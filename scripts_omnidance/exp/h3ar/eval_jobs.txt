@@ -1,0 +1,29 @@
+# <model_dir_name under models/train> <tag> <mode> <rows> <steps...> (priority order). 10-12: fixed first 3 cases per condition; no full-val sampling.
+H3A4_richprompt_decfgDS_full12k HA4rich biorigcfg3 3 300
+BASE val_zsbase_biospeech biospeech 3 sp
+BASE val_zsbase_biosilence biosilence 3 si
+H3A4_richprompt_decfgDS_full12k HA4rich biospeech 3 300
+H3A4_richprompt_decfgDS_full12k HA4rich biosilence 3 300
+BASE val_zsbase_bionoise bionoise 3 no
+H3A5hr_richprompt_decfgDS_full12k HA5hr bihrorig 3 100 300 500
+H3A6dup_richprompt_decfgDS_full12k HA6dup biorig 3 100 300 500
+BASE val_zsbase_biorig biorig 3 orig
+H3M1ab_rich_mert_mlr1e-3_n1cur M1abR biorig 3 300 708
+H3M2b_rich_moe5_mlr1e-3_f1cur M2bR biorig 3 300 886
+H3A2_decfgDS_lr5e-5_full12k HA2ds biorig 3 750
+H3A4_richprompt_decfgDS_full12k HA4rich biorig 3 100 300 500
+H3A4_richprompt_decfgDS_full12k HA4rich biorig 3 750
+H3A3_cfgloss4_full12k HA3cfg biorig 3 750
+H3B4m_align5tail_cfgloss4_n1cur HB4m ar5 3 100
+H3B3_mix_cfgloss4_n1cur HB3cfg ar 3 100 200
+BASE val_zsbase_bihr bihr 3 hr
+H3A2_decfgDS_lr5e-5_full12k HA2ds bihr 3 750
+H3A3_cfgloss4_full12k HA3cfg bi 3 100 300 500
+H3A3_cfgloss4_full12k HA3cfg bi 3 750
+H3M2b_moe5_mlr1e-3_decfgDS_f1cur M2b bi 3 300 500 886
+H3W1b_musicDPO_b1000_decfgDS_f1cur W1b bi 3 446
+H3M1ab_mert_mlr1e-3_decfgDS_cur M1ab bi 3 300 785
+H3OS1_rich_g3p5_cur OS1G biorig 3 100 300
+H3REF_rich_g3p5_cur_v2 REF35 biorig 3 100 300
+H3OS1_rich_fm_cur_v2 OS1FM biorig 3 100 300
+# Hybrid inference is run on its own prepared node, not claimed by workers lacking the Hybrid base.

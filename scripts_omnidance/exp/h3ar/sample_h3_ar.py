@@ -1,0 +1,198 @@
+"""H3-AR sampling (block-causal, multi-step per block) on OD-Val-47 with music as clean target audio + reference audio.
+Mode `ar`: block by block; context frames = previously generated latents (mask 0 -> clean), current block denoised
+`--steps` steps, future frames ignored (invisible under block-causal attention). Mode `bi`: stock bidirectional.
+Output layout <out>/<cond>/<sid>_<audiostem>.mp4 (video + original music), like the other samplers.
+python sample_h3_ar.py --out <dir> [--lora <dit lora safetensors>] --mode ar --conds joint,aswap --shard i --nshard n
+"""
+import argparse, csv, glob, os, sys, time
+import librosa, torch
+from PIL import Image
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(HERE, "..", "h3"))
+p = argparse.ArgumentParser()
+p.add_argument("--out", required=True)
+p.add_argument("--lora", default="")
+p.add_argument("--mode", default="ar", choices=["ar", "bi"])
+p.add_argument("--conds", default="joint,aswap")
+p.add_argument("--csv_dir", default="/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/E2")
+p.add_argument("--prompt_mode", default="motion", choices=["orig", "motion", "music"], help="motion: E10 motion caption only; music: motion caption + BPM/beat times written into the prompt (idea M1b)")
+p.add_argument("--shard", type=int, default=0)
+p.add_argument("--nshard", type=int, default=1)
+p.add_argument("--rows", type=int, default=3)
+p.add_argument("--steps", type=int, default=20)
+p.add_argument("--block", type=int, default=6)
+p.add_argument("--lookahead", type=float, default=8)
+p.add_argument("--seed", type=int, default=42)
+p.add_argument("--cm_steps", type=int, default=0, help=">0: multistep consistency sampler (CF++ stage-2 student), N steps per block, sigmas of an N-step shift-5 schedule")
+p.add_argument("--shift", type=float, default=5.0, help="video flow shift (official DiffSynth/ComfyUI default 12)")
+p.add_argument("--audio_shift", type=float, default=5.0, help="audio flow shift (official default 3)")
+p.add_argument("--cfg", type=float, default=1.0, help=">1: real CFG with negative prompt ' ' (diagnose lost CFG-distillation after fine-tuning)")
+p.add_argument("--height", type=int, default=832); p.add_argument("--width", type=int, default=480)
+p.add_argument("--audio_override", default="", help="replace the music of every case by this wav (speech/noise/silence probe)")
+p.add_argument("--prompt_prefix", default="", help="e.g. a community LoRA trigger word (fal realism: r34l1sm)")
+p.add_argument("--w", default="/dev/shm/h3/Ref2VA")
+a = p.parse_args()
+
+csv.field_size_limit(10 ** 9)
+E = "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp"
+cap = {r["sample_id"]: r["motion_caption"] for r in csv.DictReader(open(f"{E}/E10/val47_motion_captions.csv"))}
+jobs = []
+for c in a.conds.split(","):
+    rows = list(csv.DictReader(open(f"{a.csv_dir}/full_{c}.csv")))
+    jobs += [(c, r) for r in (rows[:a.rows] if a.rows else rows)]
+jobs = jobs[a.shard::a.nshard]
+todo = [(c, r, f"{a.out}/{c}/{r['sample_id']}_{os.path.basename(r['audio_path'])[:-4]}.mp4") for c, r in jobs]
+todo = [t for t in todo if not os.path.exists(t[2])]
+print(f"[h3ar] {len(todo)} todo", flush=True)
+if not todo:
+    sys.exit(0)
+
+from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Pipeline, ModelConfig  # noqa: E402
+from diffsynth.utils.data.audio_video import write_video_audio  # noqa: E402
+import h3_causal as HC  # noqa: E402
+src = open(os.path.join(HERE, "..", "h3", "e3_h3_zeroshot.py")).read()
+ns = {}; exec(src[src.index("def h3_prompt"):src.index("\n\n\n", src.index("def h3_prompt"))], ns)
+h3_prompt = ns["h3_prompt"]
+
+vram = dict(offload_dtype=torch.bfloat16, offload_device="cpu", onload_dtype=torch.bfloat16, onload_device="cpu",
+            preparing_dtype=torch.bfloat16, preparing_device="cuda", computation_dtype=torch.bfloat16, computation_device="cuda")
+W = a.w
+pipe = MiniMaxH3Pipeline.from_pretrained(
+    torch_dtype=torch.bfloat16, device="cuda",
+    model_configs=[
+        ModelConfig(path=sorted(glob.glob(f"{W}/text_encoder/model*.safetensors")), **vram),
+        ModelConfig(path=sorted(glob.glob(f"{W}/transformer/model*.safetensors")), **vram),
+        ModelConfig(path=f"{W}/video_vae/source/model.safetensors", **vram),
+        ModelConfig(path=f"{W}/audio_vae/model.safetensors", **vram),
+    ],
+    processor_config=ModelConfig(path=f"{W}/processor/"),
+    **({"vram_limit": torch.cuda.mem_get_info("cuda")[1] / (1024 ** 3) - 5} if a.height > 832 else {}),  # official-res (as e3/oos scripts)
+)
+MUSIC = False
+if a.lora:
+    import h3_music as MU  # M1a: trained MERT injector (od_music.* keys) travels inside the LoRA file
+    _rest, MUSIC = MU.load_injector(pipe.dit, a.lora)
+    pipe.load_lora(pipe.dit, state_dict={k: v.to(device=pipe.device, dtype=pipe.torch_dtype) for k, v in _rest.items()})
+MERT_DIRS = ["/apdcephfs_gy4/share_302533218/cedricnie/diff/data/omnidance/audio_cache/mert_features",
+             "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/G2/mert_val"]
+if a.mode == "ar":
+    HC.install()
+
+
+@torch.no_grad()
+def generate(prompt, img, wav, sr):
+    pipe.scheduler.set_timesteps(a.steps, shift=a.shift)
+    pipe.scheduler_audio.set_timesteps(a.steps, shift=a.audio_shift)
+    inputs_posi = {"prompt": prompt}; inputs_nega = {"negative_prompt": " "}
+    sh = {"cfg_scale": a.cfg, "height": a.height, "width": a.width, "num_frames": 124, "seed": a.seed, "rand_device": "cpu",
+          "tiled": True, "tile_size": 256, "tile_overlap": 64, "use_gradient_checkpointing": False, "use_gradient_checkpointing_offload": False,
+          "keyframes": None, "keyframe_indices": None,
+          "references": [{"type": "image", "image": img}, {"type": "audio", "audio": wav, "sample_rate": sr}],
+          "ref_image_short_edge": 2048, "ref_video_short_edge": 768, "ref_video_max_pixels": 768 * 1344,
+          "control_video": None, "control_scale": 1.0, "retake_video": None, "frame_regions_to_retake": None,
+          "retake_audio": (wav, sr), "seconds_regions_to_retake": [],
+          "imgvid_cond_noise_aug": pipe.imgvid_cond_noise_aug, "audio_cond_noise_aug": pipe.audio_cond_noise_aug, "text_embedding": None}
+    for unit in pipe.units:
+        sh, inputs_posi, inputs_nega = pipe.unit_runner(unit, pipe, sh, inputs_posi, inputs_nega)
+    pipe.load_models_to_device(pipe.in_iteration_models)
+    models = {n: getattr(pipe, n) for n in pipe.in_iteration_models}
+    lat0 = sh["video_latents"].clone()
+    T = lat0.shape[2]
+    if MUSIC:
+        stem = os.path.basename(CUR_AUDIO[0])[:-4]
+        if isinstance(pipe.dit.od_music, MU.MusicMoE):  # M2: MERT + beat + CLAP + H3 audio-VAE latent of the music
+            MU.set_feat(MU.load_moe_feats(stem, sh["input_latents_audio"]), sh["ref_audio_anchor"].shape[0])
+        else:
+            mp = next(f"{d}/{stem}.pt" for d in MERT_DIRS if os.path.exists(f"{d}/{stem}.pt"))
+            MU.set_feat(MU.load_mert(mp).to(pipe.device), sh["ref_audio_anchor"].shape[0])
+    PL = {"p": None, "n": None}
+
+    def pred(tv, ta):
+        HC.STATE["plan"] = PL["p"]
+        v, _ = pipe.model_fn(**models, **sh, **inputs_posi, timestep_video=tv, timestep_audio=ta)
+        if a.cfg > 1:
+            HC.STATE["plan"] = PL["n"]
+            vn, _ = pipe.model_fn(**models, **sh, **inputs_nega, timestep_video=tv, timestep_audio=ta)
+            HC.STATE["plan"] = PL["p"]
+            v = vn + a.cfg * (v - vn)
+        return v
+
+    def denoise(region_mask, context):
+        sh["video_latents"] = lat0.clone() if context is None else context * (1 - region_mask) + lat0 * region_mask
+        if context is not None:
+            sh["input_latents_video"] = context; sh["denoise_mask_video"] = region_mask
+        if a.cm_steps > 0:  # x0 = x - s v ; re-noise to the next sigma with fresh noise (only the noisy region)
+            g = torch.Generator(device="cpu").manual_seed(a.seed + 1)
+            for k, s in enumerate(CM_SIG):
+                tv = torch.tensor([s * 1000.0], dtype=torch.float32, device=pipe.device)
+                v = pred(tv, tv)
+                x0 = sh["video_latents"] - s * v
+                if k + 1 < len(CM_SIG):
+                    nz = torch.randn(x0.shape, generator=g).to(x0)
+                    x0 = (1 - CM_SIG[k + 1]) * x0 + CM_SIG[k + 1] * nz
+                sh["video_latents"] = x0 * region_mask + sh["video_latents"] * (1 - region_mask)
+            return sh["video_latents"]
+        for k, tv in enumerate(pipe.scheduler.timesteps):
+            tv = tv.unsqueeze(0).to(dtype=torch.float32, device=pipe.device)
+            ta = pipe.scheduler_audio.timesteps[k].unsqueeze(0).to(dtype=torch.float32, device=pipe.device)
+            v = pred(tv, ta)
+            sh["video_latents"] = pipe.step(pipe.scheduler, sh["video_latents"], k, noise_pred=v,
+                                            inpaint_mask=sh.get("denoise_mask_video"), input_latents=sh.get("input_latents_video"))
+        return sh["video_latents"]
+
+    if a.mode == "bi":
+        out = denoise(torch.ones_like(lat0), None)
+    else:
+        n_rv = sh["ref_visual_anchor"].shape[0]; n_ra = sh["ref_audio_anchor"].shape[0]
+        plan = HC.make_plan(inputs_posi.get("packed", sh.get("packed")), n_rv, n_ra, T, block=a.block, lookahead=a.lookahead)
+        HC.STATE["plan"] = plan; PL["p"] = plan
+        if a.cfg > 1:
+            PL["n"] = HC.make_plan(inputs_nega["packed"], n_rv, n_ra, T, block=a.block, lookahead=a.lookahead)
+        ctx = torch.zeros_like(lat0)
+        for f0, f1 in plan["bounds"]:
+            m = torch.ones_like(lat0); m[:, :, :f0] = 0
+            res = denoise(m, ctx)
+            ctx[:, :, f0:f1] = res[:, :, f0:f1]
+        out = ctx
+        HC.STATE["plan"] = None
+    pipe.load_models_to_device(["video_vae"])
+    frames = pipe.video_vae.decode_video(out, dtype=pipe.torch_dtype, tiled=True, tile_size=256, tile_overlap=64)
+    return pipe.vae_output_to_video(frames, min_value=0, max_value=1)
+
+
+CM_SIG = []
+if a.cm_steps > 0:
+    import copy as _copy
+    _sc = _copy.deepcopy(pipe.scheduler); _sc.set_timesteps(a.cm_steps, shift=a.shift)
+    CM_SIG = [float(x) for x in _sc.sigmas[:a.cm_steps]]
+    print(f"[h3ar] consistency sampler sigmas {CM_SIG}", flush=True)
+dur = 124 / 24
+CUR_AUDIO = [None]
+import json as _json
+BEATS = _json.load(open(f"{E}/beats.json")) if a.prompt_mode == "music" else {}
+for c, r, dst in todo:
+    t0 = time.time()
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    img = Image.open(r["image_path"]).convert("RGB")
+    sr = pipe.audio_vae.sample_rate
+    y, _ = librosa.load(a.audio_override or r["audio_path"], sr=sr, mono=False, duration=dur)
+    wav = torch.from_numpy(y if y.ndim == 2 else y[None]).float()
+    if wav.shape[0] == 1:
+        wav = wav.repeat(2, 1)
+    body = cap.get(r.get("swap_src") or r["sample_id"], r["prompt"]) if a.prompt_mode in ("motion", "music") else r["prompt"]
+    if a.prompt_mode == "music":
+        bt = [t for t in BEATS.get(r["audio_path"], []) if t < dur]
+        if len(bt) >= 2:
+            ibi = sorted(bt[i + 1] - bt[i] for i in range(len(bt) - 1))[len(bt) // 2 - 1]
+            body += (f" The music has a steady tempo of about {60.0 / ibi:.0f} BPM; its beats fall at "
+                     + ", ".join(f"{t:.1f}" for t in bt) + " seconds. <Subject 1> places a clear accent "
+                     "(a sharp arm hit, step or body bounce) exactly on each of these beats.")
+    CUR_AUDIO[0] = r["audio_path"]
+    if a.prompt_prefix:
+        body = a.prompt_prefix + " " + body
+    video = generate(h3_prompt(body, generic=(c == "audio_only")), img, wav, sr)
+    write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)
+    print(f"[h3ar] {c} {r['sample_id']} {time.time() - t0:.0f}s", flush=True)
+print("[h3ar] done", flush=True)

@@ -1,0 +1,15 @@
+# Focused bidirectional human review. Fixed first three cases, joint and aswap.
+H3OS1_rich_g3p5_cur OS1G biorig 3 300
+H3REF_rich_g3p5_cur_v2 REF35 biorig 3 300
+H3OS1_rich_fm_cur_v2 OS1FM biorig 3 300
+H3HYB25_rich_g3p5_cur HYB25G biorighyb 3 100 300
+BASE val_HYB25base_biorighyb biorighyb 3 base
+H3A5hr_richprompt_decfgDS_full12k HA5hr bihrorig 3 500
+H3A6dup_richprompt_decfgDS_full12k HA6dup biorig 3 500
+H3M1ab_rich_mert_mlr1e-3_n1cur M1abR biorig 3 708
+H3M2b_rich_moe5_mlr1e-3_f1cur M2bR biorig 3 886
+H3DS_rich_fm_cur_8gpu DSFM8 biorig 3 100 300
+H3DS_rich_g3p5_cur DSG35 biorig 3 100 300
+H3HYB25_rich_fm_cur HYB25FM biorighyb 3 100 300
+H3REF_rich_fm_cur REFFM biorig 3 100 300
+H3REF_rich_inverse3p5_cur REFINV35 biorig 3 100 300

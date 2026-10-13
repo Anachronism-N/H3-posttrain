@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>OmniDance 音乐控舞 · 人工评审</title>
+<script>if(!/\/$|\.html$/.test(location.pathname))location.replace(location.pathname+"/"+location.search)</script>
+<style>
+:root{--bg:#111418;--panel:#1a1f26;--line:#2b323c;--fg:#e6e9ee;--dim:#8a94a3;--acc:#4f9dff;--ok:#3ecf8e;--warn:#f5a524;--bad:#ef5b5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.45 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+header{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+header b{font-size:15px}
+select,input,button{background:#0f1318;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:3px 6px;font:inherit}
+button{cursor:pointer}button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+label{white-space:nowrap}
+#main{display:flex;min-height:calc(100vh - 50px)}
+aside{width:300px;flex:none;border-right:1px solid var(--line);padding:8px;overflow:auto;max-height:calc(100vh - 50px);position:sticky;top:50px}
+aside details{margin:2px 0}aside summary{cursor:pointer;color:var(--dim);padding:2px 0}
+.mrow{display:flex;gap:4px;align-items:flex-start;padding:2px 0 2px 10px}
+.mrow small{color:var(--dim);display:block}
+.badge{display:inline-block;font-size:10px;padding:0 4px;border-radius:3px;background:#263040;color:#9fb3cc;margin-right:2px}
+section{flex:1;padding:10px 14px;min-width:0}
+#bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+#seek{flex:1;min-width:200px}
+#info{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin-bottom:10px;display:flex;gap:12px}
+#info img{height:120px;border-radius:4px}
+#info .txt{flex:1;min-width:0}
+#info .prompt{color:var(--dim);max-height:4.5em;overflow:hidden;cursor:pointer}
+#info .prompt.open{max-height:none}
+.kv{color:var(--dim)}.kv b{color:var(--fg);font-weight:600}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tw,250px),1fr));gap:10px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.tile.focus{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.tile .hd{padding:5px 7px;display:flex;gap:6px;align-items:center;justify-content:space-between}
+.tile .hd .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile .hd small{color:var(--dim)}
+.tile video{width:100%;aspect-ratio:480/832;background:#000;object-fit:contain;display:block}
+.tile .missing{aspect-ratio:480/832;display:flex;align-items:center;justify-content:center;color:var(--dim);background:#0b0d10}
+.chips{padding:3px 7px;display:flex;flex-wrap:wrap;gap:3px}
+.chip{font-size:11px;padding:0 5px;border-radius:3px;background:#222a35;color:#b8c4d4}
+.rate{padding:5px 7px 7px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
+.rate .row{display:flex;align-items:center;gap:3px}
+.rate .row span.l{width:34px;color:var(--dim)}
+.rate .row button{padding:0 7px;min-width:24px}
+.flags{display:flex;flex-wrap:wrap;gap:3px}
+.flags button{font-size:11px;padding:0 5px}
+.flags button.on{background:var(--bad);border-color:var(--bad)}
+.flags button.best.on{background:var(--ok);border-color:var(--ok)}
+.rate input{width:100%}
+.done{color:var(--ok)}
+table{border-collapse:collapse;margin:8px 0 18px;font-size:12px}
+th,td{border:1px solid var(--line);padding:3px 7px;text-align:center;white-space:nowrap}
+th{background:var(--panel);position:sticky;top:50px}
+td.l{text-align:left;max-width:420px;overflow:hidden;text-overflow:ellipsis}
+.hint{color:var(--dim);font-size:12px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <b>OmniDance 评审</b>
+  <span><button data-tab="cmp" class="tabbtn on">对比评审</button> <button data-tab="sum" class="tabbtn">汇总</button></span>
+  <label>评审人 <input id="reviewer" size="8" placeholder="名字"></label>
+  <label>预设 <select id="preset"><option value="">（自定义）</option></select></label>
+  <label>条件 <select id="cond"></select></label>
+  <label>视图 <select id="view"><option value="models">多模型·同条件</option><option value="conds">单模型·多条件</option></select></label>
+  <label><input type="checkbox" id="blind"> 盲评</label>
+  <label><input type="checkbox" id="srcgt"> 显示音乐/文本来源 GT</label>
+  <label>音轨 <select id="audioMode"><option value="wav">条件音乐（wav）</option><option value="embed">视频自带音轨</option></select></label>
+  <label>宽 <input type="range" id="tw" min="160" max="420" value="250" style="width:80px"></label>
+  <span class="hint" id="status"></span>
+</header>
+<div id="main">
+  <aside>
+    <input id="mfilter" placeholder="筛选模型（如 E6_3b / aswap）" style="width:100%">
+    <div style="margin:6px 0;display:flex;gap:6px"><button id="clearSel">清空选择</button><button id="rebuild" title="重新扫描实验目录（新出的推理结果）">重新扫描</button></div>
+    <div id="mlist"></div>
+  </aside>
+  <section id="cmp">
+    <div id="bar">
+      <button id="prev" title="←">上一个</button>
+      <select id="sample"></select>
+      <button id="next" title="→">下一个</button>
+      <button id="nextUnrated">下一个未评</button>
+      <button id="play" title="空格">播放</button>
+      <button id="restart" title="R">重头</button>
+      <button id="stepB" title=",">-1帧</button><button id="stepF" title=".">+1帧</button>
+      <select id="rate"><option>0.25</option><option>0.5</option><option selected>1</option></select>
+      <label><input type="checkbox" id="loop" checked> 循环</label>
+      <input type="range" id="seek" min="0" max="1000" value="0">
+      <span id="time" class="hint">0.00s</span>
+      <button id="reveal" class="hidden">揭晓盲评</button>
+    </div>
+    <div id="info"></div>
+    <div id="grid"></div>
+    <p class="hint">快捷键：空格 播放/暂停，←/→ 切换样本，R 重头，, / . 逐帧。点击视频标题旁的“听此列”切换主音轨（aswap 时 GT 列原音乐与生成列不同）。评分自动保存到服务器。</p>
+  </section>
+  <section id="sum" class="hidden">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <label>范围 <select id="sumScope"><option value="sel">当前选择的模型</option><option value="rated">所有有评分的模型</option></select></label>
+      <label>评审人 <select id="sumWho"><option value="me">仅我</option><option value="all">所有人</option></select></label>
+      <button id="exportJson">导出评分 JSON</button><button id="exportCsv">导出评分 CSV</button>
+    </div>
+    <h3>人工评分（均值，1–5；n=已评样本数）</h3><div id="sumHuman"></div>
+    <h3>自动指标（47 条 val 均值；BAS 节拍对齐，TA 文本对齐，ID 身份，Mot 动作幅度）</h3><div id="sumAuto"></div>
+  </section>
+</div>
+<audio id="master" preload="auto"></audio>
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const CN={joint:"原配 joint",aswap:"换音乐 aswap",tswap:"换文本 tswap",audio_only:"仅音频",text_only:"仅文本",long:"长视频 33s"};
+const DIMS=[["sync","音乐"],["motion","动作"],["quality","画质"]];
+const FLAGS=["最佳","跳变/闪烁","崩坏","动作太小","身份漂移","与音乐无关"];
+const LS=k=>"odrev_"+k;
+let M=null, byId={}, S={sel:[],cond:"joint",view:"models",sid:"",blind:false,srcgt:false,audioMode:"wav",tw:250,preset:""};
+let mine={}, allRev=[], tiles=[], focus=0, revealed=false;
+const A=$("#master");
+
+function save(){localStorage.setItem(LS("state"),JSON.stringify(S))}
+function load(){try{Object.assign(S,JSON.parse(localStorage.getItem(LS("state"))||"{}"))}catch(e){}}
+function media(p){return "media?p="+encodeURIComponent(p)}
+function reviewer(){return ($("#reviewer").value||"").trim()}
+function status(t){$("#status").textContent=t}
+function fmt(x,d=3){return x==null||isNaN(x)?"-":(+x).toFixed(d)}
+function hash(s){let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0}
+function shuffled(arr,seed){const a=arr.slice();let x=seed||1;for(let i=a.length-1;i>0;i--){x=Math.imul(x^(x>>>15),2246822507)>>>0;x^=x>>>13;const j=x%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
+function vpath(m,c,f){return M.exp+"/"+m.id+(c==="long"?"/":"/"+c+"/")+f}
+
+async function init(){
+  load();
+  $("#reviewer").value=localStorage.getItem(LS("reviewer"))||"";
+  status("加载清单…");
+  M=await (await fetch("api/manifest")).json();
+  M.models.forEach(m=>byId[m.id]=m);
+  S.sel=S.sel.filter(id=>byId[id]);
+  M.presets.forEach((p,i)=>$("#preset").add(new Option(p.name,i)));
+  M.conds.forEach(c=>$("#cond").add(new Option(CN[c]||c,c)));
+  if(!S.sel.length){applyPreset(0)}
+  await loadReviews();
+  bindUI(); syncUI(); renderModelList(); renderSamples(); render();
+  status(`清单 ${M.built}，${M.models.length} 个模型目录`);
+}
+async function loadReviews(){
+  try{allRev=await (await fetch("api/reviews")).json()}catch(e){allRev=[]}
+  mine={};const me=reviewer();allRev.filter(r=>r.reviewer===me).forEach(r=>mine[r.key]=r);
+}
+function applyPreset(i){
+  const p=M.presets[i];if(!p)return;
+  S.preset=String(i);S.sel=p.models.filter(id=>byId[id]);S.cond=p.cond;S.view=p.view;
+}
+function syncUI(){
+  $("#preset").value=S.preset||"";$("#cond").value=S.cond;$("#view").value=S.view;
+  $("#blind").checked=S.blind;$("#srcgt").checked=S.srcgt;$("#audioMode").value=S.audioMode;$("#tw").value=S.tw;
+  document.documentElement.style.setProperty("--tw",S.tw+"px");
+}
+
+/* ---------- 模型列表 ---------- */
+function renderModelList(){
+  const q=$("#mfilter").value.trim().toLowerCase();const box=$("#mlist");box.innerHTML="";
+  const groups={};M.models.forEach(m=>{(groups[m.group]=groups[m.group]||[]).push(m)});
+  for(const g of Object.keys(groups).sort()){
+    const ms=groups[g].filter(m=>!q||(m.id+" "+m.desc+" "+Object.keys(m.conds).join(" ")).toLowerCase().includes(q));
+    if(!ms.length)continue;
+    const d=document.createElement("details");
+    const nsel=ms.filter(m=>S.sel.includes(m.id)).length;
+    d.open=!!q||nsel>0;
+    d.innerHTML=`<summary>${g} <span class="hint">(${ms.length}${nsel?`，已选 ${nsel}`:""})</span></summary>`;
+    ms.forEach(m=>{
+      const r=document.createElement("label");r.className="mrow";
+      const cb=document.createElement("input");cb.type="checkbox";cb.checked=S.sel.includes(m.id);
+      cb.onchange=()=>{if(cb.checked)S.sel.push(m.id);else S.sel=S.sel.filter(x=>x!==m.id);S.preset="";syncUI();save();renderSamples();render()};
+      const t=document.createElement("div");
+      t.innerHTML=`<div></div><small></small><div>${Object.keys(m.conds).map(c=>`<span class="badge">${c}</span>`).join("")}</div>`;
+      t.children[0].textContent=m.label.replace(g+"/","");t.children[1].textContent=m.desc;
+      r.append(cb,t);d.append(r);
+    });
+    box.append(d);
+  }
+}
+
+/* ---------- 样本 ---------- */
+function sampleIds(){
+  const ms=S.sel.map(id=>byId[id]);const set=new Set();
+  if(S.view==="conds"&&ms[0]){Object.values(ms[0].conds).forEach(d=>Object.keys(d).forEach(s=>set.add(s)))}
+  else ms.forEach(m=>Object.keys(m.conds[S.cond]||{}).forEach(s=>set.add(s)));
+  if(!set.size)Object.keys(M.samples).forEach(s=>set.add(s));
+  return [...set].sort();
+}
+function renderSamples(){
+  const ids=sampleIds(),sel=$("#sample");sel.innerHTML="";
+  ids.forEach((s,i)=>{const n=countRated(s);sel.add(new Option(`${i+1}. ${s}${n.total?`  [${n.done}/${n.total}]`:""}`,s))});
+  if(!ids.includes(S.sid))S.sid=ids[0]||"";sel.value=S.sid;
+}
+function genTilesFor(sid){
+  const out=[];
+  if(S.view==="conds"){const m=byId[S.sel[0]];if(m)for(const c of M.conds)if(m.conds[c])out.push({m,c,sid,e:m.conds[c][sid]})}
+  else S.sel.forEach(id=>{const m=byId[id];out.push({m,c:S.cond,sid,e:(m.conds[S.cond]||{})[sid]})});
+  return out;
+}
+function countRated(sid){const g=genTilesFor(sid).filter(t=>t.e);return{total:g.length,done:g.filter(t=>mine[key(t)]&&isRated(mine[key(t)])).length}}
+function isRated(r){return DIMS.some(([k])=>r[k])}
+function key(t){return `${t.m.id}|${t.c}|${t.sid}`}
+
+/* ---------- 渲染 ---------- */
+function audioFor(c,sid,src,m){
+  const s=M.samples[sid]||{};
+  if(c==="long")return M.exp+"/"+m.id+"/"+sid+".wav";
+  if(c==="aswap"){const k=src||s.aswap_src;return (M.samples[k]||{}).audio||s.audio}
+  return s.audio;
+}
+function render(){
+  pauseAll();
+  const sid=S.sid,s=M.samples[sid]||{};revealed=false;
+  // info
+  const info=$("#info");info.innerHTML="";
+  if(s.image){const im=new Image();im.src=media(s.image);info.append(im)}
+  const tx=document.createElement("div");tx.className="txt";
+  const gen=genTilesFor(sid);
+  const src=(gen.find(t=>t.e&&t.e[1])||{}).e?.[1];
+  const asrc=src&&S.cond==="aswap"?src:s.aswap_src, tsrc=src&&S.cond==="tswap"?src:s.tswap_src;
+  tx.innerHTML=`<div class="kv">样本 <b></b>　条件 <b>${S.view==="conds"?"单模型·多条件":(CN[S.cond]||S.cond)}</b>　aswap 音乐来自 <b>${asrc||"-"}</b>　tswap 文本来自 <b>${tsrc||"-"}</b>
+    　GT 指标 BAS ${fmt(s.gt_metrics?.bas,2)} / TA ${fmt(s.gt_metrics?.ta,2)} / Mot ${fmt(s.gt_metrics?.motion,3)}</div>
+    <div class="kv" style="margin-top:4px">原 prompt（点击展开）：</div><div class="prompt p1"></div>
+    <div class="kv mc">动作 caption（H3AR 用）：<span></span></div>
+    <div class="kv tp">tswap 使用的 prompt（来自 ${tsrc}）：</div><div class="prompt p2"></div>`;
+  tx.querySelector("b").textContent=sid;
+  tx.querySelector(".p1").textContent=s.prompt||"";
+  tx.querySelector(".mc span").textContent=s.motion_caption||"-";
+  const tp=(M.samples[tsrc]||{}).prompt;
+  if(S.cond==="tswap"||S.view==="conds"){tx.querySelector(".p2").textContent=tp||""}else{tx.querySelector(".tp").remove();tx.querySelector(".p2").remove()}
+  tx.querySelectorAll(".prompt").forEach(p=>p.onclick=()=>p.classList.toggle("open"));
+  info.append(tx);
+  // tiles
+  tiles=[{kind:"gt",label:"GT（原视频）",sub:"",video:s.video,audio:s.audio}];
+  if(S.srcgt){
+    const c=S.view==="conds"?"aswap":S.cond;
+    if(c==="aswap"&&asrc&&M.samples[asrc])tiles.push({kind:"gt",label:"GT（音乐来源）",sub:asrc,video:M.samples[asrc].video,audio:M.samples[asrc].audio});
+    if(S.cond==="tswap"&&tsrc&&M.samples[tsrc])tiles.push({kind:"gt",label:"GT（文本来源）",sub:tsrc,video:M.samples[tsrc].video,audio:M.samples[tsrc].audio});
+  }
+  let g=gen.map(t=>({kind:"gen",...t,label:S.view==="conds"?(CN[t.c]||t.c):t.m.label,sub:S.view==="conds"?t.m.label:(t.m.desc||""),
+     video:t.e?vpath(t.m,t.c,t.e[0]):null,audio:t.e?audioFor(t.c,sid,t.e[1],t.m):null,met:t.e?(t.m.metrics[t.c]||{})[sid]:null}));
+  if(S.blind){g=shuffled(g,hash(sid+S.cond+reviewer()));g.forEach((t,i)=>{t.blindLabel="候选 "+String.fromCharCode(65+i)})}
+  tiles=tiles.concat(g);
+  focus=tiles.findIndex(t=>t.kind==="gen"&&t.video);if(focus<0)focus=0;
+  const grid=$("#grid");grid.innerHTML="";
+  tiles.forEach((t,i)=>grid.append(tileEl(t,i)));
+  $("#reveal").classList.toggle("hidden",!S.blind);
+  setMasterAudio();A.currentTime=0;updTime();
+}
+function tileEl(t,i){
+  const el=document.createElement("div");el.className="tile"+(i===focus?" focus":"");t.el=el;
+  const hd=document.createElement("div");hd.className="hd";
+  const nm=document.createElement("div");nm.style.minWidth="0";
+  nm.innerHTML=`<div class="nm"></div><small></small>`;
+  const blind=S.blind&&t.kind==="gen"&&!revealed;
+  nm.children[0].textContent=blind?t.blindLabel:t.label;nm.children[0].title=t.m?t.m.id:"";
+  nm.children[1].textContent=blind?"":(t.sub||"");
+  const lb=document.createElement("button");lb.textContent="听此列";lb.onclick=()=>{focus=i;$$(".tile").forEach((x,j)=>x.classList.toggle("focus",j===i));const was=!getMaster().paused;setMasterAudio();if(was)playAll()};
+  hd.append(nm,lb);el.append(hd);
+  if(t.video){const v=document.createElement("video");v.src=media(t.video);v.preload="auto";v.muted=true;v.playsInline=true;v.onclick=togglePlay;t.v=v;el.append(v)}
+  else{const d=document.createElement("div");d.className="missing";d.textContent="该模型无此条件/样本";el.append(d)}
+  if(t.kind==="gen"&&t.met&&!blind){
+    const c=document.createElement("div");c.className="chips";
+    const mt=t.met;c.innerHTML=[["BAS",mt.bas,2],["BASalt",mt.bas_alt,2],["TA",mt.ta,3],["ID",mt.id_dino,3],["Mot",mt.motion,3]].filter(x=>x[1]!=null).map(([k,v,d])=>`<span class="chip">${k} ${fmt(v,d)}</span>`).join("");
+    el.append(c);
+  }
+  if(t.kind==="gen"&&t.e)el.append(rateEl(t));
+  return el;
+}
+function rateEl(t){
+  const k=key(t),r=mine[k]||{};
+  const box=document.createElement("div");box.className="rate";
+  DIMS.forEach(([d,l])=>{
+    const row=document.createElement("div");row.className="row";row.innerHTML=`<span class="l">${l}</span>`;
+    for(let s=1;s<=5;s++){const b=document.createElement("button");b.textContent=s;b.classList.toggle("on",r[d]===s);
+      b.onclick=()=>{if(!needReviewer())return;const cur=mine[k]||{};const nv=cur[d]===s?0:s;update(t,{[d]:nv});row.querySelectorAll("button").forEach((x,j)=>x.classList.toggle("on",j+1===nv))};row.append(b)}
+    box.append(row);
+  });
+  const fl=document.createElement("div");fl.className="flags";
+  FLAGS.forEach(f=>{const b=document.createElement("button");b.textContent=f;if(f==="最佳")b.classList.add("best");b.classList.toggle("on",(r.flags||[]).includes(f));
+    b.onclick=()=>{if(!needReviewer())return;const cur=new Set((mine[k]||{}).flags||[]);cur.has(f)?cur.delete(f):cur.add(f);b.classList.toggle("on",cur.has(f));update(t,{flags:[...cur]})};fl.append(b)});
+  box.append(fl);
+  const note=document.createElement("input");note.placeholder="备注（回车保存）";note.value=r.note||"";
+  note.onkeydown=e=>{e.stopPropagation();if(e.key==="Enter")note.blur()};note.onchange=()=>update(t,{note:note.value});
+  box.append(note);
+  return box;
+}
+function needReviewer(){if(reviewer())return true;alert("请先在顶部填写评审人");$("#reviewer").focus();return false}
+async function update(t,patch){
+  const me=reviewer();if(!me)return;
+  const k=key(t);const r=Object.assign({key:k,reviewer:me,model:t.m.id,label:t.m.label,cond:t.c,sid:t.sid,blind:S.blind},mine[k]||{},patch);
+  mine[k]=r;
+  try{const res=await fetch("api/review",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(r)});if(!res.ok)throw 0;status(`已保存 ${t.sid} · ${S.blind?"(盲评)":t.m.label}`)}
+  catch(e){status("保存失败！请检查服务");}
+  const o=$("#sample").selectedOptions[0];if(o){const n=countRated(S.sid);o.text=o.text.replace(/\s+\[\d+\/\d+\]$/,"")+`  [${n.done}/${n.total}]`}
+}
+
+/* ---------- 同步播放 ---------- */
+function vids(){return tiles.filter(t=>t.v).map(t=>t.v)}
+function getMaster(){if(S.audioMode==="embed"){const t=tiles[focus];if(t&&t.v)return t.v}return A}
+function setMasterAudio(){
+  const t=tiles[focus];
+  if(S.audioMode==="wav"&&t&&t.audio){const u=media(t.audio);if(!A.src.endsWith(u)){const ct=A.currentTime;A.src=u;A.currentTime=ct}}
+  const m=getMaster();vids().forEach(v=>v.muted=!(S.audioMode==="embed"&&v===m));
+  if(S.audioMode==="embed")A.pause();
+}
+function playAll(){
+  const m=getMaster(),r=+$("#rate").value;
+  [A,...vids()].forEach(x=>x.playbackRate=r);
+  const t=m.currentTime;vids().forEach(v=>{if(v!==m&&Math.abs(v.currentTime-t)>0.05)v.currentTime=Math.min(t,(v.duration||99)-0.01)});
+  m.play().catch(()=>{});vids().forEach(v=>{if(v!==m&&t<(v.duration||99))v.play().catch(()=>{})});
+  $("#play").textContent="暂停";
+}
+function pauseAll(){[A,...vids()].forEach(x=>x.pause());$("#play").textContent="播放"}
+function togglePlay(){getMaster().paused?playAll():pauseAll()}
+function seekAll(t){const m=getMaster();m.currentTime=t;vids().forEach(v=>v.currentTime=Math.min(t,(v.duration||99)-0.01));updTime()}
+function updTime(){const m=getMaster();$("#time").textContent=m.currentTime.toFixed(2)+"s / "+(m.duration||0).toFixed(2)+"s";if(m.duration)$("#seek").value=Math.round(m.currentTime/m.duration*1000)}
+function tick(){
+  const m=getMaster();
+  if(!m.paused){const t=m.currentTime;
+    vids().forEach(v=>{if(v===m)return;const d=v.duration||0;
+      if(d&&t>=d-0.02){if(!v.paused)v.pause();return}
+      if(v.paused)v.play().catch(()=>{});
+      if(v.readyState>=2&&Math.abs(v.currentTime-t)>0.12)v.currentTime=t});
+    updTime()}
+  requestAnimationFrame(tick);
+}
+function onEnded(e){const m=getMaster();if(e.target!==m)return;if($("#loop").checked){seekAll(0);playAll()}else pauseAll()}
+
+/* ---------- 汇总 ---------- */
+function renderSummary(){
+  const who=$("#sumWho").value,me=reviewer();
+  const revs=allRev.filter(r=>who==="all"||r.reviewer===me);
+  const conds=M.conds;
+  let ids=$("#sumScope").value==="sel"?S.sel.slice():[...new Set(revs.map(r=>r.model))].filter(id=>byId[id]);
+  // human
+  const agg={};revs.forEach(r=>{if(!isRated(r)&&!(r.flags||[]).length)return;const a=(agg[r.model+"|"+r.cond]=agg[r.model+"|"+r.cond]||{n:0,sync:[],motion:[],quality:[],flags:{}});a.n++;DIMS.forEach(([d])=>{if(r[d])a[d].push(r[d])});(r.flags||[]).forEach(f=>a.flags[f]=(a.flags[f]||0)+1)});
+  const mean=a=>a.length?(a.reduce((x,y)=>x+y,0)/a.length).toFixed(2):"-";
+  let h=`<table><tr><th>模型</th>${conds.map(c=>`<th>${CN[c]}<br><span class="hint">n · 音乐/动作/画质 · 标记</span></th>`).join("")}</tr>`;
+  ids.forEach(id=>{const m=byId[id];h+=`<tr><td class="l" title="${m.id}">${esc(m.label)}<br><span class="hint">${esc(m.desc)}</span></td>`+conds.map(c=>{const a=agg[id+"|"+c];if(!a)return"<td>-</td>";
+    const fl=Object.entries(a.flags).map(([f,n])=>`${f}${n}`).join(" ");return `<td>${a.n} · <b>${mean(a.sync)}</b>/${mean(a.motion)}/${mean(a.quality)}<br><span class="hint">${fl}</span></td>`}).join("")+"</tr>"});
+  $("#sumHuman").innerHTML=h+"</table>";
+  // auto
+  const keys=[["bas","BAS"],["ta","TA"],["id_dino","ID"],["motion","Mot"]];
+  let t=`<table><tr><th>模型</th>${conds.map(c=>`<th>${CN[c]}<br><span class="hint">${keys.map(k=>k[1]).join(" / ")}</span></th>`).join("")}</tr>`;
+  ids.forEach(id=>{const m=byId[id];t+=`<tr><td class="l">${esc(m.label)}</td>`+conds.map(c=>{const d=m.metrics[c];if(!d)return`<td>${m.conds[c]?"无指标":"-"}</td>`;const v=Object.values(d);
+    return `<td>${keys.map(([k])=>{const xs=v.map(x=>x[k]).filter(x=>x!=null);return xs.length?(xs.reduce((a,b)=>a+b,0)/xs.length).toFixed(3):"-"}).join(" / ")}<br><span class="hint">n=${v.length}</span></td>`}).join("")+"</tr>"});
+  $("#sumAuto").innerHTML=t+"</table>";
+}
+function esc(s){return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function download(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text]));a.download=name;a.click()}
+
+/* ---------- 绑定 ---------- */
+function bindUI(){
+  $$(".tabbtn").forEach(b=>b.onclick=async()=>{$$(".tabbtn").forEach(x=>x.classList.toggle("on",x===b));$("#cmp").classList.toggle("hidden",b.dataset.tab!=="cmp");$("#sum").classList.toggle("hidden",b.dataset.tab!=="sum");if(b.dataset.tab==="sum"){pauseAll();await loadReviews();renderSummary()}});
+  $("#reviewer").onchange=async()=>{localStorage.setItem(LS("reviewer"),reviewer());await loadReviews();renderSamples();render()};
+  $("#preset").onchange=e=>{if(e.target.value!==""){applyPreset(+e.target.value)}else S.preset="";syncUI();save();renderModelList();renderSamples();render()};
+  $("#cond").onchange=e=>{S.cond=e.target.value;save();renderSamples();render()};
+  $("#view").onchange=e=>{S.view=e.target.value;save();renderSamples();render()};
+  $("#blind").onchange=e=>{S.blind=e.target.checked;save();render()};
+  $("#srcgt").onchange=e=>{S.srcgt=e.target.checked;save();render()};
+  $("#audioMode").onchange=e=>{const was=!getMaster().paused;pauseAll();S.audioMode=e.target.value;save();setMasterAudio();if(was)playAll()};
+  $("#tw").oninput=e=>{S.tw=+e.target.value;document.documentElement.style.setProperty("--tw",S.tw+"px");save()};
+  $("#mfilter").oninput=renderModelList;
+  $("#clearSel").onclick=()=>{S.sel=[];S.preset="";syncUI();save();renderModelList();renderSamples();render()};
+  $("#rebuild").onclick=async()=>{status("重新扫描中（可能需要一两分钟）…");M=await (await fetch("api/manifest?rebuild=1")).json();byId={};M.models.forEach(m=>byId[m.id]=m);renderModelList();renderSamples();render();status(`清单 ${M.built}，${M.models.length} 个模型目录`)};
+  $("#sample").onchange=e=>{S.sid=e.target.value;save();render()};
+  const go=d=>{const o=[...$("#sample").options];if(!o.length)return;const i=o.findIndex(x=>x.value===S.sid);const j=Math.max(0,Math.min(o.length-1,i+d));S.sid=o[j].value;$("#sample").value=S.sid;save();render()};
+  $("#prev").onclick=()=>go(-1);$("#next").onclick=()=>go(1);
+  $("#nextUnrated").onclick=()=>{const ids=sampleIds();const i=ids.indexOf(S.sid);for(let k=1;k<=ids.length;k++){const s=ids[(i+k)%ids.length];const n=countRated(s);if(n.done<n.total){S.sid=s;$("#sample").value=s;save();render();return}}status("当前组合已全部评完")};
+  $("#play").onclick=togglePlay;
+  $("#restart").onclick=()=>{seekAll(0);playAll()};
+  $("#stepF").onclick=()=>{pauseAll();seekAll(getMaster().currentTime+1/16)};
+  $("#stepB").onclick=()=>{pauseAll();seekAll(Math.max(0,getMaster().currentTime-1/16))};
+  $("#rate").onchange=()=>{const r=+$("#rate").value;[A,...vids()].forEach(x=>x.playbackRate=r)};
+  $("#seek").oninput=e=>{const m=getMaster();if(m.duration)seekAll(e.target.value/1000*m.duration)};
+  $("#reveal").onclick=()=>{revealed=true;const g=$("#grid");g.innerHTML="";tiles.forEach((t,i)=>g.append(tileEl(t,i)))};
+  document.addEventListener("ended",onEnded,true);
+  A.addEventListener("error",()=>{if(A.src)status("音乐 wav 加载失败，可切换到“视频自带音轨”")});
+  $("#sumScope").onchange=renderSummary;$("#sumWho").onchange=renderSummary;
+  $("#exportJson").onclick=()=>download("omnidance_reviews.json",JSON.stringify(allRev,null,1));
+  $("#exportCsv").onclick=()=>{const cols=["reviewer","model","label","cond","sid","sync","motion","quality","flags","note","blind","ts"];
+    download("omnidance_reviews.csv","\ufeff"+cols.join(",")+"\n"+allRev.map(r=>cols.map(c=>{let v=r[c];if(Array.isArray(v))v=v.join("|");return '"'+String(v??"").replace(/"/g,'""')+'"'}).join(",")).join("\n"))};
+  document.addEventListener("keydown",e=>{if(["INPUT","SELECT","TEXTAREA"].includes(e.target.tagName))return;
+    if(e.key===" "){e.preventDefault();togglePlay()}else if(e.key==="ArrowRight")go(1);else if(e.key==="ArrowLeft")go(-1);
+    else if(e.key==="r"||e.key==="R"){seekAll(0);playAll()}else if(e.key===".")$("#stepF").click();else if(e.key===",")$("#stepB").click()});
+  requestAnimationFrame(tick);
+}
+init().catch(e=>{status("初始化失败："+e);console.error(e)});
+</script>
+</body>
+</html>

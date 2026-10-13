@@ -1,0 +1,3 @@
+# Dedicated worker must have a verified /opt/h3w/Hybrid25_bf16 base. Fixed three cases per condition.
+BASE val_HYB25base_biorighyb biorighyb 3 base
+H3HYB25_rich_g3p5_cur HYB25G biorighyb 3 100 300

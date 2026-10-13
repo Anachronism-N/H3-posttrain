@@ -66,8 +66,10 @@ def FlowMatchSFTAudioVideoLoss(pipe: BasePipeline, **inputs):
 def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale: float = 1.0, audio_loss_weight: float = 1.0, inputs_nega: dict | None = None, training_cfg_mode: str = "inverse", **inputs):
     if training_cfg_mode not in ("inverse", "direct"):
         raise ValueError("training_cfg_mode must be 'inverse' or 'direct'")
-    max_timestep_boundary = int(inputs.get("max_timestep_boundary", 1) * len(pipe.scheduler.timesteps))
-    min_timestep_boundary = int(inputs.get("min_timestep_boundary", 0) * len(pipe.scheduler.timesteps))
+    import os as _os
+    # local patch (OmniDance 10-13): OD_H3_TB_MIN/MAX restrict the training timestep index range (0 = sigma 1, pure noise)
+    max_timestep_boundary = int(float(_os.environ.get("OD_H3_TB_MAX", inputs.get("max_timestep_boundary", 1))) * len(pipe.scheduler.timesteps))
+    min_timestep_boundary = int(float(_os.environ.get("OD_H3_TB_MIN", inputs.get("min_timestep_boundary", 0))) * len(pipe.scheduler.timesteps))
 
     timestep_id = torch.randint(min_timestep_boundary, max_timestep_boundary, (1,))
     timestep_video = pipe.scheduler.timesteps[timestep_id].to(dtype=torch.float32, device=pipe.device)

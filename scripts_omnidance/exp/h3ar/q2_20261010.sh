@@ -41,7 +41,7 @@ case $J in
       cp "$S/train_ha2.sh" "/tmp/train_cfg_${J}.sh"
       env -u OD_H3_MUSIC -u OD_H3_MUSIC_MODE -u OD_H3_MUSIC_LR -u OD_H3_DPO -u OD_H3_CD_TEACHER -u ADAPTER \
         W="$BASE" TF=0 OD_H3_POSI_DIR=/opt/h3cache/posi OD_H3_NEGA_DIR=/opt/h3cache/nega \
-        CACHE=${CFG_CACHE:-/opt/h3cache/cfg_rich_cur} REPEAT=${CFG_REPEAT:-2} SAVE=100 LR=5e-5 RANK=64 \
+        CACHE=${CFG_CACHE:-/opt/h3cache/cfg_rich_cur} REPEAT=${CFG_REPEAT:-2} SAVE=100 LR=${CFG_LR:-5e-5} RANK=${CFG_RANK:-64} \
         bash "/tmp/train_cfg_${J}.sh" "$M/$OUT" 0 1 "$IP" \
           --training_cfg_scale "$G" --training_cfg_mode "$CFG_MODE" --seed 42 --max_train_steps 300 --enable_csv_log
     )

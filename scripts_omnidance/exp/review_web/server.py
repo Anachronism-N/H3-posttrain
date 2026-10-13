@@ -93,6 +93,12 @@ DESC = {
     "H3AR/val_DSG35": "Ref2VA + DiffSynth训练助手 + direct guidance3.5；与DSFM8单变量对照，同2091精选集/300更新",
     "H3AR/val_HYB25FM": "Hybrid BF16 + 普通FM；与Hybrid guidance3.5单变量对照，同2091精选集/300更新",
     "H3AR/val_REFFM": "原Ref2VA + 普通FM，无训练助手；同2091精选集/300更新",
+    "H3AR/val_GT512LR": "GT512 单变量：lr 1e-5（其余同GT512）——检验漂移速度",
+    "H3AR/val_GT512HI": "GT512 单变量：只在高噪声半段训练（时间步索引[0,0.5)，sigma 1→0.69）——只学结构/运动，细节留给底座",
+    "H3AR/val_GT512LO": "GT512 单变量：只在低噪声半段训练（sigma 0.69→0）——检验细节变糊是否来自低噪声段拟合",
+    "H3AR/val_GT512R16": "GT512 单变量：LoRA rank 16（其余同GT512）——检验容量",
+    "H3AR/val_GT512": "归因对照：原Ref2VA+普通FM，512个精选ID的真实视频latent（=REFFM配方，repeat5/300更新）",
+    "H3AR/val_SG512": "归因对照：同512 ID，但训练目标换成原始H3自己生成的视频（cfg1/shift12/50步）；其余与GT512完全相同",
     "H3AR/val_REFINV35": "原Ref2VA + inverse guidance3.5；同direct3.5目标但损失/梯度缩放不同，同2091精选集/300更新",
     "E2_S4final/S4-final": "Wan2.2-5B 最终版 S4-final（50 步老师）",
     "E2/S4-11000": "Wan2.2 S4-11000 704p 老师",
@@ -111,6 +117,14 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-13 归因】H3自生成数据(SG512) vs 真实数据(GT512)，同512 ID同配方（原Ref2VA+普通FM）", "cond": "joint", "view": "models",
+     "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_GT512100_biorig", "H3AR/val_GT512300_biorig",
+                "H3AR/val_SG512100_biorig", "H3AR/val_SG512300_biorig",
+                "H3AR/val_GT512LR100_biorig", "H3AR/val_GT512LR300_biorig", "H3AR/val_GT512HI100_biorig", "H3AR/val_GT512HI300_biorig",
+                "H3AR/val_GT512LO100_biorig", "H3AR/val_GT512LO300_biorig", "H3AR/val_GT512R16100_biorig", "H3AR/val_GT512R16300_biorig",
+                "H3AR/val_REFFM100_biorig", "H3AR/val_REFFM300_biorig",
+                "H3AR/val_DSFM8100_biorig", "H3AR/val_DSFM8300_biorig", "H3AR/val_HA6dup500_biorig", "H3AR/val_HA6dup1499_biorig",
+                "H3AR/val_HA5hr500_bihrorig", "H3AR/val_M1abR708_biorig", "H3AR/val_M2bR886_biorig"]},
     {"name": "【Hybrid / 社区CFG】双向舞蹈：同精选集3case（H-A4数据预算不同，仅参考）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_biorig", "H3AR/val_HA4rich300_biorig", "H3AR/val_HYB25base_biorighyb",
                 "H3AR/val_HYB25G100_biorighyb", "H3AR/val_HYB25G300_biorighyb", "H3AR/val_OS1G100_biorig", "H3AR/val_OS1G300_biorig",

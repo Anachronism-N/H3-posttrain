@@ -33,6 +33,7 @@ p.add_argument("--height", type=int, default=832); p.add_argument("--width", typ
 p.add_argument("--audio_override", default="", help="replace the music of every case by this wav (speech/noise/silence probe)")
 p.add_argument("--prompt_prefix", default="", help="e.g. a community LoRA trigger word (fal realism: r34l1sm)")
 p.add_argument("--w", default="/dev/shm/h3/Ref2VA")
+p.add_argument("--lora_steps", default="", help="a:b -> LoRA active only on denoise step indices [a, b) (bi mode); diagnoses which noise range the fine-tune damages")
 a = p.parse_args()
 
 csv.field_size_limit(10 ** 9)
@@ -74,7 +75,16 @@ MUSIC = False
 if a.lora:
     import h3_music as MU  # M1a: trained MERT injector (od_music.* keys) travels inside the LoRA file
     _rest, MUSIC = MU.load_injector(pipe.dit, a.lora)
-    pipe.load_lora(pipe.dit, state_dict={k: v.to(device=pipe.device, dtype=pipe.torch_dtype) for k, v in _rest.items()})
+    LORA_SD = {k: v.to(device=pipe.device, dtype=pipe.torch_dtype) for k, v in _rest.items()}
+    pipe.load_lora(pipe.dit, state_dict=LORA_SD)
+LS = [int(x) for x in a.lora_steps.split(":")] if a.lora_steps else None
+LORA_ON = [bool(a.lora)]
+
+
+def set_lora(on):  # hot-loaded LoRA (vram management on): toggle per denoise step for --lora_steps
+    if on != LORA_ON[0]:
+        pipe.clear_lora(verbose=0) if not on else pipe.load_lora(pipe.dit, state_dict=LORA_SD, verbose=0)
+        LORA_ON[0] = on
 MERT_DIRS = ["/apdcephfs_gy4/share_302533218/cedricnie/diff/data/omnidance/audio_cache/mert_features",
              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/G2/mert_val"]
 if a.mode == "ar":
@@ -137,6 +147,8 @@ def generate(prompt, img, wav, sr):
         for k, tv in enumerate(pipe.scheduler.timesteps):
             tv = tv.unsqueeze(0).to(dtype=torch.float32, device=pipe.device)
             ta = pipe.scheduler_audio.timesteps[k].unsqueeze(0).to(dtype=torch.float32, device=pipe.device)
+            if LS is not None:
+                set_lora(LS[0] <= k < LS[1])
             v = pred(tv, ta)
             sh["video_latents"] = pipe.step(pipe.scheduler, sh["video_latents"], k, noise_pred=v,
                                             inpaint_mask=sh.get("denoise_mask_video"), input_latents=sh.get("input_latents_video"))

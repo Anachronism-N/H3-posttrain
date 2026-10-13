@@ -14,12 +14,12 @@ H3HYB25_rich_fm_cur HYB25FM biorighyb 3 100 300
 H3REF_rich_fm_cur REFFM biorig 3 100 300
 H3REF_rich_inverse3p5_cur REFINV35 biorig 3 100 300
 H3A6dup_richprompt_decfgDS_full12k HA6dup biorig 3 1499
-H3REF_gt512_fm GT512 biorig 3 100 300
-H3REF_sg512_fm SG512 biorig 3 100 300
-H3REF_gt512_fm_lr1e-5 GT512LR biorig 3 100 300
-H3REF_gt512_fm_hinoise GT512HI biorig 3 100 300
-H3REF_gt512_fm_lonoise GT512LO biorig 3 100 300
-H3REF_gt512_fm_r16 GT512R16 biorig 3 100 300
+# abandoned 10-14: H3REF_gt512_fm GT512 biorig 3 100 300
+# abandoned 10-14: H3REF_sg512_fm SG512 biorig 3 100 300
+# abandoned 10-14: H3REF_gt512_fm_lr1e-5 GT512LR biorig 3 100 300
+# abandoned 10-14: H3REF_gt512_fm_hinoise GT512HI biorig 3 100 300
+# abandoned 10-14: H3REF_gt512_fm_lonoise GT512LO biorig 3 100 300
+# abandoned 10-14: H3REF_gt512_fm_r16 GT512R16 biorig 3 100 300
 H3A5hr_richprompt_decfgDS_full12k HA5hr bihrorig 3 1000 1499
-H3REF_sg512_fm_c600 SG512C biorig 3 300
-H3REF_gt512_fm_c600 GT512C biorig 3 300
+# abandoned 10-14: H3REF_sg512_fm_c600 SG512C biorig 3 300
+# abandoned 10-14: H3REF_gt512_fm_c600 GT512C biorig 3 300

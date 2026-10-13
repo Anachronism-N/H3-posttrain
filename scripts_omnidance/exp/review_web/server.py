@@ -93,6 +93,11 @@ DESC = {
     "H3AR/val_DSG35": "Ref2VA + DiffSynth训练助手 + direct guidance3.5；与DSFM8单变量对照，同2091精选集/300更新",
     "H3AR/val_HYB25FM": "Hybrid BF16 + 普通FM；与Hybrid guidance3.5单变量对照，同2091精选集/300更新",
     "H3AR/val_REFFM": "原Ref2VA + 普通FM，无训练助手；同2091精选集/300更新",
+    "H3AR/val_RC_SG512300_L0-42": "根因：SG512 300 LoRA 只在前42步（sigma>0.7，高噪声）生效，后8步用原始H3",
+    "H3AR/val_RC_SG512300_L42-50": "根因：SG512 300 LoRA 只在最后8步（sigma<0.7，低噪声）生效，前42步用原始H3",
+    "H3AR/val_RC_GT512300_L42-50": "根因：GT512 300 LoRA 只在最后8步（低噪声）生效",
+    "H3AR/val_RC_SG512300_n100": "根因：SG512 300，100步采样（检验轨迹弯曲/离散误差）",
+    "H3AR/val_RC_GT512300_n100": "根因：GT512 300，100步采样",
     "H3AR/val_DIAG_DSbase_cfg3": "诊断：DiffSynth去蒸馏底座，无LoRA，推理真CFG3（负prompt空格）——去蒸馏底座+CFG本身是否清晰",
     "H3AR/val_DIAG_DSFM8300_keepDS_cfg3": "诊断：DSFM8 300 LoRA + 推理保留去蒸馏底座 + 真CFG3（训练/推理底座一致的去蒸馏方案）",
     "H3AR/val_DIAG_REFFM300_cfg3": "诊断：REFFM 300（原Ref2VA+普通FM）+ 推理真CFG3",
@@ -123,6 +128,10 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-14 根因】LoRA只在高噪声步/只在低噪声步生效、100步采样（同3case joint）", "cond": "joint", "view": "models",
+     "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_SG512300_biorig", "H3AR/val_RC_SG512300_L0-42_biorig",
+                "H3AR/val_RC_SG512300_L42-50_biorig", "H3AR/val_GT512300_biorig", "H3AR/val_RC_GT512300_L42-50_biorig",
+                "H3AR/val_RC_SG512300_n100_biorig", "H3AR/val_RC_GT512300_n100_biorig"]},
     {"name": "【10-14 CFG推理诊断】微调后推理开真CFG3 / 保留去蒸馏底座（同3case）", "cond": "joint", "view": "models",
      "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_DIAG_DSbase_cfg3_biorig",
                 "H3AR/val_DSFM8300_biorig", "H3AR/val_DIAG_DSFM8300_keepDS_cfg3_biorig",

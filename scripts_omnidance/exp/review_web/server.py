@@ -93,6 +93,10 @@ DESC = {
     "H3AR/val_DSG35": "Ref2VA + DiffSynth训练助手 + direct guidance3.5；与DSFM8单变量对照，同2091精选集/300更新",
     "H3AR/val_HYB25FM": "Hybrid BF16 + 普通FM；与Hybrid guidance3.5单变量对照，同2091精选集/300更新",
     "H3AR/val_REFFM": "原Ref2VA + 普通FM，无训练助手；同2091精选集/300更新",
+    "H3AR/val_HRFM512": "704×1280，原始Ref2VA底座，普通FM；512样本(303精选+209)/repeat5/seed42/lr5e-5——与HRANC512只差训练目标",
+    "H3AR/val_HRANC512": "704×1280，原始Ref2VA底座，锚定σ≥0.5；与HRFM512完全相同数据/底座/seed",
+    "H3AR/val_zsbase_bi768orig": "原始H3 + 富文本，768×1344（H3官方默认分辨率）推理",
+    "H3AR/val_CANHI05300_bi768orig": "锚定σ≥0.5 300（480p训练）在 768×1344 推理",
     "H3AR/val_MCFG1_base": "原始H3 + 推理音乐引导 w=1：v + w·(v(音乐) − v(同一音乐错位50%))；推理多一次前向",
     "H3AR/val_MCFG2_base": "原始H3 + 推理音乐引导 w=2",
     "H3AR/val_MCFG1_CANHI05300": "锚定σ≥0.5 300（2091）+ 推理音乐引导 w=1",
@@ -144,6 +148,13 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-15 704p 单变量】同512样本/同原始底座/同seed：普通FM vs 锚定（只差训练目标）", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_zsbase_bihrorig", "H3AR/val_HRFM512100_bihrorig", "H3AR/val_HRFM512300_bihrorig",
+                "H3AR/val_HRANC512100_bihrorig", "H3AR/val_HRANC512300_bihrorig", "H3AR/val_HA5hr300_bihrorig", "H3AR/val_HRANC100_bihrorig"]},
+    {"name": "【10-14 分辨率】同模型 480×832 / 704×1280 / 768×1344：原始H3 与 锚定300（看手脸是否随分辨率变清楚）", "cond": "joint", "view": "models",
+     "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bi768orig",
+                "H3AR/val_CANHI05300_biorig", "H3AR/val_CANHI05300_bi768orig", "H3AR/val_HA5hr300_bihrorig",
+                "H3AR/val_HRANC100_bihrorig", "H3AR/val_HRANC200_bihrorig", "H3AR/val_HRANC400_bihrorig"]},
     {"name": "【10-14 音乐引导】推理音乐引导 / 训练中蒸馏音乐引导（锚定）——切 aswap 看换音乐后的动作", "cond": "aswap", "view": "models",
      "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_MCFG1_base_biorig", "H3AR/val_MCFG2_base_biorig",
                 "H3AR/val_CANHI05300_biorig", "H3AR/val_MCFG1_CANHI05300_biorig",

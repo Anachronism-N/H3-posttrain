@@ -29,6 +29,7 @@ use_cpu: false
 YAML
 bash /apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/hold.sh stop "$HOLD_GPUS"
 cd $U
+mkdir -p $O && { date; hostname -I | awk '{print $1}'; echo "W=$W CACHE=${CACHE:-} H=${H:-832} W_=${W_:-480} NG=$NG ACC=$ACC LR=${LR:-} RANK=${RANK:-} REPEAT=${REPEAT:-}"; env | grep -E '^(OD_|CUDA_VISIBLE_DEVICES=|TF=)' | grep -viE 'token|key|secret|pass' | sort; ls -l --time-style=+%F_%T $W/transformer/ 2>/dev/null | md5sum; } > $O/od_env.txt  # notes/23 X01: record the real config
 PATH=/opt/venv_h3/bin:$PATH OD_H3_TF=${TF:-0} OD_DS_ACTCKPT=1 OD_H3_CLEAN_AUDIO=1 PYTHONPATH=$U NCCL_IB_DISABLE=0 GLOO_SOCKET_IFNAME=${IFN:-} /opt/venv_h3/bin/accelerate launch --config_file "$CONF" \
   examples/minimax_h3/model_training/train.py \
   --dataset_base_path ${CACHE:-/opt/h3cache/f0} \

@@ -33,6 +33,8 @@ p.add_argument("--height", type=int, default=832); p.add_argument("--width", typ
 p.add_argument("--audio_override", default="", help="replace the music of every case by this wav (speech/noise/silence probe)")
 p.add_argument("--prompt_prefix", default="", help="e.g. a community LoRA trigger word (fal realism: r34l1sm)")
 p.add_argument("--w", default="/dev/shm/h3/Ref2VA")
+p.add_argument("--music_cfg", type=float, default=0.0, help=">0: music guidance v + w*(v(music) - v(music rolled by 50%%)) (time-misaligned negative, same text/ref)")
+p.add_argument("--music_cfg_min_sig", type=float, default=0.0, help="apply music guidance only where sigma >= this")
 p.add_argument("--lora_steps", default="", help="a:b -> LoRA active only on denoise step indices [a, b) (bi mode); diagnoses which noise range the fine-tune damages")
 a = p.parse_args()
 
@@ -127,6 +129,13 @@ def generate(prompt, img, wav, sr):
             vn, _ = pipe.model_fn(**models, **sh, **inputs_nega, timestep_video=tv, timestep_audio=ta)
             HC.STATE["plan"] = PL["p"]
             v = vn + a.cfg * (v - vn)
+        if a.music_cfg > 0 and float(tv.reshape(-1)[0]) / 1000.0 >= a.music_cfg_min_sig:
+            shn = dict(sh)
+            for k in ("audio_latents", "input_latents_audio"):
+                if shn.get(k) is not None:
+                    shn[k] = torch.roll(shn[k], shn[k].shape[-1] // 2, dims=-1)
+            vm, _ = pipe.model_fn(**models, **shn, **inputs_posi, timestep_video=tv, timestep_audio=ta)
+            v = v + a.music_cfg * (v - vm)
         return v
 
     def denoise(region_mask, context):

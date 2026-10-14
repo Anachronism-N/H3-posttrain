@@ -32,8 +32,11 @@ H3REF_cur_anchoradd5_900 CANADD5 biorig 3 300 600 900
 H3REF_cur_dpo1k_anchi05 DPOANC1K biorig 3 100 300
 H3REF_cur_dpo5k_anchi05 DPOANC5K biorig 3 100 300
 H3REF_cur_anchorhi05_lr1e-4 CANHI05LR biorig 3 100 300
-H3REF_hr_anchorhi05 HRANC bihrorig 3 100 200 400
+H3REF_hr_anchorhi05 HRANC bihrorig 3 100 200 300 400
 H3REF_dup_anchorhi05 DUPANC biorig 3 100 200 400
 # stopped 10-14: H3REF_cur_anchorhi05_mcfg1 ANCMCFG1 biorig 3 100 200 300
 H3REF_hr512_fm HRFM512 bihrorig 3 100 300
 H3REF_hr512_anchorhi05 HRANC512 bihrorig 3 100 300
+# 10-15 preview: 480p-trained same-512 pair (FM vs anchor) sampled at 704x1280, while 704p-trained pair runs
+H3REF_gt512_fm GT512 bihrorig 3 300
+H3REF_gt512_anchorhi05 ANCHI05 bihrorig 3 300

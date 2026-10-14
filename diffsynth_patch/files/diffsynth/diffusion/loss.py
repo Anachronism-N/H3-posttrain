@@ -99,6 +99,8 @@ def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale: 
     if _os.environ.get("OD_H3_DPO") == "1":  # local patch (OmniDance W1b): music-contrastive Diffusion-DPO (bidirectional)
         import sys as _sys; _sys.path.insert(0, "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/h3ar")
         import h3_dpo as _DPO
+        if training_cfg_scale > 1.0 or _os.environ.get("OD_H3_TF", "0") == "1":
+            raise ValueError("OD_H3_DPO does not combine with training_cfg_scale>1 or OD_H3_TF=1 (DPO branch returns early)")
         return _DPO.dpo_loss(pipe, models, inputs, timestep_video, timestep_audio, training_target)
     tf_frames = None
     if _os.environ.get("OD_H3_TF", "0") == "1":
@@ -171,6 +173,11 @@ def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale: 
     anchor = float(_os.environ.get("OD_H3_ANCHOR", "0"))
     anchor_mode = _os.environ.get("OD_H3_ANCHOR_MODE", "hi")
     sigma_now = float(timestep_video.reshape(-1)[0]) / 1000.0
+    # notes/24 P0: the anchor branch returns before CFG / TF-region / aux losses -> refuse combinations it would silently drop
+    if anchor > 0 and (training_cfg_scale > 1.0 or tf_frames is not None):
+        raise ValueError("OD_H3_ANCHOR does not combine with training_cfg_scale>1 or OD_H3_TF=1 (anchor branch returns early)")
+    if anchor <= 0 and float(_os.environ.get("OD_H3_ANCHOR_MCFG", "0")) > 0:
+        raise ValueError("OD_H3_ANCHOR_MCFG>0 needs OD_H3_ANCHOR>0 (teacher branch only runs under the anchor)")
     v_base = None
     if anchor > 0:  # always run the base forward (ZeRO-3: every rank must issue the same forwards, sigma may differ per rank)
         from peft.tuners.tuners_utils import BaseTunerLayer

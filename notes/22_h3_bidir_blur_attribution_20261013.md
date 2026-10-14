@@ -241,3 +241,7 @@ GT512 同数据、seed42、300 步，四组均正常结束、权重全有限。�
   | N8 | H3REF_hr512_anchorhi05 | σ≥0.5 锚定原始 H3 |
 - 另有 N5 H3REF_hr_anchorhi05（full12k hr，锚定，400 步）在跑；其对照 HA5hr 用 DeCFG 底座，**不是单变量**。
 - 人评判据（用户 10-15 要求）：等到 300（或 500）步再看；比较 原始 H3 704 vs 普通 FM vs 锚定 的手脸清晰度与动作。
+### 10.3 10-15 00:40 补充
+- 704p 对照进度：N3 FM ≈131 s/步、N8 锚定 ≈161 s/步（多一次底座前向）→ 300 步约 10-15 11:00 / 13:30；N5 HRANC（full12k hr）step-138，评测队列加入 300 步。
+- 预览（不替代上面的对照）：480p 训练的同 512 对照组 GT512 FM300 与 ANCHI05 300 用 704×1280 推理（bihrorig，3 case joint+aswap），N2 已开跑。训练/推理分辨率不一致，只作参考。
+- 吸收 notes/24（c954cda）P0：`loss.py` 对 anchor/DPO 与 `training_cfg_scale>1`、`OD_H3_TF=1` 的组合、以及 MCFG 无 anchor 显式报错；`sample_h3_ar.py` 音乐引导差分改为 `v_text + w·(vp − vm)`（cfg=1 时与之前完全相同，已有结果不受影响）。

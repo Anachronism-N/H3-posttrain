@@ -124,6 +124,7 @@ def generate(prompt, img, wav, sr):
     def pred(tv, ta):
         HC.STATE["plan"] = PL["p"]
         v, _ = pipe.model_fn(**models, **sh, **inputs_posi, timestep_video=tv, timestep_audio=ta)
+        vp = v  # notes/24: music difference uses the un-guided positive branch (vm=vp -> no change for any w)
         if a.cfg > 1:
             HC.STATE["plan"] = PL["n"]
             vn, _ = pipe.model_fn(**models, **sh, **inputs_nega, timestep_video=tv, timestep_audio=ta)
@@ -135,7 +136,7 @@ def generate(prompt, img, wav, sr):
                 if shn.get(k) is not None:
                     shn[k] = torch.roll(shn[k], shn[k].shape[-1] // 2, dims=-1)
             vm, _ = pipe.model_fn(**models, **shn, **inputs_posi, timestep_video=tv, timestep_audio=ta)
-            v = v + a.music_cfg * (v - vm)
+            v = v + a.music_cfg * (vp - vm)
         return v
 
     def denoise(region_mask, context):

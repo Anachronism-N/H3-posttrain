@@ -245,3 +245,9 @@ GT512 同数据、seed42、300 步，四组均正常结束、权重全有限。�
 - 704p 对照进度：N3 FM ≈131 s/步、N8 锚定 ≈161 s/步（多一次底座前向）→ 300 步约 10-15 11:00 / 13:30；N5 HRANC（full12k hr）step-138，评测队列加入 300 步。
 - 预览（不替代上面的对照）：480p 训练的同 512 对照组 GT512 FM300 与 ANCHI05 300 用 704×1280 推理（bihrorig，3 case joint+aswap），N2 已开跑。训练/推理分辨率不一致，只作参考。
 - 吸收 notes/24（c954cda）P0：`loss.py` 对 anchor/DPO 与 `training_cfg_scale>1`、`OD_H3_TF=1` 的组合、以及 MCFG 无 anchor 显式报错；`sample_h3_ar.py` 音乐引导差分改为 `v_text + w·(vp − vm)`（cfg=1 时与之前完全相同，已有结果不受影响）。
+### 10.4 10-15 01:10 文本×音乐探针（原始 H3，704×1280，50 步，shift 12/3，同 3 case）
+- 目的（用户 10-15）：空文本 prompt 下有/无音乐的差别，再恢复文本看效果；区分"文本"和"音乐"各自驱动什么。
+- 条件：empty（prompt=" "，与 CFG 负 prompt 相同）/ generic（H3 模板中 Picture/Audio 绑定 + 一句通用舞蹈描述，无逐视频描述）/ orig（富文本，已有 val_zsbase_bihrorig）× 原音乐 / 静音（audio_override silence.wav，参考音频与目标音频都被替换）。有音乐的 empty/generic 另做 aswap。
+- 输出 val_zsbase_bihr{empty,generic,orig}[_silence]；N1 GPU2-4 + N6 GPU0-2；704p 采样约 25 min/条。网页【10-15 文本×音乐】。
+- 首条观察（wJPptuhcl joint，empty vs orig）：**空 prompt 下人物外观（服装/上衣颜色）与参考图不一致**（参考图浅黄上衣+浅蓝裤，empty 生成成深蓝外套+黑裤），身份/场景保留；富文本版服饰与参考图一致。说明 H3 的参考图绑定依赖文本模板里的 `<Picture 1>`/`<Subject 1>` 声明，空 prompt 不是"纯图像+音乐"条件。动作仍在跳舞（踢腿、抬手）。待全部完成后统一看。
+- E4（N6 完成，全 47）：锚定 lr1e-4 300 Δaudio +0.032±0.027（底座 +0.033±0.028），DPOANC5K300 −0.008±0.026；motion 0.180/0.187 ≈ 底座 0.181。即锚定类模型音乐跟随 ≈ 底座，未改善；只有旧 W1b DPO（Δaudio +0.089）明显跟随但 motion 降 36%。

@@ -17,7 +17,7 @@ p.add_argument("--lora", default="")
 p.add_argument("--mode", default="ar", choices=["ar", "bi"])
 p.add_argument("--conds", default="joint,aswap")
 p.add_argument("--csv_dir", default="/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/E2")
-p.add_argument("--prompt_mode", default="motion", choices=["orig", "motion", "music"], help="motion: E10 motion caption only; music: motion caption + BPM/beat times written into the prompt (idea M1b)")
+p.add_argument("--prompt_mode", default="motion", choices=["orig", "motion", "music", "empty", "generic"], help="motion: E10 motion caption only; music: motion caption + BPM/beat times written into the prompt (idea M1b)")
 p.add_argument("--shard", type=int, default=0)
 p.add_argument("--nshard", type=int, default=1)
 p.add_argument("--rows", type=int, default=3)
@@ -214,7 +214,9 @@ for c, r, dst in todo:
     CUR_AUDIO[0] = r["audio_path"]
     if a.prompt_prefix:
         body = a.prompt_prefix + " " + body
-    video = generate(h3_prompt(body, generic=(c == "audio_only")), img, wav, sr)
+    # empty: text prompt " " (same as the CFG negative) -> isolates what image + audio alone drive
+    # generic: H3 template (reference/audio bindings) + one generic dance sentence, no per-video description
+    video = generate(" " if a.prompt_mode == "empty" else h3_prompt(body, generic=(c == "audio_only" or a.prompt_mode == "generic")), img, wav, sr)
     write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)
     print(f"[h3ar] {c} {r['sample_id']} {time.time() - t0:.0f}s", flush=True)
 print("[h3ar] done", flush=True)

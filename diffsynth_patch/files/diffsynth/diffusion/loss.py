@@ -181,6 +181,15 @@ def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale: 
         try:
             with torch.no_grad():
                 v_base, _ = pipe.model_fn(**models, **inputs_base, timestep_video=timestep_video, timestep_audio=timestep_audio)
+                # 10-14 music-guidance distillation: anchor target = base + w * (base(music) - base(music rolled 50%))
+                mcfg = float(_os.environ.get("OD_H3_ANCHOR_MCFG", "0"))
+                if mcfg > 0:
+                    inputs_roll = dict(inputs_base)
+                    for _k in ("audio_latents", "input_latents_audio", "audio_input_latents"):
+                        if inputs_roll.get(_k) is not None:
+                            inputs_roll[_k] = torch.roll(inputs_roll[_k], inputs_roll[_k].shape[-1] // 2, dims=-1)
+                    v_roll, _ = pipe.model_fn(**models, **inputs_roll, timestep_video=timestep_video, timestep_audio=timestep_audio)
+                    v_base = v_base.float() + mcfg * (v_base.float() - v_roll.float())
         finally:
             for m in lora_layers:
                 m._disable_adapters = False

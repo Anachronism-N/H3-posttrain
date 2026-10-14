@@ -93,6 +93,10 @@ DESC = {
     "H3AR/val_DSG35": "Ref2VA + DiffSynth训练助手 + direct guidance3.5；与DSFM8单变量对照，同2091精选集/300更新",
     "H3AR/val_HYB25FM": "Hybrid BF16 + 普通FM；与Hybrid guidance3.5单变量对照，同2091精选集/300更新",
     "H3AR/val_REFFM": "原Ref2VA + 普通FM，无训练助手；同2091精选集/300更新",
+    "H3AR/val_MCFG1_base": "原始H3 + 推理音乐引导 w=1：v + w·(v(音乐) − v(同一音乐错位50%))；推理多一次前向",
+    "H3AR/val_MCFG2_base": "原始H3 + 推理音乐引导 w=2",
+    "H3AR/val_MCFG1_CANHI05300": "锚定σ≥0.5 300（2091）+ 推理音乐引导 w=1",
+    "H3AR/val_ANCMCFG1": "训练蒸馏音乐引导：σ≥0.5 目标=原始H3的音乐引导速度(w=1)，σ<0.5 普通FM；lr1e-4/2091/300步；推理不再需要引导",
     "H3AR/val_DPOANC1K": "音乐对比DPO(β=1000)+SFT项锚定原始H3(σ≥0.5)；2091精选/富文本/300步",
     "H3AR/val_DPOANC5K": "音乐对比DPO(β=5000)+锚定(σ≥0.5)；2091精选/富文本/300步",
     "H3AR/val_CANHI05LR": "锚定σ≥0.5 + lr 1e-4（锚定下能否用更大lr加快适配）；2091精选/300步",
@@ -140,6 +144,11 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-14 音乐引导】推理音乐引导 / 训练中蒸馏音乐引导（锚定）——切 aswap 看换音乐后的动作", "cond": "aswap", "view": "models",
+     "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_MCFG1_base_biorig", "H3AR/val_MCFG2_base_biorig",
+                "H3AR/val_CANHI05300_biorig", "H3AR/val_MCFG1_CANHI05300_biorig",
+                "H3AR/val_ANCMCFG1100_biorig", "H3AR/val_ANCMCFG1200_biorig", "H3AR/val_ANCMCFG1300_biorig",
+                "H3AR/val_DPOANC1K300_biorig", "H3AR/val_DPOANC5K300_biorig"]},
     {"name": "【10-14 锚定+音乐】锚定+音乐对比DPO / 高lr / 704×1280 锚定（同3case，joint 与 aswap 都要看）", "cond": "aswap", "view": "models",
      "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_W1b446_bi", "H3AR/val_ANCHI05300_biorig",
                 "H3AR/val_DPOANC1K100_biorig", "H3AR/val_DPOANC1K300_biorig", "H3AR/val_DPOANC5K100_biorig", "H3AR/val_DPOANC5K300_biorig",

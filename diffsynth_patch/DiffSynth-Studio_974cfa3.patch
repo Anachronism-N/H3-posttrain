@@ -60,7 +60,7 @@ index b4b8863..68741ef 100644
              data = self.data[data_id % len(self.data)].copy()
              for key in self.data_file_keys:
 diff --git a/diffsynth/diffusion/loss.py b/diffsynth/diffusion/loss.py
-index e7757fc..779a7a0 100644
+index e7757fc..2a87919 100644
 --- a/diffsynth/diffusion/loss.py
 +++ b/diffsynth/diffusion/loss.py
 @@ -63,9 +63,13 @@ def FlowMatchSFTAudioVideoLoss(pipe: BasePipeline, **inputs):
@@ -151,7 +151,7 @@ index e7757fc..779a7a0 100644
      if training_cfg_scale > 1.0:
          if not inputs_nega:
              raise ValueError(
-@@ -91,30 +152,80 @@ def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale:
+@@ -91,30 +152,89 @@ def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale:
          inputs_uncond = {**inputs, **inputs_nega}
          inputs_uncond["use_gradient_checkpointing"] = False
          inputs_uncond["use_gradient_checkpointing_offload"] = False
@@ -184,6 +184,15 @@ index e7757fc..779a7a0 100644
 +        try:
 +            with torch.no_grad():
 +                v_base, _ = pipe.model_fn(**models, **inputs_base, timestep_video=timestep_video, timestep_audio=timestep_audio)
++                # 10-14 music-guidance distillation: anchor target = base + w * (base(music) - base(music rolled 50%))
++                mcfg = float(_os.environ.get("OD_H3_ANCHOR_MCFG", "0"))
++                if mcfg > 0:
++                    inputs_roll = dict(inputs_base)
++                    for _k in ("audio_latents", "input_latents_audio", "audio_input_latents"):
++                        if inputs_roll.get(_k) is not None:
++                            inputs_roll[_k] = torch.roll(inputs_roll[_k], inputs_roll[_k].shape[-1] // 2, dims=-1)
++                    v_roll, _ = pipe.model_fn(**models, **inputs_roll, timestep_video=timestep_video, timestep_audio=timestep_audio)
++                    v_base = v_base.float() + mcfg * (v_base.float() - v_roll.float())
 +        finally:
 +            for m in lora_layers:
 +                m._disable_adapters = False

@@ -150,8 +150,8 @@ DESC = {
 PRESETS = [
     {"name": "【10-15 文本×音乐】原始H3 704p：空prompt/H3模板+通用句/富文本 × 有音乐/静音（看文本与音乐各自驱动什么）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_bihrempty", "H3AR/val_zsbase_bihrempty_silence", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrgeneric_silence", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bihrorig_silence"]},
-    {"name": "【10-15 704p 噪声段切换】HA5hr300（704p普通FM）LoRA 全程 / 仅高噪声σ≥0.5(0:47步) / 仅低噪声(47:50) vs 原始H3：糊来自哪段", "cond": "joint", "view": "models",
-     "models": ["H3AR/val_zsbase_bihrorig", "H3AR/val_HA5hr300_bihrorig", "H3AR/val_HA5hr300hi_bihrorig", "H3AR/val_HA5hr300lo_bihrorig"]},
+    {"name": "【10-15 704p 噪声段切换】HA5hr300（704p普通FM）LoRA 全程 / 仅高噪声σ≥0.5(0:47步) / 仅低噪声(47:50) / 细分 0:10(σ1→.98) 10:30(σ.98→.89) 30:47(σ.89→.5) vs 原始H3：糊来自哪段", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_zsbase_bihrorig", "H3AR/val_HA5hr300_bihrorig", "H3AR/val_HA5hr300hi_bihrorig", "H3AR/val_HA5hr300lo_bihrorig", "H3AR/val_HA5hr300s0-10_bihrorig", "H3AR/val_HA5hr300s10-30_bihrorig", "H3AR/val_HA5hr300s30-47_bihrorig"]},
     {"name": "【10-15 704p 预览】480p训练的同512 FM300 / 锚定300 用704推理（训练推理分辨率不一致，仅参考）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_bihrorig", "H3AR/val_GT512300_bihrorig", "H3AR/val_ANCHI05300_bihrorig"]},
     {"name": "【10-15 704p 单变量】同512样本/同原始底座/同seed：普通FM vs 锚定（只差训练目标）", "cond": "joint", "view": "models",

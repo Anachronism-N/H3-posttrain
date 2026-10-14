@@ -45,13 +45,22 @@ def dpo_loss(pipe, models, inputs, timestep_video, timestep_audio, target):
     if ra_neg is not None:
         neg["ref_audio_anchor"] = ra_neg
 
-    def err(inp, grad):
+    V = {}
+
+    def err(inp, grad, name=None):
         kw = dict(inp)
         if not grad:
             kw["use_gradient_checkpointing"] = False; kw["use_gradient_checkpointing_offload"] = False
         with torch.set_grad_enabled(grad):
             v, _ = pipe.model_fn(**models, **kw, timestep_video=timestep_video, timestep_audio=timestep_audio)
+        if name:
+            V[name] = v
         return ((v.float() - target.float()) ** 2).mean()
+
+    # 10-14 base anchor (notes/22 §9): the SFT term regresses to the frozen base prediction at sigma >= OD_H3_ANCHOR_SIG
+    # instead of the FM target (FM pulls the distilled high-noise predictions to the conditional mean -> blur)
+    anchor = float(os.environ.get("OD_H3_ANCHOR", "0")); sig = float(timestep_video.reshape(-1)[0]) / 1000.0
+    use_anchor = anchor > 0 and sig >= float(os.environ.get("OD_H3_ANCHOR_SIG", "0.5"))
 
     # ZeRO-3 cannot take gradients from two forwards of the same params in one backward (duplicate ds_id in the reduce bucket),
     # so only ONE branch carries gradient per step. c = sigmoid(beta * diff) = d(L_dpo/beta)/d diff (computed from all 4 values).
@@ -59,16 +68,20 @@ def dpo_loss(pipe, models, inputs, timestep_video, timestep_audio, target):
     gpos = random.random() < 0.5
     with torch.no_grad():
         set_lora(dit, False)
-        rp, rn = err(inputs, False), err(neg, False)
+        rp, rn = err(inputs, False, "base_pos"), err(neg, False)
         set_lora(dit, True)
         e_other = err(neg if gpos else inputs, False)
-    e_grad = err(inputs if gpos else neg, True)
+    e_grad = err(inputs if gpos else neg, True, "grad")
     ep, en = (e_grad, e_other) if gpos else (e_other, e_grad)
     diff = (ep.detach() - rp) - (en.detach() - rn)
     l_dpo = -F.logsigmoid(-beta * diff)
     c = torch.sigmoid(beta * diff)  # = d(L_dpo/beta)/d diff : DPO gradient rescaled by 1/beta so it is on the same scale as the SFT term
     w = pipe.scheduler.training_weight(timestep_video)
-    loss = (2 * c * e_grad + 2 * lam * w * e_grad) if gpos else (-2 * c * e_grad)
+    if gpos and use_anchor:
+        e_sft = anchor * ((V["grad"].float() - V["base_pos"].detach().float()) ** 2).mean()
+    else:
+        e_sft = e_grad
+    loss = (2 * c * e_grad + 2 * lam * w * e_sft) if gpos else (-2 * c * e_grad)
     STATE["n"] += 1; STATE["acc"] += float(diff.item() < 0); STATE["l"] += float(l_dpo.item())
     if STATE["n"] % 10 == 1:
         print(f"[OD H3-DPO] n={STATE['n']} kind={kind} t={float(timestep_video):.0f} ep={ep.item():.4f} en={en.item():.4f} "

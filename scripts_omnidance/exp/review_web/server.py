@@ -93,6 +93,11 @@ DESC = {
     "H3AR/val_DSG35": "Ref2VA + DiffSynth训练助手 + direct guidance3.5；与DSFM8单变量对照，同2091精选集/300更新",
     "H3AR/val_HYB25FM": "Hybrid BF16 + 普通FM；与Hybrid guidance3.5单变量对照，同2091精选集/300更新",
     "H3AR/val_REFFM": "原Ref2VA + 普通FM，无训练助手；同2091精选集/300更新",
+    "H3AR/val_DPOANC1K": "音乐对比DPO(β=1000)+SFT项锚定原始H3(σ≥0.5)；2091精选/富文本/300步",
+    "H3AR/val_DPOANC5K": "音乐对比DPO(β=5000)+锚定(σ≥0.5)；2091精选/富文本/300步",
+    "H3AR/val_CANHI05LR": "锚定σ≥0.5 + lr 1e-4（锚定下能否用更大lr加快适配）；2091精选/300步",
+    "H3AR/val_HRANC": "704×1280 原生分辨率 + 锚定σ≥0.5；full12k hr数据/400步",
+    "H3AR/val_zsbase_bihrorig": "原始H3 + 富文本，704×1280 推理（高分辨率基线）",
     "H3AR/val_CANHI05": "锚定σ>=0.5，2091精选全集，900步（300/600/900）",
     "H3AR/val_CANADD5": "FM+5×锚定，2091精选全集，900步（300/600/900）",
     "H3AR/val_ANCHI07": "锚定：sigma>=0.7 的训练步目标=冻结原始H3预测（同x_t/t/条件），sigma<0.7 普通FM；GT512/300步",
@@ -134,6 +139,11 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-14 锚定+音乐】锚定+音乐对比DPO / 高lr / 704×1280 锚定（同3case，joint 与 aswap 都要看）", "cond": "aswap", "view": "models",
+     "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_W1b446_bi", "H3AR/val_ANCHI05300_biorig",
+                "H3AR/val_DPOANC1K100_biorig", "H3AR/val_DPOANC1K300_biorig", "H3AR/val_DPOANC5K100_biorig", "H3AR/val_DPOANC5K300_biorig",
+                "H3AR/val_CANHI05LR100_biorig", "H3AR/val_CANHI05LR300_biorig",
+                "H3AR/val_zsbase_bihrorig", "H3AR/val_HRANC100_bihrorig", "H3AR/val_HRANC200_bihrorig", "H3AR/val_HRANC400_bihrorig"]},
     {"name": "【10-14 锚定训练】高噪声段锚定原始H3 vs 普通FM（GT512同数据，同3case）", "cond": "joint", "view": "models",
      "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_GT512100_biorig", "H3AR/val_GT512300_biorig",
                 "H3AR/val_ANCHI07100_biorig", "H3AR/val_ANCHI07300_biorig", "H3AR/val_ANCHI05100_biorig", "H3AR/val_ANCHI05300_biorig",

@@ -47,6 +47,8 @@ while true; do
       esac
       FIRST=1; [ $mode = ar5 ] && FIRST=5
       OD_H3_FIRST=$FIRST OD_H3_MERGE_TAIL=$([ $mode = ar5 ] && echo 1 || echo 0) bash $S/run_h3ar_node.sh 0 1 $out $A --shift 12 --audio_shift 3 $LA --conds $([ "${mode#bio}" != "$mode" ] && [ "$mode" != biorig ] && [ "$mode" != biorigcfg3 ] && [ "$mode" != biorighyb ] && echo joint || echo joint,aswap) --rows $rows < /dev/null
+      rc=$?   # notes/23 O01: release the claim of a failed job so it can be retried; mark success explicitly
+      if [ $rc = 0 ]; then touch $C/$cl/.ok; else echo "[sched] FAILED rc=$rc $cl $(date)"; rmdir $C/$cl 2>/dev/null || rm -rf $C/$cl; fi
       ran=1; break 2
     done
   done < $J

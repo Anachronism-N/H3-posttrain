@@ -93,6 +93,12 @@ DESC = {
     "H3AR/val_DSG35": "Ref2VA + DiffSynth训练助手 + direct guidance3.5；与DSFM8单变量对照，同2091精选集/300更新",
     "H3AR/val_HYB25FM": "Hybrid BF16 + 普通FM；与Hybrid guidance3.5单变量对照，同2091精选集/300更新",
     "H3AR/val_REFFM": "原Ref2VA + 普通FM，无训练助手；同2091精选集/300更新",
+    "H3AR/val_CANHI05": "锚定σ>=0.5，2091精选全集，900步（300/600/900）",
+    "H3AR/val_CANADD5": "FM+5×锚定，2091精选全集，900步（300/600/900）",
+    "H3AR/val_ANCHI07": "锚定：sigma>=0.7 的训练步目标=冻结原始H3预测（同x_t/t/条件），sigma<0.7 普通FM；GT512/300步",
+    "H3AR/val_ANCHI05": "锚定：sigma>=0.5 锚定原始H3，sigma<0.5 普通FM；GT512/300步",
+    "H3AR/val_ANCADD1": "锚定：全时间步 FM + 1×||v-v_base||²；GT512/300步",
+    "H3AR/val_ANCADD5": "锚定：全时间步 FM + 5×||v-v_base||²；GT512/300步",
     "H3AR/val_RC_SG512300_L0-42": "根因：SG512 300 LoRA 只在前42步（sigma>0.7，高噪声）生效，后8步用原始H3",
     "H3AR/val_RC_SG512300_L42-50": "根因：SG512 300 LoRA 只在最后8步（sigma<0.7，低噪声）生效，前42步用原始H3",
     "H3AR/val_RC_GT512300_L42-50": "根因：GT512 300 LoRA 只在最后8步（低噪声）生效",
@@ -128,6 +134,12 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-14 锚定训练】高噪声段锚定原始H3 vs 普通FM（GT512同数据，同3case）", "cond": "joint", "view": "models",
+     "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_GT512100_biorig", "H3AR/val_GT512300_biorig",
+                "H3AR/val_ANCHI07100_biorig", "H3AR/val_ANCHI07300_biorig", "H3AR/val_ANCHI05100_biorig", "H3AR/val_ANCHI05300_biorig",
+                "H3AR/val_ANCADD1100_biorig", "H3AR/val_ANCADD1300_biorig", "H3AR/val_ANCADD5100_biorig", "H3AR/val_ANCADD5300_biorig",
+                "H3AR/val_CANHI05300_biorig", "H3AR/val_CANHI05600_biorig", "H3AR/val_CANHI05900_biorig",
+                "H3AR/val_CANADD5300_biorig", "H3AR/val_CANADD5600_biorig", "H3AR/val_CANADD5900_biorig"]},
     {"name": "【10-14 根因】LoRA只在高噪声步/只在低噪声步生效、100步采样（同3case joint）", "cond": "joint", "view": "models",
      "models": ["E3_h3/out/H3-Ref2VA", "H3AR/val_zsbase_biorig", "H3AR/val_SG512300_biorig", "H3AR/val_RC_SG512300_L0-42_biorig",
                 "H3AR/val_RC_SG512300_L42-50_biorig", "H3AR/val_GT512300_biorig", "H3AR/val_RC_GT512300_L42-50_biorig",

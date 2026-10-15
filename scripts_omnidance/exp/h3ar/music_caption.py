@@ -40,7 +40,25 @@ for f, (sec, bt, tempo) in feat.items():
                 + f". The tempo is about {tempo:.0f} BPM and the beats fall at " + ", ".join(f"{x:.1f}" for x in bt)
                 + " seconds; <Subject 1> places a clear accent on each beat.")
     print(f.split("/")[-1], "levels", lv, f"tempo {tempo:.0f}", flush=True)
-out = {"timed": timed,
+# "seg" (10-15 v2): text controls timing at ~2.5 s granularity but not per second -> 3 segments, 3 contrasting levels
+# (global terciles over all segments of the listed clips), vivid wording as in the calm / energetic probes.
+SEGW = {1: "barely moves, only gentle swaying and soft hand gestures with the feet staying in place",
+        2: "dances with moderate bouncing steps and clear arm gestures",
+        3: "bursts into big, exaggerated, high-energy moves: wide arm swings above the head, high kicks and jumps"}
+nseg = 3; edges = np.linspace(0, a.dur, nseg + 1)
+segv = {}
+for f in auds:
+    y, sr = librosa.load(f, sr=22050, mono=True, duration=a.dur)
+    env = librosa.onset.onset_strength(y=y, sr=sr); t = librosa.times_like(env, sr=sr)
+    segv[f] = [float(env[(t >= edges[i]) & (t < edges[i + 1])].mean()) for i in range(nseg)]
+q3 = np.quantile(np.concatenate(list(segv.values())), [1 / 3, 2 / 3])
+seg = {}
+for f, v in segv.items():
+    lv = [int(1 + np.searchsorted(q3, x)) for x in v]
+    seg[f] = " ".join(f"{'From' if i == 0 else 'Then from'} {edges[i]:.1f} to {edges[i + 1]:.1f} seconds, matching the "
+                      f"{['quiet', 'medium', 'loud and driving'][l - 1]} music, <Subject 1> {SEGW[l]}." for i, l in enumerate(lv))
+    print(f.split("/")[-1], "seg levels", lv, flush=True)
+out = {"timed": timed, "seg": seg,
        "calm": {"*": "<Subject 1> dances very calmly with small, restrained movements: gentle swaying, soft hand gestures, "
                      "feet mostly staying in place, no big arm swings, no kicks and no jumps."},
        "energetic": {"*": "<Subject 1> dances with big, exaggerated, high-energy movements: wide powerful arm swings above the head, "

@@ -486,3 +486,22 @@ val47 GT（每条 3 段×1.7 s）：
   | wJPrpF | l/l/l | 10.57 / 11.22 / 8.70 / 8.59 | q/q/m | 6.98 / 4.88 / 8.42 / 8.44 |
   | wJQTcl | m/m/m | 2.08 / 2.12 / 2.14 / 2.30 | q/q/q | 1.38 / 1.23 / 2.32 / 2.60 |
   - 换音乐后动作变化：seg2 −7% / −34% / −34%，seg +4% / −57% / −42%；通用句 +9% / −3% / +8%，富文本 −7% / −2% / +13%。两版方案 A 都使动作随音乐能量变化，换全集阈值后 wJPrpF aswap 第 3 段由 quiet 变 medium，降幅相应变小（与文本一致）。BPM 词对动作影响不明显（3 首都在 123–136，区分度低）。
+
+## 19. 10-15 18:00 mentor 最小验证：只用"音乐类别"做音频→H3 文本空间 CLIP —— 规划与数据情况
+**问：当前 caption 有没有舞种标签？** 没有结构化标签。数据清单（source_manifest / vlm_filter_results）只有画质/剪辑字段，原始 prompt 全是"a person dancing to music"。富文本 caption 第 2 节（Choreographic Content）里有舞种词，但分布极不均、且常多选：hip-hop/street/urban 70.7%、contemporary/modern 56.6%（二者常同时出现，独占仅 38% / 20%）、中国古典/传统 6.2%、K-pop 1.7%、ballet 0.6%、jazz/latin <0.1%。**也没有音乐类别标签**；CLAP 零样本给 7133 条舞蹈音乐打类别：edm 2900 / kpop 1443 / hiphop 1402 / rock 622 / pop 316 / jazz 263 / **piano 74 / classical 52 / chinese 11**，且 top1-top2 余量仅 0.044（不可靠）。→ 舞蹈数据里"钢琴/古风"这类极端音乐太少，不足以做均衡类别。
+**可用的均衡音乐类别数据**：共享库 `/apdcephfs_zwfy7/share_304725743/data/music_clap_data/pond5/audio/<类别>/`，18 个真实标注类别、每类 1 万–28 万首（rock 14.9 万、hiphop 8.8 万、dance 9.5 万、funk 7.6 万、jazz 9.2 万、chinese 1.0 万、chinese-zither 403、orchestral 28.4 万、ambient 8.3 万、zen 1.4 万、chillout 11.3 万…；44.1 kHz 立体声、整曲长度）。
+**实验规划（按 mentor 方案）**：
+- **门控 G0（零训练，N1 跑中）**：冻结 H3，模板 + 只写类别"<Subject 1> dances to {rock / soft piano / hip-hop / traditional Chinese} music."，同 3 case。若 H3 对纯类别文本的动作差异都不大，则后面音频→类别 embedding 也不会有大差异 → 应改用"类别+能量/动作词"作为目标文本。（这一步决定 CLIP 的文本端写什么。）
+- **G1 音频↔文本 CLIP（只训音频 encoder）**：文本端 = H3 自己的文本编码器（Qwen3-VL，冻结），输入 H3 模板 +"dances to {类别} music"，取模板中描述 token 段的输出（5120 维）作为该类的目标 embedding；音频端 = 冻结 MERT（或 CLAP 音频塔）+ 可训投影/小 Transformer → 输出同形状 token 序列。数据：pond5 选 6–8 类（rock、hiphop、dance/edm、funk、jazz、piano/ambient/zen、chinese、orchestral），每类等量 ~3k 段×5 s（≈1/3 规模、类别均衡），切 5.17 s 片段。损失：InfoNCE（音频 vs 各类文本 embedding）+ 与本类文本 embedding 的 MSE（保证能直接替换进 H3）。验收：留出集类别 top-1；舞蹈 val 音乐的预测类别分布。
+- **G2 替换进 H3（零训练推理）**：把音频 encoder 输出 token 替换 H3 文本编码器在描述段的输出，送入冻结 H3。两极端：一首 rock（或 hiphop）vs 一首钢琴/zen，同人物同 seed，看动作差异（运动比 + 人评）。差异大 → 跑通；再细化为分段能量 caption（§16 方案 A 的学习版）。
+- 风险：若音频 token 只学到"类别中心"（均值），等价于给 H3 一句固定类别文本——这是 G1 的预期，也是 mentor 说的"先跑通"；细粒度靠后续 caption。
+### 19.1 10-15 18:40 G0 门控结果：**只写音乐类别的文本，H3 动作几乎不变**
+原始 H3 704p，模板 + "<Subject 1> dances to {rock / hip-hop / traditional Chinese / soft piano} music."，同 seed，joint 运动量：
+| case | rock | hip-hop | 古风 | 钢琴 | （对照）平静 | 夸张 | 通用句 |
+|---|---|---|---|---|---|---|---|
+| wJPptu | 8.69 | 8.16 | 8.99 | 7.97 | 5.97 | 10.60 | 8.06 |
+| wJPrpF | 8.12 | 8.64 | 8.30 | 8.47 | 5.67 | 10.81 | 8.70 |
+| wJQTcl | 2.00 | 2.03 | 2.09 | 1.99 | 1.55 | 3.55 | 2.14 |
+- 4 个类别之间差 ≤ 13%，都 ≈ 通用句；抽帧（wJPrpFsTh f15/45/75/105）四行几乎是**同一套动作**（同一举手、抱臂姿势序列）。而写明动作强度的"平静 / 夸张"差 1.8–2.3×。
+- → H3 **不会把"rock / 钢琴"这种音乐类别词翻译成动作差异**；它只响应**直接描述动作**的词。所以 mentor 的"音频 → 类别文本 embedding"CLIP，即使训到完美，替换进 H3 后也只会得到≈本表的结果（rock 与钢琴差别很小）。
+- 修正方案：把 CLIP 的文本端从"音乐类别"改为**"音乐类别 → 对应的动作描述"**（rock/hip-hop/funk/dance → 夸张高能量动作；zen/钢琴/古风 → 平静柔和动作；jazz/orchestral → 中等），即目标 embedding 用 H3 编码"<Subject 1> dances to rock music with big, high-energy moves…"这类句子。这样 G2 的两极端音乐才可能产生大的动作差（上限≈ 平静 vs 夸张的 1.8–2.3×，已验证）。

@@ -150,6 +150,8 @@ DESC = {
 PRESETS = [
     {"name": "【10-15 文本×音乐】原始H3 704p：空prompt/H3模板+通用句/富文本 × 有音乐/静音（看文本与音乐各自驱动什么）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_bihrempty", "H3AR/val_zsbase_bihrempty_silence", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrgeneric_silence", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bihrorig_silence"]},
+    {"name": "【10-16 G4 自编码器token直接注入】音乐→AE编码器→32个H3文本token（每段音乐自己的token，不查表）→冻结H3：摇滚 / 爵士 / 禅意；舞蹈配乐 joint/aswap。对照 G2/G3", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_G4ae_rock", "H3AR/val_G4ae_jazz", "H3AR/val_G4ae_zen", "H3AR/val_G4ae_dance", "H3AR/val_G3_rock_soft1", "H3AR/val_G3_zen_soft1", "H3AR/val_zsbase_bihrgeneric"]},
     {"name": "【10-16 音乐CoT】Qwen2.5-Omni听音乐→辨类→编舞文本→冻结H3：原音乐/换音乐(aswap)；摇滚 vs 禅意（对照 G2 编码器、方案A规则文本）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_bihrcot", "H3AR/val_COT_rock", "H3AR/val_COT_zen", "H3AR/val_G2_rock_enc", "H3AR/val_G2_zen_enc", "H3AR/val_zsbase_bihrseg2", "H3AR/val_zsbase_bihrgeneric"]},
     {"name": "【10-16 舞种文本门控】冻结H3，同人物同seed、原音乐，只改描述段为舞种+特征动作：中国古典 / hip-hop / K-pop / contemporary ——看舞种风格是否可被文本控制", "cond": "joint", "view": "models",

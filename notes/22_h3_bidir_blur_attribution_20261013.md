@@ -618,3 +618,15 @@ val47 GT（每条 3 段×1.7 s）：
 ### 25.3 音乐 CoT v2（先听音辨类、不给提示；再给实测节拍/能量；最后从 8 种舞种中选并按三段写编舞）
 - 舞种选择：rock → hip-hop；zen/ambient → contemporary（全程小幅慢速）；6 首舞蹈配乐（pop/electronic）→ 全部 hip-hop；分段强度跟随实测能量（如 wJPptu 小→中→大）。CoT 文本在 `H3AR/music_cot_v2_val3.json`。
 - 送入冻结 H3（704p，同 3 人物）：`bihrcot`（原音乐 joint + 换音乐 aswap，文本随音乐重写）、`COT_rock` / `COT_zen`（同人物换成 pond5 摇滚/禅意片段）。对照 G2 编码器（rock/zen 1.93×）与方案 A seg2。网页【10-16 音乐CoT】。
+
+## 26. 10-16 02:40 用户：先验证 autoencoder 的 CLIP 训练（最优先），音乐 CoT 放后面
+### 26.1 阶段 1：音乐 ↔ H3 文本 自编码器（`h3ar/genre_ae.py`）
+- E：MERT 逐帧（4 层 × 81 帧 @16 fps）→ MLP → 2 层 Transformer → 32 个可学习 query 交叉注意力 → **32 个 H3 文本编码器输入层 token（5120 维）**；D：token 均值 → MLP → 重建 MERT 片段向量。H3 与其文本编码器全程冻结。
+- 损失：CLIP（池化 token vs 8 类"类别+动作"caption 的 InfoNCE）+ 逐 token 对齐（MSE + 1−cos，使 token 可被 H3 读懂）+ 0.2 × 音乐重建。pond5 8 类 23,871 段，25 epoch，单卡 18 min。
+- 留出 2,387 段：**8 类 top-1 57.0%**（G1 纯分类头 64.9%），**三档能量 75.3%**（G1 78.3%），**token 与目标 caption 的平均 cos 0.50**，重建相对误差 0.83（重建项很弱，见 §26.3）。
+- 导出 9 条音频的 token：rock→rock、zen→zen、jazz→jazz（与目标 caption cos 0.51 / 0.49 / 0.68），6 首舞蹈配乐→dance/funk（cos 0.51–0.54），token 范数与真实 caption 相当（0.96–1.19×）。
+### 26.2 G4：每段音乐自己的 32 个 token 直接写入冻结 H3（不再查表/选 caption）
+- `sample_h3_ar.py --soft_tokens tokens.pt`（按音乐文件名取 token）；rock / jazz / zen 同 3 人物 joint，舞蹈配乐 joint+aswap（N1/N3）。网页【10-16 G4 自编码器token直接注入】，对照 G3（rock/zen 单热 caption 1.9×）。
+- 判据：rock / jazz / zen 的动作幅度保持 G3 的单调顺序且差距接近 1.9× → 自编码器输出的 token 可直接作为 H3 文本条件，可以进入阶段 2（经冻结 H3 用视频 loss 微调 E）。若差距明显变小 → token 只有 cos 0.5，H3 读不懂，需要加大逐 token 对齐权重或改为"预测 caption 系数 + 查表"。
+### 26.3 已知问题
+- 重建损失权重 0.2 下相对误差 0.83，说明 token 主要被 CLIP/对齐项主导、几乎没携带额外音乐信息；mentor 的"文本重建回音乐"若要起作用需提高权重或改为对比式重建（音乐-token 检索）。下一步视 G4 结果调整。

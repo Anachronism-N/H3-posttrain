@@ -36,6 +36,8 @@ p.add_argument("--body_key", default="timed", help="timed | calm | energetic")
 p.add_argument("--soft_text", default="", help="10-15 G3: genre_clip text_targets.pt; description = K placeholder tokens whose "
                "input embeddings are replaced by sum_c p_c T_c (soft prompt written into H3's text-encoder input layer)")
 p.add_argument("--soft_p", default="", help='json {genre: prob}, e.g. {"rock":0.5,"zen":0.5}')
+p.add_argument("--soft_tokens", default="", help="10-16 AE: genre_ae.py tokens.pt {key: [K,5120]}; key = audio file stem "
+               "(of --audio_override or the row's music); overrides --soft_p per clip")
 p.add_argument("--prompt_prefix", default="", help="e.g. a community LoRA trigger word (fal realism: r34l1sm)")
 p.add_argument("--w", default="/dev/shm/h3/Ref2VA")
 p.add_argument("--music_cfg", type=float, default=0.0, help=">0: music guidance v + w*(v(music) - v(music rolled by 50%%)) (time-misaligned negative, same text/ref)")
@@ -95,8 +97,10 @@ def set_lora(on):  # hot-loaded LoRA (vram management on): toggle per denoise st
 SOFT = None
 if a.soft_text:
     import json as _js
-    _st = torch.load(a.soft_text, weights_only=False); _pp = _js.loads(a.soft_p)
-    _mix = sum(float(v) * _st["T"][_st["genres"].index(g)].float() for g, v in _pp.items()) / sum(float(v) for v in _pp.values())
+    _st = torch.load(a.soft_text, weights_only=False); _pp = _js.loads(a.soft_p) if a.soft_p else {}
+    _mix = (sum(float(v) * _st["T"][_st["genres"].index(g)].float() for g, v in _pp.items()) / sum(float(v) for v in _pp.values())
+            if _pp else None)
+    SOFT_TOK = torch.load(a.soft_tokens, weights_only=False) if a.soft_tokens else None
     _ph = pipe.tokenizer(" move" * _st["K"], add_special_tokens=False)["input_ids"]
     assert len(_ph) == _st["K"] and len(set(_ph)) == 1, "placeholder must be K identical tokens"
     SOFT = {"body": "move" + " move" * (_st["K"] - 1), "id": _ph[0], "K": _st["K"], "mix": _mix, "hits": 0}
@@ -242,6 +246,10 @@ for c, r, dst in todo:
         assert body, r["audio_path"]
     if SOFT is not None:  # K placeholder tokens (template supplies the leading space); their input embeddings become the soft caption
         body = SOFT["body"]
+        if SOFT_TOK is not None:  # per-clip encoder tokens, keyed by the music file stem actually used
+            _k = os.path.basename(a.audio_override or r["audio_path"])[:-4]
+            SOFT["mix"] = SOFT_TOK[_k].float(); assert SOFT["mix"].shape[0] == SOFT["K"], _k
+        assert SOFT["mix"] is not None, "need --soft_p or --soft_tokens"
     if a.prompt_prefix:
         body = a.prompt_prefix + " " + body
     # empty: text prompt " " (same as the CFG negative) -> isolates what image + audio alone drive

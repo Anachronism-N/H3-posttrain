@@ -1,0 +1,26 @@
+{
+ "rock_enc": {
+  "*": "<Subject 1> dances to loud rock music with big, explosive, high-energy moves: wide arm swings above the head, high kicks and jumps."
+ },
+ "rock_gen": {
+  "*": "The dancer performs a freestyle dance to the music, moving in sync with its beat and rhythm."
+ },
+ "hiphop_enc": {
+  "*": "<Subject 1> dances to hip-hop music with big, hard-hitting, high-energy moves: wide arm swings, sharp hits, kicks and jumps."
+ },
+ "hiphop_gen": {
+  "*": "The dancer performs a freestyle dance to the music, moving in sync with its beat and rhythm."
+ },
+ "zen_enc": {
+  "*": "<Subject 1> dances very calmly to soft meditative music, barely moving: gentle swaying and soft hand gestures, feet staying in place."
+ },
+ "zen_gen": {
+  "*": "The dancer performs a freestyle dance to the music, moving in sync with its beat and rhythm."
+ },
+ "chinese_enc": {
+  "*": "<Subject 1> dances calmly to soft traditional Chinese music, barely moving: gentle swaying and soft hand gestures, feet staying in place."
+ },
+ "chinese_gen": {
+  "*": "The dancer performs a freestyle dance to the music, moving in sync with its beat and rhythm."
+ }
+}

@@ -150,6 +150,8 @@ DESC = {
 PRESETS = [
     {"name": "【10-15 文本×音乐】原始H3 704p：空prompt/H3模板+通用句/富文本 × 有音乐/静音（看文本与音乐各自驱动什么）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_bihrempty", "H3AR/val_zsbase_bihrempty_silence", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrgeneric_silence", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bihrorig_silence"]},
+    {"name": "【10-15 G2 音乐类别CLIP】冻结H3，同人物同seed：摇滚 vs 禅意音乐；_enc=音频编码器（只看MERT）选出的文本，_gen=通用句（原始H3只靠音乐）", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_G2_rock_enc", "H3AR/val_G2_zen_enc", "H3AR/val_G2_rock_gen", "H3AR/val_G2_zen_gen"]},
     {"name": "【10-15 方案A 冻结H3+音乐→分段文本】切 joint/aswap 看换音乐后动作强度是否跟着变：方案A(seg / seg2=全集阈值+BPM) vs 通用句 vs 富文本", "cond": "aswap", "view": "models",
      "models": ["H3AR/val_zsbase_bihrseg", "H3AR/val_zsbase_bihrseg2", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrorig"]},
     {"name": "【10-15 文本控幅度/音乐→文本】原始H3 704p 不训练：平静文本 / 夸张文本 / 通用句 / 富文本 / 按音乐逐秒强度+节拍生成的文本（看文本能否控制动作幅度、音乐写进文本能否跟拍）", "cond": "joint", "view": "models",

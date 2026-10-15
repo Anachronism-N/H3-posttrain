@@ -74,7 +74,10 @@ if __name__ == "__main__":
     items = [(g, f) for g in GENRES for f in sorted(glob.glob(f"{a.feat}/{g}/*.pt"))]
     random.Random(0).shuffle(items)
     print("items", len(items), {g: sum(1 for x in items if x[0] == g) for g in GENRES}, flush=True)
-    X = torch.stack([mert_vec(f) for _, f in items]); Y = torch.tensor([GENRES.index(g) for g, _ in items])
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(32) as ex:
+        X = torch.stack(list(ex.map(mert_vec, [f for _, f in items])))
+    Y = torch.tensor([GENRES.index(g) for g, _ in items])
     mu, sd = X.mean(0), X.std(0) + 1e-6; X = (X - mu) / sd
     nv = len(items) // 10; Xv, Yv, Xt, Yt = X[:nv], Y[:nv], X[nv:], Y[nv:]
     dev = "cuda" if torch.cuda.is_available() else "cpu"

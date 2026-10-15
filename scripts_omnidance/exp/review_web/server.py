@@ -150,6 +150,8 @@ DESC = {
 PRESETS = [
     {"name": "【10-15 文本×音乐】原始H3 704p：空prompt/H3模板+通用句/富文本 × 有音乐/静音（看文本与音乐各自驱动什么）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_bihrempty", "H3AR/val_zsbase_bihrempty_silence", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrgeneric_silence", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bihrorig_silence"]},
+    {"name": "【10-15 G3 连续注入】音频编码器的类别概率→caption token embedding 加权写入H3文本编码器输入层：rock单热 / rock+zen各半 / zen单热 / jazz（编码器概率）——看中间值是否给中间幅度", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_G3_rock_soft1", "H3AR/val_G3_mix50", "H3AR/val_G3_jazz_encp", "H3AR/val_G3_zen_soft1", "H3AR/val_G2_rock_enc", "H3AR/val_G2_zen_enc"]},
     {"name": "【10-15 G2 音乐类别CLIP】冻结H3，同人物同seed：摇滚 vs 禅意音乐；_enc=音频编码器（只看MERT）选出的文本，_gen=通用句（原始H3只靠音乐）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_G2_rock_enc", "H3AR/val_G2_zen_enc", "H3AR/val_G2_rock_gen", "H3AR/val_G2_zen_gen"]},
     {"name": "【10-15 方案A 冻结H3+音乐→分段文本】切 joint/aswap 看换音乐后动作强度是否跟着变：方案A(seg / seg2=全集阈值+BPM) vs 通用句 vs 富文本", "cond": "aswap", "view": "models",

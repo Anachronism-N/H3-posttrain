@@ -1,0 +1,98 @@
+{
+ "rock": {
+  "wav": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/GENRE8/g2/rock_89426879.wav",
+  "src": "/apdcephfs_zwfy7/share_304725743/data/music_clap_data/pond5/audio/rock/89426879.wav",
+  "start": 82.21256235827664,
+  "pred": "rock",
+  "p": {
+   "rock": 0.84,
+   "hiphop": 0.033,
+   "dance": 0.08,
+   "funk": 0.02,
+   "jazz": 0.005,
+   "orchestral": 0.005,
+   "zen": 0.008,
+   "chinese": 0.008
+  }
+ },
+ "hiphop": {
+  "wav": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/GENRE8/g2/hiphop_144952025.wav",
+  "src": "/apdcephfs_zwfy7/share_304725743/data/music_clap_data/pond5/audio/hiphop/144952025.wav",
+  "start": 57.60172335600907,
+  "pred": "hiphop",
+  "p": {
+   "rock": 0.022,
+   "hiphop": 0.905,
+   "dance": 0.013,
+   "funk": 0.035,
+   "jazz": 0.004,
+   "orchestral": 0.004,
+   "zen": 0.007,
+   "chinese": 0.008
+  }
+ },
+ "zen": {
+  "wav": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/GENRE8/g2/zen_184642506.wav",
+  "src": "/apdcephfs_zwfy7/share_304725743/data/music_clap_data/pond5/audio/zen/184642506.wav",
+  "start": 180.00108843537416,
+  "pred": "zen",
+  "p": {
+   "rock": 0.006,
+   "hiphop": 0.005,
+   "dance": 0.009,
+   "funk": 0.007,
+   "jazz": 0.006,
+   "orchestral": 0.009,
+   "zen": 0.882,
+   "chinese": 0.075
+  }
+ },
+ "chinese": {
+  "wav": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/GENRE8/g2/chinese_52773910.wav",
+  "src": "/apdcephfs_zwfy7/share_304725743/data/music_clap_data/pond5/audio/chinese/52773910.wav",
+  "start": 43.34931972789116,
+  "pred": "chinese",
+  "p": {
+   "rock": 0.011,
+   "hiphop": 0.011,
+   "dance": 0.011,
+   "funk": 0.009,
+   "jazz": 0.013,
+   "orchestral": 0.013,
+   "zen": 0.1,
+   "chinese": 0.832
+  }
+ },
+ "jazz": {
+  "wav": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/GENRE8/g2/jazz_106408528.wav",
+  "src": "/apdcephfs_zwfy7/share_304725743/data/music_clap_data/pond5/audio/jazz/106408528.wav",
+  "start": 72.96172335600907,
+  "pred": "jazz",
+  "p": {
+   "rock": 0.004,
+   "hiphop": 0.004,
+   "dance": 0.004,
+   "funk": 0.008,
+   "jazz": 0.832,
+   "orchestral": 0.139,
+   "zen": 0.003,
+   "chinese": 0.007
+  }
+ },
+ "orchestral": {
+  "wav": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/GENRE8/g2/orchestral_141176307.wav",
+  "src": "/apdcephfs_zwfy7/share_304725743/data/music_clap_data/pond5/audio/orchestral/141176307.wav",
+  "start": 26.40108843537415,
+  "pred": "orchestral",
+  "p": {
+   "rock": 0.004,
+   "hiphop": 0.003,
+   "dance": 0.005,
+   "funk": 0.005,
+   "jazz": 0.17,
+   "orchestral": 0.8,
+   "zen": 0.005,
+   "chinese": 0.008
+  }
+ }
+}

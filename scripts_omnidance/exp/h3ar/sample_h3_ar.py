@@ -33,6 +33,9 @@ p.add_argument("--height", type=int, default=832); p.add_argument("--width", typ
 p.add_argument("--audio_override", default="", help="replace the music of every case by this wav (speech/noise/silence probe)")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
 p.add_argument("--body_key", default="timed", help="timed | calm | energetic")
+p.add_argument("--soft_text", default="", help="10-15 G3: genre_clip text_targets.pt; description = K placeholder tokens whose "
+               "input embeddings are replaced by sum_c p_c T_c (soft prompt written into H3's text-encoder input layer)")
+p.add_argument("--soft_p", default="", help='json {genre: prob}, e.g. {"rock":0.5,"zen":0.5}')
 p.add_argument("--prompt_prefix", default="", help="e.g. a community LoRA trigger word (fal realism: r34l1sm)")
 p.add_argument("--w", default="/dev/shm/h3/Ref2VA")
 p.add_argument("--music_cfg", type=float, default=0.0, help=">0: music guidance v + w*(v(music) - v(music rolled by 50%%)) (time-misaligned negative, same text/ref)")
@@ -89,6 +92,25 @@ def set_lora(on):  # hot-loaded LoRA (vram management on): toggle per denoise st
     if on != LORA_ON[0]:
         pipe.clear_lora(verbose=0) if not on else pipe.load_lora(pipe.dit, state_dict=LORA_SD, verbose=0)
         LORA_ON[0] = on
+SOFT = None
+if a.soft_text:
+    import json as _js
+    _st = torch.load(a.soft_text, weights_only=False); _pp = _js.loads(a.soft_p)
+    _mix = sum(float(v) * _st["T"][_st["genres"].index(g)].float() for g, v in _pp.items()) / sum(float(v) for v in _pp.values())
+    _ph = pipe.tokenizer(" move" * _st["K"], add_special_tokens=False)["input_ids"]
+    assert len(_ph) == _st["K"] and len(set(_ph)) == 1, "placeholder must be K identical tokens"
+    SOFT = {"body": "move" + " move" * (_st["K"] - 1), "id": _ph[0], "K": _st["K"], "mix": _mix, "hits": 0}
+
+    def _soft_hook(mod, inp, out):
+        ids = inp[0].reshape(-1); hit = (ids == SOFT["id"]).nonzero().reshape(-1)
+        if hit.numel() >= SOFT["K"]:
+            s = int(hit[0]); assert bool((ids[s:s + SOFT["K"]] == SOFT["id"]).all()), "placeholder not contiguous"
+            out = out.clone(); o = out.reshape(-1, out.shape[-1])
+            o[s:s + SOFT["K"]] = SOFT["mix"].to(o.device, o.dtype); SOFT["hits"] += 1
+            return o.reshape(out.shape)
+        return out
+    pipe.text_encoder.model.language_model.embed_tokens.register_forward_hook(_soft_hook)
+    print(f"[h3ar] soft prompt {_pp} K={SOFT['K']}", flush=True)
 MERT_DIRS = ["/apdcephfs_gy4/share_302533218/cedricnie/diff/data/omnidance/audio_cache/mert_features",
              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/G2/mert_val"]
 if a.mode == "ar":
@@ -218,11 +240,15 @@ for c, r, dst in todo:
         BJ = _json.load(open(a.body_json))[a.body_key]
         body = BJ.get(r["audio_path"], BJ.get("*"))
         assert body, r["audio_path"]
+    if SOFT is not None:  # K placeholder tokens (template supplies the leading space); their input embeddings become the soft caption
+        body = SOFT["body"]
     if a.prompt_prefix:
         body = a.prompt_prefix + " " + body
     # empty: text prompt " " (same as the CFG negative) -> isolates what image + audio alone drive
     # generic: H3 template (reference/audio bindings) + one generic dance sentence, no per-video description
     video = generate(" " if a.prompt_mode == "empty" else h3_prompt(body, generic=(c == "audio_only" or a.prompt_mode == "generic")), img, wav, sr)
     write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)
-    print(f"[h3ar] {c} {r['sample_id']} {time.time() - t0:.0f}s", flush=True)
+    if SOFT is not None:
+        assert SOFT["hits"] > 0, "soft prompt hook never fired"
+    print(f"[h3ar] {c} {r['sample_id']} {time.time() - t0:.0f}s" + (f" soft_hits={SOFT['hits']}" if SOFT else ""), flush=True)
 print("[h3ar] done", flush=True)

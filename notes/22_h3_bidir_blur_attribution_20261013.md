@@ -546,3 +546,7 @@ val47 GT（每条 3 段×1.7 s）：
 - 抽帧（wJPrpFsTh f15/45/75/105）：rock_enc 双臂高举、高抬腿、张嘴大幅动作；zen_enc 原地柔和抬手、站姿不变；通用句两行动作相近、幅度中等。画质、身份、服装一致（H3 未动）。
 - 结论：mentor 的最小验证成立——"音频 encoder 对齐 H3 文本空间 + 冻结 H3"能让音乐决定动作（不损画质）。局限：本轮用 argmax 选择 caption（离散），动作差异的上限由手写 caption 决定；类别→动作的对应是人工规则（rock→大动作），尚未从舞蹈数据中学习。
 - 下一步：(1) soft 注入——把编码器输出的连续 embedding（或概率加权 token）写入文本编码器输入层，看中间音乐（jazz/orchestral）是否给出中间幅度；(2) 换开源数据（FMA）复现；(3) 目标文本从"类别+手写动作"改为舞蹈视频的结构化 caption（舞种 + 分段强度），让"音乐→动作"从舞蹈数据学习；(4) 结合分段（方案 A seg）做段级时序。
+### 21.2 10-15 21:20 G3 连续注入（soft prompt）启动
+- 实现：`sample_h3_ar.py --soft_text text_targets.pt --soft_p '{...}'`。模板描述段写 32 个占位 token（" move"，已验证在完整模板中 32 个连续、唯一），在 H3 文本编码器的 `embed_tokens` 上挂 forward hook，把这 32 行输入 embedding 替换成 Σ_c p_c·T_c（T_c = 8 句类别 caption 的输入层 token embedding，与 G1 训练目标相同），其余 64 层 Qwen3-VL 与 H3 全部冻结。每条视频断言 hook 生效。
+- 4 组（冻结 H3，704p，同 3 人物 joint，同 seed）：rock 音乐 + p={rock:1}（应≈G2_rock_enc，验证 soft 注入等价于真文本）/ rock 音乐 + p={rock:.5, zen:.5}（插值）/ zen 音乐 + p={zen:1} / jazz 音乐 + 编码器概率（jazz .83, orchestral .14）。
+- 判据：mix50 与 jazz 的运动量介于 rock 与 zen 之间 → 连续 embedding 可平滑控制动作幅度，可进入"编码器输出直接作为文本 embedding"的端到端阶段。网页【10-15 G3 连续注入】。

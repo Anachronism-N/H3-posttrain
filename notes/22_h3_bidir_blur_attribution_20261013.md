@@ -550,3 +550,13 @@ val47 GT（每条 3 段×1.7 s）：
 - 实现：`sample_h3_ar.py --soft_text text_targets.pt --soft_p '{...}'`。模板描述段写 32 个占位 token（" move"，已验证在完整模板中 32 个连续、唯一），在 H3 文本编码器的 `embed_tokens` 上挂 forward hook，把这 32 行输入 embedding 替换成 Σ_c p_c·T_c（T_c = 8 句类别 caption 的输入层 token embedding，与 G1 训练目标相同），其余 64 层 Qwen3-VL 与 H3 全部冻结。每条视频断言 hook 生效。
 - 4 组（冻结 H3，704p，同 3 人物 joint，同 seed）：rock 音乐 + p={rock:1}（应≈G2_rock_enc，验证 soft 注入等价于真文本）/ rock 音乐 + p={rock:.5, zen:.5}（插值）/ zen 音乐 + p={zen:1} / jazz 音乐 + 编码器概率（jazz .83, orchestral .14）。
 - 判据：mix50 与 jazz 的运动量介于 rock 与 zen 之间 → 连续 embedding 可平滑控制动作幅度，可进入"编码器输出直接作为文本 embedding"的端到端阶段。网页【10-15 G3 连续注入】。
+### 21.3 10-15 21:55 G3 结果：**连续注入成立，强度可平滑插值**（冻结 H3，704p，同 3 人物 joint，同 seed；每条视频 hook 均生效）
+| case | rock 单热(soft) | rock 真文本(G2) | rock+zen 各半 | jazz（编码器概率） | zen 单热(soft) | zen 真文本(G2) |
+|---|---|---|---|---|---|---|
+| wJPptu | 11.53 | 11.56 | 10.90 | 9.26 | 5.96 | 5.96 |
+| wJPrpF | 9.92 | 9.83 | 7.98 | 7.01 | 5.07 | 5.13 |
+| wJQTcl | 3.42 | 3.27 | 2.13 | 1.93 | 1.64 | 1.69 |
+- **soft 单热 ≈ 真文本**：运动量差 ≤5%，像素差 3–8（不完全相同来自独立分词 + "." 补齐与模板内分词的细微差异）→ 把 embedding 直接写入文本编码器输入层与输入真实文字等价，H3 能"读懂"。
+- **插值单调**：3/3 case 都是 rock > rock/zen 各半 > jazz > zen；jazz（编码器给 jazz .83 / orchestral .14，即"中等"档）落在中间。
+- 抽帧（wJPrpFsTh f15/45/75/105，自上而下 rock / 各半 / jazz / zen）：高举双臂+高抬腿 → 中幅展臂 → 摇摆中幅 → 原地小幅手势；身份、服装、画质一致。
+- 结论：编码器输出的连续量可以直接作为 H3 的"文本"，动作强度随之连续变化，不需要动 H3。下一步可把编码器从"输出类别概率再查表"改成直接输出 token embedding（mentor 阶段 2：经冻结 H3 用视频 loss 端到端微调编码器），以及把目标从手写类别 caption 换成舞蹈数据的结构化 caption。

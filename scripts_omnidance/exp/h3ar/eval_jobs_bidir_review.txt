@@ -40,3 +40,5 @@ H3REF_hr512_anchorhi05 HRANC512 bihrorig 3 100 300
 # 10-15 preview: 480p-trained same-512 pair (FM vs anchor) sampled at 704x1280, while 704p-trained pair runs
 H3REF_gt512_fm GT512 bihrorig 3 300
 H3REF_gt512_anchorhi05 ANCHI05 bihrorig 3 300
+# 10-15 paired-noise reflow control (same SG512 targets as SG512, only the noise pairing differs)
+H3REF_sg512p_fm SG512P biorig 3 100 300

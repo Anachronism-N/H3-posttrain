@@ -75,7 +75,12 @@ def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale: 
     timestep_video = pipe.scheduler.timesteps[timestep_id].to(dtype=torch.float32, device=pipe.device)
     timestep_audio = pipe.scheduler_audio.timesteps[timestep_id].to(dtype=torch.float32, device=pipe.device)
 
-    noise = torch.randn_like(inputs["input_latents"])
+    # local patch (OmniDance 10-15, paired-noise reflow): a cache entry may carry the exact initial noise "od_noise" that
+    # produced its target (sg_gen.py seed) -> x_t lies on the (noise, x0) line of that sample, so the FM target is
+    # deterministic per sample instead of a conditional mean over noises.
+    od_noise = inputs.pop("od_noise", None)
+    noise = od_noise.to(inputs["input_latents"]) if od_noise is not None else torch.randn_like(inputs["input_latents"])
+    assert noise.shape == inputs["input_latents"].shape
     inputs["video_latents"] = pipe.scheduler.add_noise(inputs["input_latents"], noise, timestep_video)
     training_target = pipe.scheduler.training_target(inputs["input_latents"], noise, timestep_video)
 

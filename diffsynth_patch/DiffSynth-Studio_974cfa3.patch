@@ -60,10 +60,10 @@ index b4b8863..68741ef 100644
              data = self.data[data_id % len(self.data)].copy()
              for key in self.data_file_keys:
 diff --git a/diffsynth/diffusion/loss.py b/diffsynth/diffusion/loss.py
-index e7757fc..2a87919 100644
+index e7757fc..297cb80 100644
 --- a/diffsynth/diffusion/loss.py
 +++ b/diffsynth/diffusion/loss.py
-@@ -63,9 +63,13 @@ def FlowMatchSFTAudioVideoLoss(pipe: BasePipeline, **inputs):
+@@ -63,24 +63,92 @@ def FlowMatchSFTAudioVideoLoss(pipe: BasePipeline, **inputs):
      return loss
  
  
@@ -80,7 +80,15 @@ index e7757fc..2a87919 100644
  
      timestep_id = torch.randint(min_timestep_boundary, max_timestep_boundary, (1,))
      timestep_video = pipe.scheduler.timesteps[timestep_id].to(dtype=torch.float32, device=pipe.device)
-@@ -75,12 +79,69 @@ def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale:
+     timestep_audio = pipe.scheduler_audio.timesteps[timestep_id].to(dtype=torch.float32, device=pipe.device)
+ 
+-    noise = torch.randn_like(inputs["input_latents"])
++    # local patch (OmniDance 10-15, paired-noise reflow): a cache entry may carry the exact initial noise "od_noise" that
++    # produced its target (sg_gen.py seed) -> x_t lies on the (noise, x0) line of that sample, so the FM target is
++    # deterministic per sample instead of a conditional mean over noises.
++    od_noise = inputs.pop("od_noise", None)
++    noise = od_noise.to(inputs["input_latents"]) if od_noise is not None else torch.randn_like(inputs["input_latents"])
++    assert noise.shape == inputs["input_latents"].shape
      inputs["video_latents"] = pipe.scheduler.add_noise(inputs["input_latents"], noise, timestep_video)
      training_target = pipe.scheduler.training_target(inputs["input_latents"], noise, timestep_video)
  
@@ -105,6 +113,8 @@ index e7757fc..2a87919 100644
 +    if _os.environ.get("OD_H3_DPO") == "1":  # local patch (OmniDance W1b): music-contrastive Diffusion-DPO (bidirectional)
 +        import sys as _sys; _sys.path.insert(0, "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/h3ar")
 +        import h3_dpo as _DPO
++        if training_cfg_scale > 1.0 or _os.environ.get("OD_H3_TF", "0") == "1":
++            raise ValueError("OD_H3_DPO does not combine with training_cfg_scale>1 or OD_H3_TF=1 (DPO branch returns early)")
 +        return _DPO.dpo_loss(pipe, models, inputs, timestep_video, timestep_audio, training_target)
 +    tf_frames = None
 +    if _os.environ.get("OD_H3_TF", "0") == "1":
@@ -151,7 +161,7 @@ index e7757fc..2a87919 100644
      if training_cfg_scale > 1.0:
          if not inputs_nega:
              raise ValueError(
-@@ -91,30 +152,89 @@ def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale:
+@@ -91,30 +159,94 @@ def FlowMatchSFTMiniMaxH3AudioVideoLoss(pipe: BasePipeline, training_cfg_scale:
          inputs_uncond = {**inputs, **inputs_nega}
          inputs_uncond["use_gradient_checkpointing"] = False
          inputs_uncond["use_gradient_checkpointing_offload"] = False
@@ -174,6 +184,11 @@ index e7757fc..2a87919 100644
 +    anchor = float(_os.environ.get("OD_H3_ANCHOR", "0"))
 +    anchor_mode = _os.environ.get("OD_H3_ANCHOR_MODE", "hi")
 +    sigma_now = float(timestep_video.reshape(-1)[0]) / 1000.0
++    # notes/24 P0: the anchor branch returns before CFG / TF-region / aux losses -> refuse combinations it would silently drop
++    if anchor > 0 and (training_cfg_scale > 1.0 or tf_frames is not None):
++        raise ValueError("OD_H3_ANCHOR does not combine with training_cfg_scale>1 or OD_H3_TF=1 (anchor branch returns early)")
++    if anchor <= 0 and float(_os.environ.get("OD_H3_ANCHOR_MCFG", "0")) > 0:
++        raise ValueError("OD_H3_ANCHOR_MCFG>0 needs OD_H3_ANCHOR>0 (teacher branch only runs under the anchor)")
 +    v_base = None
 +    if anchor > 0:  # always run the base forward (ZeRO-3: every rank must issue the same forwards, sigma may differ per rank)
 +        from peft.tuners.tuners_utils import BaseTunerLayer

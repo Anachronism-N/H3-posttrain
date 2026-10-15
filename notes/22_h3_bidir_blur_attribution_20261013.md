@@ -566,3 +566,9 @@ val47 GT（每条 3 段×1.7 s）：
 - 分布：舞种 freestyle/other 917、k-pop 403、hip-hop 401、中国古典 198、contemporary 119、ballet 43、jazz 10；整体强度 energetic 1859 / calm 160 / medium 72（89% 被判 energetic）；分段模式"calm→medium→energetic"占 980 条（47%）——明显是 VLM 的套路化输出，而非真实变化。
 - **用 GT 视频运动量校验（随机 600 条）**：Spearman(VLM 整体强度, GT 运动量) = **0.036**；calm / medium / energetic 三组 GT 运动量 8.36 / 5.66 / 8.07（不单调）；段内 corr = 0.041；"c→m→e"的 297 条 GT 三段运动量 7.77 / 7.91 / 7.88（平的）。→ **8B VLM 的强度标签与真实动作无关，不能作为监督**。舞种标签有一定区分（中国古典 9.14、hip-hop 7.32 运动量不同），可保留作风格标签，但未人工核验。
 - 修正：强度标签改用**测量值**（视频分段运动量，或姿态关键点速度，按全集分位数量化成三档），舞种用 VLM/caption 关键词；目标 caption 由"舞种 + 测得的分段强度"按固定模板生成，与推理格式一致。
+
+## 22. 10-15 22:40 结构化 caption（2091 精选）完成 —— 但强度标签不可靠
+- `e10/caption_struct.py`（Qwen3-VL-8B 看 16 帧，输出 JSON：舞种 + 3 段×{强度 calm/medium/energetic, 动作词} + 整体强度），N1+N3 16 卡，**2091/2091 全部合法 JSON**，结果 `H3AR/CAPS/cur2091_struct.json`。
+- 分布：舞种 freestyle/other 917、k-pop 403、hip-hop 401、中国古典 198、contemporary 119、ballet 43、jazz 10；整体强度 energetic 1859 / calm 160 / medium 72（**89% 被判为高能量**）；分段 energetic 3746 / calm 1448 / medium 1079。
+- **与真实运动的一致性（523 条抽检）**：VLM 的分段强度 vs 帧差运动量 Spearman **0.04**；vs 人物框内活动像素比例 0.09；整体强度 vs 运动 −0.03 / 0.02；同一视频内三段的强度排序与运动排序一致性 0.11。三档的平均运动量几乎相同（calm 7.93 / medium 7.88 / energetic 8.27）。
+- 结论：**8B VLM 看 16 帧给出的"动作强度"基本不反映真实运动**（偏向一律 energetic），不能直接作为"音乐→动作"的学习目标；舞种标签（尤其中国古典、k-pop、hip-hop）看起来更可信，但也需抽查。若要从舞蹈数据学"什么音乐配什么舞"，强度应改用客观运动量（姿态关键点速度/人物框运动）分档，舞种用 VLM。

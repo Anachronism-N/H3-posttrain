@@ -11,6 +11,7 @@ p = argparse.ArgumentParser()
 p.add_argument("--csv_dir", default="/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/E2")
 p.add_argument("--rows", type=int, default=3); p.add_argument("--out", required=True)
 p.add_argument("--dur", type=float, default=124 / 24)
+p.add_argument("--q_rows", type=int, default=0, help="v3: thresholds from the first N val rows (0 = all 47, joint+aswap audios)")
 a = p.parse_args()
 csv.field_size_limit(10 ** 9)
 auds = []
@@ -58,7 +59,29 @@ for f, v in segv.items():
     seg[f] = " ".join(f"{'From' if i == 0 else 'Then from'} {edges[i]:.1f} to {edges[i + 1]:.1f} seconds, matching the "
                       f"{['quiet', 'medium', 'loud and driving'][l - 1]} music, <Subject 1> {SEGW[l]}." for i, l in enumerate(lv))
     print(f.split("/")[-1], "seg levels", lv, flush=True)
-out = {"timed": timed, "seg": seg,
+# "seg2" (v3): thresholds from the whole val set (not just the probed clips) + tempo word
+qa = []
+for c in ("joint", "aswap"):
+    rr = list(csv.DictReader(open(f"{a.csv_dir}/full_{c}.csv")))
+    qa += [r["audio_path"] for r in (rr[:a.q_rows] if a.q_rows else rr)]
+qa = list(dict.fromkeys(qa))
+allseg, tempos = {}, {}
+for f in qa:
+    y, sr = librosa.load(f, sr=22050, mono=True, duration=a.dur)
+    env = librosa.onset.onset_strength(y=y, sr=sr); t = librosa.times_like(env, sr=sr)
+    allseg[f] = [float(env[(t >= edges[i]) & (t < edges[i + 1])].mean()) for i in range(nseg)]
+    tempos[f] = float(np.atleast_1d(librosa.beat.beat_track(onset_envelope=env, sr=sr)[0])[0])
+Q = np.quantile(np.concatenate(list(allseg.values())), [1 / 3, 2 / 3])
+print("seg2 thresholds", Q, "from", len(qa), "audios", flush=True)
+seg2 = {}
+for f in auds:
+    lv = [int(1 + np.searchsorted(Q, x)) for x in allseg[f]]
+    bpm = tempos[f]; tw = "slow, flowing" if bpm < 100 else ("steady" if bpm < 128 else "fast, punchy")
+    seg2[f] = (f"The music has a {tw} rhythm at about {bpm:.0f} BPM and <Subject 1> moves at a matching {tw} pace. "
+               + " ".join(f"{'From' if i == 0 else 'Then from'} {edges[i]:.1f} to {edges[i + 1]:.1f} seconds, matching the "
+                          f"{['quiet', 'medium', 'loud and driving'][l - 1]} music, <Subject 1> {SEGW[l]}." for i, l in enumerate(lv)))
+    print(f.split("/")[-1], "seg2 levels", lv, f"bpm {bpm:.0f}", flush=True)
+out = {"timed": timed, "seg": seg, "seg2": seg2,
        "calm": {"*": "<Subject 1> dances very calmly with small, restrained movements: gentle swaying, soft hand gestures, "
                      "feet mostly staying in place, no big arm swings, no kicks and no jumps."},
        "energetic": {"*": "<Subject 1> dances with big, exaggerated, high-energy movements: wide powerful arm swings above the head, "

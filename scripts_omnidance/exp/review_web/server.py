@@ -150,8 +150,10 @@ DESC = {
 PRESETS = [
     {"name": "【10-15 文本×音乐】原始H3 704p：空prompt/H3模板+通用句/富文本 × 有音乐/静音（看文本与音乐各自驱动什么）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_bihrempty", "H3AR/val_zsbase_bihrempty_silence", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrgeneric_silence", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bihrorig_silence"]},
+    {"name": "【10-15 方案A 冻结H3+音乐→分段文本】切 joint/aswap 看换音乐后动作强度是否跟着变：方案A(seg / seg2=全集阈值+BPM) vs 通用句 vs 富文本", "cond": "aswap", "view": "models",
+     "models": ["H3AR/val_zsbase_bihrseg", "H3AR/val_zsbase_bihrseg2", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrorig"]},
     {"name": "【10-15 文本控幅度/音乐→文本】原始H3 704p 不训练：平静文本 / 夸张文本 / 通用句 / 富文本 / 按音乐逐秒强度+节拍生成的文本（看文本能否控制动作幅度、音乐写进文本能否跟拍）", "cond": "joint", "view": "models",
-     "models": ["H3AR/val_zsbase_bihrcalm", "H3AR/val_zsbase_bihrenergetic", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bihrtimed", "H3AR/val_zsbase_bihrc2e", "H3AR/val_zsbase_bihre2c", "H3AR/val_zsbase_bihrseg"]},
+     "models": ["H3AR/val_zsbase_bihrcalm", "H3AR/val_zsbase_bihrenergetic", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bihrtimed", "H3AR/val_zsbase_bihrc2e", "H3AR/val_zsbase_bihre2c", "H3AR/val_zsbase_bihrseg", "H3AR/val_zsbase_bihrseg2"]},
     {"name": "【10-15 配对噪声】同SG512目标/同配方：普通FM(随机噪声) vs 配对噪声(生成该目标的那个噪声)，480p", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_biorig", "H3AR/val_SG512100_biorig", "H3AR/val_SG512300_biorig", "H3AR/val_SG512P100_biorig", "H3AR/val_SG512P300_biorig", "H3AR/val_GT512100_biorig", "H3AR/val_GT512300_biorig", "H3AR/val_GTINV512100_biorig", "H3AR/val_GTINV512300_biorig"]},
     {"name": "【10-15 704p 噪声段切换】HA5hr300（704p普通FM）LoRA 全程 / 仅高噪声σ≥0.5(0:47步) / 仅低噪声(47:50) / 细分 0:10(σ1→.98) 10:30(σ.98→.89) 30:47(σ.89→.5) vs 原始H3：糊来自哪段", "cond": "joint", "view": "models",

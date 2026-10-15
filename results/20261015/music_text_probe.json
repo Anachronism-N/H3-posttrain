@@ -1,0 +1,53 @@
+{
+ "n": 3000,
+ "res": {
+  "energy_hi": {
+   "pos_rate": 0.866,
+   "auc": 0.623,
+   "auc_shuffled": 0.54
+  },
+  "energy_lo": {
+   "pos_rate": 0.657,
+   "auc": 0.63,
+   "auc_shuffled": 0.521
+  },
+  "fast": {
+   "pos_rate": 0.051,
+   "auc": 0.524,
+   "auc_shuffled": 0.454
+  },
+  "slow": {
+   "pos_rate": 0.294,
+   "auc": 0.577,
+   "auc_shuffled": 0.527
+  },
+  "hiphop": {
+   "pos_rate": 0.703,
+   "auc": 0.741,
+   "auc_shuffled": 0.525
+  },
+  "kpop": {
+   "pos_rate": 0.017,
+   "auc": 0.601,
+   "auc_shuffled": 0.58
+  },
+  "jazz": {
+   "pos_rate": 0.0013333333333333333,
+   "skip": true
+  },
+  "contemporary": {
+   "pos_rate": 0.566,
+   "auc": 0.629,
+   "auc_shuffled": 0.534
+  },
+  "latin": {
+   "pos_rate": 0.0,
+   "skip": true
+  },
+  "chinese": {
+   "pos_rate": 0.069,
+   "auc": 0.732,
+   "auc_shuffled": 0.496
+  }
+ }
+}

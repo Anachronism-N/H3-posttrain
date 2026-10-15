@@ -602,3 +602,19 @@ val47 GT（每条 3 段×1.7 s）：
 - 舞种文本门控（§23，N1/N3，中国古典/hip-hop/K-pop/contemporary，同 3 人物）；
 - FMA：star-proxy 下单连接 ~150 KB/s，改为 48 路并行分段下载（`exp/dl_parallel.sh`），metadata 已过半；
 - Qwen2.5-Omni-7B（ModelScope ~10 MB/s）与 MotionScript 代码下载中。
+
+## 25. 10-16 02:00 舞种文本门控结果 + 音乐 CoT 第一版
+### 25.1 舞种文本能控制舞蹈风格（冻结 H3，同人物同 seed，原音乐）
+| case | 中国古典 | hip-hop | K-pop | contemporary | 通用句 | 四种风格两两像素差 |
+|---|---|---|---|---|---|---|
+| wJPptu | 9.79 | 9.01 | 8.86 | 10.87 | 8.06 | 21.1 |
+| wJPrpF | 8.24 | 9.98 | 8.42 | 10.15 | 8.70 | 24.8 |
+| wJQTcl | 2.33 | 2.31 | 1.95 | 2.76 | 2.14 | 8.8 |
+- 抽帧（wJPrpFsTh f15/45/75/105，自上而下 古典 / hip-hop / K-pop / contemporary）：古典 = 双手胸前绕腕、柔和抬臂；hip-hop = 宽马步、握拳屈臂、重心下沉；K-pop = 一顿一顿的定点造型、双手过头比划；contemporary = 弯腰、转身、大幅倾斜。**四种舞种的动作语汇明显不同**，运动量只差 ~20%（区别在"风格"而非"幅度"），画质一致。
+- → 冻结 H3 能被文本控制**舞种风格**（不只是幅度）。配合 §23（本数据音乐能预测舞种，AUC 0.65–0.85），"音乐 → 舞种文本"是有数据依据、H3 也能执行的映射。
+### 25.2 音乐 CoT v1（Qwen2.5-Omni-7B thinker，`h3ar/music_cot.py`）
+- 单独"听音辨类"（无提示）：rock→"rock, guitars/drums, energetic"；hiphop→"hip hop, drum machine, energetic"；zen→"ambient, synthesizer, calm"；chinese→"slow calm classical, piano and strings"；舞蹈配乐 → pop/electronic/energetic；jazz/orchestral 与 2 首舞曲答"不确定"。→ **7B Omni 能分辨大类与平静/激烈，细分弱**。
+- 两步 CoT（分析 → 编舞文本）v1 问题：给了 librosa 实测提示后，模型主要复述提示里的分段能量，**舞种一律写成"modern dance"**，且会续写无关对话（"Human: …"）。需要：先不给提示单独问类别，再把类别作为舞种约束；输出截断与格式约束。
+### 25.3 音乐 CoT v2（先听音辨类、不给提示；再给实测节拍/能量；最后从 8 种舞种中选并按三段写编舞）
+- 舞种选择：rock → hip-hop；zen/ambient → contemporary（全程小幅慢速）；6 首舞蹈配乐（pop/electronic）→ 全部 hip-hop；分段强度跟随实测能量（如 wJPptu 小→中→大）。CoT 文本在 `H3AR/music_cot_v2_val3.json`。
+- 送入冻结 H3（704p，同 3 人物）：`bihrcot`（原音乐 joint + 换音乐 aswap，文本随音乐重写）、`COT_rock` / `COT_zen`（同人物换成 pond5 摇滚/禅意片段）。对照 G2 编码器（rock/zen 1.93×）与方案 A seg2。网页【10-16 音乐CoT】。

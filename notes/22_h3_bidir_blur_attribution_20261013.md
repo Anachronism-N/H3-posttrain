@@ -560,3 +560,9 @@ val47 GT（每条 3 段×1.7 s）：
 - **插值单调**：3/3 case 都是 rock > rock/zen 各半 > jazz > zen；jazz（编码器给 jazz .83 / orchestral .14，即"中等"档）落在中间。
 - 抽帧（wJPrpFsTh f15/45/75/105，自上而下 rock / 各半 / jazz / zen）：高举双臂+高抬腿 → 中幅展臂 → 摇摆中幅 → 原地小幅手势；身份、服装、画质一致。
 - 结论：编码器输出的连续量可以直接作为 H3 的"文本"，动作强度随之连续变化，不需要动 H3。下一步可把编码器从"输出类别概率再查表"改成直接输出 token embedding（mentor 阶段 2：经冻结 H3 用视频 loss 端到端微调编码器），以及把目标从手写类别 caption 换成舞蹈数据的结构化 caption。
+
+## 22. 10-15 结构化 caption（VLM）完成 + 质量校验：**VLM 给的动作强度不可靠**
+- `e10/caption_struct.py`：Qwen3-VL-8B 看前 5.17 s 的 16 帧，输出 JSON {舞种（8 类固定词表）, 3 段（各 1.7 s）的强度 calm/medium/energetic + ≤12 词动作, 整体强度}。N1+N3 16 卡，2091/2091 全部成功、JSON 全部合法。输出 `H3AR/CAPS/v1/cap_*.jsonl`。
+- 分布：舞种 freestyle/other 917、k-pop 403、hip-hop 401、中国古典 198、contemporary 119、ballet 43、jazz 10；整体强度 energetic 1859 / calm 160 / medium 72（89% 被判 energetic）；分段模式"calm→medium→energetic"占 980 条（47%）——明显是 VLM 的套路化输出，而非真实变化。
+- **用 GT 视频运动量校验（随机 600 条）**：Spearman(VLM 整体强度, GT 运动量) = **0.036**；calm / medium / energetic 三组 GT 运动量 8.36 / 5.66 / 8.07（不单调）；段内 corr = 0.041；"c→m→e"的 297 条 GT 三段运动量 7.77 / 7.91 / 7.88（平的）。→ **8B VLM 的强度标签与真实动作无关，不能作为监督**。舞种标签有一定区分（中国古典 9.14、hip-hop 7.32 运动量不同），可保留作风格标签，但未人工核验。
+- 修正：强度标签改用**测量值**（视频分段运动量，或姿态关键点速度，按全集分位数量化成三档），舞种用 VLM/caption 关键词；目标 caption 由"舞种 + 测得的分段强度"按固定模板生成，与推理格式一致。

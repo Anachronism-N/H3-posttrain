@@ -42,3 +42,4 @@ H3REF_gt512_fm GT512 bihrorig 3 300
 H3REF_gt512_anchorhi05 ANCHI05 bihrorig 3 300
 # 10-15 paired-noise reflow control (same SG512 targets as SG512, only the noise pairing differs)
 H3REF_sg512p_fm SG512P biorig 3 100 300
+H3REF_gtinv512_fm GTINV512 biorig 3 100 300

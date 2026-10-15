@@ -150,6 +150,8 @@ DESC = {
 PRESETS = [
     {"name": "【10-15 文本×音乐】原始H3 704p：空prompt/H3模板+通用句/富文本 × 有音乐/静音（看文本与音乐各自驱动什么）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_bihrempty", "H3AR/val_zsbase_bihrempty_silence", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrgeneric_silence", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bihrorig_silence"]},
+    {"name": "【10-16 舞种文本门控】冻结H3，同人物同seed、原音乐，只改描述段为舞种+特征动作：中国古典 / hip-hop / K-pop / contemporary ——看舞种风格是否可被文本控制", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_zsbase_bihrds_chinese", "H3AR/val_zsbase_bihrds_hiphop", "H3AR/val_zsbase_bihrds_kpop", "H3AR/val_zsbase_bihrds_contemporary", "H3AR/val_zsbase_bihrgeneric"]},
     {"name": "【10-15 G3 连续注入】音频编码器的类别概率→caption token embedding 加权写入H3文本编码器输入层：rock单热 / rock+zen各半 / zen单热 / jazz（编码器概率）——看中间值是否给中间幅度", "cond": "joint", "view": "models",
      "models": ["H3AR/val_G3_rock_soft1", "H3AR/val_G3_mix50", "H3AR/val_G3_jazz_encp", "H3AR/val_G3_zen_soft1", "H3AR/val_G2_rock_enc", "H3AR/val_G2_zen_enc"]},
     {"name": "【10-15 G2 音乐类别CLIP】冻结H3，同人物同seed：摇滚 vs 禅意音乐；_enc=音频编码器（只看MERT）选出的文本，_gen=通用句（原始H3只靠音乐）", "cond": "joint", "view": "models",

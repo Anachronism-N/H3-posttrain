@@ -572,3 +572,33 @@ val47 GT（每条 3 段×1.7 s）：
 - 分布：舞种 freestyle/other 917、k-pop 403、hip-hop 401、中国古典 198、contemporary 119、ballet 43、jazz 10；整体强度 energetic 1859 / calm 160 / medium 72（**89% 被判为高能量**）；分段 energetic 3746 / calm 1448 / medium 1079。
 - **与真实运动的一致性（523 条抽检）**：VLM 的分段强度 vs 帧差运动量 Spearman **0.04**；vs 人物框内活动像素比例 0.09；整体强度 vs 运动 −0.03 / 0.02；同一视频内三段的强度排序与运动排序一致性 0.11。三档的平均运动量几乎相同（calm 7.93 / medium 7.88 / energetic 8.27）。
 - 结论：**8B VLM 看 16 帧给出的"动作强度"基本不反映真实运动**（偏向一律 energetic），不能直接作为"音乐→动作"的学习目标；舞种标签（尤其中国古典、k-pop、hip-hop）看起来更可信，但也需抽查。若要从舞蹈数据学"什么音乐配什么舞"，强度应改用客观运动量（姿态关键点速度/人物框运动）分档，舞种用 VLM。
+
+## 23. 10-16 01:00 舞蹈数据里的"音乐→动作"信号：强度几乎没有，舞种有
+- 2091 精选全部算客观运动（人物中心框内活动像素比例，3 段 + 整段，`CAPS/cur2091_motion.json`），按全集三分位分 3 档。
+- MERT（舞蹈配乐，4 层时间均值）→ 线性探针，80/20 留出：
+  | 目标 | 结果 |
+  |---|---|
+  | 实测运动量（ridge） | Spearman **0.17** |
+  | 运动量最高 1/3 | AUC **0.56** |
+  | VLM 舞种 = 中国古典（9.5%） | AUC **0.85** |
+  | = contemporary（5.7%） | AUC **0.84** |
+  | = hip-hop（19%） | AUC **0.72** |
+  | = K-pop（19%） | AUC **0.65** |
+- → 本数据里，**音乐几乎预测不了舞者动得多大（≈ 随机）**，但**能较好地预测舞种**（音乐与舞种绑定：古风音乐 → 中国古典舞、hip-hop 音乐 → 街舞）。与 §15.3（运动-音乐能量相关 0.05–0.18）一致。
+- 所以从舞蹈数据学"音乐 → 文本"时，**目标应是舞种（风格）而不是强度**；强度只能用 pond5 那类"类别→动作档"的人工先验。
+- 门控（零训练）：冻结 H3 能否按文本生成**不同舞种**？`bihrds_{chinese,hiphop,kpop,contemporary}` = 模板 + "performs {舞种}: {特征动作}"，同 3 人物 joint，同 seed（N1/N3）。网页【10-16 舞种文本门控】。若风格差异明显 → 训"舞蹈配乐 → 舞种 caption"编码器（2091 + pond5 混训），用 aswap 验证换音乐是否换舞种。
+
+## 24. 10-16 01:30 用户建议整合：caption 粒度 / H3 官方 prompt / 音乐 CoT / 音乐专有 encoder / RSI
+### 24.1 参考资料要点
+- **MotionScript**（IROS'25，github pjyazdian/MotionScript）：输入 3D 骨架序列 → posecode（静态姿态属性，如肘角、手相对关节位置）→ motioncode（posecode 随时间的变化：伸展/弯曲/上升/横移 + 幅度 + 速度）→ 按时间顺序聚合成自然语言（"left elbow extends… a second later she shifts far to the left… speedily"）。**无需训练、规则化、带时间与幅度/速度副词** → 正好解决 §22 "VLM 强度不可靠"：强度直接由关节速度量化。需要 3D 关节（SMPL/HumanML3D 22 关节）。
+  - 管线：精选 2091 已有 DWPose 2D → 2D→3D lifting（MotionBERT / VideoPose3D 17 关节，或 GVHMR/WHAM 直出 SMPL）→ 重定向到 MotionScript 的关节定义 → 逐 1.7 s 段生成动作描述。
+- **H3 官方 prompt（skills/h3-prompt-writing/references/ref-en.txt）**：Ref2VA 六段顺序 subject_definitions → summary → retention_analysis → detailed_description → overall_soundscape → non_diegetic_music —— **与我们现用模板一致**；`<Audio 1>: fully_copy` 表示音乐 1:1 复用；detailed_description 建议 350–500 词、按播放顺序写动作，镜头切换用 `[Shot N] At MM:SS.mmm`。官方 music-video skill 的做法：先分析 BPM/鼓点/人声时间，把画面动作写到 2–5 s 的分镜里、切点落在拍点上。→ 我们的分段文本（§16/§21）方向一致，但现在描述段过短（~60 词），可按官方建议扩写为时间轴式 350–500 词。
+### 24.2 路线（逐步验证，每步都可在冻结 H3 上零训练检验）
+1. **音乐 CoT（零训练上限）**：音频大模型（Qwen2.5-Omni-7B，ModelScope 下载中；后续可换 Qwen3-Omni-30B-A3B-Captioner）听 5.17 s 音乐 → 结构化分析（流派、BPM、拍点时刻、能量曲线、段落/drop）→ 同一模型（或文本 LLM）以"编舞师"身份按 H3 官方 Ref2VA 格式写 detailed_description（舞种 + 每段动作，用 MotionScript 风格的部位/幅度/速度词）→ 冻结 H3。验证：同人物换音乐（joint/aswap）动作是否随音乐变化、与规则版方案 A、G2/G3 学习版对比。
+2. **音乐专有 encoder（蒸馏 CoT）**：CoT 产出的 H3 文本 embedding 作为目标，训 MERT→H3 文本 token 的 encoder（G1/G3 的连续注入已验证可行）——推理时去掉大模型，速度快、可端到端微调（mentor 阶段 2）。数据：pond5（主力，质量高）+ FMA（开源，下载中）+ 2091 舞蹈配乐。
+3. **RSI（大模型闭环增强 prompt）**：大模型同时看音乐与当前 prompt（+ 生成视频的抽帧/运动/节拍对齐指标），迭代改写 prompt 直至评分提升；把每首音乐的最优 prompt 作为 CLIP/encoder 的训练目标（自举数据）。代价：每轮需 H3 生成（704p ≈25 min/条），先在 3 case × 2–3 轮小规模验证闭环是否带来提升。
+4. **舞蹈侧监督（真实数据）**：2091 精选做 DWPose→3D→MotionScript，得到"舞种（VLM）+ 实测分段强度与动作（MotionScript）"的 caption；用来 (a) 训练/校验第 2 步 encoder 的"音乐→动作"映射，(b) 评测（生成视频同样跑 MotionScript，比较与音乐分析的一致性）。注意 §23：本数据中音乐几乎不预测动作强度（AUC 0.56），但预测舞种（0.65–0.85），所以 encoder 目标以舞种+风格为主、强度用音乐能量先验。
+### 24.3 正在进行
+- 舞种文本门控（§23，N1/N3，中国古典/hip-hop/K-pop/contemporary，同 3 人物）；
+- FMA：star-proxy 下单连接 ~150 KB/s，改为 48 路并行分段下载（`exp/dl_parallel.sh`），metadata 已过半；
+- Qwen2.5-Omni-7B（ModelScope ~10 MB/s）与 MotionScript 代码下载中。

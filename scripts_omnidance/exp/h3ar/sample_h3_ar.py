@@ -31,6 +31,8 @@ p.add_argument("--audio_shift", type=float, default=5.0, help="audio flow shift 
 p.add_argument("--cfg", type=float, default=1.0, help=">1: real CFG with negative prompt ' ' (diagnose lost CFG-distillation after fine-tuning)")
 p.add_argument("--height", type=int, default=832); p.add_argument("--width", type=int, default=480)
 p.add_argument("--audio_override", default="", help="replace the music of every case by this wav (speech/noise/silence probe)")
+p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
+p.add_argument("--body_key", default="timed", help="timed | calm | energetic")
 p.add_argument("--prompt_prefix", default="", help="e.g. a community LoRA trigger word (fal realism: r34l1sm)")
 p.add_argument("--w", default="/dev/shm/h3/Ref2VA")
 p.add_argument("--music_cfg", type=float, default=0.0, help=">0: music guidance v + w*(v(music) - v(music rolled by 50%%)) (time-misaligned negative, same text/ref)")
@@ -212,6 +214,10 @@ for c, r, dst in todo:
                      + ", ".join(f"{t:.1f}" for t in bt) + " seconds. <Subject 1> places a clear accent "
                      "(a sharp arm hit, step or body bounce) exactly on each of these beats.")
     CUR_AUDIO[0] = r["audio_path"]
+    if a.body_json:  # 10-15: fixed probe body ("*") or music-derived body keyed by audio path, inside the H3 template
+        BJ = _json.load(open(a.body_json))[a.body_key]
+        body = BJ.get(r["audio_path"], BJ.get("*"))
+        assert body, r["audio_path"]
     if a.prompt_prefix:
         body = a.prompt_prefix + " " + body
     # empty: text prompt " " (same as the CFG negative) -> isolates what image + audio alone drive

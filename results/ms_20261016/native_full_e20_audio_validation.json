@@ -1,0 +1,57 @@
+{
+  "metrics": {
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/native_full_lr3e7_b8_e20/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 0.016412341967225075,
+        "output_vs_base_relative_rms": 0.05647222325205803,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.07397646456956863,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.26200592517852783
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 0.034281015396118164,
+        "output_vs_base_relative_rms": 0.08291539549827576,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.11006656289100647,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.2916933596134186
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 0.027645912021398544,
+        "output_vs_base_relative_rms": 0.06524056196212769,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.1004549041390419,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.2579582631587982
+      }
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/native_full_lr1e6_b8_e20/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 0.037476547062397,
+        "output_vs_base_relative_rms": 0.07572060078382492,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.07344041019678116,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.2585875689983368
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 0.05903524160385132,
+        "output_vs_base_relative_rms": 0.10937196016311646,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.11077859997749329,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.29577478766441345
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 0.05507960915565491,
+        "output_vs_base_relative_rms": 0.1068134754896164,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.09996069222688675,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.2565152943134308
+      }
+    }
+  },
+  "scope": "audio representation/reconstruction only; not dance generation acceptance"
+}

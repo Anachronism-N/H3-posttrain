@@ -1,0 +1,20 @@
+{"epoch": 1, "train_loss": 4.101845741271973, "stage": "representation_only"}
+{"epoch": 2, "train_loss": 3.885676145553589, "stage": "representation_only"}
+{"epoch": 3, "train_loss": 3.692301034927368, "stage": "representation_only"}
+{"epoch": 4, "train_loss": 3.535417079925537, "stage": "representation_only"}
+{"epoch": 5, "train_loss": 3.40993332862854, "stage": "representation_only", "a2t_R@1": 0.009999999776482582, "a2t_R@5": 0.04999999701976776, "a2t_R@10": 0.10499999672174454, "t2a_R@1": 0.019999999552965164, "t2a_R@5": 0.04999999701976776, "t2a_R@10": 0.09999999403953552}
+{"epoch": 6, "train_loss": 3.30059552192688, "stage": "representation_only"}
+{"epoch": 7, "train_loss": 3.20967173576355, "stage": "representation_only"}
+{"epoch": 8, "train_loss": 3.1184701919555664, "stage": "representation_only"}
+{"epoch": 9, "train_loss": 3.034475803375244, "stage": "representation_only"}
+{"epoch": 10, "train_loss": 2.963792324066162, "stage": "representation_only", "a2t_R@1": 0.014999999664723873, "a2t_R@5": 0.054999999701976776, "a2t_R@10": 0.11999999731779099, "t2a_R@1": 0.02499999850988388, "t2a_R@5": 0.07499999552965164, "t2a_R@10": 0.0949999988079071}
+{"epoch": 11, "train_loss": 2.887507915496826, "stage": "representation_only"}
+{"epoch": 12, "train_loss": 2.809957981109619, "stage": "representation_only"}
+{"epoch": 13, "train_loss": 2.7470879554748535, "stage": "representation_only"}
+{"epoch": 14, "train_loss": 2.6690220832824707, "stage": "representation_only"}
+{"epoch": 15, "train_loss": 2.611070156097412, "stage": "representation_only", "a2t_R@1": 0.019999999552965164, "a2t_R@5": 0.044999998062849045, "a2t_R@10": 0.11499999463558197, "t2a_R@1": 0.02499999850988388, "t2a_R@5": 0.07000000029802322, "t2a_R@10": 0.10499999672174454}
+{"epoch": 16, "train_loss": 2.5425829887390137, "stage": "representation_only"}
+{"epoch": 17, "train_loss": 2.4814987182617188, "stage": "representation_only"}
+{"epoch": 18, "train_loss": 2.4223573207855225, "stage": "representation_only"}
+{"epoch": 19, "train_loss": 2.368823289871216, "stage": "representation_only"}
+{"epoch": 20, "train_loss": 2.3228671550750732, "stage": "representation_only", "a2t_R@1": 0.02499999850988388, "a2t_R@5": 0.044999998062849045, "a2t_R@10": 0.07000000029802322, "t2a_R@1": 0.019999999552965164, "t2a_R@5": 0.054999999701976776, "t2a_R@10": 0.07499999552965164}

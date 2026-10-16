@@ -82,8 +82,8 @@
   "motion_complete": true,
   "generated_video_motion_entries": 48,
   "native_baseline_motion_entries": 6,
-  "continuous_audio_video_human_review": "pending",
-  "music_adherence_verdict": "not established",
-  "quality_verdict": "no overall collapse in inspected still frames; not continuous-video acceptance",
+  "continuous_audio_video_human_review": "first user review received on 2026-10-17; relative improvement over native and bridge-only remains unconfirmed",
+  "music_adherence_verdict": "MusicFM bridge-initialized CLIP recipes subjectively beat-align better than random-adapter pure CLIP; superiority over native and bridge-only not established. MuQ recipes remain broadly similar to native with good subjective beat alignment; swaps change some motion but retain motifs.",
+  "quality_verdict": "user reports no major overall quality problems in reviewed videos; not a quantitative quality or musical-adherence superiority verdict",
   "scope": "Technical completeness and descriptive motion statistics only; motion change and weak timing proxies are not evidence of improved musical adherence. Full per-video records stay in the source reports, linked by SHA256; weights, raw audio/video are excluded."
 }

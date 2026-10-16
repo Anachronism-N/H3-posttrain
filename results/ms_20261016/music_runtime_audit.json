@@ -51,6 +51,6 @@
     "failed_logs_preserved": true,
     "normal_running_shards_not_restarted": true,
     "recovery": "Four different nodes; at most one cold sampler per recovery node; two failed shards sequentially on each node; recheck >=180GiB host and cgroup free memory and <=4 live samplers before every start; independent retry_memory1 logs",
-    "recovery_completion": "all eight retry shards exited 0; strict audio/video validation passed 48/48; continuous musical-adherence review remains pending"
+    "recovery_completion": "all eight retry shards exited 0; strict audio/video validation passed 48/48; first user effect review received, superiority over native and bridge-only remains unconfirmed"
   }
 }

@@ -242,7 +242,7 @@ for c, r, dst in todo:
     CUR_AUDIO[0] = r["audio_path"]
     if a.body_json:  # 10-15: fixed probe body ("*") or music-derived body keyed by audio path, inside the H3 template
         BJ = _json.load(open(a.body_json))[a.body_key]
-        body = BJ.get(r["audio_path"], BJ.get("*"))
+        body = BJ.get(r["sample_id"], BJ.get(r["audio_path"], BJ.get("*")))
         assert body, r["audio_path"]
     if SOFT is not None:  # K placeholder tokens (template supplies the leading space); their input embeddings become the soft caption
         body = SOFT["body"]

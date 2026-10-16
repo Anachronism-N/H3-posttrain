@@ -1,0 +1,46 @@
+{
+  "interface": {
+    "wJPptuhclZmKAEWs": {
+      "shape": [
+        2,
+        32,
+        203
+      ],
+      "reference_max_abs_error": 0.0,
+      "effective_hz": 40.0,
+      "latent_rms": 0.5155316591262817
+    },
+    "wJPrpFsThWAcBQIw": {
+      "shape": [
+        2,
+        32,
+        203
+      ],
+      "reference_max_abs_error": 0.0,
+      "effective_hz": 40.0,
+      "latent_rms": 0.48816996812820435
+    },
+    "wJQTclrlOLEYYfTB": {
+      "shape": [
+        2,
+        32,
+        203
+      ],
+      "reference_max_abs_error": 0.0,
+      "effective_hz": 40.0,
+      "latent_rms": 0.519001841545105
+    }
+  },
+  "clip_gradient_test": {
+    "loss": 1.1018469333648682,
+    "mean_proj_grad_norm": {
+      "weight": 0.06676620244979858,
+      "bias": 0.0005426605348475277
+    },
+    "training_parameters": "audio mean_proj and audio-side projection only",
+    "text_trainable": false,
+    "dit_loaded": false
+  },
+  "status": "interface_and_gradient_only",
+  "weights_sha256": "37dddc2f3e6d5d5139d823d5ea283bbf304dadcb885b1ccda818aa13dade5ea2"
+}

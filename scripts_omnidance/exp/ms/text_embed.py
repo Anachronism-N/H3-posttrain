@@ -19,6 +19,7 @@ ap.add_argument('--out', required=True)
 ap.add_argument('--w', default='/dev/shm/h3/Ref2VA'); ap.add_argument('--bs', type=int, default=16)
 ap.add_argument('--shard', type=int, default=0); ap.add_argument('--nshard', type=int, default=1)
 ap.add_argument('--key', default='caption')
+ap.add_argument('--dance_only', action='store_true', help='Align dance genre and original motion, excluding music BPM descriptions')
 a = ap.parse_args()
 if a.ms_dir:
     C = {}
@@ -48,7 +49,8 @@ out = {}
 with torch.inference_mode():
     for i in range(0, len(sids), a.bs):
         b = sids[i:i + a.bs]
-        texts = [C[s][a.key] for s in b]
+        texts = ([f"Dance style: {C[s]['dims']['genre']}. " + C[s]['motion_original'] for s in b]
+                 if a.dance_only else [C[s][a.key] for s in b])
         t = tok(texts, add_special_tokens=False, padding=True, return_tensors='pt').to('cuda')
         h = lm(input_ids=t['input_ids'], attention_mask=t['attention_mask'], use_cache=False).last_hidden_state.float()
         m = t['attention_mask'].unsqueeze(-1).float()

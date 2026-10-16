@@ -1,0 +1,5 @@
+{"epoch": 1, "train_loss": 2.7005560398101807, "stage": "representation_only"}
+{"epoch": 2, "train_loss": 2.4829959869384766, "stage": "representation_only"}
+{"epoch": 3, "train_loss": 2.2731003761291504, "stage": "representation_only"}
+{"epoch": 4, "train_loss": 2.1112680435180664, "stage": "representation_only"}
+{"epoch": 5, "train_loss": 1.9706437587738037, "stage": "representation_only", "a2t_R@1": 0.014999999664723873, "a2t_R@5": 0.054999999701976776, "a2t_R@10": 0.0949999988079071, "t2a_R@1": 0.019999999552965164, "t2a_R@5": 0.07000000029802322, "t2a_R@10": 0.0949999988079071}

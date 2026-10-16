@@ -31,6 +31,7 @@ p.add_argument("--audio_shift", type=float, default=5.0, help="audio flow shift 
 p.add_argument("--cfg", type=float, default=1.0, help=">1: real CFG with negative prompt ' ' (diagnose lost CFG-distillation after fine-tuning)")
 p.add_argument("--height", type=int, default=832); p.add_argument("--width", type=int, default=480)
 p.add_argument("--audio_override", default="", help="replace the music of every case by this wav (speech/noise/silence probe)")
+p.add_argument("--native_audio_ckpt", default="", help="Native audio-side CLIP checkpoint; install mean_proj only, retaining the original audio latent interface")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
 p.add_argument("--body_key", default="timed", help="timed | calm | energetic")
 p.add_argument("--soft_text", default="", help="10-15 G3: genre_clip text_targets.pt; description = K placeholder tokens whose "
@@ -80,6 +81,29 @@ pipe = MiniMaxH3Pipeline.from_pretrained(
     processor_config=ModelConfig(path=f"{W}/processor/"),
     **({"vram_limit": torch.cuda.mem_get_info("cuda")[1] / (1024 ** 3) - 5} if a.height > 832 else {}),  # official-res (as e3/oos scripts)
 )
+if a.native_audio_ckpt:
+    native = torch.load(a.native_audio_ckpt, map_location='cpu', weights_only=False)
+    state = (native['native_audio_encoder'] if 'native_audio_encoder' in native else
+             {'mean_proj.' + key: value for key, value in native['native_mean_proj'].items()})
+    assert state and all(torch.isfinite(value).all() for value in state.values()), 'Non-finite native audio weights'
+    # VRAM management adds module segments around wrapped layers; CPU-offloaded
+    # parameters remain the source of future onload/preparing copies.
+    from diffsynth.core.vram.layers import AutoWrappedModule
+    assert not any(module.disk_offload for module in pipe.audio_vae.modules() if isinstance(module, AutoWrappedModule)), 'Native checkpoint loading expects CPU, not disk, offload'
+    current = pipe.audio_vae.state_dict()
+    keys = {key.replace('.module.', '.'): key for key in current}
+    assert len(keys) == len(current), 'Ambiguous wrapped audio parameter names'
+    mapped = {}
+    for key, value in state.items():
+        assert key.startswith(('encoder.', 'pre_block.', 'mean_proj.')) and key in keys, key
+        target = keys[key]
+        assert current[target].shape == value.shape, key
+        mapped[target] = value
+    result = pipe.audio_vae.load_state_dict(mapped, strict=False)
+    assert not result.unexpected_keys, result.unexpected_keys
+    installed = pipe.audio_vae.state_dict()
+    assert all(torch.equal(installed[key].cpu(), value.to(installed[key].dtype)) for key, value in mapped.items()), 'Native checkpoint installation mismatch'
+    print(f'[h3ar] native audio encoder loaded: {len(mapped)} tensors; no caption retrieval or text-token hook', flush=True)
 MUSIC = False
 if a.lora:
     import h3_music as MU  # M1a: trained MERT injector (od_music.* keys) travels inside the LoRA file

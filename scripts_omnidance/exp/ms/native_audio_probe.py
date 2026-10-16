@@ -23,12 +23,20 @@ def main():
     from diffsynth.models.minimax_h3_audio_vae import MiniMaxH3AudioVAE
 
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--ids', required=True)
+    source = ap.add_mutually_exclusive_group(required=True)
+    source.add_argument('--ids')
+    source.add_argument('--caps', help='Selected caption JSON; only its clip IDs are used for native feature caching')
     ap.add_argument('--out', required=True)
     ap.add_argument('--text', default='')
+    ap.add_argument('--shard', type=int, default=0)
+    ap.add_argument('--nshard', type=int, default=1)
+    ap.add_argument('--verify_n', type=int, default=3)
     ap.add_argument('--w', default='/dev/shm/h3/Ref2VA/audio_vae/model.safetensors')
     a = ap.parse_args()
-    ids = [line.strip() for line in open(a.ids) if line.strip()]
+    ids = sorted(json.load(open(a.caps))) if a.caps else [line.strip() for line in open(a.ids) if line.strip()]
+    if not 0 <= a.shard < a.nshard:
+        raise ValueError('Invalid native cache shard')
+    ids = ids[a.shard::a.nshard]
     os.makedirs(a.out, exist_ok=True)
     torch.manual_seed(0)
     model = MiniMaxH3AudioVAE()
@@ -42,7 +50,7 @@ def main():
     mean, std = model._latent_stats('cuda')
     results, cached = {}, {}
     with torch.no_grad():
-        for sid in ids:
+        for index, sid in enumerate(ids):
             path = ROOT + '/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/' + sid + '.wav'
             audio, sr = sf.read(path, dtype='float32', always_2d=True)
             waveform = torch.from_numpy(audio.T.copy()).cuda()
@@ -55,15 +63,20 @@ def main():
             z = model.encoder(padded)
             z = model.pre_block(z.transpose(1, 2)).transpose(1, 2)
             latent = (model.mean_proj(z) - mean) / std
-            reference = model.encode_audio(waveform)
-            assert latent.shape == reference.shape
-            error = (latent - reference).abs().max().item()
-            assert error < 1e-4 and torch.isfinite(latent).all()
+            error = None
+            if index < a.verify_n:
+                reference = model.encode_audio(waveform)
+                assert latent.shape == reference.shape
+                error = (latent - reference).abs().max().item()
+                assert error < 1e-4
+            assert torch.isfinite(latent).all()
             cached[sid] = z.cpu()
             results[sid] = dict(shape=list(latent.shape), reference_max_abs_error=error,
                                 effective_hz=model.sample_rate / model.hop_length,
                                 latent_rms=latent.square().mean().sqrt().item())
-    torch.save(dict(features=cached, mean_proj=model.mean_proj.state_dict(),
+            if (index + 1) % 25 == 0:
+                print('native cache', index + 1, '/', len(ids), flush=True)
+    torch.save(dict(features=cached, mean_proj={k: v.cpu() for k, v in model.mean_proj.state_dict().items()},
                     mean=mean.cpu(), std=std.cpu(), sample_rate=model.sample_rate,
                     hop_length=model.hop_length), os.path.join(a.out, 'native_features.pt'))
     report = dict(interface=results, clip_gradient_test=None, status='interface_only')

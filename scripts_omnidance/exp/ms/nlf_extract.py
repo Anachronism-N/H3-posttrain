@@ -45,6 +45,12 @@ for sid in ids:
     with torch.inference_mode():
         for s in range(0, T, a.bs):
             r = m.detect_smpl_batched(fr[s:s + a.bs].cuda())
+            if 'boxes' not in r:
+                # NLF omits boxes for a batch with no accepted people.
+                if any(joints.numel() for joints in r['joints3d']):
+                    raise ValueError(f'NLF returned populated joints without boxes: {sid}, batch {s}')
+                print('NO_DETECTION', sid, s, flush=True)
+                continue
             for k in range(len(r['boxes'])):
                 b = r['boxes'][k]
                 if b.shape[0] == 0:

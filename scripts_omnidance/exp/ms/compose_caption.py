@@ -6,8 +6,15 @@
   动作描述 ← MS-lite 三段事件 + VLM key_moves
 输出: captions.json {sid: {dims:{...}, caption: str}}
 """
-import argparse, glob, json, os, re, collections
+import argparse, glob, json, os, re, collections, random
 import numpy as np
+from concurrent.futures import ThreadPoolExecutor
+
+
+def read_json(path):
+    with open(path) as stream:
+        return json.load(stream)
+
 
 GENRE_PHRASE = {
     "chinese classical": "Chinese classical dance", "chinese folk": "Chinese folk dance", "ballet": "ballet",
@@ -55,6 +62,8 @@ def main():
     ap.add_argument('--audio', default=f'{E}/MS/audio_feats.jsonl'); ap.add_argument('--rich', default=f'{E}/H3AR/full12k_rich_prompts.json')
     ap.add_argument('--out', default=f'{E}/MS/captions_v1.json')
     ap.add_argument('--format_probe', action='store_true', help='Prepare same-content original/structured bodies from the supplied original MS directory')
+    ap.add_argument('--count', type=int, default=0, help='Select this many diverse items by genre and movement bins; zero keeps all')
+    ap.add_argument('--seed', type=int, default=0)
     a = ap.parse_args()
     if a.format_probe:
         original, structured = {}, {}
@@ -84,13 +93,14 @@ def main():
             if 'bpm' in d: A[d['sid']] = d
     R = json.load(open(a.rich))
     M = {}
-    for f in glob.glob(os.path.join(a.ms, '*.json')):
-        d = json.load(open(f))
-        if a.motion_source == 'original':
-            if d.get('ms') and any(sentence.strip() for sentence in d['ms']):
+    paths = sorted(glob.glob(os.path.join(a.ms, '*.json')))
+    with ThreadPoolExecutor(max_workers=32) as pool:
+        for d in pool.map(read_json, paths):
+            if a.motion_source == 'original':
+                if d.get('ms') and any(sentence.strip() for sentence in d['ms']):
+                    M[d['sid']] = d
+            elif d.get('segs'):
                 M[d['sid']] = d
-        elif d.get('segs'):
-            M[d['sid']] = d
     sids = sorted(set(V) & set(M))
     print('vlm', len(V), 'ms', len(M), 'audio', len(A), 'both', len(sids))
     K = {k: np.array([M[s]['kin'][k] for s in sids]) for k in ['speed', 'travel', 'disp', 'pelvis_h_med', 'arm_speed', 'leg_speed', 'torso_speed']}
@@ -149,7 +159,26 @@ def main():
         # Identical context and movement text; only headings/line breaks differ.
         structured = 'Dance context:\n' + context + '\nMovement description:\n' + motion
         out[s] = dict(dims=dims, caption=c, caption_structured=structured, motion_original=motion)
-    json.dump(out, open(a.out, 'w'), ensure_ascii=False)
+    if a.count:
+        if not 0 < a.count <= len(out):
+            raise ValueError(f'Requested {a.count} items from {len(out)} usable captions')
+        buckets = collections.defaultdict(list)
+        for sid, item in out.items():
+            dims = item['dims']
+            buckets[(dims['genre'], dims['energy'], dims['level'], dims['focus'])].append(sid)
+        rng = random.Random(a.seed)
+        for bucket in buckets.values():
+            rng.shuffle(bucket)
+        selected = []
+        while len(selected) < a.count:
+            for key in sorted(buckets):
+                if buckets[key]:
+                    selected.append(buckets[key].pop())
+                if len(selected) == a.count:
+                    break
+        out = {sid: out[sid] for sid in sorted(selected)}
+    with open(a.out, 'w') as stream:
+        json.dump(out, stream, ensure_ascii=False, allow_nan=False)
     print(len(out), dict(stat))
     print('genre', collections.Counter(o['dims']['genre'] for o in out.values()).most_common())
     print('coarse', collections.Counter(o['dims']['coarse'] for o in out.values()).most_common())

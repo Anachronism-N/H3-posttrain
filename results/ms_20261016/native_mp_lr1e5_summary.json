@@ -1,0 +1,34 @@
+{
+  "best_metrics": {
+    "R@1": 0.014999999664723873,
+    "R@5": 0.07000000029802322,
+    "R@10": 0.11499999463558197,
+    "hit_genre": 0.175,
+    "random_genre": 0.11465,
+    "hit_coarse": 0.41,
+    "random_coarse": 0.31555,
+    "hit_energy": 0.36,
+    "random_energy": 0.35435,
+    "hit_tempo": 0.37,
+    "random_tempo": 0.39855,
+    "hit_quality": 0.48,
+    "random_quality": 0.34755,
+    "native_latent_relative_rms_change": 0.03055744618177414
+  },
+  "sha256": "95e6a89608e96d9597dc4f0db454cb9b3331f61b6de31a205d2acdb53256ec45",
+  "args": {
+    "caches": [
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/native_2k_s*/native_features.pt"
+    ],
+    "text": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/text_orig_2k.pt",
+    "caps": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/captions_orig_2k.json",
+    "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/native_mp_lr1e5",
+    "epochs": 60,
+    "batch_size": 128,
+    "native_lr": 1e-05,
+    "head_lr": 0.0003,
+    "val_fraction": 0.1,
+    "seed": 0
+  },
+  "stage": "representation_only"
+}

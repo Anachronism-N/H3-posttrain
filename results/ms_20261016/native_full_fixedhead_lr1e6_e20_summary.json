@@ -1,0 +1,39 @@
+{
+  "best_metrics": {
+    "a2t_R@1": 0.019999999552965164,
+    "a2t_R@5": 0.04999999701976776,
+    "a2t_R@10": 0.10999999940395355,
+    "t2a_R@1": 0.019999999552965164,
+    "t2a_R@5": 0.05999999865889549,
+    "t2a_R@10": 0.11499999463558197
+  },
+  "args": {
+    "caps": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/captions_orig_2k.json",
+    "text": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/text_orig_2k.pt",
+    "w": "/dev/shm/h3/Ref2VA/audio_vae/model.safetensors",
+    "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/native_full_fixedhead_lr1e6_e20",
+    "epochs": 20,
+    "batch_size": 8,
+    "native_lr": 1e-06,
+    "head_lr": 0.0003,
+    "checkpoint_encoder": true,
+    "head_ablation_ckpt": "",
+    "init_audio_head_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/native_full_lr1e6_b8_e20/best.pt",
+    "freeze_audio_head": true
+  },
+  "stage": "representation_only",
+  "sha256": {
+    "base_weights": "37dddc2f3e6d5d5139d823d5ea283bbf304dadcb885b1ccda818aa13dade5ea2",
+    "text": "9b9d34bbcc158467dac5e9cb4fa1449f4ac1d57ac96976d883b3611320f48cc6",
+    "caps": "ca8eac90f4aab1b4bd708cb3d0da5c26bd18d92dc39f8e2e4f6996b265a2ece5",
+    "best": "45d237e44493132b9fe94fe2deda090312bf46a9614ae76a8c48f566a71606ce",
+    "last": "f14e778d9f2843aecfd4952185d6b2639f71564739a670517d8b6a5203be9a84"
+  },
+  "trainable_parameters": {
+    "encoder": 73714816,
+    "pre_block": 12670304,
+    "mean_proj": 1056,
+    "audio_head": 0
+  },
+  "audio_head_trainable": false
+}

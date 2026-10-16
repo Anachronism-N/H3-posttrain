@@ -811,3 +811,21 @@ val47 GT（每条 3 段×1.7 s）：
 
 - 说明：把训练head装在未训练的原生encoder上，就能拿到几乎相同分数；该小样本实验支持“表征诊断的大部分成绩来自head适配、原生encoder学到的增量弱”。不是证明原生encoder不能学习，也不是证明所有音乐/舞种没有信号。
 - 下一单变量验证：使用固定的预训练音频侧head（不是H3文本head），将其冻结，只训练原生encoder/pre_block/mean_proj，以同一CLIP目标驱动原生表征；保持原始初始化、同1800/200、同batch与生成接口。此变更仍不训DiT/文本、不加视频或重建loss；声学保真作为验收，不作为新增训练目标。
+
+### 27.12 用户追问音频AdaLN：scheduler time不等于有效音频调制time
+- 当前原生audio-VAE CLIP不加载DiT，因此没有扩散timestep/modality输入，也不训练DiT AdaLN；推理沿用原生规则。此前`train_ha.sh`定义的LoRA仅attn qkv/out及mlp fc1/fc2，不包含AdaLN/time_embedder；`train_full.sh --trainable_models dit`的全DiT训练则包括这些权重。权重是否训练与输入time是否变化需分开判断。
+- upstream `model_fn_minimax_h3`先转`tau=1-timestep/1000`（pipeline:968-969）；audio位先用tau_audio，然后目标audio中mask=0强制tau=1（1010-1011）；参考audio用max(tau_audio,audio_cond_noise_aug)，默认augment=1故也为1（1014，pipeline:38）。旧`OD_H3_CLEAN_AUDIO=1`训练分支设干净latent与全零mask（loss.py:92-97），所以有效音频调制通常固定在干净端1，虽然外部audio scheduler仍取值。
+- modality tag：video=0、text=1、audio=2；DiT用`combined_indices=inverse_indices*3+token_tags`选择各模态AdaLN参数（dit.py:370）。AdaLN projection把time embedding映射成3组×6参数（shift/scale/gate用于attention和MLP，dit.py:166-183,224-234），不是把新增可训练modality embedding简单相加。
+- 用捕获DiT入参的CPU小测试验证：raw(video,audio)=(900,700)/(200,100)，真实干净音频与参考音频time均1；视频time0.1/0.8。没有加载/修改DiT权重。
+- 发现实际推理边界：三个case音频5.0625s编码203帧，124/24秒视频初始化207帧audio。原生retake unit把补齐的4帧mask设1（pipeline:410-425）；这4帧保留随audio scheduler变化的time，而其他203帧目标audio及203帧参考audio仍time1。采样器只更新video，不更新这4帧audio噪声（sample_h3_ar.py:209-216）。通过真实音频长度+原retake unit的shape stub测试均复现[203,204,205,206]为regenerate tail。
+- 因此不能笼统说“全部音频time不变”，也不能直接说time mismatch是音乐控制弱的根因。尾部约0.1s噪声/time不一致是待单变量对照的接口边界，不修改既有运行配置来掩盖；检查padding策略后另列基线与训练encoder相同对照。
+
+### 27.13 固定音频head训练结束与尾部对照设计
+- 两组固定head实验20轮全部完成，trainable音频head=0，原生encoder/pre_block/mean_proj共86,386,176参数；无文本/DiT训练。lr3e-7的损失2.8499→2.8196，lr1e-6为2.8479→2.7861。损失下降较小，best音频→文本R@1/R@10为2.0%/11.5%和2.0%/11.0%，没有明确改善。
+- best SHA256：3e-7=66931b8904e0bc39df053150bd2e8c1e4f2e484bba75553336fc07d1bde7e49e；1e-6=45d237e44493132b9fe94fe2deda090312bf46a9614ae76a8c48f566a71606ce。权重finite检查与训练退出0确认。
+- 固定head的三个case声学重建：3e-7 latent偏移1.65%/2.64%/2.33%，频谱误差0.264/0.290/0.259；1e-6 latent偏移6.21%/9.25%/8.20%，频谱误差0.255/0.303/0.258。没有一致重建改善；不能因CLIP score相近忽略原生分布变化。
+- 生成验收：`val_nativeclip_fixedhead_lr3e7`、`val_nativeclip_fixedhead_lr1e6`，每组固定3case joint/aswap，沿旧legacy音频尾部策略，用来隔离训练变化；进行中。
+- 尾部单变量政策：新增显式`--audio_tail_mode repeat_clean`，只将已有retake填充部分的mask从1改0，使用已重复的最后干净latent，令其有效AdaLN time=1；不改原音频/参考音频/文本/视频长度/seed。默认仍legacy，旧结果不被改变。这里对比的是“尾部处理策略”（同时决定内容与time），不是仅time的因果消融。
+- 对照组：原生基线legacy vs `val_nativeclip_base_cleanpad`；原生全encoder二十轮1e-6 legacy vs `val_nativeclip_full_lr1e6_e20_cleanpad`，各3case joint/aswap。同基线与训练encoder均比较，不能把训练与padding混在同一差异里。
+- 代码守卫：只接受连续尾部mask，至少有真实干净行；不支持用这个选项覆盖任意音频重生成区。CPU捕获DiT测试已验证不同scheduler步下repeat_clean目标/参考音频均有效time1；实际生成待验收。
+- 四配置共24条以6节点×4GPU并行启动，逐PID确认各4个真实sampler；启动期CPU装载会造成GPU等待，不把占卡100%算作利用率。未更改运行脚本或覆盖活跃任务。

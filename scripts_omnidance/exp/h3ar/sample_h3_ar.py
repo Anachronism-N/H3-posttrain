@@ -31,7 +31,8 @@ p.add_argument("--audio_shift", type=float, default=5.0, help="audio flow shift 
 p.add_argument("--cfg", type=float, default=1.0, help=">1: real CFG with negative prompt ' ' (diagnose lost CFG-distillation after fine-tuning)")
 p.add_argument("--height", type=int, default=832); p.add_argument("--width", type=int, default=480)
 p.add_argument("--audio_override", default="", help="replace the music of every case by this wav (speech/noise/silence probe)")
-p.add_argument("--native_audio_ckpt", default="", help="Native audio-side CLIP checkpoint; install mean_proj only, retaining the original audio latent interface")
+p.add_argument("--native_audio_ckpt", default="", help="Native audio-side CLIP checkpoint; install native encoding weights, retaining the original audio latent interface")
+p.add_argument("--audio_tail_mode", default="legacy", choices=["legacy", "repeat_clean"], help="Controlled audio-padding probe: legacy regenerates padded target audio; repeat_clean keeps the repeated clean latent fixed at AdaLN time=1")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
 p.add_argument("--body_key", default="timed", help="timed | calm | energetic")
 p.add_argument("--soft_text", default="", help="10-15 G3: genre_clip text_targets.pt; description = K placeholder tokens whose "
@@ -160,6 +161,18 @@ def generate(prompt, img, wav, sr):
           "imgvid_cond_noise_aug": pipe.imgvid_cond_noise_aug, "audio_cond_noise_aug": pipe.audio_cond_noise_aug, "text_embedding": None}
     for unit in pipe.units:
         sh, inputs_posi, inputs_nega = pipe.unit_runner(unit, pipe, sh, inputs_posi, inputs_nega)
+    if a.audio_tail_mode == 'repeat_clean':
+        assert sh.get('input_latents_audio') is not None and sh.get('denoise_mask_audio') is not None
+        # Retake unit already repeats the last clean latent for padding. Here
+        # only its regenerate mask is changed; waveform/ref/prompt stay identical.
+        mask = sh['denoise_mask_audio'].clone()
+        clean_rows = mask[0, 0] == 0
+        assert clean_rows.any() and mask.shape[-1] == sh['audio_latents'].shape[-1]
+        padded = (~clean_rows).nonzero().reshape(-1)
+        assert not padded.numel() or torch.equal(padded, torch.arange(int(padded[0]), mask.shape[-1], device=mask.device)), 'Only contiguous tail padding may be changed'
+        mask.zero_()
+        sh['denoise_mask_audio'] = mask
+        print(f'[h3ar] repeat_clean audio tail: {padded.numel()} rows fixed at effective time=1', flush=True)
     pipe.load_models_to_device(pipe.in_iteration_models)
     models = {n: getattr(pipe, n) for n in pipe.in_iteration_models}
     lat0 = sh["video_latents"].clone()

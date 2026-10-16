@@ -1,0 +1,22 @@
+{
+  "fixedhead_lr3e7": {
+    "completed_shards": 6,
+    "tail_rows_confirmed": 0,
+    "encoder_install_confirmed": 6
+  },
+  "fixedhead_lr1e6": {
+    "completed_shards": 6,
+    "tail_rows_confirmed": 0,
+    "encoder_install_confirmed": 6
+  },
+  "base_cleanpad": {
+    "completed_shards": 6,
+    "tail_rows_confirmed": 6,
+    "encoder_install_confirmed": 0
+  },
+  "full_lr1e6_e20_cleanpad": {
+    "completed_shards": 6,
+    "tail_rows_confirmed": 6,
+    "encoder_install_confirmed": 6
+  }
+}

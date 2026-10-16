@@ -1,0 +1,81 @@
+{
+  "pairs": {
+    "base_vs_base_cleanpad": [
+      {
+        "cond": "aswap",
+        "id": "wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH",
+        "post1s_pixel_mae": 15.725520133972168,
+        "speed_ratio": 0.9580749370776085
+      },
+      {
+        "cond": "aswap",
+        "id": "wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH",
+        "post1s_pixel_mae": 11.680516242980957,
+        "speed_ratio": 0.9573468213187745
+      },
+      {
+        "cond": "aswap",
+        "id": "wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb",
+        "post1s_pixel_mae": 6.109785556793213,
+        "speed_ratio": 0.941450325602152
+      },
+      {
+        "cond": "joint",
+        "id": "wJPptuhclZmKAEWs_wJPptuhclZmKAEWs",
+        "post1s_pixel_mae": 11.49377155303955,
+        "speed_ratio": 0.9680108380239454
+      },
+      {
+        "cond": "joint",
+        "id": "wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw",
+        "post1s_pixel_mae": 11.818168640136719,
+        "speed_ratio": 1.0402145449984235
+      },
+      {
+        "cond": "joint",
+        "id": "wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB",
+        "post1s_pixel_mae": 4.675220012664795,
+        "speed_ratio": 1.018766095881887
+      }
+    ],
+    "full_lr1e6_e20_vs_full_lr1e6_e20_cleanpad": [
+      {
+        "cond": "aswap",
+        "id": "wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH",
+        "post1s_pixel_mae": 14.24832820892334,
+        "speed_ratio": 1.0132552004253519
+      },
+      {
+        "cond": "aswap",
+        "id": "wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH",
+        "post1s_pixel_mae": 11.802155494689941,
+        "speed_ratio": 0.9904460621277708
+      },
+      {
+        "cond": "aswap",
+        "id": "wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb",
+        "post1s_pixel_mae": 6.352682590484619,
+        "speed_ratio": 0.9559492109533217
+      },
+      {
+        "cond": "joint",
+        "id": "wJPptuhclZmKAEWs_wJPptuhclZmKAEWs",
+        "post1s_pixel_mae": 11.149792671203613,
+        "speed_ratio": 0.9406795587941229
+      },
+      {
+        "cond": "joint",
+        "id": "wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw",
+        "post1s_pixel_mae": 10.94217300415039,
+        "speed_ratio": 1.0923426580026951
+      },
+      {
+        "cond": "joint",
+        "id": "wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB",
+        "post1s_pixel_mae": 4.892722129821777,
+        "speed_ratio": 1.0713313379015126
+      }
+    ]
+  },
+  "scope": "Same-seed tail-policy sensitivity; pixel/motion differences do not measure musical adherence"
+}

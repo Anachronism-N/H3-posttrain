@@ -157,6 +157,10 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-16 原生音频CLIP·固定head】仅更新完整原生encoder，训练用head冻结：基线 / 固定head3e-7 / 固定head1e-6", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_nativeclip_base", "H3AR/val_nativeclip_fixedhead_lr3e7", "H3AR/val_nativeclip_fixedhead_lr1e6"]},
+    {"name": "【10-16 音频尾部·单变量】legacy尾部4帧噪声与repeat_clean(time=1)：原生基线及20轮1e-6编码器分别对照；prompt/音乐/seed相同", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_nativeclip_base", "H3AR/val_nativeclip_base_cleanpad", "H3AR/val_nativeclip_full_lr1e6_e20", "H3AR/val_nativeclip_full_lr1e6_e20_cleanpad"]},
     {"name": "【10-16 原生音频CLIP·完整encoder】同prompt/seed，仅换原生音频编码权重：基线 / 全编码5轮1e-6 / 5轮1e-5 / 20轮3e-7 / 20轮1e-6；joint与aswap都看", "cond": "joint", "view": "models",
      "models": ["H3AR/val_nativeclip_base", "H3AR/val_nativeclip_full_lr1e6_pilot5", "H3AR/val_nativeclip_full_lr1e5_pilot5", "H3AR/val_nativeclip_full_lr3e7_e20", "H3AR/val_nativeclip_full_lr1e6_e20"]},
     {"name": "【10-16 原生音频CLIP·末端消融】仅mean_proj更新（不是完整encoder训练）：基线 / lr1e-6 / lr1e-5", "cond": "joint", "view": "models",

@@ -940,5 +940,8 @@ waveform[batch,2,L]32k → 每声道resample24k → dense music encoder
 - 第一批MuQ/MusicFM bridge-only及pureCLIP共4配置×3case×joint/aswap=24条，6nodes×4GPU受管理并行生成。恢复对话后的实时核查为24个真实H3采样GPU，不计16个仅约975MiB的占卡任务；另24张真实空闲GPU已接续bridge+CLIP及同init lambda0，共8配置48条，**未增加第四case**。
 - 每条固定seed42、generic prompt、50步、shift12/3、704×1280、repeat_clean；与既有`val_nativeclip_base_cleanpad`同条件对照，不混比legacy。reference与retake两处均使用训练后同encoder+adapter，不调用原生编码器信息旁路、不替换文本。
 - 新批24分片中8个被SIGKILL/exit137：N1四个、N3三个、N2一个；内核日志确认N1/N3 memory-cgroup OOM，N2 global OOM。调度仅验证GPU空闲，漏掉每节点~1TB容器内存与/dev/shm模型、H3冷加载可超过100GiB/进程，属于调度错误，不是训练checkpoint NaN。当前已停止额外启动，原24正常分片保持运行，新批16存活分片不重启；保留原失败日志，恢复必须联合检查主机/cgroup内存、最多少量冷加载并发，用独立retry日志只补失败分片，不能拿当前failcnt0排除先前OOM。
-- 真实三条验证音频检查了缓存与live重采样：原wav→24k与原wav→32k→24k的波形相对RMS差0.65%/0.85%/2.72%；同bridgeadapter的latent差MuQ3.78%–4.59%、MusicFM5.61%–9.93%。FP16缓存与同24k live hidden误差约0.022%–0.023%，对应latent误差仅0.015%–0.019%。因此不能称缓存warmup与在线微调预处理严格等价，主要差异来自重采样链而非FP16舍入；后续应统一链路并另做warmup对照，已有运行结果保留不偷换。
+- 在现有200条CLIP验证音频中抽取三条检查缓存与live重采样（不是新增视频case）：原wav→24k与原wav→32k→24k的波形相对RMS差0.65%/0.85%/2.72%；同bridgeadapter的latent差MuQ3.78%–4.59%、MusicFM5.61%–9.93%。FP16缓存与同24k live hidden误差约0.022%–0.023%，对应latent误差仅0.015%–0.019%。固定三个生成case另做CPU波形核查，原wav均24kHz，24→32→24后相对RMS差1.82%/1.90%/2.37%。因此不能称缓存warmup与在线微调预处理严格等价，主要差异来自重采样链而非FP16舍入；后续应统一链路并另做warmup对照，已有运行结果保留不偷换。
+- 但重采样不等于bridge训练恶化根因：缓存warmup best与相同adapter的live初始化验证MSE只增加MuQ0.000257、MusicFM0.000614；后续lambda1训练的train/val MSE却随epoch均升至约0.240/0.241与0.246/0.248。不能将该趋势归因于单次重采样，或仅因validation开eval而解释；权重/BN训练动态仍需固定权重模式对照。
+- 内存守卫恢复已启动：N5–N8各一个失败分片，启动前主机与cgroup可用内存均>180GiB、已有sampler≤4；四个真实retry进程及reference/retake两次新编码已核验，尚未生成完成。每节点另一个失败分片排在前一个正常退出之后，重新检查预算；旧失败日志不覆盖。唯一PPID1孤儿编码worker已按精确PID/命令核验后SIGTERM，其余有活跃父任务的worker未动。
+- 新评审预设已在发布仓库准备：MuQ、MusicFM各自原生cleanpad/bridge-only/pureCLIP/bridgeCLIP/lambda0五列，以及纯CLIP骨干对比；尚未部署到正在运行的评审服务，不提前宣称网页已有全部结果。
 - 当前只确认作业与接口，完整视频/音轨解码、1秒后运动统计和连续视频人评仍待完成。**尚无本轮生成音乐遵循或画质判优结论**，不得用上一轮原生66条完成记录代替本轮验收。

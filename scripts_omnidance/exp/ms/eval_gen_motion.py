@@ -25,6 +25,10 @@ for d in a.dirs:
         with torch.inference_mode():
             for s in range(0, T, 24):
                 r = m.detect_smpl_batched(fr[s:s + 24].cuda())
+                if 'boxes' not in r:
+                    if any(joints.numel() for joints in r['joints3d']):
+                        raise ValueError(f'NLF joints without boxes: {f}, batch {s}')
+                    continue
                 for k in range(len(r['boxes'])):
                     b = r['boxes'][k]
                     if b.shape[0] == 0: continue

@@ -8,9 +8,9 @@
 - 视频/音频经 /media 提供（支持 Range，可拖动），只允许访问 EXP 与 OmniDance_processed
 - 评审结果写入 logs_omnidance/exp/review_web/reviews/<评审人>.jsonl（追加，取最新）
 """
-import argparse, csv, gzip, json, os, re, threading, time
+import argparse, csv, gzip, html, json, os, re, threading, time
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urlencode
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = "/apdcephfs_gy4/share_302533218/cedricnie"
@@ -21,13 +21,22 @@ REVIEWS = f"{OUT}/reviews"
 MANIFEST = f"{OUT}/manifest.json"
 ALLOWED = [os.path.realpath(EXP), os.path.realpath(DATA)]
 CONDS = ["joint", "aswap", "tswap", "audio_only", "text_only"]
-SKIP = {"review", "review_web", "logs", "kps", "shards", "r0", "r0b", "r1", "r1v2", "__pycache__"}
+SKIP = {"review", "review_web", "logs", "kps", "shards", "r0", "r0b", "r1", "r1v2", "__pycache__", "MS"}
 ID_RE = re.compile(r"wJ[A-Za-z]{14}")
 METRIC_KEYS = ["bas", "bas_alt", "ta", "ta_alt", "id_dino", "motion", "g2", "g2_alt"]
 CTYPE = {".mp4": "video/mp4", ".wav": "audio/wav", ".png": "image/png", ".jpg": "image/jpeg", ".json": "application/json"}
 
 # 模型说明（label 匹配前缀即可）
 DESC = {
+    "H3AR/val_nativeclip_base": "原生音频基线：通用舞蹈prompt，原始audio-VAE，不检索caption",
+    "H3AR/val_nativeclip_full_lr1e6_pilot5": "完整原生encoder CLIP：lr1e-6，5轮，文本/DiT冻结",
+    "H3AR/val_nativeclip_full_lr1e5_pilot5": "完整原生encoder CLIP：lr1e-5，5轮；声学漂移较大对照",
+    "H3AR/val_nativeclip_full_lr3e7_e20": "完整原生encoder CLIP：lr3e-7，20轮，全局batch64",
+    "H3AR/val_nativeclip_full_lr1e6_e20": "完整原生encoder CLIP：lr1e-6，20轮，全局batch64",
+    "H3AR/val_nativeclip_mp_lr1e6_fixed": "仅原生mean_proj末端CLIP：lr1e-6，60轮，不是完整encoder",
+    "H3AR/val_nativeclip_mp_lr1e5_fixed": "仅原生mean_proj末端CLIP：lr1e-5，60轮，不是完整encoder",
+    "H3AR/val_MSfmt_original": "原版MotionScript动作正文，固定3case",
+    "H3AR/val_MSfmt_structured": "相同MotionScript正文，仅加标题换行",
     "E3_h3/H3-Ref2VA": "原始 H3（33B 双向，零样本 Ref2VA，原长 prompt）",
     "E3_h3/out_retake": "原始 H3 retake（音乐作干净对齐音轨）",
     "E3_h3/out_seed43": "原始 H3 seed43",
@@ -148,8 +157,18 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-16 原生音频CLIP·完整encoder】同prompt/seed，仅换原生音频编码权重：基线 / 全编码5轮1e-6 / 5轮1e-5 / 20轮3e-7 / 20轮1e-6；joint与aswap都看", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_nativeclip_base", "H3AR/val_nativeclip_full_lr1e6_pilot5", "H3AR/val_nativeclip_full_lr1e5_pilot5", "H3AR/val_nativeclip_full_lr3e7_e20", "H3AR/val_nativeclip_full_lr1e6_e20"]},
+    {"name": "【10-16 原生音频CLIP·末端消融】仅mean_proj更新（不是完整encoder训练）：基线 / lr1e-6 / lr1e-5", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_nativeclip_base", "H3AR/val_nativeclip_mp_lr1e6_fixed", "H3AR/val_nativeclip_mp_lr1e5_fixed"]},
+    {"name": "【10-16 原版MotionScript·同内容格式】完全相同动作正文：原版 / 只加标题换行；不混淆动作内容与格式", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_MSfmt_original", "H3AR/val_MSfmt_structured"]},
     {"name": "【10-15 文本×音乐】原始H3 704p：空prompt/H3模板+通用句/富文本 × 有音乐/静音（看文本与音乐各自驱动什么）", "cond": "joint", "view": "models",
      "models": ["H3AR/val_zsbase_bihrempty", "H3AR/val_zsbase_bihrempty_silence", "H3AR/val_zsbase_bihrgeneric", "H3AR/val_zsbase_bihrgeneric_silence", "H3AR/val_zsbase_bihrorig", "H3AR/val_zsbase_bihrorig_silence"]},
+    {"name": "【10-16 MS新格式caption·动作细节】冻结H3，同人物同seed、原音乐，同为街舞，只改动作描述：跳跃 / 深蹲贴地 / 连续转圈 / 只动手臂脚不动（3D实测：转圈净转角1260°、贴地骨盆最低0.44m、只动手臂腿速0.22）", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_MS_st_jump", "H3AR/val_MS_st_floor", "H3AR/val_MS_st_turn", "H3AR/val_MS_st_arms", "H3AR/val_zsbase_bihr"]},
+    {"name": "【10-16 MS新格式caption·舞种】冻结H3，完整新格式(舞种+BPM/能量+层次/位移+质感+分段动作)：中国古典 / 现代 / 街舞，对照原始富文本", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_MS_g_chinese", "H3AR/val_MS_g_contemp", "H3AR/val_MS_g_street", "H3AR/val_zsbase_bihr"]},
     {"name": "【10-16 G4 自编码器token直接注入】音乐→AE编码器→32个H3文本token（每段音乐自己的token，不查表）→冻结H3：摇滚 / 爵士 / 禅意；舞蹈配乐 joint/aswap。对照 G2/G3", "cond": "joint", "view": "models",
      "models": ["H3AR/val_G4ae_rock", "H3AR/val_G4ae_jazz", "H3AR/val_G4ae_zen", "H3AR/val_G4ae_dance", "H3AR/val_G3_rock_soft1", "H3AR/val_G3_zen_soft1", "H3AR/val_zsbase_bihrgeneric"]},
     {"name": "【10-16 音乐CoT】Qwen2.5-Omni听音乐→辨类→编舞文本→冻结H3：原音乐/换音乐(aswap)；摇滚 vs 禅意（对照 G2 编码器、方案A规则文本）", "cond": "joint", "view": "models",
@@ -438,6 +457,85 @@ def load_reviews():
     return list(out.values())
 
 
+_data_review = None
+
+
+def data_review_page(query):
+    global _data_review
+    if _data_review is None:
+        with open(f"{EXP}/MS/captions_orig_2k.json") as stream:
+            captions = json.load(stream)
+        with open(f"{EXP}/MS/native_full_lr3e7_b8_e20/split.json") as stream:
+            val = set(json.load(stream)["val"])
+        _data_review = captions, val
+    captions, val = _data_review
+    genre = query.get("genre", [""])[0]
+    split = query.get("split", [""])[0]
+    ids = sorted(sid for sid, item in captions.items()
+                 if (not genre or item["dims"]["genre"] == genre)
+                 and (split not in ("train", "val") or (sid in val) == (split == "val")))
+    genres = sorted({item["dims"]["genre"] for item in captions.values()})
+    options = '<option value="">全部舞种</option>' + ''.join(
+        f'<option value="{html.escape(g, quote=True)}"' + (' selected' if g == genre else '')
+        + f'>{html.escape(g)}</option>' for g in genres)
+    splits = ''.join(f'<option value="{s}"' + (' selected' if s == split else '') + f'>{label}</option>'
+                     for s, label in (("", "全部"), ("train", "训练1800"), ("val", "验证200")))
+    header = ('<!doctype html><html lang="zh"><meta charset="utf-8"><title>MotionScript 数据评审</title>'
+              '<style>body{font:16px sans-serif;background:#111418;color:#e6e9ee;margin:24px}'
+              'a{color:#8dbfff}video{max-height:70vh;max-width:100%}.grid{display:flex;gap:24px;flex-wrap:wrap}'
+              '.text{max-width:800px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#1a1f26;padding:12px}'
+              'button,input,select{font:inherit;margin:4px}textarea{width:100%;min-height:70px}</style>'
+              '<h2>训练数据：原版 MotionScript + 舞种</h2><p><a href="./">返回生成评审</a></p>'
+              '<p>核对动作是否真实、左右/时间是否正确；舞种是VLM标签，不是已核验真值。'
+              '下面的CLIP目标仅含舞种与原版动作，不含音乐BPM。手指3D未估计；DWPose覆盖是分数覆盖，不是准确率。</p>'
+              f'<form>舞种 <select name="genre">{options}</select> 数据划分 <select name="split">{splits}</select>'
+              '<button>筛选</button></form>')
+    if not ids:
+        return (header + '<p>该筛选无样本。</p></html>').encode()
+    requested = query.get("sid", [""])[0]
+    try:
+        index = max(0, min(len(ids) - 1, int(query.get("i", ["0"])[0])))
+    except ValueError:
+        index = 0
+    if requested in ids:
+        index = ids.index(requested)
+    sid = ids[index]
+    item = captions[sid]
+    base = f"{DATA}/pose_preprocess_outputs/mainline/normalized_704x1280/main"
+    media = lambda path: 'media?' + urlencode({"p": path})
+    links = []
+    for label, position in (("上一条", max(0, index - 1)), ("下一条", min(len(ids) - 1, index + 1))):
+        url = 'data-review?' + urlencode(dict(i=position, genre=genre, split=split))
+        links.append(f'<a href="{html.escape(url, quote=True)}">{label}</a>')
+    target = f"Dance style: {item['dims']['genre']}. " + item['motion_original']
+    payload = json.dumps(dict(key='MS/data/' + sid, sample_id=sid, model='MotionScript_original_data'))
+    payload = payload.replace('<', '\\u003c')
+    body = (f'<p>{" · ".join(links)}　{index + 1}/{len(ids)}　{html.escape(sid)}　'
+            f'{"验证集" if sid in val else "训练集"}</p>'
+            f'<div class="grid"><div><video controls preload="metadata" src="{html.escape(media(base + "/videos/" + sid + ".mp4"), quote=True)}"></video>'
+            f'<p>原配音乐 <audio controls src="{html.escape(media(base + "/audio/" + sid + ".wav"), quote=True)}"></audio></p></div>'
+            f'<div class="text"><h3>实际 CLIP 文本目标</h3><pre>{html.escape(target)}</pre>'
+            f'<details><summary>所有结构化维度</summary><pre>{html.escape(json.dumps(item["dims"], ensure_ascii=False, indent=2))}</pre></details>'
+            '<p>评审人 <input id="reviewer" maxlength="40"></p>'
+            '<p>动作正确度 <select id="score"><option value="">请选择</option>'
+            + ''.join(f'<option>{i}</option>' for i in range(1, 6)) + '</select>（1差，5好）</p>'
+            '<p><label><input type="checkbox" id="wrong">动作事实不符</label>'
+            '<label><input type="checkbox" id="side">左右/时间错误</label>'
+            '<label><input type="checkbox" id="style">舞种待纠正</label></p>'
+            '<textarea id="note" placeholder="记录具体错误或漏掉的身体部位"></textarea>'
+            '<button id="save">保存评审</button><span id="saved"></span></div></div>'
+            '<script>const payload=' + payload + ';document.getElementById("save").onclick=async()=>{'
+            'const name=document.getElementById("reviewer").value.trim();if(!name){alert("请填写评审人");return;}'
+            'const score=document.getElementById("score").value;'
+            'try{const response=await fetch("review",{method:"POST",headers:{"Content-Type":"application/json"},'
+            'body:JSON.stringify({...payload,reviewer:name,caption_accuracy:score?Number(score):null,'
+            'flags:["wrong","side","style"].filter(id=>document.getElementById(id).checked),'
+            'note:document.getElementById("note").value})});if(!response.ok)throw Error("保存失败");'
+            'document.getElementById("saved").textContent="已保存";}catch(error){'
+            'document.getElementById("saved").textContent=error.message;}};</script></html>')
+    return (header + body).encode()
+
+
 class H(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
@@ -471,6 +569,8 @@ class H(BaseHTTPRequestHandler):
             elif path == "manifest":
                 body = manifest_gz(rebuild=q.get("rebuild", ["0"])[0] == "1")
                 self._send(200, body, extra={"Content-Encoding": "gzip", "Cache-Control": "no-cache"})
+            elif path == "data-review":
+                self._send(200, data_review_page(q), "text/html; charset=utf-8", {"Cache-Control": "no-cache"})
             elif path == "reviews":
                 self._json(load_reviews())
             elif path == "media":

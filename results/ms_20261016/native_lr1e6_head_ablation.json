@@ -1,0 +1,21 @@
+{
+  "original_encoder_with_trained_head": {
+    "a2t_R@1": 0.014999999664723873,
+    "a2t_R@5": 0.04999999701976776,
+    "a2t_R@10": 0.11499999463558197,
+    "t2a_R@1": 0.02499999850988388,
+    "t2a_R@5": 0.06499999761581421,
+    "t2a_R@10": 0.0949999988079071
+  },
+  "trained_encoder_with_same_head": {
+    "a2t_R@1": 0.014999999664723873,
+    "a2t_R@5": 0.05999999865889549,
+    "a2t_R@10": 0.11499999463558197,
+    "t2a_R@1": 0.02499999850988388,
+    "t2a_R@5": 0.06499999761581421,
+    "t2a_R@10": 0.10999999940395355
+  },
+  "checkpoint_sha256": "436ea2f4ac60282524e7f9b37f17ee4e161a186d75f0df864c70ccb2f7edac0d",
+  "validation_items": 200,
+  "scope": "Fixed-head representation ablation, no training or generation"
+}

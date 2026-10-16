@@ -153,6 +153,9 @@ def main():
     parser.add_argument('--native_lr', type=float, default=1e-6)
     parser.add_argument('--head_lr', type=float, default=3e-4)
     parser.add_argument('--checkpoint_encoder', action='store_true')
+    parser.add_argument('--head_ablation_ckpt', default='', help='Evaluate a fixed trained audio head with original vs trained native encoder, without training')
+    parser.add_argument('--init_audio_head_ckpt', default='', help='Initialize only the training-side audio head; native encoder starts from original H3')
+    parser.add_argument('--freeze_audio_head', action='store_true', help='Freeze the initialized audio head so only native encoder weights can learn')
     args = parser.parse_args()
     if args.epochs < 1 or args.batch_size < 1 or args.native_lr <= 0 or args.head_lr <= 0:
         raise ValueError('Positive epochs, batch_size and learning rates are required')
@@ -163,7 +166,7 @@ def main():
     world = int(os.environ.get('WORLD_SIZE', '1'))
     rank = int(os.environ.get('RANK', '0'))
     local_rank = int(os.environ.get('LOCAL_RANK', '0'))
-    if args.batch_size * world < 2:
+    if args.batch_size * world < 2 and not args.head_ablation_ckpt:
         raise ValueError('InfoNCE requires at least two global paired items')
     torch.cuda.set_device(local_rank)
     device = torch.device('cuda', local_rank)
@@ -207,10 +210,43 @@ def main():
         raise ValueError('Training split is smaller than the global batch')
     val_loader = DataLoader(AudioPairs(val_ids, targets, native.hop_length), batch_size=args.batch_size,
                             num_workers=2, pin_memory=True) if rank == 0 else None
+    if args.head_ablation_ckpt:
+        if world != 1:
+            raise ValueError('Fixed-head ablation runs on one GPU without DDP')
+        checkpoint = torch.load(args.head_ablation_ckpt, map_location='cpu', weights_only=False)
+        expected_split = dict(train=train_ids, val=val_ids, seed=42)
+        if checkpoint['split'] != expected_split:
+            raise ValueError('Fixed-head ablation must use the identical train/validation split')
+        assert torch.equal(text_mean, checkpoint['text_mean']) and torch.equal(text_std, checkpoint['text_std'])
+        model.head.load_state_dict(checkpoint['head'], strict=True)
+        original_metrics = evaluate(model, val_loader, device)
+        model.native.load_state_dict(checkpoint['native_audio_encoder'], strict=True)
+        trained_metrics = evaluate(model, val_loader, device)
+        finite_guard(model.named_parameters(), device, 'ablation weights', synchronize=False)
+        report = dict(original_encoder_with_trained_head=original_metrics,
+                      trained_encoder_with_same_head=trained_metrics,
+                      checkpoint_sha256=sha256(args.head_ablation_ckpt),
+                      validation_items=len(val_ids), scope='Fixed-head representation ablation, no training or generation')
+        os.makedirs(args.out, exist_ok=True)
+        with open(os.path.join(args.out, 'head_ablation.json'), 'w') as stream:
+            json.dump(report, stream, indent=2, allow_nan=False)
+        print(json.dumps(report), flush=True)
+        return
+    if args.freeze_audio_head and not args.init_audio_head_ckpt:
+        raise ValueError('A frozen audio head must be initialized from a specified checkpoint')
+    if args.init_audio_head_ckpt:
+        initialized = torch.load(args.init_audio_head_ckpt, map_location='cpu', weights_only=False)
+        if initialized['split'] != dict(train=train_ids, val=val_ids, seed=42):
+            raise ValueError('Audio head initialization must use the identical split')
+        assert torch.equal(text_mean, initialized['text_mean']) and torch.equal(text_std, initialized['text_std'])
+        model.head.load_state_dict(initialized['head'], strict=True)
+        model.head.requires_grad_(not args.freeze_audio_head)
+        del initialized
     train_model = DDP(model, device_ids=[local_rank], broadcast_buffers=False) if world > 1 else model
-    optimizer = torch.optim.AdamW([
-        {'params': model.native.parameters(), 'lr': args.native_lr, 'weight_decay': 0.0},
-        {'params': model.head.parameters(), 'lr': args.head_lr}], weight_decay=0.01)
+    groups = [{'params': model.native.parameters(), 'lr': args.native_lr, 'weight_decay': 0.0}]
+    if not args.freeze_audio_head:
+        groups.append({'params': model.head.parameters(), 'lr': args.head_lr})
+    optimizer = torch.optim.AdamW(groups, weight_decay=0.01)
     split = dict(train=train_ids, val=val_ids, seed=42)
     log, best_score, best_metrics = None, -1.0, None
     if rank == 0:
@@ -229,7 +265,7 @@ def main():
             loss = clip_loss(embedding, target.to(device, non_blocking=True))
             finite_guard([('loss', loss)], device, 'CLIP loss')
             loss.backward()
-            finite_guard(((name, p.grad) for name, p in model.named_parameters()), device, 'gradients')
+            finite_guard(((name, p.grad) for name, p in model.named_parameters() if p.requires_grad), device, 'gradients')
             nn.utils.clip_grad_norm_(model.parameters(), 1.0, error_if_nonfinite=True)
             optimizer.step()
             finite_guard(model.named_parameters(), device, 'updated weights')
@@ -265,9 +301,10 @@ def main():
                        sha256={name: sha256(path) for name, path in (
                            ('base_weights', args.w), ('text', args.text), ('caps', args.caps),
                            ('best', os.path.join(args.out, 'best.pt')), ('last', os.path.join(args.out, 'last.pt')))},
-                       trainable_parameters={name: sum(p.numel() for p in module.parameters()) for name, module in (
+                       trainable_parameters={name: sum(p.numel() for p in module.parameters() if p.requires_grad) for name, module in (
                            ('encoder', model.native.encoder), ('pre_block', model.native.pre_block),
-                           ('mean_proj', model.native.mean_proj), ('audio_head', model.head))})
+                           ('mean_proj', model.native.mean_proj), ('audio_head', model.head))},
+                       audio_head_trainable=not args.freeze_audio_head)
         with open(os.path.join(args.out, 'summary.json'), 'w') as stream:
             json.dump(summary, stream, indent=2, allow_nan=False)
         print('DONE representation_only', flush=True)

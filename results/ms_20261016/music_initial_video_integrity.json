@@ -1,0 +1,31 @@
+{
+  "expected": 24,
+  "decoded_video_and_audio": 24,
+  "paths": [
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_bridge_only/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_bridge_only/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_bridge_only/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_bridge_only/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_bridge_only/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_bridge_only/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_pureclip/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_pureclip/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_pureclip/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_pureclip/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_pureclip/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_muq_pureclip/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_bridge_only/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_bridge_only/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_bridge_only/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_bridge_only/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_bridge_only/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_bridge_only/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_pureclip/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_pureclip/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_pureclip/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_pureclip/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_pureclip/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_pureclip/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4"
+  ],
+  "scope": "Complete stream decode only; musical adherence separate"
+}

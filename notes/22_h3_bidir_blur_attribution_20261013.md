@@ -944,4 +944,30 @@ waveform[batch,2,L]32k → 每声道resample24k → dense music encoder
 - 但重采样不等于bridge训练恶化根因：缓存warmup best与相同adapter的live初始化验证MSE只增加MuQ0.000257、MusicFM0.000614；后续lambda1训练的train/val MSE却随epoch均升至约0.240/0.241与0.246/0.248。不能将该趋势归因于单次重采样，或仅因validation开eval而解释；权重/BN训练动态仍需固定权重模式对照。
 - 内存守卫恢复已启动：N5–N8各一个失败分片，启动前主机与cgroup可用内存均>180GiB、已有sampler≤4；四个真实retry进程及reference/retake两次新编码已核验，尚未生成完成。每节点另一个失败分片排在前一个正常退出之后，重新检查预算；旧失败日志不覆盖。唯一PPID1孤儿编码worker已按精确PID/命令核验后SIGTERM，其余有活跃父任务的worker未动。
 - 新评审预设已在发布仓库准备：MuQ、MusicFM各自原生cleanpad/bridge-only/pureCLIP/bridgeCLIP/lambda0五列，以及纯CLIP骨干对比；尚未部署到正在运行的评审服务，不提前宣称网页已有全部结果。
-- 当前只确认作业与接口，完整视频/音轨解码、1秒后运动统计和连续视频人评仍待完成。**尚无本轮生成音乐遵循或画质判优结论**，不得用上一轮原生66条完成记录代替本轮验收。
+- 两组bridge-only的12条视频与音轨已完整ffmpeg解码通过，均有分片done；其余生成继续。运动评测误用了缺decord的H3环境，保留失败日志，切换已核验的既有`/opt/venv_eval`后恢复；不改训练/推理环境。完整48条、1秒后运动统计和连续视频人评仍待完成。**尚无本轮生成音乐遵循或画质判优结论**，不得用上一轮原生66条完成记录代替本轮验收。
+
+### 28.8 固定adapter/head：新骨干增量与最后四组声学验收
+- 六组训练模型分别固定已训练adapter/head，仅切换公开与训练后音乐骨干，在相同200验证候选上重新评估，无任何head再拟合。训练骨干端均重现checkpoint指标（误差≤1e-5）。替换整个骨干会同时替换BN running buffers，因此此消融隔离的是“骨干完整状态”，尚不是纯权重因果；不能以此跳过BN模式诊断。
+
+| 配方 | 公开骨干+同训练adapter/head：双向平均R@10 | 训练骨干+同adapter/head |
+|---|---:|---:|
+| MuQ 纯CLIP | 15.25% | 15.25% |
+| MusicFM 纯CLIP | 6.50% | 15.50% |
+| MuQ bridge初始化lambda1 | 11.00% | 14.25% |
+| MusicFM bridge初始化lambda1 | 9.00% | 13.75% |
+| MuQ bridge初始化lambda0 | 9.50% | 13.50% |
+| MusicFM bridge初始化lambda0 | 8.50% | 15.75% |
+
+- 说明MusicFM纯CLIP检索成绩更依赖训练后骨干完整状态，MuQ纯CLIP的大部分成绩仍可由公开骨干＋已训练adapter/head获得；并非所有模型都只是head在学习。200条小验证和BN状态边界限制因果解释；检索增量依然不等于冻结H3的视频音乐遵循。
+- 最后四组固定3case原decoder验收也已退出0、latent/decoded全finite：MuQ lambda1 latent相对RMS0.919–0.951，频谱距离0.934–0.956；MusicFM lambda1分别0.935–0.971、0.947–0.959；MuQ同init lambda0分别1.019–1.056、0.916–0.927；MusicFM lambda0分别1.041–1.078、0.883–0.926。基线频谱距离0.259–0.289，仍明显不兼容。
+- lambda1降低latent坐标偏移，但没有同步改善原decoder频谱重建，不能只看MSE对“兼容性”作单指标判优。8组全部音频验收已完成，生成验收仍独立进行。
+- bridge-only抽帧审核（3case×joint/aswap，1.2/2.4/3.6/4.8s）看到新接口确实改变姿态/时相；MuQ与MusicFM bridge-only在同音乐下编排高度相似，仍是通用舞蹈范围。脸/衣服/背景未见明显整体崩坏，红衣case运动手部仍糊；抽帧不证明全片画质、节拍遵循或CLIP增益，而且bridge-only骨干并未训练。需要与后续纯CLIP/bridgeCLIP连续视频作同条件比较。
+- 完整数据见`results/ms_20261016/music_fixed_adapter_head_ablation.json`与`music_bridgeclip_audio_validation.json`，不发布原始视频或模型权重。
+
+### 28.9 首批生成验收与评审入口上线（2026-10-16 23:54，阶段快照）
+- MuQ/MusicFM的bridge-only与严格pureCLIP共24条均有成功分片日志，完整视频与音轨ffmpeg解码24/24通过；另用decord核对全部124帧、704×1280、24fps。四配置NLF均完成6条，分析跳过首秒，运动量不是音乐遵循评分。结果见`music_initial_video_integrity.json`、四个`*_generation_motion.json`以及12条bridge-only汇总`music_bridge_only_motion.json`。
+- 后批24分片的原始管理任务`MfTugQ`已经退出：16个存活分片全部exit0，聚合exit1仅来自已记录的8个exit137，不能解释成新的训练或生成失败。当前40/48条有成功日志；缺少的8条由唯一`JbHM6s`队列在N5–N8各两条串行恢复，不重复启动，完整48条尚未验收。
+- 三个专用encoder评审预设已实际部署至8765服务，分别为MuQ五列、MusicFM五列和严格pureCLIP三列；均包含原生repeat_clean基线。清单重建180.1秒造成90秒客户端超时，随后正常完成，非永久死锁；缓存清单HTTP200为0.044秒，8组配置均登记，正确参数`/media?p=...`的Range206返回1024字节通过。不再次反复触发全量扫描，未生成的条目按缺失处理。
+- 首批pureCLIP抽帧与bridge-only对照可见手势、站姿与动作时相改变，MusicFM部分case转身/抬臂次序变化更明显；未见所检查静帧的脸、衣服、背景整体崩坏，运动手部仍可能糊。该观察不等于连续音画人评，更不证明CLIP比不训练骨干的bridge-only更遵循音乐。当前仍无视频音乐遵循判优结论。
+- 同尾部原生基线也完成6条NLF，结果`native_cleanpad_generation_motion.json`。首秒后3case平均全身速度joint/aswap（m/s）：原生0.4366/0.4371，MuQ bridge-only0.4220/0.4507，MusicFM bridge-only0.4192/0.4386，MuQ pureCLIP0.3946/0.3683，MusicFM pureCLIP0.3716/0.4177。严格CLIP没有一致提高运动量；运动变大或变小均不能单独判音乐遵循优劣，短片单目3D统计只作描述，不作显著性结论。
+- 实时八节点核查：原批结束后N1/N2/N4已无H3 sampler，N5–N8各一条真实retry；约975MiB/100%利用率的占卡程序单独计数，不能报作实验利用率。资源复用优先现有缓存的曲目近重复与时序表征诊断，而非增加生成case或无目的重复训练。

@@ -1,0 +1,109 @@
+{
+  "metrics": {
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_bridge_clip_pilot5/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 0.941334068775177,
+        "output_vs_base_relative_rms": 1.0308537483215332,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.18939505517482758,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.9424098134040833
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 0.9186392426490784,
+        "output_vs_base_relative_rms": 1.0300042629241943,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.25609302520751953,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.955859363079071
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 0.9511318206787109,
+        "output_vs_base_relative_rms": 1.036092758178711,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.24562488496303558,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.9338269829750061
+      }
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_bridge_clip_pilot5/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 0.9710828065872192,
+        "output_vs_base_relative_rms": 1.0221284627914429,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.18731370568275452,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.9494667053222656
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 0.9345763325691223,
+        "output_vs_base_relative_rms": 1.027816653251648,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.25478076934814453,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.9588873386383057
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 0.9611183404922485,
+        "output_vs_base_relative_rms": 1.0223618745803833,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.24233907461166382,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.9471798539161682
+      }
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_bridgeinit_clip_lambda0_pilot5/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 1.0563594102859497,
+        "output_vs_base_relative_rms": 1.0545084476470947,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.19421608746051788,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.9157472848892212
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 1.0194828510284424,
+        "output_vs_base_relative_rms": 1.0611222982406616,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.26272714138031006,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.9274383187294006
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 1.03372323513031,
+        "output_vs_base_relative_rms": 1.0565887689590454,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.2502664625644684,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.9167391061782837
+      }
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_bridgeinit_clip_lambda0_pilot5/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 1.0780593156814575,
+        "output_vs_base_relative_rms": 1.0550457239151,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.1948331743478775,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.9255198240280151
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 1.0516977310180664,
+        "output_vs_base_relative_rms": 1.0841994285583496,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.2661142945289612,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.8826722502708435
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 1.0408960580825806,
+        "output_vs_base_relative_rms": 1.0569229125976562,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.2505868971347809,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.918008029460907
+      }
+    }
+  },
+  "scope": "audio representation/reconstruction only; not dance generation acceptance"
+}

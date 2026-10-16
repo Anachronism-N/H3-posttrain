@@ -76,6 +76,12 @@
 - **恢复准入**：启动前同时读取`/sys/fs/cgroup/memory/memory.usage_in_bytes`、`memory.limit_in_bytes`和`/proc/meminfo`的MemAvailable，主机与cgroup两者都至少有180GiB可用；确认目标GPU只有已核对的占卡进程或完全空闲，非holder进程不得停止。当前保守限制为每个恢复节点至多4个既有H3 sampler，再添加1个冷加载。每节点两个失败分片串行运行，前一个退出后重新检查预算才启动后一个；预算不足直接停止队列，不sleep轮询/重试、不批量kill。
 - 监控用受工具管理的后台任务及完成事件；不以GPU占卡100%当真实利用率，不以kernel failcnt当前为0排除先前OOM。现有正常任务全部完成后，再考虑修改共享加载/缓存代码降低峰值内存。
 
+## 2026-10-17 补齐诊断的实施口径
+- 视频完整性独立入口`music_generation_validate.py`按两份CSV前三行固定映射八配置48条。先核实成功分片的两次新音频编码、203帧latent和repeat_clean尾部4帧/time1，再以decord完整读124帧及ffmpeg完整视频/音轨解码、记录文件与日志hash。没有成功日志的运行中文件不计通过；partial报告保留`complete=false`。既有环境无ffprobe，使用已有decord/ffmpeg，不把已选双流存在与解码冒称恰好两个声明流。
+- 时序可读性入口`music_temporal_probe.py`只读三个原始网格缓存，在同1800/200划分上拟合1024→3带截距ridge（固定alpha10，不验证调参）。共同25Hz网格0.04–4.96秒、训练统计标准化、按真实source范围和音频完整窗mask，分别预测起音谱通量、log-RMS及5秒DP节拍代理。DP有120BPM先验且未经人工核验，不是节拍真值。报告R2/MAE/Pearson、逐片相关及常量无定义计数，同head的片段均值广播/1秒循环错位、同网格64维logmel声学基线；不把代理可读性当作舞蹈生成验收。
+- 近重复入口`music_duplicate_audit.py`只检查前5.0625秒真实音频，不把padding作重复。精确SHA256与训练统计标准化后的logmel/chroma/RMS签名top-k筛候选，±0.48秒移位且至少3秒真实重叠后比对时序谱/色度/包络。默认疑似阈值0.98/0.98/0.95，附0.95/0.98/0.995敏感性；候选门控可能漏检，疑似连通簇不等于曲目ID，也不能排除同歌不同段。仅报告跨split风险，未经人校验不更改既有划分、不重新训练。
+- 新诊断先源码/合成测试再工具后台运行；与`JbHM6s`最后四条串行恢复分离，既有H3 sampler与源码不修改，不启动第四视频case。所有模型权重/派生音频PT仍不发布，发布诊断代码与汇总JSON。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

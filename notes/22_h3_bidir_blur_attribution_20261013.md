@@ -971,3 +971,15 @@ waveform[batch,2,L]32k → 每声道resample24k → dense music encoder
 - 首批pureCLIP抽帧与bridge-only对照可见手势、站姿与动作时相改变，MusicFM部分case转身/抬臂次序变化更明显；未见所检查静帧的脸、衣服、背景整体崩坏，运动手部仍可能糊。该观察不等于连续音画人评，更不证明CLIP比不训练骨干的bridge-only更遵循音乐。当前仍无视频音乐遵循判优结论。
 - 同尾部原生基线也完成6条NLF，结果`native_cleanpad_generation_motion.json`。首秒后3case平均全身速度joint/aswap（m/s）：原生0.4366/0.4371，MuQ bridge-only0.4220/0.4507，MusicFM bridge-only0.4192/0.4386，MuQ pureCLIP0.3946/0.3683，MusicFM pureCLIP0.3716/0.4177。严格CLIP没有一致提高运动量；运动变大或变小均不能单独判音乐遵循优劣，短片单目3D统计只作描述，不作显著性结论。
 - 实时八节点核查：原批结束后N1/N2/N4已无H3 sampler，N5–N8各一条真实retry；约975MiB/100%利用率的占卡程序单独计数，不能报作实验利用率。资源复用优先现有缓存的曲目近重复与时序表征诊断，而非增加生成case或无目的重复训练。
+
+- 后续持久完整性报告`music_generation_integrity_partial1.json`为44通过/4缺失/0错误，包含成功log/video SHA256、两次encode shape、tail4/time1及完整decord+ffmpeg解码证据。红衣case的aswap抽帧（1.2/2.4/3.6/4.8秒）对照原生与7个完成配置：两pureCLIP在2.4秒已放下手臂，而两bridge-only、两bridgeCLIP及MuQ lambda0仍做胸前手势；不同lambda配置结尾抬臂差异明显。所检查背景/衣着稳定，快速手部有模糊，未见该静帧范围整体崩坏。MusicFM lambda0该case仍缺，不补画、不推断；同音乐下编排差异不能判音乐跟随成功，也不能以抽帧代替连续听看。
+
+- 后四组已完成的20条NLF也已结束（每组5条），全部有效检测比例1.0、统计83帧、数值有限，见`music_later_partial_generation_motion.json`。连同首批24条，当前44条运动统计齐全；最后四条不计入，不将5条局部均值与完整6条当相同候选规模比较。
+
+### 28.10 逐帧代理可读性与跨划分近重复风险（2026-10-17）
+- 同2k/1800+200与同5.0625秒预处理，三个公开音乐骨干保持冻结，原始hidden按真实时间对齐到25Hz的0.04–4.96秒。1024→3带截距ridge固定alpha10、train-only标准化，标签为起音谱通量、log-RMS、5秒DP节拍代理；完整窗mask不含padding。DP节拍有120BPM先验、60–180搜索范围，未经人工核验，不是节拍真值，也不表示CLIP训练已经改善时间控制。
+- MuQ与MusicFM结果已退出0；验证200条、24800有效帧相同，逐片相关macro分别为：onset 0.7910/0.7655，log-RMS 0.6613/0.6656，beat_proxy 0.6426/0.6261。对同head输出作片内1秒循环错位后，onset相关降至0.0114/0.0200，beat_proxy降至0.0494/0.0528，说明其冻结末层表征不是只有全局曲目级能量，在该代理任务中确有局部时间信息。尚不能据此称最强encoder、真正按拍识别或H3使用了这些信息。MERT同规格对照也已退出0：onset/log-RMS/beat_proxy逐片相关分别0.8274/0.7854/0.5923；起音和能量代理优于本次MuQ/MusicFM末层，DP节拍代理则较低，三者没有一致赢家。所有输入相同target/split hash，不能把更高原始采样率直接说成舞蹈生成更优。
+- 同网格64维直接logmel的三个逐片相关为0.2217/0.6801/0.1776，三骨干时序hidden对onset和DP节拍代理明显高于该浅声学基线；但mel单帧readout本来缺少lag和上下文，不能把此差距全部归因于预训练语义优势。三encoder的1秒错位相关均接近0，仍只说明该弱任务有本地时间信号，不能保证DiT听到了它。
+- 近重复检查覆盖2k前5.0625秒真实音频：精确float32音轨SHA256无重复，但logmel/chroma/RMS候选门控共5457对，默认0.98/0.98/0.95时序阈值发现24对疑似近重复，其中2对跨train/val。独立另一次运行重现相同统计及配对；候选门控仍可能漏掉同歌不同片段。
+- 两个跨划分对为val `QYBgqkvrDtNbonkf` ↔ train `srXuURqouaTbClFL`（最佳偏移0.28秒，色度0.99915、logmel相关0.98955、包络0.99420、4k单声道波形相关0.78345），以及val `bqzYhuJDxSyqpwBA` ↔ train `WJCjJYyKnLurZmSL`（偏移0，波形相关0.99980、logmel0.99960）。后者为极强自动近重复证据，但两者均尚未人工曲目核验，不给伪songID。
+- 所有三个相关阈值统一0.95/0.98/0.995时，跨划分候选为8/2/1对，说明分组结果对阈值有依赖。既有检索和probe保留原划分、不能声称严格曲目隔离泛化；下一步应人工核对跨划分候选并以曲目组建立额外验证，不偷偷修改原结果或自动重训。代码与完整诊断见`music_temporal_probe.py`、`music_duplicate_audit.py`及对应`results/ms_20261016/*temporal_probe_v1.json`、`music_duplicate_candidates_v1.json`。

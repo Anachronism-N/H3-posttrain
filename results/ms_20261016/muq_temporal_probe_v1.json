@@ -1,0 +1,186 @@
+{
+  "stage": "frozen_music_temporal_readability_proxy",
+  "backend": "muq",
+  "args": {
+    "command": "probe",
+    "features": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_features.pt",
+    "targets": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/temporal_targets_v1.pt",
+    "split": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_linear_probe/split.json",
+    "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_temporal_probe_v1.json",
+    "alpha": 10.0,
+    "device": "cuda",
+    "chunk_frames": 4096
+  },
+  "input_sha256": {
+    "features": "4e6c31444cdee32ac04a8fa2cdf50073658a3b4d47ebda7b05397404fce2dd39",
+    "targets": "118f1a6aca79968bcb71efd56c019c870014ef499a7f443f75ef3f2cee478df8",
+    "split": "845cfa72c13ca4c298ee595b21450254c45040bbdac64b0482b43cc86068b78d"
+  },
+  "feature_metadata": {
+    "backend": "muq",
+    "model_path": "/opt/models/MuQ-large-msd-iter",
+    "sample_rate": 24000,
+    "frame_hz": 25.0,
+    "frame_offset_seconds": 0.0,
+    "hidden_size": 1024,
+    "parameters": 333401472,
+    "dense_parameters": 324733056,
+    "scope": "frame sequence, no temporal averaging or interpolation in feature cache"
+  },
+  "target_metadata": {
+    "schema": "music_temporal_targets_v1",
+    "sample_rate": 24000,
+    "waveform_seconds": 5.0625,
+    "waveform_loader": "music_encoder_adapter.load_waveform; separate channels at 24kHz then mean",
+    "grid_hz": 25.0,
+    "grid_first_seconds": 0.04,
+    "grid_last_seconds": 4.96,
+    "grid_frames": 124,
+    "target_names": ["onset_flux_proxy", "log_rms", "beat_proxy"],
+    "n_fft": 1024,
+    "hop_length": 240,
+    "n_mels": 64,
+    "mel_power": 2.0,
+    "mel_center": true,
+    "mel_log": "log(1+10000*power)",
+    "onset": "mean_mels(max(logmel[t]-logmel[t-1],0)); 100Hz -> 25Hz linear interpolation",
+    "log_rms": "log(max(sqrt(mean(raw_mono_window**2)),1e-8)); 1024 samples, centered, hop240",
+    "beat": "audio_feats.beat_dp on complete real 100Hz flux windows; max Gaussian pulse, sigma=0.05s",
+    "mask": "current 1024-sample window AND preceding lag-1 window fully inside real source duration; no padding",
+    "weak_label_boundary": "Audio-derived proxies only, not human-annotated onset/beat ground truth. beat_dp uses a strong 120 BPM tempo prior, 60-180 BPM search and tightness=100; the approximately 5-second window has not been human validated. Silence/constant onset or insufficient real windows yield no beat pulses. Readability of these labels is not evidence of human beat ability or generation quality.",
+    "derived_audio_cache_only": true,
+    "publication": false,
+    "caps_sha256": "ca8eac90f4aab1b4bd708cb3d0da5c26bd18d92dc39f8e2e4f6996b265a2ece5",
+    "samples": 2000,
+    "valid_frames": 248000,
+    "clips_with_no_valid_frames": 0
+  },
+  "samples": 2000,
+  "training_samples": 1800,
+  "validation_samples": 200,
+  "valid_frames_by_split": {"train": 223200, "val": 24800},
+  "target_valid_frames": 248000,
+  "aligned_valid_frames": 248000,
+  "frames_excluded_by_source_range": 0,
+  "alignment": "Stereo-mean hidden [T,1024], linear interpolation by exact metadata Hz/offset onto 25Hz elapsed seconds; no temporal global pooling or valid endpoint clamp.",
+  "mask": "Real complete current+lag-1 audio windows intersect actual source offset..offset+(T-1)/Hz; no inferred encoder receptive field.",
+  "ridge": {
+    "alpha": 10.0,
+    "validation_tuning": false,
+    "intercept_regularized": false,
+    "normalization": "Train-only per-dimension population mean/std; std min1e-6; no LayerNorm",
+    "statistics_dtype": "float64",
+    "fit": "Centered XTX/XTY; solve(XTX+alpha*I,XTY), bias=train target mean",
+    "feature_transfer": "One backend CPU cache; align float32 and upload bounded frame chunks for float64 statistics"
+  },
+  "trainable_parameters": {"readout_weights": 3072, "intercept": 3, "total": 3075, "backbone": 0, "text": 0, "dit": 0},
+  "backbone_updates": 0,
+  "backbone_loaded": false,
+  "text_loaded": false,
+  "dit_loaded": false,
+  "metrics": {
+    "train": {
+      "samples": 1800, "samples_with_valid_frames": 1800, "valid_frames": 223200,
+      "per_target": {
+        "onset_flux_proxy": {"pooled_R2": 0.610123012392731, "MAE": 0.1075933470625106, "pooled_Pearson": 0.7811037159384319, "per_clip_Pearson_macro": 0.7947010287933208, "per_clip_Pearson_n": 1800, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+        "log_rms": {"pooled_R2": 0.65722471648502, "MAE": 0.3645863495995274, "pooled_Pearson": 0.8106939814323465, "per_clip_Pearson_macro": 0.6789818695781057, "per_clip_Pearson_n": 1800, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+        "beat_proxy": {"pooled_R2": 0.4907370125041387, "MAE": 0.1671136600873322, "pooled_Pearson": 0.7005262401140813, "per_clip_Pearson_macro": 0.6835157383634775, "per_clip_Pearson_n": 1800, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0}
+      }
+    },
+    "val": {
+      "samples": 200, "samples_with_valid_frames": 200, "valid_frames": 24800,
+      "per_target": {
+        "onset_flux_proxy": {"pooled_R2": 0.5931690575419845, "MAE": 0.10783236563939733, "pooled_Pearson": 0.7702290646630567, "per_clip_Pearson_macro": 0.7910342925433305, "per_clip_Pearson_n": 200, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+        "log_rms": {"pooled_R2": 0.6689849684919562, "MAE": 0.38583032938366335, "pooled_Pearson": 0.8179273523139898, "per_clip_Pearson_macro": 0.6613020578084396, "per_clip_Pearson_n": 200, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+        "beat_proxy": {"pooled_R2": 0.44143566682853574, "MAE": 0.17682713179077852, "pooled_Pearson": 0.6650083849876626, "per_clip_Pearson_macro": 0.6425925316106782, "per_clip_Pearson_n": 200, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0}
+      }
+    }
+  },
+  "train_mean_constant_baseline": {
+    "train": {
+      "samples": 1800, "samples_with_valid_frames": 1800, "valid_frames": 223200,
+      "per_target": {
+        "onset_flux_proxy": {"pooled_R2": -2.220446049250313e-16, "MAE": 0.15292593574576244, "pooled_Pearson": null, "per_clip_Pearson_macro": null, "per_clip_Pearson_n": 0, "target_constant_clips": 0, "prediction_constant_clips": 1800, "clips_with_fewer_than_2_frames": 0},
+        "log_rms": {"pooled_R2": -2.220446049250313e-16, "MAE": 0.5863141770889202, "pooled_Pearson": null, "per_clip_Pearson_macro": null, "per_clip_Pearson_n": 0, "target_constant_clips": 0, "prediction_constant_clips": 1800, "clips_with_fewer_than_2_frames": 0},
+        "beat_proxy": {"pooled_R2": -2.220446049250313e-16, "MAE": 0.2839658570380064, "pooled_Pearson": null, "per_clip_Pearson_macro": null, "per_clip_Pearson_n": 0, "target_constant_clips": 0, "prediction_constant_clips": 1800, "clips_with_fewer_than_2_frames": 0}
+      }
+    },
+    "val": {
+      "samples": 200, "samples_with_valid_frames": 200, "valid_frames": 24800,
+      "per_target": {
+        "onset_flux_proxy": {"pooled_R2": -1.9063967999777276e-06, "MAE": 0.15248471769501806, "pooled_Pearson": null, "per_clip_Pearson_macro": null, "per_clip_Pearson_n": 0, "target_constant_clips": 0, "prediction_constant_clips": 200, "clips_with_fewer_than_2_frames": 0},
+        "log_rms": {"pooled_R2": -0.000364643062686687, "MAE": 0.5998029219551433, "pooled_Pearson": null, "per_clip_Pearson_macro": null, "per_clip_Pearson_n": 0, "target_constant_clips": 0, "prediction_constant_clips": 200, "clips_with_fewer_than_2_frames": 0},
+        "beat_proxy": {"pooled_R2": -0.00022792881193645087, "MAE": 0.28479131195439433, "pooled_Pearson": null, "per_clip_Pearson_macro": null, "per_clip_Pearson_n": 0, "target_constant_clips": 0, "prediction_constant_clips": 200, "clips_with_fewer_than_2_frames": 0}
+      }
+    }
+  },
+  "val_temporal_controls": {
+    "clip_mean_broadcast": {
+      "samples": 200, "samples_with_valid_frames": 200, "valid_frames": 24800,
+      "per_target": {
+        "onset_flux_proxy": {"pooled_R2": 0.009014194508102369, "MAE": 0.15411788866912848, "pooled_Pearson": 0.09940382583107066, "per_clip_Pearson_macro": null, "per_clip_Pearson_n": 0, "target_constant_clips": 0, "prediction_constant_clips": 200, "clips_with_fewer_than_2_frames": 0},
+        "log_rms": {"pooled_R2": 0.3158782692407863, "MAE": 0.4548044556355284, "pooled_Pearson": 0.5750170248508049, "per_clip_Pearson_macro": null, "per_clip_Pearson_n": 0, "target_constant_clips": 0, "prediction_constant_clips": 200, "clips_with_fewer_than_2_frames": 0},
+        "beat_proxy": {"pooled_R2": 0.0016027268894287516, "MAE": 0.28376158200550455, "pooled_Pearson": 0.04774401551868024, "per_clip_Pearson_macro": null, "per_clip_Pearson_n": 0, "target_constant_clips": 0, "prediction_constant_clips": 200, "clips_with_fewer_than_2_frames": 0}
+      }
+    },
+    "within_clip_circular_shift": {
+      "samples": 200, "samples_with_valid_frames": 200, "valid_frames": 24800,
+      "per_target": {
+        "onset_flux_proxy": {"pooled_R2": -0.538973245849804, "MAE": 0.21544353792847415, "pooled_Pearson": 0.0438358683817152, "per_clip_Pearson_macro": 0.01136813603814265, "per_clip_Pearson_n": 200, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+        "log_rms": {"pooled_R2": -0.21180326495483826, "MAE": 0.6101329698664467, "pooled_Pearson": 0.28135798755766483, "per_clip_Pearson_macro": -0.006248920687496104, "per_clip_Pearson_n": 200, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+        "beat_proxy": {"pooled_R2": -0.3902900866276031, "MAE": 0.3019297649915271, "pooled_Pearson": 0.06106581393654927, "per_clip_Pearson_macro": 0.049360045088759824, "per_clip_Pearson_n": 200, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0}
+      }
+    },
+    "same_trained_head": true,
+    "clip_mean_definition": "Broadcast mean of valid aligned features before the same affine head; identical to mean predictions.",
+    "shift_definition": "Circular +25 frames (1s) within each valid clip; short clips use min(25,n//2), n<2 use 0.",
+    "shift_frames_by_val_id": {
+      "QcXTBHnhvaKIOlgH": 25, "jjbVPUiAEdcYRjic": 25, "IXmBxDjgTTPyPupp": 25, "QwVJhdbZVPpjmywK": 25, "kvcHuOOYJxBeqtrn": 25, "ehzWvMBzMXeQGkDc": 25, "bBZCXXgxQNRPKUlN": 25, "ieuIDFuuJZZzUhVy": 25, "BUXDbLroiJqnKLWi": 25, "yXqscaiNWULCQxfB": 25,
+      "nIVWsjkwpjOANgyq": 25, "gBPYPMZXdmamZWsm": 25, "XITEwgYqoczmSkxs": 25, "TZaDWuecXUROkXuk": 25, "PkoWGJYRqDohFNke": 25, "bEiaeFvSatkHYPHD": 25, "uiWUaAyWamFaEnXR": 25, "wyMWqcbIHMvNAtdk": 25, "YVrqoYRVVQfUYuKz": 25, "jXjXRNrwcoocXuhr": 25,
+      "WOWgJKgMcUJTigJq": 25, "QYBgqkvrDtNbonkf": 25, "PgEDsZOtCBKxRQTd": 25, "eJhzwhMOxOabOXeL": 25, "GWRcLYKSitKUwToj": 25, "EkopuJUZcJCoNgqF": 25, "ppnScDMNiipTcnNL": 25, "AqSQXCEusjaPEDzo": 25, "JRtdRcZaNngsipXj": 25, "BcIvuSlLoBOmJJAY": 25,
+      "YjrYFDNmDDOMxSOQ": 25, "vdcJQclHHHutBuSg": 25, "WslfuKciQvuSunRa": 25, "iIFCzUVgFYoLHGVj": 25, "megPsrjACIFhRgvb": 25, "RiCqQSxJCBfAMIcj": 25, "RvpOwJIejtRXHzMT": 25, "aMrdGDLRfXNbBtdM": 25, "NavCcEYDnAwmGAZm": 25, "GOArjxWFjqKiBsLM": 25,
+      "pisIcwxaXmfsdjJh": 25, "tjyvaNkgNEfjRZRw": 25, "QryTdFqRdNpHXSNx": 25, "RbFxdtbQDXPAQHkk": 25, "fBtoGMNuaMloDwuj": 25, "pbSBMBqUWUkFdrhF": 25, "oTTOhmmClTgYQKbG": 25, "qqWiIqdrHBXiOnqr": 25, "plEVMvmarQnksqrp": 25, "wSbrxKdeLptIOIWc": 25,
+      "CRSxnLnWnavPMVsP": 25, "DoBQEvKqRthjEGbz": 25, "bPLmGTbCUfgJwjqu": 25, "AblFyoHlCZigPryB": 25, "EpRoOAesLTbMecBs": 25, "oXExfawunUQcyXDu": 25, "xXfCMoZLPYgfecfK": 25, "zQnmAHgetCsuDEzA": 25, "hbYMZdaoxszxOoZV": 25, "HevHjQfwdedYPmlH": 25,
+      "EjZrySeinxSzyvkW": 25, "CzmTHpLedlfqfkCv": 25, "FjMipeQXEpeWATEJ": 25, "OOMYRMZUbgSFNpQL": 25, "EXzeUpFNnHlUbEQD": 25, "VRlrYyrAEnqSgJHw": 25, "HPuyyDqAUSfaLATC": 25, "tksPbmSdtqbcEwzi": 25, "dSAvjAibIaGlHyHO": 25, "EWceLnLXNpCKcNiF": 25,
+      "GbaqjcfAjFeYZHLE": 25, "ybXENFjqhesIXmov": 25, "wKsMunTImthMSsYb": 25, "SwdmLcVGiRehRCAe": 25, "tycQhAQucpQuRWZT": 25, "YWtzQmFXommNhUPB": 25, "glsCbrrabHndPIia": 25, "eCajXqmYvXfnIjUP": 25, "lZKlrNfnySJjveYu": 25, "SYWPBeDktEoWPSzE": 25,
+      "xsSljAIwrSmXqtTZ": 25, "DNZoNRSbIOWKGofZ": 25, "BEQqxtQVmexVtXaG": 25, "KENZwZMzngCTLTCu": 25, "BXzuZTxvDoMWeLNC": 25, "BKmDFIcAlFYnkkfa": 25, "OadnuQYTwWAKMWgR": 25, "WDuCXKNJSmtqYeER": 25, "PcdEagVUxZzsYZHO": 25, "rwdjTQsCKsyRVmwj": 25,
+      "uNpMjqOAnFLqScTP": 25, "gsObBsyBIURXuuCP": 25, "dCIfqClOcfGCMZhA": 25, "CHqOasHQmttzBWxG": 25, "eDuofDDuUuCumKdt": 25, "XYpxbQIzBhUStcHI": 25, "UOrmYLPPHwQeWKEC": 25, "biiTaaVWxxRXKsyU": 25, "pvUwlIULvPwgGOgR": 25, "CAmHnYjBzGdrdOrB": 25,
+      "rxBGNCLigyXbbOUN": 25, "JRgTsxkiHNWAXPUt": 25, "npgHNEBFZOZyXqMu": 25, "ZyFedymjltHZeBbU": 25, "WXrBiiZcqaKVfbjr": 25, "DbBmHzxaLWNBETqX": 25, "hzoAFRlAYYUNTJxr": 25, "xGCCQNqFnNzmnvbB": 25, "gFCmrLQOcDUNaRea": 25, "IMfVdxmmFqIPupaX": 25,
+      "cCCVkrnwBKsrAppP": 25, "HQRcZVHtphDBQsqo": 25, "gvhqAvflEXUphRdY": 25, "BKLOMPXJJfQJdhBz": 25, "pmSceUyPSmmpkhZE": 25, "GpWLWOFOzRKhSibu": 25, "yBhBkATWQwYiRFLn": 25, "BLtkNbyuhDiLHxwY": 25, "RSRNfQQgXruDrRoG": 25, "bUqmgyawURUoXrXW": 25,
+      "hHoTyFlVaJBsstRi": 25, "nGFnQlSNkIkyRlDX": 25, "KZeijKazrFjakCEO": 25, "XVjSTCmwRPjbcipw": 25, "HhjOMdpVaUtAKAwA": 25, "iTaqXKCRVJSXAEGn": 25, "NoJviawpoHyRRzpF": 25, "PTewGnziGFcOlMIX": 25, "wwrshwCbfOBQpFYV": 25, "QUIHQPnjYeRapeCS": 25,
+      "DQpugPXqxliGBTEo": 25, "JlqJPUSRbbSPOVFT": 25, "oXTIStMoSqMhsDPd": 25, "VcNqWNvqADtOhZmQ": 25, "eeFkhOXtAzRYYmaU": 25, "ofnydWMPxwHuccaF": 25, "ewVpxqYYvyorVHBY": 25, "XhJkhVSMcirSXxOm": 25, "mBLJYZeQtaUiBFfh": 25, "yOorLuoKzcnGmkdS": 25,
+      "kbNzeNvvmMdFZsoI": 25, "AhYyOYEldUYRUuCh": 25, "eLLFYbhQviqrGENe": 25, "uiQsJOPJnbYWvjtk": 25, "xkwYTmgyRkZqqFYV": 25, "FKabjXzkdZNmkCgi": 25, "wANnEshyDGcedDOd": 25, "doEdYGGgQUMWURGh": 25, "jvqFahkTTpdktClC": 25, "FSsMvlMSmQlgkOmy": 25,
+      "gFRpZSNthveKkjBt": 25, "dBlMtfIoyJhPnyHl": 25, "ONWKufiSxxzbidEN": 25, "xmmopyYrEiwHWQKi": 25, "MILifsBKGrKrQATU": 25, "JNiaxGWiwIHDPRPc": 25, "ZfUdeUXBccvWzSyN": 25, "mEicdenZRVGuOPzk": 25, "dXkgxqsHWPzqxGAr": 25, "oYpZHYwqIMdDyHEu": 25,
+      "jqPRAsLaQpRkgjaR": 25, "AUeMoMkdGsJybJwa": 25, "bqzYhuJDxSyqpwBA": 25, "JaDSVDkkAcWZynxP": 25, "qPaarjcLdNvRvlIc": 25, "ttfeoWyDuBsjtxgS": 25, "uGhFZLNaZgGcSoPa": 25, "zCsjUianEHLFJjCN": 25, "ZregkIgPYpyEBnEk": 25, "QkcTcljnqqZaKPZj": 25,
+      "ktYDtylUEthARAlY": 25, "pPHfFLmzEvJjUIED": 25, "oZmlHKAajFhNRDex": 25, "qAHMxUZfcUIKYuFb": 25, "nFWrpNHGdQJvwGLi": 25, "CkaDUZfbXmuKufjo": 25, "JjTkUsZwfiXfonfE": 25, "lPDbmxtTfmTVYMKv": 25, "EkMnOInJDpnCPYkF": 25, "wIYSdDCeXOYeesmW": 25,
+      "chnmdUxnBsQKkOfB": 25, "pDwQdfPAUohoYWBZ": 25, "VILpeISBYiDmEvDn": 25, "hAwurGTbCGCJbrbJ": 25, "xEYdyKyjsXzqsMhP": 25, "FVYQWYIVzoqhYOzN": 25, "DNKUHSeblihSLydp": 25, "FGVJSqJmTzDHFGav": 25, "GejtdYJymUhqEVaz": 25, "DdYyQbwPRuaWCyJT": 25,
+      "ILAFaMaVsFTAsTut": 25, "YOSMYGJxzCbGSkEm": 25, "RDqWGXKBzeKTXSjP": 25, "BznCLESvXaNWzYsh": 25, "XnqrSWBTsCOtBmIK": 25, "NrfMOYFfCIzMGblA": 25, "ypuQijgFHXyTwzIG": 25, "KGHlQBSuDERlnyrk": 25, "NuUFjdHwNapXtcBT": 25, "ystGXUtwzvoJUQKF": 25
+    }
+  },
+  "direct_acoustic_baseline": {
+    "input": "64-dimensional logmel on the same valid 25Hz frames", "independent_encoder": false, "derived_from_target_audio": true, "alpha": 10.0, "readout_parameters": 195,
+    "metrics": {
+      "train": {
+        "samples": 1800, "samples_with_valid_frames": 1800, "valid_frames": 223200,
+        "per_target": {
+          "onset_flux_proxy": {"pooled_R2": 0.03232359159894449, "MAE": 0.15169151119954877, "pooled_Pearson": 0.1797876305265479, "per_clip_Pearson_macro": 0.22308109389740122, "per_clip_Pearson_n": 1800, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+          "log_rms": {"pooled_R2": 0.6757780769991755, "MAE": 0.31153006964732016, "pooled_Pearson": 0.8220572224903812, "per_clip_Pearson_macro": 0.7014118585003629, "per_clip_Pearson_n": 1800, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+          "beat_proxy": {"pooled_R2": 0.02383604911819115, "MAE": 0.27891870575459127, "pooled_Pearson": 0.1543892787121861, "per_clip_Pearson_macro": 0.18358735413453267, "per_clip_Pearson_n": 1800, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0}
+        }
+      },
+      "val": {
+        "samples": 200, "samples_with_valid_frames": 200, "valid_frames": 24800,
+        "per_target": {
+          "onset_flux_proxy": {"pooled_R2": 0.03384837009589048, "MAE": 0.14938154783961174, "pooled_Pearson": 0.18450227772478675, "per_clip_Pearson_macro": 0.22173431625911103, "per_clip_Pearson_n": 200, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+          "log_rms": {"pooled_R2": 0.6628471655363821, "MAE": 0.3217510196037831, "pooled_Pearson": 0.8142741466385823, "per_clip_Pearson_macro": 0.680106098944757, "per_clip_Pearson_n": 200, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0},
+          "beat_proxy": {"pooled_R2": 0.023687848685137403, "MAE": 0.2790883385736344, "pooled_Pearson": 0.15520054487415613, "per_clip_Pearson_macro": 0.17757739606988024, "per_clip_Pearson_n": 200, "target_constant_clips": 0, "prediction_constant_clips": 0, "clips_with_fewer_than_2_frames": 0}
+        }
+      }
+    }
+  },
+  "metric_note": "Pooled R2/MAE/Pearson use all valid frames; per-clip Pearson macro excludes either constant vector or <2 frames and reports n. Undefined R2/Pearson are null, never NaN.",
+  "weak_label_boundary": "Audio-derived proxies only, not human-annotated onset/beat ground truth. beat_dp uses a strong 120 BPM tempo prior, 60-180 BPM search and tightness=100; the approximately 5-second window has not been human validated. Silence/constant onset or insufficient real windows yield no beat pulses. Readability of these labels is not evidence of human beat ability or generation quality.",
+  "finite": true,
+  "publication": false,
+  "publication_omissions": {"valid_frames_per_clip": "Per-clip identifiers and valid-frame counts omitted from this derived publication copy; all other source fields are preserved unchanged."}
+}

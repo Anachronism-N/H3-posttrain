@@ -848,3 +848,97 @@ val47 GT（每条 3 段×1.7 s）：
 - 尚未区分：(A)原生latent没有获得足够舞蹈语义；(B)变化有语义但冻结DiT沿原生音频通道不敏感；二者可同时成立。全局池化+训练音频head的CLIP分数与逐帧32维latent的生成可用性没有保证，固定head实验支持head捷径但不证明唯一根因。
 - 前几帧相似与参考首帧约束、相同seed/布局一致，不能单靠开头判定音频无效；用户明确指出后续全片模型间仍相似，因此本轮失败判据不是只看第一秒。
 - 不能推出音频通道完全无作用、MotionScript不可用、原生encoder路线不可能、必须改DiT或必须检索caption。后续诊断应分开验证latent舞种/动作语义是否改善、时间信息是否被池化损失、冻结DiT对保持声学接口的语义变化是否敏感。
+
+## 28. 专用音乐encoder替换：已批准实验与实测后端
+
+### 28.1 范围与候选依据（2026-10-16）
+- 用户授权从原生编码侧转向当前公开的专用音乐encoder，CLIP训练后视频生成必须也用同一个encoder＋时序adapter；同时尝试严格CLIP和原生latent桥接＋CLIP。冻结原H3 DiT/text/decoder，不检索caption、不加video/DiT训练loss。计划见`plans/music_encoder_replacement_20261016.md`。
+- 第一批比较MuQ-large-msd-iter、MusicFM-MSD、已有MERT-v1-330M；不声称统一SOTA。MuQ论文MARBLE Avg77.0对应私有160k小时迭代版，不是公开MSD权重；MusicFM/MERT在该表75.4/74.4也不是本项目舞蹈控制排行榜。官方资料和本项目同数据对照共同决定候选。
+- CLaMP3默认MERT5s窗口池化，对5sclip失去密集时间细节，保留全局语义参考不作为首批替换。Music2Latent偏codec重建（~10Hz/64维），不冒称最强音乐语义模型。MuQ-MuLan是音乐文本预训练候选，官方`create_MuLan_from_config`显式frozen_pretrained=False，与一般类构造默认值不同；不能自动认为其MuQ底座未微调或与独立MuQ完全相同。本批先MuQ/MusicFM密集序列，MuQ-MuLan另列后续语义初始化参考。
+- MuQ官方权重CC-BY-NC4.0、代码MIT；MusicFM HF接口模型元数据license=mit，而README正文空，记录确切口径不把code license当所有音源许可。预训练数据外部音乐许可不因本项目微调而消失，权重不推送代码仓。
+- 固定官方revision：MuQ源码28847ea50cd31ac4b8b6a7dacc051ad7d1c7606a；MuQ权重0562a57814f6f8bbd9fdea0a25921a2fce1a841a；MusicFM源码b83ebedb401bcef639b26b05c0c8bee1dc2dfe71；MusicFM权重4513b38bc25ad1d227b1980819b9691ba97f4d87。实际sha256见`backbone_weight_hashes.json`。
+
+### 28.2 已实测的时序与梯度
+| 音乐骨干 | 输入 | 单条stereo5.0625s原始hidden形状 | 网格 | 实测模型参数（含unused SSL组件） |
+|---|---|---|---|---:|
+| MuQ-MSD | 24kHz，每声道独立 | [2,127,1024] | 25Hz | 333,401,472 |
+| MusicFM-MSD | 24kHz，每声道独立 | [2,127,1024] | 25Hz | 328,932,480 |
+| MERT-v1-330M本地官方版 | 24kHz，每声道独立 | [2,379,1024] | 75Hz、CNN中心offset0.0083125s | 315,428,992 |
+
+- 三模型在真实GPU上已验证有限hidden与conv/featureprojection正梯度：MuQ conv.linear gradient0.0390，MusicFM0.2753，MERT feature projection0.01478（单个局部hidden范数loss测试，只证可微不是CLIP效果）。MuQ按官方建议FP32。
+- 绕开历史MERT封装的no_grad/16Hz缓存，直接使用原始hidden；官方MERT本地preprocessor明确do_normalize=false，因此不沿用旧人为波形归一化。MuQ/MusicFM仅CNN+Conformer用于下游前向，SSL quantizer/prediction head不训练。
+- 独立`/opt/venv_music`使用transformers4.48.3；H3文本路径使用其既有环境。修复依赖soundfile及torch/torchaudioCUDA12.9一致性；远端系统site-packages缺idna，按venv内部依赖补齐。MusicFM还需Conformer配置离线缓存，缺失时明确失败，保留首轮错误日志。权重预读到各节点/opt本地盘，不以cephfs冷读拖住GPU。
+- 2k音频精确解码SHA256去重：2000unique，无精确同波形组/无精确train-val泄漏；这不是近重复歌曲指纹审核，不宣称同曲不同片段已排除。
+
+### 28.3 公平冻结特征线性probe已经结束
+- 各encoder原始dense hidden全部2k提取，8分片×250，ID/shape/finite核验。三模型同1800train/200val、seed42，time均值/总体std保留声道→4096；训练统计标准化→LayerNorm＋无bias Linear4096→5120，与同一冻结H3舞种＋原版动作文本做双向CLIP（tau0.07、globalbatch64、30epoch）。
+- **线性只代表表达层数弱，不代表少参数**：head20,979,712参数（约21M），不能称比先前2.7M MLP更小。本测试只比较冻结特征可读性；生成接口head是另一个128→5120的约0.66M线性head，不能混同。
+
+| dense骨干 | val a2t R@1 | val a2t R@10 | val t2a R@10 | val粗舞种命中 | 同200候选train R@10 |
+|---|---:|---:|---:|---:|---:|
+| MuQ | 2.0% | 12.0% | 13.5% | 50.5% | 100.0% |
+| MusicFM | 2.5% | 14.5% | 13.0% | 51.0% | 99.5% |
+| MERT | 1.5% | 11.0% | 12.5% | 49.5% | 100.0% |
+
+- 随机全200候选R@1=.5%、R@10=5%；随机genre命中11.465%。同genre检索另按类别候选数量给随机基线与n，不能用变量候选规模数字当全局R@10改善。
+- MusicFM略高、MuQ接近；验证200条、小差异及用验证选best的偏差不足以判“最强”。train几乎全记住而val弱：提高encoder基础表征不自动解决音乐→细动作一对多和监督噪声。两者均进入替换实验，MERT保留参考，不强行锁定MuQ。
+
+### 28.4 共享训练/生成接口与两种配方
+```
+waveform[batch,2,L]32k → 每声道resample24k → dense music encoder
+ → LayerNorm1024/Linear1024→256/GELU + residual localConv1d256×3
+ → 按真实秒坐标25→40Hz → Linear256→32
+ → normalized latent z[batch,2,32,ceil(L/800)]
+     ├─ 有效frame mean/std → 128维 → LN+Linear128→5120 → L2 → CLIP
+     └─ 原H3 audio patch proj32→5376 → 冻结DiT → video生成
+```
+- adapter469,536参数，生成与CLIP共用同一个z，不建立只对比学习但不进入生成的独立语义旁路。25→40Hz是接口对齐，不产生新的时间信息；SSL原始特征网格不先降到16Hz。
+- 纯CLIP：dense骨干/adapter/音频弱head训练，随机adapter起点，没有teacher路径、仅InfoNCE。
+- bridge warmup：冻结dense骨干与音频head，缓存原始hidden只用于adapter逐帧MSE到原生normalized teacher；明确此阶段不是微调全音乐骨干。
+- bridge+CLIP：同warmupadapter初始化，重新加载公开骨干，全部编码骨干＋adapter＋弱head微调，Lclip+lambdaLbridge。另以同初始化lambda0比较兼容约束，不把随机adapter起点差异当单loss因果。
+- native teacher[2,32,203]由已验证pre_block缓存及原生mean_proj＋固定norm生成，共2k有限值。仅有效帧/声道计MSE；CLIP pool也只用有效帧，短音频padding不计入pool。
+- `sample_h3_ar.py --music_encoder_ckpt`同时替换audio_vae.encode_audio的reference与retake两处调用，保留原decoder/hop/sample_rate，禁止混用nativecheckpoint/旧MERT残差/G4文本hook。H3与音乐backbone Transformers版本不同，暂采用独立环境worker加载同共享encoder＋adapter；精确波形hash可memo复用latent，不是检索caption。
+- 真实GPU代理等价测试：MuQ同波形、同bridgeadapter checkpoint，独立worker vs直接共享encode最大误差0；重复波形两次调用输出相同[2,32,203]。训练后MusicFM bridge-only实际加载输出finite [2,32,203]。形状正常不证明声学/生成可用。
+- 音频pad政策统一repeat_clean到目标207frames，mask0/time1；所有候选用相同原生baseline_cleanpad比较，固定3case joint/aswap、seed42、704p、50步、不检索文字。
+
+### 28.5 当前阶段结果与进行中的验证
+- 两骨干 bridge warmup20epoch正常结束：MuQ验证MSE/teacher energy=0.680、预测能量/teacher=.326；MusicFM分别.681/.316。虽MSE下降，但剩余误差约68%且预测能量偏小，**不是接口保真成功**，可能是声学信息不能由该语义hidden/小adapter完整恢复，生成和原decoder重建需实测。
+- 两骨干随机adapter严格CLIP5epoch已产出：MuQ val a2t/t2a R@10=13.0%/17.5%，MusicFM17.0%/14.0%；CLIP仅是离线匹配，不能证明冻结DiT读懂了新latent坐标。
+- MuQ/MusicFM bridge+CLIP5epoch与同bridge初始化lambda0四组均已结束，验证及best/last检查点已产出。动态torchrun在N3广告本机域名v225-r0无法解析，停止确认未进入训练的父进程后用静态127.0.0.1 rendezvous恢复并退出0；不改hostfile、不重复覆盖running输出。
+- 完整配方与消融（以下R@10均在200候选中，随机5%；五轮组只在第5轮验证，所谓best并非多个epoch独立优选）：
+
+| 骨干/配方 | val a2t R@10 | val t2a R@10 | val MSE/teacher energy | val预测能量/teacher |
+|---|---:|---:|---:|---:|
+| MuQ bridge-only20轮 | — | — | 0.6800 | 0.3256 |
+| MusicFM bridge-only20轮 | — | — | 0.6805 | 0.3165 |
+| MuQ 随机adapter纯CLIP5轮 | 13.0% | 17.5% | 未加载teacher | 未做此训练验证 |
+| MusicFM 随机adapter纯CLIP5轮 | 17.0% | 14.0% | 未加载teacher | 未做此训练验证 |
+| MuQ bridge初始化+CLIP，lambda1 | 12.0% | 16.5% | 0.9341 | 0.1625 |
+| MusicFM bridge初始化+CLIP，lambda1 | 14.0% | 13.5% | 0.9626 | 0.1331 |
+| MuQ 同bridge初始化，lambda0 | 11.5% | 15.5% | 1.1716 | 0.4499 |
+| MusicFM 同bridge初始化，lambda0 | 16.0% | 15.5% | 1.2326 | 0.4955 |
+
+- lambda0仍读取teacher仅报告MSE诊断，实际loss严格等于CLIP；不能与不读teacher/随机adapter的纯CLIP组混同。lambda1相对同init lambda0保留更多原生坐标兼容性，但MSE仍比bridge-only差，预测能量更小；本轮权重不保证兼容、也未带来一致检索优势。不能把loss正常下降等同于音乐条件训练成功。
+- full-CLIP真实梯度覆盖316,343,296个骨干参数，adapter469,536与head655,616均有梯度；声明trainable骨干324,733,056中3个张量没有梯度，真实前向已列出：Conformer的pos_conv_embed.conv.bias[1024]及weight-norm original0[1,1,128]/original1[1024,64,128]，共8,389,760参数。不能说所有声明参数都更新；后续核对官方RoPE路径为何不使用该位置卷积，不修改正在生成的实现。BN为每rank双声道小batch训练统计、验证running stats，非SyncBN；保留这一训练/验证边界。
+
+### 28.6 固定三个留出case：声学重建并未兼容成功
+- `native_audio_validate.py --dedicated_music`通过同共享隔离代理产生新latent，送入冻结原生decoder，完全独立于生成播放的输入音轨。4个初始配置均完成、shape与有限值通过；不是视频评测。
+
+| 配方 | 三case latent相对RMS偏移范围 | 原decoder频谱相对距离范围 |
+|---|---|---|
+| 原生重建基线 | 0 | 0.259–0.289 |
+| MuQ bridge-only | 0.761–0.823 | 0.970–1.011 |
+| MusicFM bridge-only | 0.757–0.830 | 0.973–1.050 |
+| MuQ 纯CLIP | 1.131–1.146 | 0.950–0.972 |
+| MusicFM 纯CLIP | 1.150–1.162 | 0.943–0.973 |
+
+- bridge-only也有很大声学误差，原decoder重建频谱距离约为基线3–4倍。纯CLIP没有声学坐标目标，输出shape正确不能保证原DiT兼容；桥接warmup的MSE改善也不足以证明该接口保真。
+- 这些结果支持“当前语义hidden→小adapter恢复原生声学坐标尚不足”，不单凭频谱错误就证明视频一定不可用，也不证明MuQ/MusicFM本身没有音乐语义。桥接+CLIP与同init lambda0的三个case重建正在独立验收。
+- 结果文件发布于`results/ms_20261016/music_initial_audio_validation.json`；模型权重不入GitHub。
+
+### 28.7 生成验收与计算资源（进行中）
+- 第一批MuQ/MusicFM bridge-only及pureCLIP共4配置×3case×joint/aswap=24条，6nodes×4GPU受管理并行生成。恢复对话后的实时核查为24个真实H3采样GPU，不计16个仅约975MiB的占卡任务；另24张真实空闲GPU已接续bridge+CLIP及同init lambda0，共8配置48条，**未增加第四case**。
+- 每条固定seed42、generic prompt、50步、shift12/3、704×1280、repeat_clean；与既有`val_nativeclip_base_cleanpad`同条件对照，不混比legacy。reference与retake两处均使用训练后同encoder+adapter，不调用原生编码器信息旁路、不替换文本。
+- 新批24分片中8个被SIGKILL/exit137：N1四个、N3三个、N2一个；内核日志确认N1/N3 memory-cgroup OOM，N2 global OOM。调度仅验证GPU空闲，漏掉每节点~1TB容器内存与/dev/shm模型、H3冷加载可超过100GiB/进程，属于调度错误，不是训练checkpoint NaN。当前已停止额外启动，原24正常分片保持运行，新批16存活分片不重启；保留原失败日志，恢复必须联合检查主机/cgroup内存、最多少量冷加载并发，用独立retry日志只补失败分片，不能拿当前failcnt0排除先前OOM。
+- 真实三条验证音频检查了缓存与live重采样：原wav→24k与原wav→32k→24k的波形相对RMS差0.65%/0.85%/2.72%；同bridgeadapter的latent差MuQ3.78%–4.59%、MusicFM5.61%–9.93%。FP16缓存与同24k live hidden误差约0.022%–0.023%，对应latent误差仅0.015%–0.019%。因此不能称缓存warmup与在线微调预处理严格等价，主要差异来自重采样链而非FP16舍入；后续应统一链路并另做warmup对照，已有运行结果保留不偷换。
+- 当前只确认作业与接口，完整视频/音轨解码、1秒后运动统计和连续视频人评仍待完成。**尚无本轮生成音乐遵循或画质判优结论**，不得用上一轮原生66条完成记录代替本轮验收。

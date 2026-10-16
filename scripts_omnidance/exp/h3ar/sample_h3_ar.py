@@ -32,6 +32,7 @@ p.add_argument("--cfg", type=float, default=1.0, help=">1: real CFG with negativ
 p.add_argument("--height", type=int, default=832); p.add_argument("--width", type=int, default=480)
 p.add_argument("--audio_override", default="", help="replace the music of every case by this wav (speech/noise/silence probe)")
 p.add_argument("--native_audio_ckpt", default="", help="Native audio-side CLIP checkpoint; install native encoding weights, retaining the original audio latent interface")
+p.add_argument("--music_encoder_ckpt", default="", help="Trained dedicated music encoder plus adapter replaces reference and target audio encoding; not a residual/text hook")
 p.add_argument("--audio_tail_mode", default="legacy", choices=["legacy", "repeat_clean"], help="Controlled audio-padding probe: legacy regenerates padded target audio; repeat_clean keeps the repeated clean latent fixed at AdaLN time=1")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
 p.add_argument("--body_key", default="timed", help="timed | calm | energetic")
@@ -82,6 +83,12 @@ pipe = MiniMaxH3Pipeline.from_pretrained(
     processor_config=ModelConfig(path=f"{W}/processor/"),
     **({"vram_limit": torch.cuda.mem_get_info("cuda")[1] / (1024 ** 3) - 5} if a.height > 832 else {}),  # official-res (as e3/oos scripts)
 )
+if a.music_encoder_ckpt:
+    assert not a.native_audio_ckpt and not a.lora and not a.soft_text, 'Dedicated music replacement must not combine with native checkpoints or old injection hooks'
+    sys.path.insert(0, os.path.join(HERE, '..', 'ms'))
+    from music_encoder_adapter import MusicEncodingProxy
+    pipe.audio_vae.encode_audio = MusicEncodingProxy(a.music_encoder_ckpt)
+    print('[h3ar] dedicated music encoder + adapter replaces reference AND retake audio encoding', flush=True)
 if a.native_audio_ckpt:
     native = torch.load(a.native_audio_ckpt, map_location='cpu', weights_only=False)
     state = (native['native_audio_encoder'] if 'native_audio_encoder' in native else

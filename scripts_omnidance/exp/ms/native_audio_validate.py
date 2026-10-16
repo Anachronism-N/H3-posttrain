@@ -30,6 +30,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--ids', required=True)
     ap.add_argument('--ckpts', nargs='+', required=True)
+    ap.add_argument('--dedicated_music', action='store_true', help='Use each dedicated encoder+adapter through the shared isolation proxy')
     ap.add_argument('--out', required=True)
     ap.add_argument('--w', default='/dev/shm/h3/Ref2VA/audio_vae/model.safetensors')
     a = ap.parse_args()
@@ -59,18 +60,23 @@ def main():
         results = {}
         for path in a.ckpts:
             model.load_state_dict(originals, strict=False)
-            checkpoint = torch.load(path, map_location='cpu', weights_only=False)
-            if 'native_audio_encoder' in checkpoint:
-                native = checkpoint['native_audio_encoder']
+            if a.dedicated_music:
+                from music_encoder_adapter import MusicEncodingProxy
+                encode_audio = MusicEncodingProxy(path)
             else:
-                native = {'mean_proj.' + key: value for key, value in checkpoint['native_mean_proj'].items()}
-            expected = model.state_dict()
-            if any(key not in originals or value.shape != expected[key].shape or not torch.isfinite(value).all() for key, value in native.items()):
-                raise ValueError('Invalid native encoder checkpoint')
-            model.load_state_dict(native, strict=False)
+                checkpoint = torch.load(path, map_location='cpu', weights_only=False)
+                if 'native_audio_encoder' in checkpoint:
+                    native = checkpoint['native_audio_encoder']
+                else:
+                    native = {'mean_proj.' + key: value for key, value in checkpoint['native_mean_proj'].items()}
+                expected = model.state_dict()
+                if any(key not in originals or value.shape != expected[key].shape or not torch.isfinite(value).all() for key, value in native.items()):
+                    raise ValueError('Invalid native encoder checkpoint')
+                model.load_state_dict(native, strict=False)
+                encode_audio = model.encode_audio
             rows = {}
             for sid, waveform in data.items():
-                latent = model.encode_audio(waveform)
+                latent = encode_audio(waveform)
                 baseline, baseline_audio = reference[sid]
                 assert latent.shape == baseline.shape and torch.isfinite(latent).all()
                 decoded = model.decode_audio(latent).squeeze(0)

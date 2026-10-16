@@ -1,0 +1,70 @@
+{
+  "config": {
+    "stage": "clip",
+    "backend": "muq",
+    "model_path": "/opt/models/MuQ-large-msd-iter",
+    "caps": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/captions_orig_2k.json",
+    "text": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/text_orig_2k.pt",
+    "teacher": null,
+    "features": null,
+    "init": null,
+    "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_pureclip_pilot5",
+    "epochs": 5,
+    "batch_size": 2,
+    "encoder_lr": 1e-05,
+    "adapter_lr": 0.0001,
+    "head_lr": 0.0001,
+    "bridge_weight": 1.0
+  },
+  "parameters": {
+    "backbone": {
+      "total": 333401472,
+      "trainable": 324733056
+    },
+    "adapter": {
+      "total": 469536,
+      "trainable": 469536
+    },
+    "audio_head": {
+      "total": 655616,
+      "trainable": 655616
+    }
+  },
+  "baseline": {
+    "val_a2t_R@1": 0.009999999776482582,
+    "val_a2t_R@5": 0.02499999850988388,
+    "val_a2t_R@10": 0.06499999761581421,
+    "val_t2a_R@1": 0.0,
+    "val_t2a_R@5": 0.014999999664723873,
+    "val_t2a_R@10": 0.03999999910593033,
+    "val_R@1": 0.004999999888241291,
+    "val_R@5": 0.019999999087303877,
+    "val_R@10": 0.05249999836087227
+  },
+  "best_metrics": {
+    "val_a2t_R@1": 0.019999999552965164,
+    "val_a2t_R@5": 0.08999999612569809,
+    "val_a2t_R@10": 0.12999999523162842,
+    "val_t2a_R@1": 0.009999999776482582,
+    "val_t2a_R@5": 0.08999999612569809,
+    "val_t2a_R@10": 0.17499999701976776,
+    "val_R@1": 0.014999999664723873,
+    "val_R@5": 0.08999999612569809,
+    "val_R@10": 0.1524999961256981
+  },
+  "input_sha256": {
+    "caps": "ca8eac90f4aab1b4bd708cb3d0da5c26bd18d92dc39f8e2e4f6996b265a2ece5",
+    "text": "9b9d34bbcc158467dac5e9cb4fa1449f4ac1d57ac96976d883b3611320f48cc6"
+  },
+  "checkpoint_sha256": {
+    "last": "d78f00c5ea650421cd045f467255b30359c8e59e681b9a533c6883cc86664045",
+    "best": "3bd89c0565de9e5eccc989cfae785350b6bebdb0830a9fb7ec1263ee2846785c"
+  },
+  "initialization": {
+    "backbone": "public initialization",
+    "adapter": "random",
+    "audio_head": "random"
+  },
+  "bn_caveat": "per-rank BN train stats versus validation running stats; bridge backbone always eval",
+  "dtype": "float32"
+}

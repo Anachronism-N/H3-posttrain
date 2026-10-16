@@ -28,6 +28,15 @@ CTYPE = {".mp4": "video/mp4", ".wav": "audio/wav", ".png": "image/png", ".jpg": 
 
 # 模型说明（label 匹配前缀即可）
 DESC = {
+    "H3AR/val_musicreplace_muq_bridge_only": "MuQ替换：冻结公开骨干，adapter桥接20轮；reference/retake均替换，repeat_clean",
+    "H3AR/val_musicreplace_muq_pureclip": "MuQ替换：骨干+随机adapter+线性head纯CLIP5轮，无teacher；repeat_clean",
+    "H3AR/val_musicreplace_muq_bridgeclip": "MuQ替换：bridge初始化后全编码CLIP5轮+latent MSE(lambda1)；repeat_clean",
+    "H3AR/val_musicreplace_muq_bridgeinit_lambda0": "MuQ替换：相同bridge初始化，CLIP5轮但lambda0；teacher仅作诊断",
+    "H3AR/val_musicreplace_musicfm_bridge_only": "MusicFM替换：冻结公开骨干，adapter桥接20轮；reference/retake均替换，repeat_clean",
+    "H3AR/val_musicreplace_musicfm_pureclip": "MusicFM替换：骨干+随机adapter+线性head纯CLIP5轮，无teacher；repeat_clean",
+    "H3AR/val_musicreplace_musicfm_bridgeclip": "MusicFM替换：bridge初始化后全编码CLIP5轮+latent MSE(lambda1)；repeat_clean",
+    "H3AR/val_musicreplace_musicfm_bridgeinit_lambda0": "MusicFM替换：相同bridge初始化，CLIP5轮但lambda0；teacher仅作诊断",
+    "H3AR/val_nativeclip_base_cleanpad": "原生音频对照：未训练原audio-VAE，repeat_clean尾部，同generic prompt/seed/704p",
     "H3AR/val_nativeclip_base": "原生音频基线：通用舞蹈prompt，原始audio-VAE，不检索caption",
     "H3AR/val_nativeclip_full_lr1e6_pilot5": "完整原生encoder CLIP：lr1e-6，5轮，文本/DiT冻结",
     "H3AR/val_nativeclip_full_lr1e5_pilot5": "完整原生encoder CLIP：lr1e-5，5轮；声学漂移较大对照",
@@ -157,6 +166,12 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-16 专用音乐encoder·MuQ】同repeat_clean：原生对照 / bridge-only / 纯CLIP / bridge+CLIP / 同初始化lambda0；joint看画质，aswap看换音乐增量", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_nativeclip_base_cleanpad", "H3AR/val_musicreplace_muq_bridge_only", "H3AR/val_musicreplace_muq_pureclip", "H3AR/val_musicreplace_muq_bridgeclip", "H3AR/val_musicreplace_muq_bridgeinit_lambda0"]},
+    {"name": "【10-16 专用音乐encoder·MusicFM】同repeat_clean：原生对照 / bridge-only / 纯CLIP / bridge+CLIP / 同初始化lambda0；不以动作变化量代替音乐遵循", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_nativeclip_base_cleanpad", "H3AR/val_musicreplace_musicfm_bridge_only", "H3AR/val_musicreplace_musicfm_pureclip", "H3AR/val_musicreplace_musicfm_bridgeclip", "H3AR/val_musicreplace_musicfm_bridgeinit_lambda0"]},
+    {"name": "【10-16 专用音乐encoder·纯CLIP对比】原生同尾部基线 / MuQ / MusicFM；新模型无teacher，H3 DiT与文本均冻结", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_nativeclip_base_cleanpad", "H3AR/val_musicreplace_muq_pureclip", "H3AR/val_musicreplace_musicfm_pureclip"]},
     {"name": "【10-16 原生音频CLIP·固定head】仅更新完整原生encoder，训练用head冻结：基线 / 固定head3e-7 / 固定head1e-6", "cond": "joint", "view": "models",
      "models": ["H3AR/val_nativeclip_base", "H3AR/val_nativeclip_fixedhead_lr3e7", "H3AR/val_nativeclip_fixedhead_lr1e6"]},
     {"name": "【10-16 音频尾部·单变量】legacy尾部4帧噪声与repeat_clean(time=1)：原生基线及20轮1e-6编码器分别对照；prompt/音乐/seed相同", "cond": "joint", "view": "models",

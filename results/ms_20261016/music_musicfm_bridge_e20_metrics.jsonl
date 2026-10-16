@@ -1,0 +1,20 @@
+{"epoch": 1, "stage": "bridge", "train_loss": 0.23410797119140625, "train_clip_loss": 0.0, "train_bridge_MSE": 0.23410797119140625}
+{"epoch": 2, "stage": "bridge", "train_loss": 0.20167653262615204, "train_clip_loss": 0.0, "train_bridge_MSE": 0.20167653262615204}
+{"epoch": 3, "stage": "bridge", "train_loss": 0.19201888144016266, "train_clip_loss": 0.0, "train_bridge_MSE": 0.19201888144016266}
+{"epoch": 4, "stage": "bridge", "train_loss": 0.18668879568576813, "train_clip_loss": 0.0, "train_bridge_MSE": 0.18668879568576813}
+{"epoch": 5, "stage": "bridge", "train_loss": 0.1834673434495926, "train_clip_loss": 0.0, "train_bridge_MSE": 0.1834673434495926, "val_bridge_MSE": 0.18532700836658478, "val_teacher_energy": 0.25808262825012207, "val_bridge_MSE_over_teacher_energy": 0.71809175853159, "val_latent_energy_ratio": 0.2822125493197546, "val_bridge_relative_baseline": 0.5979556374470272}
+{"epoch": 6, "stage": "bridge", "train_loss": 0.18111659586429596, "train_clip_loss": 0.0, "train_bridge_MSE": 0.18111659586429596}
+{"epoch": 7, "stage": "bridge", "train_loss": 0.179387167096138, "train_clip_loss": 0.0, "train_bridge_MSE": 0.179387167096138}
+{"epoch": 8, "stage": "bridge", "train_loss": 0.17805801331996918, "train_clip_loss": 0.0, "train_bridge_MSE": 0.17805801331996918}
+{"epoch": 9, "stage": "bridge", "train_loss": 0.17710080742835999, "train_clip_loss": 0.0, "train_bridge_MSE": 0.17710080742835999}
+{"epoch": 10, "stage": "bridge", "train_loss": 0.17607834935188293, "train_clip_loss": 0.0, "train_bridge_MSE": 0.17607834935188293, "val_bridge_MSE": 0.17936883866786957, "val_teacher_energy": 0.25808262825012207, "val_bridge_MSE_over_teacher_energy": 0.6950054712478879, "val_latent_energy_ratio": 0.31039848306245765, "val_bridge_relative_baseline": 0.5787316657679203}
+{"epoch": 11, "stage": "bridge", "train_loss": 0.1753525584936142, "train_clip_loss": 0.0, "train_bridge_MSE": 0.1753525584936142}
+{"epoch": 12, "stage": "bridge", "train_loss": 0.17476116120815277, "train_clip_loss": 0.0, "train_bridge_MSE": 0.17476116120815277}
+{"epoch": 13, "stage": "bridge", "train_loss": 0.17412839829921722, "train_clip_loss": 0.0, "train_bridge_MSE": 0.17412839829921722}
+{"epoch": 14, "stage": "bridge", "train_loss": 0.17355099320411682, "train_clip_loss": 0.0, "train_bridge_MSE": 0.17355099320411682}
+{"epoch": 15, "stage": "bridge", "train_loss": 0.1731606423854828, "train_clip_loss": 0.0, "train_bridge_MSE": 0.1731606423854828, "val_bridge_MSE": 0.17684318125247955, "val_teacher_energy": 0.25808262825012207, "val_bridge_MSE_over_teacher_energy": 0.685219235605006, "val_latent_energy_ratio": 0.31574103306582957, "val_bridge_relative_baseline": 0.5705826587607763}
+{"epoch": 16, "stage": "bridge", "train_loss": 0.1726727932691574, "train_clip_loss": 0.0, "train_bridge_MSE": 0.1726727932691574}
+{"epoch": 17, "stage": "bridge", "train_loss": 0.17235417664051056, "train_clip_loss": 0.0, "train_bridge_MSE": 0.17235417664051056}
+{"epoch": 18, "stage": "bridge", "train_loss": 0.1719353049993515, "train_clip_loss": 0.0, "train_bridge_MSE": 0.1719353049993515}
+{"epoch": 19, "stage": "bridge", "train_loss": 0.1715203821659088, "train_clip_loss": 0.0, "train_bridge_MSE": 0.1715203821659088}
+{"epoch": 20, "stage": "bridge", "train_loss": 0.17127691209316254, "train_clip_loss": 0.0, "train_bridge_MSE": 0.17127691209316254, "val_bridge_MSE": 0.17562587559223175, "val_teacher_energy": 0.25808262825012207, "val_bridge_MSE_over_teacher_energy": 0.6805025072126244, "val_latent_energy_ratio": 0.31647898177051337, "val_bridge_relative_baseline": 0.5666550348895619}

@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-16",
+  "scope": "Verified checkpoint and interface diagnostics; video generation acceptance is pending",
+  "checkpoints": {
+    "muq_bridge_e20": {"epoch": 20, "sha256": "00cb6b6160e1b72b854ec0e073e7adb1ee9473dc14015bad48a992d7d1b5bfdb", "state_tensors": 8},
+    "musicfm_bridge_e20": {"epoch": 20, "sha256": "797dec7d158d9a4c72b251e01c62b4c2ba72a8788749727eda936125b0980b02", "state_tensors": 8},
+    "muq_pureclip_pilot5": {"epoch": 5, "sha256": "3bd89c0565de9e5eccc989cfae785350b6bebdb0830a9fb7ec1263ee2846785c", "state_tensors": 536},
+    "musicfm_pureclip_pilot5": {"epoch": 5, "sha256": "6a5ad70a0a7763cc1895311ec299ee09f043c8e58ff47b363e4aa3aa83969c2f", "state_tensors": 476},
+    "muq_bridge_clip_pilot5": {"epoch": 5, "sha256": "d261bc80c8da07d46a5abe7f84d96a7eb2fcc792c2181104d7ef2f3f009fe5cd", "state_tensors": 536},
+    "musicfm_bridge_clip_pilot5": {"epoch": 5, "sha256": "37bbba257c9366a8b71f5343221f5bf9ec5323d16175fcf3aaec4e2da9d5e25b", "state_tensors": 476},
+    "muq_bridgeinit_clip_lambda0_pilot5": {"epoch": 5, "sha256": "88d227dfb1d59d0362b97676a8e2c406059953faa8b091c6e16e184cbac8142d", "state_tensors": 536},
+    "musicfm_bridgeinit_clip_lambda0_pilot5": {"epoch": 5, "sha256": "c5d365c830a1f3d498a70dd13bcc0fc604095257df7f8d6185cd0f38b61ab2b1", "state_tensors": 476}
+  },
+  "all_checkpoint_tensors_finite": true,
+  "all_checkpoints_normalized_shared_clip_generator_latent": true,
+  "dense_backbone_declared_trainable": 324733056,
+  "dense_backbone_parameters_with_gradient": 316343296,
+  "unused_position_convolution_parameters": {
+    "pos_conv_embed.conv.bias": [1024],
+    "pos_conv_embed.conv.parametrizations.weight.original0": [1, 1, 128],
+    "pos_conv_embed.conv.parametrizations.weight.original1": [1024, 64, 128]
+  },
+  "unused_position_convolution_parameter_count": 8389760,
+  "adapter_parameters_with_gradient": 469536,
+  "clip_head_parameters_with_gradient": 655616,
+  "resampling_audit": {
+    "scope": "Three existing validation audio IDs, not additional video-generation cases; original backbone and trained bridge adapter in eval mode",
+    "cache_path": "source wav -> 24kHz",
+    "live_path": "source wav -> 32kHz -> 24kHz",
+    "rows": [
+      {"backend": "muq", "id": "QcXTBHnhvaKIOlgH", "waveform_relative_rms": 0.006544181611388922, "cache_fp16_hidden_relative_rms": 0.0002276731829624623, "cached_vs_live_latent_relative_rms": 0.0378115214407444, "cached_vs_same_24k_path_latent_relative_rms": 0.0001819399039959535},
+      {"backend": "muq", "id": "jjbVPUiAEdcYRjic", "waveform_relative_rms": 0.008515994064509869, "cache_fp16_hidden_relative_rms": 0.00023096089717000723, "cached_vs_live_latent_relative_rms": 0.042404063045978546, "cached_vs_same_24k_path_latent_relative_rms": 0.00016756985860411078},
+      {"backend": "muq", "id": "IXmBxDjgTTPyPupp", "waveform_relative_rms": 0.027198761701583862, "cache_fp16_hidden_relative_rms": 0.0002318576443940401, "cached_vs_live_latent_relative_rms": 0.045876581221818924, "cached_vs_same_24k_path_latent_relative_rms": 0.00019039191829506308},
+      {"backend": "musicfm", "id": "QcXTBHnhvaKIOlgH", "waveform_relative_rms": 0.006544181611388922, "cache_fp16_hidden_relative_rms": 0.00022301649732980877, "cached_vs_live_latent_relative_rms": 0.056077465415000916, "cached_vs_same_24k_path_latent_relative_rms": 0.00015058519784361124},
+      {"backend": "musicfm", "id": "jjbVPUiAEdcYRjic", "waveform_relative_rms": 0.008515994064509869, "cache_fp16_hidden_relative_rms": 0.0002214070555055514, "cached_vs_live_latent_relative_rms": 0.08620266616344452, "cached_vs_same_24k_path_latent_relative_rms": 0.00015591578267049044},
+      {"backend": "musicfm", "id": "IXmBxDjgTTPyPupp", "waveform_relative_rms": 0.027198761701583862, "cache_fp16_hidden_relative_rms": 0.0002252858830615878, "cached_vs_live_latent_relative_rms": 0.09928630292415619, "cached_vs_same_24k_path_latent_relative_rms": 0.0001645125012146309}
+    ],
+    "conclusion": "Cached bridge warmup and live resampling are not exactly equivalent. FP16 rounding is much smaller than the resampling-chain difference. Existing running code is preserved; unified preprocessing requires a separate corrected warmup."
+  },
+  "generation_scheduling_incident": {
+    "planned_configurations": 8,
+    "fixed_video_cases": 3,
+    "conditions": ["joint", "aswap"],
+    "planned_total_videos": 48,
+    "initial_batch_live": 24,
+    "second_batch_started": 24,
+    "second_batch_exit_137": 8,
+    "second_batch_survived_initial_load": 16,
+    "cause": "GPU-only admission check missed host/cgroup memory and shared-memory model storage; kernel logs confirmed cgroup/global OOM during concurrent H3 cold loading",
+    "failed_shards": {"muq_bridgeclip": [2], "muq_bridgeinit_lambda0": [0, 1, 2], "musicfm_bridgeclip": [0, 1], "musicfm_bridgeinit_lambda0": [2, 4]},
+    "failed_logs_preserved": true,
+    "normal_running_shards_not_restarted": true,
+    "recovery": "Four different nodes; at most one cold sampler per recovery node; two failed shards sequentially on each node; recheck >=180GiB host and cgroup free memory and <=4 live samplers before every start; independent retry_memory1 logs",
+    "recovery_completion": "pending"
+  }
+}

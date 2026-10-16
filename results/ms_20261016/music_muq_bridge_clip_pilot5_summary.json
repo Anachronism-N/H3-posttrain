@@ -1,0 +1,81 @@
+{
+  "config": {
+    "stage": "bridge_clip",
+    "backend": "muq",
+    "model_path": "/opt/models/MuQ-large-msd-iter",
+    "caps": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/captions_orig_2k.json",
+    "text": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/text_orig_2k.pt",
+    "teacher": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/native_teacher_2k.pt",
+    "features": null,
+    "init": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_bridge_e20/best.pt",
+    "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_bridge_clip_pilot5",
+    "epochs": 5,
+    "batch_size": 2,
+    "encoder_lr": 1e-05,
+    "adapter_lr": 0.0001,
+    "head_lr": 0.0001,
+    "bridge_weight": 1.0
+  },
+  "parameters": {
+    "backbone": {
+      "total": 333401472,
+      "trainable": 324733056
+    },
+    "adapter": {
+      "total": 469536,
+      "trainable": 469536
+    },
+    "audio_head": {
+      "total": 655616,
+      "trainable": 655616
+    }
+  },
+  "baseline": {
+    "val_a2t_R@1": 0.004999999888241291,
+    "val_a2t_R@5": 0.029999999329447746,
+    "val_a2t_R@10": 0.05999999865889549,
+    "val_t2a_R@1": 0.0,
+    "val_t2a_R@5": 0.03500000014901161,
+    "val_t2a_R@10": 0.044999998062849045,
+    "val_R@1": 0.0024999999441206455,
+    "val_R@5": 0.03249999973922968,
+    "val_R@10": 0.05249999836087227,
+    "val_bridge_MSE": 0.17575934529304504,
+    "val_teacher_energy": 0.25808262825012207,
+    "val_bridge_MSE_over_teacher_energy": 0.6810196660067604,
+    "val_latent_energy_ratio": 0.3277041625364788
+  },
+  "best_metrics": {
+    "val_a2t_R@1": 0.02499999850988388,
+    "val_a2t_R@5": 0.07499999552965164,
+    "val_a2t_R@10": 0.11999999731779099,
+    "val_t2a_R@1": 0.029999999329447746,
+    "val_t2a_R@5": 0.0949999988079071,
+    "val_t2a_R@10": 0.16499999165534973,
+    "val_R@1": 0.027499998919665813,
+    "val_R@5": 0.08499999716877937,
+    "val_R@10": 0.14249999448657036,
+    "val_bridge_MSE": 0.2410869151353836,
+    "val_teacher_energy": 0.25808262825012207,
+    "val_bridge_MSE_over_teacher_energy": 0.9341462335920301,
+    "val_latent_energy_ratio": 0.16252494568013917,
+    "val_bridge_relative_baseline": 1.371687603486559
+  },
+  "input_sha256": {
+    "caps": "ca8eac90f4aab1b4bd708cb3d0da5c26bd18d92dc39f8e2e4f6996b265a2ece5",
+    "text": "9b9d34bbcc158467dac5e9cb4fa1449f4ac1d57ac96976d883b3611320f48cc6",
+    "teacher": "bda3328a163f5cb5133c740e1ca3e35448eedbf07046f1bebf8b132f2d0079c1",
+    "init": "00cb6b6160e1b72b854ec0e073e7adb1ee9473dc14015bad48a992d7d1b5bfdb"
+  },
+  "checkpoint_sha256": {
+    "last": "a7b70a50ca1d1ac3c36504db4dbaf461b989405446ecb918d4d7d092df5e66a4",
+    "best": "d261bc80c8da07d46a5abe7f84d96a7eb2fcc792c2181104d7ef2f3f009fe5cd"
+  },
+  "initialization": {
+    "backbone": "public initialization",
+    "adapter": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_bridge_e20/best.pt",
+    "audio_head": "random"
+  },
+  "bn_caveat": "per-rank BN train stats versus validation running stats; bridge backbone always eval",
+  "dtype": "float32"
+}

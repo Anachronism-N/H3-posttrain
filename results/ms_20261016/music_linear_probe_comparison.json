@@ -1,0 +1,107 @@
+{
+  "models": {
+    "muq": {
+      "best_epoch": 5,
+      "val_R1": 0.019999999552965164,
+      "val_R10": 0.11999999731779099,
+      "val_t2a_R10": 0.13499999046325684,
+      "genre": 0.2,
+      "coarse": 0.505,
+      "random_genre": 0.11465,
+      "train_same200_R10": 1.0,
+      "same_genre": {
+        "n": 197,
+        "skipped_singletons": 3,
+        "n_classes": 11,
+        "candidate_count_min": 2,
+        "candidate_count_max": 40,
+        "candidate_count_query_mean": 23.263959390862944,
+        "a2t_R@1": 0.08121827411167512,
+        "a2t_R@5": 0.38578680203045684,
+        "a2t_R@10": 0.6192893401015228,
+        "t2a_R@1": 0.1116751269035533,
+        "t2a_R@5": 0.38578680203045684,
+        "t2a_R@10": 0.5888324873096447,
+        "random_R@1": 0.05583756345177665,
+        "random_R@5": 0.2639593908629442,
+        "random_R@10": 0.5076142131979695
+      },
+      "parameters": {
+        "linear": 20971520,
+        "layer_norm": 8192,
+        "total": 20979712,
+        "encoder": 0,
+        "text": 0
+      }
+    },
+    "musicfm": {
+      "best_epoch": 5,
+      "val_R1": 0.02499999850988388,
+      "val_R10": 0.14499999582767487,
+      "val_t2a_R10": 0.12999999523162842,
+      "genre": 0.2,
+      "coarse": 0.51,
+      "random_genre": 0.11465,
+      "train_same200_R10": 0.9950000047683716,
+      "same_genre": {
+        "n": 197,
+        "skipped_singletons": 3,
+        "n_classes": 11,
+        "candidate_count_min": 2,
+        "candidate_count_max": 40,
+        "candidate_count_query_mean": 23.263959390862944,
+        "a2t_R@1": 0.1218274111675127,
+        "a2t_R@5": 0.3401015228426396,
+        "a2t_R@10": 0.5888324873096447,
+        "t2a_R@1": 0.08629441624365482,
+        "t2a_R@5": 0.3604060913705584,
+        "t2a_R@10": 0.5634517766497462,
+        "random_R@1": 0.05583756345177665,
+        "random_R@5": 0.2639593908629442,
+        "random_R@10": 0.5076142131979695
+      },
+      "parameters": {
+        "linear": 20971520,
+        "layer_norm": 8192,
+        "total": 20979712,
+        "encoder": 0,
+        "text": 0
+      }
+    },
+    "mert": {
+      "best_epoch": 10,
+      "val_R1": 0.014999999664723873,
+      "val_R10": 0.10999999940395355,
+      "val_t2a_R10": 0.125,
+      "genre": 0.195,
+      "coarse": 0.495,
+      "random_genre": 0.11465,
+      "train_same200_R10": 1.0,
+      "same_genre": {
+        "n": 197,
+        "skipped_singletons": 3,
+        "n_classes": 11,
+        "candidate_count_min": 2,
+        "candidate_count_max": 40,
+        "candidate_count_query_mean": 23.263959390862944,
+        "a2t_R@1": 0.07614213197969544,
+        "a2t_R@5": 0.3248730964467005,
+        "a2t_R@10": 0.6192893401015228,
+        "t2a_R@1": 0.08121827411167512,
+        "t2a_R@5": 0.3401015228426396,
+        "t2a_R@10": 0.5989847715736041,
+        "random_R@1": 0.05583756345177665,
+        "random_R@5": 0.2639593908629442,
+        "random_R@10": 0.5076142131979695
+      },
+      "parameters": {
+        "linear": 20971520,
+        "layer_norm": 8192,
+        "total": 20979712,
+        "encoder": 0,
+        "text": 0
+      }
+    }
+  },
+  "scope": "Frozen dense encoder + same linear head; validation selected epoch, not generation acceptance"
+}

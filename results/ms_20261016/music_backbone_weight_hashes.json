@@ -1,0 +1,14 @@
+{
+  "muq": {
+    "file": "/opt/models/MuQ-large-msd-iter/model.safetensors",
+    "sha256": "273febab2be02872c37d2c37e48a9d6c52c1c9392f3eeeabd498efa281ccb7a6"
+  },
+  "musicfm": {
+    "file": "/opt/models/MusicFM-MSD/pretrained_msd.pt",
+    "sha256": "218b483a0256ddef736267425fabb166fd97008983696bb9270def464b47bded"
+  },
+  "mert": {
+    "file": "/opt/models/MERT-v1-330M/pytorch_model.bin",
+    "sha256": "0c03774d821a6ad972cb48220b128a10ebea2c790116bd0fd35e5a013f8017f6"
+  }
+}

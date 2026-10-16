@@ -982,4 +982,47 @@ waveform[batch,2,L]32k → 每声道resample24k → dense music encoder
 - 同网格64维直接logmel的三个逐片相关为0.2217/0.6801/0.1776，三骨干时序hidden对onset和DP节拍代理明显高于该浅声学基线；但mel单帧readout本来缺少lag和上下文，不能把此差距全部归因于预训练语义优势。三encoder的1秒错位相关均接近0，仍只说明该弱任务有本地时间信号，不能保证DiT听到了它。
 - 近重复检查覆盖2k前5.0625秒真实音频：精确float32音轨SHA256无重复，但logmel/chroma/RMS候选门控共5457对，默认0.98/0.98/0.95时序阈值发现24对疑似近重复，其中2对跨train/val。独立另一次运行重现相同统计及配对；候选门控仍可能漏掉同歌不同片段。
 - 两个跨划分对为val `QYBgqkvrDtNbonkf` ↔ train `srXuURqouaTbClFL`（最佳偏移0.28秒，色度0.99915、logmel相关0.98955、包络0.99420、4k单声道波形相关0.78345），以及val `bqzYhuJDxSyqpwBA` ↔ train `WJCjJYyKnLurZmSL`（偏移0，波形相关0.99980、logmel0.99960）。后者为极强自动近重复证据，但两者均尚未人工曲目核验，不给伪songID。
+- 两对跨划分疑似片段另在24kHz原波形粗lag附近±40ms精细对齐：相关0.97208/0.99961、拟合增益后相对RMS误差0.23467/0.02786，后者几乎相同配乐却分别标`pop / casual`与`chinese folk`，不能把配乐身份等同唯一舞蹈标签。细查仍是片段重叠证据，不是完整歌曲ID，见`music_crosssplit_waveform_verification.json`；没有擅自更改既有划分。
 - 所有三个相关阈值统一0.95/0.98/0.995时，跨划分候选为8/2/1对，说明分组结果对阈值有依赖。既有检索和probe保留原划分、不能声称严格曲目隔离泛化；下一步应人工核对跨划分候选并以曲目组建立额外验证，不偷偷修改原结果或自动重训。代码与完整诊断见`music_temporal_probe.py`、`music_duplicate_audit.py`及对应`results/ms_20261016/*temporal_probe_v1.json`、`music_duplicate_candidates_v1.json`。
+
+### 28.11 八组训练与48条生成的最终技术验收（2026-10-17）
+- 唯一内存守卫恢复队列`JbHM6s`的8条重试全部exit0，原失败日志保留。八配置各三个固定人物，joint/aswap各3条，**48/48严格验收通过、缺失0、错误0**；未增加第四case、未重复训练或重启正常分片。完整报告`music_generation_integrity_final_20261017.json` SHA256=`dfb3d94a491a4d3bf7c0152580d3185dd06b45a6c565dfb9b6d600cbe190d30b`，包含每视频/成功log hash、两次替换203帧latent、repeat_clean尾4/time1、完整124帧704×1280/24fps及原音轨解码。环境没有ffprobe，验证的是选定视频/音频完整解码，不冒称恰好1+1个声明流。
+- 最后四组完整6条NLF已分别完成，连同首四组共48条，原生cleanpad另6条；有效检测率均1.0、跳过首秒后运动统计83帧、全部数值有限。独立重跑与早期partial可能有微小数值差异，最终四组采用`*_final_generation_motion.json`，不混合旧5条partial和6条全集。
+
+| 配置 | joint平均速度(m/s) | aswap平均速度(m/s) |
+|---|---:|---:|
+| 原生cleanpad | 0.4366 | 0.4371 |
+| MuQ bridge-only | 0.4220 | 0.4507 |
+| MuQ pureCLIP | 0.3946 | 0.3683 |
+| MuQ bridgeCLIP | 0.4218 | 0.4085 |
+| MuQ bridge-init lambda0 | 0.4053 | 0.3955 |
+| MusicFM bridge-only | 0.4192 | 0.4386 |
+| MusicFM pureCLIP | 0.3716 | 0.4177 |
+| MusicFM bridgeCLIP | 0.4096 | 0.4407 |
+| MusicFM bridge-init lambda0 | 0.3977 | 0.4200 |
+
+- 完整三case×joint/aswap六张对照表逐张查看了1.2/2.4/3.6/4.8秒的原生与8配置：楼梯case的转身/勾腿/抬臂时相确有变化；红衣case的手部次序及结尾动作不同；商店case大部分姿态依旧相似，但部分配置结尾举臂/放臂不同。所查看静帧无明显背景/衣着整体崩坏，快速手臂/手部仍模糊。静帧相似或不同都不能证明节拍/音乐风格遵循；未将这次抽帧冒称连续听看人评。
+- 8765网页一次重建已完成（120.51秒，HTTP200，built=`2026-10-17 00:28:02`），逐配置检查8组全部joint3/aswap3，无缺失。预设仍为MuQ五列、MusicFM五列、pureCLIP三列，已不需要等待生成或反复重新扫描。
+- `results/ms_20261016/music_replacement_final_acceptance.json`发布最终计数、各报告SHA256与完整配置描述统计，原逐视频报告留实验目录并可由已发布验收脚本复核；权重、音轨和原视频不发布。八组训练与生成任务技术上全部正确结束，**音乐遵循收益与连续视频画质的人评仍未完成，不宣称已训好更听音乐的模型**。网页应选“专用音乐encoder·MuQ”或“MusicFM”五列预设（同cleanpad基线），固定三个case先joint看画质、再aswap听看换音乐增量，判断CLIP是否优于bridge-only，而不只判断是否不同于原生。
+- 跨划分两对另做24kHz单声道波形细网格核验（在候选偏移附近±40ms寻找最大绝对互相关，拟合一个增益后计算相对残差）。`QYBgqkvrDtNbonkf`/`srXuURqouaTbClFL`：偏移0.27954s、重叠4.78296s、Pearson0.97208、增益0.95883、相对残差0.23467；两标签分别pop/casual与modern jazz。`WJCjJYyKnLurZmSL`/`bqzYhuJDxSyqpwBA`：偏移0、重叠5.0625s、Pearson0.999612、增益1.00078、相对残差0.027864；标签分别pop/casual与chinese folk。后者确认极接近的配乐跨划分且动作标签不同，说明音频→唯一舞种/编舞硬正负监督存在冲突风险；仍不凭该短段匹配给全曲身份、泄漏总体率或因果根因结论。
+
+### 28.11 八组训练与48条生成的最终技术验收（2026-10-17）
+- 唯一恢复任务`JbHM6s`完成8/8分片、全部exit0；保留最初8份OOM失败日志，正常运行分片未重启。最终`music_generation_validate.py`严格验收为**48/48 passed、missing0、errors0、complete=true**，不是partial报告冒充结束。
+- 每条均核验对应CSV前三行人物/音轨输出名、成功日志、reference/retake两次`[2,32,203]`编码、尾部4行repeat_clean/time1、视频与日志SHA256。decord逐帧检查124帧/704×1280/24fps，ffmpeg完整解码选中的视频及音轨；未使用不存在的ffprobe，报告明确未独立检查声明流恰好两条。
+- 后四组也各完成全部6条NLF，检测valid均1.0、运动指标有限；与首四组共48条齐全。同一秒后统计下，3case平均全身速度如下（m/s，**仅运动量，不是音乐评分**）：
+
+| 配方 | joint均速 | aswap均速 |
+|---|---:|---:|
+| 原生repeat_clean基线 | 0.4366 | 0.4371 |
+| MuQ bridge-only | 0.4220 | 0.4507 |
+| MuQ pureCLIP | 0.3946 | 0.3683 |
+| MuQ bridge初始化lambda1 | 0.4218 | 0.4085 |
+| MuQ同初始化lambda0 | 0.4053 | 0.3955 |
+| MusicFM bridge-only | 0.4192 | 0.4386 |
+| MusicFM pureCLIP | 0.3716 | 0.4177 |
+| MusicFM bridge初始化lambda1 | 0.4096 | 0.4407 |
+| MusicFM同初始化lambda0 | 0.3977 | 0.4200 |
+
+- 全部8配置已登记评审页，各joint3/aswap3。最终清单刷新HTTP200实测，完成的固定3case可在“【10-16 专用音乐encoder·MuQ】”“【10-16 专用音乐encoder·MusicFM】”“【10-16 专用音乐encoder·纯CLIP对比】”选择；先同音乐比较原生/bridge-only/CLIP，再切aswap看同人物换音乐，听所选列而不是GT音轨。
+- 最终技术验收与完整运动数据发布为`music_generation_integrity_final_20261017.json`及四个`*_final_generation_motion.json`；精简完整性副本只省略ffmpeg原始stderr元数据，保留所有48条SHA/shape/tail/done与解码证据，并记录源路径。此前44条partial记录保留原状态，不覆盖为成功。
+- **本批训练、音频接口、生成和技术指标已全部结束，但效果验收尚未成功。** 连续音画人工评分尚未完成；当前不能宣称任何配方音乐遵循显著增强。8组原decoder重建仍明显偏离原生，固定adapter/head消融揭示骨干完整状态增量并不统一，曲目近重复说明既有200验证不是严格曲目隔离；这些限制需要先处理，不能靠继续加轮数、额外生成case或擅自训练DiT掩盖。

@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-17",
+  "stage": "music_replacement_final_technical_acceptance",
+  "training_configurations": 8,
+  "fixed_video_cases": 3,
+  "conditions": ["joint", "aswap"],
+  "integrity": {"expected": 48, "passed": 48, "missing": 0, "errors": 0, "complete": true, "full48_complete": true},
+  "source_integrity_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/music_generation_integrity_final_20261017.json",
+  "source_integrity_sha256": "dfb3d94a491a4d3bf7c0152580d3185dd06b45a6c565dfb9b6d600cbe190d30b",
+  "video": {"height": 1280, "width": 704, "fps": 24, "frames": 124},
+  "audio_interface": {"reference_and_retake_replaced": true, "encode_calls": [1, 2], "latent_shape": [2, 32, 203], "tail_policy": "repeat_clean", "tail_frames": 4, "tail_effective_time": 1},
+  "checks": ["completed matching shard log", "both replacement calls and fixed tail evidence", "full decord video frame decode", "full ffmpeg selected audio/video decode", "stable source log/video SHA256"],
+  "declared_stream_count_checked": false,
+  "recovery": {"original_oom_shards": 8, "recovered_shards": 8, "managed_task": "JbHM6s", "all_retry_exit_codes_zero": true, "original_failure_logs_preserved": true},
+  "review_web": {"port": 8765, "manifest_status": 200, "manifest_built": "2026-10-17 00:28:02", "dedicated_configurations": 8, "joint_per_configuration": 3, "aswap_per_configuration": 3},
+  "motion_skip_seconds": 1.0,
+  "motion_configurations": [
+    {
+      "configuration": "native_cleanpad",
+      "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/native_cleanpad_generation_motion.json",
+      "source_sha256": "4e859fa94f6e9e213c8491792a2cb23ab0a03bd9b8d6d2836c455f60ae7d2c0a",
+      "videos": 6, "valid_detection_min": 1.0, "statistics_frames_per_video": 83,
+      "condition_means": {"joint": {"speed": 0.43658960434935756, "arm_speed": 0.7957662164877514, "turn": 168.74614651585912}, "aswap": {"speed": 0.43714505283308397, "arm_speed": 0.7202848652900768, "turn": 159.13456587434277}}
+    },
+    {
+      "configuration": "muq_bridge_only",
+      "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_bridge_only_generation_motion.json",
+      "source_sha256": "af6fdcc10975424ab7ef7aae380f9acd15fd71217a81f95db7f8e66261e82263",
+      "videos": 6, "valid_detection_min": 1.0, "statistics_frames_per_video": 83,
+      "condition_means": {"joint": {"speed": 0.42196006825389865, "arm_speed": 0.699074777986803, "turn": 172.91161300541398}, "aswap": {"speed": 0.4506617238169381, "arm_speed": 0.7774891185208714, "turn": 145.68852710673409}}
+    },
+    {
+      "configuration": "muq_pureclip",
+      "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_pureclip_generation_motion.json",
+      "source_sha256": "9f5f18769e391c93b993a318904d0aefeb5aca9d3ea7326b421263fce6add5a4",
+      "videos": 6, "valid_detection_min": 1.0, "statistics_frames_per_video": 83,
+      "condition_means": {"joint": {"speed": 0.39455150148087265, "arm_speed": 0.6688608170231252, "turn": 183.24518413736018}, "aswap": {"speed": 0.3682641608115593, "arm_speed": 0.6387979612119868, "turn": 156.61492957697166}}
+    },
+    {
+      "configuration": "musicfm_bridge_only",
+      "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_bridge_only_generation_motion.json",
+      "source_sha256": "03913b7ca27d8c777488138f029a60672a87e2d612ec42ffb029c24c6a158cf0",
+      "videos": 6, "valid_detection_min": 1.0, "statistics_frames_per_video": 83,
+      "condition_means": {"joint": {"speed": 0.4191642943525495, "arm_speed": 0.6874073316479551, "turn": 181.2920848003463}, "aswap": {"speed": 0.4386239548400744, "arm_speed": 0.755226709729529, "turn": 157.6284441426055}}
+    },
+    {
+      "configuration": "musicfm_pureclip",
+      "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_pureclip_generation_motion.json",
+      "source_sha256": "6ee1efd805b6786813a5ca658ae023f1eaae081680e7b2c74d272e596129ceaf",
+      "videos": 6, "valid_detection_min": 1.0, "statistics_frames_per_video": 83,
+      "condition_means": {"joint": {"speed": 0.371631507387693, "arm_speed": 0.624004986227329, "turn": 156.95463761478206}, "aswap": {"speed": 0.41765274220890447, "arm_speed": 0.7371983823233174, "turn": 207.21828723650185}}
+    },
+    {
+      "configuration": "muq_bridgeclip",
+      "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_bridgeclip_final_generation_motion.json",
+      "source_sha256": "dbe8019f680e0291d368d7c9f1c445c87dcb229dc66c89fcdb2fe24713a4818a",
+      "videos": 6, "valid_detection_min": 1.0, "statistics_frames_per_video": 83,
+      "condition_means": {"joint": {"speed": 0.4218425387002324, "arm_speed": 0.733271765468173, "turn": 203.74724125656846}, "aswap": {"speed": 0.40847136899877906, "arm_speed": 0.7112686820155302, "turn": 159.6212231391369}}
+    },
+    {
+      "configuration": "muq_bridgeinit_lambda0",
+      "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/muq_bridgeinit_lambda0_final_generation_motion.json",
+      "source_sha256": "e874c5f0e351709127558752c211e1414fbe7559a3d359a6140f616f8e97b108",
+      "videos": 6, "valid_detection_min": 1.0, "statistics_frames_per_video": 83,
+      "condition_means": {"joint": {"speed": 0.4052703050133795, "arm_speed": 0.7030697411204185, "turn": 168.7748029763292}, "aswap": {"speed": 0.3955479704603204, "arm_speed": 0.6519838464699835, "turn": 116.60636467574733}}
+    },
+    {
+      "configuration": "musicfm_bridgeclip",
+      "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_bridgeclip_final_generation_motion.json",
+      "source_sha256": "3dba3aa323690ebecee644bd0a7fc38e766110dcbc6c7f63f7d79b3070dad2f7",
+      "videos": 6, "valid_detection_min": 1.0, "statistics_frames_per_video": 83,
+      "condition_means": {"joint": {"speed": 0.4096472799440063, "arm_speed": 0.6846072421950821, "turn": 158.39668087577968}, "aswap": {"speed": 0.44072164702687133, "arm_speed": 0.7342022489616783, "turn": 151.2719856026367}}
+    },
+    {
+      "configuration": "musicfm_bridgeinit_lambda0",
+      "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_bridgeinit_lambda0_final_generation_motion.json",
+      "source_sha256": "a3ce206f3e6418381057319f4fff90be5d29a8f313978be72e68bf0b68d5e9ba",
+      "videos": 6, "valid_detection_min": 1.0, "statistics_frames_per_video": 83,
+      "condition_means": {"joint": {"speed": 0.39772733141873634, "arm_speed": 0.6625994357070444, "turn": 134.75940021783387}, "aswap": {"speed": 0.4200079343818855, "arm_speed": 0.749147050733863, "turn": 161.3065878831986}}
+    }
+  ],
+  "motion_complete": true,
+  "generated_video_motion_entries": 48,
+  "native_baseline_motion_entries": 6,
+  "continuous_audio_video_human_review": "pending",
+  "music_adherence_verdict": "not established",
+  "quality_verdict": "no overall collapse in inspected still frames; not continuous-video acceptance",
+  "scope": "Technical completeness and descriptive motion statistics only; motion change and weak timing proxies are not evidence of improved musical adherence. Full per-video records stay in the source reports, linked by SHA256; weights, raw audio/video are excluded."
+}

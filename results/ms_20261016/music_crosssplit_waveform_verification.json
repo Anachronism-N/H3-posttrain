@@ -1,0 +1,28 @@
+{
+  "scope": "Two cross-split suspected pairs verified using mono waveforms at 24kHz. This is overlap evidence, not global song identity or complete song-level isolation.",
+  "method": "FFT cross-correlation; search within +/-40ms of the coarse candidate lag; maximize absolute correlation; fit one signed gain; gain-normalized residual RMS divided by target RMS.",
+  "rows": [
+    {
+      "ids": ["QYBgqkvrDtNbonkf", "srXuURqouaTbClFL"],
+      "split": ["val", "train"],
+      "genre": ["pop / casual", "modern jazz"],
+      "lag_seconds": 0.2795416666666667,
+      "overlap_seconds": 4.782958333333333,
+      "waveform_pearson": 0.9720760537275279,
+      "gain_fit": 0.9588299306199104,
+      "gain_normalized_relative_rms": 0.23466603028456387
+    },
+    {
+      "ids": ["WJCjJYyKnLurZmSL", "bqzYhuJDxSyqpwBA"],
+      "split": ["train", "val"],
+      "genre": ["pop / casual", "chinese folk"],
+      "lag_seconds": 0.0,
+      "overlap_seconds": 5.0625,
+      "waveform_pearson": 0.9996117267114698,
+      "gain_fit": 1.0007832576710836,
+      "gain_normalized_relative_rms": 0.02786388021993772
+    }
+  ],
+  "existing_split_modified": false,
+  "conclusion": "The second pair has extremely similar audio across train and validation but different dance-genre labels. Existing retrieval metrics must not be represented as strictly song-isolated generalization. This does not establish the root cause of weak music-conditioned generation."
+}

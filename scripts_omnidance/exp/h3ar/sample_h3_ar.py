@@ -47,6 +47,8 @@ p.add_argument("--music_cfg", type=float, default=0.0, help=">0: music guidance 
 p.add_argument("--music_cfg_min_sig", type=float, default=0.0, help="apply music guidance only where sigma >= this")
 p.add_argument("--lora_steps", default="", help="a:b -> LoRA active only on denoise step indices [a, b) (bi mode); diagnoses which noise range the fine-tune damages")
 a = p.parse_args()
+if a.prompt_mode == "empty" and (a.body_json or a.soft_text or a.soft_tokens or a.prompt_prefix):
+    p.error("Empty prompt must not combine with captions, soft tokens or a prompt prefix")
 
 csv.field_size_limit(10 ** 9)
 E = "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp"
@@ -298,7 +300,11 @@ for c, r, dst in todo:
         body = a.prompt_prefix + " " + body
     # empty: text prompt " " (same as the CFG negative) -> isolates what image + audio alone drive
     # generic: H3 template (reference/audio bindings) + one generic dance sentence, no per-video description
-    video = generate(" " if a.prompt_mode == "empty" else h3_prompt(body, generic=(c == "audio_only" or a.prompt_mode == "generic")), img, wav, sr)
+    prompt = " " if a.prompt_mode == "empty" else h3_prompt(body, generic=(c == "audio_only" or a.prompt_mode == "generic"))
+    print('[h3ar] input_conditions ' + _json.dumps(dict(prompt_mode=a.prompt_mode, semantic_text=prompt,
+          image_path=r["image_path"], audio_path=a.audio_override or r["audio_path"], seed=a.seed,
+          music_encoder_ckpt=a.music_encoder_ckpt or None)), flush=True)
+    video = generate(prompt, img, wav, sr)
     write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)
     if SOFT is not None:
         assert SOFT["hits"] > 0, "soft prompt hook never fired"

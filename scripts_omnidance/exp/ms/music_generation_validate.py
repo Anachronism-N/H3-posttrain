@@ -59,7 +59,7 @@ def fixed_cases(exp_root):
     return cases
 
 
-def successful_log(log_dir, case):
+def successful_log(log_dir, case, require_replacement=True, require_empty_prompt=False):
     """Never inspect a video until its shard has a complete, matching success log."""
     invalid = []
     for suffix in ('_retry_memory1', ''):
@@ -83,12 +83,28 @@ def successful_log(log_dir, case):
             r'^\[h3ar\] repeat_clean audio tail: 4 rows fixed at effective time=1\s*$',
             text, flags=re.MULTILINE,
         )
-        if not sample_line or not all(calls) or not tail:
+        condition_record = None
+        if require_empty_prompt:
+            records = re.findall(r'^\[h3ar\] input_conditions (.+)$', text, flags=re.MULTILINE)
+            if len(records) != 1:
+                invalid.append(f'{path}: require exactly one empty-prompt input audit')
+                continue
+            condition_record = json.loads(records[0])
+            if (condition_record.get('prompt_mode') != 'empty' or condition_record.get('semantic_text') != ' '
+                    or condition_record.get('audio_path') != case['audio_path']
+                    or condition_record.get('seed') != 42
+                    or bool(condition_record.get('music_encoder_ckpt')) != require_replacement):
+                invalid.append(f'{path}: empty-prompt input audit disagrees with fixed condition')
+                continue
+        if not sample_line or (require_replacement and not all(calls)) or not tail:
             invalid.append(f'{path}: done log lacks matching sample, both [2,32,203] calls, '
                            'or repeat_clean tail=4 time=1')
             continue
         done = re.search(r'^\[h3ar\] done\s*$', text, flags=re.MULTILINE)
-        if not (calls[0].start() < calls[1].start() < tail.start() < sample_line.start() < done.start()):
+        ordered = tail.start() < sample_line.start() < done.start()
+        if require_replacement:
+            ordered = ordered and calls[0].start() < calls[1].start() < tail.start()
+        if not ordered:
             invalid.append(f'{path}: replacement/tail/sample/done evidence is out of order')
             continue
         if signature(path) != before:
@@ -96,6 +112,10 @@ def successful_log(log_dir, case):
         evidence = dict(encode_calls=[1, 2], encode_shapes=[[2, 32, 203], [2, 32, 203]],
                         repeat_clean_tail_rows=4, repeat_clean_effective_time=1,
                         matching_sample_done=True)
+        if not require_replacement:
+            evidence.update(encode_calls=None, encode_shapes=None, native_encoder=True)
+        if condition_record is not None:
+            evidence['input_conditions'] = condition_record
         return path, hashlib.sha256(content).hexdigest(), before, evidence
     if invalid:
         raise ValueError('; '.join(invalid))
@@ -147,7 +167,7 @@ def probe_video(path):
     )
 
 
-def validate(exp_root, tags=TAGS):
+def validate(exp_root, tags=TAGS, native_tags=(), require_empty_prompt=False):
     expected = fixed_cases(exp_root)
     results = []
     for tag in tags:
@@ -156,7 +176,9 @@ def validate(exp_root, tags=TAGS):
             video_path = group_dir / case['condition'] / case['filename']
             entry = dict(tag=tag, **case, video_path=str(video_path))
             try:
-                log = successful_log(group_dir / 'logs', case)
+                log = successful_log(group_dir / 'logs', case,
+                                     require_replacement=tag not in native_tags,
+                                     require_empty_prompt=require_empty_prompt)
                 if log is None:
                     entry.update(status='missing', reason='no_matching_success_log')
                 else:
@@ -211,6 +233,8 @@ def main(argv=None):
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--tags', nargs='+', default=list(TAGS),
                         help='Validate only these fixed groups; each group still uses the same six cases.')
+    parser.add_argument('--native_tags', nargs='*', default=[], help='Explicit original-native groups: no music-replacement encode log required')
+    parser.add_argument('--require_empty_prompt', action='store_true', help='Require actual empty semantic text and fixed music/seed evidence')
     parser.add_argument('--allow_partial', action='store_true',
                         help='Allow missing success logs, but never validation errors; complete remains false.')
     args = parser.parse_args(argv)
@@ -230,7 +254,11 @@ def main(argv=None):
     except ImportError:
         parser.error('decord is required; use /opt/venv_eval/bin/python')
     try:
-        result = validate(exp_root, args.tags)
+        if len(set(args.native_tags)) != len(args.native_tags) or not set(args.native_tags) <= set(args.tags):
+            parser.error('--native_tags must be unique members of --tags')
+        result = validate(exp_root, args.tags, args.native_tags, args.require_empty_prompt)
+        result['native_tags'] = args.native_tags
+        result['required_empty_prompt'] = args.require_empty_prompt
         result['allow_partial'] = args.allow_partial
         atomic_write_new(out, result)
     except (OSError, ValueError, KeyError) as error:

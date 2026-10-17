@@ -123,6 +123,12 @@
 - 以两个预设整体定性反馈完成本轮首轮效果验收，不要求必须提交网页数值评分；不冒称36条逐视频穷尽人评、不捏造逐拍偏好或bridge-only独立评分。结论为画质保留、扩量和更多更新未建立明确可感知音乐控制增量；检索改善不作视频收益。过去“仍待人评”是阶段状态，以本节为最新事实。
 - 本轮受控规模实验到此收尾，不重复训练/加数据以满足goal。下一方向优先另行设计音乐文本接口/可编辑编舞控制的可归因验证，其他维度/融合/LLM/APP与DiT训练不在本轮自动扩大范围。
 
+## 用户新增输入约束：仅音乐＋参考图快速推理
+- 用户要求后续验证只给音乐和参考图，不给文本prompt；本轮先比较原生H3与MusicFM6000/1875的lambda0和lambda1，不扩大六配置全量训练或新增人物。每配置固定三人物、joint/aswap各3，共18条；50步/704×1280/124帧24fps/seed42/shift12和audio_shift3/repeat_clean保持与前轮一致，只改语义文本。
+- 复用`sample_h3_ar.py --prompt_mode empty`：实际prompt为单个空白字符`" "`，无通用舞蹈句、无H3自然语言人物/音乐绑定模板、无MotionScript/CoT/软token注入；不移除模型所需文本编码器或Ref2VA的结构标识`<Picture 1>: / <Audio 1>:`和参考条件打包。上游拒绝长度0字符串，空白占位没有语义指令，不冒称完全删除文本模态。
+- sampler增加实际input_conditions日志（prompt/图/音轨/seed/encoder），empty禁止caption/soft-token/prefix组合；验收支持显式native_tags和require_empty_prompt，不把原生模型缺replacement日志当失败。合成测试空文本分支不调用模板，非空语义与假replacement声明拒绝。无训练loss/权重或DiT更改。
+- 八节点启动前无活跃采样/训练，主机/cgroup空闲均超过180GiB；每节点只新增一个冷加载，18分片按队列串行，每次重新准入。完整18结束后再完整音画解码并提供新评审入口。当前启动不等于视频验收结束，准确命令在`music_empty_inference_plan_v1.json`，旧结果不覆盖。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

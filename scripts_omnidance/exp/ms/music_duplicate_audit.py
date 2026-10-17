@@ -196,19 +196,19 @@ def main():
         raise ValueError('workers must be in [1,64]')
     hashes = {name: sha256(path) for name, path in (('caps', args.caps), ('split', args.split))}
     caps, split = read_json(args.caps), read_json(args.split)
-    if not isinstance(caps, dict) or len(caps) != 2000 or not isinstance(split, dict):
-        raise ValueError('Exactly 2000 caption IDs and a split dictionary are required')
+    if not isinstance(caps, dict) or len(caps) < 4 or not isinstance(split, dict):
+        raise ValueError('At least four caption IDs and an explicit split dictionary are required')
     for sid in caps:
         if not sid or '/' in sid or '\\' in sid or '\0' in sid or sid in ('.', '..'):
             raise ValueError(f'Invalid original clip ID: {sid!r}')
-    for key, count in (('train', 1800), ('val', 200)):
+    for key in ('train', 'val'):
         values = split.get(key)
-        if (not isinstance(values, list) or len(values) != count or
-                any(not isinstance(s, str) for s in values) or len(set(values)) != count):
-            raise ValueError(f'{key} must contain exactly {count} unique string IDs')
+        if (not isinstance(values, list) or len(values) < 2 or
+                any(not isinstance(s, str) for s in values) or len(set(values)) != len(values)):
+            raise ValueError(f'{key} must contain at least two unique string IDs')
     train, val = set(split['train']), set(split['val'])
     if train & val or train | val != set(caps):
-        raise ValueError('Split must partition exactly the same 2000 IDs; no intersection-only audit')
+        raise ValueError('Split must partition exactly all caption IDs; no intersection-only audit')
     ids = sorted(caps)
     init_worker()
     records = {}
@@ -262,7 +262,7 @@ def main():
     scores.sort(key=lambda r: (r['suspected'], r.get('chroma_cosine', -2),
                                r.get('logmel_pearson', -2), r.get('envelope_pearson', -2)), reverse=True)
     report = dict(stage='music_duplicate_candidate_audit', input_sha256=hashes, args=vars(args),
-                  n_ids=2000, n_train=1800, n_val=200, audio_root=str(AUDIO_ROOT),
+                  n_ids=len(ids), n_train=len(train), n_val=len(val), audio_root=str(AUDIO_ROOT),
                   scope='Only first actual 5.0625s decoded at 24k stereo. Candidates/suspected pairs are not songID or truth. '
                         'Gate can miss duplicates; absence cannot establish no shared song. Different excerpts of one song remain unresolved; '
                         'Exact hashes do not normalize gain/channel variation; mono near-scoring may miss or collapse channel changes. '
@@ -276,7 +276,7 @@ def main():
                               pearson='flattened mean-centered logmel and centered RMS; constant signal returns 0',
                               exact='SHA256 of dtype/rate/shape and actual resampled float32 stereo bytes, no padded samples',
                               suspected_thresholds=dict(chroma=0.98, logmel=0.98, envelope=0.95)),
-                  normalization=dict(train_n=1800, mean=mean.tolist(), std=std.tolist()),
+                  normalization=dict(train_n=len(train), mean=mean.tolist(), std=std.tolist()),
                   audio_metadata=[{k: v for k, v in records[sid].items()
                                    if k not in ('logmel', 'chroma', 'envelope', 'signature', 'waveform')} for sid in ids],
                   exact_groups=exact, exact_n_pairs=sum(g['n_pairs'] for g in exact),

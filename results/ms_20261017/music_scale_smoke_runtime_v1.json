@@ -1,0 +1,45 @@
+{
+  "scope": "Real GPU interface checks and a two-rank four-update training mechanics test only; not a data-scale experiment or evidence of generation improvement.",
+  "audio_items": 4,
+  "teacher_cache": {
+    "sha256": "c098d7c13380b67436753ab3fc321becefea82a12044ce3c012c4e7f2223ddf9",
+    "waveform_path": "sourcewav->32k",
+    "latent_shape": [2,32,203],
+    "reference_max_abs_errors": [0.00006699562072753906,0.00006902217864990234,0.00006222724914550781],
+    "allowed_reference_error": 0.0001,
+    "all_tensor_hashes_verified": true
+  },
+  "musicfm_cache": {
+    "sha256": "cf18f3a7c7628e011aad18f9a1652ce603a3f1b2a1cc275c1a2ab9849475da58",
+    "waveform_path": "sourcewav->32k->24k",
+    "feature_shape": [2,127,1024],
+    "all_tensor_hashes_verified": true
+  },
+  "training": {
+    "world_size": 2,
+    "per_rank_batch": 1,
+    "global_batch": 2,
+    "requested_updates": 4,
+    "completed_updates": 4,
+    "validation_updates": [2,4],
+    "encoder_parameters_with_gradient": 316343296,
+    "encoder_unused_tensors": 3,
+    "adapter_parameters_with_gradient": 469536,
+    "head_parameters_with_gradient": 655616,
+    "peak_allocated_gib": 7.192567825317383,
+    "peak_reserved_gib": 8.037109375,
+    "setup_seconds": 8.137302186340094,
+    "input_load_seconds": 0.09819451067596674,
+    "training_wall_seconds": 2.2543852059170604,
+    "gpu_event_seconds": 1.3735848846435548,
+    "validation_seconds": 1.1680996818467975,
+    "checkpoint_seconds": 26.48648933507502,
+    "export_seconds": 103.98898495081812,
+    "wall_seconds": 142.72550321090966,
+    "best_checkpoint_sha256": "6fae3511f76a8850ca728905ad443ccf0bd4e175721cf19bbe3949d4f0cb1644",
+    "last_checkpoint_sha256": "b25378f133b7103c0823f15c138f434527609eb40d5962821bc886363c1ccd74",
+    "source_summary": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_scale_ddp_smoke_offline_v1/summary.json",
+    "note": "Measured at a tiny batch and dataset; do not extrapolate to future training duration. Checkpoint writes and hash export on the shared filesystem dominate this small test. No DiT or text weights trained."
+  },
+  "recovery": "First startup attempted an HF config HEAD request despite a cached config. Exact failed-init launcher/ranks were terminated and the new managed run used HF_HUB_OFFLINE=1 and TRANSFORMERS_OFFLINE=1; no package changes or hook bypass."
+}

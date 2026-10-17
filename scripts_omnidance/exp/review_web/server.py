@@ -28,6 +28,12 @@ CTYPE = {".mp4": "video/mp4", ".wav": "audio/wav", ".png": "image/png", ".jpg": 
 
 # 模型说明（label 匹配前缀即可）
 DESC = {
+    "H3AR/val_musicreplace_musicfm_scale_d1800_l0_s560_v4": "MusicFM规模对照：clean1800，bridge100初始化，CLIP560更新lambda0；同batch16/norm/704p/seed",
+    "H3AR/val_musicreplace_musicfm_scale_d1800_l1_s560_v4": "MusicFM规模对照：clean1800，bridge100初始化，CLIP560更新lambda1；两路音频替换",
+    "H3AR/val_musicreplace_musicfm_scale_d6000_l0_s560_v4": "MusicFM规模对照：nested6000，bridge100初始化，CLIP560更新lambda0；相同更新预算",
+    "H3AR/val_musicreplace_musicfm_scale_d6000_l1_s560_v4": "MusicFM规模对照：nested6000，bridge100初始化，CLIP560更新lambda1；相同更新预算",
+    "H3AR/val_musicreplace_musicfm_scale_d6000_l0_s1875_v4": "MusicFM步数对照：同6000/bridge100，CLIP1875更新lambda0；不是单纯数据量收益",
+    "H3AR/val_musicreplace_musicfm_scale_d6000_l1_s1875_v4": "MusicFM步数对照：同6000/bridge100，CLIP1875更新lambda1；不是单纯数据量收益",
     "H3AR/val_musicreplace_muq_bridge_only": "MuQ替换：冻结公开骨干，adapter桥接20轮；reference/retake均替换，repeat_clean",
     "H3AR/val_musicreplace_muq_pureclip": "MuQ替换：骨干+随机adapter+线性head纯CLIP5轮，无teacher；repeat_clean",
     "H3AR/val_musicreplace_muq_bridgeclip": "MuQ替换：bridge初始化后全编码CLIP5轮+latent MSE(lambda1)；repeat_clean",
@@ -166,6 +172,12 @@ DESC = {
 }
 
 PRESETS = [
+    {"name": "【10-17 MusicFM扩量·lambda0】原生 / 旧bridge-only / 1800与6000同560更新 / 6000多1875更新；听当前列，joint与aswap均看", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_nativeclip_base_cleanpad", "H3AR/val_musicreplace_musicfm_bridge_only", "H3AR/val_musicreplace_musicfm_scale_d1800_l0_s560_v4", "H3AR/val_musicreplace_musicfm_scale_d6000_l0_s560_v4", "H3AR/val_musicreplace_musicfm_scale_d6000_l0_s1875_v4"]},
+    {"name": "【10-17 MusicFM扩量·lambda1】原生 / 旧bridge-only / 1800与6000同560更新 / 6000多1875更新；检索成绩不是视频音乐评分", "cond": "joint", "view": "models",
+     "models": ["H3AR/val_nativeclip_base_cleanpad", "H3AR/val_musicreplace_musicfm_bridge_only", "H3AR/val_musicreplace_musicfm_scale_d1800_l1_s560_v4", "H3AR/val_musicreplace_musicfm_scale_d6000_l1_s560_v4", "H3AR/val_musicreplace_musicfm_scale_d6000_l1_s1875_v4"]},
+    {"name": "【10-17 MusicFM桥接约束·6000】原生 / 同6000同560的lambda0与1 / 同1875的lambda0与1；看卡点相位、动作质感与画质", "cond": "aswap", "view": "models",
+     "models": ["H3AR/val_nativeclip_base_cleanpad", "H3AR/val_musicreplace_musicfm_scale_d6000_l0_s560_v4", "H3AR/val_musicreplace_musicfm_scale_d6000_l1_s560_v4", "H3AR/val_musicreplace_musicfm_scale_d6000_l0_s1875_v4", "H3AR/val_musicreplace_musicfm_scale_d6000_l1_s1875_v4"]},
     {"name": "【10-16 专用音乐encoder·MuQ】同repeat_clean：原生对照 / bridge-only / 纯CLIP / bridge+CLIP / 同初始化lambda0；joint看画质，aswap看换音乐增量", "cond": "joint", "view": "models",
      "models": ["H3AR/val_nativeclip_base_cleanpad", "H3AR/val_musicreplace_muq_bridge_only", "H3AR/val_musicreplace_muq_pureclip", "H3AR/val_musicreplace_muq_bridgeclip", "H3AR/val_musicreplace_muq_bridgeinit_lambda0"]},
     {"name": "【10-16 专用音乐encoder·MusicFM】同repeat_clean：原生对照 / bridge-only / 纯CLIP / bridge+CLIP / 同初始化lambda0；不以动作变化量代替音乐遵循", "cond": "joint", "view": "models",

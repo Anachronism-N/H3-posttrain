@@ -130,6 +130,11 @@
 - 八节点启动前无活跃采样/训练，主机/cgroup空闲均超过180GiB；每节点只新增一个冷加载，18分片按队列串行，每次重新准入。18分片全部exit0，严格完整音画与实际空白输入核验18passed/0missing/errors已通过。准确命令、完成任务和逐条验收分别为`music_empty_inference_plan_v1.json`、`music_empty_inference_jobs_v1.json`及`music_empty_inference_integrity_v1.json`，旧结果不覆盖。
 - 原8766入口第一预设已加入【仅音乐+参考图·无文本】原生/λ0/λ1三列，合并11模型/3人物/4预设并保留原有文本对照。页面/API200、18视频及6实际音轨Range206已核验。推理请求已完成，空文本条件下的音乐效果需看当前新结果，不能用旧有文本的人评宣称这批有效。
 
+## 2026-10-18 无文本诊断与目标对齐边界
+- 用户明确无文本动作不同、动作小且不像舞蹈；新增18empty pose缓存一次，重读同权重generic/原生/GT共39视频，对照实际音乐来源caption。body速度比原生0.5773/λ0 0.5032/λ1 0.4641，原生本身也退化；不把运动量当caption/音乐分数。六视觉图与缺失动作证据见notes28.19、`music_empty_caption_visual_review_v1.json`与完整motion audit。
+- 参考图当前是reference-only而非硬首帧条件：sampler的keyframes/retake_video为None。实际楼梯浅黄衣/灰裤在empty原生及两音乐encoder都变深色衣裤，不能把输入正确/解码成功当参考保真正确；不单独归因训练骨干。维持无外部语义文本要求，先验收一致的参考条件，不偷偷恢复通用舞蹈句。
+- 共用encoder/adapter与CLIP的池化投影对齐不等于生成行为一致。若需要训练与部署学生完全同输入，应在相同图/音频/噪声/timestep/CFG/tail下训练空文本学生通过冻结H3的生成路径；教师可用内部caption或GT作为监督而学生推理无caption。该路线需新增生成监督并保留冻结DiT到encoder/adapter的梯度，超出此前CLIP/桥接-only限制，需独立授权/方案，当前只分析不实施。没有承诺音乐唯一恢复caption或两条件输出逐像素一致。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

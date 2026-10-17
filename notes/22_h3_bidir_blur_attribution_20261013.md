@@ -1097,3 +1097,21 @@ waveform[batch,2,L]32k → 每声道resample24k → dense music encoder
 - 八节点当前空闲且模型/本地环境齐备，每节点一条冷加载，后续同节点分片串行并重新核验内存准入。18分片受工具管理队列`3zsKdT`全部exit0，原生/专用都使用相同empty条件，专用reference/retake均替换；没有重训或重启正常任务。独立严格报告`music_empty_inference_integrity_v1.json`验收**18/18 passed、0 missing、0 errors**，SHA256=`9269026f9bfff06a2f401acec277c6519e8539434df9332a17037fadf1b8fbfd`；逐条实际input_conditions核对prompt为空白、参考图/音轨/seed及准确encoder路径，完整124帧704×1280/24fps和选定音轨解码通过，替换两路203latent/tail4time1符合接口。原生组明确标为native_tags，不伪造音乐encoder替换日志。
 - 同一已确认可访问的8766网页已加入第一预设 **【仅音乐+参考图·无文本】原生H3 / MusicFM lambda0 / lambda1**；独立合并清单保留旧三个有文本预设与既有结果，共11模型/3人物/4预设。网页页面/API HTTP200、新18条视频及6个实际音轨Range206全部通过，sample audio_by_condition保持准确aswap音乐；旧8765/旧清单不动。不需要重新训练或重新扫描全树，刷新原8766页面后可直接选新预设。
 - 楼梯joint/aswap的八时间点视觉采样已查看：三空文本配置仍有勾腿、步移及手臂母题，发生时相、转身和臂部动作不同，换音乐也有局部编排变化；所查静帧未见全局背景/人物崩坏。其余case采样图保留实验目录，技术完整解码并不等于连续听看或音乐效果胜出。**当前仅完成空文本快速推理和技术验收，尚未收到这批无文本结果的人评；不能将上一轮有文本评审或未校准自动指标套用为本批结论。** 完整命令/完成清单/日志及媒体hash公开于结果JSON，不发布原人物视频或音轨。
+
+### 28.19 无文本用户反馈、caption核对及训练/生成目标差异（2026-10-18）
+- 用户真实连续观察：只有音乐和有文本的视频动作几乎不同；empty lambda1换音乐变化略小、lambda0也不大，case1几乎没有舞蹈动作，其他case动作小、不像舞蹈。用户还追问CLIP音乐-文本对齐是否应保证无文本/有文本生成一致，以及如何使训练/生成完全对齐。以下诊断不以“动作变小仍合理”抹掉该负反馈，也不把小动作自动说成caption成功。
+- 已生成并实际Read六张逐case/condition对照：原生empty、lambda0/1empty、原生generic、lambda0/1generic、实际音乐来源GT，各10时间点0.5–5.0秒，共420采样帧。原音乐三条有原版MS，六音轨都有E10视频观看VLM动作caption；换入音乐三条没有原版MS，`music_eval3_caps.json`仅空对象，不能拿generation_holdout伪舞种或音乐CoT填作监督真值。六音轨都为训练留出，所谓音乐对应caption只是来源舞蹈描述，不是这首音乐的唯一正确编舞。
+- **动作与caption核对**：楼梯empty仍有后勾腿、步移与小手势，不是物理完全静止；对应VLM正文的双臂收展/前抬腿/分阶段单臂动作未完整体现，swap来源的绕臂/转体序列也未建立。原版MS的360°转圈与VLM turns:none及所查GT帧有冲突，不采用未核验转圈句作GT。红衣empty偏反复手到嘴/脸/胸和双手头部造型，部分肘屈伸符合粗MS，但没有实现明确来源动作顺序；swap来源要求交替抬腿，生成画面腿部裁切，不能认证腿部内容。商店empty主要低幅度单臂/重心变化，明显少了E10正文的反复双臂抬落/交替前伸；可见低层动作重合但不能叫完整caption复现。各case证据/缺项/不确定项完整保留`music_empty_caption_visual_review_v1.json`，没有主观捏造caption准确率。
+- **重要纠正：参考图不是硬锁定首帧。** sampler设置keyframes=None、retake_video=None，只把图输入references；上游ReferenceEncoder返回ref_visual_anchor，不返回第一帧锁定mask。此前“固定首帧强约束”不能用于本次sampler，准确说是固定参考图。实际输入PNG经Read确认楼梯是浅黄上衣/灰裤，但六个empty楼梯joint/aswap均变成深蓝外套/深裤，包括原生H3；generic仍保持浅黄衣/灰裤。无文本不仅少了舞蹈句，还移除了人物/图像/音乐自然语言绑定，参考保真也受影响。该失败在原生就发生，不能单独归因于MusicFM训练；技术输入/完整解码通过不等于参考图身份衣着保真通过。
+- 复用confidence DWPose入口，18新empty视频只提一次，另外同权重generic和原生/GT缓存重读；39视频fingerprint/finite全部通过，跟踪比例1.0不当身份准确率。统一[1,5)邻帧双端有效导数、最低0.7覆盖、缺失不填0、按画面高度归一化；不是m/s或人物身高单位。完整结果`music_empty_motion_caption_audit_v1.json` SHA256=`2c4e994cbd635e0d5989b6951a359dab519b62daa390feb2636dc3906d5c2e2d`。
+
+| 同权重去文本/保留generic的平均速度比（六joint/aswap） | body | arms | legs |
+|---|---:|---:|---:|
+| 原生H3 | 0.5773 | 0.5512 | 0.5889 |
+| MusicFM lambda0 | 0.5032 | 0.4414 | 0.6552 |
+| MusicFM lambda1 | 0.4641 | 0.3685 | 0.6497 |
+
+- 所有18个同case去文本body速度比均<1。楼梯joint的arms相对同权重generic仅原生46.3%、lambda0 32.2%、lambda1 32.4%；支持用户所见动作收缩，但速度不等于“是否舞蹈”或音乐评分。empty swap同时间骨盆对齐pose RMS：lambda0三case0.06791/0.13607/0.02998、lambda1 0.06230/0.01768/0.03263（画面高度单位）。lambda1变化明显较小主要在红衣case2；case1差距较小、case3lambda1略大，不能说lambda1在所有case更不听音乐，或变化大就更正确。红衣下肢裁切/姿态估计误差限制腿部结论。
+- **训练与生成目前共用模块，但目标不等价**：CLIP是audio latent有效时间mean/std→128维→audio_head→归一化5120；文本目标是冻结H3 last hidden的masked mean、train统计标准化和归一化。DiT生成只接逐帧stereo32D音频latent经原audio patch proj，加独立文字hidden；不用CLIP head或标准化池化文本目标。bridge仅拟合原生audio encoder latent，不拟合“带caption的生成预测”。global池化非可逆、不同模态/接口，检索对齐并不约束`G(I,music,empty)≈G(I,music,caption)`。旧generic推理还只是通用舞蹈/保身份/音轨绑定模板，根本不是训练所配的完整MotionScript。没有生成一致性、逐token文本重建或舞步时序目标，因此不能理论上承诺纯音乐和带文本同视频。
+- **后续对齐设计仅为讨论，未启动**：先明确reference-only保真和真正首帧条件不同，在无外部语义prompt下统一并验收学生/教师的图像条件。随后若用户另行授权新增生成端loss，可同图/音频时窗/时间步/噪声/CFG/tail策略，让学生冻结H3接新音乐latent+空文本，教师冻结原H3接原生音乐+对应caption，以教师预测/GT动作监督学生。冻结DiT参数仍须保留穿过DiT到encoder/adapter的反向梯度，不是no_grad。teacher caption仅训练用、不进入学生推理；这新增生成层监督，超出原CLIP/bridge-only约束，不在本次诊断私自加入。可选直接GT video目标也需独立方案/监督粒度验收；不可声称仅加CLIP轮数就完全对齐或音乐确定唯一caption/逐像素视频。
+- **本次负结论**：原生和训练音乐encoder无语义文本都显著改变动作与降低运动，部分低层动作重合但未证明重现来源caption；原生参考保真也退化，显示文本同时承担任务/参考绑定的重要作用。现训练没有让音乐可靠承担这条作用。保持用户“仅音乐+参考图”要求，不把舞蹈prompt偷偷恢复、不自动重训或新生成；后续先解决无文本参考/任务条件，再做真正以部署学生路径为目标的可归因训练。用户原话、各case视觉对照与39视频运动报告均记录发布，旧人评和技术验收不覆盖。

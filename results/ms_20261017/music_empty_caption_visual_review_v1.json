@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-18",
+  "review_type": "Assistant visual sampled-sequence comparison plus direct user continuous-video feedback; not an automatic caption score",
+  "user_feedback": "首先,只有音乐和有文本时的视频中的人物动作几乎完全不同,我需要你review最后生产的动作是否是音乐对应的caption内容;其次,val_musicreplace_empty_musicfm_scale_d6000_l1_s1875_v4好像在音乐swap时动作变化略小,但是其实lamda=0的变化也不是很大,而且对于case1而言,人物几乎就没有舞蹈动作了,其他几个case的整体动作也很小,不像是舞蹈",
+  "additional_user_questions": [
+    "你是如何实现无文本的?因为之前训练了音乐和文本的对齐,理论上纯音乐输入和带文本的情况,生成的视频应该基本一致才对",
+    "训练时和生成时使用的区别是什么?能否对齐?",
+    "如何让训练和生成时完全对齐?"
+  ],
+  "visual_protocol": {
+    "fixed_source_people": 3,
+    "conditions": ["joint", "aswap"],
+    "six_comparison_images_actually_viewed": true,
+    "rows_each": ["empty native H3", "empty MusicFM lambda0", "empty MusicFM lambda1", "generic native H3", "generic MusicFM lambda0", "generic MusicFM lambda1", "video recorded with actual input music"],
+    "sample_times_seconds": [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
+    "limits": "420 sampled frames do not constitute continuous audiovisual human review or exhaustive action/timing ground truth; left/right and cropped lower-body claims remain uncertain."
+  },
+  "caption_provenance": {
+    "caption_motion_reference": "E10/val47_motion_captions.csv: video-observed VLM motion captions exist for all six audio-source IDs",
+    "original_motionscript_reference": "MS/ms_orig_eval3 contains only the three original-music body-only MotionScript captions; swap-source original MS captions not found",
+    "training_holdout": "All six actual generation audio IDs are explicit heldouts from clean1800/6000 training; music_eval3_caps.json contains empty objects, not populated training targets",
+    "caption_not_unique_music_truth": true,
+    "case1_conflict": "Body-only MotionScript mentions full/360-degree turns while video-observed label says turns:none; source-video samples do not establish a full turn. Do not use the 360-degree sentence as unverified truth.",
+    "generic_generation_text": "A repeated dance/identity/audio-binding H3 template and fixed freestyle-dance sentence, not the music-associated detailed MotionScript or E10 action caption"
+  },
+  "case_reviews": [
+    {
+      "case": 1,
+      "person_id": "wJPptuhclZmKAEWs",
+      "condition": "joint",
+      "audio_id": "wJPptuhclZmKAEWs",
+      "reference_caption_actions": ["raise and lower one bent leg", "extend and retract both arms", "weight shift and step", "small torso pivot", "different arm heights"],
+      "empty_observation": "Repeated rear bent-leg curl, light steps/sways and small arm gestures; lambda1 arms remain lower for a substantial early-middle segment. Not stationary, but less expansive than generic-text outputs.",
+      "caption_correspondence": "Partial low-level overlap in knee bending, weight changes and arm movement; clear full bilateral arm extensions and the described action order/directions are not demonstrated. No faithful full-caption reproduction established.",
+      "reference_fidelity": "All three empty configurations show a dark/navy jacket, white inner top and dark pants instead of the verified pale-yellow top and gray pants in the actual reference PNG; drift also occurs with native audio, not only trained adapters."
+    },
+    {
+      "case": 1,
+      "person_id": "wJPptuhclZmKAEWs",
+      "condition": "aswap",
+      "audio_id": "wJaBSZwBFkeJXORH",
+      "reference_caption_actions": ["raise and lower both arms", "opposite forward/backward arm motion", "torso turn", "bent-knee step", "circular arms"],
+      "empty_observation": "Original rear leg-curl/side-step motif largely retained; lambda0 alters turning/arm timing, lambda1 spends more time with lowered arms or near-standing poses.",
+      "caption_correspondence": "Some stepping and torso/arm changes overlap generally, but the swapped-source arm choreography and ordered circular/alternating actions are not faithfully reproduced.",
+      "reference_fidelity": "Dark outfit substitution persists in all empty configurations."
+    },
+    {
+      "case": 2,
+      "person_id": "wJPrpFsThWAcBQIw",
+      "condition": "joint",
+      "audio_id": "wJPrpFsThWAcBQIw",
+      "reference_caption_actions": ["directional right/left arm raises", "knee bend and forward torso lowering", "cross-body right-arm swing", "step and weight transfer"],
+      "empty_observation": "Visible arm gestures form repeated hand-to-mouth/face/chest and bilateral head-level/open-arm poses; native and lambda0 have substantial visible upper-body movement, lambda1 has more early held poses.",
+      "caption_correspondence": "Elbow flexion/extension overlaps the coarse original MS, but the specific source-video right/left arm sequence and torso lowering are not established. Lower legs are outside the generated framing, so stepping or alternating-leg correspondence cannot be verified."
+    },
+    {
+      "case": 2,
+      "person_id": "wJPrpFsThWAcBQIw",
+      "condition": "aswap",
+      "audio_id": "wJaFwJIRkaRVlcqH",
+      "reference_caption_actions": ["alternate forward raised/bent legs", "repeated inward/outward arm extension", "small torso turn", "weight shift"],
+      "empty_observation": "Lambda0 changes markedly toward mostly single-arm/neck-to-forward gestures; lambda1 largely keeps the joint bilateral head/chest gesture motif. Legs remain cropped.",
+      "caption_correspondence": "No demonstrated transfer of the swapped-source alternating-leg choreography; bilateral arm extensions partly overlap only in some outputs. Cannot certify leg actions from this crop."
+    },
+    {
+      "case": 3,
+      "person_id": "wJQTclrlOLEYYfTB",
+      "condition": "joint",
+      "audio_id": "wJQTclrlOLEYYfTB",
+      "reference_caption_actions": ["repeated bilateral raised/outward arms and lowering", "right/left alternate forward arm extension"],
+      "empty_observation": "Native largely turns/steps with arms low; trained lambda0/lambda1 mainly show small arm gestures and mild weight shifts. Generic-text outputs show much larger repeated bilateral arm actions.",
+      "caption_correspondence": "Mostly does not visibly realize the E10 repeated bilateral raises and alternate extensions. A few low-level MS elbow/weight-shift primitives overlap, but full-caption consistency is not established."
+    },
+    {
+      "case": 3,
+      "person_id": "wJQTclrlOLEYYfTB",
+      "condition": "aswap",
+      "audio_id": "wJaLwnbQvvvCeWTb",
+      "reference_caption_actions": ["one raised arm and other outward/lowered arm", "weight transfer", "small torso turn", "two small forward steps", "arms out then hands near shoulders"],
+      "empty_observation": "Mostly upright standing/swaying with restrained single-arm gestures; the two trained variants look similar at many matched times.",
+      "caption_correspondence": "Some single-arm motion and weight shifts overlap generally; the full stepped and bilateral arm-out/in sequence is not established. Original swapped-source MS is unavailable."
+    }
+  ],
+  "motion_audit": {
+    "report": "music_empty_motion_caption_audit_v1.json",
+    "sha256": "2c4e994cbd635e0d5989b6951a359dab519b62daa390feb2636dc3906d5c2e2d",
+    "validated_pose_videos": 39,
+    "new_pose_videos": 18,
+    "time_window_seconds": [1, 5],
+    "speed_unit": "Image-frame-height per second, not meters or person-height per second",
+    "empty_over_generic_mean_speed_ratio": {
+      "native": {"body": 0.5773467623595615, "arms": 0.5512135778725173, "legs": 0.5889403568978382},
+      "lambda0": {"body": 0.5032356380036443, "arms": 0.4414304992020523, "legs": 0.6551948341065781},
+      "lambda1": {"body": 0.46405883628755545, "arms": 0.36851886800933514, "legs": 0.649697878906636}
+    },
+    "case1_joint_empty_over_same_model_generic_arm_speed": {"native": 0.46264514365693893, "lambda0": 0.3217129096827716, "lambda1": 0.32383009191753903},
+    "empty_same_time_swap_pose_rms_by_case": {
+      "lambda0": [0.06790923327207565, 0.13607484102249146, 0.029976796358823776],
+      "lambda1": [0.062295157462358475, 0.017684781923890114, 0.03262926638126373]
+    },
+    "limits": "Tracked fraction and finite aggregate speed fraction are not complete-body or identity accuracy. The shared derivative accepts at least 60% valid joint pairs, so 4/6 observed leg joints can produce a speed; case2 is visibly cropped and cannot certify foot/step actions. No calibrated near-static duration or dance threshold is computed. Motion amount and swap difference do not measure musical correctness or caption accuracy. Findings are confined to these three fixed cases, without IID or significance claims."
+  },
+  "training_generation_alignment": {
+    "shared_backbone_adapter": true,
+    "contrastive_training_readout": "L2(audio_head(mean/std time-pool of stereo32D audio latents))",
+    "text_training_target": "L2(train-stat standardized pooled frozen H3 text last-hidden of genre+MotionScript)",
+    "generation_readout": "Sequential stereo32D audio latents through original audio patch projection into frozen H3, with separately encoded generic or empty text",
+    "CLIP_head_used_in_generation": false,
+    "prediction_matching_or_caption_reconstruction_loss_trained": false,
+    "bridge_teacher": "Original native audio encoder output for the same music, not a caption-conditioned teacher-video prediction",
+    "empty_text_definition": "One whitespace semantic prompt; no user caption, generic dance template, CoT or soft-token injection. Original reference-label packing and text encoder still run.",
+    "image_condition_definition": "Reference image anchor (keyframes=None, retake_video=None), not a hard-clamped target first frame",
+    "generative_equivalence_guaranteed": false,
+    "proposed_next_objective": "If separately authorized, train the actual empty-text student image+music H3 path against same-noise/time/ref-image caption-conditioned teacher predictions or ground-truth video targets; freeze H3 weights but backpropagate through it into audio encoder/adapter. Explicitly adds generator-level supervision, beyond the prior CLIP/bridge-only restriction.",
+    "reference_next_requirement": "First fix and verify the chosen no-text reference-preservation interface; do not silently restore semantic prompts. Keep identical image-conditioning policies for every student/teacher control."
+  },
+  "verdict": "In these three fixed cases, text removal is a major mode change and reduces motion even for native H3. Trained music encoders have not demonstrated faithful source-caption choreography; all empty staircase configurations fail to preserve the reference outfit. Caption-level retrieval alignment has not established generative replacement of text. Preserve user no-text requirement; no automatic retraining, prompt restoration or new video generation performed in this diagnosis."
+}

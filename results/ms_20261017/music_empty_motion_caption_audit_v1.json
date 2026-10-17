@@ -1,0 +1,1961 @@
+{
+  "complete": true,
+  "validated_videos": 39,
+  "generated_videos": 36,
+  "GT_controls": 3,
+  "protocol": {
+    "window_seconds": [
+      1.0,
+      5.0
+    ],
+    "speed_unit": "video-frame-height per second",
+    "valid_threshold": 0.3,
+    "minimum_speed_coverage": 0.7,
+    "no_fill_or_cross_missing_derivatives": true,
+    "span": "Per-joint 5th-to-95th percentile XY span, divided by image height"
+  },
+  "cases": [
+    {
+      "tag": "empty_native_h3_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "empty_native_h3_v1/joint/wJPptuhclZmKAEWs/wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_native_h3_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "source_sha256": "b7a8b6e074aebcc9c28cbe829f25d8b3a80e75c038217305111c9d42f7e27856",
+      "pose_cache_sha256": "d86f9ec8e4df4864adec0a3122bdace53a3c6e136355b589fc725b4d487925fc",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.11408293534715819,
+          "median_speed_heights_per_second": 0.12292776788972914,
+          "mean_joint_p05_p95_span_heights": 0.11669645641495234,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.16613637077884372,
+          "median_speed_heights_per_second": 0.17190877422330608,
+          "mean_joint_p05_p95_span_heights": 0.1441527260183941,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.12406147897175568,
+          "median_speed_heights_per_second": 0.09261288185195299,
+          "mean_joint_p05_p95_span_heights": 0.14172461622556864,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_native_h3_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "empty_native_h3_v1/joint/wJPrpFsThWAcBQIw/wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_native_h3_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "source_sha256": "1d819f3a7f59cfe2c87e102848c4879e7954a3e8b97427f27708c1f6c9268584",
+      "pose_cache_sha256": "a393e5f0b558cc1f75cde4848c79188b20b67794007f5022a17bbdb18eaa5f62",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1337340503690548,
+          "median_speed_heights_per_second": 0.11220730982360363,
+          "mean_joint_p05_p95_span_heights": 0.10910661254722241,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2224862842104107,
+          "median_speed_heights_per_second": 0.17353010919028683,
+          "mean_joint_p05_p95_span_heights": 0.24406112004252078,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10950494163831338,
+          "median_speed_heights_per_second": 0.1061290086559722,
+          "mean_joint_p05_p95_span_heights": 0.029303224104140612,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "empty_native_h3_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "empty_native_h3_v1/joint/wJQTclrlOLEYYfTB/wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_native_h3_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "source_sha256": "b65b679607a57a0f5a17f3ddcdab34e4995a7479d8b1bbe0f1bd053c6704af51",
+      "pose_cache_sha256": "5c8e6a6af9a2c11bc2267942a2793a045fc9c40c8d71ee42adbc1dc361c74882",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.11516303048841471,
+          "median_speed_heights_per_second": 0.10698933024802579,
+          "mean_joint_p05_p95_span_heights": 0.12795908874566228,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.17124085844820217,
+          "median_speed_heights_per_second": 0.14500538157860166,
+          "mean_joint_p05_p95_span_heights": 0.17925797489091355,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10137048366209304,
+          "median_speed_heights_per_second": 0.07893327221522935,
+          "mean_joint_p05_p95_span_heights": 0.10425434240368825,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_native_h3_v1",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "empty_native_h3_v1/aswap/wJPptuhclZmKAEWs/wJaBSZwBFkeJXORH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_native_h3_v1/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "source_sha256": "08f4632a7689be49625bf1ead21f276c2ed9755cb78f17c7130c1356c9eb9eb0",
+      "pose_cache_sha256": "98d102a800ae9078b01124d959493a76a95b2399e0589a01e8f763e99201be4e",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10728653184213792,
+          "median_speed_heights_per_second": 0.0930035148133229,
+          "mean_joint_p05_p95_span_heights": 0.1076665787756675,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1559825756387263,
+          "median_speed_heights_per_second": 0.11846019107102938,
+          "mean_joint_p05_p95_span_heights": 0.1537178671926787,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1287896771962432,
+          "median_speed_heights_per_second": 0.0878549562016735,
+          "mean_joint_p05_p95_span_heights": 0.12712477826221036,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_native_h3_v1",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "empty_native_h3_v1/aswap/wJPrpFsThWAcBQIw/wJaFwJIRkaRVlcqH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_native_h3_v1/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "source_sha256": "cbf82f4b00a51b65cb2dd84054a43fe28a0bab875da49d0f1af88f07a900ae90",
+      "pose_cache_sha256": "c834db69b04c1d4045811e6194e5da2d264153f04c2a90c25dd6f68443afdf50",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.15950897426441646,
+          "median_speed_heights_per_second": 0.1386806767931561,
+          "mean_joint_p05_p95_span_heights": 0.12081803302184294,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2738631137250774,
+          "median_speed_heights_per_second": 0.2035377815341455,
+          "mean_joint_p05_p95_span_heights": 0.2537753659653226,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10964867882901498,
+          "median_speed_heights_per_second": 0.10471798872523087,
+          "mean_joint_p05_p95_span_heights": 0.04119016347041577,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "empty_native_h3_v1",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "empty_native_h3_v1/aswap/wJQTclrlOLEYYfTB/wJaLwnbQvvvCeWTb",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_native_h3_v1/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "source_sha256": "42fdb0692bab73ddaa986fc04b44ff531fbf6383f539bbb64976a679fbfcfee5",
+      "pose_cache_sha256": "0882df4657c65f7111530a1770617a85f6f770244e55e02b00fa024a1c8c9657",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.11622593202614107,
+          "median_speed_heights_per_second": 0.11368052557399563,
+          "mean_joint_p05_p95_span_heights": 0.1538074710782773,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1665561977068127,
+          "median_speed_heights_per_second": 0.15927009168600734,
+          "mean_joint_p05_p95_span_heights": 0.17699557044937422,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.09702945318658941,
+          "median_speed_heights_per_second": 0.08801871826737194,
+          "mean_joint_p05_p95_span_heights": 0.14594913316734445,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "empty_musicfm_scale_d6000_l0_s1875_v4/joint/wJPptuhclZmKAEWs/wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l0_s1875_v4/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "source_sha256": "7721f90f059f966d80f0f0941aea641f0608d1d65e5d13f150da4a8c796f0b2e",
+      "pose_cache_sha256": "249f595a4ca47a175b6622e2649d57576194787ca18029c9bd21fd0b59c12f49",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.0865037462684244,
+          "median_speed_heights_per_second": 0.08896600237735114,
+          "mean_joint_p05_p95_span_heights": 0.10263960630571632,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10683206410235756,
+          "median_speed_heights_per_second": 0.08946286441102833,
+          "mean_joint_p05_p95_span_heights": 0.1239173407083851,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10771617205982276,
+          "median_speed_heights_per_second": 0.08804341403955111,
+          "mean_joint_p05_p95_span_heights": 0.12861176604318234,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "empty_musicfm_scale_d6000_l0_s1875_v4/joint/wJPrpFsThWAcBQIw/wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l0_s1875_v4/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "source_sha256": "892eb2d759a12497bf95e5ae5420109e5638bfbb9f3382dbcd45b72ea011aabf",
+      "pose_cache_sha256": "3f1c45d9feebdcb0f594cd92e11455aa910f282d06bf6519d04ae6d49892f762",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1347926351922737,
+          "median_speed_heights_per_second": 0.11850956980091584,
+          "mean_joint_p05_p95_span_heights": 0.11547852986896719,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.23355813546379953,
+          "median_speed_heights_per_second": 0.1775365982640958,
+          "mean_joint_p05_p95_span_heights": 0.25417181303472575,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10181914682412392,
+          "median_speed_heights_per_second": 0.10262148212096173,
+          "mean_joint_p05_p95_span_heights": 0.03893214980030704,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "empty_musicfm_scale_d6000_l0_s1875_v4/joint/wJQTclrlOLEYYfTB/wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l0_s1875_v4/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "source_sha256": "144103811708086216bdf651587b3f94aef28fa3149b291282d7d95f07963730",
+      "pose_cache_sha256": "d265a1d971ef8dc096be3168446aba396f8dd6d9519e84b823a46505bb967c93",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10065212457040805,
+          "median_speed_heights_per_second": 0.10139206163735243,
+          "mean_joint_p05_p95_span_heights": 0.13656156530077176,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.12900025257226883,
+          "median_speed_heights_per_second": 0.12379680486591893,
+          "mean_joint_p05_p95_span_heights": 0.147398258425342,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10715578465492592,
+          "median_speed_heights_per_second": 0.10711832257364214,
+          "mean_joint_p05_p95_span_heights": 0.14628521156212013,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "empty_musicfm_scale_d6000_l0_s1875_v4/aswap/wJPptuhclZmKAEWs/wJaBSZwBFkeJXORH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l0_s1875_v4/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "source_sha256": "46669a1b6b915831121f32dbf2a8cef15a6248ed413d645b293e30798adfb353",
+      "pose_cache_sha256": "6a5d4b925c7a42d879bbf6fe754e31e688172b7da67535347a5942648ab9f252",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.14220303170415585,
+          "median_speed_heights_per_second": 0.135609727618541,
+          "mean_joint_p05_p95_span_heights": 0.11849552226392318,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.16277805787281752,
+          "median_speed_heights_per_second": 0.12664836566514887,
+          "mean_joint_p05_p95_span_heights": 0.17822137700275686,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2209486543758388,
+          "median_speed_heights_per_second": 0.13928190516667122,
+          "mean_joint_p05_p95_span_heights": 0.13101063770288005,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "empty_musicfm_scale_d6000_l0_s1875_v4/aswap/wJPrpFsThWAcBQIw/wJaFwJIRkaRVlcqH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l0_s1875_v4/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "source_sha256": "0ebed7f5f8edcd7e74bf68aa1ddfa3ea331c7aa3e87271b296591f0d02a65c4d",
+      "pose_cache_sha256": "f18e4c4e3b9eff2fd6269325668f17512c3e42386e529031f7148c22c90dccdf",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.08217862689629839,
+          "median_speed_heights_per_second": 0.07887701397418076,
+          "mean_joint_p05_p95_span_heights": 0.0819191897391263,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.12043000664328145,
+          "median_speed_heights_per_second": 0.10788614686395437,
+          "mean_joint_p05_p95_span_heights": 0.12576584302017355,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.07475054147646126,
+          "median_speed_heights_per_second": 0.07443060189283962,
+          "mean_joint_p05_p95_span_heights": 0.05500977187614771,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "empty_musicfm_scale_d6000_l0_s1875_v4/aswap/wJQTclrlOLEYYfTB/wJaLwnbQvvvCeWTb",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l0_s1875_v4/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "source_sha256": "582c780bbec56456fa9c7b819017c768c6b78e3be981c3ffbaefe0134c550597",
+      "pose_cache_sha256": "b3413824b22ee0495fbdea78f482283aa285b17c54e04908fc1bee46b17b8009",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.08928221593188318,
+          "median_speed_heights_per_second": 0.09115724575271267,
+          "mean_joint_p05_p95_span_heights": 0.10027855953710706,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.14870481266129484,
+          "median_speed_heights_per_second": 0.15230578594115682,
+          "mean_joint_p05_p95_span_heights": 0.13986572929530436,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.06090680771488919,
+          "median_speed_heights_per_second": 0.05988941848817766,
+          "mean_joint_p05_p95_span_heights": 0.06952775941224888,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "empty_musicfm_scale_d6000_l1_s1875_v4/joint/wJPptuhclZmKAEWs/wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l1_s1875_v4/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "source_sha256": "b51fea41e088a45abc64deac75b087ab5c1a4e5f3625698d7a5a127c21a5d7a7",
+      "pose_cache_sha256": "f5ff85f25994db3e47aa98457af740dfc082180e10f5c1ca53f2bed8248b514d",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.11100013506632005,
+          "median_speed_heights_per_second": 0.09207505926293001,
+          "mean_joint_p05_p95_span_heights": 0.11826818084006112,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.0978525907039363,
+          "median_speed_heights_per_second": 0.08606669469781986,
+          "mean_joint_p05_p95_span_heights": 0.12944177359014883,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.19379071831664774,
+          "median_speed_heights_per_second": 0.14119018638338726,
+          "mean_joint_p05_p95_span_heights": 0.16064488221904075,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "empty_musicfm_scale_d6000_l1_s1875_v4/joint/wJPrpFsThWAcBQIw/wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l1_s1875_v4/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "source_sha256": "3da0e8ef9f070fca867d2910061882bfe449c1af0509102a2fa8c50c1004bcdf",
+      "pose_cache_sha256": "e24f48ee01f78904f7f7f1fa98a93cb9e8744f20f40d3c603e62a149f6c19969",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.0950543177948776,
+          "median_speed_heights_per_second": 0.0903281882043039,
+          "mean_joint_p05_p95_span_heights": 0.10409881692291749,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1310441580193077,
+          "median_speed_heights_per_second": 0.11801176003413046,
+          "mean_joint_p05_p95_span_heights": 0.2160095829812909,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.11150632627552985,
+          "median_speed_heights_per_second": 0.10959817461804057,
+          "mean_joint_p05_p95_span_heights": 0.04499548431783097,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "empty_musicfm_scale_d6000_l1_s1875_v4/joint/wJQTclrlOLEYYfTB/wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l1_s1875_v4/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "source_sha256": "d8e71d7eaf8e284c715f5f3872ff00a673b628a877a66b32131d9148e620c0b3",
+      "pose_cache_sha256": "9c325e1645bd2f3c5cb807a4ee5fe05f8052ae2d195a5490f1583a9e1887780e",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10570441720299611,
+          "median_speed_heights_per_second": 0.10689177428232333,
+          "mean_joint_p05_p95_span_heights": 0.15914943612325033,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.13175563366617601,
+          "median_speed_heights_per_second": 0.1294964063808267,
+          "mean_joint_p05_p95_span_heights": 0.18316024139894427,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.11203937025775902,
+          "median_speed_heights_per_second": 0.11069520922497958,
+          "mean_joint_p05_p95_span_heights": 0.15733286459675397,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "empty_musicfm_scale_d6000_l1_s1875_v4/aswap/wJPptuhclZmKAEWs/wJaBSZwBFkeJXORH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l1_s1875_v4/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "source_sha256": "eb2bc03f28e4d5462dccf2a376c3d599344bbfaaacf9c359b8c62d594fa02fc7",
+      "pose_cache_sha256": "7251d89d978eb12eaca2393cbbbb3776616d1e2d4f6fd6f0cc9ef1d7a7f8d077",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.08353066727033837,
+          "median_speed_heights_per_second": 0.05281655353116305,
+          "mean_joint_p05_p95_span_heights": 0.08638674608415425,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.08237013730322208,
+          "median_speed_heights_per_second": 0.0633271787049018,
+          "mean_joint_p05_p95_span_heights": 0.12356603467429424,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.13917328496227213,
+          "median_speed_heights_per_second": 0.05992497214190426,
+          "mean_joint_p05_p95_span_heights": 0.09970478391172266,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "empty_musicfm_scale_d6000_l1_s1875_v4/aswap/wJPrpFsThWAcBQIw/wJaFwJIRkaRVlcqH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l1_s1875_v4/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "source_sha256": "cc667b985d10811d66794b4a7fd39065f5d896c30f65dc7588774a60278b0f9a",
+      "pose_cache_sha256": "948f9a12a4d1b8249d9652200f81626849326ab835129cae1b4278b870c3b78a",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.0840256390724889,
+          "median_speed_heights_per_second": 0.08057386515800506,
+          "mean_joint_p05_p95_span_heights": 0.09978516568874266,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.12660897855431474,
+          "median_speed_heights_per_second": 0.10642965215374559,
+          "mean_joint_p05_p95_span_heights": 0.2066591972232272,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.08894027694403166,
+          "median_speed_heights_per_second": 0.08608976701810225,
+          "mean_joint_p05_p95_span_heights": 0.04078429498109405,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "empty_musicfm_scale_d6000_l1_s1875_v4/aswap/wJQTclrlOLEYYfTB/wJaLwnbQvvvCeWTb",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_empty_musicfm_scale_d6000_l1_s1875_v4/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "source_sha256": "d4684d36d03a28e6d131ac92d79ae4a8bbf948d22a848dad09d6729b8b07773b",
+      "pose_cache_sha256": "7d175ac9522bdd937b3ec94d2fad6c23e338ff5736ff7a1e8493e04a631fc897",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.08407332914890436,
+          "median_speed_heights_per_second": 0.0812761269147309,
+          "mean_joint_p05_p95_span_heights": 0.10507225970069259,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.13843733987151885,
+          "median_speed_heights_per_second": 0.12379137168279455,
+          "mean_joint_p05_p95_span_heights": 0.14649158154182543,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.058440589996451485,
+          "median_speed_heights_per_second": 0.05351001933907888,
+          "mean_joint_p05_p95_span_heights": 0.07082309359486365,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "musicfm_scale_d6000_l0_s1875_v4/joint/wJPptuhclZmKAEWs/wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l0_s1875_v4/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "source_sha256": "24cb91685b7c90ea419bc96bc86bcb4135116d0e222b1273cf8af3a05d0d442c",
+      "pose_cache_sha256": "2dd0f5dd7a3a88e8d43507db23e0cd77b17e6a6b4fe54b7294aba40a03307823",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.21612379670047685,
+          "median_speed_heights_per_second": 0.2119217413138065,
+          "mean_joint_p05_p95_span_heights": 0.12018071029807796,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.3320726675460442,
+          "median_speed_heights_per_second": 0.30016524217751117,
+          "mean_joint_p05_p95_span_heights": 0.17851705509303092,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.19032909064071094,
+          "median_speed_heights_per_second": 0.2001635980749305,
+          "mean_joint_p05_p95_span_heights": 0.12176522193001964,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "musicfm_scale_d6000_l0_s1875_v4/joint/wJPrpFsThWAcBQIw/wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l0_s1875_v4/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "source_sha256": "3a09b8eb51c4dffa9b1b171ecb405d359e658fd7189475c6062295d9fb584be1",
+      "pose_cache_sha256": "d56ef864462e39088b744aba5e420c94294d613455a166587ebf02bf2d6dd0aa",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.22367056314008207,
+          "median_speed_heights_per_second": 0.21362473957191508,
+          "mean_joint_p05_p95_span_heights": 0.1283397976073669,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.3869742638136495,
+          "median_speed_heights_per_second": 0.3571457513825174,
+          "mean_joint_p05_p95_span_heights": 0.22429074402837798,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.14911129490127006,
+          "median_speed_heights_per_second": 0.14424130863811463,
+          "mean_joint_p05_p95_span_heights": 0.08930836815771405,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "musicfm_scale_d6000_l0_s1875_v4/joint/wJQTclrlOLEYYfTB/wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l0_s1875_v4/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "source_sha256": "51ca9d2a803f6b68ae458cb67828d0a32574667478f01bbc3c7c4220f2bb423e",
+      "pose_cache_sha256": "1e2fa05e4c7f8b9fa812e6f8793c2a2ccabd1bb25831ef5d771c7bf049ac879f",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.17340679051215768,
+          "median_speed_heights_per_second": 0.16817628051738898,
+          "mean_joint_p05_p95_span_heights": 0.16359162745294203,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2832574591924776,
+          "median_speed_heights_per_second": 0.2471087456430499,
+          "mean_joint_p05_p95_span_heights": 0.19514186886733784,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.14529049601086894,
+          "median_speed_heights_per_second": 0.13076659973142385,
+          "mean_joint_p05_p95_span_heights": 0.16983740674409606,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "musicfm_scale_d6000_l0_s1875_v4/aswap/wJPptuhclZmKAEWs/wJaBSZwBFkeJXORH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l0_s1875_v4/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "source_sha256": "5cff4306f7cdd5e543d98c10768c1d2619f9cd5dedfd2b911d7cfddad7663e6a",
+      "pose_cache_sha256": "87bdca2fbff26309723458d74a9da6647b06f3abae908aa9bad3947ed0273423",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.25361105472454265,
+          "median_speed_heights_per_second": 0.25355191915540276,
+          "mean_joint_p05_p95_span_heights": 0.16216015510512413,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.38099944531219254,
+          "median_speed_heights_per_second": 0.36934909386348325,
+          "mean_joint_p05_p95_span_heights": 0.2445539580707302,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2473787763377029,
+          "median_speed_heights_per_second": 0.22430086245146186,
+          "mean_joint_p05_p95_span_heights": 0.15792948684129174,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "musicfm_scale_d6000_l0_s1875_v4/aswap/wJPrpFsThWAcBQIw/wJaFwJIRkaRVlcqH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l0_s1875_v4/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "source_sha256": "02176440688c5d6ecef0e5703c72b64ab69d8de134e55bbcbfda1dbae6047fe8",
+      "pose_cache_sha256": "4334311e2d71b71645eb7d5d144e4e81846bea9047d93f0a83a12dbc378f93b8",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2169399152824848,
+          "median_speed_heights_per_second": 0.19708601259307335,
+          "mean_joint_p05_p95_span_heights": 0.13632194267845435,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.3980137742076085,
+          "median_speed_heights_per_second": 0.36306400950660445,
+          "mean_joint_p05_p95_span_heights": 0.25956661111140383,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1393068273074719,
+          "median_speed_heights_per_second": 0.1360683267958937,
+          "mean_joint_p05_p95_span_heights": 0.0836602205270534,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "musicfm_scale_d6000_l0_s1875_v4/aswap/wJQTclrlOLEYYfTB/wJaLwnbQvvvCeWTb",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l0_s1875_v4/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "source_sha256": "94c7cedb5cb4d9f0fe08e2549d82b1bb9b1409fc8ed0bf0c285161420ce68492",
+      "pose_cache_sha256": "a28d767f6800cc9422ad48e540262d25a7d3df3acbd47aa7f6f741d0901ef262",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.17929908778788026,
+          "median_speed_heights_per_second": 0.16505347535343523,
+          "mean_joint_p05_p95_span_heights": 0.17640936884973502,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.260460950641554,
+          "median_speed_heights_per_second": 0.2414385650341227,
+          "mean_joint_p05_p95_span_heights": 0.22782059005687536,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.15621235443433915,
+          "median_speed_heights_per_second": 0.15594579903022546,
+          "mean_joint_p05_p95_span_heights": 0.1490368084748628,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "musicfm_scale_d6000_l1_s1875_v4/joint/wJPptuhclZmKAEWs/wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l1_s1875_v4/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "source_sha256": "de1ed5c855107c190950cfa3234e344c16de7a42876b1cff9b9188528ab227ef",
+      "pose_cache_sha256": "5711b63164ee880efdf50a4cf043a15b66130124cd4488289bf658107278d09f",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2148173209296519,
+          "median_speed_heights_per_second": 0.19495642320141787,
+          "mean_joint_p05_p95_span_heights": 0.18316711858965593,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.3021726304819558,
+          "median_speed_heights_per_second": 0.2915188053736546,
+          "mean_joint_p05_p95_span_heights": 0.2554480063924576,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2594834475675974,
+          "median_speed_heights_per_second": 0.209593204475924,
+          "mean_joint_p05_p95_span_heights": 0.2292488945186358,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "musicfm_scale_d6000_l1_s1875_v4/joint/wJPrpFsThWAcBQIw/wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l1_s1875_v4/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "source_sha256": "4b965eee2b3deae0b414b41cb022dcfe68068c3c40635d6ba9801f1321f0b341",
+      "pose_cache_sha256": "304c10ad5d7ee82805f5f0cdb448fe1288730d50378a85ce37867a1ac6ecc805",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.23733388509932066,
+          "median_speed_heights_per_second": 0.23664476154159186,
+          "mean_joint_p05_p95_span_heights": 0.12941700774763065,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.4023670852731654,
+          "median_speed_heights_per_second": 0.38451814939677487,
+          "mean_joint_p05_p95_span_heights": 0.22990129464980744,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.18368501124053083,
+          "median_speed_heights_per_second": 0.1801172378882412,
+          "mean_joint_p05_p95_span_heights": 0.09110801598962635,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "musicfm_scale_d6000_l1_s1875_v4/joint/wJQTclrlOLEYYfTB/wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l1_s1875_v4/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "source_sha256": "3fc048b47e10effb08f08c99149c58f852936bfba59afa69f87bf2e50d10fafd",
+      "pose_cache_sha256": "5226ef90fd3980ca890ada472b7743b165f45533ddf806bd996ad5dcf69ec0de",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1831344588658537,
+          "median_speed_heights_per_second": 0.18194242009258504,
+          "mean_joint_p05_p95_span_heights": 0.1818546443268833,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2776459425825016,
+          "median_speed_heights_per_second": 0.27279454518985585,
+          "mean_joint_p05_p95_span_heights": 0.22958640536355368,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.14927439430759995,
+          "median_speed_heights_per_second": 0.15437586334510567,
+          "mean_joint_p05_p95_span_heights": 0.16096379473508296,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "musicfm_scale_d6000_l1_s1875_v4/aswap/wJPptuhclZmKAEWs/wJaBSZwBFkeJXORH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l1_s1875_v4/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "source_sha256": "515a41dca66785a2b1fc267a195ad07983708ea455a9c84ebcac5ff9579a1899",
+      "pose_cache_sha256": "c42bab0786a785488322f2b13f53e1ef266a4bc71a4554c9b79cf9a873f07e18",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.19870926994819305,
+          "median_speed_heights_per_second": 0.18570779435278323,
+          "mean_joint_p05_p95_span_heights": 0.1477680174919241,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2849365703877433,
+          "median_speed_heights_per_second": 0.2523832884873556,
+          "mean_joint_p05_p95_span_heights": 0.22836427543743945,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2251352699849849,
+          "median_speed_heights_per_second": 0.19547051015313716,
+          "mean_joint_p05_p95_span_heights": 0.16557614995140388,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "musicfm_scale_d6000_l1_s1875_v4/aswap/wJPrpFsThWAcBQIw/wJaFwJIRkaRVlcqH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l1_s1875_v4/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "source_sha256": "60db3f695025aff3e81a5e2af40b0ac1abcb39476a6369b77b394845c728bd7d",
+      "pose_cache_sha256": "f9cebbb3756ccdd7c9de4400242eacc2f25b17ef3fc9bed3a29c9840cc23b057",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.21323954977878687,
+          "median_speed_heights_per_second": 0.19040900056441973,
+          "mean_joint_p05_p95_span_heights": 0.14011697076481672,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.4036135511691932,
+          "median_speed_heights_per_second": 0.3490579971650878,
+          "mean_joint_p05_p95_span_heights": 0.26075785059972806,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1283611414834335,
+          "median_speed_heights_per_second": 0.11134559731926322,
+          "mean_joint_p05_p95_span_heights": 0.09285908901336307,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "musicfm_scale_d6000_l1_s1875_v4/aswap/wJQTclrlOLEYYfTB/wJaLwnbQvvvCeWTb",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_musicfm_scale_d6000_l1_s1875_v4/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "source_sha256": "e333b4340c074cd7ea1c4e33ddf8756f3a6507055641b8e7932a6d3d0084911f",
+      "pose_cache_sha256": "863c4662f9596ea270daa5387ea280b48a78267f5bb6c06364162283f58c71bd",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.16681093699542174,
+          "median_speed_heights_per_second": 0.1645710614796318,
+          "mean_joint_p05_p95_span_heights": 0.18103934313818545,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.25065522497670073,
+          "median_speed_heights_per_second": 0.2533206959336378,
+          "mean_joint_p05_p95_span_heights": 0.23678508324067726,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.13747287143399103,
+          "median_speed_heights_per_second": 0.13406416123723663,
+          "mean_joint_p05_p95_span_heights": 0.17389383331648686,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "native_cleanpad",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "native_cleanpad/joint/wJPptuhclZmKAEWs/wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_nativeclip_base_cleanpad/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "source_sha256": "6edcf7119b8047848ba01d71fe004a36f4e2ede9848968d40ed6c22f3bb46482",
+      "pose_cache_sha256": "8b659550d0da669794d5c41cabe990be990fc9e8ca2ec28e14bc64a19091f72a",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.24284644352942183,
+          "median_speed_heights_per_second": 0.2362940942555151,
+          "mean_joint_p05_p95_span_heights": 0.14387847654065344,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.35910108007539643,
+          "median_speed_heights_per_second": 0.3297661638930908,
+          "mean_joint_p05_p95_span_heights": 0.22231951977087885,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.25784063987597033,
+          "median_speed_heights_per_second": 0.19483874005750373,
+          "mean_joint_p05_p95_span_heights": 0.158694709791439,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "native_cleanpad",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "native_cleanpad/joint/wJPrpFsThWAcBQIw/wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_nativeclip_base_cleanpad/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "source_sha256": "46c97399e50efbe0e7caba91b9c75210ece93f81d4704896e656b52937de44fe",
+      "pose_cache_sha256": "008080f6f292ff0292a8b8e831f7745c9b25730834617e9e75b91a3606eb9343",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2575184288860454,
+          "median_speed_heights_per_second": 0.24706613496334057,
+          "mean_joint_p05_p95_span_heights": 0.14329831099561932,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.42873199969290926,
+          "median_speed_heights_per_second": 0.4098764033560539,
+          "mean_joint_p05_p95_span_heights": 0.2665741046064591,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.20727166274464784,
+          "median_speed_heights_per_second": 0.19699373396855474,
+          "mean_joint_p05_p95_span_heights": 0.09710922251507556,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "native_cleanpad",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "native_cleanpad/joint/wJQTclrlOLEYYfTB/wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_nativeclip_base_cleanpad/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "source_sha256": "02e4bf2dbf6bf64b138bc0e8c7a8f148ca6ec4ee6fa49e269c8e4947f2eca7bf",
+      "pose_cache_sha256": "46ac8f147c795cd0da050de7adb032ff2c3460f33f022acc33b2dc5f3301107e",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.16825834702492326,
+          "median_speed_heights_per_second": 0.15575038706164496,
+          "mean_joint_p05_p95_span_heights": 0.13361005383914348,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2985640724570547,
+          "median_speed_heights_per_second": 0.27932576878799764,
+          "mean_joint_p05_p95_span_heights": 0.2138584654056597,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.11529734128572676,
+          "median_speed_heights_per_second": 0.11339843266939995,
+          "mean_joint_p05_p95_span_heights": 0.09445677186315293,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "native_cleanpad",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "native_cleanpad/aswap/wJPptuhclZmKAEWs/wJaBSZwBFkeJXORH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_nativeclip_base_cleanpad/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "source_sha256": "f5aad83478b3e74ec0085dbfea5f2ec358048c911e9167ccd65c6d02f41aa640",
+      "pose_cache_sha256": "f4bd88025ad2b6ddb976a8a34ac28a269727839deaed048911bc082f9b5d9796",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.20955255531359154,
+          "median_speed_heights_per_second": 0.17700625979833245,
+          "mean_joint_p05_p95_span_heights": 0.15654241185613577,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.318743257490283,
+          "median_speed_heights_per_second": 0.27296557117188935,
+          "mean_joint_p05_p95_span_heights": 0.24176440856618497,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.2333971921023419,
+          "median_speed_heights_per_second": 0.1913171338993881,
+          "mean_joint_p05_p95_span_heights": 0.18330002923063737,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "native_cleanpad",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "native_cleanpad/aswap/wJPrpFsThWAcBQIw/wJaFwJIRkaRVlcqH",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_nativeclip_base_cleanpad/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "source_sha256": "c12a3a59415db7593a7120f02f157ffe5eeeb52139b4f2ba30794c3a11203659",
+      "pose_cache_sha256": "9153df3783f5426dd5348aea728bd53bc90b92fa4c226dc3a8c468f40d77d166",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.23388244182752618,
+          "median_speed_heights_per_second": 0.2159236061875515,
+          "mean_joint_p05_p95_span_heights": 0.14723669728751454,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.39745953180169474,
+          "median_speed_heights_per_second": 0.39163249828710545,
+          "mean_joint_p05_p95_span_heights": 0.2652640648747811,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.17752301049013977,
+          "median_speed_heights_per_second": 0.1516170559201216,
+          "mean_joint_p05_p95_span_heights": 0.10673289948950396,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "native_cleanpad",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "native_cleanpad/aswap/wJQTclrlOLEYYfTB/wJaLwnbQvvvCeWTb",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_nativeclip_base_cleanpad/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "source_sha256": "6a12b70450491c28ef9e5d0199907d50ad8b00663d93257f82a09f05deb48643",
+      "pose_cache_sha256": "2b82b7ca1f7462eca35184ad0856a4175a0f0fb8b75ff3fa7d45087aafc3f4cc",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1800620531996641,
+          "median_speed_heights_per_second": 0.16678937156994073,
+          "mean_joint_p05_p95_span_heights": 0.1546804158428385,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.29507226200644693,
+          "median_speed_heights_per_second": 0.2730462897240173,
+          "mean_joint_p05_p95_span_heights": 0.1929345716033023,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.14699376408760637,
+          "median_speed_heights_per_second": 0.13830501477557355,
+          "mean_joint_p05_p95_span_heights": 0.14251205124502017,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "GT",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "key": "GT/joint/wJPptuhclZmKAEWs/wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJPptuhclZmKAEWs.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "source_sha256": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+      "pose_cache_sha256": "c056cfe36cc85d62149b0f06979f306821d18c354e7d671a72fa1438d0985d5e",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.15489541381115904,
+          "median_speed_heights_per_second": 0.16263861928552198,
+          "mean_joint_p05_p95_span_heights": 0.07992980063735071,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.25782182383019125,
+          "median_speed_heights_per_second": 0.24032226615221713,
+          "mean_joint_p05_p95_span_heights": 0.1222324348838076,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.10448050470226367,
+          "median_speed_heights_per_second": 0.07959032865811252,
+          "mean_joint_p05_p95_span_heights": 0.07269005437090567,
+          "span_usable_joints": 6
+        }
+      }
+    },
+    {
+      "tag": "GT",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "key": "GT/joint/wJPrpFsThWAcBQIw/wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJPrpFsThWAcBQIw.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "source_sha256": "a967740e4258bcdc0f0cb3c03d8d4fa4f7b180d703812e951ce90330ca3ed963",
+      "pose_cache_sha256": "7f02efeb591d23ec5bb9e5bce1275fa394ec12ce10b57805257ae44d1a551519",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.15991802746021724,
+          "median_speed_heights_per_second": 0.15449492003621706,
+          "mean_joint_p05_p95_span_heights": 0.11088049160697169,
+          "span_usable_joints": 16
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.282634675916397,
+          "median_speed_heights_per_second": 0.25948312331838064,
+          "mean_joint_p05_p95_span_heights": 0.2292519522643517,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.145234173895632,
+          "median_speed_heights_per_second": 0.13164941830577997,
+          "mean_joint_p05_p95_span_heights": 0.06107545294758272,
+          "span_usable_joints": 4
+        }
+      }
+    },
+    {
+      "tag": "GT",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "key": "GT/joint/wJQTclrlOLEYYfTB/wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJQTclrlOLEYYfTB.mp4",
+      "correct_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "alt_audio": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "source_sha256": "187d2b2d4542eb4a6d0fdcdb8bad717876d56cf103772d0af439b2cf3656bc71",
+      "pose_cache_sha256": "adc31996bbf7e31c0729356430aedb60cca9710964393462b51996c67f560b67",
+      "tracked_fraction": 1.0,
+      "motion": {
+        "body": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.1379603024746481,
+          "median_speed_heights_per_second": 0.13580220736254217,
+          "mean_joint_p05_p95_span_heights": 0.10394602569743532,
+          "span_usable_joints": 18
+        },
+        "arms": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.20433704258284435,
+          "median_speed_heights_per_second": 0.18661911978802492,
+          "mean_joint_p05_p95_span_heights": 0.14812391315112697,
+          "span_usable_joints": 6
+        },
+        "legs": {
+          "usable_speed_fraction": 1.0,
+          "mean_speed_heights_per_second": 0.12432353839755043,
+          "median_speed_heights_per_second": 0.06724067192673922,
+          "mean_joint_p05_p95_span_heights": 0.09182645573497016,
+          "span_usable_joints": 6
+        }
+      }
+    }
+  ],
+  "text_removal_pairs": [
+    {
+      "empty_tag": "empty_native_h3_v1",
+      "generic_tag": "native_cleanpad",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "empty_over_generic_speed": {
+        "body": 0.46977395958173285,
+        "arms": 0.46264514365693893,
+        "legs": 0.48115564339055805
+      },
+      "valid_pair_fraction": 0.9947916666666666,
+      "pelvis_centered_pose_rms_heights": 0.07477676123380661,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_native_h3_v1",
+      "generic_tag": "native_cleanpad",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "empty_over_generic_speed": {
+        "body": 0.5193183685825977,
+        "arms": 0.5189402339218263,
+        "legs": 0.5283160282899839
+      },
+      "valid_pair_fraction": 0.8888888888888888,
+      "pelvis_centered_pose_rms_heights": 0.06377901136875153,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_native_h3_v1",
+      "generic_tag": "native_cleanpad",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "empty_over_generic_speed": {
+        "body": 0.684441708388804,
+        "arms": 0.5735481065721106,
+        "legs": 0.8792092040603039
+      },
+      "valid_pair_fraction": 0.9942129629629629,
+      "pelvis_centered_pose_rms_heights": 0.09084615111351013,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_native_h3_v1",
+      "generic_tag": "native_cleanpad",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "empty_over_generic_speed": {
+        "body": 0.5119791151273989,
+        "arms": 0.48936745161889894,
+        "legs": 0.5518047412488599
+      },
+      "valid_pair_fraction": 0.9872685185185185,
+      "pelvis_centered_pose_rms_heights": 0.08886288851499557,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_native_h3_v1",
+      "generic_tag": "native_cleanpad",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "empty_over_generic_speed": {
+        "body": 0.682004912459587,
+        "arms": 0.6890339564474615,
+        "legs": 0.6176589644704411
+      },
+      "valid_pair_fraction": 0.8871527777777778,
+      "pelvis_centered_pose_rms_heights": 0.06534235179424286,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_native_h3_v1",
+      "generic_tag": "native_cleanpad",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "empty_over_generic_speed": {
+        "body": 0.6454771005929965,
+        "arms": 0.5644590127660786,
+        "legs": 0.660092309281645
+      },
+      "valid_pair_fraction": 0.9930555555555556,
+      "pelvis_centered_pose_rms_heights": 0.044926967471838,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "empty_over_generic_speed": {
+        "body": 0.4002509098445499,
+        "arms": 0.3217129096827716,
+        "legs": 0.5659469695211297
+      },
+      "valid_pair_fraction": 1.0,
+      "pelvis_centered_pose_rms_heights": 0.06883467733860016,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "empty_over_generic_speed": {
+        "body": 0.6026391372201032,
+        "arms": 0.6035495310775273,
+        "legs": 0.6828399343694297
+      },
+      "valid_pair_fraction": 0.8888888888888888,
+      "pelvis_centered_pose_rms_heights": 0.05494619533419609,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "empty_over_generic_speed": {
+        "body": 0.5804393488463259,
+        "arms": 0.45541696568213325,
+        "legs": 0.7375278328384933
+      },
+      "valid_pair_fraction": 0.9959490740740741,
+      "pelvis_centered_pose_rms_heights": 0.056053824722766876,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "empty_over_generic_speed": {
+        "body": 0.5607130645728688,
+        "arms": 0.4272396190483598,
+        "legs": 0.8931592986546927
+      },
+      "valid_pair_fraction": 0.9901620370370371,
+      "pelvis_centered_pose_rms_heights": 0.08630804717540741,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "empty_over_generic_speed": {
+        "body": 0.37880823724527973,
+        "arms": 0.3025774846185695,
+        "legs": 0.5365892176373751
+      },
+      "valid_pair_fraction": 0.8877314814814815,
+      "pelvis_centered_pose_rms_heights": 0.11681065708398819,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "empty_over_generic_speed": {
+        "body": 0.49795131159567574,
+        "arms": 0.5709293938112904,
+        "legs": 0.38989750801361994
+      },
+      "valid_pair_fraction": 0.9982638888888888,
+      "pelvis_centered_pose_rms_heights": 0.04874475300312042,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "empty_over_generic_speed": {
+        "body": 0.5167187384422797,
+        "arms": 0.32383009191753903,
+        "legs": 0.7468326790523461
+      },
+      "valid_pair_fraction": 0.9652777777777778,
+      "pelvis_centered_pose_rms_heights": 0.0759798139333725,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "empty_over_generic_speed": {
+        "body": 0.4005088348640094,
+        "arms": 0.32568309589822025,
+        "legs": 0.607051852094318
+      },
+      "valid_pair_fraction": 0.8888888888888888,
+      "pelvis_centered_pose_rms_heights": 0.060111671686172485,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "empty_over_generic_speed": {
+        "body": 0.5771956728276069,
+        "arms": 0.4745455036751537,
+        "legs": 0.7505598718215989
+      },
+      "valid_pair_fraction": 0.9976851851851852,
+      "pelvis_centered_pose_rms_heights": 0.0457470677793026,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "empty_over_generic_speed": {
+        "body": 0.42036623300018294,
+        "arms": 0.2890823638086622,
+        "legs": 0.61817628562399
+      },
+      "valid_pair_fraction": 0.9768518518518519,
+      "pelvis_centered_pose_rms_heights": 0.08552823215723038,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "empty_over_generic_speed": {
+        "body": 0.39404340873752774,
+        "arms": 0.31368862167177525,
+        "legs": 0.6928909786573566
+      },
+      "valid_pair_fraction": 0.8877314814814815,
+      "pelvis_centered_pose_rms_heights": 0.08406582474708557,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "empty_tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "generic_tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "empty_over_generic_speed": {
+        "body": 0.504003698218012,
+        "arms": 0.5523018316669325,
+        "legs": 0.42510634561461325
+      },
+      "valid_pair_fraction": 0.9988425925925926,
+      "pelvis_centered_pose_rms_heights": 0.04856858402490616,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    }
+  ],
+  "music_swap_pairs": [
+    {
+      "tag": "empty_native_h3_v1",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "valid_pair_fraction": 0.9976851851851852,
+      "pelvis_centered_pose_rms_heights": 0.04191213101148605,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "native_cleanpad",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "valid_pair_fraction": 0.984375,
+      "pelvis_centered_pose_rms_heights": 0.07219003885984421,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "empty_native_h3_v1",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "valid_pair_fraction": 0.8888888888888888,
+      "pelvis_centered_pose_rms_heights": 0.03219304233789444,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "native_cleanpad",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "valid_pair_fraction": 0.8877314814814815,
+      "pelvis_centered_pose_rms_heights": 0.06590940803289413,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "empty_native_h3_v1",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "valid_pair_fraction": 0.9890046296296297,
+      "pelvis_centered_pose_rms_heights": 0.05537610873579979,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "native_cleanpad",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "valid_pair_fraction": 0.9976851851851852,
+      "pelvis_centered_pose_rms_heights": 0.04844467714428902,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "valid_pair_fraction": 0.9976851851851852,
+      "pelvis_centered_pose_rms_heights": 0.06790923327207565,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "valid_pair_fraction": 0.9918981481481481,
+      "pelvis_centered_pose_rms_heights": 0.06504103541374207,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "valid_pair_fraction": 0.8883101851851852,
+      "pelvis_centered_pose_rms_heights": 0.13607484102249146,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "valid_pair_fraction": 0.8894675925925926,
+      "pelvis_centered_pose_rms_heights": 0.07172929495573044,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l0_s1875_v4",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "valid_pair_fraction": 0.9965277777777778,
+      "pelvis_centered_pose_rms_heights": 0.029976796358823776,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "musicfm_scale_d6000_l0_s1875_v4",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "valid_pair_fraction": 0.9976851851851852,
+      "pelvis_centered_pose_rms_heights": 0.045783527195453644,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "valid_pair_fraction": 0.9866898148148148,
+      "pelvis_centered_pose_rms_heights": 0.062295157462358475,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "valid_pair_fraction": 0.9618055555555556,
+      "pelvis_centered_pose_rms_heights": 0.05608821287751198,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "valid_pair_fraction": 0.8888888888888888,
+      "pelvis_centered_pose_rms_heights": 0.017684781923890114,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "valid_pair_fraction": 0.8929398148148148,
+      "pelvis_centered_pose_rms_heights": 0.06648983061313629,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "empty_musicfm_scale_d6000_l1_s1875_v4",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "valid_pair_fraction": 0.9994212962962963,
+      "pelvis_centered_pose_rms_heights": 0.03262926638126373,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    },
+    {
+      "tag": "musicfm_scale_d6000_l1_s1875_v4",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "valid_pair_fraction": 0.9971064814814815,
+      "pelvis_centered_pose_rms_heights": 0.035041503608226776,
+      "scope": "Same-time pose difference, not correct music response, beat synchrony or dance quality."
+    }
+  ],
+  "summaries": {
+    "empty_native_h3_v1": {
+      "videos": 6,
+      "groups": {
+        "body": {
+          "mean_speed": 0.12433357572288718,
+          "valid_videos": 6
+        },
+        "arms": {
+          "mean_speed": 0.1927109000846788,
+          "valid_videos": 6
+        },
+        "legs": {
+          "mean_speed": 0.1117341189140016,
+          "valid_videos": 6
+        }
+      }
+    },
+    "empty_musicfm_scale_d6000_l0_s1875_v4": {
+      "videos": 6,
+      "groups": {
+        "body": {
+          "mean_speed": 0.10593539676057391,
+          "valid_videos": 6
+        },
+        "arms": {
+          "mean_speed": 0.15021722155263662,
+          "valid_videos": 6
+        },
+        "legs": {
+          "mean_speed": 0.112216184517677,
+          "valid_videos": 6
+        }
+      }
+    },
+    "empty_musicfm_scale_d6000_l1_s1875_v4": {
+      "videos": 6,
+      "groups": {
+        "body": {
+          "mean_speed": 0.09389808425932089,
+          "valid_videos": 6
+        },
+        "arms": {
+          "mean_speed": 0.11801147301974595,
+          "valid_videos": 6
+        },
+        "legs": {
+          "mean_speed": 0.11731509445878198,
+          "valid_videos": 6
+        }
+      }
+    },
+    "musicfm_scale_d6000_l0_s1875_v4": {
+      "videos": 6,
+      "groups": {
+        "body": {
+          "mean_speed": 0.2105085346912707,
+          "valid_videos": 6
+        },
+        "arms": {
+          "mean_speed": 0.3402964267855877,
+          "valid_videos": 6
+        },
+        "legs": {
+          "mean_speed": 0.17127147327206063,
+          "valid_videos": 6
+        }
+      }
+    },
+    "musicfm_scale_d6000_l1_s1875_v4": {
+      "videos": 6,
+      "groups": {
+        "body": {
+          "mean_speed": 0.2023409036028713,
+          "valid_videos": 6
+        },
+        "arms": {
+          "mean_speed": 0.32023183414521,
+          "valid_videos": 6
+        },
+        "legs": {
+          "mean_speed": 0.18056868933635628,
+          "valid_videos": 6
+        }
+      }
+    },
+    "native_cleanpad": {
+      "videos": 6,
+      "groups": {
+        "body": {
+          "mean_speed": 0.21535337829686207,
+          "valid_videos": 6
+        },
+        "arms": {
+          "mean_speed": 0.34961203392063084,
+          "valid_videos": 6
+        },
+        "legs": {
+          "mean_speed": 0.1897206017644055,
+          "valid_videos": 6
+        }
+      }
+    },
+    "GT": {
+      "videos": 3,
+      "groups": {
+        "body": {
+          "mean_speed": 0.1509245812486748,
+          "valid_videos": 3
+        },
+        "arms": {
+          "mean_speed": 0.24826451410981087,
+          "valid_videos": 3
+        },
+        "legs": {
+          "mean_speed": 0.1246794056651487,
+          "valid_videos": 3
+        }
+      }
+    }
+  },
+  "caption_sources": {
+    "audio_sources": {
+      "wJPptuhclZmKAEWs": {
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+        "video_source_caption": "The dancer lifts her right leg upward and slightly outward, bending at the knee. She extends both arms outward to the sides, palms facing forward. She lowers her right leg back to the ground while keeping her arms extended. She shifts her weight to her left leg and slightly turns her torso to the right. She brings her arms inward toward her chest, then extends them outward again. She steps forward with her right foot, then pivots on her left foot. She raises her right arm upward while lowering her left arm downward.",
+        "video_source_caption_kind": "E10 video-observed VLM motion caption, NOT original MotionScript",
+        "original_motionscript": "His left foot moves nearer to the right one briskly. He turns counterclockwise and speedily. At the same time, his left elbow and his left knee are almost completely bent and then, the left knee extends significantly and rapidly. A few seconds later, and completely turned counterclockwise and from this stance, he turns clockwise rapidly, and a moment later, he turns counterclockwise. Not long after, the person is 360 degrees turned counterclockwise and from this position, he turns clockwise and turns slightly counterclockwise. Shortly after, he turns slightly clockwise. Not too long before, the elbows are rather bent and with that pose, both elbows extend and briskly. Immediately after, both elbows are rather bent. Then, the right elbow bends and speedily. Simultaneously, the elbows are bent. Then, his left elbow bends significantly and briskly. Shortly after, the left knee is straight, and then, his left knee bends completely and briskly.",
+        "original_motionscript_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_orig_eval3/wJPptuhclZmKAEWs.json",
+        "original_motionscript_sha256": "e9817b296e2643ea98a4a08d9302fcdf2b96809b941807b670d449e5d41eabba",
+        "video_observed_genre": "k-pop",
+        "genre_kind": "Video-observed VLM label, not music genre or human ground truth",
+        "missing_original_motionscript": false
+      },
+      "wJPrpFsThWAcBQIw": {
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+        "video_source_caption": "The dancer raises his right arm upward and slightly forward. He extends his left arm outward to the side. He bends his knees and lowers his torso forward. He swings his right arm downward and across his body. He lifts his left arm upward and slightly backward. He steps forward with his right foot. He shifts his weight to his left foot and extends his right arm forward.",
+        "video_source_caption_kind": "E10 video-observed VLM motion caption, NOT original MotionScript",
+        "original_motionscript": "The left hand moves farther from his right elbow gradually. Not long after, it gets closer to the right arm quickly. A few seconds earlier, both hands move farther from the left knee at a slow pace and immediately after, they move away from each other. Soon after, they move away from each other. Right before, the right hand gets closer to his left knee. In the meantime, the right elbow is bent and from this position, his right elbow extends and rapidly. Not long after, the left elbow is fully bent, and with that pose, the left elbow extends. Not long after, it extends and briskly. His hands are spread apart. From this position, the left hand spreads away from his right elbow, and a few seconds later, gets closer to the right one steadily. Simultaneously, the left elbow is almost completely bent. With that pose, the left elbow bends.",
+        "original_motionscript_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_orig_eval3/wJPrpFsThWAcBQIw.json",
+        "original_motionscript_sha256": "67d62fca298680cbc080485305164fc8a0162c2a5846f2371993fa82bc9b99a6",
+        "video_observed_genre": "k-pop",
+        "genre_kind": "Video-observed VLM label, not music genre or human ground truth",
+        "missing_original_motionscript": false
+      },
+      "wJQTclrlOLEYYfTB": {
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+        "video_source_caption": "The dancer raises both arms upward and outward from the sides. He then lowers his arms back down to his sides. He extends his right arm forward and slightly to the side. He brings his right arm back to his side. He extends his left arm forward and slightly to the side. He brings his left arm back to his side. He raises both arms upward and outward again, then lowers them.",
+        "video_source_caption_kind": "E10 video-observed VLM motion caption, NOT original MotionScript",
+        "original_motionscript": "His elbows and the left knee are barely bent, and then, both elbows bend and speedily. In the meantime, the left hand spreads away from his left knee quickly, and at the same time, gets closer to his left shoulder, and soon after, it moves nearer to his left knee briskly. A few seconds earlier, he shifts towards the front, and he moves to the right. A second later, his right hand spreads away from the right knee. It gets closer to his left ankle. A few seconds later, it spreads away from the left ankle rapidly. He turns clockwise just a little. He turns slightly counterclockwise. Just before, both knees are unbent. With that pose, the left knee bends and quickly and extends significantly. At the same time, the left hand moves farther from the left knee. Right after, his left hand is near to the left shoulder and with that pose, his left hand spreads away from his left shoulder. At the same time, both elbows are rather bent, and from this stance, his elbows extend and quickly and a second later, bend and quickly. His hands move nearer to the knees. A second later, the elbows are almost completely bent and then, his elbows extend. The left hand spreads away from his left knee briskly. Meanwhile, the left elbow is partially bent. With that pose, his left elbow bends and quickly.",
+        "original_motionscript_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_orig_eval3/wJQTclrlOLEYYfTB.json",
+        "original_motionscript_sha256": "2e176b7f5134b7812717f8cadd68ecebd0c960d0c06297567f31b4a6eb33ddf4",
+        "video_observed_genre": "pop / casual",
+        "genre_kind": "Video-observed VLM label, not music genre or human ground truth",
+        "missing_original_motionscript": false
+      },
+      "wJaBSZwBFkeJXORH": {
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+        "video_source_caption": "The dancer raises both arms upward and outward. She lowers her arms to her sides while shifting her weight. Her right arm extends forward as her left arm moves backward. She turns her torso to the right while keeping her legs stationary. Her left arm swings upward as her right arm moves downward. She steps forward with her right foot while bending her knees. Her arms move in a circular motion as she turns her body to the left.",
+        "video_source_caption_kind": "E10 video-observed VLM motion caption, NOT original MotionScript",
+        "original_motionscript": null,
+        "original_motionscript_path": null,
+        "original_motionscript_sha256": null,
+        "video_observed_genre": null,
+        "genre_kind": "Video-observed VLM label, not music genre or human ground truth",
+        "missing_original_motionscript": true
+      },
+      "wJaFwJIRkaRVlcqH": {
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+        "video_source_caption": "The dancer lifts her right leg forward and slightly outward, bending at the knee. She extends her arms outward to the sides, palms facing down. Her torso rotates slightly to the left as her right leg lowers. She shifts her weight to her left leg, bending the knee slightly. Her arms move inward toward her chest, then outward again as she extends her right leg forward. She lifts her left leg forward and slightly outward, mirroring the previous motion. Her arms extend outward again, palms facing down, as she lowers her left leg.",
+        "video_source_caption_kind": "E10 video-observed VLM motion caption, NOT original MotionScript",
+        "original_motionscript": null,
+        "original_motionscript_path": null,
+        "original_motionscript_sha256": null,
+        "video_observed_genre": null,
+        "genre_kind": "Video-observed VLM label, not music genre or human ground truth",
+        "missing_original_motionscript": true
+      },
+      "wJaLwnbQvvvCeWTb": {
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+        "video_source_caption": "The dancer raises her right arm upward and slightly outward. She shifts her weight to her left leg, bending her right knee slightly. Her left arm moves downward and then outward to the side. She turns her torso slightly to the right while keeping her hips facing forward. Her right leg steps forward, and her left leg follows in a small step. She extends her arms outward to the sides, palms facing forward. She brings her arms back in toward her chest, ending with her hands near her shoulders.",
+        "video_source_caption_kind": "E10 video-observed VLM motion caption, NOT original MotionScript",
+        "original_motionscript": null,
+        "original_motionscript_path": null,
+        "original_motionscript_sha256": null,
+        "video_observed_genre": null,
+        "genre_kind": "Video-observed VLM label, not music genre or human ground truth",
+        "missing_original_motionscript": true
+      }
+    },
+    "vlm_motion_csv_sha256": "a45af961a428c41ab1283860295d23a5714846872d2756c6dca33a855e6a24a3",
+    "genre_file_sha256": "a4c8e9e6b32b73efe76f71abed5193a42342014525b8cfd84099e4b7d14e6971",
+    "scope": "Captions describe a dance recorded with that music, not its unique required choreography. Holdout audio IDs were not used for CLIP training."
+  },
+  "scope": "Motion amount and same-time pose difference only. Not a caption, dance or music accuracy score; no significance or IID assumption for three fixed cases."
+}

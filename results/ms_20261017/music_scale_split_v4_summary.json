@@ -1,0 +1,30 @@
+{
+  "status": "complete",
+  "pool_items": 11908,
+  "eligible_caption_audio_items": 11902,
+  "acoustic_candidate_pairs_checked": 28597,
+  "exact_duplicate_pairs": 11,
+  "suspected_acoustic_pairs": 467,
+  "suspected_pairs_crossing_audit_partition": 10,
+  "remaining_training_candidate_group_representatives": 11272,
+  "original_training_items_retained": 1777,
+  "original_training_items_replaced_after_candidate_group_exclusion_or_deduplication": 23,
+  "nested_training_sizes": [1800,6000],
+  "validation_size": 200,
+  "validation_ids_and_order_unchanged": true,
+  "normalization_ids": "same clean 1800 training subset for both sizes",
+  "training_one_representative_per_candidate_group": true,
+  "training_groups_disjoint_from_validation_and_generation_audio_groups": true,
+  "known_within_validation_candidate_clusters": 0,
+  "generation_audio_audit_only_items": 6,
+  "files": {
+    "pool_sha256": "6310656e9c766c778215b879a556fc609efc2d64031c37b7c0caf5fae8c85748",
+    "train1800_split_sha256": "44b07b8b9219b5cbced271ac36ce7e1d26204fe6f47983a113a9dd8585720060",
+    "train6000_split_sha256": "85ec5fe07105d9a0764243e1ed25d8ee0fe96d503d79139572abd6b74fef9d70",
+    "caps6200_sha256": "4bc371f4f5311abf34ca8a0bc4194e1988c5a0c05ab160a7b606825ca5804b84",
+    "normalization_ids1800_sha256": "b73ebe0b273f02c8b1e9e2eb94bc5489d4e1fc0cf2436439029ca638456bd0cd"
+  },
+  "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_scale_v4_report.json",
+  "source_audio_candidate_audit": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_scale_duplicate_audit_v4.json",
+  "scope": "Conservative exclusion using exact and heuristic acoustic candidate groups, NOT proof of global song identities or complete song isolation. Candidate top-k and +/-0.48s overlap checks can miss different excerpts of the same song. The old 2000-item results are unchanged. This summary proves dataset preparation only; formal scale training and video acceptance remain required."
+}

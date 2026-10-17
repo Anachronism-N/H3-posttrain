@@ -1,0 +1,16 @@
+{
+  "status": "complete",
+  "candidate_items": 11908,
+  "training_eligible_items_before_acoustic_grouping": 11902,
+  "audit_only_generation_audio_items": 6,
+  "legacy_caption_items_preserved_exactly": 2000,
+  "legacy_validation_items_and_order_preserved": 200,
+  "rejected": {"empty_motion_script": 67, "invalid_or_abstained_motion_script": 22, "genuinely_short_new_audio": 1},
+  "audio_shortfall_audit": {"old_rejected": 122, "one_sample_deficit": 118, "sixteen_sample_deficit": 3, "3312_sample_deficit": 1, "final_tolerance_seconds": 0.001, "source_duration_not_extended": true},
+  "source_pool_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_scale_pool_v4.json",
+  "source_pool_sha256": "6310656e9c766c778215b879a556fc609efc2d64031c37b7c0caf5fae8c85748",
+  "source_report_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_scale_pool_report_v4.json",
+  "source_audit_partition_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_scale_audit_split_v4.json",
+  "metadata_reuse": "Prior SoundFile headers reused only when the absolute path, size and nanosecond mtime remain identical; all other headers re-read. Canonical audio root resolved once, escaping symlinks rejected.",
+  "scope": "Caption/audio-header preparation only, not proof of song isolation or completed 6000-item training. Full acoustic candidate grouping, training split construction, caches, formal training and generation remain required. Fixed audio/video case count stays three."
+}

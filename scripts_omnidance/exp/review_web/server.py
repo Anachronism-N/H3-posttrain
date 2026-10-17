@@ -19,6 +19,7 @@ DATA = f"{ROOT}/OmniDance_processed"
 OUT = f"{EXP}/review_web"
 REVIEWS = f"{OUT}/reviews"
 MANIFEST = f"{OUT}/manifest.json"
+FOCUSED_MANIFEST = False
 ALLOWED = [os.path.realpath(EXP), os.path.realpath(DATA)]
 CONDS = ["joint", "aswap", "tswap", "audio_only", "text_only"]
 SKIP = {"review", "review_web", "logs", "kps", "shards", "r0", "r0b", "r1", "r1v2", "__pycache__", "MS"}
@@ -598,7 +599,11 @@ class H(BaseHTTPRequestHandler):
                 with open(os.path.join(HERE, "index.html"), "rb") as f:
                     self._send(200, f.read(), "text/html; charset=utf-8", {"Cache-Control": "no-cache"})
             elif path == "manifest":
-                body = manifest_gz(rebuild=q.get("rebuild", ["0"])[0] == "1")
+                rebuild = q.get("rebuild", ["0"])[0] == "1"
+                if rebuild and FOCUSED_MANIFEST:
+                    self._json({"error": "Focused manifest is fixed; reload the page instead of rescanning."}, 400)
+                    return
+                body = manifest_gz(rebuild=rebuild)
                 self._send(200, body, extra={"Content-Encoding": "gzip", "Cache-Control": "no-cache"})
             elif path == "data-review":
                 self._send(200, data_review_page(q), "text/html; charset=utf-8", {"Cache-Control": "no-cache"})
@@ -680,7 +685,13 @@ if __name__ == "__main__":
     ap.add_argument("--port", type=int, default=8765)
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("--rebuild", action="store_true")
+    ap.add_argument("--manifest", help="Serve an existing focused manifest without scanning or changing the legacy manifest")
     a = ap.parse_args()
+    if a.manifest:
+        if a.rebuild or not os.path.isfile(a.manifest):
+            ap.error("--manifest requires an existing file and cannot combine with --rebuild")
+        MANIFEST = os.path.abspath(a.manifest)
+        FOCUSED_MANIFEST = True
     manifest_gz(rebuild=a.rebuild)
     srv = ThreadingHTTPServer((a.host, a.port), H)
     srv.daemon_threads = True

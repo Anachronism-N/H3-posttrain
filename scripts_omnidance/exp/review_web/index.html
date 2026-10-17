@@ -208,6 +208,7 @@ function key(t){return `${t.m.id}|${t.c}|${t.sid}`}
 function audioFor(c,sid,src,m){
   const s=M.samples[sid]||{};
   if(c==="long")return M.exp+"/"+m.id+"/"+sid+".wav";
+  if(s.audio_by_condition?.[c])return s.audio_by_condition[c];
   if(c==="aswap"){const k=src||s.aswap_src;return (M.samples[k]||{}).audio||s.audio}
   return s.audio;
 }

@@ -109,6 +109,11 @@
 - 新生成队列`music_scale_generate.py`仅接受已审计CLIP配置，每配置固定3人物joint/aswap各3、704×1280、124帧、24fps、bi/50步、shift12/audio_shift3、seed42、generic prompt、repeat_clean。每节点只新增一个冷加载，主机/cgroup各180GiB准入、目标GPU非holder不得停止；输出/日志/最终JSON新路径拒覆盖，成功后完整decord/ffmpeg解码。
 - 1800两组12条先生成，6000四组24条在权重审计完成后安排到其余节点并行。仅三人物，不因扩量增加case。后续DWPose复用原生/GT缓存，F1/BAS继续只作校准不足的诊断；原decoder声学检查及连续帧检查不等于音乐收益，最终需明确相对原生/bridge-only的可感知增量或负结果。
 
+## 2026-10-17 执行收尾
+- 六训练配置、16份best/last实际审计、36视频完整124帧音画解码以及45条反事实/姿态缓存全部正确结束。完整JSON与元数据汇总发布至`results/ms_20261017/music_scale_all6_*`和`music_scale_final_acceptance_v4.json`；最终解释见notes §28.15，不以小数据12条结果替代全量。
+- 扩量/更多更新对检索有配方依赖的收益，但原生声学恢复和生成音乐遵循没有可靠一致增量；GT事件拍点校准失败仍在，三人物及多配置视频不独立。明确是未证明收益，不是证明无法控制。停止自动扩大数据或扫更多配方，当前固定case连续听看人评后再决策文本接口/可编辑编舞路线，不擅自训练DiT或开发LLM/APP。
+- 原评审开发机SSH缺可信key后，用户允许替代方案：当前节点8766独立服务，固定八模型（六新+原生+历史bridge-only）/三人物/三预设清单，保留旧8765及旧manifest。`server.py --manifest`禁止全树rescan；`index.html`显式每条件音轨防止focused清单aswap回落原音轨。页面/API和48video+6audio Range均通过，计算节点访问code-server代理超时，外部浏览器是否可达不冒称验收。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

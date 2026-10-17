@@ -1,0 +1,125 @@
+{
+  "experiment": "MusicFM nested clean1800/6000 data-and-update-budget comparison",
+  "date": "2026-10-17",
+  "technical_experiment_complete": true,
+  "generation": {
+    "configurations": 6,
+    "fixed_source_people": 3,
+    "conditions": ["joint", "aswap"],
+    "expected_videos": 36,
+    "passed": 36,
+    "missing": 0,
+    "errors": 0,
+    "complete_video_and_selected_audio_decode": true,
+    "video_size": [704, 1280],
+    "fps": 24,
+    "decoded_video_frames_each": 124,
+    "reference_and_retake_encoded_shapes": [[2, 32, 203], [2, 32, 203]],
+    "audio_tail_rows": 4,
+    "audio_tail_effective_time": 1,
+    "audio_tail_mode": "repeat_clean",
+    "declared_stream_count_checked": false
+  },
+  "training": {
+    "bridge_warmups": 2,
+    "bridge_updates_each": 100,
+    "formal_clip_configurations": 6,
+    "checkpoints_actually_reloaded_and_audited": 16,
+    "fixed_validation_items": 200,
+    "fixed_normalization_training_items": 1800,
+    "clip_global_batch": 16,
+    "encoder_lr": 0.00001,
+    "adapter_lr": 0.0001,
+    "head_lr": 0.0001,
+    "backbone_parameters_with_grad": 316343296,
+    "adapter_parameters_with_grad": 469536,
+    "head_parameters_with_grad": 655616,
+    "unused_backbone_gradient_tensors": 3,
+    "validation_schedule": "final optimizer update only; best is not multi-evaluation selection",
+    "bn_caveat": "Per-rank training running statistics, not SyncBN; bridge backbone always eval.",
+    "scale_caveat": "Each data scale uses its own same-100-update warmup; scale comparison includes warmup data exposure, not CLIP data alone.",
+    "same_budget_retrieval_R10": {
+      "d1800_l0_s560": 0.125,
+      "d1800_l1_s560": 0.145,
+      "d6000_l0_s560": 0.1625,
+      "d6000_l1_s560": 0.145
+    },
+    "larger_budget_retrieval_R10": {"d6000_l0_s1875": 0.205, "d6000_l1_s1875": 0.1875},
+    "retrieval_random_R10": 0.05
+  },
+  "counterfactual_diagnostics": {
+    "expected_videos": 45,
+    "new_generated_videos": 36,
+    "reused_native_videos": 6,
+    "reused_GT_videos": 3,
+    "validated_source_and_pose_caches": 45,
+    "valid_body_f1_cases": 45,
+    "time_window_seconds": [1, 5],
+    "phase_controls": 32,
+    "GT_body_correct_minus_alternative_f1": [-0.04705882352941171, 0.08144796380090497, -0.22058823529411764],
+    "GT_body_correct_minus_mean_phase_f1": [-0.0698529411764705, -0.17216064938824077, -0.15234375],
+    "metric_calibration_accepted": false,
+    "configurations_are_IID": false,
+    "automatic_musical_winner": null,
+    "body_f1_increment_over_native": {
+      "d1800_l0_s560": -0.12957080758938347,
+      "d1800_l1_s560": -0.07341095997375445,
+      "d6000_l0_s560": -0.013503466939326405,
+      "d6000_l1_s560": -0.0638468542022183,
+      "d6000_l0_s1875": -0.09565336038952944,
+      "d6000_l1_s1875": -0.05015551744586608
+    },
+    "body_f1_above_phase_p95_count_out_of_six": {
+      "d1800_l0_s560": 0, "d1800_l1_s560": 0,
+      "d6000_l0_s560": 1, "d6000_l1_s560": 1,
+      "d6000_l0_s1875": 0, "d6000_l1_s1875": 0
+    }
+  },
+  "audio_reconstruction": {
+    "checkpoint_audio_pairs": 18,
+    "all_latents_and_decoded_audio_finite": true,
+    "native_spectral_distance_range": [0.259478896856308, 0.288909912109375],
+    "new_spectral_distance_range": [0.8630000352859497, 0.9663774371147156],
+    "musical_adherence_score": false
+  },
+  "visual_check": {
+    "all_six_source_condition_comparison_images_actually_viewed": true,
+    "rows_per_image": 8,
+    "sampled_times_seconds": [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5],
+    "scope": "384 temporally sampled frames including native and historical bridge controls; not continuous audio-video human review or exact hand-quality acceptance",
+    "observation": "Motion motifs and timing differ, especially staircase turns/leg curls; red-shirt and shop retain common arm motifs. No whole-scene/identity collapse seen in the sampled thumbnails; hand detail remains uncertain."
+  },
+  "conclusion": {
+    "retrieval_learning": "Scale helps lambda0 at equal updates (+3.75 percentage points), not lambda1; more updates improve both retrieval scores.",
+    "native_interface": "Neither scaling nor more updates consistently restores native acoustic representation/reconstruction.",
+    "generation_musical_gain_proven": false,
+    "generation_claim": "No reliable consistent advantage over native or historical bridge-only established; this is insufficient evidence of benefit, not proof that the encoder cannot control music.",
+    "human_continuous_review_of_new_scale_configs_complete": false,
+    "next_decision": "Do not automatically expand data or sweep more recipes. Review these fixed cases, then prioritize explicitly testable choreography-control interfaces rather than claiming retrieval gain as video gain."
+  },
+  "source_report_sha256": {
+    "music_scale_all6_generation_integrity_v4.json": "87cafe2deaf11e4262ad736054b6a96eea9cdc7f8d16ac3131a950999ef2d02c",
+    "music_scale_all6_counterfactual_metrics_v4.json": "ac7896b2f081628fc39931eac1d3eb9705890a27a7613e0c80f2d648f6302415",
+    "music_scale_all6_audio_validation_v4.json": "835ccb3f9482528ed337d90b01686af2d16023f59bda5863ffb359fca57690d0",
+    "music_scale_checkpoint_audit_partial7_v4.json": "a24e06a081bc14813a96ffaa7f5d659c7cc1c841c6aae5601ac7d6f5db0f6383",
+    "music_scale_checkpoint_audit_l0s560_v4.json": "f2be4895eac2709887dc3d0579ec4ebb6f22a1ff514cb9ad33fc32c3c16a294e"
+  },
+  "review_service": {
+    "alternative_node": "current trusted cluster node, independent from original SSH-blocked review host",
+    "port": 8766,
+    "models": 8,
+    "fixed_source_people": 3,
+    "presets": 3,
+    "local_index_http_status": 200,
+    "local_manifest_http_status": 200,
+    "video_range_206_verified": 48,
+    "audio_range_206_verified": 6,
+    "correct_joint_and_aswap_audio_verified_by_executing_original_JS": true,
+    "outside_allowed_roots_rejected": true,
+    "focused_manifest_rescan_rejected": true,
+    "external_proxy_browser_access_verified": false,
+    "proxy_probe_from_compute_node": "timed out; local service and media verified",
+    "legacy_8765_or_manifest_modified": false
+  },
+  "publication_scope": "Metadata, code, metrics and bounded conclusions only; no model weights, derived feature PT caches, original videos/audio or credentials."
+}

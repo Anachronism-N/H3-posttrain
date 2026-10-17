@@ -135,6 +135,33 @@
 - 参考图当前是reference-only而非硬首帧条件：sampler的keyframes/retake_video为None。实际楼梯浅黄衣/灰裤在empty原生及两音乐encoder都变深色衣裤，不能把输入正确/解码成功当参考保真正确；不单独归因训练骨干。维持无外部语义文本要求，先验收一致的参考条件，不偷偷恢复通用舞蹈句。
 - 共用encoder/adapter与CLIP的池化投影对齐不等于生成行为一致。若需要训练与部署学生完全同输入，应在相同图/音频/噪声/timestep/CFG/tail下训练空文本学生通过冻结H3的生成路径；教师可用内部caption或GT作为监督而学生推理无caption。该路线需新增生成监督并保留冻结DiT到encoder/adapter的梯度，超出此前CLIP/桥接-only限制，需独立授权/方案，当前只分析不实施。没有承诺音乐唯一恢复caption或两条件输出逐像素一致。
 
+## 2026-10-18 已确认的新主线：音乐预测原生文本 hidden
+
+用户确认先走文本侧输出hidden，推理先完全不提供人物/ID/动作文字；不足后才加入仅身份信息。A输入embedding及首帧固定后置，C旧全局接口复原和D离散动作文字不纳入本轮。
+
+```text
+训练教师：参考图结构prefix + 舞种/原版MotionScript → 冻结H3文本encoder → raw逐token hidden
+训练学生：参考图结构上下文 + 音乐 → MusicFM → 共享text adapter → raw逐token hidden
+部署学生：执行完整同一MusicFM/adapter/最后5120维投影 → 原DiT文本条件入口
+```
+
+- 原32D音频adapter生成确实使用，但旧CLIP head的归一化全局向量不是原生text token目标。本轮最后投影属于部署adapter，不能再只用于训练loss。
+- CLIP不强制池化；首轮直接raw token MSE/cosine和长度监督，后续可对实际输出序列做无额外语义head的对比学习。检索相似不保证音乐对应动作，caption也不是音乐唯一编舞答案。
+- 保留图像结构prefix、视觉tags；空白占位的正文hidden丢弃后接新tail。旧text_embedding实际prepend，不等于本轮tail替换；prompt=None整体绕过图像编码也不采用。
+- 真实音乐只进入新text adapter；原生reference/retake两路均固定相同长度静音，并保持repeat_clean尾部和有效time1。原生静音latent不是零latent，换音乐必须核实原生条件hash不变。真实音乐只在生成之后用于mux。
+- 先同次teacher拆拼身份oracle，再独立结构prefix回填，核验raw条件、tags、packed和首步DiT预测；固定三个源人物joint/aswap各三。Teacher oracle只说明接口和条件可达性，绝不是训练好的音乐模型。
+- 原始caption逐token序列不池化/不复制均值/不插值压成K槽；训练集预检2000条图均存在，train1800原文平均392.688 tokens、最长1309，Qmax仅由训练集确定。部署由音乐+安全图上下文预测长度并实际截取，不读GT长度，不把补零行当自动mask。
+- 首轮公开MusicFM骨干冻结eval，训练共享adapter；如未解冻不称encoder已微调。TC/DiT/VAE冻结，无新增生成/FM/DiT/video训练loss。共享所有读取/裁剪/重采样/BN政策，checkpoint保存部署全部映射。
+- 新代码为`ms/music_text_adapter.py`（原始token输出/长度/严格重载）、`ms/music_text_condition.py`（明确tail回填）、`ms/music_text_oracle_generate.py`（工具管理三节点串行队列）、`ms/music_text_cache.py`（TC-only逐token目标/CPU预检），既有sampler加入显式oracle和fixed_native_silence参数。原实验默认路径不改。
+- 独立CPU复核已通过：全部部署层有限梯度、短/长query前缀误差1.55e-6、padding不变、checkpoint重载完全一致且拒覆盖。真实首个case的独立prefix和首步DiT预测均逐值一致，packed一致；完整六条视频及效果尚待完成，不提前宣称训练/音乐控制成功。
+- 正式训练门禁：完成oracle技术验收并查看视频，再提取1800/val200新目标、small-fit、正式adapter训练与正确/错配/零音乐三case验收。失败保留证据，区分接口、拟合、泛化、生成效果，不无限扩数据扫参数。
+
+### 首批joint oracle实际观察（阶段状态）
+- 三条joint sampler exit0，完整124帧/24fps/704×1280及音轨解码通过，三人物×参考图+六时间采样帧对照图已实际查看。可以看到转身、步移、手臂变化；不能把采样帧观察等同连续听看或音乐正确度。
+- 楼梯参考人物为女性浅黄上衣/灰裤，oracle输出男性外观、深色衣裤，人物保真失败。原版MS中的His/He可能提供错误性别语义，但无去代词反事实前不认定是唯一原因；过去原生empty也有参考衣着漂移。不要把接口精确回填成功包装成全部生成质量验收通过。
+- N2两条TC-only教师缓存真实exit0，未加载video/audio VAE；实际tail462/479、prefix7437。只验证提取程序，不冒称全1800/200缓存完成。
+- 三条aswap仍由原管理队列运行。后续先核验全六结果与人物/监督标签问题，再决定教师去性别代词或仅ID文本的最小对照；保持动作原文与修改来源可追溯，不直接训入明显错误身份目标。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

@@ -1,0 +1,119 @@
+{
+  "complete": true,
+  "expected": 2,
+  "rows": [
+    {
+      "sample_id": "AAcaGYtiTozEttaF",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_targets_smoke_v1/AAcaGYtiTozEttaF.pt",
+      "file_sha256": "a711dbe5b055fbd66616b61756efe19f54ec1ed521b56a73a6a8aff265f06c6d",
+      "tail_length": 462,
+      "prefix_length": 7437
+    },
+    {
+      "sample_id": "ACYTcnkJDuOfXBiA",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_targets_smoke_v1/ACYTcnkJDuOfXBiA.pt",
+      "file_sha256": "89649a546885a1ba2082d70d8198b43bf035434e43cc4453cdd083daf39343b4",
+      "tail_length": 479,
+      "prefix_length": 7437
+    }
+  ],
+  "training_query_max": 479,
+  "train_count": 2,
+  "val_count": 0,
+  "seconds": 10.482415441423655,
+  "source": {
+    "caps_sha256": "4bc371f4f5311abf34ca8a0bc4194e1988c5a0c05ab160a7b606825ca5804b84",
+    "split_sha256": "44b07b8b9219b5cbced271ac36ce7e1d26204fe6f47983a113a9dd8585720060",
+    "image_root": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames",
+    "original_full_train": 1800,
+    "original_full_val": 200,
+    "ids": [
+      "AAcaGYtiTozEttaF",
+      "ACYTcnkJDuOfXBiA"
+    ],
+    "shard": 0,
+    "nshard": 1,
+    "explicit_subset": 2,
+    "interface": "raw_h3_last_hidden_5120_tail_replacement",
+    "reference_image_short_edge": 2048,
+    "structural_audio_label": true,
+    "semantic_student_prompt": " ",
+    "final_norm": "Identity",
+    "caption_fields": [
+      "dims.genre",
+      "motion_original"
+    ],
+    "model_files_metadata": [
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00001-of-00014.safetensors",
+        "size": 4932328944,
+        "mtime_ns": 1790889742000000000
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00002-of-00014.safetensors",
+        "size": 4875990528,
+        "mtime_ns": 1790889653000000000
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00003-of-00014.safetensors",
+        "size": 4875990552,
+        "mtime_ns": 1790889719495968574
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00004-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889603000000000
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00005-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889550000000000
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00006-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889610153669694
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00007-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889563000000000
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00008-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889585000000000
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00009-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889595341358270
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00010-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889696000000000
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00011-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889725000000000
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00012-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889550288411050
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00013-of-00014.safetensors",
+        "size": 4875990584,
+        "mtime_ns": 1790889666000000000
+      },
+      {
+        "path": "/dev/shm/h3/Ref2VA/text_encoder/model-00014-of-00014.safetensors",
+        "size": 3270697008,
+        "mtime_ns": 1790889502000000000
+      }
+    ]
+  }
+}

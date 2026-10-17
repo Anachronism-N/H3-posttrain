@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-18",
+  "stage": "shared_adapter_and_oracle_interface",
+  "scope": "Implementation and interface checks, not a trained music model or established generation gain",
+  "student_inputs": ["reference_image", "music"],
+  "student_semantic_prompt": " ",
+  "native_reference_and_retake_audio": "same_fixed_silence",
+  "external_identity_or_action_text": false,
+  "first_frame_lock_implemented": false,
+  "video_or_dit_training_loss": false,
+  "clip_requires_pooled_embedding": false,
+  "adapter_final_5120_projection_preserved_for_deployment": true,
+  "synthetic_tests": {
+    "all_deployment_layers_finite_gradients": true,
+    "short_full_query_prefix_max_abs_error": 0.0000015497207641601562,
+    "padding_invariance": true,
+    "strict_checkpoint_roundtrip_exact": true,
+    "checkpoint_no_overwrite": true,
+    "identity_tail_and_tags": true,
+    "real_music_features_tested_in_these_tests": false
+  },
+  "data_preflight": {
+    "train": 1800,
+    "validation": 200,
+    "all_2000_reference_images_present": true,
+    "train_mean_caption_tokens": 392.68833333333333,
+    "train_max_caption_tokens": 1309,
+    "validation_does_not_set_query_max": true
+  },
+  "tc_only_smoke": {
+    "complete": true,
+    "samples": 2,
+    "tail_lengths": [462, 479],
+    "structural_prefix_lengths": [7437, 7437],
+    "video_or_audio_vae_loaded": false,
+    "full_split_teacher_cache_complete": false
+  },
+  "first_real_case_interface": {
+    "sample_id": "wJPptuhclZmKAEWs",
+    "condition": "joint",
+    "raw_hidden_identity_exact": true,
+    "independent_structural_prefix_exact": true,
+    "packed_equal": true,
+    "first_step_dit_prediction_exact": true,
+    "tail_length": 213,
+    "status": "passed"
+  },
+  "oracle_generation": {
+    "managed_job": "mgdr72",
+    "source_people": 3,
+    "expected_videos": 6,
+    "joint_sampler_exit_zero": 3,
+    "joint_complete_124_frame_audio_video_decode": 3,
+    "joint_sampled_frame_visual_review": "Turning, stepping and arm movements are visible. Staircase reference woman becomes a male-presenting person with different clothing; identity fidelity fails. Original MS male pronouns are a possible confound, not a verified cause. These are teacher conditions, not predictions from music.",
+    "continuous_music_adherence_review_completed": false,
+    "aswap_state_at_this_record": "running",
+    "all_six_complete": false,
+    "music_prediction": false,
+    "caption_sources": "joint uses original MotionScript plus genre; swap has explicitly labeled video-observed VLM fallback because original MS is unavailable"
+  },
+  "formal_music_text_training_started": false,
+  "next_gate": "Finish six oracle clips and video inspection before formal adapter training"
+}

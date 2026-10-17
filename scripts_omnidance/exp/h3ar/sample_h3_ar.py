@@ -34,6 +34,9 @@ p.add_argument("--audio_override", default="", help="replace the music of every 
 p.add_argument("--native_audio_ckpt", default="", help="Native audio-side CLIP checkpoint; install native encoding weights, retaining the original audio latent interface")
 p.add_argument("--music_encoder_ckpt", default="", help="Trained dedicated music encoder plus adapter replaces reference and target audio encoding; not a residual/text hook")
 p.add_argument("--audio_tail_mode", default="legacy", choices=["legacy", "repeat_clean"], help="Controlled audio-padding probe: legacy regenerates padded target audio; repeat_clean keeps the repeated clean latent fixed at AdaLN time=1")
+p.add_argument("--fixed_native_silence", action="store_true", help="Fixed 5.0625s silence for BOTH native audio conditions; original music is only muxed")
+p.add_argument("--text_hidden_oracle", default="", help="Supervision-only JSON audio_id -> {prompt, source}; raw hidden tail replaces empty student text")
+p.add_argument("--text_oracle_cache_dir", default="", help="Existing new directory for oracle targets and strict condition-equivalence reports")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
 p.add_argument("--body_key", default="timed", help="timed | calm | energetic")
 p.add_argument("--soft_text", default="", help="10-15 G3: genre_clip text_targets.pt; description = K placeholder tokens whose "
@@ -49,6 +52,15 @@ p.add_argument("--lora_steps", default="", help="a:b -> LoRA active only on deno
 a = p.parse_args()
 if a.prompt_mode == "empty" and (a.body_json or a.soft_text or a.soft_tokens or a.prompt_prefix):
     p.error("Empty prompt must not combine with captions, soft tokens or a prompt prefix")
+if a.fixed_native_silence and (a.music_encoder_ckpt or a.native_audio_ckpt or a.music_cfg or a.lora):
+    p.error("Fixed native silence cannot combine with old music/native checkpoints or guidance")
+if a.text_hidden_oracle and (a.prompt_mode != "empty" or not a.fixed_native_silence or
+                           not a.text_oracle_cache_dir or a.mode != "bi" or a.cfg != 1):
+    p.error("Raw hidden oracle requires empty prompt, fixed native silence, cache directory, bi and CFG1")
+if a.fixed_native_silence and a.audio_tail_mode != "repeat_clean":
+    p.error("Fixed native silence requires repeat_clean, including the padded tail")
+if a.text_oracle_cache_dir and not a.text_hidden_oracle:
+    p.error("Oracle cache directory requires the explicit oracle mode")
 
 csv.field_size_limit(10 ** 9)
 E = "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp"
@@ -85,6 +97,20 @@ pipe = MiniMaxH3Pipeline.from_pretrained(
     processor_config=ModelConfig(path=f"{W}/processor/"),
     **({"vram_limit": torch.cuda.mem_get_info("cuda")[1] / (1024 ** 3) - 5} if a.height > 832 else {}),  # official-res (as e3/oos scripts)
 )
+TEXT_ORACLE = None
+ORACLE_CAPTIONS = None
+if a.text_hidden_oracle:
+    import json
+    from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
+    sys.path.insert(0, os.path.join(HERE, '..', 'ms'))
+    from music_text_condition import OracleTextTailEmbedder, tensor_sha256, difference
+    ORACLE_CAPTIONS = json.load(open(a.text_hidden_oracle))
+    TEXT_ORACLE = OracleTextTailEmbedder(a.text_oracle_cache_dir)
+    matches = [i for i, unit in enumerate(pipe.units) if isinstance(unit, MiniMaxH3Unit_PromptEmbedder)]
+    assert len(matches) == 1, 'Expected exactly one original prompt embedder'
+    pipe.units[matches[0]] = TEXT_ORACLE
+if a.fixed_native_silence:
+    pipe.audio_cond_noise_aug = 1.0
 if a.music_encoder_ckpt:
     assert not a.native_audio_ckpt and not a.lora and not a.soft_text, 'Dedicated music replacement must not combine with native checkpoints or old injection hooks'
     sys.path.insert(0, os.path.join(HERE, '..', 'ms'))
@@ -160,13 +186,14 @@ def generate(prompt, img, wav, sr):
     pipe.scheduler.set_timesteps(a.steps, shift=a.shift)
     pipe.scheduler_audio.set_timesteps(a.steps, shift=a.audio_shift)
     inputs_posi = {"prompt": prompt}; inputs_nega = {"negative_prompt": " "}
+    condition_wav = torch.zeros((2, round(5.0625 * sr)), dtype=torch.float32) if a.fixed_native_silence else wav
     sh = {"cfg_scale": a.cfg, "height": a.height, "width": a.width, "num_frames": 124, "seed": a.seed, "rand_device": "cpu",
           "tiled": True, "tile_size": 256, "tile_overlap": 64, "use_gradient_checkpointing": False, "use_gradient_checkpointing_offload": False,
           "keyframes": None, "keyframe_indices": None,
-          "references": [{"type": "image", "image": img}, {"type": "audio", "audio": wav, "sample_rate": sr}],
+          "references": [{"type": "image", "image": img}, {"type": "audio", "audio": condition_wav, "sample_rate": sr}],
           "ref_image_short_edge": 2048, "ref_video_short_edge": 768, "ref_video_max_pixels": 768 * 1344,
           "control_video": None, "control_scale": 1.0, "retake_video": None, "frame_regions_to_retake": None,
-          "retake_audio": (wav, sr), "seconds_regions_to_retake": [],
+          "retake_audio": (condition_wav, sr), "seconds_regions_to_retake": [],
           "imgvid_cond_noise_aug": pipe.imgvid_cond_noise_aug, "audio_cond_noise_aug": pipe.audio_cond_noise_aug, "text_embedding": None}
     for unit in pipe.units:
         sh, inputs_posi, inputs_nega = pipe.unit_runner(unit, pipe, sh, inputs_posi, inputs_nega)
@@ -186,6 +213,32 @@ def generate(prompt, img, wav, sr):
     models = {n: getattr(pipe, n) for n in pipe.in_iteration_models}
     lat0 = sh["video_latents"].clone()
     T = lat0.shape[2]
+    if TEXT_ORACLE is not None:
+        from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PackedSequenceBuilder
+        teacher_posi = dict(inputs_posi, **TEXT_ORACLE.teacher_output)
+        teacher_posi.update(MiniMaxH3Unit_PackedSequenceBuilder().process(
+            pipe, prompt_embeds=teacher_posi['prompt_embeds'],
+            text_token_tags=teacher_posi['text_token_tags'], video_latents=sh['video_latents'],
+            audio_latents=sh['audio_latents'], keyframe_cond_anchor=sh.get('keyframe_cond_anchor'),
+            keyframe_indices=sh.get('keyframe_indices'), ref_blocks=sh['ref_blocks']))
+        teacher_packed, student_packed = teacher_posi['packed'], inputs_posi['packed']
+        packed_equal = teacher_packed.keys() == student_packed.keys() and all(
+            torch.equal(v, student_packed[k]) if torch.is_tensor(v) else v == student_packed[k]
+            for k, v in teacher_packed.items())
+        assert packed_equal, 'Identity oracle changed packed token positions or tags'
+        tv = pipe.scheduler.timesteps[0].reshape(1).to(device=pipe.device, dtype=torch.float32)
+        ta = pipe.scheduler_audio.timesteps[0].reshape(1).to(device=pipe.device, dtype=torch.float32)
+        teacher_v, _ = pipe.model_fn(**models, **sh, **teacher_posi, timestep_video=tv, timestep_audio=ta)
+        student_v, _ = pipe.model_fn(**models, **sh, **inputs_posi, timestep_video=tv, timestep_audio=ta)
+        assert a.fixed_native_silence and not torch.count_nonzero(sh['denoise_mask_audio'])
+        native_audio = dict(waveform_sha256=tensor_sha256(condition_wav),
+                            waveform_samples=condition_wav.shape[-1],
+                            reference_sha256=tensor_sha256(sh['ref_audio_anchor']),
+                            retake_sha256=tensor_sha256(sh['input_latents_audio']),
+                            mask_sha256=tensor_sha256(sh['denoise_mask_audio']),
+                            all_target_audio_clean=True, native_music_bypass=False)
+        TEXT_ORACLE.finish_audit(packed_equal, difference(student_v, teacher_v), native_audio)
+        del teacher_v, student_v, teacher_posi
     if MUSIC:
         stem = os.path.basename(CUR_AUDIO[0])[:-4]
         if isinstance(pipe.dit.od_music, MU.MusicMoE):  # M2: MERT + beat + CLAP + H3 audio-VAE latent of the music
@@ -301,9 +354,20 @@ for c, r, dst in todo:
     # empty: text prompt " " (same as the CFG negative) -> isolates what image + audio alone drive
     # generic: H3 template (reference/audio bindings) + one generic dance sentence, no per-video description
     prompt = " " if a.prompt_mode == "empty" else h3_prompt(body, generic=(c == "audio_only" or a.prompt_mode == "generic"))
+    if TEXT_ORACLE is not None:
+        from pathlib import Path
+        audio_id = Path(a.audio_override or r['audio_path']).stem
+        entry = ORACLE_CAPTIONS[audio_id]
+        if not isinstance(entry, dict) or not entry.get('source'):
+            raise ValueError('Oracle caption must declare its supervision source')
+        TEXT_ORACLE.set_case(entry['prompt'], dict(sample_id=r['sample_id'], audio_id=audio_id,
+                              condition=c, image_path=r['image_path'], audio_path=r['audio_path'],
+                              caption_source=entry['source']))
     print('[h3ar] input_conditions ' + _json.dumps(dict(prompt_mode=a.prompt_mode, semantic_text=prompt,
           image_path=r["image_path"], audio_path=a.audio_override or r["audio_path"], seed=a.seed,
-          music_encoder_ckpt=a.music_encoder_ckpt or None)), flush=True)
+          music_encoder_ckpt=a.music_encoder_ckpt or None,
+          native_audio_condition='fixed_silence' if a.fixed_native_silence else 'input_music',
+          text_hidden_oracle=bool(TEXT_ORACLE))), flush=True)
     video = generate(prompt, img, wav, sr)
     write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)
     if SOFT is not None:

@@ -102,6 +102,13 @@
 - 最少对照应含直接H3自然语言prompt、相同舞种/动作信息的手工计划、音乐条件LLM规划，以及局部编辑与组合的控制成功率/不受编辑部分的保留率。必须区分LLM引入更多文字信息与音乐encoder改进，不把已有原生文本能力说成新贡献。
 - 当前其它维度与LLM/APP训练仍后置。正在进行的反事实诊断及一次小规模数据量对照用于决定是否继续音乐encoder路线；若数据扩量仍无可感知收益，不无限遍历学习率/轮数，以已可用H3的编舞控制验证为下一决策。
 
+## 2026-10-17 正式规模实验执行与生成验收
+- 1800/6000各100更新bridge完成；随后1800 lambda0/1各560、6000 lambda0/1各560及1875共六配置全部完成正式更新。固定global batch16、文本归一化clean1800、验证200顺序；具体指标和实测耗时见notes §28.14。只在最后更新验证，因此best不代表多轮择优。
+- N4已存在字节相同缓存时cp no-clobber返回非零，第一版lambda0/560未开始；恢复先核验hash并确认无同输出活跃进程。另一重复尝试因已有正常训练占端口而在rendezvous前失败，保留日志、不杀正常任务、不再重复启动，等待现有560任务完成。
+- 综合权重审计在有完整本地缓存的N4运行，实际校验best/last文件SHA256、CPU读取全张量finite、split/norm/最后验证/finished事件和输入文件hash。N6缺其他主机记录的本地cache路径曾导致审计退出，不能解释为权重坏；无修改训练源码或输入来掩盖。
+- 新生成队列`music_scale_generate.py`仅接受已审计CLIP配置，每配置固定3人物joint/aswap各3、704×1280、124帧、24fps、bi/50步、shift12/audio_shift3、seed42、generic prompt、repeat_clean。每节点只新增一个冷加载，主机/cgroup各180GiB准入、目标GPU非holder不得停止；输出/日志/最终JSON新路径拒覆盖，成功后完整decord/ffmpeg解码。
+- 1800两组12条先生成，6000四组24条在权重审计完成后安排到其余节点并行。仅三人物，不因扩量增加case。后续DWPose复用原生/GT缓存，F1/BAS继续只作校准不足的诊断；原decoder声学检查及连续帧检查不等于音乐收益，最终需明确相对原生/bridge-only的可感知增量或负结果。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

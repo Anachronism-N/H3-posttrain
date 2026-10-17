@@ -1,0 +1,161 @@
+{
+  "metrics": {
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_scale_d1800_l0_s560_v4/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 1.0390758514404297,
+        "output_vs_base_relative_rms": 1.0382312536239624,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.190847709774971,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.9219048619270325
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 1.0177342891693115,
+        "output_vs_base_relative_rms": 1.0605504512786865,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.262611448764801,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.9251842498779297
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 1.0555132627487183,
+        "output_vs_base_relative_rms": 1.0442285537719727,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.2473205178976059,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.920326828956604
+      }
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_scale_d1800_l1_s560_v4/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 0.9608928561210632,
+        "output_vs_base_relative_rms": 1.0203462839126587,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.18687140941619873,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.9494461417198181
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 0.9362850189208984,
+        "output_vs_base_relative_rms": 1.0233163833618164,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.25409895181655884,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.9663774371147156
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 0.972903847694397,
+        "output_vs_base_relative_rms": 1.024272084236145,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.24272020161151886,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.9466204047203064
+      }
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_scale_d6000_l0_s560_v4/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 1.1633719205856323,
+        "output_vs_base_relative_rms": 1.1951663494110107,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.2161550521850586,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.8811347484588623
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 1.0846210718154907,
+        "output_vs_base_relative_rms": 1.177159070968628,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.28302687406539917,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.8630000352859497
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 1.091860294342041,
+        "output_vs_base_relative_rms": 1.1245498657226562,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.26444846391677856,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.9066444635391235
+      }
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_scale_d6000_l1_s560_v4/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 0.9104053974151611,
+        "output_vs_base_relative_rms": 1.1273207664489746,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.20669445395469666,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.919633150100708
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 0.849470317363739,
+        "output_vs_base_relative_rms": 1.093542456626892,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.2676299214363098,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.9129592776298523
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 0.8737065196037292,
+        "output_vs_base_relative_rms": 1.1347124576568604,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.26828116178512573,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.965549647808075
+      }
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_scale_d6000_l0_s1875_v4/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 1.1610324382781982,
+        "output_vs_base_relative_rms": 1.128991723060608,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.20423990488052368,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.9247946739196777
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 1.0850293636322021,
+        "output_vs_base_relative_rms": 1.0845389366149902,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.26575812697410583,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.9139900207519531
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 1.1444754600524902,
+        "output_vs_base_relative_rms": 1.0931912660598755,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.25774022936820984,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.9412819147109985
+      }
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_encoders/musicfm_scale_d6000_l1_s1875_v4/best.pt": {
+      "wJPptuhclZmKAEWs": {
+        "latent_relative_rms": 0.9336268901824951,
+        "output_vs_base_relative_rms": 1.0491827726364136,
+        "baseline_waveform_l1": 0.0745885893702507,
+        "waveform_l1": 0.19253113865852356,
+        "baseline_spectral_distance": 0.26539409160614014,
+        "spectral_distance": 0.9555113315582275
+      },
+      "wJPrpFsThWAcBQIw": {
+        "latent_relative_rms": 0.8980717062950134,
+        "output_vs_base_relative_rms": 1.0369205474853516,
+        "baseline_waveform_l1": 0.10929796099662781,
+        "waveform_l1": 0.25726380944252014,
+        "baseline_spectral_distance": 0.288909912109375,
+        "spectral_distance": 0.962622344493866
+      },
+      "wJQTclrlOLEYYfTB": {
+        "latent_relative_rms": 0.9457257986068726,
+        "output_vs_base_relative_rms": 1.0373561382293701,
+        "baseline_waveform_l1": 0.10101370513439178,
+        "waveform_l1": 0.24576713144779205,
+        "baseline_spectral_distance": 0.259478896856308,
+        "spectral_distance": 0.9452410340309143
+      }
+    }
+  },
+  "scope": "audio representation/reconstruction only; not dance generation acceptance"
+}

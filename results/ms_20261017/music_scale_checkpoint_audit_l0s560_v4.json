@@ -1,0 +1,150 @@
+{
+  "status": "verified",
+  "configuration_count": 1,
+  "checkpoint_count": 2,
+  "configurations": [
+    {
+      "name": "musicfm_scale_d6000_l0_s560_v4",
+      "status": "verified",
+      "stage": "bridge_clip",
+      "train_count": 6000,
+      "val_count": 200,
+      "train_ids_sha256": "bb43162a14b461277f4882621ee0de7870354d1b30e0edf52f31c0213ad4ab8c",
+      "val_ids_sha256": "444a7bc4ded29eb2e2750da66b4936cfc302037fb61505534fb206630fa42321",
+      "normalization_ids_sha256": "dd6dabfe8ec693a172b55c7ac3b3be24988f76073c90ef133b572042e92b5dbf",
+      "normalization_stats_sha256": "ddf6c730d0d49f42850ab869eb6cd2d76dc44515b619f539884a4ccf87cbe0f3",
+      "global_step": 560,
+      "global_batch": 16,
+      "actually_items_seen": 8960,
+      "bridge_weight": 0.0,
+      "encoder_lr": 1e-05,
+      "adapter_lr": 0.0001,
+      "head_lr": 0.0001,
+      "input_sha256": {
+        "caps": "4bc371f4f5311abf34ca8a0bc4194e1988c5a0c05ab160a7b606825ca5804b84",
+        "text": "eab88706962f495f049283423df676a2557f0f7a39869a6837dc18826231d5f2",
+        "teacher": "a1f92bb3d88b419f853c8e0159769bee627c04eb747c2557036f2b16c87c6ea8",
+        "split": "85ec5fe07105d9a0764243e1ed25d8ee0fe96d503d79139572abd6b74fef9d70",
+        "normalization_ids": "b73ebe0b273f02c8b1e9e2eb94bc5489d4e1fc0cf2436439029ca638456bd0cd",
+        "init": "adb211198088eeac4f0455b68791b23b5094dd99420a92f060e824d07441672f"
+      },
+      "summary_sha256": "9c5690a717b2c7ae5d0b89e33fbb29d3aed9aa79970cd484b0ca893eaab17d56",
+      "checkpoints": [
+        {
+          "name": "best",
+          "sha256": "019d92fd79bd6f9c7f2b0516e932d60964c1c68c145cdbab24a7bc478ed04d14",
+          "tensors_finite": true,
+          "tensor_count": 484,
+          "floating_values": 330764896,
+          "global_step": 560,
+          "metrics": {
+            "val_candidates": 200,
+            "val_random_R@1": 0.005,
+            "val_random_R@5": 0.025,
+            "val_random_R@10": 0.05,
+            "val_a2t_R@1": 0.02499999850988388,
+            "val_a2t_R@5": 0.09999999403953552,
+            "val_a2t_R@10": 0.14999999105930328,
+            "val_t2a_R@1": 0.019999999552965164,
+            "val_t2a_R@5": 0.0949999988079071,
+            "val_t2a_R@10": 0.17499999701976776,
+            "val_R@1": 0.022499999031424522,
+            "val_R@5": 0.09749999642372131,
+            "val_R@10": 0.16249999403953552,
+            "val_bridge_MSE": 0.3573753237724304,
+            "val_teacher_energy": 0.258074551820755,
+            "val_bridge_MSE_over_teacher_energy": 1.3847755280444873,
+            "val_latent_energy_ratio": 0.7151083573097663,
+            "val_bridge_relative_baseline": 1.9712082412649108
+          }
+        },
+        {
+          "name": "last",
+          "sha256": "d3b0a865236f97252d24bb1f528c3a9ac0ecc4dc9fc3cd0adcfd091f4da9d01e",
+          "tensors_finite": true,
+          "tensor_count": 484,
+          "floating_values": 330764896,
+          "global_step": 560,
+          "metrics": {
+            "val_candidates": 200,
+            "val_random_R@1": 0.005,
+            "val_random_R@5": 0.025,
+            "val_random_R@10": 0.05,
+            "val_a2t_R@1": 0.02499999850988388,
+            "val_a2t_R@5": 0.09999999403953552,
+            "val_a2t_R@10": 0.14999999105930328,
+            "val_t2a_R@1": 0.019999999552965164,
+            "val_t2a_R@5": 0.0949999988079071,
+            "val_t2a_R@10": 0.17499999701976776,
+            "val_R@1": 0.022499999031424522,
+            "val_R@5": 0.09749999642372131,
+            "val_R@10": 0.16249999403953552,
+            "val_bridge_MSE": 0.3573753237724304,
+            "val_teacher_energy": 0.258074551820755,
+            "val_bridge_MSE_over_teacher_energy": 1.3847755280444873,
+            "val_latent_energy_ratio": 0.7151083573097663,
+            "val_bridge_relative_baseline": 1.9712082412649108
+          }
+        }
+      ],
+      "best_metrics": {
+        "val_candidates": 200,
+        "val_random_R@1": 0.005,
+        "val_random_R@5": 0.025,
+        "val_random_R@10": 0.05,
+        "val_a2t_R@1": 0.02499999850988388,
+        "val_a2t_R@5": 0.09999999403953552,
+        "val_a2t_R@10": 0.14999999105930328,
+        "val_t2a_R@1": 0.019999999552965164,
+        "val_t2a_R@5": 0.0949999988079071,
+        "val_t2a_R@10": 0.17499999701976776,
+        "val_R@1": 0.022499999031424522,
+        "val_R@5": 0.09749999642372131,
+        "val_R@10": 0.16249999403953552,
+        "val_bridge_MSE": 0.3573753237724304,
+        "val_teacher_energy": 0.258074551820755,
+        "val_bridge_MSE_over_teacher_energy": 1.3847755280444873,
+        "val_latent_energy_ratio": 0.7151083573097663,
+        "val_bridge_relative_baseline": 1.9712082412649108
+      },
+      "gradients": {
+        "backbone": {
+          "grad_norm": 3.282348388109323,
+          "parameters_with_grad": 316343296,
+          "missing_grad_tensors": 3
+        },
+        "adapter": {
+          "grad_norm": 2.322560296881864,
+          "parameters_with_grad": 469536,
+          "missing_grad_tensors": 0
+        },
+        "audio_head": {
+          "grad_norm": 0.7570486640859514,
+          "parameters_with_grad": 655616,
+          "missing_grad_tensors": 0
+        }
+      },
+      "performance": {
+        "setup_seconds": 14.75638130493462,
+        "input_load_seconds": 2.663274371996522,
+        "train_data_load_seconds": 87.38088949956,
+        "forward_backward_optimizer_seconds": 227.86254567746073,
+        "validation_seconds": 57.44518230762333,
+        "checkpoint_seconds": 19.89273115992546,
+        "export_seconds": 51.45882974099368,
+        "train_gpu_seconds": 234.30512384033204,
+        "train_wall_seconds": 343.8143866872415,
+        "train_steps_per_second": 1.6287858265495347,
+        "train_items_per_second": 26.060573224792556,
+        "wall_start_unix": 1792207740.1154203,
+        "wall_end_unix": 1792208232.1593518,
+        "wall_seconds": 492.0439256122336,
+        "wall_steps_per_second": 1.1381097720151936,
+        "wall_items_per_second": 18.209756352243097
+      },
+      "bn_caveat": "per-rank BN train stats versus validation running stats; bridge backbone always eval"
+    }
+  ],
+  "fixed_validation_and_normalization_verified": true,
+  "scope": "Checkpoint and training-protocol integrity only; not generated video acceptance or musical adherence."
+}

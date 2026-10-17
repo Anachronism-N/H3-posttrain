@@ -1,0 +1,13 @@
+{
+ "status":"verified",
+ "caption_items":6200,
+ "cache_shards_each":8,
+ "all_24_cache_jobs_exit_code":0,
+ "teacher":{"waveform_path":"sourcewav->32k","shape_per_item":[2,32,203],"compute_dtype":"float32","sha256":"a1f92bb3d88b419f853c8e0159769bee627c04eb747c2557036f2b16c87c6ea8","source":"original frozen H3 audio VAE","per_shard_first_three_native_encode_checks":true,"maximum_reference_error_tolerance":0.0001},
+ "music":{"waveform_path":"sourcewav->32k->24k","shape_per_item":[2,127,1024],"backbone":"public MusicFM-MSD frozen in eval mode","storage_dtype":"float16","sha256":"771e659cddb2ccf56e3b4b8287ccf7e4f4d4de92f0c2a4b2707183a3e85bf295"},
+ "text":{"supervision":"Dance style: genre + original MotionScript; --dance_only","encoder":"original frozen H3 text encoder","shape_per_item":[5120],"sha256":"eab88706962f495f049283423df676a2557f0f7a39869a6837dc18826231d5f2"},
+ "caps6200_sha256":"4bc371f4f5311abf34ca8a0bc4194e1988c5a0c05ab160a7b606825ca5804b84",
+ "validation":"Teacher and music parts validated for exact ID union, unique shards, strict consistent metadata, per-tensor hash, finite tensors, shape and dtype. Atomic merged outputs reloaded and verified. Text parts matched exact sorted-ID sharding, finite 5120 vectors and byte-equivalent tensors after merge.",
+ "formal_training_status":"1800- and 6000-training-item bridge warmups started with 100 optimizer updates each; full CLIP scale experiments are not yet completed",
+ "scope":"Cache/interface preparation evidence only. Weights and derived audio/text PT caches are not published; this does not establish improved musical adherence."
+}

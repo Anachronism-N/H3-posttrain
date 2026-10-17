@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 import os
+import re
 from pathlib import Path
 
 import numpy as np
@@ -21,7 +22,9 @@ METRICS = ('precision', 'recall', 'f1', 'bas_music', 'bas_motion')
 CACHE_VERSION = 1
 
 
-def cases(exp_root):
+def cases(exp_root, tags=TAGS):
+    if len(set(tags)) != len(tags) or any(re.fullmatch(r'[A-Za-z0-9_-]+', tag) is None or tag in ('native_cleanpad', 'GT') for tag in tags):
+        raise ValueError('Tags must be distinct bare generated configuration names')
     fixed = fixed_cases(exp_root)
     with (exp_root / 'E2/full_joint.csv').open(newline='') as stream:
         joint = {row['sample_id']: row for row in list(csv.DictReader(stream))[:3]}
@@ -30,7 +33,7 @@ def cases(exp_root):
     if set(original) != set(swapped) or set(original) != set(joint):
         raise ValueError('Fixed joint/aswap/GT IDs must match exactly')
     result = []
-    for tag in (*TAGS, 'native_cleanpad', 'GT'):
+    for tag in (*tags, 'native_cleanpad', 'GT'):
         for case in (fixed[:3] if tag == 'GT' else fixed):
             sid, condition = case['sample_id'], case['condition']
             correct = case['audio_path']
@@ -42,8 +45,9 @@ def cases(exp_root):
             key = f'{tag}/{condition}/{sid}/{Path(correct).stem}'
             result.append(dict(tag=tag, condition=condition, sample_id=sid, key=key,
                                video_path=str(video), correct_audio=correct, alt_audio=alt))
-    if len(result) != 57 or len({c['key'] for c in result}) != 57:
-        raise ValueError('Expected exactly 57 unique fixed cases')
+    expected = len(tags) * 6 + 9
+    if len(result) != expected or len({c['key'] for c in result}) != expected:
+        raise ValueError(f'Expected exactly {expected} unique fixed-case configuration videos')
     return result
 
 
@@ -283,6 +287,8 @@ def score_group(data, group, correct, alt):
 
 
 def score(all_cases, out, exp_root):
+    tags = tuple(dict.fromkeys(case['tag'] for case in all_cases if case['tag'] not in ('native_cleanpad', 'GT')))
+    expected = len(all_cases)
     available, missing, manifest = {}, [], []
     for case in all_cases:
         fingerprint, path = source_fingerprint(case), cache_path(out, case)
@@ -293,7 +299,7 @@ def score(all_cases, out, exp_root):
             available[case['key']] = load_verified(path, case, fingerprint)
         manifest.append(entry)
     if missing:
-        return dict(schema_version=1, expected_videos=57, complete=False, cache_complete=False,
+        return dict(schema_version=1, expected_videos=expected, complete=False, cache_complete=False,
                     validated_caches=len(available), missing=missing, exp_root=str(exp_root),
                     cases=[dict(**entry, status=('missing_cache' if entry['key'] not in available else
                            'not_scored_incomplete'), groups=None) for entry in manifest], configurations=None,
@@ -315,7 +321,7 @@ def score(all_cases, out, exp_root):
         row['increment_over_native_pair'] = {g: {m: delta(row['groups'][g]['margin'][m], base['groups'][g]['margin'][m])
                                                    for m in METRICS} for g in GROUPS}
     summaries = {}
-    for tag in (*TAGS, 'native_cleanpad', 'GT'):
+    for tag in (*tags, 'native_cleanpad', 'GT'):
         selected = [r for r in rows if r['tag'] == tag]
         summary = {}
         for g in GROUPS:
@@ -343,7 +349,7 @@ def score(all_cases, out, exp_root):
     gt = [dict(sample_id=r['sample_id'], group=g, f1_margin=r['groups'][g]['margin']['f1'])
           for r in rows if r['tag'] == 'GT' for g in GROUPS
           if r['groups'][g]['margin']['f1'] is None or r['groups'][g]['margin']['f1'] <= 0]
-    return dict(schema_version=1, expected_videos=57, complete=True, cache_complete=True, validated_caches=57,
+    return dict(schema_version=1, expected_videos=expected, complete=True, cache_complete=True, validated_caches=expected,
                 missing=[], exp_root=str(exp_root), cases=rows, configurations=summaries,
                 valid_body_f1_cases=sum(r['groups']['body']['correct']['f1'] is not None for r in rows),
                 audio_sources={p: dict(sha256=a['sha256'], beat_count=len(a['beats']), silent=a['silent']) for p, a in audio.items()},
@@ -355,9 +361,9 @@ def score(all_cases, out, exp_root):
                               audio_sr=24000, nfft=1024, hop=240, onset='positive logmel flux, zero-lag only',
                               bas_music='mean over music beats of exp(-nearest motion distance^2/(2*sigma^2))',
                               bas_motion='traditional BAS: mean over motion events of exp(-nearest beat distance^2/(2*sigma^2))',
-                              completeness='complete means all 57 source/cache fingerprints validated, NOT metric/human acceptance'),
+                              completeness='complete means all selected source/cache fingerprints validated, NOT metric/human acceptance'),
                 scope='Only three fixed source cases per condition, paired deltas and configuration means; '
-                      '57 videos are NOT IID. No significance claim, metric tuning, max-lag selection, '
+                      'Configuration videos are NOT IID. No significance claim, metric tuning, max-lag selection, '
                       'music-style truth, or automatic human-quality verdict.')
 
 
@@ -367,6 +373,7 @@ def main(argv=None):
     parser.add_argument('--exp_root', type=Path, default=DEFAULT_EXP_ROOT)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--out_json', type=Path)
+    parser.add_argument('--tags', nargs='+', default=list(TAGS), help='Generated configurations, always the same three source cases plus native/GT controls')
     parser.add_argument('--shard', type=int, default=0)
     parser.add_argument('--nshard', type=int, default=1)
     args = parser.parse_args(argv)
@@ -381,14 +388,14 @@ def main(argv=None):
     if args.stage == 'extract' and args.out_json is not None:
         parser.error('--out_json is only valid for score')
     try:
-        selected = cases(args.exp_root.absolute())
+        selected = cases(args.exp_root.absolute(), args.tags)
         if args.stage == 'extract':
             args.out.mkdir(exist_ok=True)
             extract(selected, args.out, args.shard, args.nshard)
         else:
             result = score(selected, args.out, args.exp_root.absolute())
             atomic_write_new(args.out_json, result)
-            print(json.dumps(dict(videos=57, complete=result['complete'], validated_caches=result['validated_caches'],
+            print(json.dumps(dict(videos=len(selected), complete=result['complete'], validated_caches=result['validated_caches'],
                                   missing=len(result['missing']), out_json=str(args.out_json))), flush=True)
             return 0 if result['complete'] else 1
     except (OSError, ValueError, KeyError, RuntimeError) as error:

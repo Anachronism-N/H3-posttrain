@@ -209,7 +209,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--exp_root', type=Path, default=DEFAULT_EXP_ROOT)
     parser.add_argument('--out', type=Path, required=True)
-    parser.add_argument('--tags', nargs='+', choices=TAGS, default=list(TAGS),
+    parser.add_argument('--tags', nargs='+', default=list(TAGS),
                         help='Validate only these fixed groups; each group still uses the same six cases.')
     parser.add_argument('--allow_partial', action='store_true',
                         help='Allow missing success logs, but never validation errors; complete remains false.')
@@ -221,8 +221,8 @@ def main(argv=None):
         parser.error(f'output parent directory does not exist: {out.parent}')
     if os.path.lexists(out):
         parser.error(f'refusing existing output: {out}')
-    if len(set(args.tags)) != len(args.tags):
-        parser.error('--tags must not contain duplicates')
+    if len(set(args.tags)) != len(args.tags) or any(re.fullmatch(r'[A-Za-z0-9_-]+', tag) is None for tag in args.tags):
+        parser.error('--tags must contain distinct bare configuration names')
     if shutil.which('ffmpeg') is None:
         parser.error('ffmpeg is not on PATH')
     try:

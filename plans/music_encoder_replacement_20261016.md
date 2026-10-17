@@ -112,7 +112,11 @@
 ## 2026-10-17 执行收尾
 - 六训练配置、16份best/last实际审计、36视频完整124帧音画解码以及45条反事实/姿态缓存全部正确结束。完整JSON与元数据汇总发布至`results/ms_20261017/music_scale_all6_*`和`music_scale_final_acceptance_v4.json`；最终解释见notes §28.15，不以小数据12条结果替代全量。
 - 扩量/更多更新对检索有配方依赖的收益，但原生声学恢复和生成音乐遵循没有可靠一致增量；GT事件拍点校准失败仍在，三人物及多配置视频不独立。明确是未证明收益，不是证明无法控制。停止自动扩大数据或扫更多配方，当前固定case连续听看人评后再决策文本接口/可编辑编舞路线，不擅自训练DiT或开发LLM/APP。
-- 原评审开发机SSH缺可信key后，用户允许替代方案：当前节点8766独立服务，固定八模型（六新+原生+历史bridge-only）/三人物/三预设清单，保留旧8765及旧manifest。`server.py --manifest`禁止全树rescan；`index.html`显式每条件音轨防止focused清单aswap回落原音轨。页面/API和48video+6audio Range均通过，计算节点访问code-server代理超时，外部浏览器是否可达不冒称验收。
+- 原评审开发机SSH缺可信key后，用户允许替代方案：当前节点8766独立服务，固定八模型（六新+原生+历史bridge-only）/三人物/三预设清单，保留旧8765及旧manifest。`server.py --manifest`禁止全树rescan；`index.html`显式每条件音轨防止focused清单aswap回落原音轨。页面/API和48video+6audio Range均通过，计算节点访问code-server代理超时，后续用户明确确认https代理8766可访问；内网直连报readLoopPeekFailLocked，不影响已确认代理入口。连续音画人评仍单独记录，不把入口可访问当效果验收。
+
+## 2026-10-17 连续音画验收补充
+- 新增已有Omni7B的联合音画校准入口，实际同裁[1,5)音频/video并核验联合token时间，三个GT分别正确/错配配乐六次前向，不用旧纯音乐CoT冒充视频评审。
+- 六次运行完成，但GT正确/错配分数5/3、3/3、3/3，泛化描述和两对平局不足以校准评分器；保留raw及JSON围栏续写解析修复后的完整意见，不扩大无效自动ranking、不称人评。连续新配置效果验收仍需真实听看反馈；用户已确认HTTPS8766代理可访问。
 
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）

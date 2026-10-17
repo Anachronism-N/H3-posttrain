@@ -117,8 +117,9 @@
     "correct_joint_and_aswap_audio_verified_by_executing_original_JS": true,
     "outside_allowed_roots_rejected": true,
     "focused_manifest_rescan_rejected": true,
-    "external_proxy_browser_access_verified": false,
-    "proxy_probe_from_compute_node": "timed out; local service and media verified",
+    "external_proxy_browser_access_verified": true,
+    "external_proxy_verification_source": "User confirmed the code-server /proxy/8766/ page is accessible; direct intranet address showed readLoopPeekFailLocked.",
+    "proxy_probe_from_compute_node": "timed out; user browser access is separately confirmed, local service and media verified",
     "legacy_8765_or_manifest_modified": false
   },
   "publication_scope": "Metadata, code, metrics and bounded conclusions only; no model weights, derived feature PT caches, original videos/audio or credentials."

@@ -93,9 +93,29 @@
     "retrieval_learning": "Scale helps lambda0 at equal updates (+3.75 percentage points), not lambda1; more updates improve both retrieval scores.",
     "native_interface": "Neither scaling nor more updates consistently restores native acoustic representation/reconstruction.",
     "generation_musical_gain_proven": false,
-    "generation_claim": "No reliable consistent advantage over native or historical bridge-only established; this is insufficient evidence of benefit, not proof that the encoder cannot control music.",
-    "human_continuous_review_of_new_scale_configs_complete": false,
-    "next_decision": "Do not automatically expand data or sweep more recipes. Review these fixed cases, then prioritize explicitly testable choreography-control interfaces rather than claiming retrieval gain as video gain."
+    "generation_claim": "User qualitative continuous review of both scale presets reports small joint differences, movement changes with motif retention after audio swap, overall similarity to original H3, and no visual-quality degradation. No perceptible scaling, extra-update or lambda advantage was reported; this is not proof of equivalence or absence of music control. No improvement over native or historical bridge-only is established.",
+    "human_continuous_review_of_new_scale_configs_complete": true,
+    "human_review_completion_scope": "First-round preset-level qualitative acceptance for both lambda0 and lambda1 scale comparisons; not exhaustive individual ratings for all 36 videos or a calibrated beat/style preference test.",
+    "next_decision": "Close this scaling comparison with the bounded negative-increment verdict and preserved quality. Do not automatically expand data, increase updates or sweep recipes. Prioritize an independently attributable choreography-control interface as the next proposed experiment; do not present retrieval gain as video gain."
+  },
+  "human_review": {
+    "date": "2026-10-17",
+    "source": "Direct user message after continuous viewing in the confirmed-accessible 8766 review page",
+    "method": "Natural-language aggregate feedback, not web score submission or automatic judge output",
+    "presets": ["10-17 MusicFM扩量·lambda0", "10-17 MusicFM扩量·lambda1"],
+    "raw_user_feedback": "10-17 MusicFM扩量·lambda0中,joint的几个配置差异好像不是很大,但是有一些小差异;aswap之后动作有改变,但是还是有一些动作被保留.此外,所有配置与原始h3的动作差异好像都没有很大,这样是合理的吗?10-17 MusicFM扩量·lambda1」的观感也是一样的,在肉眼上已经区分不太开了.画质都没有退化",
+    "joint": "Differences among configurations are small, with some local differences.",
+    "audio_swap": "Movement changes, while some movement motifs are retained.",
+    "lambda_comparison": "Both presets have a similar overall impression and are difficult to distinguish visually; no lambda winner reported.",
+    "original_H3_comparison": "Overall movement difference from original H3 is not large; no perceptible improvement over original H3 reported.",
+    "visual_quality_degradation_reported": false,
+    "per_video_numeric_ratings_provided": false,
+    "all_36_individual_videos_explicitly_verified_viewed": false,
+    "specific_beat_or_style_preference_provided": false,
+    "independent_bridge_only_preference_provided": false,
+    "retained_motif_interpretation": "Compatible with shared first frame, prompt, seed and frozen H3 movement priors; retention alone neither proves audio bypass nor successful beat/style control.",
+    "accepted_verdict": "First-round qualitative effect acceptance complete: preserved quality, small perceptual configuration differences, no established generative music-control increment from scaling or more updates.",
+    "limitations": "Aggregate qualitative observation on three fixed source people. No statistical equivalence, broad generalization, exact beat accuracy or exhaustive per-video review claim."
   },
   "source_report_sha256": {
     "music_scale_all6_generation_integrity_v4.json": "87cafe2deaf11e4262ad736054b6a96eea9cdc7f8d16ac3131a950999ef2d02c",

@@ -8,6 +8,7 @@ from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 import csv
 import glob
+from functools import lru_cache
 import hashlib
 import itertools
 import json
@@ -96,16 +97,23 @@ def assert_sources_unchanged(records):
             raise RuntimeError(f"Input changed during preparation: {record['path']}")
 
 
+@lru_cache(maxsize=4)
+def resolved_audio_root(audio_root):
+    return Path(audio_root).resolve(strict=True)
+
+
 def audio_metadata(sid, audio_root):
     import soundfile as sf
-    path = Path(audio_root) / (valid_id(sid) + '.wav')
-    if path.resolve().parent != Path(audio_root).resolve():
+    root = resolved_audio_root(str(audio_root))
+    path = root / (valid_id(sid) + '.wav')
+    if path.is_symlink() and path.resolve().parent != root:
         raise ValueError(f'Audio path escapes root: {sid}')
     stat = path.stat()
     with sf.SoundFile(str(path)) as stream:
         frames, rate, channels = len(stream), stream.samplerate, stream.channels
-    if rate <= 0 or frames < math.ceil(SECONDS * rate) - 1:
-        raise ValueError(f'Audio shorter than {SECONDS}s beyond one-sample rounding tolerance: {sid}')
+    rounding_tolerance = max(1, math.ceil(0.001 * rate))
+    if rate <= 0 or frames < math.ceil(SECONDS * rate) - rounding_tolerance:
+        raise ValueError(f'Audio shorter than {SECONDS}s beyond 1ms rounding tolerance: {sid}')
     if channels not in (1, 2):
         raise ValueError(f'Expected mono/stereo original audio: {sid}, channels={channels}')
     after = path.stat()
@@ -115,8 +123,8 @@ def audio_metadata(sid, audio_root):
                 source_sr=rate, source_channels=channels, duration_seconds=frames / rate,
                 size_bytes=stat.st_size, mtime_ns=stat.st_mtime_ns,
                 target_shortfall_samples=max(0, math.ceil(SECONDS * rate) - frames),
-                allowed_rounding_shortfall_samples=1,
-                validation='SoundFile metadata only; one-sample rounding tolerance; actual duration retained for downstream masks, no full waveform decode or content hash')
+                allowed_rounding_shortfall_samples=rounding_tolerance,
+                validation='SoundFile metadata only; at most 1ms rounding tolerance; actual duration retained for downstream masks, no full waveform decode or content hash')
 
 
 def curated_train(path):
@@ -164,6 +172,8 @@ def make_pool(args):
         raise ValueError('No MotionScript JSONs or VLM JSONL sources found')
     holdout_csvs = args.holdout_csv or [str(EXP / 'E2/full_joint.csv'), str(EXP / 'E2/full_aswap.csv')]
     named = {'train_csv': args.train_csv, 'legacy_caps': args.legacy_caps, 'legacy_split': args.legacy_split}
+    if getattr(args, 'resume_audio_report', None):
+        named['resume_audio_report'] = args.resume_audio_report
     sources = {name: source_record(path) for name, path in named.items()}
     vlm_sources = [source_record(path) for path in vlm_paths]
     holdout_sources = [source_record(path) for path in holdout_csvs]
@@ -270,8 +280,27 @@ def make_pool(args):
         provenance[sid] = dict(ms=ms_sources[sid], vlm=label_sources.get(sid, []),
                                genre_source=genre_source, legacy_caption=sid in legacy)
 
+    resolved_audio_root(str(args.audio_root))
+    previous_audio = {}
+    if getattr(args, 'resume_audio_report', None):
+        previous = read_json(args.resume_audio_report)
+        previous_audio = {item['id']: item for item in previous.get('audio_metadata', [])}
+
     def inspect(sid):
         try:
+            item = previous_audio.get(sid)
+            if item is not None:
+                path = Path(args.audio_root) / (valid_id(sid) + '.wav')
+                stat = path.stat()
+                if (str(path.absolute()) == item['audio_path'] and stat.st_size == item['size_bytes']
+                        and stat.st_mtime_ns == item['mtime_ns']):
+                    rate, frames = item['source_sr'], item['source_frames']
+                    tolerance = max(1, math.ceil(0.001 * rate))
+                    if rate > 0 and frames >= math.ceil(SECONDS * rate) - tolerance and item['source_channels'] in (1, 2):
+                        item = dict(item, target_shortfall_samples=max(0, math.ceil(SECONDS * rate) - frames),
+                                    allowed_rounding_shortfall_samples=tolerance,
+                                    validation='Verified unchanged path/size/mtime against prior SoundFile metadata report')
+                        return sid, item, None
             return sid, audio_metadata(sid, args.audio_root), None
         except Exception as error:
             return sid, None, f'{type(error).__name__}: {error}'
@@ -522,6 +551,7 @@ def main():
     pool.add_argument('--audio_root', default=str(AUDIO_ROOT))
     pool.add_argument('--holdout_csv', action='append', help='Two fixed-case CSVs; use first 3 tracks from each')
     pool.add_argument('--workers', type=int, default=8)
+    pool.add_argument('--resume_audio_report', help='Reuse prior audio headers only when path, size and nanosecond mtime are unchanged')
     pool.add_argument('--legacy_size', type=int, default=2000, help='Override only for small synthetic fixtures')
     split = commands.add_parser('split', help='Consume full-pool audit; never run an audit or train')
     split.add_argument('--pool', required=True)

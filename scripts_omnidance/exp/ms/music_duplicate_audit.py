@@ -18,7 +18,7 @@ from torch.nn import functional as F
 from music_encoder_adapter import AUDIO_ROOT, load_waveform
 
 SR, SECONDS, NFFT, HOP = 24000, 5.0625, 2048, 960
-MEL_BANK = CHROMA_BANK = WINDOW = None
+MEL_BANK = CHROMA_BANK = WINDOW = RESOLVED_AUDIO_ROOT = None
 
 
 def finite(value, name):
@@ -47,7 +47,8 @@ def read_json(path):
 
 
 def init_worker():
-    global MEL_BANK, CHROMA_BANK, WINDOW
+    global MEL_BANK, CHROMA_BANK, WINDOW, RESOLVED_AUDIO_ROOT
+    RESOLVED_AUDIO_ROOT = AUDIO_ROOT.resolve(strict=True)
     torch.set_num_threads(2)
     torch.set_num_interop_threads(2)
     WINDOW = torch.hann_window(NFFT)
@@ -83,8 +84,8 @@ def waveform_features(waveform, waveform_corr=False):
 
 def extract(item):
     sid, waveform_corr = item
-    path = AUDIO_ROOT / (sid + '.wav')
-    if path.resolve().parent != AUDIO_ROOT.resolve():
+    path = RESOLVED_AUDIO_ROOT / (sid + '.wav')
+    if path.is_symlink() and path.resolve().parent != RESOLVED_AUDIO_ROOT:
         raise ValueError(f'Audio path escapes original root: {sid}')
     with sf.SoundFile(str(path)) as stream:
         source_sr, source_frames, channels = stream.samplerate, len(stream), stream.channels

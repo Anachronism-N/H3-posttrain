@@ -1139,3 +1139,41 @@ waveform[batch,2,L]32k → 每声道resample24k → dense music encoder
 **正式九视频验收。** 新rawtoken模型joint/aswap6+同三人zerojoint3全部exit0，9条完整124帧/24fps/704×1280音画、输入/seed/empty/权重hash/最终adapter执行、两路native静音一致。初次launcher因缺PYTHONPATH导入diffsynth失败未生成，恢复新v2目录，旧失败树/log保留，无重复训练。实际Read三套参考+六时间采样图，原/换/零音乐保留相近小手势、后勾腿、脸/头侧抬臂和低幅单臂母题；楼梯白蓝运动衣裤/肩包替代浅黄上衣灰裤。原swapRGB MAE .02822/.01068/.02124、原zero .05569/.01546/.03152不是音画准确度。音乐变化同时预测长度449→410、271→265、305→312，zero297/208/202，packed变长可导致输出变化，未隔离长度混杂不认定音乐内容控制成功。
 
 **结论与交付边界。** 本轮技术闭环及表示反事实/采样视觉评审完成，研究结果为负：映射完整部署仍不足，当前raw逐词回归未建立音乐控制；旧完整head部署单token也未建立增量，不能全部归因忘加载adapter。不冒称新用户连续音画认可、穷尽偏好、三case统计显著或音乐唯一编舞真值。8766保留旧结果并上线16模型/三人物/七预设，第一【10-18 正式文本token·仅音乐+参考图】四列(原生/旧完整链/rawtoken/zero)，零音乐只有joint。页面/API200、九视频Range206/跨节点200通过。完整训练/权重/九视频/反事实报告和代码在results/ms_20261017与plans；不上传权重媒体。后续针对监督与音乐条件依赖讨论，不盲目扩量；生成预测loss仍需独立批准。
+
+### 28.21 直接原生H序列的对比监督：四个受控配置（2026-10-18）
+
+用户要求直接对齐原生文本encoder输出H并自动推进。复用原rawH模型完整权重和2000teacher/music特征，冻结MusicFM/TC/DiT/VAE；图结构prefix保持，学生预测动作rawtail[L,5120]是实际部署条件。此前纯MSE已直接对齐rawH但学均值；本轮新增实际输出的音乐反事实序列InfoNCE，未增加训练专用语义head、未把生成条件pool成一token。
+
+训练集固定mean/std只用于loss数值，最多64有效token采样；逐token cosine矩阵双向soft-Chamfer聚标量（温度.1），correct/wrong/zero三候选CE（温度.07）。三个预测同图context、同有效采样位置，teacher长度只loss用，部署仍预测有效长度；序列相似不是逐拍时序或原词第j位语义相同。对比损失三branch对adapter反传，teacher/stat/骨干冻结。小8train300更新能100%辨别训练音乐，但8valwrong-margin负，未当泛化成功。
+
+本地10.17GB输入bundle与原2000文件数值一致、SHA校验，init快照byte-exact为cbb79c...，避免多次CephFS千文件冷读；bundle制作漏offline造成HEAD失败重试最终cached成功，后续训练offline保留失败日志。四个正式配置同init/split1800/200/lr3e-4/batch8/1875更新，15000曝光：
+
+| 配方 | correct优于真实wrong比例（random50%） | correct−wrong score | val token MSE | 长度MAE |
+|---|---:|---:|---:|---:|
+| MSE续训、InfoNCE权重0 | 52.0% | −0.000077 | 5.04644 | 138.975 |
+| MSE+InfoNCE，wrong+静音负例 | 51.0% | 0.000050 | 5.49469 | 149.000 |
+| MSE+InfoNCE，仅双真实音乐负例 | 62.0% | 0.006339 | 5.35961 | 146.060 |
+| 同双真实负例，长度loss权重2 | 58.5% | 0.007541 | 5.39910 | 151.330 |
+
+四配置均exit0，全部507tensor独立SHA/finite，骨干逐值与init一致，完整ckpt重载与cached/online预测length一致通过。含静音配置98%区分零音，但真实wrong只有51%，不能用三选一random1/3宣传有效音乐语义。去静音负例出现局部62%信号，是当前固定val200/一个循环错配/已选配方的表示诊断，不是舞蹈准确率、显著优于所有音乐或能替代文本的证明。
+
+长度标准未降低：init valMAE137.71，允许至144.60；双真实负例146.06未过，weight2反而151.33。MSE-only长度通过但音乐margin失败；四完整musicdependencygate均false。按已批准门禁不继续额外H3生成，accepted_checkpoint会拒绝未完成/未通过权重；明确本轮没有新视频，不把跳过推理称作已完成视频效果。现有8766的旧完整链/原rawtoken九视频仍保留，未混入这些未验收模型。
+
+结论：直接H维度和完整部署解决接口不一致，但CLIP序列监督尚未实现目标；真实负例较有无音更合适，却仍有长度/语义序列泛化缺口。下一方向需针对H序列长度/表示/监督信息设计最小对照，不盲目扫数据/模型，不擅加DiT/video loss。完整四报告/权重审计和代码按当前真实结果发布；没有冒称新用户人评或整个音乐编舞目标完成。
+
+### 28.21 直接原生H序列的对比监督对照（2026-10-18）
+
+用户要求直接对齐原生文本encoder的H，并保留CLIP训练目标。复用原H的动作rawtail[L,5120]、图结构prefix及已审计原模型checkpoint，音乐骨干/TC/DiT/VAE冻结；实际预测rawH直接进DiT，训练专用对比读出没有可训练head，mean/std仅loss计算使用，不改变部署坐标。序列有效token均匀采最多64项，用逐token cosine矩阵双向soft-Chamfer形成score，再同参考context的correct/wrong/zero三选一InfoNCE；该匹配不约束词序、不声称逐拍对齐。
+
+小集8train/8val300步全部梯度、完整保存重载和online前向通过，train choice100%/margin.358，val choice50%但wrongmargin负；小集拟合不当泛化成绩。将已审核2000targets/features与原init压为本地数值bundle，文件SHA与原输入绑定，减少CephFS重复PT冷读。bundle阶段漏offline发生HEAD重试，最终本地缓存成功，日志保留，正式训练全offline。
+
+| 四组同init/data/lr3e-4/batch8/1875更新 | val rawMSE(tokenweighted) | correct beats real wrong | correct-wrong score | length MAE |
+|---|---:|---:|---:|---:|
+| MSE续训 | 5.04644 | 52% | -.000077 | 138.975 |
+| 序列InfoNCE含zero负例 | 5.49469 | 51% | .000050 | 149.00 |
+| 双真实音乐负例 | 5.35961 | 62% | .006339 | 146.06 |
+| 双真实负例、lengthloss权重2 | 5.39910 | 58.5% | .007541 | 151.33 |
+
+每组15000曝光，完整507tensorcheckpoint独立SHA/finite及冻结骨干逐值不变通过。含zero负例主要识别静音(98%正确胜zero)，不能用三候选chance1/3宣传真实音乐区分；双真实负例出现部分表示级信号，长度146.06仍超init137.71的5%范围，增加长度权重后151.33没有修复。完整门禁四组均false，accepted_checkpoint拒绝未通过候选；按批准计划不新增H3生成，既有16model/7preset网页保持，不捏造视频结果。
+
+**受限结论：** 同维度/原生坐标/完整adapter部署是必要条件，不是音乐代替文本生成的充分条件。配对动作caption非音乐唯一编舞，词序回归与soft-Chamfer内容匹配各有边界。反复同val200选多配方有选择偏差，62%不能称独立显著改善或视频音乐准确率。所有四训练正确退出，不继续盲目扩量/扫长度；如果下一步直接约束冻结H3的生成行为，需明确新增生成预测loss授权，不自行训DiT或恢复动作文本。

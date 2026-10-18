@@ -233,6 +233,37 @@
 - GtF0SW N5 GPU6 MSE-only权重0 / GPU7 H序列InfoNCE权重1，同init/split/batch8/lr3e-4/1875步并行。训练raw最终映射不变，loss固定读出；本地加载后真实step1 rawMSE均5.29986，证明初始前向相同。纯MSE和HCLIP区别只新增对比loss。
 - 补门禁：长度MAE不得超init5%、raw能量比.1–2，模型可区分wrong/zero且原MSE不无解释退化；accepted_checkpoint明确拒绝音乐门禁失败或未完整验收权重，不能只写generate_only_if声明而实际照常生成。固定length采样用于loss不是部署GTlength。
 
+### 直接H序列第一组结果与真实音乐负例修正
+- GtF0SW两个正式1875更新/15000曝光都exit0，完整checkpoint/online通过。MSEw0 val rawMSE5.04644、wrong-score margin-7.71e-5、三选一20%；HInfoNCEw1 rawMSE5.49469、三选一51%、correct-wrong margin4.97e-5、correctbeatswrong51%、correctbeatszero98%。其优势主要是识别音乐/静音，不能用3候选random1/3包装成真实音乐区分成功，二选一realmusic随机50%也需对照。
+- HInfoNCEw1长度MAE149>initial137.71*1.05，wrongmargin也未过1e-3门禁。未进行重复H3生成；门禁不降低，不把trainingexit0当有效音乐条件。
+- 发现zero负例容易形成静音捷径，追加TiU3Os同init/data/lr/steps1875的最小单变量：correct+两条互异真实音乐负例同图context/同lossindices，zero仅评估，不改变teacherH或部署raw映射，不新增DiT/video监督。负例不为self/完全相同caption/彼此重复，synthetic验证通过。
+- 接下来独立审计三完整权重SHA/tensorfinite/frozenbone/实际更新曝光，音乐依赖仍不成立则发布负结果，不自动扫更多模型或偷加动作文本。
+
+### 真实音乐负例出现部分改善；长度约束不放宽
+- TiU3Os同init/数据双真实音乐负例1875更新exit0，val correctbeatswrong62%、correct-minus-wrong.006339、三选一47%、correctbeatszero69.5%；rawMSE5.35961，长度MAE146.06。说明不只静音区别出现了一些表示级音乐信号，不能称H3动作控制成功或完整caption还原。
+- 完整门禁仍false：长度146.06超过初始137.71*1.05=144.60。没有放宽阈值直接生成；kljtj6追加单参数lengthlossweight2，同init/data/真实负例/steps，保存独立v3，不覆盖v2。通过后才能固定三个case推理。
+- 三formal权重(MSEw0/含zeroCLIPw1/真实负例v2)独立SHA和全部507tensorfinite通过，冻结bone逐值与init一致，各1875/15000曝光。所有计算报告与生成边界按当前结果发布，不把gatefalse当程序崩溃或漏掉实验。
+
+### 四组最终状态：直接H表示对齐仍未通过完整验收
+
+| 同起点1875更新配置 | val tokenweighted rawMSE | 正确优于错配比例 | 正确-错配score | 长度MAE | 完整门禁 |
+|---|---:|---:|---:|---:|---|
+| MSE续训 | 5.04644 | 52% | -0.000077 | 138.975 | 未通过 |
+| H序列InfoNCE含静音负例 | 5.49469 | 51% | 0.000050 | 149.00 | 未通过 |
+| H序列InfoNCE双真实音乐负例 | 5.35961 | 62% | 0.006339 | 146.06 | 未通过 |
+| 双真实负例，长度loss权重2 | 5.39910 | 58.5% | 0.007541 | 151.33 | 未通过 |
+
+- 四组全部1875实际更新/15000曝光完成，完整checkpoint strict重载/online一致性通过；独立全部507tensor SHA/finite、冻结骨干逐值与初始模型不变检查通过。长度权重2没有改善长度误差，不继续扫长度权重或把它说成修复成功。
+- 真实负例改善的是当前序列similarity下的表示级音乐区分：62%二选一相对随机50%，不等于视频音乐准确率。验证集在多配方中反复使用，未经独立留出确认，不称统计显著或最终winner。soft-Chamfer不约束词序；固定teacher有效长度仅loss使用，不是实际部署预测长度的有效性证明。
+- 原始H回填可读，训练/部署同完整adapter成立，但音乐→动作文本是欠定映射，原逐词位置与配对措辞可能存在监督冲突；本轮结果未证明直接H对齐足以实现文本替代，也未否定所有文本侧/CLIP方案。
+- 四组完整门禁均未通过，按已批准计划没有新增H3推理或网页伪结果；原8766已验收16模型/7预设保持。所有训练已退出，后续不自动重复同类训练。新增生成预测监督仍需单独授权；整体可用音乐编舞目标尚未完成。
+
+### 直接H序列本轮四配置结束（2026-10-18）
+- 三原配置及lengthweight2修正均1875更新/15000曝光exit0，各完整507tensor权重独立SHA/finite/冻结骨干逐值与同init一致验收通过。没有更改H3/TC/VAE，没有遗留对比训练进程。
+- lengthweight2结果：真实wrong正确率58.5%、correct-wrong score margin.007541，rawMSE5.399102、长度MAE151.33，反而比lengthweight1的146.06更差。长度阈值仍为init137.71*1.05=144.60，不放宽阈值；四配置完整门禁均false，因此按批准方案不生成额外H3视频。已存权重可以继续诊断，但不能称通过部署效果验收。
+- 最有希望的表示信号是双真实负例weight1的62%(pair-wise随机50%)，这不是舞蹈/音乐准确率；固定val200的单错配对照、配置选择偏差、caption非唯一编舞限制保留。没有声称音乐已经代替文本。
+- 本轮直接原生H序列对比监督验证结束：MSE单独未有效，含静音InfoNCE容易学有无音乐，真实音乐负例出现弱正确依赖，但长度泛化和原生序列回归不足，且MSE仍不如train位置mean。不能否定直接H或CLIP所有路线，不继续盲目增步/数据扫参数；后续优先解决语义序列/长度接口和训练目标，而非再次验证同维度。未新增DiT/video loss或动作prompt。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

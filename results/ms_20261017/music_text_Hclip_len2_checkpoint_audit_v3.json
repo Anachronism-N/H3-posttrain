@@ -1,0 +1,40 @@
+{
+  "complete": true,
+  "checkpoint_sha256": "e51bdbe6f75ad97a3b9834f44428baaeb555058d7ea82030f10fc10535c300b2",
+  "all507tensors_finite": true,
+  "frozen_backbone_exact": true,
+  "steps": 1875,
+  "items_seen": 15000,
+  "gate": false,
+  "final": {
+    "tie_aware_correct_top1": 0.405,
+    "correct_minus_wrong_score": 0.007540636407211423,
+    "correct_minus_zero_score": 0.015998562125023454,
+    "raw_mse": 5.552583785057068,
+    "wrong_raw_mse": 5.58818772315979,
+    "zero_raw_mse": 5.95431125164032,
+    "position_mean_raw_mse": 4.815057752132415,
+    "correct_wrong_output_rms": 0.5460998866148293,
+    "student_teacher_energy_ratio": 0.5863537752628326,
+    "chance_top1": 0.3333333333333333,
+    "correct_beats_wrong_fraction": 0.585,
+    "correct_beats_zero_fraction": 0.655
+  },
+  "regression": {
+    "raw_mse": 5.399102317553501,
+    "cosine_loss": 0.2112655140338652,
+    "length_mae": 151.33,
+    "log_length_mse": 0.31962222009897234,
+    "student_energy": 8.312937684424876,
+    "teacher_energy": 13.942613063997754,
+    "zero_mse": 13.942613063997754,
+    "candidates": 200,
+    "valid_tokens": 84068,
+    "mse_over_train_teacher_energy": 0.38855517428248737,
+    "student_teacher_energy_ratio": 0.5962252302540277,
+    "student_rms": 2.883216551774229,
+    "teacher_rms": 3.7339808601541806,
+    "target_tokens_above_query_max": 0,
+    "scope": "Raw-token representation and length, not musical generation quality"
+  }
+}

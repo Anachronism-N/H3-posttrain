@@ -77,13 +77,14 @@ def music_tensor(ids, features):
     return value, torch.tensor(lengths, device='cuda')
 
 
-def mismatched_ids(ids, all_ids, targets, offset=1):
+def mismatched_ids(ids, all_ids, targets, offset=1, excluded=None):
     positions = {sid: i for i, sid in enumerate(all_ids)}
     result = []
-    for sid in ids:
+    for index, sid in enumerate(ids):
         for shift in range(offset, offset + len(all_ids)):
             candidate = all_ids[(positions[sid] + shift) % len(all_ids)]
-            if candidate != sid and targets[candidate]['metadata']['caption_sha256'] != targets[sid]['metadata']['caption_sha256']:
+            if (candidate != sid and (excluded is None or candidate != excluded[index])
+                    and targets[candidate]['metadata']['caption_sha256'] != targets[sid]['metadata']['caption_sha256']):
                 result.append(candidate)
                 break
         else:
@@ -150,14 +151,17 @@ def main():
     parser.add_argument('--bundle', type=Path, help='SHA-verified local numerical copy of the existing2000 inputs')
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--clip_weight', type=float, default=1.)
+    parser.add_argument('--real_music_negatives_only', action='store_true', help='Two distinct real-music negatives; silence is evaluation only')
     parser.add_argument('--steps', type=int, default=1875)
     parser.add_argument('--eval_every', type=int, default=625)
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--small_fit', type=int, default=0)
     parser.add_argument('--lr', type=float, default=0.0003)
+    parser.add_argument('--length_weight', type=float, default=1.)
     args = parser.parse_args()
     if (args.out.exists() or not args.out.parent.is_dir() or args.steps < 1 or args.batch_size < 2
-            or args.eval_every < 1 or args.small_fit < 0 or not math.isfinite(args.clip_weight) or args.clip_weight < 0):
+            or args.eval_every < 1 or args.small_fit < 0 or not math.isfinite(args.clip_weight) or args.clip_weight < 0
+            or not math.isfinite(args.length_weight) or args.length_weight <= 0):
         parser.error('Require a new output directory and valid experiment arguments')
     torch.set_num_threads(2)
     torch.manual_seed(42)
@@ -203,10 +207,11 @@ def main():
     args.out.mkdir()
     protocol = dict(init=str(args.init), init_sha256=sha256(args.init), split_sha256=sha256(args.split),
                     train_count=len(train), val_count=len(val), steps=args.steps, batch_size=args.batch_size,
-                    clip_weight=args.clip_weight, lr=args.lr, small_fit=args.small_fit,
+                    clip_weight=args.clip_weight, lr=args.lr, small_fit=args.small_fit, length_weight=args.length_weight,
                     normalization_from_full_train_only=True, no_extra_semantic_head=True,
                     deployed_output='unaltered_raw_native_H_tail', sampling='up_to64_evenly_spaced_valid_tokens_loss_only',
-                    counterfactuals='correct/wrong_nonidentical_caption/actual_silence_same_reference_context_and_indices',
+                    counterfactuals='correct/two_distinct_real_music_same_reference_context_and_indices' if args.real_music_negatives_only else 'correct/wrong_nonidentical_caption/actual_silence_same_reference_context_and_indices',
+                    silence_is_eval_only=args.real_music_negatives_only,
                     loss='rawMSE/train_teacher_energy + log_length_MSE + clip_weight*same_context_sequence_InfoNCE',
                     backbone_frozen_eval=True, no_dit_video_loss=True, numerical_input_bundle_sha256=bundle_sha)
     write_new(args.out / 'plan.json', protocol)
@@ -236,15 +241,21 @@ def main():
         model.train()
         correct, logs = model.adapter(music, context, feature_lengths, query_count=target.shape[1])
         stats = masked_token_loss(correct, target, mask)
-        anchor = stats['raw_mse'] / teacher_energy + length_loss(logs, text_lengths, model.adapter.qmax)
+        anchor = stats['raw_mse'] / teacher_energy + args.length_weight * length_loss(logs, text_lengths, model.adapter.qmax)
         contrastive = torch.zeros((), device='cuda')
         if args.clip_weight:
             wrong_ids = mismatched_ids(ids, train, targets, offset=step % (len(train) - 1) + 1)
             wrong_music, wrong_lengths = music_tensor(wrong_ids, features)
             wrong, _ = model.adapter(wrong_music, context, wrong_lengths, query_count=target.shape[1])
-            zero, _ = model.adapter(zero_features.expand(len(ids), -1, -1, -1), context,
-                                   zero_lengths.expand(len(ids)), query_count=target.shape[1])
-            contrastive, _ = counterfactual_loss(correct, wrong, zero, target, mask, mean, std)
+            if args.real_music_negatives_only:
+                second_ids = mismatched_ids(ids, train, targets, offset=step % (len(train) - 1) + 2, excluded=wrong_ids)
+                second_music, second_lengths = music_tensor(second_ids, features)
+                second, _ = model.adapter(second_music, context, second_lengths, query_count=target.shape[1])
+                contrastive, _ = counterfactual_loss(correct, wrong, second, target, mask, mean, std)
+            else:
+                zero, _ = model.adapter(zero_features.expand(len(ids), -1, -1, -1), context,
+                                       zero_lengths.expand(len(ids)), query_count=target.shape[1])
+                contrastive, _ = counterfactual_loss(correct, wrong, zero, target, mask, mean, std)
         loss = anchor + args.clip_weight * min(1., step / 100) * contrastive
         if not torch.isfinite(loss):
             raise ValueError('Nonfinite native-H contrastive loss')

@@ -51,6 +51,7 @@ def main():
     parser.add_argument('--pipeline_pid', type=int, required=True)
     parser.add_argument('--hosts', nargs='+', required=True)
     parser.add_argument('--report', type=Path, required=True)
+    parser.add_argument('--output_version', default='v1', choices=['v1', 'v2'])
     args = parser.parse_args()
     if args.report.exists() or not args.report.parent.is_dir():
         parser.error('Require a new report with an existing parent')
@@ -69,7 +70,7 @@ def main():
     jobs = []
     stages = [('trained1800', False, False), ('trained1800_zero', True, True)]
     for tag, zero, joint_only in stages:
-        out = exp / 'H3AR' / ('val_musicreplace_text_' + tag + '_v1')
+        out = exp / 'H3AR' / ('val_musicreplace_text_' + tag + '_' + args.output_version)
         if out.exists():
             raise FileExistsError('Refuse duplicate generated experiment tree: ' + str(out))
         command = [sys.executable, str(args.root / 'scripts_omnidance/exp/ms/music_text_oracle_generate.py'),
@@ -88,9 +89,10 @@ def main():
     # Reuse the proven full decoder with explicitly native-fixed, empty-text logs.
     import shlex
     decoder = args.root / 'scripts_omnidance/exp/ms/music_generation_validate.py'
+    tag = 'text_trained1800_' + args.output_version
     command = ['env', 'OMP_NUM_THREADS=2', '/opt/venv_eval/bin/python', str(decoder),
-               '--exp_root', str(exp), '--tags', 'text_trained1800_v1', '--native_tags', 'text_trained1800_v1',
-               '--require_empty_prompt', '--out', str(exp / 'MS/music_text_trained_integrity_v1.json')]
+               '--exp_root', str(exp), '--tags', tag, '--native_tags', tag,
+               '--require_empty_prompt', '--out', str(exp / 'MS' / ('music_text_trained_integrity_' + args.output_version + '.json'))]
     decoded = subprocess.run(SSH + [args.hosts[0], shlex.join(command)])
     report = dict(complete=decoded.returncode == 0, jobs=jobs, selected_checkpoint_sha256=expected_sha,
                   default_six_full_decode_exit=decoded.returncode,

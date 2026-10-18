@@ -199,6 +199,12 @@
 - 8766原入口已重载工具管理yonqEA，保留旧11模型/4预设，新增三列完整旧链/原raw教师/中性教师，合计14模型/3人物/6预设；页面/manifest200、15新增视频Range206核验。第一新预设【10-18 文本侧·旧完整CLIP链】，第二【10-18 接口教师oracle·不是音乐预测】。teacher不能冒充音乐预测成绩。
 - 新正式NFcYQG仍正常读取teacher文件；已完成小集门禁不等于正式数据泛化或视频效果，新4GfX7J等正式报告接续生成。此处只结束旧完整链诊断，不缩小全实验目标。
 
+### 正式rawtoken训练完成与生成恢复
+- NFcYQG正式1800/200、1875更新exit0，实际15000曝光。最后val rawMSE5.381603、cosine loss.202404、长度MAE137.71、student/teacher能量比.454974；长度泛化不足，不能宣传完整caption恢复或生成收益。原始token幅值和语义回归确有学习，但trainprobe也长度MAE148.59。
+- 约496.7万adapter参数，507tensor完整MusicFM+adapter权重；best=last1875。独立重读两权重SHA/finite和冻结范围通过，SHA cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc。保存时/strict重载输出一致；cached/online相对RMS2.3863e-7、预测长度259一致。正式训练区间272.44s含过程val；finished361.10s含checkpoint/部署审计；49m26s launcher还含CephFS目标读取，不能把IO算GPU训练。
+- 4GfX7J初次生成启动器在写plan前导入music_text_condition触发缺diffsynth(PYTHONPATH)异常，未进入采样；保留失败日志/空输出树。修复为通用原子JSON写入不导入模型模块，fp88pX使用独立v2输出树/新recovery_v3报告恢复，绝不覆盖原失败目录或重训。
+- 恢复后只用音乐/参考图、两路固定静音、同完整adapter和预测长度，default joint/aswap六条+zerojoint三条。实际视频验收/效果/网页后续独立结束，不以训练exit0冒充完整实验成功。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

@@ -1,0 +1,38 @@
+{
+  "step": 1875,
+  "val": {
+    "raw_mse": 5.381603478302016,
+    "cosine_loss": 0.20240433273446398,
+    "length_mae": 137.71,
+    "log_length_mse": 0.28239085122942925,
+    "student_energy": 6.343524460261185,
+    "teacher_energy": 13.942613063997754,
+    "zero_mse": 13.942613063997754,
+    "candidates": 200,
+    "valid_tokens": 84068,
+    "mse_over_train_teacher_energy": 0.38729584373473686,
+    "student_teacher_energy_ratio": 0.45497385828207954,
+    "student_rms": 2.5186354361560914,
+    "teacher_rms": 3.7339808601541806,
+    "target_tokens_above_query_max": 0,
+    "scope": "Raw-token representation and length, not musical generation quality"
+  },
+  "train_probe": {
+    "raw_mse": 5.333807959875395,
+    "cosine_loss": 0.20177075767153224,
+    "length_mae": 148.59375,
+    "log_length_mse": 0.21284517273306847,
+    "student_energy": 6.343443577580674,
+    "teacher_energy": 13.862796135142792,
+    "zero_mse": 13.862796135142792,
+    "candidates": 32,
+    "valid_tokens": 13760,
+    "mse_over_train_teacher_energy": 0.38385616154514196,
+    "student_teacher_energy_ratio": 0.4575875974616526,
+    "student_rms": 2.5186193792593343,
+    "teacher_rms": 3.7232776065105315,
+    "target_tokens_above_query_max": 0,
+    "scope": "Raw-token representation and length, not musical generation quality"
+  },
+  "seconds": 272.44212604500353
+}

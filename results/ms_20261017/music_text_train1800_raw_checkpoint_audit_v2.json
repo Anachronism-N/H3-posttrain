@@ -1,0 +1,102 @@
+{
+  "complete": true,
+  "checkpoints": [
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_train1800_raw_neutral_v2/candidate_step1875.pt",
+      "sha256": "cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc",
+      "tensors": 507,
+      "all_finite": true,
+      "metadata": {
+        "format_version": 1,
+        "interface_type": "h3_text_raw_hidden",
+        "feature_dim": 1024,
+        "raw_dim": 5120,
+        "query_max": 1423,
+        "width": 256,
+        "heads": 8,
+        "layers": 2,
+        "query_self_attention": false,
+        "output_normalization": "none_raw_hidden",
+        "backend": "musicfm",
+        "preprocessing": {
+          "input_sample_rate": 32000,
+          "backbone_sample_rate": 24000,
+          "channels": 2,
+          "channel_order": "left_right",
+          "resample": "torchaudio.functional.resample_default",
+          "waveform_normalization": "none",
+          "dense_padding": "after_backbone_with_explicit_valid_mask",
+          "dense_quantization": "float16_roundtrip_for_cached_and_online_features",
+          "position_encoding": "absolute_feature_index_sinusoidal_plus_stereo"
+        },
+        "state_scope": "music_to_h3_text",
+        "freeze_backbone": true,
+        "backbone_metadata": {
+          "backend": "musicfm",
+          "model_path": "/opt/models/MusicFM-MSD",
+          "sample_rate": 24000,
+          "frame_hz": 25.0,
+          "frame_offset_seconds": 0.0,
+          "hidden_size": 1024,
+          "parameters": 328932480,
+          "dense_parameters": 0,
+          "scope": "frame sequence, no temporal averaging or interpolation in feature cache"
+        }
+      }
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_train1800_raw_neutral_v2/last.pt",
+      "sha256": "cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc",
+      "tensors": 507,
+      "all_finite": true,
+      "metadata": {
+        "format_version": 1,
+        "interface_type": "h3_text_raw_hidden",
+        "feature_dim": 1024,
+        "raw_dim": 5120,
+        "query_max": 1423,
+        "width": 256,
+        "heads": 8,
+        "layers": 2,
+        "query_self_attention": false,
+        "output_normalization": "none_raw_hidden",
+        "backend": "musicfm",
+        "preprocessing": {
+          "input_sample_rate": 32000,
+          "backbone_sample_rate": 24000,
+          "channels": 2,
+          "channel_order": "left_right",
+          "resample": "torchaudio.functional.resample_default",
+          "waveform_normalization": "none",
+          "dense_padding": "after_backbone_with_explicit_valid_mask",
+          "dense_quantization": "float16_roundtrip_for_cached_and_online_features",
+          "position_encoding": "absolute_feature_index_sinusoidal_plus_stereo"
+        },
+        "state_scope": "music_to_h3_text",
+        "freeze_backbone": true,
+        "backbone_metadata": {
+          "backend": "musicfm",
+          "model_path": "/opt/models/MusicFM-MSD",
+          "sample_rate": 24000,
+          "frame_hz": 25.0,
+          "frame_offset_seconds": 0.0,
+          "hidden_size": 1024,
+          "parameters": 328932480,
+          "dense_parameters": 0,
+          "scope": "frame sequence, no temporal averaging or interpolation in feature cache"
+        }
+      }
+    }
+  ],
+  "steps": 1875,
+  "actual_items_seen": 15000,
+  "selected_and_last_online_checks": {
+    "relative_rms": 2.386259154718573e-07,
+    "max_abs": 6.103515625e-05,
+    "predicted_length_cached": 259,
+    "predicted_length_online": 259,
+    "exact_saved_step": true,
+    "checkpoint_sha256": "cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc"
+  },
+  "scope": "complete saved weights audit, not video musical acceptance"
+}

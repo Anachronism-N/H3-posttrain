@@ -42,7 +42,7 @@ def main():
     args.out.mkdir()
     (args.out / 'logs').mkdir()
     (args.out / 'cache').mkdir()
-    from music_text_condition import write_new
+    from music_generation_validate import atomic_write_new as write_new
     code_sha = hashlib.sha256(sampler.read_bytes()).hexdigest()
     write_new(args.out / 'plan.json', dict(kind='teacher_oracle_not_trained_music_model' if args.caps else 'trained_music_text_deployment',
               source_people=3, conditions=conditions, videos=expected, hosts=args.hosts,

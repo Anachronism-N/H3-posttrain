@@ -205,6 +205,12 @@
 - 4GfX7J初次生成启动器在写plan前导入music_text_condition触发缺diffsynth(PYTHONPATH)异常，未进入采样；保留失败日志/空输出树。修复为通用原子JSON写入不导入模型模块，fp88pX使用独立v2输出树/新recovery_v3报告恢复，绝不覆盖原失败目录或重训。
 - 恢复后只用音乐/参考图、两路固定静音、同完整adapter和预测长度，default joint/aswap六条+zerojoint三条。实际视频验收/效果/网页后续独立结束，不以训练exit0冒充完整实验成功。
 
+### 正式回归审计：token误差下降未建立音乐依赖
+- 新`music_text_regression_audit.py`固定同一图结构context，val200分别正确音乐/一位置循环错配/真实静音MusicFM编码；train1800原始target构造逐位置均值和全局均值基线。严格原文件SHA/teacher协议沿用，目标mask相同，不增加生成case或训练。
+- tokenweighted rawMSE：正确5.38160354、错配5.38160507、静音5.38213766、逐位置均值4.75674750。宏平均正确5.53759473、错配5.53759485，差1.19e-7；模型还不如逐位置平均target。模型可改变length(验证MAE137.71，比固定train平均长度431的MAE155.57略低)，但rawtoken内容对换音乐不敏感。
+- 正确/错配输出RMS宏平均.002778、正确/静音.012215；这不是DiT动作/音乐准确度。不能把cosine≈.795和相对zero MSE下降归因音乐语义学习；更像主要拟合文本位置/共享分布。多种正文写法/原始词位置不等价、直接回归平均化是后续训练目标需要修正的候选原因，尚未实证唯一根因。
+- 保持fp88pX已运行六条正确/aswap+三zero生成，完整效果核验后决定下一训练对照；不跳过负结果继续扩量，不擅自新增video/DiT预测loss。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

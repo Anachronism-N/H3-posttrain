@@ -1177,3 +1177,19 @@ waveform[batch,2,L]32k → 每声道resample24k → dense music encoder
 每组15000曝光，完整507tensorcheckpoint独立SHA/finite及冻结骨干逐值不变通过。含zero负例主要识别静音(98%正确胜zero)，不能用三候选chance1/3宣传真实音乐区分；双真实负例出现部分表示级信号，长度146.06仍超init137.71的5%范围，增加长度权重后151.33没有修复。完整门禁四组均false，accepted_checkpoint拒绝未通过候选；按批准计划不新增H3生成，既有16model/7preset网页保持，不捏造视频结果。
 
 **受限结论：** 同维度/原生坐标/完整adapter部署是必要条件，不是音乐代替文本生成的充分条件。配对动作caption非音乐唯一编舞，词序回归与soft-Chamfer内容匹配各有边界。反复同val200选多配方有选择偏差，62%不能称独立显著改善或视频音乐准确率。所有四训练正确退出，不继续盲目扩量/扫长度；如果下一步直接约束冻结H3的生成行为，需明确新增生成预测loss授权，不自行训DiT或恢复动作文本。
+
+### 28.22 用户纠正：未校准原H序列CLIP模型直接推理（2026-10-18）
+
+用户要求训练后实际生成，而非继续用表示门槛和length校准挡住推理。上一条length头校准计划未获批准执行。原生H候选为双真实音乐负例weight1/1875，SHA `895868746f3fdec2b58acdae7fe1345d9c5670195e1850aef714a6930c301f45`，原门槛false/lengthMAE146.06保留。研究质量门槛不是用户授权诊断的安全/权限限制；本轮明确diag=true/qualitypassed=false，原权重/adapter/lengthhead/原gate不改，不新训练。
+
+路径为真实音乐→完整公开冻结MusicFM+已训rawHadapter→预测length截取rawtail[L,5120]→图结构prefix后→原DiT condition_proj/token_refiner。不是音频latent入口，也不经过H3文本encoder50层二次编码；原TC只产生参考图结构prefix。无外部语义文字、teachercaption或GTlength；reference和retake native音频均固定同长度静音，zero仅置零adapter音乐输入，生成之后仍按原输入音乐mux。
+
+N1/N4/N8同时做三人物joint/aswap6，N2/N3/N6并行zerojoint3，单节点一个H3冷加载/默认两个shard串行，真实计算与holder分开；两个工具管理队列O2BQ7w/8D3w1U均exit0。Qr8GNU基于真实pidfd结束事件接续完整9审计，124frame/24fps/704×1280decord及ffmpeg音画完整解码、空白prompt/seed/source/checkpoint内容SHA/最后投影/原质量gatefalse读取、native音频hash跨9完全一致全部通过。音轨存在与解码不是独立mux源音轨逐值匹配，该边界记录为false。无错误重训/覆盖，审计组marker须有最终all9完整报告才可供review使用。
+
+实际Read三套参考＋六时间采样图及旧MSE原音乐/换音乐基线：楼梯仍小手势/后勾腿，原/换整体母题近似，zero也有同类动作，白蓝运动衣裤/小包仍替代浅黄上衣灰裤；红衣原/换仍脸/头侧抬臂、末端动作略异，zero后段双臂举高/展开更明显；商店原/换单臂重心变化接近，zero也有手臂变化。存在条件影响，不宣称完全无效，但没有建立歌曲对应动作顺序、卡点或与文本相同的控制强度。此为采样帧评审，不冒称连续听看或新用户偏好。
+
+原/换/零length三case：415/393/239、236/231/182、312/315/196；预测长度变同时packed位置变，是动作差异的混杂，不能靠视频差异认定音乐语义成功。全124frameRGB原/换MAE(.04242/.01684/.00913)、原/零(.05348/.05145/.02021)只未对齐像素代理，不是音乐/姿态accuracy。保持62%表示诊断与视频结果独立。
+
+8766已追加诊断原权重/zero两组至18模型/3人物/8preset，旧16model/7preset/sample音轨映射和评分原样保留。新第一预设【H序列CLIP·训练后直接推理】MSE基线/原权重CLIP候选/zero，joint三列，aswap零音乐缺失如实显示，未扩展源case。页面/API200、9新视频Range206、跨节点manifest200全部核实。
+
+**本次结论：** 应先直接推理已有训练映射，不能用人为表示门槛阻止诊断或先做未获批准的校准。完整H映射部署已证实，音乐/静音能影响某些手势但整体相似与参考衣着漂移仍在；当前模型没有证明音乐可可靠承担动作文本的控制作用。保存全部代码/指令/完整审计/受限分析，不上传模型/媒体features，下一方案不能把接口正确或有差异当整体目标成功。

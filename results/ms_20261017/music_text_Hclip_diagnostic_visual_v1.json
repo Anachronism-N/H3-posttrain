@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-18",
+  "diagnostic_only": true,
+  "quality_gate_passed": false,
+  "checkpoint": "music_text_Hclip_realneg_d1800_s1875_v2/last.pt",
+  "checkpoint_sha256": "895868746f3fdec2b58acdae7fe1345d9c5670195e1850aef714a6930c301f45",
+  "purpose": "User-authorized direct post-training video experiment. Previous length threshold preserved but not treated as a ban on diagnostic inference.",
+  "length_calibration_or_new_training_performed": false,
+  "model_path": "public pretrained frozen MusicFM -> entire trained raw H sequence adapter and predicted-length head -> image structural prefix plus raw action tail -> original DiT text condition projection/token refiner",
+  "music_tokens_run_through_native_text_encoder_again": false,
+  "no_external_semantic_action_or_identity_prompt": true,
+  "native_audio_music_bypass": false,
+  "technical_result": {"source_people": 3, "joint": 3, "aswap": 3, "zero_joint": 3, "all9_sampler_exit_zero": true, "all9_complete124_frame24fps704x1280_video_audio_decode": true, "native_reference_retake_and_masks_identical_across9": true, "actual_checkpoint_content_and_original_failed_gate_rechecked": true},
+  "visual_review": {
+    "method": "Actual reference-plus-six-time-frame mosaics for original music, swapped music and zero music, compared with the previously generated raw H MSE baseline. Not continuous audio listening or a calibrated music/adherence evaluation.",
+    "staircase": "Original and swapped music retain hand gestures and backward leg lifts, differing in some late facing/gesture frames. Zero music still produces similar steps and leg lifts. White/navy sportswear and a small bag replace the reference pale yellow top/grey trousers in all variants; reference outfit fidelity remains incorrect.",
+    "red_shirt": "Original and swapped music both use hand-near-mouth and head-side raised-arm motifs with late gesture differences. Zero music has visibly larger late two-arm raising/spreading, so conditioning changes the output, but this does not establish which music yields correct choreography. The frame crops prevent a reliable footwork claim.",
+    "store": "Original and swapped music remain low-amplitude single-arm, torso and weight movement with closely related sequence. Zero music still generates arm/weight changes. No complete MotionScript sequence or useful musical increment established."
+  },
+  "unaligned_pixel_mae0to1": {"original_swapped": [0.04241969407866559, 0.01684109517748678, 0.009126700382048806], "original_zero": [0.053478810981276534, 0.0514533014577483, 0.020210842384145625], "not_music_or_pose_accuracy": true},
+  "predicted_token_counts_original_swapped_zero": [[415, 393, 239], [236, 231, 182], [312, 315, 196]],
+  "length_layout_confound": "Changing music also changes predicted tail length and DiT packed layout. These inference outputs are unmodified deployed behavior; differences alone do not isolate musical token-content causality.",
+  "full_mux_audio_source_equality_independently_checked": false,
+  "audio_scope": "The selected audio stream was fully decoded and sampler traces real input music to mux; no independent decoded-audio equality test was performed.",
+  "conclusion": "Direct inference of the previous raw-H CLIP model is feasible without retraining or length calibration. Music/zero interventions do alter some generated gestures, but original/swapped outputs retain strong shared motifs and outfit drift persists. The current three-case evidence has not established music replacing action text with comparable usable control. The prior62% representation test is not a video score; do not use it or the failed length gate as a substitute for actual video observation.",
+  "not_claimed": ["no conditioning effect whatsoever", "verified beat/music synchronization", "new continuous human preference feedback", "all direct native H or CLIP schemes impossible", "usable music choreography goal achieved"],
+  "publication_scope": "Code, commands, complete integrity/evidence JSON and qualified analysis only; no checkpoint weights, feature tensors, images or videos uploaded"
+}

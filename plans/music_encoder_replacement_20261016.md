@@ -273,6 +273,14 @@
 - 必须完成9video124frame/24fps/704p音画decode、实际prompt/图/音轨/seed/checkpointsha/rawH长度/最后投影/mux/静音hash核对；实际查看原音乐/换音乐/zero对照并复用旧MSE基线。采样帧/像素/姿态差不等于连续音画准确度，长度改变packed仍是混杂；不拿62%表征成绩替代实际视频结果。
 - 当前管理任务在读取旧checkpoint准备指令，还没有新视频完成，不将启动/排期称实验完成。后续实际结果与完整审计/代码/结论发表既定GitHub，不上传媒体/权重/PTfeatures/凭据。
 
+### 原权重直接推理九视频已完成（2026-10-18）
+- O2BQ7w原音乐/换音乐6和8D3w1U零输入3都exit0，六节点同一阶段最多六个GPU真实推理，单节点一个H3冷加载；占卡程序不算实验利用率。没有模型更新、没有length校准、没有额外语义文本。原qualitygatefalse记录保留，诊断生成由用户明确授权，不能再用研究length指标阻止诊断。
+- Qr8GNU完整9视频decord124帧/ffmpeg音画、actualempty/seed/参考图/音轨/checkpoint内容SHA/最终rawHadapter执行、原native固定静音ref/retake/mask跨9一致全部通过，原finished summary的gatefalse独立重读核实。selectedaudio完整解码，但未进行独立mux音轨逐值源匹配，不夸大验收范围。
+- 实际Read三套参考图+六时间点图并对比已有rawH MSE基线：原音乐/换音乐仍重复手到脸、头侧抬臂、后勾腿及低幅单臂/重心母题；零音乐也产生同类动作，红衣零输入后段双臂举高/展开明显不同。条件确实影响输出，不能说完全无作用，但没有建立音乐对应编舞或文本同等控制。楼梯仍白蓝运动装/肩包，非参考浅黄上衣灰裤。
+- 九个真实预测长度：原/换/零三case分别415/393/239、236/231/182、312/315/196；长度改变也改变DiT packed，不能把像素变化单独归因music语义内容。原/换RGB MAE .04242/.01684/.00913，原/零 .05348/.05145/.02021，均为未对齐像素代理，不是pose/音乐准确度。
+- 原8766保留全部旧16模型/7预设和样本/评分，追加两个diag组后18模型/8预设，第一【H序列CLIP·训练后直接推理】MSE基线/CLIP原权重候选/候选零音乐；joint三列、aswap零音乐列明确无结果。页面/manifest200、9新增视频Range206、跨节点manifest200通过；不替换旧权重或媒体。
+- 本次“只需推理”的实验已完成技术和采样视觉诊断，音乐替代动作文本的整体目标仍未达到。未来先实际推理验证旧权重，再决定是否重训；原生H维度、CLIP表示指标、长度gate都不替代视频效果验收。未宣称连续听看或新用户认可，未重新训练，length头/DiT预测监督未获授权仍不做。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

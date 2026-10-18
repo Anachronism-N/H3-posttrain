@@ -44,7 +44,95 @@ def wait_pipeline(report_path, pid):
         os.close(watch)
 
 
+def online_followup_main():
+    import shlex
+    from music_generation_validate import atomic_write_new
+    parser = argparse.ArgumentParser(description='Online full-model generation, zero input and complete audio/video audit')
+    parser.add_argument('--online', action='store_true', required=True)
+    parser.add_argument('--root', type=Path, required=True)
+    parser.add_argument('--runs', nargs='+', required=True)
+    parser.add_argument('--tags', nargs='+', required=True)
+    parser.add_argument('--zero_tags', nargs='+', required=True)
+    parser.add_argument('--hosts', nargs='+', required=True)
+    parser.add_argument('--wait_marker', type=Path)
+    parser.add_argument('--wait_pid', type=int)
+    parser.add_argument('--report', type=Path, required=True)
+    parser.add_argument('--integrity', type=Path, required=True)
+    args = parser.parse_args()
+    if (args.report.exists() or args.integrity.exists() or not args.report.parent.is_dir()
+            or not args.integrity.parent.is_dir() or len(args.runs) != len(args.tags)
+            or len(args.runs) != len(args.zero_tags) or not 1 <= len(args.hosts) <= 3
+            or len(set(args.hosts)) != len(args.hosts)
+            or any(Path(name).name != name or name in ('.', '..') for name in args.runs + args.tags + args.zero_tags)
+            or (args.wait_marker is None) != (args.wait_pid is None)):
+        parser.error('Require valid matching new outputs, unique hosts and optional verified wait')
+    if args.wait_marker:
+        if not args.wait_marker.is_file():
+            try:
+                fd = os.pidfd_open(args.wait_pid)
+            except ProcessLookupError:
+                if not args.wait_marker.is_file():
+                    raise RuntimeError('Prior generation process is gone without its marker')
+            else:
+                try:
+                    command = (Path('/proc') / str(args.wait_pid) / 'cmdline').read_bytes().split(bytes([0]))
+                    if (str(args.root / 'scripts_omnidance/exp/ms/music_text_oracle_generate.py').encode() not in command
+                            or str(args.wait_marker.parent).encode() not in command):
+                        raise ValueError('Prior PID does not match the exact generation group')
+                    print(json.dumps(dict(event='verified_generation_wait', pid=args.wait_pid,
+                                         marker=str(args.wait_marker))), flush=True)
+                    select.select([fd], [], [])
+                finally:
+                    os.close(fd)
+        prior = json.loads(args.wait_marker.read_text())
+        if not prior.get('all_sampler_jobs_exit_zero'):
+            raise ValueError('Prior generation did not finish technically intact')
+    exp = args.root / 'logs_omnidance/exp'
+    jobs = []
+    for run, tag, zero_tag in zip(args.runs, args.tags, args.zero_tags):
+        checkpoint = exp / 'MS' / run / 'last.pt'
+        summary = json.loads((checkpoint.parent / 'finished.json').read_text())
+        layout = json.loads((checkpoint.parent / 'h3_layout_audit.json').read_text())
+        expected = summary['checkpoint_sha256']
+        if (not summary['complete'] or not summary['deployment']['independent_inference_tail_exact']
+                or not layout.get('complete') or layout.get('checkpoint_sha256') != expected):
+            raise ValueError('Online full model or actual H3 layout not technically audited')
+        for group, zero in ((tag, False), (zero_tag, True)):
+            directory = exp / 'H3AR' / ('val_musicreplace_' + group)
+            if directory.exists():
+                raise FileExistsError('Refuse duplicate generation tree: ' + str(directory))
+            command = [sys.executable, str(args.root / 'scripts_omnidance/exp/ms/music_text_oracle_generate.py'),
+                       '--root', str(args.root), '--checkpoint', str(checkpoint), '--out', str(directory),
+                       '--hosts', *args.hosts]
+            if zero:
+                command += ['--joint_only', '--zero_input']
+            log_path = exp / 'MS' / (group + '_generation.log')
+            with log_path.open('x') as log:
+                log.write(json.dumps(dict(command=command, checkpoint_sha256=expected)) + '\n')
+                log.flush()
+                print(json.dumps(dict(event='online_generation_launch', tag=group, hosts=args.hosts)), flush=True)
+                result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT)
+            jobs.append(dict(tag=group, checkpoint_sha256=expected, exit_code=result.returncode, log=str(log_path)))
+            if result.returncode:
+                atomic_write_new(args.report, dict(complete=False, jobs=jobs, full_decode_checked=False))
+                raise SystemExit(result.returncode)
+    audit_command = ['env', 'OMP_NUM_THREADS=2', '/opt/venv_eval/bin/python',
+        str(args.root / 'scripts_omnidance/exp/ms/music_text_diagnostic.py'), '--online',
+        '--exp_root', str(exp), '--runs', *args.runs, '--tags', *args.tags,
+        '--zero_tags', *args.zero_tags, '--out', str(args.integrity)]
+    result = subprocess.run(SSH + [args.hosts[0], shlex.join(audit_command)])
+    atomic_write_new(args.report, dict(complete=result.returncode == 0, expected_videos=9 * len(args.runs),
+                     jobs=jobs, full_decode_exit_code=result.returncode, integrity=str(args.integrity),
+                     video_quality_acceptance_checked=False))
+    if result.returncode:
+        raise SystemExit(result.returncode)
+    print(json.dumps(dict(event='online_generation_and_decode_finished', report=str(args.report),
+                         videos=9 * len(args.runs))), flush=True)
+
+
 def main():
+    if '--online' in sys.argv:
+        return online_followup_main()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--pipeline_report', type=Path, required=True)

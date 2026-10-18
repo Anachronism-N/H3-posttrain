@@ -1115,3 +1115,27 @@ waveform[batch,2,L]32k → 每声道resample24k → dense music encoder
 - **训练与生成目前共用模块，但目标不等价**：CLIP是audio latent有效时间mean/std→128维→audio_head→归一化5120；文本目标是冻结H3 last hidden的masked mean、train统计标准化和归一化。DiT生成只接逐帧stereo32D音频latent经原audio patch proj，加独立文字hidden；不用CLIP head或标准化池化文本目标。bridge仅拟合原生audio encoder latent，不拟合“带caption的生成预测”。global池化非可逆、不同模态/接口，检索对齐并不约束`G(I,music,empty)≈G(I,music,caption)`。旧generic推理还只是通用舞蹈/保身份/音轨绑定模板，根本不是训练所配的完整MotionScript。没有生成一致性、逐token文本重建或舞步时序目标，因此不能理论上承诺纯音乐和带文本同视频。
 - **后续对齐设计仅为讨论，未启动**：先明确reference-only保真和真正首帧条件不同，在无外部语义prompt下统一并验收学生/教师的图像条件。随后若用户另行授权新增生成端loss，可同图/音频时窗/时间步/噪声/CFG/tail策略，让学生冻结H3接新音乐latent+空文本，教师冻结原H3接原生音乐+对应caption，以教师预测/GT动作监督学生。冻结DiT参数仍须保留穿过DiT到encoder/adapter的反向梯度，不是no_grad。teacher caption仅训练用、不进入学生推理；这新增生成层监督，超出原CLIP/bridge-only约束，不在本次诊断私自加入。可选直接GT video目标也需独立方案/监督粒度验收；不可声称仅加CLIP轮数就完全对齐或音乐确定唯一caption/逐像素视频。
 - **本次负结论**：原生和训练音乐encoder无语义文本都显著改变动作与降低运动，部分低层动作重合但未证明重现来源caption；原生参考保真也退化，显示文本同时承担任务/参考绑定的重要作用。现训练没有让音乐可靠承担这条作用。保持用户“仅音乐+参考图”要求，不把舞蹈prompt偷偷恢复、不自动重训或新生成；后续先解决无文本参考/任务条件，再做真正以部署学生路径为目标的可归因训练。用户原话、各case视觉对照与39视频运动报告均记录发布，旧人评和技术验收不覆盖。
+
+### 28.20 文本侧共享adapter首轮完整结果（2026-10-18）
+
+**批准方向与输入边界。** 用户确认先音乐encoder→原生文本output hidden→冻结DiT，首轮学生仅音乐+参考图，不先加人物/ID/动作文字，首帧锁后置。首轮不增加DiT/video/FM loss。旧32D音频adapter生成确已执行，旧CLIPhead只在训练执行；5120池化标准化单位向量不是原生逐tokenrawhidden。CLIP本身不强制池化，之前pool是全局检索实现选择。
+
+**原生接口oracle。** 新unit保留图结构prefix/tags，丢空白正文hidden，替换原文本tail并重建packed。真实caption仅oracle教师使用，学生音乐预测路径不能读取caption/GTlength。三源人物joint/aswap六条exit0、全124帧音画解码通过，独立prefix/同次拆拼/packed/首步DiT一致；两路原生audio固定相同静音，所有音轨只经新text条件控制或最终mux。Teacher oracle不是音乐训练成绩。原MS joint楼梯变男性/衣着，中性代词three-joint同图同seed恢复女性浅黄上衣/灰裤，支持教师措辞是影响因素但不称唯一根因。教师目标使用原MS+舞种，gender pronouns→the dancer逐条记录，不偷偷加ID答案；swap缺原MS只在oracle标明VLM fallback。
+
+**实际新训练。** train1800/val200独立留出沿已审计数据，完整2000图上下文化教师targets和2000公开冻结MusicFMfeatures生成/分片SHA/finite验收。中性原文train平均431.154tokens、最大1423，val无超过上限，raw目标不pool/单位化/插值压缩。约496.7万adapter：dense音乐序列cross-attention+图结构末行context+位置queries→raw5120输出，全部最后投影和长度head部署。生成自己预测有效长度，不用GT；音乐骨干/TC/DiT/VAE冻结。旧smallfit300未通过长度/幅值，日志保留；rawMSE+length/cos0/lr3e-4/1000step小集修复通过(trainMSE5.502/长度MAE0/能量比.4056)。多个优化因素一起调整不单归因cosine。
+
+正式1875step、1800train/200val、batch8、15000曝光exit0；best/last507tensor完整strict/独立SHA/finite通过，SHA `cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc`。训练保存时/重载输出一致，cached/online相对RMS2.386e-7、预测length259一致。val rawMSE5.381603、cosine loss.202404、长度MAE137.71、能量比.454974；长度学习不充分，不能称复现caption或音乐语义成功。有效训练/val区间272.44s、finished361.10s含权重/部署检查，49m26s管理wall含CephFS读，不把等待算GPU计算。训练部署同前向成立但不保证生成行为。
+
+**真正音乐依赖的反事实。** val200同图context，正确/循环错配/真实静音MusicFM及train逐位置均值基线：
+
+| tokenweighted MSE | 正确音乐 | 错配音乐 | 静音音乐 | train位置均值 |
+|---|---:|---:|---:|---:|
+| rawtoken误差 | 5.38160354 | 5.38160507 | 5.38213766 | 4.75674750 |
+
+错配相对正确没有实质回归劣化，模型不如train均值；correct/wrong输出RMS宏平均.002778。cosine≈.795或误差比zero低不足以证音乐学习，主要拟合共享token位置/分布。原始caption第j词不天然语义对应、直接回归均值化是候选解释，不称唯一根因。
+
+**旧完整链免训练验证。** 用户追问为何不复用已有encoder/adapter后，补旧MusicFM6000/lambda0/1875的全部encoder→32Dadapter→pool→CLIPhead→L2，单5120token接同图prefix，trainmean/std选唯一norm272.45535，不宣称inverseL2/rawhidden等价，不复制token。六条视频/全音画通过，旧原swap embeddingcos-.140/.149/.073明显不同，但采样视频动作母题接近且楼梯衣着漂移；单token尺度配方未建立可用音乐增量，不能否定文本侧全路线。
+
+**正式九视频验收。** 新rawtoken模型joint/aswap6+同三人zerojoint3全部exit0，9条完整124帧/24fps/704×1280音画、输入/seed/empty/权重hash/最终adapter执行、两路native静音一致。初次launcher因缺PYTHONPATH导入diffsynth失败未生成，恢复新v2目录，旧失败树/log保留，无重复训练。实际Read三套参考+六时间采样图，原/换/零音乐保留相近小手势、后勾腿、脸/头侧抬臂和低幅单臂母题；楼梯白蓝运动衣裤/肩包替代浅黄上衣灰裤。原swapRGB MAE .02822/.01068/.02124、原zero .05569/.01546/.03152不是音画准确度。音乐变化同时预测长度449→410、271→265、305→312，zero297/208/202，packed变长可导致输出变化，未隔离长度混杂不认定音乐内容控制成功。
+
+**结论与交付边界。** 本轮技术闭环及表示反事实/采样视觉评审完成，研究结果为负：映射完整部署仍不足，当前raw逐词回归未建立音乐控制；旧完整head部署单token也未建立增量，不能全部归因忘加载adapter。不冒称新用户连续音画认可、穷尽偏好、三case统计显著或音乐唯一编舞真值。8766保留旧结果并上线16模型/三人物/七预设，第一【10-18 正式文本token·仅音乐+参考图】四列(原生/旧完整链/rawtoken/zero)，零音乐只有joint。页面/API200、九视频Range206/跨节点200通过。完整训练/权重/九视频/反事实报告和代码在results/ms_20261017与plans；不上传权重媒体。后续针对监督与音乐条件依赖讨论，不盲目扩量；生成预测loss仍需独立批准。

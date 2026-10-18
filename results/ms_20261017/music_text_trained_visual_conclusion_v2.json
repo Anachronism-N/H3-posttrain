@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-18",
+  "configuration": "music_text_train1800_raw_neutral_v2",
+  "checkpoint_sha256": "cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc",
+  "technical_acceptance": {"training_steps": 1875, "train": 1800, "val": 200, "complete_checkpoint_roundtrip": true, "independent_tensor_finite_hash": true, "generated_videos": 9, "complete124_frame_audio_video_decodes": 9, "same_native_silence_for_all_conditions": true, "no_external_semantic_text": true, "same_trained_final_projection_deployed": true},
+  "evaluation_method": "Actual reference-plus-six-time-frame mosaics for correct music, swapped music and zero music on the same three people, plus full-frame RGB difference and fixed-context val200 token audit. Not continuous audio listening or user preference feedback.",
+  "visual_cases": {
+    "staircase": "Original music and swapped music repeat palm/hand gestures and backward leg lifts, with limited timing/end variations. Zero music still produces this action family. All use white/navy sportswear and a small bag instead of the reference pale yellow top/grey trousers.",
+    "red_shirt": "Hand-near-face, head-side arm movements and forward hand gestures remain similar across original/swapped/zero music. Reference red clothing is broadly retained. Legs cropped, no footwork accuracy claim.",
+    "store": "Mostly low-amplitude single-arm, torso and weight changes. Original/swapped/zero retain related motifs; cannot establish complete paired MotionScript sequence or musical correctness."
+  },
+  "paired_rgb_mae0to1": {"original_swapped": [0.028222188601390488, 0.010677953892868132, 0.02124421301508142], "original_zero": [0.05568616009587722, 0.015464054484431061, 0.031523335845239704], "not_music_accuracy": true},
+  "val200_token_weighted_mse": {"correct": 5.381603540320114, "wrong": 5.381605070097982, "zero": 5.382137662530507, "train_position_mean": 4.7567474997428745},
+  "conclusion": "Training and deployment now execute the same complete raw-token mapping. This is necessary but insufficient: direct per-word-position regression mostly learns shared token distribution rather than demonstrated musical control. Correct music does not materially improve token fit over wrong music and is worse than a train-only positional mean. Generated videos preserve similar motifs with music replaced or zeroed; reference outfit drift remains. No established useful music-driven dance increment from this first recipe.",
+  "not_claimed": ["continuous_audio_adherence_review", "new_user_preference_acceptance", "unique_choreography_ground_truth", "all_text_side_adapters_invalid", "DiT_or_video_training_loss_authorized"],
+  "next_boundary": "Do not blindly expand data or claim omitted adapter was the only problem. Teacher representations/sequence supervision and contrastive musical dependency need redesign; any new generator-level loss requires separate authorization. Identity text and first-frame lock remain postponed."
+}

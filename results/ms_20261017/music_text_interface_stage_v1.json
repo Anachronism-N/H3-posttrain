@@ -74,12 +74,15 @@
   "music_features": {"complete": true, "count": 2000, "independent_file_sha_and_tensor_finite_union_audit": true},
   "formal_music_text_training_started": true,
   "formal_music_text_current_stage": "v2 completed1875 updates exit0; best/last complete507tensor SHA and finite independently verified",
-  "formal_training_result": {"steps": 1875, "train": 1800, "val": 200, "items_seen": 15000, "val_raw_mse": 5.381603478302016, "val_length_mae": 137.71, "val_energy_ratio": 0.45497385828207954, "selected_checkpoint_sha256": "cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc", "online_relative_rms": 0.0000002386259154718573, "video_effect_not_yet_accepted": true},
+  "formal_training_result": {"steps": 1875, "train": 1800, "val": 200, "items_seen": 15000, "val_raw_mse": 5.381603478302016, "val_length_mae": 137.71, "val_energy_ratio": 0.45497385828207954, "selected_checkpoint_sha256": "cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc", "online_relative_rms": 0.0000002386259154718573, "diagnostic_video_review_complete": true, "new_human_effect_acceptance": false},
   "teacher_cache_state": "Four TC-only shards completed exit0, unique union2000 covers train1800/val200; all2000 file SHA reread passed in original pipeline; original smoke excluded",
   "neutral_teacher_lengths": {"train_mean": 431.15444444444444, "train_max": 1423, "val_above_train_max": 0},
   "train_pipeline_state": "Original smallfit300 failed; raw-regression smallfit1000 passed including complete selected/last deployment audit. New formal1800/1875-step v2 launched, original failed logs preserved.",
   "smallfit_v2_success": {"steps": 1000, "train_raw_mse": 5.501978874206543, "train_length_mae": 0.0, "student_teacher_energy_ratio": 0.40559614420174467, "val_length_mae": 102.0, "scope": "8train/8val fitting diagnostic, not full-set generalization or generation gain", "complete_checkpoint_roundtrip_exact": true, "online_relative_rms": 0.0000015385999176942278, "online_cached_predicted_length": 385},
   "smallfit_v1_failure": {"steps": 300, "train_raw_mse": 12.626130104064941, "train_length_mae": 31.375, "length_tolerance": 20.875, "student_teacher_energy_ratio": 0.003318632006623557, "formal_launched": false},
   "original_generation_followup_state": "Exited because training acceptance report complete=false, generated no trained-model clips",
-  "next_gate": "Finish v2 full1800 training and complete selected/last checkpoint deployment checks, then three-person correct/swapped/zero music generation; legacy fullCLIP six-clip diagnostic runs independently"
+  "first_round_status": "Training/deployment, complete nine-video integrity, representation dependency and sampled-frame visual review finished. Effect is a negative result, not a new human preference acceptance.",
+  "formal_generation": {"videos": 9, "sampler_exit_zero": 9, "full124_frame_audio_video_decode": 9, "same_native_audio_condition_hash": true, "external_semantic_prompt": false, "useful_musical_generation_increment_established": false},
+  "review_service": {"port": 8766, "models": 16, "presets": 7, "source_people": 3, "page_manifest200": true, "new9video_range206": true},
+  "next_gate": "Redesign musical-dependency supervision rather than blindly scale raw token regression; any new generator-level loss needs separate authorization. Current first experiment is a verified negative result, not completion of the broader goal of usable music choreography."
 }

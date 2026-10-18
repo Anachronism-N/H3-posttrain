@@ -1,0 +1,21 @@
+{
+  "complete": true,
+  "jobs": [
+    {
+      "tag": "trained1800",
+      "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_trained1800_v2",
+      "exit_code": 0
+    },
+    {
+      "tag": "trained1800_zero",
+      "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_trained1800_zero_v2",
+      "exit_code": 0
+    }
+  ],
+  "selected_checkpoint_sha256": "cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc",
+  "default_six_full_decode_exit": 0,
+  "zero_joint_clips": 3,
+  "zero_decode_and_visual_review_pending": true,
+  "all_new_inputs_no_semantic_text": true,
+  "musical_effect_not_yet_accepted": true
+}

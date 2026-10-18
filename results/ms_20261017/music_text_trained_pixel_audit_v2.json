@@ -1,0 +1,35 @@
+{
+  "complete": true,
+  "frames_per_video": 124,
+  "cases": [
+    {
+      "sample_id": "wJPptuhclZmKAEWs",
+      "joint_aswap_mae": 0.028222188601390488,
+      "joint_zero_mae": 0.05568616009587722,
+      "joint_motion": 0.021684051688185067,
+      "aswap_motion": 0.022364653048779423,
+      "zero_motion": 0.022063696749387234
+    },
+    {
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "joint_aswap_mae": 0.010677953892868132,
+      "joint_zero_mae": 0.015464054484431061,
+      "joint_motion": 0.00872312747538317,
+      "aswap_motion": 0.008102939029250718,
+      "zero_motion": 0.008746934659037043
+    },
+    {
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "joint_aswap_mae": 0.02124421301508142,
+      "joint_zero_mae": 0.031523335845239704,
+      "joint_motion": 0.006639821348878426,
+      "aswap_motion": 0.006884618488147976,
+      "zero_motion": 0.0067795135943991384
+    }
+  ],
+  "pixel_range": [
+    0,
+    1
+  ],
+  "scope": "Unaligned RGB only; sequence length and motion changes can change pixels without proving music alignment"
+}

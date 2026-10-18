@@ -24,5 +24,13 @@
   "audio_scope": "The selected audio stream was fully decoded and sampler traces real input music to mux; no independent decoded-audio equality test was performed.",
   "conclusion": "Direct inference of the previous raw-H CLIP model is feasible without retraining or length calibration. Music/zero interventions do alter some generated gestures, but original/swapped outputs retain strong shared motifs and outfit drift persists. The current three-case evidence has not established music replacing action text with comparable usable control. The prior62% representation test is not a video score; do not use it or the failed length gate as a substitute for actual video observation.",
   "not_claimed": ["no conditioning effect whatsoever", "verified beat/music synchronization", "new continuous human preference feedback", "all direct native H or CLIP schemes impossible", "usable music choreography goal achieved"],
-  "publication_scope": "Code, commands, complete integrity/evidence JSON and qualified analysis only; no checkpoint weights, feature tensors, images or videos uploaded"
+  "publication_scope": "Code, commands, complete integrity/evidence JSON and qualified analysis only; no checkpoint weights, feature tensors, images or videos uploaded",
+  "subsequent_user_review": {
+    "date": "2026-10-18",
+    "verbatim": "还是完全不像跳舞,动作和之前差不多,而且更换歌曲的差别也不大.",
+    "kind": "User qualitative video feedback, not inferred from automated metrics or task notifications",
+    "verdict": "Current candidate fails the requested usable music-to-dance/text-replacement objective",
+    "scope": "Overall reported impression; no invented per-video numerical ratings or exhaustive case scoring"
+  },
+  "training_deployment_length_difference": "Training raw-H loss uses ground-truth caption token lengths to mask and bound supervised queries; deployment computes qmax outputs and truncates using the learned predicted length. Same parameterized condition mapping, not identical effective lengths/masks, and no ground-truth length at inference."
 }

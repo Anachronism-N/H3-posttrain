@@ -1193,3 +1193,9 @@ N1/N4/N8同时做三人物joint/aswap6，N2/N3/N6并行zerojoint3，单节点一
 8766已追加诊断原权重/zero两组至18模型/3人物/8preset，旧16model/7preset/sample音轨映射和评分原样保留。新第一预设【H序列CLIP·训练后直接推理】MSE基线/原权重CLIP候选/zero，joint三列，aswap零音乐缺失如实显示，未扩展源case。页面/API200、9新视频Range206、跨节点manifest200全部核实。
 
 **本次结论：** 应先直接推理已有训练映射，不能用人为表示门槛阻止诊断或先做未获批准的校准。完整H映射部署已证实，音乐/静音能影响某些手势但整体相似与参考衣着漂移仍在；当前模型没有证明音乐可可靠承担动作文本的控制作用。保存全部代码/指令/完整审计/受限分析，不上传模型/媒体features，下一方案不能把接口正确或有差异当整体目标成功。
+
+**用户随后真实反馈（2026-10-18）：** “还是完全不像跳舞,动作和之前差不多,而且更换歌曲的差别也不大.” 此为新候选视频的整体定性否决，不是自动任务通知或指标推测；不编造逐case评分。当前模型未达到可用音乐编舞/动作文本替代目标，不能用62%表示区分或像素有差异推翻该反馈。
+
+**当前训练/生成的准确区别：** 骨干是公开预训练MusicFM并在本轮冻结，更新约496.7万参数的raw文本adapter和length head，不是音乐骨干全量CLIP微调。教师为同图结构prefix+舞种/中性代词原MS得到的原生TC raw action tail；loss为有效词位置rawMSE/trainenergy + log长度MSE + 同图context的正确/两条真实wrong音乐序列InfoNCE。最多64有效token的mean/std/L2处理仅用于计算序列score，不处理实际部署raw H；没有额外训练语义head被丢弃，也没有视频/DiT预测/节拍动作监督。
+
+训练利用GT caption length设query_count和有效mask监督，生成则全qmax1423前向后根据预测长度截取。这是参数/输出坐标相同，不是有效条件长度或mask已完全相同；不能把strict权重前向重载一致扩大为文本与音乐生成行为完全对齐。真实音乐内容只经预测raw H进入DiT文本condition_proj/token_refiner；原生TC仅编码图结构prefix，nativeaudio两路仍有固定静音tokens，但没有真实音乐内容旁路。

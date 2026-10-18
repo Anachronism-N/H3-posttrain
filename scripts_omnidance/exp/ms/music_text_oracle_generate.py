@@ -21,6 +21,7 @@ def main():
     parser.add_argument('--gpu', type=int, default=7)
     parser.add_argument('--joint_only', action='store_true', help='Three same-person teacher-label diagnostic clips only')
     parser.add_argument('--zero_input', action='store_true', help='Deploy model on zero music, original track only muxed')
+    parser.add_argument('--legacy_clip', action='store_true', help='Reuse all old trained encoder/adapter/head weights as one global text token')
     args = parser.parse_args()
     expected = 3 if args.joint_only else 6
     conditions = ['joint'] if args.joint_only else ['joint', 'aswap']
@@ -28,8 +29,8 @@ def main():
         parser.error('Require a new output tree and existing parent')
     if len(set(args.hosts)) != len(args.hosts) or not 0 <= args.gpu < 8 or len(args.hosts) > expected:
         parser.error('Require unique hosts and a valid GPU index')
-    if args.zero_input and not args.checkpoint:
-        parser.error('Zero music input requires a deployed model checkpoint')
+    if (args.zero_input or args.legacy_clip) and not args.checkpoint:
+        parser.error('Zero/legacy music input requires a deployed model checkpoint')
     if args.caps:
         caps = json.loads(args.caps.read_text())
         if len(caps) != 6 or any(not value.get('source') for value in caps.values()):
@@ -48,7 +49,8 @@ def main():
               sampler_sha256=code_sha, supervision_caps_sha256=hashlib.sha256(args.caps.read_bytes()).hexdigest() if args.caps else None,
               checkpoint_sha256=hashlib.sha256(args.checkpoint.read_bytes()).hexdigest() if args.checkpoint else None,
               native_audio='same_fixed_silence_reference_and_retake', semantic_student_prompt=' ',
-              raw_text_tail_replacement=True, no_training=True, student_uses_caption=bool(args.caps), zero_music_input=args.zero_input))
+              raw_text_tail_replacement=True, no_training=True, student_uses_caption=bool(args.caps),
+              zero_music_input=args.zero_input, legacy_clip_complete_chain=args.legacy_clip))
     queues = [list(range(expected))[i::len(args.hosts)] for i in range(len(args.hosts))]
     guard = guard_code(str(sampler), str(holder), args.gpu)
 
@@ -78,6 +80,8 @@ def main():
                 command += ['--music_text_ckpt', str(args.checkpoint)]
                 if args.zero_input:
                     command += ['--music_text_zero_input']
+                if args.legacy_clip:
+                    command += ['--music_text_legacy_clip']
             path = args.out / 'logs' / f'shard_{shard}.log'
             with path.open('x') as stream:
                 stream.write(json.dumps(dict(host=host, command=command, sampler_sha256=code_sha)) + '\n')

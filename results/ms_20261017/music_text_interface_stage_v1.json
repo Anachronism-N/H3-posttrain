@@ -72,9 +72,13 @@
     "student_external_semantic_text_added": false
   },
   "music_features": {"complete": true, "count": 2000, "independent_file_sha_and_tensor_finite_union_audit": true},
-  "formal_music_text_training_started": false,
-  "teacher_cache_state": "Four TC-only shards completed exit0, unique union2000 covers train1800/val200; SHA reread currently waiting on CephFS in the live original pipeline; original smoke excluded",
+  "formal_music_text_training_started": true,
+  "formal_music_text_current_stage": "v2 launcher admitted on N5GPU7, target/cache load audit ongoing; no optimization steps yet observed",
+  "teacher_cache_state": "Four TC-only shards completed exit0, unique union2000 covers train1800/val200; all2000 file SHA reread passed in original pipeline; original smoke excluded",
   "neutral_teacher_lengths": {"train_mean": 431.15444444444444, "train_max": 1423, "val_above_train_max": 0},
-  "train_pipeline_state": "Managed event-driven cache audit -> 8-item small-fit -> formal1875-step training registered; registration is not completion",
-  "next_gate": "Complete teacher cache and SHA/protocol audit, pass real small-fit, then train full adapter and verify cached/online checkpoint deployment before three-case generation"
+  "train_pipeline_state": "Original smallfit300 failed; raw-regression smallfit1000 passed including complete selected/last deployment audit. New formal1800/1875-step v2 launched, original failed logs preserved.",
+  "smallfit_v2_success": {"steps": 1000, "train_raw_mse": 5.501978874206543, "train_length_mae": 0.0, "student_teacher_energy_ratio": 0.40559614420174467, "val_length_mae": 102.0, "scope": "8train/8val fitting diagnostic, not full-set generalization or generation gain", "complete_checkpoint_roundtrip_exact": true, "online_relative_rms": 0.0000015385999176942278, "online_cached_predicted_length": 385},
+  "smallfit_v1_failure": {"steps": 300, "train_raw_mse": 12.626130104064941, "train_length_mae": 31.375, "length_tolerance": 20.875, "student_teacher_energy_ratio": 0.003318632006623557, "formal_launched": false},
+  "original_generation_followup_state": "Exited because training acceptance report complete=false, generated no trained-model clips",
+  "next_gate": "Finish v2 full1800 training and complete selected/last checkpoint deployment checks, then three-person correct/swapped/zero music generation; legacy fullCLIP six-clip diagnostic runs independently"
 }

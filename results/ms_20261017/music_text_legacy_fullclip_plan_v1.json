@@ -1,0 +1,24 @@
+{
+  "kind": "trained_music_text_deployment",
+  "source_people": 3,
+  "conditions": [
+    "joint",
+    "aswap"
+  ],
+  "videos": 6,
+  "hosts": [
+    "28.216.17.70",
+    "28.216.19.213",
+    "28.216.19.225"
+  ],
+  "sampler_sha256": "807f7716601a2d36282e2ca0526607d33316a8b609f83cb30230d010ec97ccc8",
+  "supervision_caps_sha256": null,
+  "checkpoint_sha256": "b20f4d9377615269098d7b115ffdcf3daa501df9998439e8a7edbb93d34fc314",
+  "native_audio": "same_fixed_silence_reference_and_retake",
+  "semantic_student_prompt": " ",
+  "raw_text_tail_replacement": true,
+  "no_training": true,
+  "student_uses_caption": false,
+  "zero_music_input": false,
+  "legacy_clip_complete_chain": true
+}

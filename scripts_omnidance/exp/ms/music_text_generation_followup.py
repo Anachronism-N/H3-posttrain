@@ -17,8 +17,9 @@ def wait_pipeline(report_path, pid):
     if report_path.is_file():
         return
     fd = os.pidfd_open(pid)
-    if b'/music_text_pipeline.py' not in (Path('/proc') / str(pid) / 'cmdline').read_bytes():
-        raise ValueError('Declared training pipeline PID does not match')
+    command = (Path('/proc') / str(pid) / 'cmdline').read_bytes()
+    if b'/music_text_pipeline.py' not in command and report_path.name.encode() not in command:
+        raise ValueError('Declared training pipeline PID does not match the expected report')
     libc = ctypes.CDLL(None, use_errno=True)
     watch = libc.inotify_init1(0x800 | 0x80000)
     if watch < 0 or libc.inotify_add_watch(watch, str(report_path.parent).encode(), 0x8 | 0x80 | 0x100) < 0:
@@ -58,7 +59,7 @@ def main():
     if not pipeline['complete']:
         raise ValueError('Training pipeline did not pass its acceptance gates')
     exp = args.root / 'logs_omnidance/exp'
-    summary_path = exp / 'MS/music_text_train1800_neutral_v1/finished.json'
+    summary_path = Path(pipeline.get('formal_summary', str(exp / 'MS/music_text_train1800_neutral_v1/finished.json')))
     summary = json.loads(summary_path.read_text())
     checkpoint = Path(summary['best_checkpoint'])
     expected_sha = summary['selected_checkpoint_deployment']['checkpoint_sha256']

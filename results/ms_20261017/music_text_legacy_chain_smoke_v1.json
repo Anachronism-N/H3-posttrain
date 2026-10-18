@@ -1,0 +1,15 @@
+{
+  "legacy_full_chain": true,
+  "tail_shape": [
+    1,
+    5120
+  ],
+  "tail_norm": 272.4553527832031,
+  "metadata": {
+    "kind": "legacy_full_clip_chain_global_token",
+    "scale": 272.4553527832031,
+    "normalization_count": 1800
+  },
+  "coordinate_policy": "standardized_CLIP_direction_scaled_by_train_pooled_expected_norm_not_inverse_L2",
+  "checkpoint_sha256": "b20f4d9377615269098d7b115ffdcf3daa501df9998439e8a7edbb93d34fc314"
+}

@@ -1,0 +1,12 @@
+{
+  "complete": false,
+  "stages": [
+    {
+      "stage": "smallfit",
+      "exit_code": 1,
+      "log": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_smallfit_neutral_v1.log",
+      "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_smallfit_neutral_v1"
+    }
+  ],
+  "failure": "smallfit"
+}

@@ -176,6 +176,22 @@
 - 音乐隔离进程与H3共用GPU，新学生unit在完成TC前向并取安全图context后先offloadTC，再执行独立音乐进程，避免额外骨干冷加载OOM。原始图prefix输出保留，仍不通过caption查表。
 - 该阶段配置/管理队列已经建立，不等于真实训练结束。生成效果由后续三人物joint/aswap正确/错配/零音乐验证，不能拿teacher oracle/检索/token loss替代。
 
+### 用户要求复用旧完整链：免训练文本注入诊断
+- 不必等新adapter训练才验证旧权重。补做已训练MusicFM6000/lambda0/1875的完整encoder→32Dadapter→时间mean/std→CLIPhead→L2，最后全局输出作为一个5120文本token，图结构prefix保留，两路原生音频固定静音，学生不输入任何语义文字。
+- 旧checkpoint strict加载476个state项，包含adapter与head；N8真实全链自测通过，tail[1,5120]有限。训练1800文本mean/std估计pooled向量期望norm=272.4553528，用该单一全局尺度放大单位CLIP方向；没有inverse L2、没有逐token恢复、没有新训练恢复器。输出仍标准化CLIP方向而非原生rawhidden坐标，必须作为边界明确的诊断。
+- 原训练前向的池化/末端投影均真正执行；不复制该token成K条，既不检索caption也不读生成GT长度。不能预先断言有效或无效，也不能以单token失败否定原生逐token主线。
+- 工具管理AT358S在N2/N3/N6各GPU7串行三源人物joint/aswap六条；独立输出`val_musicreplace_text_legacy_fullclip_v1`。原Vrzqj3训练、OYdbCB后续生成继续，不取消已批准任务、不重复启动正常任务。
+
+### 真实small-fit失败与恢复（原日志保留）
+- 原Vrzqj3全2000教师文件SHA审计通过后，smallfit300实际运行但门禁exit1：训练长度MAE31.375>平均长度5%(20.875)，student/teacher能量比.0033186，rawMSE12.626仍接近zero目标能量13.855。正式训练未启动；OYdbCB因上游complete=false退出，未生成新模型视频。不是缓存损坏、也不是成功验收。
+- 保留v1全部metrics/log/checkpoints；RcB9Vp独立小集恢复对照：相同8train/8val，rawtokenMSE+length，cosine权重0，lr3e-4/1000更新，长度末端bias由train平均log长度初始化。多个优化因素一起调整，仅用作修复拟合，不单独宣称cosine是唯一根因。
+- 新增能量比≥.1门禁，原长度/改善/完整checkpoint/online门禁不降低。部署仍5120raw输出，teacher/student未加入身份文字；TC/DiT/骨干冻结不变。训练未通过不启动formal，不把更低cos loss当幅值对齐。
+
+### 小集修复实际通过并启动正式训练
+- RcB9Vp raw小集1000步exit0：train rawMSE5.50198、长度MAE0、能量比.405596；独立8val rawMSE5.68923、长度MAE102，不以小集验证代表正式泛化。参数变化包含cosine0/lr3e-4/更多更新/长度bias初始化，不能单归因cosine。
+- best/last完整checkpoint、所有adapter梯度、cached/online相对RMS1.5386e-6和预测长度385一致验收通过。正式NFcYQG已N5 GPU7启动1800train/200val、1875步、batch8、lr3e-4/cos0/train均log长度bias，公开骨干冻结eval；新目录`music_text_train1800_raw_neutral_v2`，未重启失败v1。加载/审计未结束时不把它称有效GPU更新完成。
+- 新生成followup读取明确formal_summary/新v2报告，旧失败OYdbCB不继续称存活，零音乐与三case输出树只在正式门禁通过后创建。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

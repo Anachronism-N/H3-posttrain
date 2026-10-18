@@ -37,6 +37,7 @@ p.add_argument("--audio_tail_mode", default="legacy", choices=["legacy", "repeat
 p.add_argument("--fixed_native_silence", action="store_true", help="Fixed 5.0625s silence for BOTH native audio conditions; original music is only muxed")
 p.add_argument("--music_text_ckpt", default="", help="Full trained MusicFM and raw text-token adapter; only music plus reference image, no caption lookup")
 p.add_argument("--music_text_zero_input", action="store_true", help="Zero music ONLY into the deployed text adapter; original audio is still muxed")
+p.add_argument('--music_text_legacy_clip', action='store_true', help='Use complete old encoder/adapter/CLIPhead as one scaled text token; no retraining')
 p.add_argument("--text_hidden_oracle", default="", help="Supervision-only JSON audio_id -> {prompt, source}; raw hidden tail replaces empty student text")
 p.add_argument("--text_oracle_cache_dir", default="", help="Existing new directory for oracle targets and strict condition-equivalence reports")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
@@ -66,8 +67,8 @@ if a.text_oracle_cache_dir and not a.text_hidden_oracle:
 if a.music_text_ckpt and (a.text_hidden_oracle or a.prompt_mode != 'empty' or not a.fixed_native_silence or
                          a.mode != 'bi' or a.cfg != 1):
     p.error('Music text deployment requires empty prompt, fixed native silence, bi CFG1 and no oracle')
-if a.music_text_zero_input and not a.music_text_ckpt:
-    p.error('Zero text-adapter music input requires a deployed music text checkpoint')
+if (a.music_text_zero_input or a.music_text_legacy_clip) and not a.music_text_ckpt:
+    p.error('Zero/legacy text-adapter input requires an explicit music text checkpoint')
 
 csv.field_size_limit(10 ** 9)
 E = "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp"
@@ -112,7 +113,7 @@ if a.music_text_ckpt:
     sys.path.insert(0, os.path.join(HERE, '..', 'ms'))
     from music_text_infer import student_text_embedder
     from music_text_condition import tensor_sha256
-    TEXT_STUDENT = student_text_embedder(a.music_text_ckpt)
+    TEXT_STUDENT = student_text_embedder(a.music_text_ckpt, legacy_clip=a.music_text_legacy_clip)
     matches = [i for i, unit in enumerate(pipe.units) if isinstance(unit, MiniMaxH3Unit_PromptEmbedder)]
     assert len(matches) == 1, 'Expected exactly one original prompt embedder'
     pipe.units[matches[0]] = TEXT_STUDENT
@@ -400,7 +401,7 @@ for c, r, dst in todo:
           music_encoder_ckpt=a.music_encoder_ckpt or None,
           native_audio_condition='fixed_silence' if a.fixed_native_silence else 'input_music',
           text_hidden_oracle=bool(TEXT_ORACLE), music_text_ckpt=a.music_text_ckpt or None,
-          music_text_zero_input=a.music_text_zero_input,
+          music_text_zero_input=a.music_text_zero_input, legacy_clip_complete_chain=a.music_text_legacy_clip,
           waveform_loader='music_clip_bridge.load_audio' if TEXT_STUDENT is not None else 'librosa')), flush=True)
     video = generate(prompt, img, wav, sr)
     write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)

@@ -216,6 +216,10 @@ def train_adapter(args):
     torch.manual_seed(args.seed)
     random.seed(args.seed)
     adapter = MusicTextAdapter(query_max).cuda()
+    if args.initialize_length_mean:
+        mean_log_length = sum(math.log(len(targets[sid]['tail'])) for sid in train) / len(train)
+        torch.nn.init.zeros_(adapter.length_head[-1].weight)
+        torch.nn.init.constant_(adapter.length_head[-1].bias, mean_log_length)
     wrapper = MusicToH3Text(backbone, adapter, freeze_backbone=True)
     teacher_energy = sum(float(targets[sid]['tail'].float().square().sum()) for sid in train) / sum(targets[sid]['tail'].numel() for sid in train)
     if not math.isfinite(teacher_energy) or teacher_energy <= 0:
@@ -231,7 +235,9 @@ def train_adapter(args):
                     student_caption_input=False, no_dit_video_loss=True, preprocessing=PREPROCESSING,
                     backbone_frozen_eval=True, steps=args.steps, batch_size=args.batch_size, lr=args.lr,
                     small_fit=args.small_fit, seed=args.seed,
-                    loss='raw_token_MSE/train_teacher_energy + cosine + log_length_MSE',
+                    loss='raw_token_MSE/train_teacher_energy + cosine_weight*cosine + length_weight*log_length_MSE',
+                    cosine_weight=args.cosine_weight, length_weight=args.length_weight,
+                    length_bias_from_train_mean=args.initialize_length_mean,
                     shared_final_projection=True, generate_uses_predicted_length=True)
     write_new(args.out / 'plan.json', protocol)
     gradient_checked = False
@@ -253,7 +259,7 @@ def train_adapter(args):
         wrapper.train()
         prediction, log_length = adapter(music, context, music_lengths, query_count=target.shape[1])
         stats = masked_token_loss(prediction, target, mask)
-        loss = stats['raw_mse'] / teacher_energy + stats['cosine_loss'] + length_loss(log_length, lengths, query_max)
+        loss = stats['raw_mse'] / teacher_energy + args.cosine_weight * stats['cosine_loss'] + args.length_weight * length_loss(log_length, lengths, query_max)
         if not torch.isfinite(loss):
             raise ValueError('Nonfinite training loss')
         optimizer.zero_grad(set_to_none=True)
@@ -276,7 +282,7 @@ def train_adapter(args):
         if step % args.eval_every == 0 or step == args.steps:
             metric = evaluate(adapter, val, targets, features, args.batch_size, teacher_energy)
             fit_metric = evaluate(adapter, train[:min(32, len(train))], targets, features, args.batch_size, teacher_energy)
-            score = metric['raw_mse'] / teacher_energy + metric['cosine_loss'] + metric['log_length_mse']
+            score = metric['raw_mse'] / teacher_energy + args.cosine_weight * metric['cosine_loss'] + args.length_weight * metric['log_length_mse']
             record = dict(step=step, val=metric, train_probe=fit_metric, seconds=time.monotonic() - started)
             history.append(record)
             write_new(args.out / f'metrics_step{step}.json', record)
@@ -292,7 +298,8 @@ def train_adapter(args):
         length_tolerance = max(2., 0.05 * sum(len(targets[sid]['tail']) for sid in train) / len(train))
         if (final_probe['raw_mse'] >= initial_probe['raw_mse']
                 or final_probe['length_mae'] > length_tolerance
-                or final_probe['log_length_mse'] >= initial_probe['log_length_mse']):
+                or final_probe['log_length_mse'] >= initial_probe['log_length_mse']
+                or final_probe['student_teacher_energy_ratio'] < 0.1):
             raise ValueError('Small-fit token or length regression failed; refuse formal-training acceptance')
     wrapper.eval()
     final_path = args.out / 'last.pt'
@@ -368,9 +375,14 @@ def main():
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--small_fit', type=int, default=0)
     parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--cosine_weight', type=float, default=1.0)
+    parser.add_argument('--length_weight', type=float, default=1.0)
+    parser.add_argument('--initialize_length_mean', action='store_true', help='Train-only log length bias initialization, no GT at inference')
     args = parser.parse_args()
     if (args.batch_size < 1 or args.steps < 1 or args.eval_every < 1 or not 0 <= args.shard < args.nshard
-            or args.max_items < 0 or args.small_fit < 0 or not math.isfinite(args.lr) or args.lr <= 0):
+            or args.max_items < 0 or args.small_fit < 0 or not math.isfinite(args.lr) or args.lr <= 0
+            or not math.isfinite(args.cosine_weight) or args.cosine_weight < 0
+            or not math.isfinite(args.length_weight) or args.length_weight <= 0):
         parser.error('Invalid training/cache arguments')
     torch.set_num_threads(2)
     if args.stage == 'features':

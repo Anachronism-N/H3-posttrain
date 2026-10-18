@@ -109,7 +109,69 @@ def wait_for_target_shards(directories, manager_pid):
         __import__('os').close(pidfd)
 
 
+def prepare_online_bundle_main():
+    import os
+    import torch
+    from concurrent.futures import ThreadPoolExecutor
+    from music_text_align import read_split, write_new
+    from music_clip_bridge import load_audio
+    from music_encoder_adapter import AUDIO_ROOT
+    parser = argparse.ArgumentParser(description='Verified teacher labels and raw waveforms for online MusicFM')
+    parser.add_argument('--prepare_online_bundle', action='store_true', required=True)
+    parser.add_argument('--source_bundle', type=Path, required=True)
+    parser.add_argument('--split', type=Path, required=True)
+    parser.add_argument('--init', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if args.out.exists() or args.out.with_suffix('.json').exists() or not args.out.parent.is_dir():
+        parser.error('Require new bundle/report and an existing parent')
+    torch.set_num_threads(2)
+    report = json.loads(args.source_bundle.with_suffix('.json').read_text())
+    source_sha = digest(args.source_bundle)
+    if not report['complete'] or source_sha != report['sha256']:
+        raise ValueError('Source teacher bundle fails SHA validation')
+    source = torch.load(args.source_bundle, map_location='cpu', weights_only=True)
+    train, val = read_split(args.split)
+    initial_sha = digest(args.init)
+    old = source['metadata']
+    if (old['split_sha256'] != digest(args.split) or old['init_sha256'] != initial_sha
+            or old['train_ids'] != train or old['val_ids'] != val
+            or set(source['targets']) != set(train + val)):
+        raise ValueError('Original audited teacher bundle does not match initialization/split')
+    # The frozen music features must not survive into the online training bundle.
+    source.pop('features')
+    waveforms, rows = {}, []
+    def read(sid):
+        path = AUDIO_ROOT / (sid + '.wav')
+        waveform, _ = load_audio(sid)
+        return sid, waveform, dict(sample_id=sid, source_path=str(path), source_sha256=digest(path),
+             waveform_sha256=__import__('hashlib').sha256(waveform.contiguous().numpy().tobytes()).hexdigest())
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        for index, (sid, waveform, row) in enumerate(executor.map(read, train + val), 1):
+            waveforms[sid] = waveform
+            rows.append(row)
+            if index % 100 == 0:
+                print(json.dumps(dict(event='online_waveform_cache', count=index, expected=len(train + val))), flush=True)
+    metadata = dict(format_version=1, split_sha256=digest(args.split), init_sha256=initial_sha,
+                    train_ids=train, val_ids=val, source_teacher_bundle_sha256=source_sha,
+                    query_max=old['query_max'], student_feature_cache_used=False,
+                    waveform_loader='music_clip_bridge.load_audio', waveform_shape=[2, 162000],
+                    waveform_dtype='float32', waveform_rows=rows,
+                    loader_source_sha256=digest(Path(__file__).with_name('music_clip_bridge.py')))
+    bundle = dict(metadata=metadata, targets=source['targets'], waveforms=waveforms,
+                  mean=source['mean'], std=source['std'], position_mean=source['position_mean'],
+                  teacher_energy=source['teacher_energy'], protocols=source['protocols'])
+    write_new(args.out, bundle, binary=True)
+    result = dict(complete=True, path=str(args.out), sha256=digest(args.out), count=len(waveforms),
+                  teacher_source_sha256=source_sha, init_sha256=initial_sha,
+                  student_feature_cache_used=False, waveform_rows=rows)
+    write_new(args.out.with_suffix('.json'), result)
+    print(json.dumps(dict(event='online_bundle_ready', complete=True, path=str(args.out), sha256=result['sha256'])), flush=True)
+
+
 def main():
+    if '--prepare_online_bundle' in __import__('sys').argv:
+        return prepare_online_bundle_main()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--cache_manager_pid', type=int, required=True)

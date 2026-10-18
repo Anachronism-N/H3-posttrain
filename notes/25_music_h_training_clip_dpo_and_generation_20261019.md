@@ -237,3 +237,30 @@ env CUDA_VISIBLE_DEVICES=0 \
 raw H 路径要求 `empty`、`bi`、`cfg=1`、固定 native 静音和 `repeat_clean`，不同时启用旧音频 checkpoint、音乐 guidance、LoRA 或教师 oracle。`--music_text_legacy_clip` 是旧单 token 诊断路径，不是本方案的 raw H 序列部署。[实际参数与组合检查](https://github.com/Anachronism-N/H3-posttrain/blob/5fa2be623511eb232db60793de3f142c948258c7/scripts_omnidance/exp/h3ar/sample_h3_ar.py#L15-L71)
 
 生成过程只运行音乐学生和冻结 H3，不计算 CLIP 损失。推理不需要动作描述；对比学习的作用已经保存在训练后的学生权重中。
+
+## 2026-10-19 执行接续：在线联合入口已实现，真实验收进行中
+
+本节更新上文“待实现”的状态，不删除旧代码基准和历史负结果。拉取文档提交`013f236`后，已实现以下代码；截至本次记录，真实A/B小集验收已启动，正式100步和视频尚未完成。
+
+- `music_text_adapter.py`：新增`configure_online_training(bool)`与可微`student_condition(waveform, context, waveform_lengths=None)`。学生全qmax输出并自行产生length/mask/tails；generate共用该构造。B只训练实际执行的`model.conv`、`model.conformer.layers`、`model.conformer.layer_norm`；A全部音乐骨干冻结。两组完整adapter可训，骨干保持eval，固定BN running统计并关闭随机层；B的dense BN affine可训。未调用的pos_conv_embed/SSL/cls/quantizer不计为训练参数。
+- 新A/B协议统一FP32，禁autocast和历史冻结特征FP16往返。V2完整checkpoint保存scope、BN/随机层/精度、有效token规则、必要buffers及未注册的MusicFM mel mean/std；加载时恢复scope再核对requires_grad参数统计，严格检查state/dtype/shape/finite。旧v1历史checkpoint继续按原协议加载、保持已有输出行为。
+- `music_text_contrastive.py --online`：在线waveform三音乐分支共同反传，教师mask仅回归、学生预测有效mask与teacher mask分别取最多64token计算序列score。raw MSE按整有效batch的teacher有效tokens累计，length/NCE按样本累计，microbatch不改变目标。优化器分组默认bone1e-5/adapter1e-4；未增加DPO、DiT或video loss。
+- `music_text_pipeline.py --prepare_online_bundle`：校验旧数值bundle/split/init SHA，仅复用冻结教师和train统计，明确移除旧音乐features；读取共享loader的真实波形，缓存`[2,162000]`FP32输入及源文件/波形hash。缓存波形不是缓存可训练骨干的输出。
+- `music_text_cache.py --audit_student_context`：重跑空语义TC，对旧教师缓存末行context直接比较，不以形状或两次新前向替代。3train+1val实际检查均exact、RMS0，prefix IDs/tags一致；这是4个选定参考的数值验证，不冒称2000条全比较。
+- `music_text_infer.py --layout_audit`：将可微学生的保存probe与独立实际music proxy输出比较，再调用同一`replace_tail`和原生`PackedSequenceBuilder`比较完整prefix/tags/位置布局。无caption/GTlength进入学生；该审计不计算视频损失或宣称生成质量。
+
+CPU独立掩码评分、无效token不影响score、有限非零梯度与微批loss/gradient等价通过。共享模块CPU fake测试覆盖A/Bscope/BN、train/eval、FP32、完整V2重载/异常拒绝；直接由旧模块生成的9类v1测试也通过。但这些不代替真实MusicFM骨干更新和H3部署验收。
+
+当前真实验收在一基N5 `28.216.19.137` GPU6/7并行：A/B各4个训练样本、3次更新、有效batch4/micro2，独立新输出`music_text_online_smoke_A_v1`和`music_text_online_smoke_B_v1`，完整日志保留；前述context审计在N2 GPU7已正确结束。波形/教师bundle在N5本地`/tmp/music_text_online_inputs_v1.pt`，不上传数值PT。两组同源初始化为原raw H回归完整checkpoint SHA `cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc`，不是旧32D音频adapter，也不是用不同骨干缓存作对照。
+
+真实验收后首阶段拟定A/B各100步、有效batch8/micro2、同样本顺序和1800/200、上述学习率/损失/学生长度规则，完成200val和完整重载，再直接生成各固定3人物joint/aswap。先看实际视频再决定继续300步/原预算，不用表示指标阻止用户授权诊断、不自动扩人物或扫描损失。技术失败先修复并保存原失败，正式训练和视频结果按实际完成状态接续发布。
+
+### 实际小集梯度与部署验收完成
+
+A/B各3更新、12曝光均exit0。B实际dense骨干为316,343,296参数/400个tensor，首步400个tensor梯度均有限且非零，组梯度norm1.606665；完整adapter4,966,657参数/42tensor，梯度norm25.184543。B骨干400tensor与adapter42tensor实际权重变化；A骨干0tensor变化、adapter42变化。两组冻结参数和所有persistent buffers（含BN running统计）均未改变。
+
+两组可微训练前向与eval的raw H/log_length/自身length/mask逐值相同，完整V2重载逐值相同，独立音乐环境部署tail逐值相同。小集的表示/长度诊断仍不能当作泛化或舞蹈效果。实测优化区间A1.151s、B2.439s，不包含输入读入、前后验证、checkpoint/部署审计；任务总时长不能冒充GPU训练时长。B峰值11,881,811,968bytes约11.07GiB，无AMP、未以显存为理由冻结骨干。
+
+完整报告位于`results/ms_20261017/music_text_online_smoke_{A,B}_v1.json`及`music_text_online_smoke_{A,B}_weight_audit_v1.json`，context报告为`music_text_online_context_audit_v1.json`。waveform/teacher本地bundle SHA`ced68f1b921a0e529bded7de7d8f2f1d5a68778a1935668994470f852397ce8f`，完整源音轨/输入波形hash元数据另存`music_text_online_waveform_bundle_v1.json`，不发布数值PT。
+
+随后已启动每GPU原生H3 prefix/tags/packed审计→100步的工具管理串行接续；只有技术布局检查通过才进入正式训练，布局检查不是研究质量门槛。正式新目录`music_text_online_A_s100_v1`/`music_text_online_B_s100_v1`；截至本条小集记录，100步和新视频尚未验收，后续以真实产物更新。

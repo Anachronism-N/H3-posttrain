@@ -101,7 +101,63 @@ def student_text_embedder(checkpoint, legacy_clip=False):
     return StudentTextTailEmbedder()
 
 
+def layout_audit_main():
+    from types import SimpleNamespace
+    from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PackedSequenceBuilder
+    from music_text_condition import replace_tail, write_new, tensor_sha256
+    parser = argparse.ArgumentParser(description='Shared student tail and actual H3 text/packed layout audit')
+    parser.add_argument('--layout_audit', action='store_true', required=True)
+    parser.add_argument('--checkpoint', type=Path, required=True)
+    parser.add_argument('--probe', type=Path, required=True)
+    parser.add_argument('--prefix', type=Path, required=True)
+    parser.add_argument('--reference_target', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if args.out.exists() or not args.out.parent.is_dir():
+        parser.error('Require a new layout audit report')
+    probe = torch.load(args.probe, map_location='cpu', weights_only=True)
+    prefix_record = torch.load(args.prefix, map_location='cpu', weights_only=True)
+    target = torch.load(args.reference_target, map_location='cpu', weights_only=True)
+    if probe['checkpoint_sha256'] != sha256(args.checkpoint):
+        raise ValueError('Probe checkpoint changed')
+    if not torch.equal(prefix_record['context'].float(), probe['context'].float()):
+        raise ValueError('Actual empty-prefix context differs from training/deployment probe')
+    proxy = MusicTextEncodingProxy(args.checkpoint)
+    deployed_tail = proxy(probe['waveform'], prefix_record['context'])
+    if not torch.equal(probe['tail'], deployed_tail):
+        raise ValueError('Training/evaluation tail differs from actual H3 music proxy')
+    expected = replace_tail(prefix_record['prefix'], prefix_record['prefix_tags'], probe['tail'])
+    actual = replace_tail(prefix_record['prefix'], prefix_record['prefix_tags'], deployed_tail)
+    if any(not torch.equal(expected[key], actual[key]) for key in expected):
+        raise ValueError('Packed text input is not the same raw student condition')
+    width, height = target['metadata']['prepared_image_size']
+    ref_blocks = [dict(kind='image', latent_t=1, latent_h=height // 16, latent_w=width // 16, ref_audio_t=0),
+                  dict(kind='audio', ref_audio_t=203)]
+    video = torch.empty(1, 24, ((124 - 5) // 17) * 5 + 2, 1280 // 16, 704 // 16)
+    audio = torch.empty(2, 32, round(124 / 24 * 40))
+    builder = MiniMaxH3Unit_PackedSequenceBuilder()
+    packed = []
+    for condition in (expected, actual):
+        packed.append(builder.process(SimpleNamespace(device='cpu'), video_latents=video, audio_latents=audio,
+                      ref_blocks=ref_blocks, **condition)['packed'])
+    if set(packed[0]) != set(packed[1]) or any(
+            not torch.equal(packed[0][key], packed[1][key]) if torch.is_tensor(packed[0][key])
+            else packed[0][key] != packed[1][key] for key in packed[0]):
+        raise ValueError('Actual H3 PackedSequenceBuilder layout differs')
+    report = dict(complete=True, checkpoint_sha256=sha256(args.checkpoint),
+        actual_empty_tc_prefix_used=True, student_reads_caption_or_target_length=False,
+        proxy_tail_exact=True, prompt_embeds_tags_exact=True, original_packed_builder_exact=True,
+        prefix_length=len(prefix_record['prefix']), student_length=len(deployed_tail),
+        packed_sha256={key: tensor_sha256(value) for key, value in packed[0].items() if torch.is_tensor(value)},
+        reference_prepared_size=[width, height], video_shape=list(video.shape), audio_shape=list(audio.shape),
+        scope='Actual frozen prefix plus shared student condition and original H3 packed layout; no DiT prediction loss or video quality claim')
+    write_new(args.out, report)
+    print(json.dumps(dict(event='h3_layout_audit', **report)), flush=True)
+
+
 def main():
+    if '--layout_audit' in __import__('sys').argv:
+        return layout_audit_main()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--checkpoint', type=Path, required=True)
     parser.add_argument('--checkpoint_sha256', required=True)

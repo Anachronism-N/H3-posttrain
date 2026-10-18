@@ -6,7 +6,9 @@
 
 目标是训练音乐encoder的实际dense骨干＋完整raw H adapter，让配乐在只输入音乐和参考图时承担H3原动作文本的控制作用。音乐输出接原生文本encoder的输出hidden侧，再进入冻结DiT的文本条件入口；不是让音乐重新经过文本encoder，也不是检索/生成动作文字后提示H3。H3文本encoder、DiT及VAE保持冻结，音乐骨干必须参与训练。训练、验证、部署的学生条件仅依赖音乐/参考图，共享全量query输出、自身预测长度、截取、prefix/tags及packed构造。教师caption/长度只作监督，不决定学生实际条件。
 
-截至本次纠正，既有H文本侧实验仍是adapter-only且视频效果为负；在线骨干训练与统一学生条件的新实现尚未完成，尚未启动新训练。新增DiT/video/生成预测loss仍需单独明确授权。
+截至2026-10-18本次纠正，既有H文本侧实验仍是adapter-only且视频效果为负；当时在线骨干训练与统一学生条件的新实现尚未完成。新增DiT/video/生成预测loss仍需单独明确授权。
+
+**2026-10-19执行接续：** 拉取`013f236`新增说明后，在线骨干＋完整adapter、预测有效区间共享及V2完整checkpoint已实现。3train+1val空语义图context逐值审计、A/B真实4样本3更新梯度/权重变化、独立部署及原生prefix/tags/packed验收已通过；B实际400个dense骨干tensor更新，A骨干不变。A/B同起点100步对照正在推进，尚不称新视频效果完成。完整代码入口、协议、实测与后续结果见`notes/25_music_h_training_clip_dpo_and_generation_20261019.md`执行接续节及`results/ms_20261017/music_text_online_*`报告，旧阶段负结果保留。
 
 ## 用户确认的范围
 - 当前改用专用音乐 encoder，视频生成也使用同一个微调 encoder；不是只算CLIP分数，也不是额外MERT残差注入。

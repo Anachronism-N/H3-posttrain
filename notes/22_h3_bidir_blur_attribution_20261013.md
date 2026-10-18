@@ -1255,3 +1255,15 @@ B组检查实际dense bone/adapter有限非零梯度与实际权重变化；A组
 待判别项包括固定音乐特征的语义可塑性、逐词MSE平均化、soft-Chamfer词序缺失、预测尾部/packed长度、图context捷径及参考人物保真；没有证据支持某项是唯一根因，也不保证解冻必然解决。音乐侧表示改善而视频仍失败时，才讨论冻结DiT预测一致性等更直接的行为监督；新增DiT/video/生成预测loss仍需单独明确授权，本次没有加入。
 
 **本次实际范围：** 完成源码只读核查、目标复述、纠正分析和既有文档更新；在线骨干与共享学生条件新代码、实际梯度更新及新训练/视频均未完成/未运行。文档发布不是训练完成，整体音乐替代文本编舞目标仍未达成。完整修正方案见plans/music_encoder_replacement_20261016.md的同日纠正节；历史负结果和用户反馈不删除。
+
+### 28.24 拉取最新方案并实际在线联合训练（2026-10-19，执行中）
+
+用户要求拉取GitHub最新文档并推进。已fast-forward至`013f236`新增notes/25，按其范围实施在线MusicFM实际dense骨干＋完整adapter，保留raw回归、log长度和双真实负例序列InfoNCE；不做DPO、不加DiT/video loss。新增可微学生全qmax/自身length/mask/tails，共用generate；A/B同FP32、无冻结features往返、骨干eval但B参数可训。V2保存完整state/buffers、dense scope、BN/随机层/精度/学生条件规则及MusicFM未注册mel stats，旧v1实际输出保持。
+
+原始教师缓存context与重跑空语义TC的3train+1val全部exact/RMS0，prefix IDs/tags一致。新N5本地bundle仅含冻结teacher/train统计和共享loader波形，不含student dense features；完整源轨/波形SHA及bundle SHA`ced68f1b921a0e529bded7de7d8f2f1d5a68778a1935668994470f852397ce8f`发布元数据，数值PT不上传。两组共同完整init为原raw回归SHA`cbb79c6338c2673d0c2f650a14da815234894055ffc14f0a56f1ec1afd1750fc`。
+
+真实A/B小集各4train/4val、3更新/12曝光exit0。B实际dense316,343,296参数/400tensor、adapter4,966,657参数/42tensor，首步各tensor梯度有限非零，两个组norm1.606665/25.184543；B400bone＋42adapter更新，A0bone＋42adapter更新，冻结参数和所有persistent buffers/BN统计不变。两组可微train/eval raw/log/自身length/mask、完整重载及独立音乐进程tail逐值一致。随后以真实空prefix、共享tail和原PackedSequenceBuilder审计prompt/tags/位置布局均exact；这不是逐步DiT训练或新视频效果。实测B优化2.439s、峰值11.07GiB，仅小集优化区间不包含IO/验证/重载。
+
+已接续一基N5 28.216.19.137 GPU6/7的A/B100步同起点对照，有效batch8/micro2、同seed/order/split1800–200、bone1e-5/adapter1e-4、双真实负例（不同ID/caption hash，不冒称验证源歌曲互异）；rawMSE按有效tokens累计，length/NCE按样本累计，修复微批划分会改变MSE目标的问题。正式全200val及完整部署完成后直接生成固定三人物joint/aswap，必要zero同三图，再看是否继续300/原预算。当前尚不宣称新视频完成或音乐编舞改善；技术布局准入与研究质量门槛分开，不再以表示指标挡推理。
+
+完整实现/指标/边界持续记录notes/25执行接续节，报告为results/ms_20261017/music_text_online_context_audit_v1.json、music_text_online_smoke_{A,B}_v1.json及对应weight/layout审计；训练/生成队列使用工具管理SSH前台子进程，不改活跃源码、不覆盖旧结果，实际GPU计算与holder分开。

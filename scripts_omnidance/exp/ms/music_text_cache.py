@@ -36,7 +36,84 @@ def target_prompt(entry, neutral_teacher=False):
     return neutralize_gender_pronouns(prompt)[0] if neutral_teacher else prompt
 
 
+def audit_student_context_main():
+    from music_text_condition import difference
+    parser = argparse.ArgumentParser(description='Actual empty-prefix/context parity against cached teacher supervision')
+    parser.add_argument('--audit_student_context', action='store_true', required=True)
+    parser.add_argument('--split', type=Path, required=True)
+    parser.add_argument('--targets', type=Path, nargs='+', required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--w', type=Path, default=Path('/dev/shm/h3/Ref2VA'))
+    args = parser.parse_args()
+    if args.out.exists() or not args.out.parent.is_dir():
+        parser.error('Require a new audit directory with existing parent')
+    split = json.loads(args.split.read_text())
+    names = split['train'][:3] + split['val'][:1]
+    records = {}
+    for directory in args.targets:
+        finished = json.loads((directory / 'finished.json').read_text())
+        if not finished['complete'] or finished['source']['split_sha256'] != sha256(args.split):
+            raise ValueError('Target protocol/split mismatch')
+        for row in finished['rows']:
+            if row['sample_id'] in names:
+                if sha256(row['path']) != row['file_sha256']:
+                    raise ValueError('Teacher target changed')
+                records[row['sample_id']] = torch.load(row['path'], map_location='cpu', weights_only=True)
+    if set(records) != set(names):
+        raise ValueError('Missing selected train/val teacher records')
+    weights = sorted(glob.glob(str(args.w / 'text_encoder/model*.safetensors')))
+    if not weights:
+        raise FileNotFoundError(args.w / 'text_encoder')
+    vram = dict(offload_dtype=torch.bfloat16, offload_device='cuda', onload_dtype=torch.bfloat16,
+                onload_device='cuda', preparing_dtype=torch.bfloat16, preparing_device='cuda',
+                computation_dtype=torch.bfloat16, computation_device='cuda')
+    pipe = MiniMaxH3Pipeline.from_pretrained(torch_dtype=torch.bfloat16, device='cuda',
+        model_configs=[ModelConfig(path=weights, **vram)],
+        processor_config=ModelConfig(path=str(args.w / 'processor')))
+    pipe.text_encoder.requires_grad_(False).eval()
+    prompt_unit, reference_unit = MiniMaxH3Unit_PromptEmbedder(), MiniMaxH3Unit_ReferenceEncoder()
+    args.out.mkdir()
+    rows = []
+    with torch.no_grad():
+        for sid in names:
+            target = records[sid]
+            metadata = target['metadata']
+            image_path = Path(metadata['image_path'])
+            if sha256(image_path) != metadata['image_sha256']:
+                raise ValueError('Training reference image changed')
+            with Image.open(image_path) as image:
+                width, height = reference_unit._resolve_reference_image_shape(pipe, *image.size, 2048)
+                prepared = image.convert('RGB').resize((width, height), Image.LANCZOS)
+            ref_blocks = [dict(kind='image', prepared_image=prepared, ref_audio_t=0),
+                          dict(kind='audio', ref_audio_t=203)]
+            input_ids, tags = prompt_unit.preprocess_ref_blocks(pipe, ' ', ref_blocks)[:2]
+            lp = prefix_length(pipe.tokenizer, ' ', input_ids)
+            if (lp != metadata['prefix_length'] or not torch.equal(input_ids[:lp].cpu(), target['token_ids'][:lp])
+                    or not torch.equal(tags[:lp].cpu(), target['prefix_tags'])):
+                raise ValueError('Student reference structure differs from cached teacher prefix')
+            encoded = prompt_unit.process(pipe, ' ', ref_blocks=ref_blocks)
+            context = encoded['prompt_embeds'][lp - 1].cpu().clone()
+            diff = difference(context, target['prefix_context'])
+            if diff['relative_rms'] > 0.002:
+                raise ValueError('Empty student context differs from cached teacher: ' + sid)
+            # Preserve only frozen structural evidence; no caption is read by the student forward.
+            write_new(args.out / (sid + '.pt'), dict(prefix=encoded['prompt_embeds'][:lp].cpu(),
+                       prefix_tags=encoded['text_token_tags'][:lp].cpu(), context=context,
+                       cached_context=target['prefix_context'], sample_id=sid), binary=True)
+            rows.append(dict(sample_id=sid, partition='train' if sid in split['train'] else 'val',
+                             prefix_length=lp, context_difference=diff,
+                             prefix_ids_tags_exact=True, student_semantic_prompt=' '))
+            print(json.dumps(dict(event='student_context_audit', **rows[-1])), flush=True)
+    report = dict(complete=True, rows=rows, selected_train=3, selected_validation=1,
+                  actual_frozen_tc_encoding=True, student_reads_caption=False,
+                  split_sha256=sha256(args.split), scope='Four selected references, not all2000 context numerical comparisons')
+    write_new(args.out / 'finished.json', report)
+    print(json.dumps(dict(event='student_context_audit_finished', **report)), flush=True)
+
+
 def main():
+    if '--audit_student_context' in sys.argv:
+        return audit_student_context_main()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--caps', type=Path, required=True)
     parser.add_argument('--split', type=Path, required=True)

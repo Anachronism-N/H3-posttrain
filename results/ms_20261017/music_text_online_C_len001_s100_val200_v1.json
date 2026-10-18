@@ -1,0 +1,5627 @@
+{
+  "candidates": 200,
+  "macro": {
+    "correct_minus_wrong_score": 2.4509087670594453e-05,
+    "correct_minus_second_score": 3.44857876189053e-05,
+    "correct_minus_zero_score": -4.045861423946917e-06,
+    "tie_aware_top1": 0.395,
+    "raw_mse": 5.469632997512817,
+    "wrong_raw_mse": 5.469644041061401,
+    "zero_raw_mse": 5.470385468006134,
+    "position_mean_mse": 4.815057752132415,
+    "correct_wrong_output_rms": 0.004719568142900243,
+    "length_absolute_error": 155.885,
+    "correct_beats_wrong_fraction": 0.555,
+    "correct_beats_second_fraction": 0.56,
+    "raw_mse_tokenweighted": 5.320157930361712,
+    "wrong_mse_tokenweighted": 5.320174256837657,
+    "zero_mse_tokenweighted": 5.32101540998154,
+    "student_teacher_energy_ratio": 0.4798793982474998
+  },
+  "cases": [
+    {
+      "sample_id": "QcXTBHnhvaKIOlgH",
+      "wrong_audio_id": "jjbVPUiAEdcYRjic",
+      "second_audio_id": "IXmBxDjgTTPyPupp",
+      "target_length": 212,
+      "predicted_lengths": [
+        219,
+        215,
+        228
+      ],
+      "zero_length": 204,
+      "scores": [
+        0.02746874839067459,
+        0.027542632073163986,
+        0.027602529153227806
+      ],
+      "zero_score": 0.027228374034166336,
+      "correct_minus_wrong_score": -7.388368248939514e-05,
+      "correct_minus_second_score": -0.00013378076255321503,
+      "correct_minus_zero_score": 0.000240374356508255,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.947904109954834,
+      "wrong_raw_mse": 5.947874069213867,
+      "zero_raw_mse": 5.948326110839844,
+      "position_mean_mse": 5.0876007080078125,
+      "correct_wrong_output_rms": 0.0035253281239420176,
+      "length_absolute_error": 7
+    },
+    {
+      "sample_id": "jjbVPUiAEdcYRjic",
+      "wrong_audio_id": "IXmBxDjgTTPyPupp",
+      "second_audio_id": "QwVJhdbZVPpjmywK",
+      "target_length": 670,
+      "predicted_lengths": [
+        384,
+        399,
+        394
+      ],
+      "zero_length": 374,
+      "scores": [
+        0.01033228263258934,
+        0.010240184143185616,
+        0.010504440404474735
+      ],
+      "zero_score": 0.010127329267561436,
+      "correct_minus_wrong_score": 9.209848940372467e-05,
+      "correct_minus_second_score": -0.00017215777188539505,
+      "correct_minus_zero_score": 0.0002049533650279045,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.029067039489746,
+      "wrong_raw_mse": 5.029133319854736,
+      "zero_raw_mse": 5.02962589263916,
+      "position_mean_mse": 4.5644330978393555,
+      "correct_wrong_output_rms": 0.003936586901545525,
+      "length_absolute_error": 286
+    },
+    {
+      "sample_id": "IXmBxDjgTTPyPupp",
+      "wrong_audio_id": "QwVJhdbZVPpjmywK",
+      "second_audio_id": "kvcHuOOYJxBeqtrn",
+      "target_length": 398,
+      "predicted_lengths": [
+        326,
+        319,
+        288
+      ],
+      "zero_length": 285,
+      "scores": [
+        0.0028999370988458395,
+        0.002714927773922682,
+        0.002732211025431752
+      ],
+      "zero_score": 0.0027632638812065125,
+      "correct_minus_wrong_score": 0.0001850093249231577,
+      "correct_minus_second_score": 0.0001677260734140873,
+      "correct_minus_zero_score": 0.00013667321763932705,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.219629764556885,
+      "wrong_raw_mse": 5.219393253326416,
+      "zero_raw_mse": 5.2201714515686035,
+      "position_mean_mse": 4.681965351104736,
+      "correct_wrong_output_rms": 0.005520828999578953,
+      "length_absolute_error": 72
+    },
+    {
+      "sample_id": "QwVJhdbZVPpjmywK",
+      "wrong_audio_id": "kvcHuOOYJxBeqtrn",
+      "second_audio_id": "ehzWvMBzMXeQGkDc",
+      "target_length": 540,
+      "predicted_lengths": [
+        350,
+        316,
+        399
+      ],
+      "zero_length": 318,
+      "scores": [
+        0.013201202265918255,
+        0.013149936683475971,
+        0.013279303908348083
+      ],
+      "zero_score": 0.012896336615085602,
+      "correct_minus_wrong_score": 5.126558244228363e-05,
+      "correct_minus_second_score": -7.810164242982864e-05,
+      "correct_minus_zero_score": 0.00030486565083265305,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.148724555969238,
+      "wrong_raw_mse": 5.148843288421631,
+      "zero_raw_mse": 5.149855136871338,
+      "position_mean_mse": 4.67077112197876,
+      "correct_wrong_output_rms": 0.003652248764410615,
+      "length_absolute_error": 190
+    },
+    {
+      "sample_id": "kvcHuOOYJxBeqtrn",
+      "wrong_audio_id": "ehzWvMBzMXeQGkDc",
+      "second_audio_id": "bBZCXXgxQNRPKUlN",
+      "target_length": 287,
+      "predicted_lengths": [
+        241,
+        305,
+        231
+      ],
+      "zero_length": 238,
+      "scores": [
+        0.013395853340625763,
+        0.013583777472376823,
+        0.013847533613443375
+      ],
+      "zero_score": 0.013374868780374527,
+      "correct_minus_wrong_score": -0.00018792413175106049,
+      "correct_minus_second_score": -0.0004516802728176117,
+      "correct_minus_zero_score": 2.0984560251235962e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.652308940887451,
+      "wrong_raw_mse": 5.651933193206787,
+      "zero_raw_mse": 5.6530046463012695,
+      "position_mean_mse": 4.906703948974609,
+      "correct_wrong_output_rms": 0.003945584408938885,
+      "length_absolute_error": 46
+    },
+    {
+      "sample_id": "ehzWvMBzMXeQGkDc",
+      "wrong_audio_id": "bBZCXXgxQNRPKUlN",
+      "second_audio_id": "ieuIDFuuJZZzUhVy",
+      "target_length": 361,
+      "predicted_lengths": [
+        291,
+        225,
+        227
+      ],
+      "zero_length": 232,
+      "scores": [
+        -0.015106931328773499,
+        -0.014858363196253777,
+        -0.014956187456846237
+      ],
+      "zero_score": -0.014838030561804771,
+      "correct_minus_wrong_score": -0.000248568132519722,
+      "correct_minus_second_score": -0.00015074387192726135,
+      "correct_minus_zero_score": -0.0002689007669687271,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.5960493087768555,
+      "wrong_raw_mse": 5.596625328063965,
+      "zero_raw_mse": 5.597161293029785,
+      "position_mean_mse": 5.0027875900268555,
+      "correct_wrong_output_rms": 0.006286272779107094,
+      "length_absolute_error": 70
+    },
+    {
+      "sample_id": "bBZCXXgxQNRPKUlN",
+      "wrong_audio_id": "ieuIDFuuJZZzUhVy",
+      "second_audio_id": "BUXDbLroiJqnKLWi",
+      "target_length": 400,
+      "predicted_lengths": [
+        235,
+        237,
+        236
+      ],
+      "zero_length": 241,
+      "scores": [
+        0.015191776677966118,
+        0.015050375834107399,
+        0.015237104147672653
+      ],
+      "zero_score": 0.01499736588448286,
+      "correct_minus_wrong_score": 0.00014140084385871887,
+      "correct_minus_second_score": -4.532746970653534e-05,
+      "correct_minus_zero_score": 0.0001944107934832573,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.408171653747559,
+      "wrong_raw_mse": 5.407927989959717,
+      "zero_raw_mse": 5.408724784851074,
+      "position_mean_mse": 4.772130966186523,
+      "correct_wrong_output_rms": 0.004335006698966026,
+      "length_absolute_error": 165
+    },
+    {
+      "sample_id": "ieuIDFuuJZZzUhVy",
+      "wrong_audio_id": "BUXDbLroiJqnKLWi",
+      "second_audio_id": "yXqscaiNWULCQxfB",
+      "target_length": 466,
+      "predicted_lengths": [
+        331,
+        330,
+        349
+      ],
+      "zero_length": 343,
+      "scores": [
+        0.023912904784083366,
+        0.024009065702557564,
+        0.023690374568104744
+      ],
+      "zero_score": 0.02397219091653824,
+      "correct_minus_wrong_score": -9.616091847419739e-05,
+      "correct_minus_second_score": 0.00022253021597862244,
+      "correct_minus_zero_score": -5.928613245487213e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.356297016143799,
+      "wrong_raw_mse": 5.356306076049805,
+      "zero_raw_mse": 5.356762409210205,
+      "position_mean_mse": 4.862494945526123,
+      "correct_wrong_output_rms": 0.0045016976073384285,
+      "length_absolute_error": 135
+    },
+    {
+      "sample_id": "BUXDbLroiJqnKLWi",
+      "wrong_audio_id": "yXqscaiNWULCQxfB",
+      "second_audio_id": "nIVWsjkwpjOANgyq",
+      "target_length": 195,
+      "predicted_lengths": [
+        404,
+        419,
+        437
+      ],
+      "zero_length": 416,
+      "scores": [
+        0.023041922599077225,
+        0.022211208939552307,
+        0.021927468478679657
+      ],
+      "zero_score": 0.023087916895747185,
+      "correct_minus_wrong_score": 0.0008307136595249176,
+      "correct_minus_second_score": 0.0011144541203975677,
+      "correct_minus_zero_score": -4.599429666996002e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.974885940551758,
+      "wrong_raw_mse": 5.975479602813721,
+      "zero_raw_mse": 5.975464344024658,
+      "position_mean_mse": 5.111140251159668,
+      "correct_wrong_output_rms": 0.005601487588137388,
+      "length_absolute_error": 209
+    },
+    {
+      "sample_id": "yXqscaiNWULCQxfB",
+      "wrong_audio_id": "nIVWsjkwpjOANgyq",
+      "second_audio_id": "gBPYPMZXdmamZWsm",
+      "target_length": 385,
+      "predicted_lengths": [
+        214,
+        225,
+        208
+      ],
+      "zero_length": 206,
+      "scores": [
+        -0.006667245179414749,
+        -0.006717116571962833,
+        -0.006603017915040255
+      ],
+      "zero_score": -0.0062810322269797325,
+      "correct_minus_wrong_score": 4.987139254808426e-05,
+      "correct_minus_second_score": -6.422726437449455e-05,
+      "correct_minus_zero_score": -0.00038621295243501663,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.2128753662109375,
+      "wrong_raw_mse": 5.212665557861328,
+      "zero_raw_mse": 5.2137064933776855,
+      "position_mean_mse": 4.64641809463501,
+      "correct_wrong_output_rms": 0.00330094201490283,
+      "length_absolute_error": 171
+    },
+    {
+      "sample_id": "nIVWsjkwpjOANgyq",
+      "wrong_audio_id": "gBPYPMZXdmamZWsm",
+      "second_audio_id": "XITEwgYqoczmSkxs",
+      "target_length": 256,
+      "predicted_lengths": [
+        375,
+        343,
+        409
+      ],
+      "zero_length": 346,
+      "scores": [
+        0.005658917594701052,
+        0.006048192270100117,
+        0.005940853618085384
+      ],
+      "zero_score": 0.006031346507370472,
+      "correct_minus_wrong_score": -0.000389274675399065,
+      "correct_minus_second_score": -0.00028193602338433266,
+      "correct_minus_zero_score": -0.00037242891266942024,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.677487373352051,
+      "wrong_raw_mse": 5.677338123321533,
+      "zero_raw_mse": 5.678149223327637,
+      "position_mean_mse": 5.01223611831665,
+      "correct_wrong_output_rms": 0.004578826483339071,
+      "length_absolute_error": 119
+    },
+    {
+      "sample_id": "gBPYPMZXdmamZWsm",
+      "wrong_audio_id": "XITEwgYqoczmSkxs",
+      "second_audio_id": "TZaDWuecXUROkXuk",
+      "target_length": 681,
+      "predicted_lengths": [
+        252,
+        318,
+        290
+      ],
+      "zero_length": 250,
+      "scores": [
+        0.0018812248017638922,
+        0.0021214026492089033,
+        0.002001067390665412
+      ],
+      "zero_score": 0.0015954123809933662,
+      "correct_minus_wrong_score": -0.00024017784744501114,
+      "correct_minus_second_score": -0.00011984258890151978,
+      "correct_minus_zero_score": 0.00028581242077052593,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.174365520477295,
+      "wrong_raw_mse": 5.174130916595459,
+      "zero_raw_mse": 5.175184726715088,
+      "position_mean_mse": 4.6902899742126465,
+      "correct_wrong_output_rms": 0.004235795699059963,
+      "length_absolute_error": 429
+    },
+    {
+      "sample_id": "XITEwgYqoczmSkxs",
+      "wrong_audio_id": "TZaDWuecXUROkXuk",
+      "second_audio_id": "PkoWGJYRqDohFNke",
+      "target_length": 328,
+      "predicted_lengths": [
+        328,
+        298,
+        271
+      ],
+      "zero_length": 252,
+      "scores": [
+        0.009931047447025776,
+        0.010167921893298626,
+        0.010155727155506611
+      ],
+      "zero_score": 0.010296439751982689,
+      "correct_minus_wrong_score": -0.00023687444627285004,
+      "correct_minus_second_score": -0.00022467970848083496,
+      "correct_minus_zero_score": -0.000365392304956913,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.694650173187256,
+      "wrong_raw_mse": 5.694464683532715,
+      "zero_raw_mse": 5.695069789886475,
+      "position_mean_mse": 5.094936847686768,
+      "correct_wrong_output_rms": 0.004288018681108952,
+      "length_absolute_error": 0
+    },
+    {
+      "sample_id": "TZaDWuecXUROkXuk",
+      "wrong_audio_id": "PkoWGJYRqDohFNke",
+      "second_audio_id": "bEiaeFvSatkHYPHD",
+      "target_length": 250,
+      "predicted_lengths": [
+        446,
+        430,
+        446
+      ],
+      "zero_length": 413,
+      "scores": [
+        0.012828647159039974,
+        0.012757600285112858,
+        0.012712672352790833
+      ],
+      "zero_score": 0.01311640627682209,
+      "correct_minus_wrong_score": 7.10468739271164e-05,
+      "correct_minus_second_score": 0.00011597480624914169,
+      "correct_minus_zero_score": -0.00028775911778211594,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.592844486236572,
+      "wrong_raw_mse": 5.5930256843566895,
+      "zero_raw_mse": 5.593789100646973,
+      "position_mean_mse": 4.917802810668945,
+      "correct_wrong_output_rms": 0.003839778481051326,
+      "length_absolute_error": 196
+    },
+    {
+      "sample_id": "PkoWGJYRqDohFNke",
+      "wrong_audio_id": "bEiaeFvSatkHYPHD",
+      "second_audio_id": "uiWUaAyWamFaEnXR",
+      "target_length": 634,
+      "predicted_lengths": [
+        387,
+        403,
+        353
+      ],
+      "zero_length": 370,
+      "scores": [
+        0.0026994210202246904,
+        0.002740838099271059,
+        0.002081057522445917
+      ],
+      "zero_score": 0.0018362379632890224,
+      "correct_minus_wrong_score": -4.14170790463686e-05,
+      "correct_minus_second_score": 0.0006183634977787733,
+      "correct_minus_zero_score": 0.000863183056935668,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.052767753601074,
+      "wrong_raw_mse": 5.052597999572754,
+      "zero_raw_mse": 5.053566932678223,
+      "position_mean_mse": 4.547902584075928,
+      "correct_wrong_output_rms": 0.00341508979909122,
+      "length_absolute_error": 247
+    },
+    {
+      "sample_id": "bEiaeFvSatkHYPHD",
+      "wrong_audio_id": "uiWUaAyWamFaEnXR",
+      "second_audio_id": "wyMWqcbIHMvNAtdk",
+      "target_length": 310,
+      "predicted_lengths": [
+        320,
+        263,
+        269
+      ],
+      "zero_length": 274,
+      "scores": [
+        0.014518526382744312,
+        0.014906218275427818,
+        0.014905678108334541
+      ],
+      "zero_score": 0.014607872813940048,
+      "correct_minus_wrong_score": -0.000387691892683506,
+      "correct_minus_second_score": -0.00038715172559022903,
+      "correct_minus_zero_score": -8.934643119573593e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.774028778076172,
+      "wrong_raw_mse": 5.773913860321045,
+      "zero_raw_mse": 5.774538993835449,
+      "position_mean_mse": 5.103783130645752,
+      "correct_wrong_output_rms": 0.00589124858379364,
+      "length_absolute_error": 10
+    },
+    {
+      "sample_id": "uiWUaAyWamFaEnXR",
+      "wrong_audio_id": "wyMWqcbIHMvNAtdk",
+      "second_audio_id": "YVrqoYRVVQfUYuKz",
+      "target_length": 270,
+      "predicted_lengths": [
+        180,
+        183,
+        184
+      ],
+      "zero_length": 185,
+      "scores": [
+        0.03316611796617508,
+        0.03315644711256027,
+        0.032963789999485016
+      ],
+      "zero_score": 0.032804109156131744,
+      "correct_minus_wrong_score": 9.670853614807129e-06,
+      "correct_minus_second_score": 0.00020232796669006348,
+      "correct_minus_zero_score": 0.00036200881004333496,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.699908256530762,
+      "wrong_raw_mse": 5.6999616622924805,
+      "zero_raw_mse": 5.700622081756592,
+      "position_mean_mse": 4.979747772216797,
+      "correct_wrong_output_rms": 0.0037465018685907125,
+      "length_absolute_error": 90
+    },
+    {
+      "sample_id": "wyMWqcbIHMvNAtdk",
+      "wrong_audio_id": "YVrqoYRVVQfUYuKz",
+      "second_audio_id": "jXjXRNrwcoocXuhr",
+      "target_length": 186,
+      "predicted_lengths": [
+        199,
+        200,
+        196
+      ],
+      "zero_length": 201,
+      "scores": [
+        0.009406709112226963,
+        0.00898774154484272,
+        0.009448455646634102
+      ],
+      "zero_score": 0.009156673215329647,
+      "correct_minus_wrong_score": 0.000418967567384243,
+      "correct_minus_second_score": -4.1746534407138824e-05,
+      "correct_minus_zero_score": 0.000250035896897316,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.887740612030029,
+      "wrong_raw_mse": 5.887866973876953,
+      "zero_raw_mse": 5.88864803314209,
+      "position_mean_mse": 4.975113391876221,
+      "correct_wrong_output_rms": 0.004784735850989819,
+      "length_absolute_error": 13
+    },
+    {
+      "sample_id": "YVrqoYRVVQfUYuKz",
+      "wrong_audio_id": "jXjXRNrwcoocXuhr",
+      "second_audio_id": "WOWgJKgMcUJTigJq",
+      "target_length": 230,
+      "predicted_lengths": [
+        279,
+        273,
+        273
+      ],
+      "zero_length": 288,
+      "scores": [
+        0.01840364560484886,
+        0.018825367093086243,
+        0.01846761256456375
+      ],
+      "zero_score": 0.018446199595928192,
+      "correct_minus_wrong_score": -0.000421721488237381,
+      "correct_minus_second_score": -6.396695971488953e-05,
+      "correct_minus_zero_score": -4.2553991079330444e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.803997039794922,
+      "wrong_raw_mse": 5.803819179534912,
+      "zero_raw_mse": 5.804566383361816,
+      "position_mean_mse": 4.999558925628662,
+      "correct_wrong_output_rms": 0.003945962991565466,
+      "length_absolute_error": 49
+    },
+    {
+      "sample_id": "jXjXRNrwcoocXuhr",
+      "wrong_audio_id": "WOWgJKgMcUJTigJq",
+      "second_audio_id": "QYBgqkvrDtNbonkf",
+      "target_length": 426,
+      "predicted_lengths": [
+        260,
+        260,
+        263
+      ],
+      "zero_length": 269,
+      "scores": [
+        0.014564279466867447,
+        0.01451508142054081,
+        0.014637308195233345
+      ],
+      "zero_score": 0.014658743515610695,
+      "correct_minus_wrong_score": 4.919804632663727e-05,
+      "correct_minus_second_score": -7.302872836589813e-05,
+      "correct_minus_zero_score": -9.446404874324799e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.390201568603516,
+      "wrong_raw_mse": 5.390285015106201,
+      "zero_raw_mse": 5.390719413757324,
+      "position_mean_mse": 4.8276143074035645,
+      "correct_wrong_output_rms": 0.0037429509684443474,
+      "length_absolute_error": 166
+    },
+    {
+      "sample_id": "WOWgJKgMcUJTigJq",
+      "wrong_audio_id": "QYBgqkvrDtNbonkf",
+      "second_audio_id": "PgEDsZOtCBKxRQTd",
+      "target_length": 348,
+      "predicted_lengths": [
+        217,
+        219,
+        242
+      ],
+      "zero_length": 224,
+      "scores": [
+        0.006325594149529934,
+        0.006397475488483906,
+        0.006191605236381292
+      ],
+      "zero_score": 0.0064715067856013775,
+      "correct_minus_wrong_score": -7.188133895397186e-05,
+      "correct_minus_second_score": 0.00013398891314864159,
+      "correct_minus_zero_score": -0.00014591263607144356,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.373918533325195,
+      "wrong_raw_mse": 5.37393045425415,
+      "zero_raw_mse": 5.374481201171875,
+      "position_mean_mse": 4.832176685333252,
+      "correct_wrong_output_rms": 0.004066749941557646,
+      "length_absolute_error": 131
+    },
+    {
+      "sample_id": "QYBgqkvrDtNbonkf",
+      "wrong_audio_id": "PgEDsZOtCBKxRQTd",
+      "second_audio_id": "eJhzwhMOxOabOXeL",
+      "target_length": 204,
+      "predicted_lengths": [
+        300,
+        337,
+        346
+      ],
+      "zero_length": 312,
+      "scores": [
+        0.013498550280928612,
+        0.01259198971092701,
+        0.013015540316700935
+      ],
+      "zero_score": 0.013489162549376488,
+      "correct_minus_wrong_score": 0.0009065605700016022,
+      "correct_minus_second_score": 0.0004830099642276764,
+      "correct_minus_zero_score": 9.387731552124023e-06,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.667296409606934,
+      "wrong_raw_mse": 5.667966842651367,
+      "zero_raw_mse": 5.668161869049072,
+      "position_mean_mse": 4.957066535949707,
+      "correct_wrong_output_rms": 0.006359873339533806,
+      "length_absolute_error": 96
+    },
+    {
+      "sample_id": "PgEDsZOtCBKxRQTd",
+      "wrong_audio_id": "eJhzwhMOxOabOXeL",
+      "second_audio_id": "GWRcLYKSitKUwToj",
+      "target_length": 356,
+      "predicted_lengths": [
+        362,
+        370,
+        341
+      ],
+      "zero_length": 333,
+      "scores": [
+        0.00904717855155468,
+        0.009165564551949501,
+        0.009302886202931404
+      ],
+      "zero_score": 0.009609630331397057,
+      "correct_minus_wrong_score": -0.00011838600039482117,
+      "correct_minus_second_score": -0.00025570765137672424,
+      "correct_minus_zero_score": -0.0005624517798423767,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.561203479766846,
+      "wrong_raw_mse": 5.561186790466309,
+      "zero_raw_mse": 5.561681270599365,
+      "position_mean_mse": 4.932732582092285,
+      "correct_wrong_output_rms": 0.005795800127089024,
+      "length_absolute_error": 6
+    },
+    {
+      "sample_id": "eJhzwhMOxOabOXeL",
+      "wrong_audio_id": "GWRcLYKSitKUwToj",
+      "second_audio_id": "EkopuJUZcJCoNgqF",
+      "target_length": 366,
+      "predicted_lengths": [
+        364,
+        336,
+        343
+      ],
+      "zero_length": 329,
+      "scores": [
+        -0.0038011374417692423,
+        -0.0037434245459735394,
+        -0.0037982906214892864
+      ],
+      "zero_score": -0.0039207045920193195,
+      "correct_minus_wrong_score": -5.7712895795702934e-05,
+      "correct_minus_second_score": -2.846820279955864e-06,
+      "correct_minus_zero_score": 0.00011956715025007725,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.484707355499268,
+      "wrong_raw_mse": 5.484467029571533,
+      "zero_raw_mse": 5.485421180725098,
+      "position_mean_mse": 4.891608238220215,
+      "correct_wrong_output_rms": 0.0035352713894098997,
+      "length_absolute_error": 2
+    },
+    {
+      "sample_id": "GWRcLYKSitKUwToj",
+      "wrong_audio_id": "EkopuJUZcJCoNgqF",
+      "second_audio_id": "ppnScDMNiipTcnNL",
+      "target_length": 197,
+      "predicted_lengths": [
+        226,
+        230,
+        202
+      ],
+      "zero_length": 218,
+      "scores": [
+        0.019534096121788025,
+        0.01931208372116089,
+        0.019620012491941452
+      ],
+      "zero_score": 0.019374888390302658,
+      "correct_minus_wrong_score": 0.00022201240062713623,
+      "correct_minus_second_score": -8.591637015342712e-05,
+      "correct_minus_zero_score": 0.00015920773148536682,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.062568664550781,
+      "wrong_raw_mse": 6.062705039978027,
+      "zero_raw_mse": 6.063011646270752,
+      "position_mean_mse": 5.209964275360107,
+      "correct_wrong_output_rms": 0.0036153763066977262,
+      "length_absolute_error": 29
+    },
+    {
+      "sample_id": "EkopuJUZcJCoNgqF",
+      "wrong_audio_id": "ppnScDMNiipTcnNL",
+      "second_audio_id": "AqSQXCEusjaPEDzo",
+      "target_length": 438,
+      "predicted_lengths": [
+        289,
+        250,
+        270
+      ],
+      "zero_length": 271,
+      "scores": [
+        0.002999100601300597,
+        0.0029473071917891502,
+        0.002944693434983492
+      ],
+      "zero_score": 0.002855986822396517,
+      "correct_minus_wrong_score": 5.179340951144695e-05,
+      "correct_minus_second_score": 5.440716631710529e-05,
+      "correct_minus_zero_score": 0.0001431137789040804,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.387028217315674,
+      "wrong_raw_mse": 5.3873491287231445,
+      "zero_raw_mse": 5.387831211090088,
+      "position_mean_mse": 4.872044563293457,
+      "correct_wrong_output_rms": 0.005924309603869915,
+      "length_absolute_error": 149
+    },
+    {
+      "sample_id": "ppnScDMNiipTcnNL",
+      "wrong_audio_id": "AqSQXCEusjaPEDzo",
+      "second_audio_id": "JRtdRcZaNngsipXj",
+      "target_length": 440,
+      "predicted_lengths": [
+        285,
+        309,
+        331
+      ],
+      "zero_length": 313,
+      "scores": [
+        0.006689175497740507,
+        0.006599757820367813,
+        0.00663155410438776
+      ],
+      "zero_score": 0.006650635041296482,
+      "correct_minus_wrong_score": 8.941767737269402e-05,
+      "correct_minus_second_score": 5.7621393352746964e-05,
+      "correct_minus_zero_score": 3.854045644402504e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.345503330230713,
+      "wrong_raw_mse": 5.345537185668945,
+      "zero_raw_mse": 5.34598970413208,
+      "position_mean_mse": 4.767065525054932,
+      "correct_wrong_output_rms": 0.00522750336676836,
+      "length_absolute_error": 155
+    },
+    {
+      "sample_id": "AqSQXCEusjaPEDzo",
+      "wrong_audio_id": "JRtdRcZaNngsipXj",
+      "second_audio_id": "BcIvuSlLoBOmJJAY",
+      "target_length": 173,
+      "predicted_lengths": [
+        325,
+        340,
+        299
+      ],
+      "zero_length": 330,
+      "scores": [
+        0.00837020855396986,
+        0.00804220326244831,
+        0.008488476276397705
+      ],
+      "zero_score": 0.008371216244995594,
+      "correct_minus_wrong_score": 0.0003280052915215492,
+      "correct_minus_second_score": -0.000118267722427845,
+      "correct_minus_zero_score": -1.0076910257339478e-06,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.723717212677002,
+      "wrong_raw_mse": 5.723813533782959,
+      "zero_raw_mse": 5.724598407745361,
+      "position_mean_mse": 4.940666198730469,
+      "correct_wrong_output_rms": 0.004762057680636644,
+      "length_absolute_error": 152
+    },
+    {
+      "sample_id": "JRtdRcZaNngsipXj",
+      "wrong_audio_id": "BcIvuSlLoBOmJJAY",
+      "second_audio_id": "YjrYFDNmDDOMxSOQ",
+      "target_length": 547,
+      "predicted_lengths": [
+        392,
+        338,
+        406
+      ],
+      "zero_length": 380,
+      "scores": [
+        0.0012557590380311012,
+        0.0011719781905412674,
+        0.0013446654193103313
+      ],
+      "zero_score": 0.0008953744545578957,
+      "correct_minus_wrong_score": 8.378084748983383e-05,
+      "correct_minus_second_score": -8.890638127923012e-05,
+      "correct_minus_zero_score": 0.00036038458347320557,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.202356815338135,
+      "wrong_raw_mse": 5.2026753425598145,
+      "zero_raw_mse": 5.203252792358398,
+      "position_mean_mse": 4.710546493530273,
+      "correct_wrong_output_rms": 0.005556149408221245,
+      "length_absolute_error": 155
+    },
+    {
+      "sample_id": "BcIvuSlLoBOmJJAY",
+      "wrong_audio_id": "YjrYFDNmDDOMxSOQ",
+      "second_audio_id": "vdcJQclHHHutBuSg",
+      "target_length": 383,
+      "predicted_lengths": [
+        256,
+        336,
+        350
+      ],
+      "zero_length": 293,
+      "scores": [
+        0.00685327872633934,
+        0.006770743522793055,
+        0.006685889791697264
+      ],
+      "zero_score": 0.006584342569112778,
+      "correct_minus_wrong_score": 8.253520354628563e-05,
+      "correct_minus_second_score": 0.0001673889346420765,
+      "correct_minus_zero_score": 0.0002689361572265625,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.435981750488281,
+      "wrong_raw_mse": 5.435826778411865,
+      "zero_raw_mse": 5.436691761016846,
+      "position_mean_mse": 4.839717388153076,
+      "correct_wrong_output_rms": 0.005514173768460751,
+      "length_absolute_error": 127
+    },
+    {
+      "sample_id": "YjrYFDNmDDOMxSOQ",
+      "wrong_audio_id": "vdcJQclHHHutBuSg",
+      "second_audio_id": "WslfuKciQvuSunRa",
+      "target_length": 146,
+      "predicted_lengths": [
+        202,
+        207,
+        192
+      ],
+      "zero_length": 184,
+      "scores": [
+        0.02087487280368805,
+        0.020436428487300873,
+        0.021383551880717278
+      ],
+      "zero_score": 0.021191425621509552,
+      "correct_minus_wrong_score": 0.0004384443163871765,
+      "correct_minus_second_score": -0.0005086790770292282,
+      "correct_minus_zero_score": -0.0003165528178215027,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.2214860916137695,
+      "wrong_raw_mse": 6.221690654754639,
+      "zero_raw_mse": 6.2220282554626465,
+      "position_mean_mse": 5.121851921081543,
+      "correct_wrong_output_rms": 0.00386453652754426,
+      "length_absolute_error": 56
+    },
+    {
+      "sample_id": "vdcJQclHHHutBuSg",
+      "wrong_audio_id": "WslfuKciQvuSunRa",
+      "second_audio_id": "iIFCzUVgFYoLHGVj",
+      "target_length": 537,
+      "predicted_lengths": [
+        397,
+        360,
+        354
+      ],
+      "zero_length": 353,
+      "scores": [
+        0.017399346455931664,
+        0.01737840101122856,
+        0.017259221524000168
+      ],
+      "zero_score": 0.016918383538722992,
+      "correct_minus_wrong_score": 2.0945444703102112e-05,
+      "correct_minus_second_score": 0.00014012493193149567,
+      "correct_minus_zero_score": 0.00048096291720867157,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.162632465362549,
+      "wrong_raw_mse": 5.162821292877197,
+      "zero_raw_mse": 5.163842678070068,
+      "position_mean_mse": 4.597132682800293,
+      "correct_wrong_output_rms": 0.004290005192160606,
+      "length_absolute_error": 140
+    },
+    {
+      "sample_id": "WslfuKciQvuSunRa",
+      "wrong_audio_id": "iIFCzUVgFYoLHGVj",
+      "second_audio_id": "megPsrjACIFhRgvb",
+      "target_length": 455,
+      "predicted_lengths": [
+        353,
+        345,
+        386
+      ],
+      "zero_length": 343,
+      "scores": [
+        0.010178769007325172,
+        0.010068108327686787,
+        0.010125581175088882
+      ],
+      "zero_score": 0.009999250993132591,
+      "correct_minus_wrong_score": 0.00011066067963838577,
+      "correct_minus_second_score": 5.318783223628998e-05,
+      "correct_minus_zero_score": 0.00017951801419258118,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.195428371429443,
+      "wrong_raw_mse": 5.1956868171691895,
+      "zero_raw_mse": 5.196483612060547,
+      "position_mean_mse": 4.640793323516846,
+      "correct_wrong_output_rms": 0.0032823197543621063,
+      "length_absolute_error": 102
+    },
+    {
+      "sample_id": "iIFCzUVgFYoLHGVj",
+      "wrong_audio_id": "megPsrjACIFhRgvb",
+      "second_audio_id": "RiCqQSxJCBfAMIcj",
+      "target_length": 1113,
+      "predicted_lengths": [
+        349,
+        387,
+        411
+      ],
+      "zero_length": 346,
+      "scores": [
+        0.002453963737934828,
+        0.002966661239042878,
+        0.0030052540823817253
+      ],
+      "zero_score": 0.0022044761572033167,
+      "correct_minus_wrong_score": -0.0005126975011080503,
+      "correct_minus_second_score": -0.0005512903444468975,
+      "correct_minus_zero_score": 0.0002494875807315111,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 4.892661094665527,
+      "wrong_raw_mse": 4.891810894012451,
+      "zero_raw_mse": 4.8934831619262695,
+      "position_mean_mse": 4.455779075622559,
+      "correct_wrong_output_rms": 0.0043302238918840885,
+      "length_absolute_error": 764
+    },
+    {
+      "sample_id": "megPsrjACIFhRgvb",
+      "wrong_audio_id": "RiCqQSxJCBfAMIcj",
+      "second_audio_id": "RvpOwJIejtRXHzMT",
+      "target_length": 238,
+      "predicted_lengths": [
+        444,
+        464,
+        437
+      ],
+      "zero_length": 411,
+      "scores": [
+        0.012214785441756248,
+        0.012215262278914452,
+        0.012248044833540916
+      ],
+      "zero_score": 0.012629000470042229,
+      "correct_minus_wrong_score": -4.76837158203125e-07,
+      "correct_minus_second_score": -3.325939178466797e-05,
+      "correct_minus_zero_score": -0.0004142150282859802,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.587082386016846,
+      "wrong_raw_mse": 5.586964130401611,
+      "zero_raw_mse": 5.587704181671143,
+      "position_mean_mse": 4.869319438934326,
+      "correct_wrong_output_rms": 0.0034617192577570677,
+      "length_absolute_error": 206
+    },
+    {
+      "sample_id": "RiCqQSxJCBfAMIcj",
+      "wrong_audio_id": "RvpOwJIejtRXHzMT",
+      "second_audio_id": "aMrdGDLRfXNbBtdM",
+      "target_length": 612,
+      "predicted_lengths": [
+        387,
+        358,
+        328
+      ],
+      "zero_length": 324,
+      "scores": [
+        0.009816465899348259,
+        0.009687859565019608,
+        0.009654506109654903
+      ],
+      "zero_score": 0.009422148577868938,
+      "correct_minus_wrong_score": 0.00012860633432865143,
+      "correct_minus_second_score": 0.00016195978969335556,
+      "correct_minus_zero_score": 0.0003943173214793205,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.051633358001709,
+      "wrong_raw_mse": 5.0519890785217285,
+      "zero_raw_mse": 5.053186416625977,
+      "position_mean_mse": 4.517786502838135,
+      "correct_wrong_output_rms": 0.0036007894668728113,
+      "length_absolute_error": 225
+    },
+    {
+      "sample_id": "RvpOwJIejtRXHzMT",
+      "wrong_audio_id": "aMrdGDLRfXNbBtdM",
+      "second_audio_id": "NavCcEYDnAwmGAZm",
+      "target_length": 366,
+      "predicted_lengths": [
+        367,
+        339,
+        374
+      ],
+      "zero_length": 337,
+      "scores": [
+        -0.013276558369398117,
+        -0.013275125995278358,
+        -0.01332965586334467
+      ],
+      "zero_score": -0.013024082407355309,
+      "correct_minus_wrong_score": -1.432374119758606e-06,
+      "correct_minus_second_score": 5.3097493946552277e-05,
+      "correct_minus_zero_score": -0.00025247596204280853,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.357241630554199,
+      "wrong_raw_mse": 5.357228755950928,
+      "zero_raw_mse": 5.357954978942871,
+      "position_mean_mse": 4.792232513427734,
+      "correct_wrong_output_rms": 0.003862229408696294,
+      "length_absolute_error": 1
+    },
+    {
+      "sample_id": "aMrdGDLRfXNbBtdM",
+      "wrong_audio_id": "NavCcEYDnAwmGAZm",
+      "second_audio_id": "GOArjxWFjqKiBsLM",
+      "target_length": 516,
+      "predicted_lengths": [
+        277,
+        311,
+        301
+      ],
+      "zero_length": 269,
+      "scores": [
+        -0.007416357286274433,
+        -0.007394818123430014,
+        -0.00742381950840354
+      ],
+      "zero_score": -0.007269727531820536,
+      "correct_minus_wrong_score": -2.153916284441948e-05,
+      "correct_minus_second_score": 7.462222129106522e-06,
+      "correct_minus_zero_score": -0.00014662975445389748,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.210182189941406,
+      "wrong_raw_mse": 5.209998607635498,
+      "zero_raw_mse": 5.210763454437256,
+      "position_mean_mse": 4.715238094329834,
+      "correct_wrong_output_rms": 0.004381709266453981,
+      "length_absolute_error": 239
+    },
+    {
+      "sample_id": "NavCcEYDnAwmGAZm",
+      "wrong_audio_id": "GOArjxWFjqKiBsLM",
+      "second_audio_id": "pisIcwxaXmfsdjJh",
+      "target_length": 581,
+      "predicted_lengths": [
+        328,
+        320,
+        337
+      ],
+      "zero_length": 283,
+      "scores": [
+        0.0033896618988364935,
+        0.0033525496255606413,
+        0.003352843690663576
+      ],
+      "zero_score": 0.003086535492911935,
+      "correct_minus_wrong_score": 3.71122732758522e-05,
+      "correct_minus_second_score": 3.6818208172917366e-05,
+      "correct_minus_zero_score": 0.00030312640592455864,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.085643291473389,
+      "wrong_raw_mse": 5.085687637329102,
+      "zero_raw_mse": 5.086884498596191,
+      "position_mean_mse": 4.579810619354248,
+      "correct_wrong_output_rms": 0.004045913461595774,
+      "length_absolute_error": 253
+    },
+    {
+      "sample_id": "GOArjxWFjqKiBsLM",
+      "wrong_audio_id": "pisIcwxaXmfsdjJh",
+      "second_audio_id": "tjyvaNkgNEfjRZRw",
+      "target_length": 518,
+      "predicted_lengths": [
+        359,
+        377,
+        335
+      ],
+      "zero_length": 323,
+      "scores": [
+        0.00402992544695735,
+        0.004052984528243542,
+        0.0038693700917065144
+      ],
+      "zero_score": 0.0037195405457168818,
+      "correct_minus_wrong_score": -2.305908128619194e-05,
+      "correct_minus_second_score": 0.00016055535525083542,
+      "correct_minus_zero_score": 0.000310384901240468,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.124382972717285,
+      "wrong_raw_mse": 5.124394416809082,
+      "zero_raw_mse": 5.1257524490356445,
+      "position_mean_mse": 4.604822635650635,
+      "correct_wrong_output_rms": 0.0040377480909228325,
+      "length_absolute_error": 159
+    },
+    {
+      "sample_id": "pisIcwxaXmfsdjJh",
+      "wrong_audio_id": "tjyvaNkgNEfjRZRw",
+      "second_audio_id": "QryTdFqRdNpHXSNx",
+      "target_length": 243,
+      "predicted_lengths": [
+        242,
+        220,
+        223
+      ],
+      "zero_length": 211,
+      "scores": [
+        0.02121124044060707,
+        0.021741462871432304,
+        0.02143365517258644
+      ],
+      "zero_score": 0.02189420908689499,
+      "correct_minus_wrong_score": -0.0005302224308252335,
+      "correct_minus_second_score": -0.00022241473197937012,
+      "correct_minus_zero_score": -0.0006829686462879181,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.790743827819824,
+      "wrong_raw_mse": 5.790572643280029,
+      "zero_raw_mse": 5.790985107421875,
+      "position_mean_mse": 5.082481384277344,
+      "correct_wrong_output_rms": 0.005638742819428444,
+      "length_absolute_error": 1
+    },
+    {
+      "sample_id": "tjyvaNkgNEfjRZRw",
+      "wrong_audio_id": "QryTdFqRdNpHXSNx",
+      "second_audio_id": "RbFxdtbQDXPAQHkk",
+      "target_length": 145,
+      "predicted_lengths": [
+        235,
+        237,
+        240
+      ],
+      "zero_length": 226,
+      "scores": [
+        0.015414280816912651,
+        0.01482429075986147,
+        0.01488572359085083
+      ],
+      "zero_score": 0.015351125039160252,
+      "correct_minus_wrong_score": 0.0005899900570511818,
+      "correct_minus_second_score": 0.000528557226061821,
+      "correct_minus_zero_score": 6.315577775239944e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 6.073548793792725,
+      "wrong_raw_mse": 6.073882102966309,
+      "zero_raw_mse": 6.074148654937744,
+      "position_mean_mse": 4.977232933044434,
+      "correct_wrong_output_rms": 0.0051934970542788506,
+      "length_absolute_error": 90
+    },
+    {
+      "sample_id": "QryTdFqRdNpHXSNx",
+      "wrong_audio_id": "RbFxdtbQDXPAQHkk",
+      "second_audio_id": "fBtoGMNuaMloDwuj",
+      "target_length": 219,
+      "predicted_lengths": [
+        362,
+        370,
+        351
+      ],
+      "zero_length": 351,
+      "scores": [
+        0.02245854213833809,
+        0.022521015256643295,
+        0.022749677300453186
+      ],
+      "zero_score": 0.02344241365790367,
+      "correct_minus_wrong_score": -6.24731183052063e-05,
+      "correct_minus_second_score": -0.00029113516211509705,
+      "correct_minus_zero_score": -0.0009838715195655823,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.6110968589782715,
+      "wrong_raw_mse": 5.611020565032959,
+      "zero_raw_mse": 5.6109113693237305,
+      "position_mean_mse": 4.87601375579834,
+      "correct_wrong_output_rms": 0.0032758305314928293,
+      "length_absolute_error": 143
+    },
+    {
+      "sample_id": "RbFxdtbQDXPAQHkk",
+      "wrong_audio_id": "fBtoGMNuaMloDwuj",
+      "second_audio_id": "pbSBMBqUWUkFdrhF",
+      "target_length": 581,
+      "predicted_lengths": [
+        278,
+        262,
+        238
+      ],
+      "zero_length": 258,
+      "scores": [
+        0.002874536905437708,
+        0.0026014710310846567,
+        0.0025817612186074257
+      ],
+      "zero_score": 0.0029105127323418856,
+      "correct_minus_wrong_score": 0.0002730658743530512,
+      "correct_minus_second_score": 0.0002927756868302822,
+      "correct_minus_zero_score": -3.5975826904177666e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.138632297515869,
+      "wrong_raw_mse": 5.1393656730651855,
+      "zero_raw_mse": 5.139583587646484,
+      "position_mean_mse": 4.609955310821533,
+      "correct_wrong_output_rms": 0.004743446130305529,
+      "length_absolute_error": 303
+    },
+    {
+      "sample_id": "fBtoGMNuaMloDwuj",
+      "wrong_audio_id": "pbSBMBqUWUkFdrhF",
+      "second_audio_id": "oTTOhmmClTgYQKbG",
+      "target_length": 374,
+      "predicted_lengths": [
+        300,
+        268,
+        365
+      ],
+      "zero_length": 295,
+      "scores": [
+        0.012120498344302177,
+        0.012274098582565784,
+        0.011922432109713554
+      ],
+      "zero_score": 0.011972447857260704,
+      "correct_minus_wrong_score": -0.00015360023826360703,
+      "correct_minus_second_score": 0.00019806623458862305,
+      "correct_minus_zero_score": 0.0001480504870414734,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.334804058074951,
+      "wrong_raw_mse": 5.334607124328613,
+      "zero_raw_mse": 5.335531234741211,
+      "position_mean_mse": 4.75811243057251,
+      "correct_wrong_output_rms": 0.004161239136010408,
+      "length_absolute_error": 74
+    },
+    {
+      "sample_id": "pbSBMBqUWUkFdrhF",
+      "wrong_audio_id": "oTTOhmmClTgYQKbG",
+      "second_audio_id": "qqWiIqdrHBXiOnqr",
+      "target_length": 296,
+      "predicted_lengths": [
+        205,
+        281,
+        220
+      ],
+      "zero_length": 222,
+      "scores": [
+        0.004387705586850643,
+        0.0035226463805884123,
+        0.004427858628332615
+      ],
+      "zero_score": 0.004211392253637314,
+      "correct_minus_wrong_score": 0.0008650592062622309,
+      "correct_minus_second_score": -4.015304148197174e-05,
+      "correct_minus_zero_score": 0.00017631333321332932,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.7931036949157715,
+      "wrong_raw_mse": 5.793341636657715,
+      "zero_raw_mse": 5.794013977050781,
+      "position_mean_mse": 5.119176387786865,
+      "correct_wrong_output_rms": 0.007567248772829771,
+      "length_absolute_error": 91
+    },
+    {
+      "sample_id": "oTTOhmmClTgYQKbG",
+      "wrong_audio_id": "qqWiIqdrHBXiOnqr",
+      "second_audio_id": "plEVMvmarQnksqrp",
+      "target_length": 444,
+      "predicted_lengths": [
+        433,
+        373,
+        396
+      ],
+      "zero_length": 380,
+      "scores": [
+        0.001677275518886745,
+        0.0014628563076257706,
+        0.001575038069859147
+      ],
+      "zero_score": 0.001715432619675994,
+      "correct_minus_wrong_score": 0.0002144192112609744,
+      "correct_minus_second_score": 0.0001022374490275979,
+      "correct_minus_zero_score": -3.815710078924894e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.335085391998291,
+      "wrong_raw_mse": 5.335700988769531,
+      "zero_raw_mse": 5.336034297943115,
+      "position_mean_mse": 4.825954914093018,
+      "correct_wrong_output_rms": 0.008626938797533512,
+      "length_absolute_error": 11
+    },
+    {
+      "sample_id": "qqWiIqdrHBXiOnqr",
+      "wrong_audio_id": "plEVMvmarQnksqrp",
+      "second_audio_id": "wSbrxKdeLptIOIWc",
+      "target_length": 425,
+      "predicted_lengths": [
+        322,
+        355,
+        346
+      ],
+      "zero_length": 331,
+      "scores": [
+        -0.005180700216442347,
+        -0.005263271741569042,
+        -0.005209347698837519
+      ],
+      "zero_score": -0.005138639826327562,
+      "correct_minus_wrong_score": 8.257152512669563e-05,
+      "correct_minus_second_score": 2.864748239517212e-05,
+      "correct_minus_zero_score": -4.206039011478424e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.323575496673584,
+      "wrong_raw_mse": 5.32319974899292,
+      "zero_raw_mse": 5.324102401733398,
+      "position_mean_mse": 4.766748428344727,
+      "correct_wrong_output_rms": 0.006382178980857134,
+      "length_absolute_error": 103
+    },
+    {
+      "sample_id": "plEVMvmarQnksqrp",
+      "wrong_audio_id": "wSbrxKdeLptIOIWc",
+      "second_audio_id": "CRSxnLnWnavPMVsP",
+      "target_length": 425,
+      "predicted_lengths": [
+        364,
+        359,
+        373
+      ],
+      "zero_length": 348,
+      "scores": [
+        0.0033732797019183636,
+        0.0033815656788647175,
+        0.003384480718523264
+      ],
+      "zero_score": 0.003382176160812378,
+      "correct_minus_wrong_score": -8.285976946353912e-06,
+      "correct_minus_second_score": -1.120101660490036e-05,
+      "correct_minus_zero_score": -8.896458894014359e-06,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.309654712677002,
+      "wrong_raw_mse": 5.30974006652832,
+      "zero_raw_mse": 5.310465335845947,
+      "position_mean_mse": 4.753660202026367,
+      "correct_wrong_output_rms": 0.00376615091226995,
+      "length_absolute_error": 61
+    },
+    {
+      "sample_id": "wSbrxKdeLptIOIWc",
+      "wrong_audio_id": "CRSxnLnWnavPMVsP",
+      "second_audio_id": "DoBQEvKqRthjEGbz",
+      "target_length": 941,
+      "predicted_lengths": [
+        395,
+        410,
+        398
+      ],
+      "zero_length": 384,
+      "scores": [
+        -0.004432779736816883,
+        -0.004138018470257521,
+        -0.004085247404873371
+      ],
+      "zero_score": -0.00480357650667429,
+      "correct_minus_wrong_score": -0.0002947612665593624,
+      "correct_minus_second_score": -0.00034753233194351196,
+      "correct_minus_zero_score": 0.0003707967698574066,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 4.988658905029297,
+      "wrong_raw_mse": 4.988422393798828,
+      "zero_raw_mse": 4.989466190338135,
+      "position_mean_mse": 4.494775295257568,
+      "correct_wrong_output_rms": 0.0035475294571369886,
+      "length_absolute_error": 546
+    },
+    {
+      "sample_id": "CRSxnLnWnavPMVsP",
+      "wrong_audio_id": "DoBQEvKqRthjEGbz",
+      "second_audio_id": "bPLmGTbCUfgJwjqu",
+      "target_length": 257,
+      "predicted_lengths": [
+        342,
+        329,
+        334
+      ],
+      "zero_length": 308,
+      "scores": [
+        -0.001102042500860989,
+        -0.001273170579224825,
+        -0.0009077175054699183
+      ],
+      "zero_score": -0.0011040917597711086,
+      "correct_minus_wrong_score": 0.0001711280783638358,
+      "correct_minus_second_score": -0.00019432499539107084,
+      "correct_minus_zero_score": 2.0492589101195335e-06,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.717065334320068,
+      "wrong_raw_mse": 5.716982841491699,
+      "zero_raw_mse": 5.717855930328369,
+      "position_mean_mse": 5.047455787658691,
+      "correct_wrong_output_rms": 0.0039100004360079765,
+      "length_absolute_error": 85
+    },
+    {
+      "sample_id": "DoBQEvKqRthjEGbz",
+      "wrong_audio_id": "bPLmGTbCUfgJwjqu",
+      "second_audio_id": "AblFyoHlCZigPryB",
+      "target_length": 392,
+      "predicted_lengths": [
+        337,
+        341,
+        326
+      ],
+      "zero_length": 314,
+      "scores": [
+        -8.896470535546541e-05,
+        7.926113903522491e-05,
+        4.575133789330721e-05
+      ],
+      "zero_score": 0.0002584545873105526,
+      "correct_minus_wrong_score": -0.00016822584439069033,
+      "correct_minus_second_score": -0.00013471604324877262,
+      "correct_minus_zero_score": -0.000347419292666018,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.35269021987915,
+      "wrong_raw_mse": 5.352822780609131,
+      "zero_raw_mse": 5.353400230407715,
+      "position_mean_mse": 4.814870357513428,
+      "correct_wrong_output_rms": 0.004923367872834206,
+      "length_absolute_error": 55
+    },
+    {
+      "sample_id": "bPLmGTbCUfgJwjqu",
+      "wrong_audio_id": "AblFyoHlCZigPryB",
+      "second_audio_id": "EpRoOAesLTbMecBs",
+      "target_length": 274,
+      "predicted_lengths": [
+        260,
+        248,
+        275
+      ],
+      "zero_length": 239,
+      "scores": [
+        0.009712537750601768,
+        0.00983443483710289,
+        0.009294392541050911
+      ],
+      "zero_score": 0.00979690346866846,
+      "correct_minus_wrong_score": -0.00012189708650112152,
+      "correct_minus_second_score": 0.00041814520955085754,
+      "correct_minus_zero_score": -8.436571806669235e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.722315788269043,
+      "wrong_raw_mse": 5.72219705581665,
+      "zero_raw_mse": 5.722895622253418,
+      "position_mean_mse": 5.030207633972168,
+      "correct_wrong_output_rms": 0.003966677933931351,
+      "length_absolute_error": 14
+    },
+    {
+      "sample_id": "AblFyoHlCZigPryB",
+      "wrong_audio_id": "EpRoOAesLTbMecBs",
+      "second_audio_id": "oXExfawunUQcyXDu",
+      "target_length": 648,
+      "predicted_lengths": [
+        367,
+        393,
+        395
+      ],
+      "zero_length": 360,
+      "scores": [
+        -0.004085525870323181,
+        -0.003677086438983679,
+        -0.003726794384419918
+      ],
+      "zero_score": -0.00404780637472868,
+      "correct_minus_wrong_score": -0.00040843943133950233,
+      "correct_minus_second_score": -0.0003587314859032631,
+      "correct_minus_zero_score": -3.7719495594501495e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.069136142730713,
+      "wrong_raw_mse": 5.068787574768066,
+      "zero_raw_mse": 5.069726943969727,
+      "position_mean_mse": 4.576417922973633,
+      "correct_wrong_output_rms": 0.0052670808508992195,
+      "length_absolute_error": 281
+    },
+    {
+      "sample_id": "EpRoOAesLTbMecBs",
+      "wrong_audio_id": "oXExfawunUQcyXDu",
+      "second_audio_id": "xXfCMoZLPYgfecfK",
+      "target_length": 442,
+      "predicted_lengths": [
+        374,
+        377,
+        346
+      ],
+      "zero_length": 326,
+      "scores": [
+        0.01407566573470831,
+        0.014022132381796837,
+        0.014152716845273972
+      ],
+      "zero_score": 0.01379129197448492,
+      "correct_minus_wrong_score": 5.353335291147232e-05,
+      "correct_minus_second_score": -7.705111056566238e-05,
+      "correct_minus_zero_score": 0.00028437376022338867,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.281603813171387,
+      "wrong_raw_mse": 5.28164005279541,
+      "zero_raw_mse": 5.282305717468262,
+      "position_mean_mse": 4.7493577003479,
+      "correct_wrong_output_rms": 0.003031267086043954,
+      "length_absolute_error": 68
+    },
+    {
+      "sample_id": "oXExfawunUQcyXDu",
+      "wrong_audio_id": "xXfCMoZLPYgfecfK",
+      "second_audio_id": "zQnmAHgetCsuDEzA",
+      "target_length": 476,
+      "predicted_lengths": [
+        423,
+        403,
+        385
+      ],
+      "zero_length": 388,
+      "scores": [
+        -0.0024043188896030188,
+        -0.0023638871498405933,
+        -0.0024432723876088858
+      ],
+      "zero_score": -0.0022394866682589054,
+      "correct_minus_wrong_score": -4.043173976242542e-05,
+      "correct_minus_second_score": 3.8953498005867004e-05,
+      "correct_minus_zero_score": -0.00016483222134411335,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.1685638427734375,
+      "wrong_raw_mse": 5.168498992919922,
+      "zero_raw_mse": 5.169410705566406,
+      "position_mean_mse": 4.664158821105957,
+      "correct_wrong_output_rms": 0.0030059125274419785,
+      "length_absolute_error": 53
+    },
+    {
+      "sample_id": "xXfCMoZLPYgfecfK",
+      "wrong_audio_id": "zQnmAHgetCsuDEzA",
+      "second_audio_id": "hbYMZdaoxszxOoZV",
+      "target_length": 255,
+      "predicted_lengths": [
+        322,
+        299,
+        308
+      ],
+      "zero_length": 299,
+      "scores": [
+        0.02867584303021431,
+        0.02878434583544731,
+        0.028679370880126953
+      ],
+      "zero_score": 0.0287821963429451,
+      "correct_minus_wrong_score": -0.00010850280523300171,
+      "correct_minus_second_score": -3.5278499126434326e-06,
+      "correct_minus_zero_score": -0.00010635331273078918,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.86345100402832,
+      "wrong_raw_mse": 5.8634352684021,
+      "zero_raw_mse": 5.864021301269531,
+      "position_mean_mse": 5.146224498748779,
+      "correct_wrong_output_rms": 0.0035354585852473974,
+      "length_absolute_error": 67
+    },
+    {
+      "sample_id": "zQnmAHgetCsuDEzA",
+      "wrong_audio_id": "hbYMZdaoxszxOoZV",
+      "second_audio_id": "HevHjQfwdedYPmlH",
+      "target_length": 669,
+      "predicted_lengths": [
+        469,
+        478,
+        481
+      ],
+      "zero_length": 475,
+      "scores": [
+        0.0008723289938643575,
+        0.0008471606997773051,
+        0.0007666846504434943
+      ],
+      "zero_score": 0.0005046455189585686,
+      "correct_minus_wrong_score": 2.5168294087052345e-05,
+      "correct_minus_second_score": 0.00010564434342086315,
+      "correct_minus_zero_score": 0.0003676834749057889,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.061251640319824,
+      "wrong_raw_mse": 5.061274528503418,
+      "zero_raw_mse": 5.0621256828308105,
+      "position_mean_mse": 4.598079204559326,
+      "correct_wrong_output_rms": 0.0038378129247576,
+      "length_absolute_error": 200
+    },
+    {
+      "sample_id": "hbYMZdaoxszxOoZV",
+      "wrong_audio_id": "HevHjQfwdedYPmlH",
+      "second_audio_id": "EjZrySeinxSzyvkW",
+      "target_length": 364,
+      "predicted_lengths": [
+        399,
+        401,
+        369
+      ],
+      "zero_length": 394,
+      "scores": [
+        0.002217514906078577,
+        0.0022556507028639317,
+        0.0024085647892206907
+      ],
+      "zero_score": 0.0024859814438968897,
+      "correct_minus_wrong_score": -3.8135796785354614e-05,
+      "correct_minus_second_score": -0.00019104988314211369,
+      "correct_minus_zero_score": -0.00026846653781831264,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.457638740539551,
+      "wrong_raw_mse": 5.457568168640137,
+      "zero_raw_mse": 5.458189487457275,
+      "position_mean_mse": 4.854014873504639,
+      "correct_wrong_output_rms": 0.0033780124504119158,
+      "length_absolute_error": 35
+    },
+    {
+      "sample_id": "HevHjQfwdedYPmlH",
+      "wrong_audio_id": "EjZrySeinxSzyvkW",
+      "second_audio_id": "CzmTHpLedlfqfkCv",
+      "target_length": 223,
+      "predicted_lengths": [
+        407,
+        373,
+        425
+      ],
+      "zero_length": 397,
+      "scores": [
+        0.013660823926329613,
+        0.01391072478145361,
+        0.013640519231557846
+      ],
+      "zero_score": 0.014289778657257557,
+      "correct_minus_wrong_score": -0.00024990085512399673,
+      "correct_minus_second_score": 2.0304694771766663e-05,
+      "correct_minus_zero_score": -0.0006289547309279442,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.712464332580566,
+      "wrong_raw_mse": 5.7122416496276855,
+      "zero_raw_mse": 5.712891578674316,
+      "position_mean_mse": 4.92020845413208,
+      "correct_wrong_output_rms": 0.0046792845241725445,
+      "length_absolute_error": 184
+    },
+    {
+      "sample_id": "EjZrySeinxSzyvkW",
+      "wrong_audio_id": "CzmTHpLedlfqfkCv",
+      "second_audio_id": "FjMipeQXEpeWATEJ",
+      "target_length": 271,
+      "predicted_lengths": [
+        250,
+        293,
+        265
+      ],
+      "zero_length": 259,
+      "scores": [
+        0.02497682347893715,
+        0.024329230189323425,
+        0.024283302947878838
+      ],
+      "zero_score": 0.024333680048584938,
+      "correct_minus_wrong_score": 0.0006475932896137238,
+      "correct_minus_second_score": 0.0006935205310583115,
+      "correct_minus_zero_score": 0.000643143430352211,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.650574207305908,
+      "wrong_raw_mse": 5.6508660316467285,
+      "zero_raw_mse": 5.6512885093688965,
+      "position_mean_mse": 5.064314365386963,
+      "correct_wrong_output_rms": 0.0060196020640432835,
+      "length_absolute_error": 21
+    },
+    {
+      "sample_id": "CzmTHpLedlfqfkCv",
+      "wrong_audio_id": "FjMipeQXEpeWATEJ",
+      "second_audio_id": "OOMYRMZUbgSFNpQL",
+      "target_length": 603,
+      "predicted_lengths": [
+        371,
+        344,
+        372
+      ],
+      "zero_length": 340,
+      "scores": [
+        -0.0019570256117731333,
+        -0.0019458334427326918,
+        -0.002110325265675783
+      ],
+      "zero_score": -0.001838591881096363,
+      "correct_minus_wrong_score": -1.1192169040441513e-05,
+      "correct_minus_second_score": 0.00015329965390264988,
+      "correct_minus_zero_score": -0.00011843373067677021,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.243905067443848,
+      "wrong_raw_mse": 5.244082927703857,
+      "zero_raw_mse": 5.244623184204102,
+      "position_mean_mse": 4.779189586639404,
+      "correct_wrong_output_rms": 0.004556750878691673,
+      "length_absolute_error": 232
+    },
+    {
+      "sample_id": "FjMipeQXEpeWATEJ",
+      "wrong_audio_id": "OOMYRMZUbgSFNpQL",
+      "second_audio_id": "EXzeUpFNnHlUbEQD",
+      "target_length": 225,
+      "predicted_lengths": [
+        311,
+        343,
+        372
+      ],
+      "zero_length": 304,
+      "scores": [
+        0.022742019966244698,
+        0.022833656519651413,
+        0.022606700658798218
+      ],
+      "zero_score": 0.023585952818393707,
+      "correct_minus_wrong_score": -9.163655340671539e-05,
+      "correct_minus_second_score": 0.0001353193074464798,
+      "correct_minus_zero_score": -0.0008439328521490097,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.940629959106445,
+      "wrong_raw_mse": 5.940351963043213,
+      "zero_raw_mse": 5.9405198097229,
+      "position_mean_mse": 5.2390336990356445,
+      "correct_wrong_output_rms": 0.0036128577776253223,
+      "length_absolute_error": 86
+    },
+    {
+      "sample_id": "OOMYRMZUbgSFNpQL",
+      "wrong_audio_id": "EXzeUpFNnHlUbEQD",
+      "second_audio_id": "VRlrYyrAEnqSgJHw",
+      "target_length": 528,
+      "predicted_lengths": [
+        372,
+        398,
+        348
+      ],
+      "zero_length": 344,
+      "scores": [
+        -0.001962863141670823,
+        -0.001795379794202745,
+        -0.0021335144992917776
+      ],
+      "zero_score": -0.00262304930947721,
+      "correct_minus_wrong_score": -0.00016748334746807814,
+      "correct_minus_second_score": 0.0001706513576209545,
+      "correct_minus_zero_score": 0.000660186167806387,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.218857288360596,
+      "wrong_raw_mse": 5.218701362609863,
+      "zero_raw_mse": 5.219977378845215,
+      "position_mean_mse": 4.657813549041748,
+      "correct_wrong_output_rms": 0.004235565196722746,
+      "length_absolute_error": 156
+    },
+    {
+      "sample_id": "EXzeUpFNnHlUbEQD",
+      "wrong_audio_id": "VRlrYyrAEnqSgJHw",
+      "second_audio_id": "HPuyyDqAUSfaLATC",
+      "target_length": 409,
+      "predicted_lengths": [
+        390,
+        339,
+        383
+      ],
+      "zero_length": 334,
+      "scores": [
+        0.01721901260316372,
+        0.01728077046573162,
+        0.017172861844301224
+      ],
+      "zero_score": 0.01698170229792595,
+      "correct_minus_wrong_score": -6.175786256790161e-05,
+      "correct_minus_second_score": 4.615075886249542e-05,
+      "correct_minus_zero_score": 0.00023731030523777008,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.319312572479248,
+      "wrong_raw_mse": 5.31950569152832,
+      "zero_raw_mse": 5.320597171783447,
+      "position_mean_mse": 4.778477668762207,
+      "correct_wrong_output_rms": 0.004271132405847311,
+      "length_absolute_error": 19
+    },
+    {
+      "sample_id": "VRlrYyrAEnqSgJHw",
+      "wrong_audio_id": "HPuyyDqAUSfaLATC",
+      "second_audio_id": "tksPbmSdtqbcEwzi",
+      "target_length": 285,
+      "predicted_lengths": [
+        155,
+        173,
+        156
+      ],
+      "zero_length": 150,
+      "scores": [
+        0.00528936879709363,
+        0.004800922702997923,
+        0.00502876378595829
+      ],
+      "zero_score": 0.00541857210919261,
+      "correct_minus_wrong_score": 0.0004884460940957069,
+      "correct_minus_second_score": 0.00026060501113533974,
+      "correct_minus_zero_score": -0.00012920331209897995,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.586310863494873,
+      "wrong_raw_mse": 5.586320877075195,
+      "zero_raw_mse": 5.58760929107666,
+      "position_mean_mse": 4.900936126708984,
+      "correct_wrong_output_rms": 0.004953181371092796,
+      "length_absolute_error": 130
+    },
+    {
+      "sample_id": "HPuyyDqAUSfaLATC",
+      "wrong_audio_id": "tksPbmSdtqbcEwzi",
+      "second_audio_id": "dSAvjAibIaGlHyHO",
+      "target_length": 486,
+      "predicted_lengths": [
+        392,
+        351,
+        370
+      ],
+      "zero_length": 338,
+      "scores": [
+        -0.0022015615832060575,
+        -0.0023785047233104706,
+        -0.002380955731496215
+      ],
+      "zero_score": -0.0027214656583964825,
+      "correct_minus_wrong_score": 0.00017694314010441303,
+      "correct_minus_second_score": 0.00017939414829015732,
+      "correct_minus_zero_score": 0.0005199040751904249,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.230116844177246,
+      "wrong_raw_mse": 5.230325698852539,
+      "zero_raw_mse": 5.231393814086914,
+      "position_mean_mse": 4.740196228027344,
+      "correct_wrong_output_rms": 0.003260923782363534,
+      "length_absolute_error": 94
+    },
+    {
+      "sample_id": "tksPbmSdtqbcEwzi",
+      "wrong_audio_id": "dSAvjAibIaGlHyHO",
+      "second_audio_id": "EWceLnLXNpCKcNiF",
+      "target_length": 904,
+      "predicted_lengths": [
+        321,
+        339,
+        351
+      ],
+      "zero_length": 305,
+      "scores": [
+        -0.012847472913563251,
+        -0.012703507207334042,
+        -0.013153445906937122
+      ],
+      "zero_score": -0.013438749127089977,
+      "correct_minus_wrong_score": -0.0001439657062292099,
+      "correct_minus_second_score": 0.00030597299337387085,
+      "correct_minus_zero_score": 0.0005912762135267258,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.150906085968018,
+      "wrong_raw_mse": 5.150659561157227,
+      "zero_raw_mse": 5.152507305145264,
+      "position_mean_mse": 4.690032005310059,
+      "correct_wrong_output_rms": 0.003440267639234662,
+      "length_absolute_error": 583
+    },
+    {
+      "sample_id": "dSAvjAibIaGlHyHO",
+      "wrong_audio_id": "EWceLnLXNpCKcNiF",
+      "second_audio_id": "GbaqjcfAjFeYZHLE",
+      "target_length": 375,
+      "predicted_lengths": [
+        290,
+        303,
+        266
+      ],
+      "zero_length": 259,
+      "scores": [
+        0.0075479671359062195,
+        0.007618542294949293,
+        0.007604983169585466
+      ],
+      "zero_score": 0.0075399973429739475,
+      "correct_minus_wrong_score": -7.057515904307365e-05,
+      "correct_minus_second_score": -5.70160336792469e-05,
+      "correct_minus_zero_score": 7.969792932271957e-06,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.519698143005371,
+      "wrong_raw_mse": 5.519842624664307,
+      "zero_raw_mse": 5.520249366760254,
+      "position_mean_mse": 4.919604301452637,
+      "correct_wrong_output_rms": 0.0044515845365822315,
+      "length_absolute_error": 85
+    },
+    {
+      "sample_id": "EWceLnLXNpCKcNiF",
+      "wrong_audio_id": "GbaqjcfAjFeYZHLE",
+      "second_audio_id": "ybXENFjqhesIXmov",
+      "target_length": 366,
+      "predicted_lengths": [
+        297,
+        265,
+        268
+      ],
+      "zero_length": 259,
+      "scores": [
+        -0.00257285637781024,
+        -0.0028099105693399906,
+        -0.0026933932676911354
+      ],
+      "zero_score": -0.002775548491626978,
+      "correct_minus_wrong_score": 0.00023705419152975082,
+      "correct_minus_second_score": 0.00012053688988089561,
+      "correct_minus_zero_score": 0.00020269211381673813,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.221826076507568,
+      "wrong_raw_mse": 5.222031116485596,
+      "zero_raw_mse": 5.2228522300720215,
+      "position_mean_mse": 4.608940124511719,
+      "correct_wrong_output_rms": 0.004467172548174858,
+      "length_absolute_error": 69
+    },
+    {
+      "sample_id": "GbaqjcfAjFeYZHLE",
+      "wrong_audio_id": "ybXENFjqhesIXmov",
+      "second_audio_id": "wKsMunTImthMSsYb",
+      "target_length": 425,
+      "predicted_lengths": [
+        364,
+        372,
+        350
+      ],
+      "zero_length": 364,
+      "scores": [
+        0.00040352006908506155,
+        0.00046393671073019505,
+        0.0004675741074606776
+      ],
+      "zero_score": 0.00043339713010936975,
+      "correct_minus_wrong_score": -6.0416641645133495e-05,
+      "correct_minus_second_score": -6.405403837561607e-05,
+      "correct_minus_zero_score": -2.9877061024308205e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.2707343101501465,
+      "wrong_raw_mse": 5.2705841064453125,
+      "zero_raw_mse": 5.2715744972229,
+      "position_mean_mse": 4.683167457580566,
+      "correct_wrong_output_rms": 0.0038992897607386112,
+      "length_absolute_error": 61
+    },
+    {
+      "sample_id": "ybXENFjqhesIXmov",
+      "wrong_audio_id": "wKsMunTImthMSsYb",
+      "second_audio_id": "SwdmLcVGiRehRCAe",
+      "target_length": 265,
+      "predicted_lengths": [
+        368,
+        350,
+        410
+      ],
+      "zero_length": 362,
+      "scores": [
+        0.011781226843595505,
+        0.011738630011677742,
+        0.011515389196574688
+      ],
+      "zero_score": 0.011879533529281616,
+      "correct_minus_wrong_score": 4.2596831917762756e-05,
+      "correct_minus_second_score": 0.0002658376470208168,
+      "correct_minus_zero_score": -9.830668568611145e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.593050479888916,
+      "wrong_raw_mse": 5.593110084533691,
+      "zero_raw_mse": 5.593613147735596,
+      "position_mean_mse": 4.905169486999512,
+      "correct_wrong_output_rms": 0.003964181989431381,
+      "length_absolute_error": 103
+    },
+    {
+      "sample_id": "wKsMunTImthMSsYb",
+      "wrong_audio_id": "SwdmLcVGiRehRCAe",
+      "second_audio_id": "tycQhAQucpQuRWZT",
+      "target_length": 153,
+      "predicted_lengths": [
+        258,
+        342,
+        368
+      ],
+      "zero_length": 264,
+      "scores": [
+        0.005115622654557228,
+        0.004535561427474022,
+        0.004706236999481916
+      ],
+      "zero_score": 0.00627532135695219,
+      "correct_minus_wrong_score": 0.0005800612270832062,
+      "correct_minus_second_score": 0.00040938565507531166,
+      "correct_minus_zero_score": -0.0011596987023949623,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.930806636810303,
+      "wrong_raw_mse": 5.931138515472412,
+      "zero_raw_mse": 5.930741310119629,
+      "position_mean_mse": 5.015756607055664,
+      "correct_wrong_output_rms": 0.0038149787578731775,
+      "length_absolute_error": 105
+    },
+    {
+      "sample_id": "SwdmLcVGiRehRCAe",
+      "wrong_audio_id": "tycQhAQucpQuRWZT",
+      "second_audio_id": "YWtzQmFXommNhUPB",
+      "target_length": 522,
+      "predicted_lengths": [
+        407,
+        427,
+        354
+      ],
+      "zero_length": 361,
+      "scores": [
+        0.006068860180675983,
+        0.005984188057482243,
+        0.005920863710343838
+      ],
+      "zero_score": 0.0057782866060733795,
+      "correct_minus_wrong_score": 8.467212319374084e-05,
+      "correct_minus_second_score": 0.0001479964703321457,
+      "correct_minus_zero_score": 0.0002905735746026039,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.223293304443359,
+      "wrong_raw_mse": 5.223311424255371,
+      "zero_raw_mse": 5.22448205947876,
+      "position_mean_mse": 4.737886428833008,
+      "correct_wrong_output_rms": 0.0033895745873451233,
+      "length_absolute_error": 115
+    },
+    {
+      "sample_id": "tycQhAQucpQuRWZT",
+      "wrong_audio_id": "YWtzQmFXommNhUPB",
+      "second_audio_id": "glsCbrrabHndPIia",
+      "target_length": 635,
+      "predicted_lengths": [
+        434,
+        354,
+        347
+      ],
+      "zero_length": 359,
+      "scores": [
+        0.010247869417071342,
+        0.009868716821074486,
+        0.01000277791172266
+      ],
+      "zero_score": 0.00952307041734457,
+      "correct_minus_wrong_score": 0.0003791525959968567,
+      "correct_minus_second_score": 0.0002450915053486824,
+      "correct_minus_zero_score": 0.0007247989997267723,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.057757377624512,
+      "wrong_raw_mse": 5.05845308303833,
+      "zero_raw_mse": 5.059240818023682,
+      "position_mean_mse": 4.558534622192383,
+      "correct_wrong_output_rms": 0.005434778518974781,
+      "length_absolute_error": 201
+    },
+    {
+      "sample_id": "YWtzQmFXommNhUPB",
+      "wrong_audio_id": "glsCbrrabHndPIia",
+      "second_audio_id": "eCajXqmYvXfnIjUP",
+      "target_length": 477,
+      "predicted_lengths": [
+        394,
+        384,
+        448
+      ],
+      "zero_length": 400,
+      "scores": [
+        0.01043443102389574,
+        0.010454274713993073,
+        0.01051974855363369
+      ],
+      "zero_score": 0.010283960029482841,
+      "correct_minus_wrong_score": -1.9843690097332e-05,
+      "correct_minus_second_score": -8.531752973794937e-05,
+      "correct_minus_zero_score": 0.00015047099441289902,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.271260738372803,
+      "wrong_raw_mse": 5.271206855773926,
+      "zero_raw_mse": 5.272294521331787,
+      "position_mean_mse": 4.747129917144775,
+      "correct_wrong_output_rms": 0.004216697067022324,
+      "length_absolute_error": 83
+    },
+    {
+      "sample_id": "glsCbrrabHndPIia",
+      "wrong_audio_id": "eCajXqmYvXfnIjUP",
+      "second_audio_id": "lZKlrNfnySJjveYu",
+      "target_length": 520,
+      "predicted_lengths": [
+        234,
+        290,
+        280
+      ],
+      "zero_length": 241,
+      "scores": [
+        -0.0050721014849841595,
+        -0.005152502562850714,
+        -0.004958558361977339
+      ],
+      "zero_score": -0.005019252188503742,
+      "correct_minus_wrong_score": 8.040107786655426e-05,
+      "correct_minus_second_score": -0.00011354312300682068,
+      "correct_minus_zero_score": -5.284929648041725e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.324877738952637,
+      "wrong_raw_mse": 5.3248491287231445,
+      "zero_raw_mse": 5.325375556945801,
+      "position_mean_mse": 4.770530700683594,
+      "correct_wrong_output_rms": 0.004139858763664961,
+      "length_absolute_error": 286
+    },
+    {
+      "sample_id": "eCajXqmYvXfnIjUP",
+      "wrong_audio_id": "lZKlrNfnySJjveYu",
+      "second_audio_id": "SYWPBeDktEoWPSzE",
+      "target_length": 925,
+      "predicted_lengths": [
+        397,
+        391,
+        401
+      ],
+      "zero_length": 357,
+      "scores": [
+        -0.004576638340950012,
+        -0.004177622497081757,
+        -0.004586263559758663
+      ],
+      "zero_score": -0.005041040480136871,
+      "correct_minus_wrong_score": -0.0003990158438682556,
+      "correct_minus_second_score": 9.62521880865097e-06,
+      "correct_minus_zero_score": 0.00046440213918685913,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 4.954978942871094,
+      "wrong_raw_mse": 4.954658508300781,
+      "zero_raw_mse": 4.956253528594971,
+      "position_mean_mse": 4.471412181854248,
+      "correct_wrong_output_rms": 0.004046576097607613,
+      "length_absolute_error": 528
+    },
+    {
+      "sample_id": "lZKlrNfnySJjveYu",
+      "wrong_audio_id": "SYWPBeDktEoWPSzE",
+      "second_audio_id": "xsSljAIwrSmXqtTZ",
+      "target_length": 329,
+      "predicted_lengths": [
+        383,
+        394,
+        363
+      ],
+      "zero_length": 342,
+      "scores": [
+        0.009685717523097992,
+        0.009896442294120789,
+        0.009945553727447987
+      ],
+      "zero_score": 0.009760843589901924,
+      "correct_minus_wrong_score": -0.00021072477102279663,
+      "correct_minus_second_score": -0.00025983620434999466,
+      "correct_minus_zero_score": -7.512606680393219e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.578289985656738,
+      "wrong_raw_mse": 5.578050136566162,
+      "zero_raw_mse": 5.578791618347168,
+      "position_mean_mse": 4.962671756744385,
+      "correct_wrong_output_rms": 0.00404279725626111,
+      "length_absolute_error": 54
+    },
+    {
+      "sample_id": "SYWPBeDktEoWPSzE",
+      "wrong_audio_id": "xsSljAIwrSmXqtTZ",
+      "second_audio_id": "DNZoNRSbIOWKGofZ",
+      "target_length": 332,
+      "predicted_lengths": [
+        462,
+        436,
+        439
+      ],
+      "zero_length": 419,
+      "scores": [
+        -0.0015304380794987082,
+        -0.0014786631800234318,
+        -0.0016264286823570728
+      ],
+      "zero_score": -0.001329432474449277,
+      "correct_minus_wrong_score": -5.177489947527647e-05,
+      "correct_minus_second_score": 9.599060285836458e-05,
+      "correct_minus_zero_score": -0.00020100560504943132,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.533663272857666,
+      "wrong_raw_mse": 5.533766746520996,
+      "zero_raw_mse": 5.534718036651611,
+      "position_mean_mse": 4.882091045379639,
+      "correct_wrong_output_rms": 0.0033724026288837194,
+      "length_absolute_error": 130
+    },
+    {
+      "sample_id": "xsSljAIwrSmXqtTZ",
+      "wrong_audio_id": "DNZoNRSbIOWKGofZ",
+      "second_audio_id": "BEQqxtQVmexVtXaG",
+      "target_length": 769,
+      "predicted_lengths": [
+        276,
+        280,
+        299
+      ],
+      "zero_length": 252,
+      "scores": [
+        0.004209602251648903,
+        0.004394873045384884,
+        0.004200181923806667
+      ],
+      "zero_score": 0.0039748940616846085,
+      "correct_minus_wrong_score": -0.000185270793735981,
+      "correct_minus_second_score": 9.420327842235565e-06,
+      "correct_minus_zero_score": 0.00023470818996429443,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.0996880531311035,
+      "wrong_raw_mse": 5.099505424499512,
+      "zero_raw_mse": 5.1005964279174805,
+      "position_mean_mse": 4.556882381439209,
+      "correct_wrong_output_rms": 0.0040330360643565655,
+      "length_absolute_error": 493
+    },
+    {
+      "sample_id": "DNZoNRSbIOWKGofZ",
+      "wrong_audio_id": "BEQqxtQVmexVtXaG",
+      "second_audio_id": "KENZwZMzngCTLTCu",
+      "target_length": 543,
+      "predicted_lengths": [
+        301,
+        322,
+        269
+      ],
+      "zero_length": 268,
+      "scores": [
+        0.0015540618915110826,
+        0.0015697469934821129,
+        0.001515233889222145
+      ],
+      "zero_score": 0.0015143044292926788,
+      "correct_minus_wrong_score": -1.5685101971030235e-05,
+      "correct_minus_second_score": 3.882800228893757e-05,
+      "correct_minus_zero_score": 3.9757462218403816e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.273454666137695,
+      "wrong_raw_mse": 5.273411273956299,
+      "zero_raw_mse": 5.2744364738464355,
+      "position_mean_mse": 4.759880542755127,
+      "correct_wrong_output_rms": 0.0038292037788778543,
+      "length_absolute_error": 242
+    },
+    {
+      "sample_id": "BEQqxtQVmexVtXaG",
+      "wrong_audio_id": "KENZwZMzngCTLTCu",
+      "second_audio_id": "BXzuZTxvDoMWeLNC",
+      "target_length": 309,
+      "predicted_lengths": [
+        424,
+        387,
+        421
+      ],
+      "zero_length": 392,
+      "scores": [
+        0.013850947842001915,
+        0.013530077412724495,
+        0.013646526262164116
+      ],
+      "zero_score": 0.0137614905834198,
+      "correct_minus_wrong_score": 0.00032087042927742004,
+      "correct_minus_second_score": 0.00020442157983779907,
+      "correct_minus_zero_score": 8.945725858211517e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.556097030639648,
+      "wrong_raw_mse": 5.5566935539245605,
+      "zero_raw_mse": 5.5574259757995605,
+      "position_mean_mse": 4.992211818695068,
+      "correct_wrong_output_rms": 0.006023978814482689,
+      "length_absolute_error": 115
+    },
+    {
+      "sample_id": "KENZwZMzngCTLTCu",
+      "wrong_audio_id": "BXzuZTxvDoMWeLNC",
+      "second_audio_id": "BKmDFIcAlFYnkkfa",
+      "target_length": 374,
+      "predicted_lengths": [
+        243,
+        274,
+        242
+      ],
+      "zero_length": 240,
+      "scores": [
+        0.0022946407552808523,
+        0.002163288416340947,
+        0.0023358375765383244
+      ],
+      "zero_score": 0.002700663637369871,
+      "correct_minus_wrong_score": 0.00013135233893990517,
+      "correct_minus_second_score": -4.119682125747204e-05,
+      "correct_minus_zero_score": -0.0004060228820890188,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.526264190673828,
+      "wrong_raw_mse": 5.526299476623535,
+      "zero_raw_mse": 5.526805877685547,
+      "position_mean_mse": 4.978386402130127,
+      "correct_wrong_output_rms": 0.004421148914843798,
+      "length_absolute_error": 131
+    },
+    {
+      "sample_id": "BXzuZTxvDoMWeLNC",
+      "wrong_audio_id": "BKmDFIcAlFYnkkfa",
+      "second_audio_id": "OadnuQYTwWAKMWgR",
+      "target_length": 406,
+      "predicted_lengths": [
+        342,
+        291,
+        369
+      ],
+      "zero_length": 294,
+      "scores": [
+        0.006541434209793806,
+        0.006511750631034374,
+        0.006486464291810989
+      ],
+      "zero_score": 0.00645067822188139,
+      "correct_minus_wrong_score": 2.968357875943184e-05,
+      "correct_minus_second_score": 5.4969917982816696e-05,
+      "correct_minus_zero_score": 9.075598791241646e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.604290962219238,
+      "wrong_raw_mse": 5.604428768157959,
+      "zero_raw_mse": 5.60504674911499,
+      "position_mean_mse": 5.026221752166748,
+      "correct_wrong_output_rms": 0.004990565124899149,
+      "length_absolute_error": 64
+    },
+    {
+      "sample_id": "BKmDFIcAlFYnkkfa",
+      "wrong_audio_id": "OadnuQYTwWAKMWgR",
+      "second_audio_id": "WDuCXKNJSmtqYeER",
+      "target_length": 443,
+      "predicted_lengths": [
+        295,
+        371,
+        285
+      ],
+      "zero_length": 298,
+      "scores": [
+        -0.0041816397570073605,
+        -0.004275210667401552,
+        -0.004260177258402109
+      ],
+      "zero_score": -0.00387765490449965,
+      "correct_minus_wrong_score": 9.357091039419174e-05,
+      "correct_minus_second_score": 7.853750139474869e-05,
+      "correct_minus_zero_score": -0.00030398485250771046,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.316289901733398,
+      "wrong_raw_mse": 5.31601619720459,
+      "zero_raw_mse": 5.316840171813965,
+      "position_mean_mse": 4.785638332366943,
+      "correct_wrong_output_rms": 0.0055215973407030106,
+      "length_absolute_error": 148
+    },
+    {
+      "sample_id": "OadnuQYTwWAKMWgR",
+      "wrong_audio_id": "WDuCXKNJSmtqYeER",
+      "second_audio_id": "PcdEagVUxZzsYZHO",
+      "target_length": 195,
+      "predicted_lengths": [
+        342,
+        272,
+        325
+      ],
+      "zero_length": 281,
+      "scores": [
+        0.01042497530579567,
+        0.01111416332423687,
+        0.01071944460272789
+      ],
+      "zero_score": 0.011569205671548843,
+      "correct_minus_wrong_score": -0.0006891880184412003,
+      "correct_minus_second_score": -0.00029446929693222046,
+      "correct_minus_zero_score": -0.0011442303657531738,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.9870476722717285,
+      "wrong_raw_mse": 5.986719608306885,
+      "zero_raw_mse": 5.987186431884766,
+      "position_mean_mse": 5.117712020874023,
+      "correct_wrong_output_rms": 0.0054151760414242744,
+      "length_absolute_error": 147
+    },
+    {
+      "sample_id": "WDuCXKNJSmtqYeER",
+      "wrong_audio_id": "PcdEagVUxZzsYZHO",
+      "second_audio_id": "rwdjTQsCKsyRVmwj",
+      "target_length": 266,
+      "predicted_lengths": [
+        226,
+        269,
+        239
+      ],
+      "zero_length": 232,
+      "scores": [
+        0.019756359979510307,
+        0.019635837525129318,
+        0.01969803124666214
+      ],
+      "zero_score": 0.019583307206630707,
+      "correct_minus_wrong_score": 0.00012052245438098907,
+      "correct_minus_second_score": 5.832873284816742e-05,
+      "correct_minus_zero_score": 0.00017305277287960052,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.593523979187012,
+      "wrong_raw_mse": 5.593441009521484,
+      "zero_raw_mse": 5.594035625457764,
+      "position_mean_mse": 4.859148979187012,
+      "correct_wrong_output_rms": 0.004533020779490471,
+      "length_absolute_error": 40
+    },
+    {
+      "sample_id": "PcdEagVUxZzsYZHO",
+      "wrong_audio_id": "rwdjTQsCKsyRVmwj",
+      "second_audio_id": "uNpMjqOAnFLqScTP",
+      "target_length": 309,
+      "predicted_lengths": [
+        254,
+        228,
+        232
+      ],
+      "zero_length": 221,
+      "scores": [
+        0.02199600264430046,
+        0.022143075242638588,
+        0.021663280203938484
+      ],
+      "zero_score": 0.021724045276641846,
+      "correct_minus_wrong_score": -0.00014707259833812714,
+      "correct_minus_second_score": 0.0003327224403619766,
+      "correct_minus_zero_score": 0.0002719573676586151,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.520968437194824,
+      "wrong_raw_mse": 5.520867824554443,
+      "zero_raw_mse": 5.521782398223877,
+      "position_mean_mse": 4.88751745223999,
+      "correct_wrong_output_rms": 0.0038711335510015488,
+      "length_absolute_error": 55
+    },
+    {
+      "sample_id": "rwdjTQsCKsyRVmwj",
+      "wrong_audio_id": "uNpMjqOAnFLqScTP",
+      "second_audio_id": "gsObBsyBIURXuuCP",
+      "target_length": 351,
+      "predicted_lengths": [
+        330,
+        336,
+        368
+      ],
+      "zero_length": 323,
+      "scores": [
+        0.007040180265903473,
+        0.006855490617454052,
+        0.00701347179710865
+      ],
+      "zero_score": 0.006891091354191303,
+      "correct_minus_wrong_score": 0.00018468964844942093,
+      "correct_minus_second_score": 2.6708468794822693e-05,
+      "correct_minus_zero_score": 0.00014908891171216965,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.308663845062256,
+      "wrong_raw_mse": 5.308837890625,
+      "zero_raw_mse": 5.309707164764404,
+      "position_mean_mse": 4.7641215324401855,
+      "correct_wrong_output_rms": 0.005396219436079264,
+      "length_absolute_error": 21
+    },
+    {
+      "sample_id": "uNpMjqOAnFLqScTP",
+      "wrong_audio_id": "gsObBsyBIURXuuCP",
+      "second_audio_id": "dCIfqClOcfGCMZhA",
+      "target_length": 421,
+      "predicted_lengths": [
+        299,
+        325,
+        278
+      ],
+      "zero_length": 288,
+      "scores": [
+        -0.007122732698917389,
+        -0.007351201493293047,
+        -0.007464248221367598
+      ],
+      "zero_score": -0.006978514604270458,
+      "correct_minus_wrong_score": 0.00022846879437565804,
+      "correct_minus_second_score": 0.00034151552245020866,
+      "correct_minus_zero_score": -0.0001442180946469307,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.160334587097168,
+      "wrong_raw_mse": 5.160521984100342,
+      "zero_raw_mse": 5.16111946105957,
+      "position_mean_mse": 4.63143253326416,
+      "correct_wrong_output_rms": 0.0060615092515945435,
+      "length_absolute_error": 122
+    },
+    {
+      "sample_id": "gsObBsyBIURXuuCP",
+      "wrong_audio_id": "dCIfqClOcfGCMZhA",
+      "second_audio_id": "CHqOasHQmttzBWxG",
+      "target_length": 633,
+      "predicted_lengths": [
+        418,
+        371,
+        432
+      ],
+      "zero_length": 388,
+      "scores": [
+        0.0036703646183013916,
+        0.003532751929014921,
+        0.0037711993791162968
+      ],
+      "zero_score": 0.003385521238669753,
+      "correct_minus_wrong_score": 0.0001376126892864704,
+      "correct_minus_second_score": -0.00010083476081490517,
+      "correct_minus_zero_score": 0.0002848433796316385,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.077646255493164,
+      "wrong_raw_mse": 5.077931880950928,
+      "zero_raw_mse": 5.078649044036865,
+      "position_mean_mse": 4.653860569000244,
+      "correct_wrong_output_rms": 0.00659876549616456,
+      "length_absolute_error": 215
+    },
+    {
+      "sample_id": "dCIfqClOcfGCMZhA",
+      "wrong_audio_id": "CHqOasHQmttzBWxG",
+      "second_audio_id": "eDuofDDuUuCumKdt",
+      "target_length": 404,
+      "predicted_lengths": [
+        209,
+        253,
+        226
+      ],
+      "zero_length": 213,
+      "scores": [
+        0.00980386696755886,
+        0.009562093764543533,
+        0.009595008566975594
+      ],
+      "zero_score": 0.009335644543170929,
+      "correct_minus_wrong_score": 0.00024177320301532745,
+      "correct_minus_second_score": 0.0002088584005832672,
+      "correct_minus_zero_score": 0.0004682224243879318,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.393199920654297,
+      "wrong_raw_mse": 5.3927903175354,
+      "zero_raw_mse": 5.3944315910339355,
+      "position_mean_mse": 4.835623741149902,
+      "correct_wrong_output_rms": 0.00863129086792469,
+      "length_absolute_error": 195
+    },
+    {
+      "sample_id": "CHqOasHQmttzBWxG",
+      "wrong_audio_id": "eDuofDDuUuCumKdt",
+      "second_audio_id": "XYpxbQIzBhUStcHI",
+      "target_length": 925,
+      "predicted_lengths": [
+        392,
+        344,
+        362
+      ],
+      "zero_length": 323,
+      "scores": [
+        0.00033885426819324493,
+        -4.210951738059521e-05,
+        -6.703904364258051e-05
+      ],
+      "zero_score": -0.0005486530717462301,
+      "correct_minus_wrong_score": 0.00038096378557384014,
+      "correct_minus_second_score": 0.00040589331183582544,
+      "correct_minus_zero_score": 0.0008875073399394751,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 4.958815574645996,
+      "wrong_raw_mse": 4.959366798400879,
+      "zero_raw_mse": 4.960450172424316,
+      "position_mean_mse": 4.477779388427734,
+      "correct_wrong_output_rms": 0.004548987839370966,
+      "length_absolute_error": 533
+    },
+    {
+      "sample_id": "eDuofDDuUuCumKdt",
+      "wrong_audio_id": "XYpxbQIzBhUStcHI",
+      "second_audio_id": "UOrmYLPPHwQeWKEC",
+      "target_length": 434,
+      "predicted_lengths": [
+        434,
+        444,
+        430
+      ],
+      "zero_length": 419,
+      "scores": [
+        0.00411590002477169,
+        0.004065646789968014,
+        0.004089558497071266
+      ],
+      "zero_score": 0.0043166633695364,
+      "correct_minus_wrong_score": 5.0253234803676605e-05,
+      "correct_minus_second_score": 2.6341527700424194e-05,
+      "correct_minus_zero_score": -0.00020076334476470947,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.427505970001221,
+      "wrong_raw_mse": 5.4273858070373535,
+      "zero_raw_mse": 5.427984714508057,
+      "position_mean_mse": 4.908605098724365,
+      "correct_wrong_output_rms": 0.003751694690436125,
+      "length_absolute_error": 0
+    },
+    {
+      "sample_id": "XYpxbQIzBhUStcHI",
+      "wrong_audio_id": "UOrmYLPPHwQeWKEC",
+      "second_audio_id": "biiTaaVWxxRXKsyU",
+      "target_length": 934,
+      "predicted_lengths": [
+        404,
+        384,
+        370
+      ],
+      "zero_length": 367,
+      "scores": [
+        -0.003361657727509737,
+        -0.003321678377687931,
+        -0.003374852705746889
+      ],
+      "zero_score": -0.004049211274832487,
+      "correct_minus_wrong_score": -3.9979349821805954e-05,
+      "correct_minus_second_score": 1.31949782371521e-05,
+      "correct_minus_zero_score": 0.0006875535473227501,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.087432861328125,
+      "wrong_raw_mse": 5.087234020233154,
+      "zero_raw_mse": 5.0886549949646,
+      "position_mean_mse": 4.600137710571289,
+      "correct_wrong_output_rms": 0.003669983707368374,
+      "length_absolute_error": 530
+    },
+    {
+      "sample_id": "UOrmYLPPHwQeWKEC",
+      "wrong_audio_id": "biiTaaVWxxRXKsyU",
+      "second_audio_id": "pvUwlIULvPwgGOgR",
+      "target_length": 554,
+      "predicted_lengths": [
+        379,
+        368,
+        358
+      ],
+      "zero_length": 369,
+      "scores": [
+        0.0038580165710300207,
+        0.0038828991819173098,
+        0.003853407222777605
+      ],
+      "zero_score": 0.003545143874362111,
+      "correct_minus_wrong_score": -2.4882610887289047e-05,
+      "correct_minus_second_score": 4.609348252415657e-06,
+      "correct_minus_zero_score": 0.0003128726966679096,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.38455867767334,
+      "wrong_raw_mse": 5.384708881378174,
+      "zero_raw_mse": 5.385995864868164,
+      "position_mean_mse": 4.869638442993164,
+      "correct_wrong_output_rms": 0.0035336266737431288,
+      "length_absolute_error": 175
+    },
+    {
+      "sample_id": "biiTaaVWxxRXKsyU",
+      "wrong_audio_id": "pvUwlIULvPwgGOgR",
+      "second_audio_id": "CAmHnYjBzGdrdOrB",
+      "target_length": 212,
+      "predicted_lengths": [
+        353,
+        337,
+        306
+      ],
+      "zero_length": 352,
+      "scores": [
+        -0.0007119231158867478,
+        -0.0005469702882692218,
+        -4.574563354253769e-05
+      ],
+      "zero_score": 0.0003834501840174198,
+      "correct_minus_wrong_score": -0.00016495282761752605,
+      "correct_minus_second_score": -0.0006661774823442101,
+      "correct_minus_zero_score": -0.0010953732999041677,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.706231594085693,
+      "wrong_raw_mse": 5.706246376037598,
+      "zero_raw_mse": 5.706450939178467,
+      "position_mean_mse": 5.0206756591796875,
+      "correct_wrong_output_rms": 0.0036190319806337357,
+      "length_absolute_error": 141
+    },
+    {
+      "sample_id": "pvUwlIULvPwgGOgR",
+      "wrong_audio_id": "CAmHnYjBzGdrdOrB",
+      "second_audio_id": "rxBGNCLigyXbbOUN",
+      "target_length": 179,
+      "predicted_lengths": [
+        197,
+        181,
+        224
+      ],
+      "zero_length": 199,
+      "scores": [
+        0.018225494772195816,
+        0.019066356122493744,
+        0.01766267977654934
+      ],
+      "zero_score": 0.018662963062524796,
+      "correct_minus_wrong_score": -0.0008408613502979279,
+      "correct_minus_second_score": 0.0005628149956464767,
+      "correct_minus_zero_score": -0.0004374682903289795,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.747509479522705,
+      "wrong_raw_mse": 5.747252464294434,
+      "zero_raw_mse": 5.74796724319458,
+      "position_mean_mse": 4.819415092468262,
+      "correct_wrong_output_rms": 0.005618320312350988,
+      "length_absolute_error": 18
+    },
+    {
+      "sample_id": "CAmHnYjBzGdrdOrB",
+      "wrong_audio_id": "rxBGNCLigyXbbOUN",
+      "second_audio_id": "JRgTsxkiHNWAXPUt",
+      "target_length": 427,
+      "predicted_lengths": [
+        199,
+        249,
+        235
+      ],
+      "zero_length": 219,
+      "scores": [
+        -0.002198108471930027,
+        -0.0023310091346502304,
+        -0.0023434432223439217
+      ],
+      "zero_score": -0.0022105881944298744,
+      "correct_minus_wrong_score": 0.0001329006627202034,
+      "correct_minus_second_score": 0.00014533475041389465,
+      "correct_minus_zero_score": 1.2479722499847412e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.19512939453125,
+      "wrong_raw_mse": 5.194315433502197,
+      "zero_raw_mse": 5.195505619049072,
+      "position_mean_mse": 4.5883660316467285,
+      "correct_wrong_output_rms": 0.0076434374786913395,
+      "length_absolute_error": 228
+    },
+    {
+      "sample_id": "rxBGNCLigyXbbOUN",
+      "wrong_audio_id": "JRgTsxkiHNWAXPUt",
+      "second_audio_id": "npgHNEBFZOZyXqMu",
+      "target_length": 600,
+      "predicted_lengths": [
+        453,
+        437,
+        401
+      ],
+      "zero_length": 420,
+      "scores": [
+        0.004026517737656832,
+        0.003980082459747791,
+        0.003798786550760269
+      ],
+      "zero_score": 0.0038950005546212196,
+      "correct_minus_wrong_score": 4.643527790904045e-05,
+      "correct_minus_second_score": 0.00022773118689656258,
+      "correct_minus_zero_score": 0.0001315171830356121,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.220408916473389,
+      "wrong_raw_mse": 5.2205376625061035,
+      "zero_raw_mse": 5.221606731414795,
+      "position_mean_mse": 4.703495979309082,
+      "correct_wrong_output_rms": 0.0029526003636419773,
+      "length_absolute_error": 147
+    },
+    {
+      "sample_id": "JRgTsxkiHNWAXPUt",
+      "wrong_audio_id": "npgHNEBFZOZyXqMu",
+      "second_audio_id": "ZyFedymjltHZeBbU",
+      "target_length": 770,
+      "predicted_lengths": [
+        312,
+        268,
+        352
+      ],
+      "zero_length": 284,
+      "scores": [
+        -0.006549534387886524,
+        -0.00701506994664669,
+        -0.006376882549375296
+      ],
+      "zero_score": -0.006943050306290388,
+      "correct_minus_wrong_score": 0.00046553555876016617,
+      "correct_minus_second_score": -0.00017265183851122856,
+      "correct_minus_zero_score": 0.0003935159184038639,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.092372894287109,
+      "wrong_raw_mse": 5.093492031097412,
+      "zero_raw_mse": 5.0939812660217285,
+      "position_mean_mse": 4.606302261352539,
+      "correct_wrong_output_rms": 0.006874928250908852,
+      "length_absolute_error": 458
+    },
+    {
+      "sample_id": "npgHNEBFZOZyXqMu",
+      "wrong_audio_id": "ZyFedymjltHZeBbU",
+      "second_audio_id": "WXrBiiZcqaKVfbjr",
+      "target_length": 488,
+      "predicted_lengths": [
+        316,
+        388,
+        361
+      ],
+      "zero_length": 336,
+      "scores": [
+        0.00803255382925272,
+        0.008039756678044796,
+        0.008138841949403286
+      ],
+      "zero_score": 0.008064301684498787,
+      "correct_minus_wrong_score": -7.202848792076111e-06,
+      "correct_minus_second_score": -0.0001062881201505661,
+      "correct_minus_zero_score": -3.174785524606705e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.172435760498047,
+      "wrong_raw_mse": 5.171831130981445,
+      "zero_raw_mse": 5.172580242156982,
+      "position_mean_mse": 4.684818267822266,
+      "correct_wrong_output_rms": 0.007652880623936653,
+      "length_absolute_error": 172
+    },
+    {
+      "sample_id": "ZyFedymjltHZeBbU",
+      "wrong_audio_id": "WXrBiiZcqaKVfbjr",
+      "second_audio_id": "DbBmHzxaLWNBETqX",
+      "target_length": 502,
+      "predicted_lengths": [
+        330,
+        299,
+        313
+      ],
+      "zero_length": 271,
+      "scores": [
+        -0.003900686278939247,
+        -0.004230765625834465,
+        -0.0040418668650090694
+      ],
+      "zero_score": -0.003954862244427204,
+      "correct_minus_wrong_score": 0.0003300793468952179,
+      "correct_minus_second_score": 0.0001411805860698223,
+      "correct_minus_zero_score": 5.4175965487957e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.20901346206665,
+      "wrong_raw_mse": 5.209417819976807,
+      "zero_raw_mse": 5.2100911140441895,
+      "position_mean_mse": 4.689099311828613,
+      "correct_wrong_output_rms": 0.0065674372017383575,
+      "length_absolute_error": 172
+    },
+    {
+      "sample_id": "WXrBiiZcqaKVfbjr",
+      "wrong_audio_id": "DbBmHzxaLWNBETqX",
+      "second_audio_id": "hzoAFRlAYYUNTJxr",
+      "target_length": 107,
+      "predicted_lengths": [
+        327,
+        342,
+        353
+      ],
+      "zero_length": 297,
+      "scores": [
+        0.01530434563755989,
+        0.01472412794828415,
+        0.013575553894042969
+      ],
+      "zero_score": 0.015091818757355213,
+      "correct_minus_wrong_score": 0.0005802176892757416,
+      "correct_minus_second_score": 0.001728791743516922,
+      "correct_minus_zero_score": 0.00021252688020467758,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 6.242918968200684,
+      "wrong_raw_mse": 6.243377685546875,
+      "zero_raw_mse": 6.243271827697754,
+      "position_mean_mse": 5.057743072509766,
+      "correct_wrong_output_rms": 0.004882269073277712,
+      "length_absolute_error": 220
+    },
+    {
+      "sample_id": "DbBmHzxaLWNBETqX",
+      "wrong_audio_id": "hzoAFRlAYYUNTJxr",
+      "second_audio_id": "xGCCQNqFnNzmnvbB",
+      "target_length": 570,
+      "predicted_lengths": [
+        334,
+        344,
+        356
+      ],
+      "zero_length": 290,
+      "scores": [
+        -0.009828515350818634,
+        -0.009598057717084885,
+        -0.009643650613725185
+      ],
+      "zero_score": -0.009828170761466026,
+      "correct_minus_wrong_score": -0.0002304576337337494,
+      "correct_minus_second_score": -0.00018486473709344864,
+      "correct_minus_zero_score": -3.4458935260772705e-07,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.0108561515808105,
+      "wrong_raw_mse": 5.010135650634766,
+      "zero_raw_mse": 5.011744499206543,
+      "position_mean_mse": 4.531707286834717,
+      "correct_wrong_output_rms": 0.006217731162905693,
+      "length_absolute_error": 236
+    },
+    {
+      "sample_id": "hzoAFRlAYYUNTJxr",
+      "wrong_audio_id": "xGCCQNqFnNzmnvbB",
+      "second_audio_id": "gFCmrLQOcDUNaRea",
+      "target_length": 720,
+      "predicted_lengths": [
+        378,
+        386,
+        323
+      ],
+      "zero_length": 328,
+      "scores": [
+        0.006633084733039141,
+        0.006607196759432554,
+        0.006480415351688862
+      ],
+      "zero_score": 0.00624425383284688,
+      "correct_minus_wrong_score": 2.5887973606586456e-05,
+      "correct_minus_second_score": 0.00015266938135027885,
+      "correct_minus_zero_score": 0.00038883090019226074,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.181448459625244,
+      "wrong_raw_mse": 5.1816229820251465,
+      "zero_raw_mse": 5.183189868927002,
+      "position_mean_mse": 4.6786580085754395,
+      "correct_wrong_output_rms": 0.0036308192647993565,
+      "length_absolute_error": 342
+    },
+    {
+      "sample_id": "xGCCQNqFnNzmnvbB",
+      "wrong_audio_id": "gFCmrLQOcDUNaRea",
+      "second_audio_id": "IMfVdxmmFqIPupaX",
+      "target_length": 108,
+      "predicted_lengths": [
+        341,
+        273,
+        283
+      ],
+      "zero_length": 273,
+      "scores": [
+        0.022899258881807327,
+        0.02400919422507286,
+        0.024023957550525665
+      ],
+      "zero_score": 0.024763889610767365,
+      "correct_minus_wrong_score": -0.0011099353432655334,
+      "correct_minus_second_score": -0.001124698668718338,
+      "correct_minus_zero_score": -0.0018646307289600372,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.2096405029296875,
+      "wrong_raw_mse": 6.208781719207764,
+      "zero_raw_mse": 6.208759784698486,
+      "position_mean_mse": 4.9868574142456055,
+      "correct_wrong_output_rms": 0.0064094155095517635,
+      "length_absolute_error": 233
+    },
+    {
+      "sample_id": "gFCmrLQOcDUNaRea",
+      "wrong_audio_id": "IMfVdxmmFqIPupaX",
+      "second_audio_id": "cCCVkrnwBKsrAppP",
+      "target_length": 1004,
+      "predicted_lengths": [
+        342,
+        354,
+        382
+      ],
+      "zero_length": 351,
+      "scores": [
+        0.005885111168026924,
+        0.005963831674307585,
+        0.0060447584837675095
+      ],
+      "zero_score": 0.005278836004436016,
+      "correct_minus_wrong_score": -7.872050628066063e-05,
+      "correct_minus_second_score": -0.00015964731574058533,
+      "correct_minus_zero_score": 0.000606275163590908,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.013438701629639,
+      "wrong_raw_mse": 5.013531684875488,
+      "zero_raw_mse": 5.0145182609558105,
+      "position_mean_mse": 4.528499126434326,
+      "correct_wrong_output_rms": 0.003967634867876768,
+      "length_absolute_error": 662
+    },
+    {
+      "sample_id": "IMfVdxmmFqIPupaX",
+      "wrong_audio_id": "cCCVkrnwBKsrAppP",
+      "second_audio_id": "HQRcZVHtphDBQsqo",
+      "target_length": 481,
+      "predicted_lengths": [
+        312,
+        343,
+        316
+      ],
+      "zero_length": 301,
+      "scores": [
+        0.0015573976561427116,
+        0.0015771558973938227,
+        0.0016248628962785006
+      ],
+      "zero_score": 0.0014039399102330208,
+      "correct_minus_wrong_score": -1.975824125111103e-05,
+      "correct_minus_second_score": -6.746524013578892e-05,
+      "correct_minus_zero_score": 0.00015345774590969086,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.285637378692627,
+      "wrong_raw_mse": 5.285490036010742,
+      "zero_raw_mse": 5.286258697509766,
+      "position_mean_mse": 4.741936683654785,
+      "correct_wrong_output_rms": 0.00365884299390018,
+      "length_absolute_error": 169
+    },
+    {
+      "sample_id": "cCCVkrnwBKsrAppP",
+      "wrong_audio_id": "HQRcZVHtphDBQsqo",
+      "second_audio_id": "gvhqAvflEXUphRdY",
+      "target_length": 534,
+      "predicted_lengths": [
+        431,
+        413,
+        411
+      ],
+      "zero_length": 406,
+      "scores": [
+        -0.0028099825140088797,
+        -0.0027377638034522533,
+        -0.003062038915231824
+      ],
+      "zero_score": -0.0032606683671474457,
+      "correct_minus_wrong_score": -7.221871055662632e-05,
+      "correct_minus_second_score": 0.00025205640122294426,
+      "correct_minus_zero_score": 0.000450685853138566,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.058609962463379,
+      "wrong_raw_mse": 5.058742523193359,
+      "zero_raw_mse": 5.059803485870361,
+      "position_mean_mse": 4.607475280761719,
+      "correct_wrong_output_rms": 0.004982819315046072,
+      "length_absolute_error": 103
+    },
+    {
+      "sample_id": "HQRcZVHtphDBQsqo",
+      "wrong_audio_id": "gvhqAvflEXUphRdY",
+      "second_audio_id": "BKLOMPXJJfQJdhBz",
+      "target_length": 581,
+      "predicted_lengths": [
+        311,
+        311,
+        316
+      ],
+      "zero_length": 300,
+      "scores": [
+        -0.008751293644309044,
+        -0.009155414998531342,
+        -0.008682956919074059
+      ],
+      "zero_score": -0.008804462850093842,
+      "correct_minus_wrong_score": 0.00040412135422229767,
+      "correct_minus_second_score": -6.833672523498535e-05,
+      "correct_minus_zero_score": 5.316920578479767e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.234376430511475,
+      "wrong_raw_mse": 5.234814643859863,
+      "zero_raw_mse": 5.235350131988525,
+      "position_mean_mse": 4.698575496673584,
+      "correct_wrong_output_rms": 0.0053584701381623745,
+      "length_absolute_error": 270
+    },
+    {
+      "sample_id": "gvhqAvflEXUphRdY",
+      "wrong_audio_id": "BKLOMPXJJfQJdhBz",
+      "second_audio_id": "pmSceUyPSmmpkhZE",
+      "target_length": 195,
+      "predicted_lengths": [
+        267,
+        270,
+        261
+      ],
+      "zero_length": 255,
+      "scores": [
+        0.016020288690924644,
+        0.015139219351112843,
+        0.016037169843912125
+      ],
+      "zero_score": 0.015521963126957417,
+      "correct_minus_wrong_score": 0.0008810693398118019,
+      "correct_minus_second_score": -1.6881152987480164e-05,
+      "correct_minus_zero_score": 0.0004983255639672279,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.865495204925537,
+      "wrong_raw_mse": 5.866150856018066,
+      "zero_raw_mse": 5.866812705993652,
+      "position_mean_mse": 4.968549728393555,
+      "correct_wrong_output_rms": 0.005207598675042391,
+      "length_absolute_error": 72
+    },
+    {
+      "sample_id": "BKLOMPXJJfQJdhBz",
+      "wrong_audio_id": "pmSceUyPSmmpkhZE",
+      "second_audio_id": "GpWLWOFOzRKhSibu",
+      "target_length": 382,
+      "predicted_lengths": [
+        350,
+        335,
+        375
+      ],
+      "zero_length": 333,
+      "scores": [
+        0.013302612118422985,
+        0.013316175900399685,
+        0.013311763294041157
+      ],
+      "zero_score": 0.013488746248185635,
+      "correct_minus_wrong_score": -1.3563781976699829e-05,
+      "correct_minus_second_score": -9.151175618171692e-06,
+      "correct_minus_zero_score": -0.00018613412976264954,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.362199306488037,
+      "wrong_raw_mse": 5.362224102020264,
+      "zero_raw_mse": 5.362738132476807,
+      "position_mean_mse": 4.765275955200195,
+      "correct_wrong_output_rms": 0.005424413830041885,
+      "length_absolute_error": 32
+    },
+    {
+      "sample_id": "pmSceUyPSmmpkhZE",
+      "wrong_audio_id": "GpWLWOFOzRKhSibu",
+      "second_audio_id": "yBhBkATWQwYiRFLn",
+      "target_length": 367,
+      "predicted_lengths": [
+        302,
+        343,
+        284
+      ],
+      "zero_length": 296,
+      "scores": [
+        0.026879845187067986,
+        0.026839835569262505,
+        0.026952281594276428
+      ],
+      "zero_score": 0.02642790414392948,
+      "correct_minus_wrong_score": 4.000961780548096e-05,
+      "correct_minus_second_score": -7.243640720844269e-05,
+      "correct_minus_zero_score": 0.00045194104313850403,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.420612335205078,
+      "wrong_raw_mse": 5.42057991027832,
+      "zero_raw_mse": 5.421320915222168,
+      "position_mean_mse": 4.786968231201172,
+      "correct_wrong_output_rms": 0.0035519194789230824,
+      "length_absolute_error": 65
+    },
+    {
+      "sample_id": "GpWLWOFOzRKhSibu",
+      "wrong_audio_id": "yBhBkATWQwYiRFLn",
+      "second_audio_id": "BLtkNbyuhDiLHxwY",
+      "target_length": 727,
+      "predicted_lengths": [
+        452,
+        405,
+        425
+      ],
+      "zero_length": 422,
+      "scores": [
+        0.0006068340735509992,
+        0.0002800116781145334,
+        0.00030273967422544956
+      ],
+      "zero_score": 0.0004875464364886284,
+      "correct_minus_wrong_score": 0.00032682239543646574,
+      "correct_minus_second_score": 0.0003040943993255496,
+      "correct_minus_zero_score": 0.00011928763706237078,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.038437366485596,
+      "wrong_raw_mse": 5.03887939453125,
+      "zero_raw_mse": 5.039287567138672,
+      "position_mean_mse": 4.548759460449219,
+      "correct_wrong_output_rms": 0.005463644862174988,
+      "length_absolute_error": 275
+    },
+    {
+      "sample_id": "yBhBkATWQwYiRFLn",
+      "wrong_audio_id": "BLtkNbyuhDiLHxwY",
+      "second_audio_id": "RSRNfQQgXruDrRoG",
+      "target_length": 369,
+      "predicted_lengths": [
+        321,
+        342,
+        346
+      ],
+      "zero_length": 338,
+      "scores": [
+        -0.0020462649408727884,
+        -0.002052303636446595,
+        -0.0023038899526000023
+      ],
+      "zero_score": -0.0018636987078934908,
+      "correct_minus_wrong_score": 6.038695573806763e-06,
+      "correct_minus_second_score": 0.00025762501172721386,
+      "correct_minus_zero_score": -0.00018256623297929764,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.456330299377441,
+      "wrong_raw_mse": 5.456304550170898,
+      "zero_raw_mse": 5.456862926483154,
+      "position_mean_mse": 4.840961456298828,
+      "correct_wrong_output_rms": 0.005123554263263941,
+      "length_absolute_error": 48
+    },
+    {
+      "sample_id": "BLtkNbyuhDiLHxwY",
+      "wrong_audio_id": "RSRNfQQgXruDrRoG",
+      "second_audio_id": "bUqmgyawURUoXrXW",
+      "target_length": 298,
+      "predicted_lengths": [
+        195,
+        197,
+        212
+      ],
+      "zero_length": 192,
+      "scores": [
+        0.016328632831573486,
+        0.015892377123236656,
+        0.015839822590351105
+      ],
+      "zero_score": 0.01593521237373352,
+      "correct_minus_wrong_score": 0.00043625570833683014,
+      "correct_minus_second_score": 0.0004888102412223816,
+      "correct_minus_zero_score": 0.0003934204578399658,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.63040018081665,
+      "wrong_raw_mse": 5.630727767944336,
+      "zero_raw_mse": 5.631468296051025,
+      "position_mean_mse": 4.987407684326172,
+      "correct_wrong_output_rms": 0.0075978003442287445,
+      "length_absolute_error": 103
+    },
+    {
+      "sample_id": "RSRNfQQgXruDrRoG",
+      "wrong_audio_id": "bUqmgyawURUoXrXW",
+      "second_audio_id": "hHoTyFlVaJBsstRi",
+      "target_length": 316,
+      "predicted_lengths": [
+        334,
+        364,
+        315
+      ],
+      "zero_length": 327,
+      "scores": [
+        0.004563185852020979,
+        0.004444293677806854,
+        0.004615889396518469
+      ],
+      "zero_score": 0.004859775770455599,
+      "correct_minus_wrong_score": 0.00011889217421412468,
+      "correct_minus_second_score": -5.270354449748993e-05,
+      "correct_minus_zero_score": -0.0002965899184346199,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.447871208190918,
+      "wrong_raw_mse": 5.447630405426025,
+      "zero_raw_mse": 5.448229789733887,
+      "position_mean_mse": 4.815121173858643,
+      "correct_wrong_output_rms": 0.005900202319025993,
+      "length_absolute_error": 18
+    },
+    {
+      "sample_id": "bUqmgyawURUoXrXW",
+      "wrong_audio_id": "hHoTyFlVaJBsstRi",
+      "second_audio_id": "nGFnQlSNkIkyRlDX",
+      "target_length": 407,
+      "predicted_lengths": [
+        452,
+        402,
+        400
+      ],
+      "zero_length": 417,
+      "scores": [
+        0.013085473328828812,
+        0.013019912876188755,
+        0.012980988249182701
+      ],
+      "zero_score": 0.0129181994125247,
+      "correct_minus_wrong_score": 6.556045264005661e-05,
+      "correct_minus_second_score": 0.00010448507964611053,
+      "correct_minus_zero_score": 0.00016727391630411148,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.379083633422852,
+      "wrong_raw_mse": 5.3792877197265625,
+      "zero_raw_mse": 5.380382061004639,
+      "position_mean_mse": 4.8576178550720215,
+      "correct_wrong_output_rms": 0.004859175533056259,
+      "length_absolute_error": 45
+    },
+    {
+      "sample_id": "hHoTyFlVaJBsstRi",
+      "wrong_audio_id": "nGFnQlSNkIkyRlDX",
+      "second_audio_id": "KZeijKazrFjakCEO",
+      "target_length": 297,
+      "predicted_lengths": [
+        214,
+        211,
+        245
+      ],
+      "zero_length": 219,
+      "scores": [
+        0.003640504088252783,
+        0.0034597725607454777,
+        0.0033764129038900137
+      ],
+      "zero_score": 0.003937786910682917,
+      "correct_minus_wrong_score": 0.00018073152750730515,
+      "correct_minus_second_score": 0.0002640911843627691,
+      "correct_minus_zero_score": -0.0002972828224301338,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.580287456512451,
+      "wrong_raw_mse": 5.580379962921143,
+      "zero_raw_mse": 5.581062316894531,
+      "position_mean_mse": 4.947386264801025,
+      "correct_wrong_output_rms": 0.004424398764967918,
+      "length_absolute_error": 83
+    },
+    {
+      "sample_id": "nGFnQlSNkIkyRlDX",
+      "wrong_audio_id": "KZeijKazrFjakCEO",
+      "second_audio_id": "XVjSTCmwRPjbcipw",
+      "target_length": 464,
+      "predicted_lengths": [
+        249,
+        301,
+        276
+      ],
+      "zero_length": 259,
+      "scores": [
+        -0.001314776949584484,
+        -0.0014295770088210702,
+        -0.00139999995008111
+      ],
+      "zero_score": -0.0009908523643389344,
+      "correct_minus_wrong_score": 0.0001148000592365861,
+      "correct_minus_second_score": 8.52230004966259e-05,
+      "correct_minus_zero_score": -0.0003239245852455497,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.352965831756592,
+      "wrong_raw_mse": 5.352900505065918,
+      "zero_raw_mse": 5.35361385345459,
+      "position_mean_mse": 4.837658405303955,
+      "correct_wrong_output_rms": 0.005296594463288784,
+      "length_absolute_error": 215
+    },
+    {
+      "sample_id": "KZeijKazrFjakCEO",
+      "wrong_audio_id": "XVjSTCmwRPjbcipw",
+      "second_audio_id": "HhjOMdpVaUtAKAwA",
+      "target_length": 447,
+      "predicted_lengths": [
+        316,
+        285,
+        285
+      ],
+      "zero_length": 266,
+      "scores": [
+        0.008121968246996403,
+        0.008110836148262024,
+        0.008129369467496872
+      ],
+      "zero_score": 0.007916235364973545,
+      "correct_minus_wrong_score": 1.1132098734378815e-05,
+      "correct_minus_second_score": -7.401220500469208e-06,
+      "correct_minus_zero_score": 0.00020573288202285767,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.454614162445068,
+      "wrong_raw_mse": 5.454781532287598,
+      "zero_raw_mse": 5.45572566986084,
+      "position_mean_mse": 4.90013313293457,
+      "correct_wrong_output_rms": 0.004063190892338753,
+      "length_absolute_error": 131
+    },
+    {
+      "sample_id": "XVjSTCmwRPjbcipw",
+      "wrong_audio_id": "HhjOMdpVaUtAKAwA",
+      "second_audio_id": "iTaqXKCRVJSXAEGn",
+      "target_length": 315,
+      "predicted_lengths": [
+        215,
+        215,
+        209
+      ],
+      "zero_length": 205,
+      "scores": [
+        0.014761127531528473,
+        0.014658693224191666,
+        0.014524717815220356
+      ],
+      "zero_score": 0.014667527750134468,
+      "correct_minus_wrong_score": 0.00010243430733680725,
+      "correct_minus_second_score": 0.0002364097163081169,
+      "correct_minus_zero_score": 9.359978139400482e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.574431896209717,
+      "wrong_raw_mse": 5.574432849884033,
+      "zero_raw_mse": 5.575701713562012,
+      "position_mean_mse": 4.952242374420166,
+      "correct_wrong_output_rms": 0.0034772346261888742,
+      "length_absolute_error": 100
+    },
+    {
+      "sample_id": "HhjOMdpVaUtAKAwA",
+      "wrong_audio_id": "iTaqXKCRVJSXAEGn",
+      "second_audio_id": "NoJviawpoHyRRzpF",
+      "target_length": 358,
+      "predicted_lengths": [
+        236,
+        227,
+        229
+      ],
+      "zero_length": 223,
+      "scores": [
+        0.0010321573354303837,
+        0.0010240322444587946,
+        0.001147552626207471
+      ],
+      "zero_score": 0.001081674126908183,
+      "correct_minus_wrong_score": 8.125090971589088e-06,
+      "correct_minus_second_score": -0.00011539529077708721,
+      "correct_minus_zero_score": -4.9516791477799416e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.306154727935791,
+      "wrong_raw_mse": 5.306331634521484,
+      "zero_raw_mse": 5.3070573806762695,
+      "position_mean_mse": 4.738907337188721,
+      "correct_wrong_output_rms": 0.003939592279493809,
+      "length_absolute_error": 122
+    },
+    {
+      "sample_id": "iTaqXKCRVJSXAEGn",
+      "wrong_audio_id": "NoJviawpoHyRRzpF",
+      "second_audio_id": "PTewGnziGFcOlMIX",
+      "target_length": 500,
+      "predicted_lengths": [
+        224,
+        226,
+        229
+      ],
+      "zero_length": 220,
+      "scores": [
+        -0.006216575391590595,
+        -0.006316047161817551,
+        -0.0063264076597988605
+      ],
+      "zero_score": -0.006184800527989864,
+      "correct_minus_wrong_score": 9.947177022695541e-05,
+      "correct_minus_second_score": 0.0001098322682082653,
+      "correct_minus_zero_score": -3.1774863600730896e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.259748458862305,
+      "wrong_raw_mse": 5.259787559509277,
+      "zero_raw_mse": 5.260615348815918,
+      "position_mean_mse": 4.703505992889404,
+      "correct_wrong_output_rms": 0.00523490970954299,
+      "length_absolute_error": 276
+    },
+    {
+      "sample_id": "NoJviawpoHyRRzpF",
+      "wrong_audio_id": "PTewGnziGFcOlMIX",
+      "second_audio_id": "wwrshwCbfOBQpFYV",
+      "target_length": 329,
+      "predicted_lengths": [
+        221,
+        224,
+        239
+      ],
+      "zero_length": 216,
+      "scores": [
+        -0.006313243880867958,
+        -0.006128176115453243,
+        -0.006515922490507364
+      ],
+      "zero_score": -0.005787381902337074,
+      "correct_minus_wrong_score": -0.0001850677654147148,
+      "correct_minus_second_score": 0.0002026786096394062,
+      "correct_minus_zero_score": -0.0005258619785308838,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.506277084350586,
+      "wrong_raw_mse": 5.5064005851745605,
+      "zero_raw_mse": 5.506747245788574,
+      "position_mean_mse": 4.884320259094238,
+      "correct_wrong_output_rms": 0.004675701726227999,
+      "length_absolute_error": 108
+    },
+    {
+      "sample_id": "PTewGnziGFcOlMIX",
+      "wrong_audio_id": "wwrshwCbfOBQpFYV",
+      "second_audio_id": "QUIHQPnjYeRapeCS",
+      "target_length": 335,
+      "predicted_lengths": [
+        292,
+        316,
+        275
+      ],
+      "zero_length": 279,
+      "scores": [
+        0.009998292662203312,
+        0.009558139368891716,
+        0.00979432463645935
+      ],
+      "zero_score": 0.009875348769128323,
+      "correct_minus_wrong_score": 0.0004401532933115959,
+      "correct_minus_second_score": 0.00020396802574396133,
+      "correct_minus_zero_score": 0.00012294389307498932,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.35301399230957,
+      "wrong_raw_mse": 5.352955341339111,
+      "zero_raw_mse": 5.353744983673096,
+      "position_mean_mse": 4.752658843994141,
+      "correct_wrong_output_rms": 0.007068077567964792,
+      "length_absolute_error": 43
+    },
+    {
+      "sample_id": "wwrshwCbfOBQpFYV",
+      "wrong_audio_id": "QUIHQPnjYeRapeCS",
+      "second_audio_id": "DQpugPXqxliGBTEo",
+      "target_length": 839,
+      "predicted_lengths": [
+        429,
+        398,
+        409
+      ],
+      "zero_length": 404,
+      "scores": [
+        -0.005360836163163185,
+        -0.0059592570178210735,
+        -0.005698271095752716
+      ],
+      "zero_score": -0.006220386363565922,
+      "correct_minus_wrong_score": 0.0005984208546578884,
+      "correct_minus_second_score": 0.00033743493258953094,
+      "correct_minus_zero_score": 0.0008595502004027367,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.127716541290283,
+      "wrong_raw_mse": 5.12832498550415,
+      "zero_raw_mse": 5.128920078277588,
+      "position_mean_mse": 4.7036213874816895,
+      "correct_wrong_output_rms": 0.0052414839155972,
+      "length_absolute_error": 410
+    },
+    {
+      "sample_id": "QUIHQPnjYeRapeCS",
+      "wrong_audio_id": "DQpugPXqxliGBTEo",
+      "second_audio_id": "JlqJPUSRbbSPOVFT",
+      "target_length": 607,
+      "predicted_lengths": [
+        393,
+        404,
+        411
+      ],
+      "zero_length": 398,
+      "scores": [
+        0.011805988848209381,
+        0.011888501234352589,
+        0.012106319889426231
+      ],
+      "zero_score": 0.011471728794276714,
+      "correct_minus_wrong_score": -8.251238614320755e-05,
+      "correct_minus_second_score": -0.0003003310412168503,
+      "correct_minus_zero_score": 0.0003342600539326668,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.0919623374938965,
+      "wrong_raw_mse": 5.0919294357299805,
+      "zero_raw_mse": 5.092814922332764,
+      "position_mean_mse": 4.594606876373291,
+      "correct_wrong_output_rms": 0.004447962623089552,
+      "length_absolute_error": 214
+    },
+    {
+      "sample_id": "DQpugPXqxliGBTEo",
+      "wrong_audio_id": "JlqJPUSRbbSPOVFT",
+      "second_audio_id": "oXTIStMoSqMhsDPd",
+      "target_length": 629,
+      "predicted_lengths": [
+        451,
+        456,
+        453
+      ],
+      "zero_length": 446,
+      "scores": [
+        0.008907769806683064,
+        0.009080085903406143,
+        0.008876629173755646
+      ],
+      "zero_score": 0.008439050987362862,
+      "correct_minus_wrong_score": -0.00017231609672307968,
+      "correct_minus_second_score": 3.1140632927417755e-05,
+      "correct_minus_zero_score": 0.0004687188193202019,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.2631072998046875,
+      "wrong_raw_mse": 5.26277494430542,
+      "zero_raw_mse": 5.26417350769043,
+      "position_mean_mse": 4.7798075675964355,
+      "correct_wrong_output_rms": 0.0038829196710139513,
+      "length_absolute_error": 178
+    },
+    {
+      "sample_id": "JlqJPUSRbbSPOVFT",
+      "wrong_audio_id": "oXTIStMoSqMhsDPd",
+      "second_audio_id": "VcNqWNvqADtOhZmQ",
+      "target_length": 184,
+      "predicted_lengths": [
+        337,
+        331,
+        291
+      ],
+      "zero_length": 315,
+      "scores": [
+        -0.004971134476363659,
+        -0.004600185435265303,
+        -0.004268303047865629
+      ],
+      "zero_score": -0.003997231833636761,
+      "correct_minus_wrong_score": -0.00037094904109835625,
+      "correct_minus_second_score": -0.0007028314284980297,
+      "correct_minus_zero_score": -0.0009739026427268982,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.744339466094971,
+      "wrong_raw_mse": 5.744180202484131,
+      "zero_raw_mse": 5.74435567855835,
+      "position_mean_mse": 5.035364151000977,
+      "correct_wrong_output_rms": 0.004465957637876272,
+      "length_absolute_error": 153
+    },
+    {
+      "sample_id": "oXTIStMoSqMhsDPd",
+      "wrong_audio_id": "VcNqWNvqADtOhZmQ",
+      "second_audio_id": "eeFkhOXtAzRYYmaU",
+      "target_length": 314,
+      "predicted_lengths": [
+        166,
+        147,
+        164
+      ],
+      "zero_length": 156,
+      "scores": [
+        0.025019880384206772,
+        0.025302110239863396,
+        0.024716518819332123
+      ],
+      "zero_score": 0.024954959750175476,
+      "correct_minus_wrong_score": -0.00028222985565662384,
+      "correct_minus_second_score": 0.00030336156487464905,
+      "correct_minus_zero_score": 6.492063403129578e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.651780128479004,
+      "wrong_raw_mse": 5.651900768280029,
+      "zero_raw_mse": 5.652785301208496,
+      "position_mean_mse": 5.07506799697876,
+      "correct_wrong_output_rms": 0.005657562520354986,
+      "length_absolute_error": 148
+    },
+    {
+      "sample_id": "VcNqWNvqADtOhZmQ",
+      "wrong_audio_id": "eeFkhOXtAzRYYmaU",
+      "second_audio_id": "ofnydWMPxwHuccaF",
+      "target_length": 121,
+      "predicted_lengths": [
+        190,
+        206,
+        195
+      ],
+      "zero_length": 198,
+      "scores": [
+        0.032905593514442444,
+        0.031685493886470795,
+        0.03341716527938843
+      ],
+      "zero_score": 0.03239700198173523,
+      "correct_minus_wrong_score": 0.0012200996279716492,
+      "correct_minus_second_score": -0.0005115717649459839,
+      "correct_minus_zero_score": 0.0005085915327072144,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.232396125793457,
+      "wrong_raw_mse": 6.233189105987549,
+      "zero_raw_mse": 6.2330241203308105,
+      "position_mean_mse": 5.124181747436523,
+      "correct_wrong_output_rms": 0.005957439541816711,
+      "length_absolute_error": 69
+    },
+    {
+      "sample_id": "eeFkhOXtAzRYYmaU",
+      "wrong_audio_id": "ofnydWMPxwHuccaF",
+      "second_audio_id": "ewVpxqYYvyorVHBY",
+      "target_length": 56,
+      "predicted_lengths": [
+        197,
+        184,
+        189
+      ],
+      "zero_length": 188,
+      "scores": [
+        0.03947090357542038,
+        0.04159700125455856,
+        0.04127722978591919
+      ],
+      "zero_score": 0.040394969284534454,
+      "correct_minus_wrong_score": -0.0021260976791381836,
+      "correct_minus_second_score": -0.0018063262104988098,
+      "correct_minus_zero_score": -0.0009240657091140747,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.8271565437316895,
+      "wrong_raw_mse": 6.825501441955566,
+      "zero_raw_mse": 6.826465129852295,
+      "position_mean_mse": 4.877383232116699,
+      "correct_wrong_output_rms": 0.006409451365470886,
+      "length_absolute_error": 141
+    },
+    {
+      "sample_id": "ofnydWMPxwHuccaF",
+      "wrong_audio_id": "ewVpxqYYvyorVHBY",
+      "second_audio_id": "XhJkhVSMcirSXxOm",
+      "target_length": 215,
+      "predicted_lengths": [
+        142,
+        146,
+        151
+      ],
+      "zero_length": 146,
+      "scores": [
+        0.020340897142887115,
+        0.020099658519029617,
+        0.01943584531545639
+      ],
+      "zero_score": 0.019582103937864304,
+      "correct_minus_wrong_score": 0.00024123862385749817,
+      "correct_minus_second_score": 0.0009050518274307251,
+      "correct_minus_zero_score": 0.0007587932050228119,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.918433666229248,
+      "wrong_raw_mse": 5.918712139129639,
+      "zero_raw_mse": 5.919702053070068,
+      "position_mean_mse": 5.168317794799805,
+      "correct_wrong_output_rms": 0.0036700060591101646,
+      "length_absolute_error": 73
+    },
+    {
+      "sample_id": "ewVpxqYYvyorVHBY",
+      "wrong_audio_id": "XhJkhVSMcirSXxOm",
+      "second_audio_id": "mBLJYZeQtaUiBFfh",
+      "target_length": 239,
+      "predicted_lengths": [
+        210,
+        216,
+        232
+      ],
+      "zero_length": 210,
+      "scores": [
+        0.01257617212831974,
+        0.012026939541101456,
+        0.011538011953234673
+      ],
+      "zero_score": 0.012180671095848083,
+      "correct_minus_wrong_score": 0.0005492325872182846,
+      "correct_minus_second_score": 0.0010381601750850677,
+      "correct_minus_zero_score": 0.0003955010324716568,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.732795715332031,
+      "wrong_raw_mse": 5.732840538024902,
+      "zero_raw_mse": 5.73344087600708,
+      "position_mean_mse": 5.009230613708496,
+      "correct_wrong_output_rms": 0.004748656880110502,
+      "length_absolute_error": 29
+    },
+    {
+      "sample_id": "XhJkhVSMcirSXxOm",
+      "wrong_audio_id": "mBLJYZeQtaUiBFfh",
+      "second_audio_id": "yOorLuoKzcnGmkdS",
+      "target_length": 450,
+      "predicted_lengths": [
+        314,
+        342,
+        258
+      ],
+      "zero_length": 305,
+      "scores": [
+        0.005942483898252249,
+        0.005942283198237419,
+        0.006007667630910873
+      ],
+      "zero_score": 0.0058500696904957294,
+      "correct_minus_wrong_score": 2.0070001482963562e-07,
+      "correct_minus_second_score": -6.518373265862465e-05,
+      "correct_minus_zero_score": 9.241420775651932e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.364377021789551,
+      "wrong_raw_mse": 5.364299774169922,
+      "zero_raw_mse": 5.365171909332275,
+      "position_mean_mse": 4.851367473602295,
+      "correct_wrong_output_rms": 0.004443242214620113,
+      "length_absolute_error": 136
+    },
+    {
+      "sample_id": "mBLJYZeQtaUiBFfh",
+      "wrong_audio_id": "yOorLuoKzcnGmkdS",
+      "second_audio_id": "kbNzeNvvmMdFZsoI",
+      "target_length": 405,
+      "predicted_lengths": [
+        410,
+        318,
+        354
+      ],
+      "zero_length": 376,
+      "scores": [
+        0.004607975482940674,
+        0.004588767420500517,
+        0.004565241280943155
+      ],
+      "zero_score": 0.004671323113143444,
+      "correct_minus_wrong_score": 1.9208062440156937e-05,
+      "correct_minus_second_score": 4.273420199751854e-05,
+      "correct_minus_zero_score": -6.334763020277023e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.339724063873291,
+      "wrong_raw_mse": 5.3404388427734375,
+      "zero_raw_mse": 5.340588569641113,
+      "position_mean_mse": 4.766714096069336,
+      "correct_wrong_output_rms": 0.01111350767314434,
+      "length_absolute_error": 5
+    },
+    {
+      "sample_id": "yOorLuoKzcnGmkdS",
+      "wrong_audio_id": "kbNzeNvvmMdFZsoI",
+      "second_audio_id": "AhYyOYEldUYRUuCh",
+      "target_length": 313,
+      "predicted_lengths": [
+        211,
+        239,
+        248
+      ],
+      "zero_length": 244,
+      "scores": [
+        0.014495858922600746,
+        0.013866040855646133,
+        0.013733414933085442
+      ],
+      "zero_score": 0.013824445195496082,
+      "correct_minus_wrong_score": 0.0006298180669546127,
+      "correct_minus_second_score": 0.0007624439895153046,
+      "correct_minus_zero_score": 0.0006714137271046638,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.534371376037598,
+      "wrong_raw_mse": 5.534155368804932,
+      "zero_raw_mse": 5.5348310470581055,
+      "position_mean_mse": 4.944141864776611,
+      "correct_wrong_output_rms": 0.009511015377938747,
+      "length_absolute_error": 102
+    },
+    {
+      "sample_id": "kbNzeNvvmMdFZsoI",
+      "wrong_audio_id": "AhYyOYEldUYRUuCh",
+      "second_audio_id": "eLLFYbhQviqrGENe",
+      "target_length": 172,
+      "predicted_lengths": [
+        173,
+        179,
+        197
+      ],
+      "zero_length": 174,
+      "scores": [
+        0.028194405138492584,
+        0.02778821811079979,
+        0.02741982415318489
+      ],
+      "zero_score": 0.028174541890621185,
+      "correct_minus_wrong_score": 0.0004061870276927948,
+      "correct_minus_second_score": 0.0007745809853076935,
+      "correct_minus_zero_score": 1.9863247871398926e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 6.174896717071533,
+      "wrong_raw_mse": 6.175076007843018,
+      "zero_raw_mse": 6.1754655838012695,
+      "position_mean_mse": 5.1614580154418945,
+      "correct_wrong_output_rms": 0.003938950598239899,
+      "length_absolute_error": 1
+    },
+    {
+      "sample_id": "AhYyOYEldUYRUuCh",
+      "wrong_audio_id": "eLLFYbhQviqrGENe",
+      "second_audio_id": "uiQsJOPJnbYWvjtk",
+      "target_length": 435,
+      "predicted_lengths": [
+        358,
+        395,
+        370
+      ],
+      "zero_length": 355,
+      "scores": [
+        0.0031797471456229687,
+        0.003175819991156459,
+        0.0031192521564662457
+      ],
+      "zero_score": 0.0029519849922508,
+      "correct_minus_wrong_score": 3.927154466509819e-06,
+      "correct_minus_second_score": 6.049498915672302e-05,
+      "correct_minus_zero_score": 0.00022776215337216854,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.505171775817871,
+      "wrong_raw_mse": 5.50517463684082,
+      "zero_raw_mse": 5.506242275238037,
+      "position_mean_mse": 4.978940486907959,
+      "correct_wrong_output_rms": 0.004436837043613195,
+      "length_absolute_error": 77
+    },
+    {
+      "sample_id": "eLLFYbhQviqrGENe",
+      "wrong_audio_id": "uiQsJOPJnbYWvjtk",
+      "second_audio_id": "xkwYTmgyRkZqqFYV",
+      "target_length": 293,
+      "predicted_lengths": [
+        365,
+        338,
+        349
+      ],
+      "zero_length": 320,
+      "scores": [
+        -0.0058053890243172646,
+        -0.005841566249728203,
+        -0.005983525887131691
+      ],
+      "zero_score": -0.005385232158005238,
+      "correct_minus_wrong_score": 3.617722541093826e-05,
+      "correct_minus_second_score": 0.00017813686281442642,
+      "correct_minus_zero_score": -0.000420156866312027,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.28743314743042,
+      "wrong_raw_mse": 5.287439823150635,
+      "zero_raw_mse": 5.287861347198486,
+      "position_mean_mse": 4.800753116607666,
+      "correct_wrong_output_rms": 0.004162413068115711,
+      "length_absolute_error": 72
+    },
+    {
+      "sample_id": "uiQsJOPJnbYWvjtk",
+      "wrong_audio_id": "xkwYTmgyRkZqqFYV",
+      "second_audio_id": "FKabjXzkdZNmkCgi",
+      "target_length": 723,
+      "predicted_lengths": [
+        364,
+        375,
+        377
+      ],
+      "zero_length": 349,
+      "scores": [
+        -0.0028797241393476725,
+        -0.002984076738357544,
+        -0.0026095786597579718
+      ],
+      "zero_score": -0.0030540511943399906,
+      "correct_minus_wrong_score": 0.00010435259900987148,
+      "correct_minus_second_score": -0.0002701454795897007,
+      "correct_minus_zero_score": 0.00017432705499231815,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.071339130401611,
+      "wrong_raw_mse": 5.071591377258301,
+      "zero_raw_mse": 5.072242736816406,
+      "position_mean_mse": 4.669305801391602,
+      "correct_wrong_output_rms": 0.00448986142873764,
+      "length_absolute_error": 359
+    },
+    {
+      "sample_id": "xkwYTmgyRkZqqFYV",
+      "wrong_audio_id": "FKabjXzkdZNmkCgi",
+      "second_audio_id": "wANnEshyDGcedDOd",
+      "target_length": 513,
+      "predicted_lengths": [
+        335,
+        341,
+        329
+      ],
+      "zero_length": 305,
+      "scores": [
+        0.011670528911054134,
+        0.0115684624761343,
+        0.011584149673581123
+      ],
+      "zero_score": 0.011381728574633598,
+      "correct_minus_wrong_score": 0.00010206643491983414,
+      "correct_minus_second_score": 8.637923747301102e-05,
+      "correct_minus_zero_score": 0.00028880033642053604,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.248592853546143,
+      "wrong_raw_mse": 5.248569965362549,
+      "zero_raw_mse": 5.249631404876709,
+      "position_mean_mse": 4.709602355957031,
+      "correct_wrong_output_rms": 0.0051383692771196365,
+      "length_absolute_error": 178
+    },
+    {
+      "sample_id": "FKabjXzkdZNmkCgi",
+      "wrong_audio_id": "wANnEshyDGcedDOd",
+      "second_audio_id": "doEdYGGgQUMWURGh",
+      "target_length": 367,
+      "predicted_lengths": [
+        229,
+        221,
+        222
+      ],
+      "zero_length": 210,
+      "scores": [
+        -0.0007187022129073739,
+        -0.0005710275145247579,
+        -0.0005658047739416361
+      ],
+      "zero_score": -6.330362521111965e-05,
+      "correct_minus_wrong_score": -0.00014767469838261604,
+      "correct_minus_second_score": -0.00015289743896573782,
+      "correct_minus_zero_score": -0.0006553985876962543,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.579087257385254,
+      "wrong_raw_mse": 5.579081058502197,
+      "zero_raw_mse": 5.579822540283203,
+      "position_mean_mse": 4.995086669921875,
+      "correct_wrong_output_rms": 0.004473448731005192,
+      "length_absolute_error": 138
+    },
+    {
+      "sample_id": "wANnEshyDGcedDOd",
+      "wrong_audio_id": "doEdYGGgQUMWURGh",
+      "second_audio_id": "jvqFahkTTpdktClC",
+      "target_length": 587,
+      "predicted_lengths": [
+        322,
+        319,
+        289
+      ],
+      "zero_length": 299,
+      "scores": [
+        -0.001983603462576866,
+        -0.002128391992300749,
+        -0.002264071721583605
+      ],
+      "zero_score": -0.0022687313612550497,
+      "correct_minus_wrong_score": 0.00014478852972388268,
+      "correct_minus_second_score": 0.00028046825900673866,
+      "correct_minus_zero_score": 0.00028512789867818356,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.277111530303955,
+      "wrong_raw_mse": 5.277310371398926,
+      "zero_raw_mse": 5.278207778930664,
+      "position_mean_mse": 4.789124011993408,
+      "correct_wrong_output_rms": 0.004136125091463327,
+      "length_absolute_error": 265
+    },
+    {
+      "sample_id": "doEdYGGgQUMWURGh",
+      "wrong_audio_id": "jvqFahkTTpdktClC",
+      "second_audio_id": "FSsMvlMSmQlgkOmy",
+      "target_length": 301,
+      "predicted_lengths": [
+        243,
+        224,
+        256
+      ],
+      "zero_length": 229,
+      "scores": [
+        0.0005891087930649519,
+        0.0008891273755580187,
+        0.0005195301491767168
+      ],
+      "zero_score": 0.000758229405619204,
+      "correct_minus_wrong_score": -0.0003000185824930668,
+      "correct_minus_second_score": 6.957864388823509e-05,
+      "correct_minus_zero_score": -0.00016912061255425215,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.5001397132873535,
+      "wrong_raw_mse": 5.500138759613037,
+      "zero_raw_mse": 5.50105619430542,
+      "position_mean_mse": 4.83914852142334,
+      "correct_wrong_output_rms": 0.004983764607459307,
+      "length_absolute_error": 58
+    },
+    {
+      "sample_id": "jvqFahkTTpdktClC",
+      "wrong_audio_id": "FSsMvlMSmQlgkOmy",
+      "second_audio_id": "gFRpZSNthveKkjBt",
+      "target_length": 792,
+      "predicted_lengths": [
+        256,
+        303,
+        257
+      ],
+      "zero_length": 262,
+      "scores": [
+        -0.013921860605478287,
+        -0.013335146009922028,
+        -0.013848541304469109
+      ],
+      "zero_score": -0.013830382376909256,
+      "correct_minus_wrong_score": -0.0005867145955562592,
+      "correct_minus_second_score": -7.331930100917816e-05,
+      "correct_minus_zero_score": -9.147822856903076e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.121832847595215,
+      "wrong_raw_mse": 5.120923042297363,
+      "zero_raw_mse": 5.122320652008057,
+      "position_mean_mse": 4.659257888793945,
+      "correct_wrong_output_rms": 0.0060122255235910416,
+      "length_absolute_error": 536
+    },
+    {
+      "sample_id": "FSsMvlMSmQlgkOmy",
+      "wrong_audio_id": "gFRpZSNthveKkjBt",
+      "second_audio_id": "dBlMtfIoyJhPnyHl",
+      "target_length": 758,
+      "predicted_lengths": [
+        435,
+        394,
+        431
+      ],
+      "zero_length": 406,
+      "scores": [
+        0.0015612368006259203,
+        0.0009798716055229306,
+        0.0013053866568952799
+      ],
+      "zero_score": 0.00048230006359517574,
+      "correct_minus_wrong_score": 0.0005813651951029897,
+      "correct_minus_second_score": 0.0002558501437306404,
+      "correct_minus_zero_score": 0.0010789367370307446,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.10980224609375,
+      "wrong_raw_mse": 5.110525608062744,
+      "zero_raw_mse": 5.111183166503906,
+      "position_mean_mse": 4.625940799713135,
+      "correct_wrong_output_rms": 0.005799605045467615,
+      "length_absolute_error": 323
+    },
+    {
+      "sample_id": "gFRpZSNthveKkjBt",
+      "wrong_audio_id": "dBlMtfIoyJhPnyHl",
+      "second_audio_id": "ONWKufiSxxzbidEN",
+      "target_length": 562,
+      "predicted_lengths": [
+        226,
+        254,
+        222
+      ],
+      "zero_length": 230,
+      "scores": [
+        0.0073111713863909245,
+        0.00735511863604188,
+        0.007363957818597555
+      ],
+      "zero_score": 0.007399543654173613,
+      "correct_minus_wrong_score": -4.39472496509552e-05,
+      "correct_minus_second_score": -5.278643220663071e-05,
+      "correct_minus_zero_score": -8.837226778268814e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.193902969360352,
+      "wrong_raw_mse": 5.193639755249023,
+      "zero_raw_mse": 5.194129467010498,
+      "position_mean_mse": 4.681967258453369,
+      "correct_wrong_output_rms": 0.004558800254017115,
+      "length_absolute_error": 336
+    },
+    {
+      "sample_id": "dBlMtfIoyJhPnyHl",
+      "wrong_audio_id": "ONWKufiSxxzbidEN",
+      "second_audio_id": "xmmopyYrEiwHWQKi",
+      "target_length": 445,
+      "predicted_lengths": [
+        361,
+        313,
+        354
+      ],
+      "zero_length": 330,
+      "scores": [
+        0.01257728785276413,
+        0.012195916846394539,
+        0.012144656851887703
+      ],
+      "zero_score": 0.011750500649213791,
+      "correct_minus_wrong_score": 0.00038137100636959076,
+      "correct_minus_second_score": 0.0004326310008764267,
+      "correct_minus_zero_score": 0.0008267872035503387,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.339455604553223,
+      "wrong_raw_mse": 5.339837074279785,
+      "zero_raw_mse": 5.34071159362793,
+      "position_mean_mse": 4.742574691772461,
+      "correct_wrong_output_rms": 0.0071207620203495026,
+      "length_absolute_error": 84
+    },
+    {
+      "sample_id": "ONWKufiSxxzbidEN",
+      "wrong_audio_id": "xmmopyYrEiwHWQKi",
+      "second_audio_id": "MILifsBKGrKrQATU",
+      "target_length": 57,
+      "predicted_lengths": [
+        210,
+        237,
+        216
+      ],
+      "zero_length": 217,
+      "scores": [
+        0.037508152425289154,
+        0.036423422396183014,
+        0.037781134247779846
+      ],
+      "zero_score": 0.0380672886967659,
+      "correct_minus_wrong_score": 0.0010847300291061401,
+      "correct_minus_second_score": -0.00027298182249069214,
+      "correct_minus_zero_score": -0.0005591362714767456,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.6988139152526855,
+      "wrong_raw_mse": 6.699652194976807,
+      "zero_raw_mse": 6.69847297668457,
+      "position_mean_mse": 4.85222864151001,
+      "correct_wrong_output_rms": 0.005145553965121508,
+      "length_absolute_error": 153
+    },
+    {
+      "sample_id": "xmmopyYrEiwHWQKi",
+      "wrong_audio_id": "MILifsBKGrKrQATU",
+      "second_audio_id": "JNiaxGWiwIHDPRPc",
+      "target_length": 501,
+      "predicted_lengths": [
+        388,
+        356,
+        376
+      ],
+      "zero_length": 365,
+      "scores": [
+        -0.0011323390062898397,
+        -0.0012753453338518739,
+        -0.0012378506362438202
+      ],
+      "zero_score": -0.0011107040336355567,
+      "correct_minus_wrong_score": 0.00014300632756203413,
+      "correct_minus_second_score": 0.00010551162995398045,
+      "correct_minus_zero_score": -2.1634972654283047e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.0673041343688965,
+      "wrong_raw_mse": 5.0675787925720215,
+      "zero_raw_mse": 5.068141460418701,
+      "position_mean_mse": 4.5853776931762695,
+      "correct_wrong_output_rms": 0.005864737089723349,
+      "length_absolute_error": 113
+    },
+    {
+      "sample_id": "MILifsBKGrKrQATU",
+      "wrong_audio_id": "JNiaxGWiwIHDPRPc",
+      "second_audio_id": "ZfUdeUXBccvWzSyN",
+      "target_length": 546,
+      "predicted_lengths": [
+        280,
+        300,
+        331
+      ],
+      "zero_length": 284,
+      "scores": [
+        -0.0014393613673746586,
+        -0.0012476339470595121,
+        -0.0013647512532770634
+      ],
+      "zero_score": -0.0012680910294875503,
+      "correct_minus_wrong_score": -0.00019172742031514645,
+      "correct_minus_second_score": -7.461011409759521e-05,
+      "correct_minus_zero_score": -0.00017127033788710833,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.220994472503662,
+      "wrong_raw_mse": 5.220582485198975,
+      "zero_raw_mse": 5.221405982971191,
+      "position_mean_mse": 4.70772123336792,
+      "correct_wrong_output_rms": 0.004021494183689356,
+      "length_absolute_error": 266
+    },
+    {
+      "sample_id": "JNiaxGWiwIHDPRPc",
+      "wrong_audio_id": "ZfUdeUXBccvWzSyN",
+      "second_audio_id": "mEicdenZRVGuOPzk",
+      "target_length": 278,
+      "predicted_lengths": [
+        215,
+        228,
+        224
+      ],
+      "zero_length": 206,
+      "scores": [
+        0.004422003403306007,
+        0.004452972207218409,
+        0.004445594735443592
+      ],
+      "zero_score": 0.004991394001990557,
+      "correct_minus_wrong_score": -3.09688039124012e-05,
+      "correct_minus_second_score": -2.3591332137584686e-05,
+      "correct_minus_zero_score": -0.0005693905986845493,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.779940128326416,
+      "wrong_raw_mse": 5.77998685836792,
+      "zero_raw_mse": 5.780374050140381,
+      "position_mean_mse": 5.049190044403076,
+      "correct_wrong_output_rms": 0.0035678588319569826,
+      "length_absolute_error": 63
+    },
+    {
+      "sample_id": "ZfUdeUXBccvWzSyN",
+      "wrong_audio_id": "mEicdenZRVGuOPzk",
+      "second_audio_id": "dXkgxqsHWPzqxGAr",
+      "target_length": 391,
+      "predicted_lengths": [
+        321,
+        315,
+        261
+      ],
+      "zero_length": 275,
+      "scores": [
+        -0.006594786420464516,
+        -0.006612350232899189,
+        -0.006407617591321468
+      ],
+      "zero_score": -0.0063748410902917385,
+      "correct_minus_wrong_score": 1.756381243467331e-05,
+      "correct_minus_second_score": -0.00018716882914304733,
+      "correct_minus_zero_score": -0.00021994533017277718,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.399001121520996,
+      "wrong_raw_mse": 5.398874282836914,
+      "zero_raw_mse": 5.399913311004639,
+      "position_mean_mse": 4.81818151473999,
+      "correct_wrong_output_rms": 0.0027844454161822796,
+      "length_absolute_error": 70
+    },
+    {
+      "sample_id": "mEicdenZRVGuOPzk",
+      "wrong_audio_id": "dXkgxqsHWPzqxGAr",
+      "second_audio_id": "oYpZHYwqIMdDyHEu",
+      "target_length": 145,
+      "predicted_lengths": [
+        162,
+        138,
+        158
+      ],
+      "zero_length": 147,
+      "scores": [
+        0.025030773133039474,
+        0.025748416781425476,
+        0.024737931787967682
+      ],
+      "zero_score": 0.025448745116591454,
+      "correct_minus_wrong_score": -0.0007176436483860016,
+      "correct_minus_second_score": 0.0002928413450717926,
+      "correct_minus_zero_score": -0.00041797198355197906,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.067403316497803,
+      "wrong_raw_mse": 6.067088603973389,
+      "zero_raw_mse": 6.068399429321289,
+      "position_mean_mse": 5.032988548278809,
+      "correct_wrong_output_rms": 0.004695181269198656,
+      "length_absolute_error": 17
+    },
+    {
+      "sample_id": "dXkgxqsHWPzqxGAr",
+      "wrong_audio_id": "oYpZHYwqIMdDyHEu",
+      "second_audio_id": "jqPRAsLaQpRkgjaR",
+      "target_length": 222,
+      "predicted_lengths": [
+        248,
+        282,
+        265
+      ],
+      "zero_length": 262,
+      "scores": [
+        0.016068894416093826,
+        0.01549198105931282,
+        0.01535039208829403
+      ],
+      "zero_score": 0.01635424792766571,
+      "correct_minus_wrong_score": 0.0005769133567810059,
+      "correct_minus_second_score": 0.0007185023277997971,
+      "correct_minus_zero_score": -0.00028535351157188416,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.930050849914551,
+      "wrong_raw_mse": 5.930361747741699,
+      "zero_raw_mse": 5.930089473724365,
+      "position_mean_mse": 5.226933002471924,
+      "correct_wrong_output_rms": 0.004561917390674353,
+      "length_absolute_error": 26
+    },
+    {
+      "sample_id": "oYpZHYwqIMdDyHEu",
+      "wrong_audio_id": "jqPRAsLaQpRkgjaR",
+      "second_audio_id": "AUeMoMkdGsJybJwa",
+      "target_length": 245,
+      "predicted_lengths": [
+        256,
+        243,
+        253
+      ],
+      "zero_length": 240,
+      "scores": [
+        0.013066258281469345,
+        0.012928984127938747,
+        0.013039309531450272
+      ],
+      "zero_score": 0.013575815595686436,
+      "correct_minus_wrong_score": 0.0001372741535305977,
+      "correct_minus_second_score": 2.6948750019073486e-05,
+      "correct_minus_zero_score": -0.0005095573142170906,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.775562763214111,
+      "wrong_raw_mse": 5.775663375854492,
+      "zero_raw_mse": 5.775850772857666,
+      "position_mean_mse": 5.054807662963867,
+      "correct_wrong_output_rms": 0.0036121862940490246,
+      "length_absolute_error": 11
+    },
+    {
+      "sample_id": "jqPRAsLaQpRkgjaR",
+      "wrong_audio_id": "AUeMoMkdGsJybJwa",
+      "second_audio_id": "bqzYhuJDxSyqpwBA",
+      "target_length": 221,
+      "predicted_lengths": [
+        335,
+        352,
+        409
+      ],
+      "zero_length": 335,
+      "scores": [
+        0.01730731874704361,
+        0.01763148605823517,
+        0.017485715448856354
+      ],
+      "zero_score": 0.017889078706502914,
+      "correct_minus_wrong_score": -0.00032416731119155884,
+      "correct_minus_second_score": -0.00017839670181274414,
+      "correct_minus_zero_score": -0.0005817599594593048,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.816298007965088,
+      "wrong_raw_mse": 5.815881252288818,
+      "zero_raw_mse": 5.816727161407471,
+      "position_mean_mse": 4.934346675872803,
+      "correct_wrong_output_rms": 0.004390402231365442,
+      "length_absolute_error": 114
+    },
+    {
+      "sample_id": "AUeMoMkdGsJybJwa",
+      "wrong_audio_id": "bqzYhuJDxSyqpwBA",
+      "second_audio_id": "JaDSVDkkAcWZynxP",
+      "target_length": 307,
+      "predicted_lengths": [
+        283,
+        334,
+        276
+      ],
+      "zero_length": 266,
+      "scores": [
+        0.022334685549139977,
+        0.022232649847865105,
+        0.022159676998853683
+      ],
+      "zero_score": 0.022670410573482513,
+      "correct_minus_wrong_score": 0.00010203570127487183,
+      "correct_minus_second_score": 0.00017500855028629303,
+      "correct_minus_zero_score": -0.0003357250243425369,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.457720756530762,
+      "wrong_raw_mse": 5.457777976989746,
+      "zero_raw_mse": 5.458470344543457,
+      "position_mean_mse": 4.826213359832764,
+      "correct_wrong_output_rms": 0.003977769520133734,
+      "length_absolute_error": 24
+    },
+    {
+      "sample_id": "bqzYhuJDxSyqpwBA",
+      "wrong_audio_id": "JaDSVDkkAcWZynxP",
+      "second_audio_id": "qPaarjcLdNvRvlIc",
+      "target_length": 469,
+      "predicted_lengths": [
+        331,
+        264,
+        251
+      ],
+      "zero_length": 255,
+      "scores": [
+        0.004655546974390745,
+        0.004630752839148045,
+        0.0046164062805473804
+      ],
+      "zero_score": 0.00457064900547266,
+      "correct_minus_wrong_score": 2.4794135242700577e-05,
+      "correct_minus_second_score": 3.9140693843364716e-05,
+      "correct_minus_zero_score": 8.48979689180851e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.267640590667725,
+      "wrong_raw_mse": 5.267648696899414,
+      "zero_raw_mse": 5.268727779388428,
+      "position_mean_mse": 4.750354290008545,
+      "correct_wrong_output_rms": 0.0034501967020332813,
+      "length_absolute_error": 138
+    },
+    {
+      "sample_id": "JaDSVDkkAcWZynxP",
+      "wrong_audio_id": "qPaarjcLdNvRvlIc",
+      "second_audio_id": "ttfeoWyDuBsjtxgS",
+      "target_length": 621,
+      "predicted_lengths": [
+        374,
+        354,
+        373
+      ],
+      "zero_length": 368,
+      "scores": [
+        0.003330240026116371,
+        0.0034033735282719135,
+        0.003200333332642913
+      ],
+      "zero_score": 0.0030592118855565786,
+      "correct_minus_wrong_score": -7.313350215554237e-05,
+      "correct_minus_second_score": 0.0001299066934734583,
+      "correct_minus_zero_score": 0.0002710281405597925,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.108574867248535,
+      "wrong_raw_mse": 5.108696937561035,
+      "zero_raw_mse": 5.109452247619629,
+      "position_mean_mse": 4.598182201385498,
+      "correct_wrong_output_rms": 0.003401032881811261,
+      "length_absolute_error": 247
+    },
+    {
+      "sample_id": "qPaarjcLdNvRvlIc",
+      "wrong_audio_id": "ttfeoWyDuBsjtxgS",
+      "second_audio_id": "uGhFZLNaZgGcSoPa",
+      "target_length": 367,
+      "predicted_lengths": [
+        312,
+        332,
+        325
+      ],
+      "zero_length": 325,
+      "scores": [
+        -0.00609839940443635,
+        -0.0062045929953455925,
+        -0.006179044954478741
+      ],
+      "zero_score": -0.005610406864434481,
+      "correct_minus_wrong_score": 0.00010619359090924263,
+      "correct_minus_second_score": 8.064555004239082e-05,
+      "correct_minus_zero_score": -0.0004879925400018692,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.506258964538574,
+      "wrong_raw_mse": 5.506215572357178,
+      "zero_raw_mse": 5.506686687469482,
+      "position_mean_mse": 4.94847297668457,
+      "correct_wrong_output_rms": 0.0046818857081234455,
+      "length_absolute_error": 55
+    },
+    {
+      "sample_id": "ttfeoWyDuBsjtxgS",
+      "wrong_audio_id": "uGhFZLNaZgGcSoPa",
+      "second_audio_id": "zCsjUianEHLFJjCN",
+      "target_length": 176,
+      "predicted_lengths": [
+        219,
+        215,
+        233
+      ],
+      "zero_length": 212,
+      "scores": [
+        0.009229633025825024,
+        0.008905807510018349,
+        0.009114647284150124
+      ],
+      "zero_score": 0.0091342031955719,
+      "correct_minus_wrong_score": 0.00032382551580667496,
+      "correct_minus_second_score": 0.00011498574167490005,
+      "correct_minus_zero_score": 9.542983025312424e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 6.09187650680542,
+      "wrong_raw_mse": 6.092065334320068,
+      "zero_raw_mse": 6.092623233795166,
+      "position_mean_mse": 5.171871185302734,
+      "correct_wrong_output_rms": 0.0038062934763729572,
+      "length_absolute_error": 43
+    },
+    {
+      "sample_id": "uGhFZLNaZgGcSoPa",
+      "wrong_audio_id": "zCsjUianEHLFJjCN",
+      "second_audio_id": "ZregkIgPYpyEBnEk",
+      "target_length": 820,
+      "predicted_lengths": [
+        420,
+        447,
+        419
+      ],
+      "zero_length": 421,
+      "scores": [
+        -0.006957315374165773,
+        -0.00703991437330842,
+        -0.006803265772759914
+      ],
+      "zero_score": -0.007138154935091734,
+      "correct_minus_wrong_score": 8.259899914264679e-05,
+      "correct_minus_second_score": -0.000154049601405859,
+      "correct_minus_zero_score": 0.00018083956092596054,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 4.882390022277832,
+      "wrong_raw_mse": 4.882489204406738,
+      "zero_raw_mse": 4.883454322814941,
+      "position_mean_mse": 4.407705307006836,
+      "correct_wrong_output_rms": 0.0029376663733273745,
+      "length_absolute_error": 400
+    },
+    {
+      "sample_id": "zCsjUianEHLFJjCN",
+      "wrong_audio_id": "ZregkIgPYpyEBnEk",
+      "second_audio_id": "QkcTcljnqqZaKPZj",
+      "target_length": 526,
+      "predicted_lengths": [
+        346,
+        311,
+        318
+      ],
+      "zero_length": 312,
+      "scores": [
+        -0.00359726557508111,
+        -0.0034668168518692255,
+        -0.003550137160345912
+      ],
+      "zero_score": -0.003684316063299775,
+      "correct_minus_wrong_score": -0.0001304487232118845,
+      "correct_minus_second_score": -4.712841473519802e-05,
+      "correct_minus_zero_score": 8.705048821866512e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.253672122955322,
+      "wrong_raw_mse": 5.253519058227539,
+      "zero_raw_mse": 5.254535675048828,
+      "position_mean_mse": 4.78677225112915,
+      "correct_wrong_output_rms": 0.003454066114500165,
+      "length_absolute_error": 180
+    },
+    {
+      "sample_id": "ZregkIgPYpyEBnEk",
+      "wrong_audio_id": "QkcTcljnqqZaKPZj",
+      "second_audio_id": "ktYDtylUEthARAlY",
+      "target_length": 14,
+      "predicted_lengths": [
+        418,
+        425,
+        421
+      ],
+      "zero_length": 421,
+      "scores": [
+        0.01272190734744072,
+        0.012631182558834553,
+        0.013415664434432983
+      ],
+      "zero_score": 0.014474715106189251,
+      "correct_minus_wrong_score": 9.072478860616684e-05,
+      "correct_minus_second_score": -0.0006937570869922638,
+      "correct_minus_zero_score": -0.0017528077587485313,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 8.147581100463867,
+      "wrong_raw_mse": 8.14745044708252,
+      "zero_raw_mse": 8.144792556762695,
+      "position_mean_mse": 2.791299343109131,
+      "correct_wrong_output_rms": 0.003409401047974825,
+      "length_absolute_error": 404
+    },
+    {
+      "sample_id": "QkcTcljnqqZaKPZj",
+      "wrong_audio_id": "ktYDtylUEthARAlY",
+      "second_audio_id": "pPHfFLmzEvJjUIED",
+      "target_length": 428,
+      "predicted_lengths": [
+        312,
+        312,
+        358
+      ],
+      "zero_length": 307,
+      "scores": [
+        -0.00714212516322732,
+        -0.007145425770431757,
+        -0.007183247711509466
+      ],
+      "zero_score": -0.0067318337969481945,
+      "correct_minus_wrong_score": 3.300607204437256e-06,
+      "correct_minus_second_score": 4.1122548282146454e-05,
+      "correct_minus_zero_score": -0.0004102913662791252,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.244144439697266,
+      "wrong_raw_mse": 5.244184494018555,
+      "zero_raw_mse": 5.24492883682251,
+      "position_mean_mse": 4.672269344329834,
+      "correct_wrong_output_rms": 0.004669990390539169,
+      "length_absolute_error": 116
+    },
+    {
+      "sample_id": "ktYDtylUEthARAlY",
+      "wrong_audio_id": "pPHfFLmzEvJjUIED",
+      "second_audio_id": "oZmlHKAajFhNRDex",
+      "target_length": 338,
+      "predicted_lengths": [
+        275,
+        314,
+        278
+      ],
+      "zero_length": 268,
+      "scores": [
+        0.01707175374031067,
+        0.01668633706867695,
+        0.016910437494516373
+      ],
+      "zero_score": 0.017090151086449623,
+      "correct_minus_wrong_score": 0.0003854166716337204,
+      "correct_minus_second_score": 0.00016131624579429626,
+      "correct_minus_zero_score": -1.8397346138954163e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.539432048797607,
+      "wrong_raw_mse": 5.5395402908325195,
+      "zero_raw_mse": 5.5401201248168945,
+      "position_mean_mse": 4.906115531921387,
+      "correct_wrong_output_rms": 0.005477936938405037,
+      "length_absolute_error": 63
+    },
+    {
+      "sample_id": "pPHfFLmzEvJjUIED",
+      "wrong_audio_id": "oZmlHKAajFhNRDex",
+      "second_audio_id": "qAHMxUZfcUIKYuFb",
+      "target_length": 450,
+      "predicted_lengths": [
+        403,
+        360,
+        363
+      ],
+      "zero_length": 354,
+      "scores": [
+        -0.0016022361814975739,
+        -0.0016508969711139798,
+        -0.0016729591879993677
+      ],
+      "zero_score": -0.001464508823119104,
+      "correct_minus_wrong_score": 4.8660789616405964e-05,
+      "correct_minus_second_score": 7.072300650179386e-05,
+      "correct_minus_zero_score": -0.00013772735837846994,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.289610862731934,
+      "wrong_raw_mse": 5.289775848388672,
+      "zero_raw_mse": 5.290558815002441,
+      "position_mean_mse": 4.770725727081299,
+      "correct_wrong_output_rms": 0.004646447021514177,
+      "length_absolute_error": 47
+    },
+    {
+      "sample_id": "oZmlHKAajFhNRDex",
+      "wrong_audio_id": "qAHMxUZfcUIKYuFb",
+      "second_audio_id": "nFWrpNHGdQJvwGLi",
+      "target_length": 708,
+      "predicted_lengths": [
+        287,
+        289,
+        295
+      ],
+      "zero_length": 276,
+      "scores": [
+        -0.006248298101127148,
+        -0.0062362756580114365,
+        -0.006175026297569275
+      ],
+      "zero_score": -0.006435506045818329,
+      "correct_minus_wrong_score": -1.2022443115711212e-05,
+      "correct_minus_second_score": -7.327180355787277e-05,
+      "correct_minus_zero_score": 0.00018720794469118118,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.108260154724121,
+      "wrong_raw_mse": 5.108186721801758,
+      "zero_raw_mse": 5.109166145324707,
+      "position_mean_mse": 4.624734401702881,
+      "correct_wrong_output_rms": 0.004376271739602089,
+      "length_absolute_error": 421
+    },
+    {
+      "sample_id": "qAHMxUZfcUIKYuFb",
+      "wrong_audio_id": "nFWrpNHGdQJvwGLi",
+      "second_audio_id": "CkaDUZfbXmuKufjo",
+      "target_length": 432,
+      "predicted_lengths": [
+        262,
+        267,
+        280
+      ],
+      "zero_length": 253,
+      "scores": [
+        -0.0032729117665439844,
+        -0.003191933035850525,
+        -0.0032116123475134373
+      ],
+      "zero_score": -0.0028084563091397285,
+      "correct_minus_wrong_score": -8.097873069345951e-05,
+      "correct_minus_second_score": -6.129941903054714e-05,
+      "correct_minus_zero_score": -0.00046445545740425587,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.364882469177246,
+      "wrong_raw_mse": 5.364820957183838,
+      "zero_raw_mse": 5.365652561187744,
+      "position_mean_mse": 4.780890941619873,
+      "correct_wrong_output_rms": 0.00398770347237587,
+      "length_absolute_error": 170
+    },
+    {
+      "sample_id": "nFWrpNHGdQJvwGLi",
+      "wrong_audio_id": "CkaDUZfbXmuKufjo",
+      "second_audio_id": "JjTkUsZwfiXfonfE",
+      "target_length": 544,
+      "predicted_lengths": [
+        385,
+        398,
+        369
+      ],
+      "zero_length": 371,
+      "scores": [
+        -0.0028411229141056538,
+        -0.002905535511672497,
+        -0.0029641215223819017
+      ],
+      "zero_score": -0.0028656614013016224,
+      "correct_minus_wrong_score": 6.441259756684303e-05,
+      "correct_minus_second_score": 0.00012299860827624798,
+      "correct_minus_zero_score": 2.4538487195968628e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.205569267272949,
+      "wrong_raw_mse": 5.205511093139648,
+      "zero_raw_mse": 5.206295013427734,
+      "position_mean_mse": 4.701911449432373,
+      "correct_wrong_output_rms": 0.003553056390956044,
+      "length_absolute_error": 159
+    },
+    {
+      "sample_id": "CkaDUZfbXmuKufjo",
+      "wrong_audio_id": "JjTkUsZwfiXfonfE",
+      "second_audio_id": "lPDbmxtTfmTVYMKv",
+      "target_length": 308,
+      "predicted_lengths": [
+        407,
+        386,
+        381
+      ],
+      "zero_length": 388,
+      "scores": [
+        -0.002901642583310604,
+        -0.0028354874812066555,
+        -0.0028585807885974646
+      ],
+      "zero_score": -0.0027379090897738934,
+      "correct_minus_wrong_score": -6.615510210394859e-05,
+      "correct_minus_second_score": -4.3061794713139534e-05,
+      "correct_minus_zero_score": -0.00016373349353671074,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.347087860107422,
+      "wrong_raw_mse": 5.34713888168335,
+      "zero_raw_mse": 5.347862720489502,
+      "position_mean_mse": 4.686582088470459,
+      "correct_wrong_output_rms": 0.004066100809723139,
+      "length_absolute_error": 99
+    },
+    {
+      "sample_id": "JjTkUsZwfiXfonfE",
+      "wrong_audio_id": "lPDbmxtTfmTVYMKv",
+      "second_audio_id": "EkMnOInJDpnCPYkF",
+      "target_length": 410,
+      "predicted_lengths": [
+        333,
+        331,
+        340
+      ],
+      "zero_length": 335,
+      "scores": [
+        -0.010571267455816269,
+        -0.010348111391067505,
+        -0.010626649484038353
+      ],
+      "zero_score": -0.009937597438693047,
+      "correct_minus_wrong_score": -0.00022315606474876404,
+      "correct_minus_second_score": 5.5382028222084045e-05,
+      "correct_minus_zero_score": -0.0006336700171232224,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.251079559326172,
+      "wrong_raw_mse": 5.251040935516357,
+      "zero_raw_mse": 5.251550197601318,
+      "position_mean_mse": 4.774653911590576,
+      "correct_wrong_output_rms": 0.004388903267681599,
+      "length_absolute_error": 77
+    },
+    {
+      "sample_id": "lPDbmxtTfmTVYMKv",
+      "wrong_audio_id": "EkMnOInJDpnCPYkF",
+      "second_audio_id": "wIYSdDCeXOYeesmW",
+      "target_length": 313,
+      "predicted_lengths": [
+        302,
+        314,
+        291
+      ],
+      "zero_length": 303,
+      "scores": [
+        0.014817864634096622,
+        0.01506275124847889,
+        0.015183845534920692
+      ],
+      "zero_score": 0.015160655602812767,
+      "correct_minus_wrong_score": -0.000244886614382267,
+      "correct_minus_second_score": -0.00036598090082407,
+      "correct_minus_zero_score": -0.00034279096871614456,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.554384231567383,
+      "wrong_raw_mse": 5.5543365478515625,
+      "zero_raw_mse": 5.554928302764893,
+      "position_mean_mse": 4.933197498321533,
+      "correct_wrong_output_rms": 0.004826593678444624,
+      "length_absolute_error": 11
+    },
+    {
+      "sample_id": "EkMnOInJDpnCPYkF",
+      "wrong_audio_id": "wIYSdDCeXOYeesmW",
+      "second_audio_id": "chnmdUxnBsQKkOfB",
+      "target_length": 125,
+      "predicted_lengths": [
+        239,
+        227,
+        273
+      ],
+      "zero_length": 232,
+      "scores": [
+        0.030520297586917877,
+        0.03082207962870598,
+        0.028957758098840714
+      ],
+      "zero_score": 0.030370576307177544,
+      "correct_minus_wrong_score": -0.0003017820417881012,
+      "correct_minus_second_score": 0.0015625394880771637,
+      "correct_minus_zero_score": 0.00014972127974033356,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.475703716278076,
+      "wrong_raw_mse": 6.475327014923096,
+      "zero_raw_mse": 6.475886344909668,
+      "position_mean_mse": 5.388324737548828,
+      "correct_wrong_output_rms": 0.004595364443957806,
+      "length_absolute_error": 114
+    },
+    {
+      "sample_id": "wIYSdDCeXOYeesmW",
+      "wrong_audio_id": "chnmdUxnBsQKkOfB",
+      "second_audio_id": "pDwQdfPAUohoYWBZ",
+      "target_length": 661,
+      "predicted_lengths": [
+        382,
+        436,
+        425
+      ],
+      "zero_length": 399,
+      "scores": [
+        -0.0028122575022280216,
+        -0.0023159258998930454,
+        -0.0025380912702530622
+      ],
+      "zero_score": -0.002880773739889264,
+      "correct_minus_wrong_score": -0.0004963316023349762,
+      "correct_minus_second_score": -0.0002741662319749594,
+      "correct_minus_zero_score": 6.851623766124249e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.251828670501709,
+      "wrong_raw_mse": 5.251338958740234,
+      "zero_raw_mse": 5.252451419830322,
+      "position_mean_mse": 4.73049259185791,
+      "correct_wrong_output_rms": 0.007124896626919508,
+      "length_absolute_error": 279
+    },
+    {
+      "sample_id": "chnmdUxnBsQKkOfB",
+      "wrong_audio_id": "pDwQdfPAUohoYWBZ",
+      "second_audio_id": "VILpeISBYiDmEvDn",
+      "target_length": 701,
+      "predicted_lengths": [
+        417,
+        407,
+        371
+      ],
+      "zero_length": 383,
+      "scores": [
+        0.003803050145506859,
+        0.003668441204354167,
+        0.003461412386968732
+      ],
+      "zero_score": 0.003133912803605199,
+      "correct_minus_wrong_score": 0.00013460894115269184,
+      "correct_minus_second_score": 0.00034163775853812695,
+      "correct_minus_zero_score": 0.00066913734190166,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.1038818359375,
+      "wrong_raw_mse": 5.104023456573486,
+      "zero_raw_mse": 5.10515832901001,
+      "position_mean_mse": 4.629813194274902,
+      "correct_wrong_output_rms": 0.005187682341784239,
+      "length_absolute_error": 284
+    },
+    {
+      "sample_id": "pDwQdfPAUohoYWBZ",
+      "wrong_audio_id": "VILpeISBYiDmEvDn",
+      "second_audio_id": "hAwurGTbCGCJbrbJ",
+      "target_length": 155,
+      "predicted_lengths": [
+        181,
+        163,
+        168
+      ],
+      "zero_length": 165,
+      "scores": [
+        0.03242959454655647,
+        0.032633841037750244,
+        0.032846782356500626
+      ],
+      "zero_score": 0.03250309079885483,
+      "correct_minus_wrong_score": -0.00020424649119377136,
+      "correct_minus_second_score": -0.00041718780994415283,
+      "correct_minus_zero_score": -7.34962522983551e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.174794673919678,
+      "wrong_raw_mse": 6.174910545349121,
+      "zero_raw_mse": 6.175774097442627,
+      "position_mean_mse": 5.12293004989624,
+      "correct_wrong_output_rms": 0.006349774543195963,
+      "length_absolute_error": 26
+    },
+    {
+      "sample_id": "VILpeISBYiDmEvDn",
+      "wrong_audio_id": "hAwurGTbCGCJbrbJ",
+      "second_audio_id": "xEYdyKyjsXzqsMhP",
+      "target_length": 935,
+      "predicted_lengths": [
+        276,
+        295,
+        277
+      ],
+      "zero_length": 284,
+      "scores": [
+        -0.004650486633181572,
+        -0.004625012166798115,
+        -0.0044349743984639645
+      ],
+      "zero_score": -0.004827158525586128,
+      "correct_minus_wrong_score": -2.5474466383457184e-05,
+      "correct_minus_second_score": -0.0002155122347176075,
+      "correct_minus_zero_score": 0.00017667189240455627,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 4.966518402099609,
+      "wrong_raw_mse": 4.966466903686523,
+      "zero_raw_mse": 4.967194557189941,
+      "position_mean_mse": 4.476136207580566,
+      "correct_wrong_output_rms": 0.006019852589815855,
+      "length_absolute_error": 659
+    },
+    {
+      "sample_id": "hAwurGTbCGCJbrbJ",
+      "wrong_audio_id": "xEYdyKyjsXzqsMhP",
+      "second_audio_id": "FVYQWYIVzoqhYOzN",
+      "target_length": 627,
+      "predicted_lengths": [
+        262,
+        249,
+        277
+      ],
+      "zero_length": 253,
+      "scores": [
+        0.009300032630562782,
+        0.009241442196071148,
+        0.009251871146261692
+      ],
+      "zero_score": 0.009126832708716393,
+      "correct_minus_wrong_score": 5.859043449163437e-05,
+      "correct_minus_second_score": 4.816148430109024e-05,
+      "correct_minus_zero_score": 0.00017319992184638977,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.302998065948486,
+      "wrong_raw_mse": 5.303066253662109,
+      "zero_raw_mse": 5.303821563720703,
+      "position_mean_mse": 4.847203254699707,
+      "correct_wrong_output_rms": 0.004818716086447239,
+      "length_absolute_error": 365
+    },
+    {
+      "sample_id": "xEYdyKyjsXzqsMhP",
+      "wrong_audio_id": "FVYQWYIVzoqhYOzN",
+      "second_audio_id": "DNKUHSeblihSLydp",
+      "target_length": 350,
+      "predicted_lengths": [
+        357,
+        391,
+        386
+      ],
+      "zero_length": 373,
+      "scores": [
+        -0.0033516825642436743,
+        -0.003404407063499093,
+        -0.0033533258829265833
+      ],
+      "zero_score": -0.0035458621568977833,
+      "correct_minus_wrong_score": 5.272449925541878e-05,
+      "correct_minus_second_score": 1.6433186829090118e-06,
+      "correct_minus_zero_score": 0.000194179592654109,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.372450828552246,
+      "wrong_raw_mse": 5.37224006652832,
+      "zero_raw_mse": 5.37332820892334,
+      "position_mean_mse": 4.732722759246826,
+      "correct_wrong_output_rms": 0.004859134554862976,
+      "length_absolute_error": 7
+    },
+    {
+      "sample_id": "FVYQWYIVzoqhYOzN",
+      "wrong_audio_id": "DNKUHSeblihSLydp",
+      "second_audio_id": "FGVJSqJmTzDHFGav",
+      "target_length": 343,
+      "predicted_lengths": [
+        313,
+        305,
+        326
+      ],
+      "zero_length": 290,
+      "scores": [
+        -0.004399201832711697,
+        -0.004382092505693436,
+        -0.004391311667859554
+      ],
+      "zero_score": -0.004386524204164743,
+      "correct_minus_wrong_score": -1.7109327018260956e-05,
+      "correct_minus_second_score": -7.890164852142334e-06,
+      "correct_minus_zero_score": -1.2677628546953201e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.415460109710693,
+      "wrong_raw_mse": 5.415493965148926,
+      "zero_raw_mse": 5.416685104370117,
+      "position_mean_mse": 4.867518901824951,
+      "correct_wrong_output_rms": 0.004157433286309242,
+      "length_absolute_error": 30
+    },
+    {
+      "sample_id": "DNKUHSeblihSLydp",
+      "wrong_audio_id": "FGVJSqJmTzDHFGav",
+      "second_audio_id": "GejtdYJymUhqEVaz",
+      "target_length": 210,
+      "predicted_lengths": [
+        387,
+        412,
+        420
+      ],
+      "zero_length": 375,
+      "scores": [
+        0.0020727175287902355,
+        0.0019213891355320811,
+        0.001776424003764987
+      ],
+      "zero_score": 0.002455812180414796,
+      "correct_minus_wrong_score": 0.0001513283932581544,
+      "correct_minus_second_score": 0.00029629352502524853,
+      "correct_minus_zero_score": -0.00038309465162456036,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.918824195861816,
+      "wrong_raw_mse": 5.919030666351318,
+      "zero_raw_mse": 5.919726848602295,
+      "position_mean_mse": 5.107667446136475,
+      "correct_wrong_output_rms": 0.0032641664147377014,
+      "length_absolute_error": 177
+    },
+    {
+      "sample_id": "FGVJSqJmTzDHFGav",
+      "wrong_audio_id": "GejtdYJymUhqEVaz",
+      "second_audio_id": "DdYyQbwPRuaWCyJT",
+      "target_length": 463,
+      "predicted_lengths": [
+        233,
+        247,
+        210
+      ],
+      "zero_length": 212,
+      "scores": [
+        0.009097227826714516,
+        0.009112158790230751,
+        0.009177232161164284
+      ],
+      "zero_score": 0.008969446644186974,
+      "correct_minus_wrong_score": -1.4930963516235352e-05,
+      "correct_minus_second_score": -8.000433444976807e-05,
+      "correct_minus_zero_score": 0.00012778118252754211,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.2615580558776855,
+      "wrong_raw_mse": 5.261460304260254,
+      "zero_raw_mse": 5.26241397857666,
+      "position_mean_mse": 4.770040988922119,
+      "correct_wrong_output_rms": 0.0035205483436584473,
+      "length_absolute_error": 230
+    },
+    {
+      "sample_id": "GejtdYJymUhqEVaz",
+      "wrong_audio_id": "DdYyQbwPRuaWCyJT",
+      "second_audio_id": "ILAFaMaVsFTAsTut",
+      "target_length": 376,
+      "predicted_lengths": [
+        243,
+        208,
+        242
+      ],
+      "zero_length": 209,
+      "scores": [
+        0.006869770120829344,
+        0.007036774419248104,
+        0.006847294047474861
+      ],
+      "zero_score": 0.007057884242385626,
+      "correct_minus_wrong_score": -0.0001670042984187603,
+      "correct_minus_second_score": 2.247607335448265e-05,
+      "correct_minus_zero_score": -0.00018811412155628204,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.48679256439209,
+      "wrong_raw_mse": 5.486991882324219,
+      "zero_raw_mse": 5.487998962402344,
+      "position_mean_mse": 4.943244457244873,
+      "correct_wrong_output_rms": 0.004554916638880968,
+      "length_absolute_error": 133
+    },
+    {
+      "sample_id": "DdYyQbwPRuaWCyJT",
+      "wrong_audio_id": "ILAFaMaVsFTAsTut",
+      "second_audio_id": "YOSMYGJxzCbGSkEm",
+      "target_length": 545,
+      "predicted_lengths": [
+        365,
+        425,
+        357
+      ],
+      "zero_length": 374,
+      "scores": [
+        0.004103812854737043,
+        0.004099574871361256,
+        0.004058717750012875
+      ],
+      "zero_score": 0.0037100559566169977,
+      "correct_minus_wrong_score": 4.237983375787735e-06,
+      "correct_minus_second_score": 4.509510472416878e-05,
+      "correct_minus_zero_score": 0.00039375689812004566,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.166024684906006,
+      "wrong_raw_mse": 5.165660381317139,
+      "zero_raw_mse": 5.166810512542725,
+      "position_mean_mse": 4.644819259643555,
+      "correct_wrong_output_rms": 0.005337453912943602,
+      "length_absolute_error": 180
+    },
+    {
+      "sample_id": "ILAFaMaVsFTAsTut",
+      "wrong_audio_id": "YOSMYGJxzCbGSkEm",
+      "second_audio_id": "RDqWGXKBzeKTXSjP",
+      "target_length": 81,
+      "predicted_lengths": [
+        269,
+        222,
+        230
+      ],
+      "zero_length": 229,
+      "scores": [
+        0.02962113730609417,
+        0.03213632106781006,
+        0.03145889192819595
+      ],
+      "zero_score": 0.030953550711274147,
+      "correct_minus_wrong_score": -0.002515183761715889,
+      "correct_minus_second_score": -0.0018377546221017838,
+      "correct_minus_zero_score": -0.0013324134051799774,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.49678373336792,
+      "wrong_raw_mse": 6.495128154754639,
+      "zero_raw_mse": 6.496389389038086,
+      "position_mean_mse": 4.887257099151611,
+      "correct_wrong_output_rms": 0.008020564913749695,
+      "length_absolute_error": 188
+    },
+    {
+      "sample_id": "YOSMYGJxzCbGSkEm",
+      "wrong_audio_id": "RDqWGXKBzeKTXSjP",
+      "second_audio_id": "BznCLESvXaNWzYsh",
+      "target_length": 684,
+      "predicted_lengths": [
+        215,
+        223,
+        263
+      ],
+      "zero_length": 221,
+      "scores": [
+        -0.010756520554423332,
+        -0.010603286325931549,
+        -0.010211236774921417
+      ],
+      "zero_score": -0.01023670844733715,
+      "correct_minus_wrong_score": -0.00015323422849178314,
+      "correct_minus_second_score": -0.000545283779501915,
+      "correct_minus_zero_score": -0.0005198121070861816,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.181288719177246,
+      "wrong_raw_mse": 5.180802345275879,
+      "zero_raw_mse": 5.181418418884277,
+      "position_mean_mse": 4.659582138061523,
+      "correct_wrong_output_rms": 0.004114561714231968,
+      "length_absolute_error": 469
+    },
+    {
+      "sample_id": "RDqWGXKBzeKTXSjP",
+      "wrong_audio_id": "BznCLESvXaNWzYsh",
+      "second_audio_id": "XnqrSWBTsCOtBmIK",
+      "target_length": 315,
+      "predicted_lengths": [
+        250,
+        308,
+        272
+      ],
+      "zero_length": 248,
+      "scores": [
+        0.0004159503150731325,
+        0.00010890234261751175,
+        0.00014921475667506456
+      ],
+      "zero_score": 0.0003935163840651512,
+      "correct_minus_wrong_score": 0.00030704797245562077,
+      "correct_minus_second_score": 0.00026673555839806795,
+      "correct_minus_zero_score": 2.24339310079813e-05,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.514960765838623,
+      "wrong_raw_mse": 5.514775276184082,
+      "zero_raw_mse": 5.515937805175781,
+      "position_mean_mse": 4.858487129211426,
+      "correct_wrong_output_rms": 0.005799115169793367,
+      "length_absolute_error": 65
+    },
+    {
+      "sample_id": "BznCLESvXaNWzYsh",
+      "wrong_audio_id": "XnqrSWBTsCOtBmIK",
+      "second_audio_id": "NrfMOYFfCIzMGblA",
+      "target_length": 435,
+      "predicted_lengths": [
+        397,
+        373,
+        363
+      ],
+      "zero_length": 355,
+      "scores": [
+        -0.004240340553224087,
+        -0.004329077433794737,
+        -0.004233605228364468
+      ],
+      "zero_score": -0.004449254367500544,
+      "correct_minus_wrong_score": 8.87368805706501e-05,
+      "correct_minus_second_score": -6.735324859619141e-06,
+      "correct_minus_zero_score": 0.00020891381427645683,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.441076755523682,
+      "wrong_raw_mse": 5.4412407875061035,
+      "zero_raw_mse": 5.442176342010498,
+      "position_mean_mse": 4.917689323425293,
+      "correct_wrong_output_rms": 0.0032609356567263603,
+      "length_absolute_error": 38
+    },
+    {
+      "sample_id": "XnqrSWBTsCOtBmIK",
+      "wrong_audio_id": "NrfMOYFfCIzMGblA",
+      "second_audio_id": "ypuQijgFHXyTwzIG",
+      "target_length": 414,
+      "predicted_lengths": [
+        401,
+        386,
+        396
+      ],
+      "zero_length": 379,
+      "scores": [
+        -0.002952919341623783,
+        -0.003134341910481453,
+        -0.003067242680117488
+      ],
+      "zero_score": -0.0027270352002233267,
+      "correct_minus_wrong_score": 0.00018142256885766983,
+      "correct_minus_second_score": 0.0001143233384937048,
+      "correct_minus_zero_score": -0.00022588414140045643,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.495397567749023,
+      "wrong_raw_mse": 5.495580196380615,
+      "zero_raw_mse": 5.4958343505859375,
+      "position_mean_mse": 4.934443950653076,
+      "correct_wrong_output_rms": 0.004577783867716789,
+      "length_absolute_error": 13
+    },
+    {
+      "sample_id": "NrfMOYFfCIzMGblA",
+      "wrong_audio_id": "ypuQijgFHXyTwzIG",
+      "second_audio_id": "KGHlQBSuDERlnyrk",
+      "target_length": 377,
+      "predicted_lengths": [
+        384,
+        392,
+        361
+      ],
+      "zero_length": 377,
+      "scores": [
+        0.011061528697609901,
+        0.010964415036141872,
+        0.011069182306528091
+      ],
+      "zero_score": 0.010858466848731041,
+      "correct_minus_wrong_score": 9.711366146802902e-05,
+      "correct_minus_second_score": -7.653608918190002e-06,
+      "correct_minus_zero_score": 0.00020306184887886047,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.471896648406982,
+      "wrong_raw_mse": 5.4718708992004395,
+      "zero_raw_mse": 5.472738265991211,
+      "position_mean_mse": 4.893350124359131,
+      "correct_wrong_output_rms": 0.0030313916504383087,
+      "length_absolute_error": 7
+    },
+    {
+      "sample_id": "ypuQijgFHXyTwzIG",
+      "wrong_audio_id": "KGHlQBSuDERlnyrk",
+      "second_audio_id": "NuUFjdHwNapXtcBT",
+      "target_length": 358,
+      "predicted_lengths": [
+        285,
+        255,
+        273
+      ],
+      "zero_length": 262,
+      "scores": [
+        0.011012704111635685,
+        0.011156135238707066,
+        0.01107698306441307
+      ],
+      "zero_score": 0.011286649852991104,
+      "correct_minus_wrong_score": -0.00014343112707138062,
+      "correct_minus_second_score": -6.427895277738571e-05,
+      "correct_minus_zero_score": -0.00027394574135541916,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.701292991638184,
+      "wrong_raw_mse": 5.701333045959473,
+      "zero_raw_mse": 5.702130317687988,
+      "position_mean_mse": 5.028730392456055,
+      "correct_wrong_output_rms": 0.004275305662304163,
+      "length_absolute_error": 73
+    },
+    {
+      "sample_id": "KGHlQBSuDERlnyrk",
+      "wrong_audio_id": "NuUFjdHwNapXtcBT",
+      "second_audio_id": "ystGXUtwzvoJUQKF",
+      "target_length": 137,
+      "predicted_lengths": [
+        215,
+        228,
+        212
+      ],
+      "zero_length": 220,
+      "scores": [
+        0.004702629521489143,
+        0.00478844391182065,
+        0.005368859972804785
+      ],
+      "zero_score": 0.004479503724724054,
+      "correct_minus_wrong_score": -8.581439033150673e-05,
+      "correct_minus_second_score": -0.0006662304513156414,
+      "correct_minus_zero_score": 0.00022312579676508904,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.208165168762207,
+      "wrong_raw_mse": 6.2079548835754395,
+      "zero_raw_mse": 6.209165096282959,
+      "position_mean_mse": 5.098387241363525,
+      "correct_wrong_output_rms": 0.004371888469904661,
+      "length_absolute_error": 78
+    },
+    {
+      "sample_id": "NuUFjdHwNapXtcBT",
+      "wrong_audio_id": "ystGXUtwzvoJUQKF",
+      "second_audio_id": "QcXTBHnhvaKIOlgH",
+      "target_length": 515,
+      "predicted_lengths": [
+        324,
+        293,
+        343
+      ],
+      "zero_length": 315,
+      "scores": [
+        0.007438382599502802,
+        0.007385206408798695,
+        0.007461500354111195
+      ],
+      "zero_score": 0.007400841452181339,
+      "correct_minus_wrong_score": 5.3176190704107285e-05,
+      "correct_minus_second_score": -2.3117754608392715e-05,
+      "correct_minus_zero_score": 3.754114732146263e-05,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.2948737144470215,
+      "wrong_raw_mse": 5.295345306396484,
+      "zero_raw_mse": 5.295956611633301,
+      "position_mean_mse": 4.7291436195373535,
+      "correct_wrong_output_rms": 0.0055147879756987095,
+      "length_absolute_error": 191
+    },
+    {
+      "sample_id": "ystGXUtwzvoJUQKF",
+      "wrong_audio_id": "QcXTBHnhvaKIOlgH",
+      "second_audio_id": "jjbVPUiAEdcYRjic",
+      "target_length": 298,
+      "predicted_lengths": [
+        341,
+        393,
+        383
+      ],
+      "zero_length": 367,
+      "scores": [
+        0.011988050304353237,
+        0.011791282333433628,
+        0.011777179315686226
+      ],
+      "zero_score": 0.011424961499869823,
+      "correct_minus_wrong_score": 0.00019676797091960907,
+      "correct_minus_second_score": 0.00021087098866701126,
+      "correct_minus_zero_score": 0.0005630888044834137,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.415337562561035,
+      "wrong_raw_mse": 5.41520357131958,
+      "zero_raw_mse": 5.416538715362549,
+      "position_mean_mse": 4.749195098876953,
+      "correct_wrong_output_rms": 0.005809103138744831,
+      "length_absolute_error": 43
+    }
+  ],
+  "student_uses_predicted_valid_interval": true,
+  "teacher_only_controls_supervision": true,
+  "silence_is_eval_only": true,
+  "scope": "Representation diagnostics, not dance or video accuracy"
+}

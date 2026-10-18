@@ -1,0 +1,251 @@
+{
+  "candidates": 8,
+  "macro": {
+    "correct_minus_wrong_score": 0.00010722829028964043,
+    "correct_minus_second_score": 0.0001403208589181304,
+    "correct_minus_zero_score": 0.00011331203859299421,
+    "tie_aware_top1": 0.625,
+    "raw_mse": 5.596583306789398,
+    "wrong_raw_mse": 5.596631228923798,
+    "zero_raw_mse": 5.597289562225342,
+    "position_mean_mse": 4.839740812778473,
+    "correct_wrong_output_rms": 0.0036543080350384116,
+    "length_absolute_error": 163.5,
+    "correct_beats_wrong_fraction": 0.75,
+    "correct_beats_second_fraction": 0.75,
+    "raw_mse_tokenweighted": 5.2858929845387355,
+    "wrong_mse_tokenweighted": 5.285945204317927,
+    "zero_mse_tokenweighted": 5.286700432143525,
+    "student_teacher_energy_ratio": 0.47692324613632864
+  },
+  "cases": [
+    {
+      "sample_id": "AAcaGYtiTozEttaF",
+      "wrong_audio_id": "ACYTcnkJDuOfXBiA",
+      "second_audio_id": "ACjmBvCtqPhuyLRS",
+      "target_length": 509,
+      "predicted_lengths": [
+        317,
+        306,
+        281
+      ],
+      "zero_length": 274,
+      "scores": [
+        0.012433566153049469,
+        0.01248379796743393,
+        0.012370957992970943
+      ],
+      "zero_score": 0.01204662211239338,
+      "correct_minus_wrong_score": -5.023181438446045e-05,
+      "correct_minus_second_score": 6.260816007852554e-05,
+      "correct_minus_zero_score": 0.0003869440406560898,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.20303201675415,
+      "wrong_raw_mse": 5.2029523849487305,
+      "zero_raw_mse": 5.204141616821289,
+      "position_mean_mse": 4.707066535949707,
+      "correct_wrong_output_rms": 0.0029659343417733908,
+      "length_absolute_error": 192
+    },
+    {
+      "sample_id": "ACYTcnkJDuOfXBiA",
+      "wrong_audio_id": "ACjmBvCtqPhuyLRS",
+      "second_audio_id": "ACmmkHXtjupbPdfu",
+      "target_length": 533,
+      "predicted_lengths": [
+        324,
+        296,
+        291
+      ],
+      "zero_length": 288,
+      "scores": [
+        0.008570760488510132,
+        0.008411149494349957,
+        0.008487838320434093
+      ],
+      "zero_score": 0.007753643207252026,
+      "correct_minus_wrong_score": 0.00015961099416017532,
+      "correct_minus_second_score": 8.292216807603836e-05,
+      "correct_minus_zero_score": 0.0008171172812581062,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.331982135772705,
+      "wrong_raw_mse": 5.332128524780273,
+      "zero_raw_mse": 5.3328328132629395,
+      "position_mean_mse": 4.779047012329102,
+      "correct_wrong_output_rms": 0.0038690848741680384,
+      "length_absolute_error": 209
+    },
+    {
+      "sample_id": "ACjmBvCtqPhuyLRS",
+      "wrong_audio_id": "ACmmkHXtjupbPdfu",
+      "second_audio_id": "AEYWOSsvBukhluPL",
+      "target_length": 72,
+      "predicted_lengths": [
+        158,
+        156,
+        177
+      ],
+      "zero_length": 153,
+      "scores": [
+        0.0015157065354287624,
+        0.0009901504963636398,
+        0.0013376094866544008
+      ],
+      "zero_score": 0.0018476878758519888,
+      "correct_minus_wrong_score": 0.0005255560390651226,
+      "correct_minus_second_score": 0.0001780970487743616,
+      "correct_minus_zero_score": -0.00033198134042322636,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 7.191481590270996,
+      "wrong_raw_mse": 7.191704273223877,
+      "zero_raw_mse": 7.191924095153809,
+      "position_mean_mse": 5.260228633880615,
+      "correct_wrong_output_rms": 0.0034659900702536106,
+      "length_absolute_error": 86
+    },
+    {
+      "sample_id": "ACmmkHXtjupbPdfu",
+      "wrong_audio_id": "AEYWOSsvBukhluPL",
+      "second_audio_id": "AFXTsMTemGcNcaNO",
+      "target_length": 389,
+      "predicted_lengths": [
+        285,
+        328,
+        312
+      ],
+      "zero_length": 281,
+      "scores": [
+        0.010265054181218147,
+        0.010086835362017155,
+        0.010065192356705666
+      ],
+      "zero_score": 0.009996403008699417,
+      "correct_minus_wrong_score": 0.00017821881920099258,
+      "correct_minus_second_score": 0.0001998618245124817,
+      "correct_minus_zero_score": 0.00026865117251873016,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.1967387199401855,
+      "wrong_raw_mse": 5.196834087371826,
+      "zero_raw_mse": 5.197248935699463,
+      "position_mean_mse": 4.650445938110352,
+      "correct_wrong_output_rms": 0.004298236221075058,
+      "length_absolute_error": 104
+    },
+    {
+      "sample_id": "AEYWOSsvBukhluPL",
+      "wrong_audio_id": "AFXTsMTemGcNcaNO",
+      "second_audio_id": "AFXfrThlLELVzSiQ",
+      "target_length": 227,
+      "predicted_lengths": [
+        237,
+        227,
+        221
+      ],
+      "zero_length": 206,
+      "scores": [
+        0.003444569418206811,
+        0.0038654913660138845,
+        0.0036178496666252613
+      ],
+      "zero_score": 0.0046310387551784515,
+      "correct_minus_wrong_score": -0.0004209219478070736,
+      "correct_minus_second_score": -0.00017328024841845036,
+      "correct_minus_zero_score": -0.0011864693369716406,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 6.029966831207275,
+      "wrong_raw_mse": 6.0296807289123535,
+      "zero_raw_mse": 6.030572891235352,
+      "position_mean_mse": 5.208702564239502,
+      "correct_wrong_output_rms": 0.0035729771479964256,
+      "length_absolute_error": 10
+    },
+    {
+      "sample_id": "AFXTsMTemGcNcaNO",
+      "wrong_audio_id": "AFXfrThlLELVzSiQ",
+      "second_audio_id": "AHYpzFzOtrwLzLJE",
+      "target_length": 396,
+      "predicted_lengths": [
+        368,
+        362,
+        391
+      ],
+      "zero_length": 345,
+      "scores": [
+        0.011454299092292786,
+        0.011404057964682579,
+        0.011361134238541126
+      ],
+      "zero_score": 0.010997079312801361,
+      "correct_minus_wrong_score": 5.0241127610206604e-05,
+      "correct_minus_second_score": 9.31648537516594e-05,
+      "correct_minus_zero_score": 0.00045721977949142456,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 5.410136699676514,
+      "wrong_raw_mse": 5.41026496887207,
+      "zero_raw_mse": 5.410828113555908,
+      "position_mean_mse": 4.79927921295166,
+      "correct_wrong_output_rms": 0.003970568533986807,
+      "length_absolute_error": 28
+    },
+    {
+      "sample_id": "AFXfrThlLELVzSiQ",
+      "wrong_audio_id": "AHYpzFzOtrwLzLJE",
+      "second_audio_id": "AHeKGyVohGKXlzAA",
+      "target_length": 282,
+      "predicted_lengths": [
+        233,
+        258,
+        231
+      ],
+      "zero_length": 219,
+      "scores": [
+        0.010292083024978638,
+        0.010198977775871754,
+        0.010311795398592949
+      ],
+      "zero_score": 0.010782561264932156,
+      "correct_minus_wrong_score": 9.3105249106884e-05,
+      "correct_minus_second_score": -1.9712373614311218e-05,
+      "correct_minus_zero_score": -0.0004904782399535179,
+      "tie_aware_top1": 0.0,
+      "raw_mse": 5.519131660461426,
+      "wrong_raw_mse": 5.519205570220947,
+      "zero_raw_mse": 5.5196003913879395,
+      "position_mean_mse": 4.955817699432373,
+      "correct_wrong_output_rms": 0.003237679600715637,
+      "length_absolute_error": 49
+    },
+    {
+      "sample_id": "AHYpzFzOtrwLzLJE",
+      "wrong_audio_id": "AHeKGyVohGKXlzAA",
+      "second_audio_id": "AKHxrVAJtixUBnyS",
+      "target_length": 932,
+      "predicted_lengths": [
+        302,
+        261,
+        260
+      ],
+      "zero_length": 245,
+      "scores": [
+        0.005808386951684952,
+        0.0054861390963196754,
+        0.005109481513500214
+      ],
+      "zero_score": 0.004822893999516964,
+      "correct_minus_wrong_score": 0.00032224785536527634,
+      "correct_minus_second_score": 0.0006989054381847382,
+      "correct_minus_zero_score": 0.0009854929521679878,
+      "tie_aware_top1": 1.0,
+      "raw_mse": 4.890196800231934,
+      "wrong_raw_mse": 4.890279293060303,
+      "zero_raw_mse": 4.891167640686035,
+      "position_mean_mse": 4.357338905334473,
+      "correct_wrong_output_rms": 0.0038539934903383255,
+      "length_absolute_error": 630
+    }
+  ],
+  "student_uses_predicted_valid_interval": true,
+  "teacher_only_controls_supervision": true,
+  "silence_is_eval_only": true,
+  "scope": "Representation diagnostics, not dance or video accuracy"
+}

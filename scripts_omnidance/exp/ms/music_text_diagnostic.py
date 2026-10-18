@@ -175,7 +175,153 @@ def audit(exp, out):
     print(json.dumps(dict(event='diagnostic_audit_finished', passed=9, pixel_pairs=pixel_pairs, out=str(out))), flush=True)
 
 
+def online_audit_main():
+    import decord
+    import numpy as np
+    import torch
+    from PIL import Image, ImageDraw
+    parser = argparse.ArgumentParser(description='Online A/B training: actual input, full video/audio and counterfactual audit')
+    parser.add_argument('--online', action='store_true', required=True)
+    parser.add_argument('--exp_root', type=Path, required=True)
+    parser.add_argument('--runs', nargs='+', required=True)
+    parser.add_argument('--tags', nargs='+', required=True)
+    parser.add_argument('--zero_tags', nargs='+', required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if (args.out.exists() or not args.out.parent.is_dir()
+            or len(args.runs) != len(args.tags) or len(args.runs) != len(args.zero_tags)
+            or len(set(args.tags + args.zero_tags)) != 2 * len(args.runs)):
+        parser.error('Require new report, existing parent and matching unique video groups')
+    if any(Path(name).name != name or name in ('.', '..') for name in args.runs + args.tags + args.zero_tags):
+        parser.error('Run and group names must be path-free identifiers')
+    exp = args.exp_root
+    cases = fixed_cases(exp)
+    rows, mosaics, pending_images, pending_markers, models = [], [], [], [], []
+    for run, tag, zero_tag in zip(args.runs, args.tags, args.zero_tags):
+        checkpoint = exp / 'MS' / run / 'last.pt'
+        summary = json.loads((checkpoint.parent / 'finished.json').read_text())
+        ckpt_sha = sha256(checkpoint)
+        state = torch.load(checkpoint, map_location='cpu', weights_only=True)
+        metadata = state['metadata']
+        train_backbone = summary['protocol']['backbone_train']
+        if type(train_backbone) is not bool:
+            raise ValueError('Training scope must be explicit')
+        if (not summary['complete'] or summary['checkpoint_sha256'] != ckpt_sha
+                or not summary['deployment']['independent_inference_tail_exact']
+                or metadata['format_version'] != 2 or metadata['online_training']['feature_cache'] != 'forbidden'
+                or metadata['online_training']['train_backbone'] != train_backbone
+                or metadata['freeze_backbone'] != (not train_backbone)):
+            raise ValueError('Require completed online models with exact full deployment and consistent scope')
+        qmax = metadata['query_max']
+        del state
+        models.append(dict(run=run, checkpoint_sha256=ckpt_sha,
+                           backbone_train=train_backbone, steps=summary['steps'], final=summary['final']))
+        for group_tag, conditions, zero in ((tag, ('joint', 'aswap'), False), (zero_tag, ('joint',), True)):
+            directory = exp / 'H3AR' / ('val_musicreplace_' + group_tag)
+            jobs = json.loads((directory / 'jobs.json').read_text())
+            if not jobs['all_sampler_jobs_exit_zero']:
+                raise ValueError('Incomplete online generation jobs')
+            group_rows = []
+            for condition in conditions:
+                grid = Image.new('RGB', (176 * 7, 348 * 3), (245, 245, 245))
+                draw = ImageDraw.Draw(grid)
+                for i, case in enumerate(c for c in cases if c['condition'] == condition):
+                    evidence = successful_log(directory / 'logs', case, require_replacement=False, require_empty_prompt=True)
+                    if evidence is None:
+                        raise ValueError('Missing successful empty-student generation evidence')
+                    log_path, log_sha, log_signature, _ = evidence
+                    text = log_path.read_text()
+                    inputs = one_record(text, '[h3ar] input_conditions ')
+                    deployment = one_record(text, '[music text deployment] ')
+                    native = one_record(text, '[music text native isolation] ')
+                    if (inputs.get('music_text_ckpt') != str(checkpoint)
+                            or inputs.get('music_text_zero_input') != zero
+                            or inputs.get('text_hidden_oracle') is not False
+                            or inputs.get('legacy_clip_complete_chain') is not False
+                            or inputs.get('native_audio_condition') != 'fixed_silence'
+                            or inputs.get('waveform_loader') != 'music_clip_bridge.load_audio'):
+                        raise ValueError('Online trained model was not deployed with the declared input route')
+                    shape = deployment.get('tail_shape', [])
+                    if (deployment.get('checkpoint_sha256') != ckpt_sha or len(shape) != 2 or shape[1] != 5120
+                            or not 1 <= shape[0] <= qmax or shape[0] != deployment.get('predicted_length')
+                            or deployment.get('uses_ground_truth_caption') is not False
+                            or deployment.get('final_adapter_projection_executed') is not True
+                            or deployment.get('legacy_clip_complete_chain') is not False
+                            or native.get('native_music_bypass') is not False
+                            or native.get('all_target_audio_clean') is not True):
+                        raise ValueError('Online raw H mapping or native isolation failed')
+                    video = directory / condition / case['filename']
+                    before = signature(video)
+                    integrity = probe_video(video)
+                    reader = decord.VideoReader(str(video), num_threads=1)
+                    with Image.open(inputs['image_path']) as image:
+                        reference = image.convert('RGB')
+                    images = [reference] + [Image.fromarray(reader[f].asnumpy()) for f in (0, 24, 48, 72, 96, 123)]
+                    for col, image in enumerate(images):
+                        grid.paste(image.resize((176, 320)), (col * 176, i * 348 + 28))
+                        draw.text((col * 176 + 4, i * 348 + 8), case['sample_id'] if col == 0 else str((0, 24, 48, 72, 96, 123)[col - 1] / 24) + 's', fill='black')
+                    row = dict(tag=group_tag, condition=condition, sample_id=case['sample_id'],
+                        video_path=str(video), video_sha256=sha256(video), audio_path=case['audio_path'],
+                        log_path=str(log_path), log_sha256=log_sha, inputs=inputs, deployment=deployment,
+                        native_audio=native, integrity=integrity, backbone_train=train_backbone, zero_input=zero,
+                        audio_mux_match_checked=False, video_quality_acceptance_checked=False)
+                    if signature(video) != before or signature(log_path) != log_signature:
+                        raise ValueError('Online video or matching log changed during audit')
+                    rows.append(row)
+                    group_rows.append(row)
+                mosaic = directory / (args.out.stem + '_' + condition + '_mosaic.png')
+                if mosaic.exists():
+                    raise FileExistsError(mosaic)
+                pending_images.append((mosaic, grid))
+                mosaics.append(dict(tag=group_tag, condition=condition, path=str(mosaic)))
+            marker = directory / ('all6_integrity.json' if len(conditions) == 2 else 'joint_integrity.json')
+            if marker.exists():
+                raise FileExistsError('Refuse existing online group acceptance marker')
+            pending_markers.append((marker, dict(complete=True, expected=len(group_rows), passed=len(group_rows),
+                rows=group_rows, final_online_report=str(args.out), musical_quality_accepted=False)))
+            print(json.dumps(dict(event='online_group_decoded', tag=group_tag, videos=len(group_rows))), flush=True)
+    expected_count = 9 * len(args.runs)
+    if len(rows) != expected_count or any(len({r['native_audio'].get(key) for r in rows}) != 1 or
+                              any(not r['native_audio'].get(key) for r in rows)
+                              for key in ('waveform_sha256', 'reference_sha256', 'retake_sha256', 'mask_sha256')):
+        raise ValueError('All clips must have identical native silence conditions')
+    lookup = {(r['tag'], r['condition'], r['sample_id']): r for r in rows}
+    pixel_pairs = []
+    for tag, zero_tag in zip(args.tags, args.zero_tags):
+        for case in cases[:3]:
+            sid = case['sample_id']
+            selected = [lookup[tag, 'joint', sid], lookup[tag, 'aswap', sid], lookup[zero_tag, 'joint', sid]]
+            readers = [decord.VideoReader(r['video_path'], num_threads=1) for r in selected]
+            differences, movement, previous = [[], []], [[], [], []], [None, None, None]
+            for frame in range(124):
+                values = [reader[frame].asnumpy().astype(np.float32) / 255 for reader in readers]
+                for j in (0, 1):
+                    differences[j].append(float(np.abs(values[0] - values[j + 1]).mean()))
+                for j, value in enumerate(values):
+                    if previous[j] is not None:
+                        movement[j].append(float(np.abs(value - previous[j]).mean()))
+                    previous[j] = value
+            pixel_pairs.append(dict(tag=tag, sample_id=sid,
+                original_swapped_rgb_mae=float(np.mean(differences[0])), original_zero_rgb_mae=float(np.mean(differences[1])),
+                adjacent_frame_rgb_mae=[float(np.mean(value)) for value in movement],
+                predicted_lengths=[r['deployment']['predicted_length'] for r in selected]))
+    result = dict(complete=True, expected=expected_count, passed=expected_count, models=models, rows=rows, mosaics=mosaics,
+        pixel_pairs=pixel_pairs, all_native_audio_hashes_identical=True,
+        student_ground_truth_caption_or_length_input=False, complete_selected_audio_video_decode=True,
+        audio_mux_match_checked=False, musical_quality_accepted=False,
+        scope='Technical integrity and unaligned pixel proxies only; not pose/music accuracy or continuous listening. Predicted length remains a packed-layout confound.')
+    for path, image in pending_images:
+        with path.open('xb') as stream:
+            image.save(stream, format='PNG')
+    atomic_write_new(args.out, result)
+    for path, record in pending_markers:
+        atomic_write_new(path, record)
+    print(json.dumps(dict(event='online_all_audited', passed=expected_count, out=str(args.out), pixel_pairs=pixel_pairs)), flush=True)
+
+
 def main():
+    if '--online' in __import__('sys').argv:
+        return online_audit_main()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--stage', choices=['plan', 'audit'], required=True)
     parser.add_argument('--exp_root', type=Path, required=True)

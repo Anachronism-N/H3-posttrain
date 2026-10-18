@@ -15,6 +15,9 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--trained_only', action='store_true', help='Append completed raw-token and zero-music model to the existing text review')
     mode.add_argument('--diagnostic_only', action='store_true', help='Append unchanged native-H CLIP candidate and zero-input diagnostic; keep quality gate false')
+    mode.add_argument('--online_only', action='store_true', help='Append completed online A/B and their zero-input controls')
+    mode.add_argument('--length_ablation', action='store_true', help='Append C length-weight0.01 and its zero-input control')
+    parser.add_argument('--online_steps', type=int, default=100)
     args = parser.parse_args()
     if args.out.exists() or not args.out.parent.is_dir():
         parser.error('Require an existing parent and new focused manifest')
@@ -43,13 +46,31 @@ def main():
             ('text_Hclip_realneg_diag_zero_v1', ['joint'],
              '同CLIP候选仅将音乐输入置零；三参考图/seed/固定native静音不变，按生成路径配原音轨（未独立验证mux逐值匹配）；未校准模型诊断，不代表验收成功，仅joint三条'),
         ]
+    if args.online_only:
+        if args.online_steps < 1:
+            parser.error('Online update count must be positive')
+        configurations = []
+        for name, zero in (('A', False), ('B', False), ('A', True), ('B', True)):
+            tag = f'text_online_{name}_s{args.online_steps}' + ('_zero' if zero else '') + '_v1'
+            description = (f'在线{name} {args.online_steps}更新：' + ('实际MusicFM dense骨干+完整adapter共同训练' if name == 'B' else '在线冻结骨干，仅训练完整adapter的同协议对照')
+                + '；学生全量raw H/自己预测有效长度→DiT文本入口，无语义文字/native真实音乐旁路；'
+                + ('仅将学生音乐置零，仍配原曲，仅joint三条' if zero else '固定三人物joint/aswap，技术验收不代表舞蹈质量通过'))
+            configurations.append((tag, ['joint'] if zero else ['joint', 'aswap'], description))
+    if args.length_ablation:
+        if args.online_steps < 1:
+            parser.error('Online update count must be positive')
+        configurations = [(f'text_online_C_len001_s{args.online_steps}' + ('_zero' if zero else '') + '_v1',
+            ['joint'] if zero else ['joint', 'aswap'],
+            f'在线C {args.online_steps}步：MusicFM dense骨干+完整adapter共同训练；仅把length loss权重1改为0.01，其余同B；'
+            + ('学生音乐置零、仍配原曲，仅joint三条' if zero else '仅音乐+参考图，完整raw H文本侧部署，技术验收不代表音乐控制通过'))
+            for zero in (False, True)]
     new_models = []
     for tag, conditions, description in configurations:
         group = 'H3AR/val_musicreplace_' + tag
         directory = exp / group
         marker = directory / ('all6_integrity.json' if len(conditions) == 2 else 'joint_integrity.json')
         integrity = json.loads(marker.read_text())
-        if not integrity['complete']:
+        if integrity.get('complete') is not True:
             raise ValueError('Incomplete video integrity report: ' + str(marker))
         entries = {}
         for condition in conditions:
@@ -76,13 +97,53 @@ def main():
                     or final.get('quality_gate_passed') is not False):
                 raise ValueError('Candidate diagnostics must preserve the failed quality gate and complete nine-video audit')
             record.update(diagnostic_only=True, quality_gate_passed=False)
+        if args.online_only or args.length_ablation:
+            final_report = Path(integrity.get('final_online_report', ''))
+            if not final_report.is_file():
+                raise ValueError('Online review requires completed all18 input/audio/video audit')
+            final = json.loads(final_report.read_text())
+            expected_count = 9 if args.length_ablation else 18
+            if (integrity.get('complete') is not True or final.get('complete') is not True
+                    or final.get('all_native_audio_hashes_identical') is not True
+                    or type(final.get('passed')) is not int or final['passed'] != expected_count
+                    or type(final.get('expected')) is not int or final['expected'] != expected_count
+                    or not isinstance(final.get('rows'), list) or len(final['rows']) != expected_count
+                    or any(not isinstance(row, dict) for row in final['rows'])
+                    or {row.get('tag') for row in final['rows']} != {entry[0] for entry in configurations}):
+                raise ValueError('Online technical audit is incomplete')
+            group_rows = [row for row in final.get('rows', []) if row.get('tag') == tag]
+            expected_rows = {(case['condition'], case['sample_id'], str(directory / case['condition'] / case['filename']), case['audio_path'])
+                             for case in fixed_cases(exp) if case['condition'] in conditions}
+            actual_rows = {(row.get('condition'), row.get('sample_id'), row.get('video_path'), row.get('audio_path'))
+                           for row in group_rows}
+            count = 3 * len(conditions)
+            if (len(group_rows) != count or integrity.get('rows') != group_rows or actual_rows != expected_rows
+                    or integrity.get('expected') != count or integrity.get('passed') != count):
+                raise ValueError('Online group marker does not match the displayed fixed cases and completed counts')
+            name = 'C' if args.length_ablation else 'A' if '_A_' in tag else 'B'
+            if any(row.get('backbone_train') is not (name != 'A')
+                   or row.get('zero_input') is not ('_zero_' in tag) for row in group_rows):
+                raise ValueError('Online displayed training scope or zero-input variant differs from the audited videos')
+            record['label'] = f'在线{name}·' + ('长度权重0.01' if name == 'C' else '骨干联合训练' if name == 'B' else '骨干冻结对照') + f'·{args.online_steps}步' + ('·零音乐' if '_zero_' in tag else '')
+            record.update(musical_quality_accepted=False, online_backbone_train=name != 'A')
         new_models.append(record)
     current = {model['id'] for model in manifest['models']}
     if current & {model['id'] for model in new_models}:
         raise ValueError('Focused manifest already contains new configurations')
     manifest['models'] += new_models
     new_ids = [model['id'] for model in new_models]
-    if args.diagnostic_only:
+    if args.length_ablation:
+        baseline = f'H3AR/val_musicreplace_text_online_B_s{args.online_steps}_v1'
+        if baseline not in current:
+            baseline = 'H3AR/val_musicreplace_text_trained1800_v2'
+        presets = [dict(name=f'【在线骨干·长度监督单变量·{args.online_steps}步】已有基线 / C长度权重0.01 / C零音乐；先joint再aswap，零音乐仅joint',
+                    cond='joint', view='models', models=[baseline, new_ids[0], new_ids[1]])]
+    elif args.online_only:
+        presets = [dict(name=f'【在线骨干联训·{args.online_steps}步】旧MSE / A骨干冻结 / B骨干联训 / B零音乐；先joint，再aswap，零音乐仅joint',
+                    cond='joint', view='models', models=['H3AR/val_musicreplace_text_trained1800_v2', new_ids[0], new_ids[1], new_ids[3]]),
+                   dict(name=f'【在线骨干联训·{args.online_steps}步·零音乐对照】A / A零音乐 / B / B零音乐；仅joint，比较音乐作用和人物保真',
+                    cond='joint', view='models', models=[new_ids[0], new_ids[2], new_ids[1], new_ids[3]])]
+    elif args.diagnostic_only:
         presets = [dict(name='【H序列CLIP·训练后直接推理】MSE基线 / 原权重CLIP候选 / 候选零音乐；未校准、原生音频均静音；joint后切aswap，零音乐仅joint',
                         cond='joint', view='models', models=[
                             'H3AR/val_musicreplace_text_trained1800_v2', new_ids[0], new_ids[1]])]
@@ -102,7 +163,11 @@ def main():
         ]
     manifest['presets'] = presets + manifest['presets']
     manifest['built'] = time.strftime('%Y-%m-%d %H:%M:%S')
-    if args.diagnostic_only:
+    if args.length_ablation:
+        manifest['scope'] += ' C length-weight0.01 single-variable backbone/adapter run and actual zero-input control appended after all9 technical audit; no established musical-quality claim.'
+    elif args.online_only:
+        manifest['scope'] += ' Online A-frozen/B-dense-backbone full-adapter models and actual zero-input controls appended after all18 technical audit; no established musical-quality claim.'
+    elif args.diagnostic_only:
         manifest['scope'] += ' Unchanged previous native-H CLIP candidate and zero-music diagnostic appended; original failed quality gate is unchanged, not a model acceptance claim.'
     else:
         manifest['scope'] += (' Completed trained raw-token and zero-music controls appended; no claim of established musical gain.'

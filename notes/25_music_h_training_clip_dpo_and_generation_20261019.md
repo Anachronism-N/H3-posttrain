@@ -264,3 +264,43 @@ A/B各3更新、12曝光均exit0。B实际dense骨干为316,343,296参数/400个
 完整报告位于`results/ms_20261017/music_text_online_smoke_{A,B}_v1.json`及`music_text_online_smoke_{A,B}_weight_audit_v1.json`，context报告为`music_text_online_context_audit_v1.json`。waveform/teacher本地bundle SHA`ced68f1b921a0e529bded7de7d8f2f1d5a68778a1935668994470f852397ce8f`，完整源音轨/输入波形hash元数据另存`music_text_online_waveform_bundle_v1.json`，不发布数值PT。
 
 随后已启动每GPU原生H3 prefix/tags/packed审计→100步的工具管理串行接续；只有技术布局检查通过才进入正式训练，布局检查不是研究质量门槛。正式新目录`music_text_online_A_s100_v1`/`music_text_online_B_s100_v1`；截至本条小集记录，100步和新视频尚未验收，后续以真实产物更新。
+
+### 三组100步完整结果与针对性长度对照
+
+A/B均完成100更新、800实际曝光、全200val、完整checkpoint重载与独立音乐部署；正式预测tail和真实空图prefix/tags/原PackedSequenceBuilder逐值验收通过。A骨干0tensor变化、B400tensor变化，adapter均42tensor变化，冻结权重/buffers不变。完整报告为`music_text_online_{A,B}_s100_{summary,val200,train_probe,weights,layout}_v1.json`。
+
+为进一步判别“骨干更新是否主要用于预测caption长度”，对B step100在同一3train+1val计算未裁剪的单样本分项梯度，不作optimizer更新，全部权重/buffers哈希不变。骨干rawMSE/Etrain梯度norm0.000271–0.000934，长度loss0.7310–4.6334，NCE0.04838–0.26853；长度约为NCE的8–77倍。长度head自身norm8.345–125.503也会参与全模型norm裁剪。该诊断提示梯度竞争，但没有测全训练过程、batch梯度抵消/方向和Adam历史，不能把norm比例说成最终更新贡献或唯一根因。详见`music_text_online_B_s100_gradient_components_v1.json`。
+
+因此增加**唯一单参数C对照**：同B完整骨干/adapter、同init/split/order/FP32/microbatch/100步/lr/锚定/NCE，把length_weight从1降为0.01，不改结构或学生条件、不添加生成loss。协议除该参数外逐字段一致。C也完成800曝光和200val、骨干400tensor更新、完整部署逐值验收；原始报告为`music_text_online_C_len001_s100_{summary,val200,train_probe,weights}_v1.json`。`len001`在本轮明确表示权重0.01，不是0.001。
+
+| 配置（同200val） | correct > 一条真实wrong | correct−wrong score | raw MSE（样本macro） | 长度MAE | correct/wrong输出RMS |
+|---|---:|---:|---:|---:|---:|
+| A骨干冻结，长度权重1 | 52.5% | -0.00000810 | 5.45948 | 147.415 | 0.002919 |
+| B骨干联训，长度权重1 | 54.5% | 0.00001273 | 5.46769 | 155.445 | 0.003503 |
+| C骨干联训，长度权重0.01 | 55.5% | 0.00002451 | 5.46963 | 155.885 | 0.004720 |
+
+相同teacher mask下train逐位置平均H的macro MSE为4.81506，仍优于三组。三候选tie-aware top1分别40.5%/41.25%/39.5%，不可把pairwise55.5%当三选一准确率或舞蹈准确率。C只有微小表示变化，没有修复长度或建立明确音乐增益；不能据四样本梯度就宣称降低长度权重成功。反复用同val200选配置仍有选择偏差。优化区间实测A66.514s、B142.618s、C143.304s，不含IO/前后val/checkpoint/部署；B/C峰值约11.09GiB。
+
+A/B各6个joint/aswap和各3个zero joint的18视频任务已启动，C另9条按已验证B生成manager的pidfd结束事件接续同三节点，避免同时开两个H3冷加载。实际B三个joint已成功、全124帧及选定音轨完整解码，并已Read同人物三种配置的六采样帧对照：楼梯仍白蓝衣裤/小包替代参考浅黄衣灰裤，保留小手势/后勾腿母题；红衣仍嘴/脸附近单臂动作、侧头与抬臂；商店仍原地单臂和小重心变化。B局部姿态有变化，但这三条未显示可用编舞增量。此为采样帧视觉诊断，不冒称连续听看、卡点评分或新用户否决；swap/zero和C视频仍需完成。
+
+A与零音乐队列曾在控制节点读取A完整权重时处于`generic_file_buffered_read`，不误判GPU训练停死、不重复启动；B是真实3卡采样而非holder100%。写入节点fsync及原SHA核实已完成，没有改权重。该同步操作不证明IO问题已完全消失，正常队列和日志保留。传输JSON遇默认SFTP subsystem不可用，使用节点支持的legacy SCP完成，仅传元数据，无模型/媒体公开上传。
+
+下一步仍为完成所有已启动视频、完整输入/音画和原/换/零反事实审计，保留新旧模型/评分并追加清楚的在线A/B/C预设。100步尚非收敛结论；是否进入300/原预算按完整视频和表示结果判别，不因当前弱指标阻止推理，也不在本阶段偷偷增加DiT预测loss。
+
+### 同起点300步预算检查完成，视频仍在接续
+
+100步三组表示依赖弱、B三个joint仍小动作母题，因此进行已提出的100–300步范围内预算检查，不直接扩大到1875步。A/B/C均从同一原raw H回归init**独立重跑300步**、2400曝光，保持相同样本顺序/seed/有效batch/精度与各自长度权重，不能称从100恢复optimizer的连续训练。三组训练和全200val退出正确；A0bone、B/C400bone及各42adapter权重变化，固定buffers不变，完整V2重载/独立tail及原生prefix/tags/packed通过。
+
+| 300步配置 | correct > 一条真实wrong | correct−wrong score | 三候选tie-aware top1 | rawMSE macro | 长度MAE |
+|---|---:|---:|---:|---:|---:|
+| A骨干冻结，length1 | 47.5% | -0.00024221 | 36.25% | 5.37288 | 141.070 |
+| B骨干联训，length1 | 45.5% | -0.00026869 | 30.50% | 5.40003 | 143.010 |
+| C骨干联训，length0.01 | 51.5% | 0.00036640 | 37.50% | 5.33456 | 142.340 |
+
+B300正确−静音score -0.005302，C300为+0.002735；这是各自预测长度有效区间的对比分数，不能当音画正确率。C相对B只改变长度loss权重、两wrong平均margin为正，但第一wrong胜率51.5%及位置均值MSE更好，仍无明确语义学习/泛化成功；不把第二wrong58.5%挑作唯一成绩，也不以三个配方反复固定val选优推独立显著性。
+
+优化区间A198.787s、B433.236s、C437.327s，不含输入/验证/重载；三组最大显存保持约11.09GiB，无新增H3训练loss。完整各200行、实际权重逐tensor SHA和独立部署/layout报告为`music_text_online_{A,B,C_len001}_s300_{summary,val200,train_probe,weights,layout}_v1.json`。
+
+100步A/B normal各6、A zero3已完成所有采样；B zero及C normal后半/zero按现有节点串行继续，A300已在空出的三节点启动，其余300队列等待既有manager实际pidfd结束。300各配置仍固定三人物，joint/aswap各3、zero joint3，共27新视频，不扩源人物。实际case采样日志的1481/1506s是端到端采样区间，不当训练耗时；占卡程序100%与真正H3 PID/GPU计算分开。
+
+评审追加器独立CPU纯内存测试发现并修复marker/final与展示case/视频路径错绑、scope/zero反转、计数错误和真值字符串误当验收成功；新增分支要求固定案例键集一致、expected/passed及实际row总数一致、旗标严格True和variant布尔一致。仅builder脚本修改，未改活跃采样/骨干源码。最终网页仍须依赖实际音画审计，不以CPU fixture通过当视频完成。

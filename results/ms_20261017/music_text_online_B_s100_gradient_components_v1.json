@@ -1,0 +1,249 @@
+{
+  "complete": true,
+  "checkpoint_sha256": "98b39d8cd85347a0080adb71b3c3d9b832d9203366c60e7c5d7a1cb973fe424b",
+  "samples": [
+    {
+      "sample_id": "AAcaGYtiTozEttaF",
+      "scores": [
+        [
+          0.012433580122888088,
+          0.012483807280659676,
+          0.012370983138680458
+        ]
+      ],
+      "length": 317,
+      "loss_values": {
+        "rawMSE_over_train_energy": 0.3744446635246277,
+        "log_length_MSE": 0.22330838441848755,
+        "sequence_NCE_full_weight": 1.0985536575317383
+      },
+      "component_gradient_norms": {
+        "rawMSE_over_train_energy": {
+          "backbone": {
+            "gradient_norm": 0.00035609463537180166,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 0.031248571509256303,
+            "tensors_with_gradient": 38
+          },
+          "length_head": {
+            "gradient_norm": 0.0,
+            "tensors_with_gradient": 0
+          }
+        },
+        "log_length_MSE": {
+          "backbone": {
+            "gradient_norm": 3.7422699058558577,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 2.203630631455877,
+            "tensors_with_gradient": 5
+          },
+          "length_head": {
+            "gradient_norm": 16.835431650818496,
+            "tensors_with_gradient": 4
+          }
+        },
+        "sequence_NCE_full_weight": {
+          "backbone": {
+            "gradient_norm": 0.048382389184953044,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 0.038057705595514316,
+            "tensors_with_gradient": 38
+          },
+          "length_head": {
+            "gradient_norm": 0.0,
+            "tensors_with_gradient": 0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "ACYTcnkJDuOfXBiA",
+      "scores": [
+        [
+          0.008570775389671326,
+          0.008411204442381859,
+          0.008487842977046967
+        ]
+      ],
+      "length": 324,
+      "loss_values": {
+        "rawMSE_over_train_energy": 0.38372474908828735,
+        "log_length_MSE": 0.24846646189689636,
+        "sequence_NCE_full_weight": 1.097458004951477
+      },
+      "component_gradient_norms": {
+        "rawMSE_over_train_energy": {
+          "backbone": {
+            "gradient_norm": 0.0002709530606564402,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 0.03296857035987633,
+            "tensors_with_gradient": 38
+          },
+          "length_head": {
+            "gradient_norm": 0.0,
+            "tensors_with_gradient": 0
+          }
+        },
+        "log_length_MSE": {
+          "backbone": {
+            "gradient_norm": 3.703988850519204,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 2.4071706755418956,
+            "tensors_with_gradient": 5
+          },
+          "length_head": {
+            "gradient_norm": 15.937159480220128,
+            "tensors_with_gradient": 4
+          }
+        },
+        "sequence_NCE_full_weight": {
+          "backbone": {
+            "gradient_norm": 0.08091302594801777,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 0.050202776511635544,
+            "tensors_with_gradient": 38
+          },
+          "length_head": {
+            "gradient_norm": 0.0,
+            "tensors_with_gradient": 0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "ACjmBvCtqPhuyLRS",
+      "scores": [
+        [
+          0.001515702111646533,
+          0.000990123488008976,
+          0.0013376274146139622
+        ]
+      ],
+      "length": 158,
+      "loss_values": {
+        "rawMSE_over_train_energy": 0.5175466537475586,
+        "log_length_MSE": 0.6197798848152161,
+        "sequence_NCE_full_weight": 1.0952664613723755
+      },
+      "component_gradient_norms": {
+        "rawMSE_over_train_energy": {
+          "backbone": {
+            "gradient_norm": 0.0009335967182562513,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 0.06727128923398332,
+            "tensors_with_gradient": 38
+          },
+          "length_head": {
+            "gradient_norm": 0.0,
+            "tensors_with_gradient": 0
+          }
+        },
+        "log_length_MSE": {
+          "backbone": {
+            "gradient_norm": 4.63336943185392,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 2.712571133731342,
+            "tensors_with_gradient": 5
+          },
+          "length_head": {
+            "gradient_norm": 125.50253751096572,
+            "tensors_with_gradient": 4
+          }
+        },
+        "sequence_NCE_full_weight": {
+          "backbone": {
+            "gradient_norm": 0.2685297014892353,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 0.11932893793437065,
+            "tensors_with_gradient": 38
+          },
+          "length_head": {
+            "gradient_norm": 0.0,
+            "tensors_with_gradient": 0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "QcXTBHnhvaKIOlgH",
+      "scores": [
+        [
+          0.019825678318738937,
+          0.019815344363451004,
+          0.01953989639878273
+        ]
+      ],
+      "length": 235,
+      "loss_values": {
+        "rawMSE_over_train_energy": 0.4287683069705963,
+        "log_length_MSE": 0.010897700674831867,
+        "sequence_NCE_full_weight": 1.0972039699554443
+      },
+      "component_gradient_norms": {
+        "rawMSE_over_train_energy": {
+          "backbone": {
+            "gradient_norm": 0.00037351882634876506,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 0.04435380602800778,
+            "tensors_with_gradient": 38
+          },
+          "length_head": {
+            "gradient_norm": 0.0,
+            "tensors_with_gradient": 0
+          }
+        },
+        "log_length_MSE": {
+          "backbone": {
+            "gradient_norm": 0.7310336813648473,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 0.36613420368263994,
+            "tensors_with_gradient": 5
+          },
+          "length_head": {
+            "gradient_norm": 8.345279461260635,
+            "tensors_with_gradient": 4
+          }
+        },
+        "sequence_NCE_full_weight": {
+          "backbone": {
+            "gradient_norm": 0.0918393180110868,
+            "tensors_with_gradient": 400
+          },
+          "adapter_H": {
+            "gradient_norm": 0.06953307552299468,
+            "tensors_with_gradient": 38
+          },
+          "length_head": {
+            "gradient_norm": 0.0,
+            "tensors_with_gradient": 0
+          }
+        }
+      }
+    }
+  ],
+  "model_parameters_and_buffers_unchanged": true,
+  "optimizer_updates": 0,
+  "scope": "Four selected samples, un-clipped per-component gradients at step100; diagnostic only, not a causal proof or a changed training loss"
+}

@@ -1199,3 +1199,59 @@ N1/N4/N8同时做三人物joint/aswap6，N2/N3/N6并行zerojoint3，单节点一
 **当前训练/生成的准确区别：** 骨干是公开预训练MusicFM并在本轮冻结，更新约496.7万参数的raw文本adapter和length head，不是音乐骨干全量CLIP微调。教师为同图结构prefix+舞种/中性代词原MS得到的原生TC raw action tail；loss为有效词位置rawMSE/trainenergy + log长度MSE + 同图context的正确/两条真实wrong音乐序列InfoNCE。最多64有效token的mean/std/L2处理仅用于计算序列score，不处理实际部署raw H；没有额外训练语义head被丢弃，也没有视频/DiT预测/节拍动作监督。
 
 训练利用GT caption length设query_count和有效mask监督，生成则全qmax1423前向后根据预测长度截取。这是参数/输出坐标相同，不是有效条件长度或mask已完全相同；不能把strict权重前向重载一致扩大为文本与音乐生成行为完全对齐。真实音乐内容只经预测raw H进入DiT文本condition_proj/token_refiner；原生TC仅编码图结构prefix，nativeaudio两路仍有固定静音tokens，但没有真实音乐内容旁路。
+
+### 28.23 用户任务目标、骨干冻结纠正与共享学生条件（2026-10-18）
+
+**用户原话：** “为什么不训练encoder的骨干?就是要训练才对啊.此外,还是需要完全对齐训练和生成时的情况.请进一步进行分析和判别.此外,我需要你向我描述我理解的我们的任务目标或者idea,需要确定你是否理解.相关信息请同步到文档并推送到github”。
+
+#### 28.23.1 对idea的准确理解
+
+核心是**训练音乐encoder实际dense骨干＋完整adapter，使音乐产生能替代动作文字的H3原生文本侧条件，再只凭音乐和参考图生成舞蹈**。不是仅训练检索投影、仅让向量维度相同，也不是把音乐先转成离散动作文字来提示H3。冻结H3文本encoder、DiT、VAE，不冻结音乐encoder；学生音乐输出接TC的raw输出hidden侧，再走原DiT condition_proj/token_refiner，不重新经过TC50层。最后5120投影、长度头、有效token读出和条件拼接都属于完整部署链。
+
+```text
+教师：同参考图结构prefix＋舞种/中性原版MotionScript → 冻结TC → raw动作H
+学生：配乐＋无动作文字的图context → 可训练音乐骨干 → 可训练完整adapter
+      → 全qmax输出＋自身预测长度 → raw有效tail
+      → 原图prefix/tags/packed → 冻结DiT文本入口 → 视频
+```
+
+教师caption和长度只监督，不向学生提供caption/人物ID答案/条件长度；真实音乐不从原生音频分支旁路，两native分支固定静音，mux配乐不是生成条件。先不加人物自然语言，首帧固定仍后置。这里的“对齐”包括实际学生条件一致和期望的文本替代控制能力，不意味着同音乐唯一caption或逐像素复现文字视频。
+
+#### 28.23.2 为什么没训骨干：助手方案偏差，而非用户限制
+
+此前H侧冻结MusicFM是助手选的固定特征读出对照，不是用户要求，也不应继续代表主线。历史专用音频CLIP阶段确实训练过骨干，但raw H回归/H序列CLIP是另一阶段，不能以历史训练替本次证明。
+
+| 已核实位置（均在scripts_omnidance/exp/ms/） | 当前真实行为 |
+|---|---|
+| music_text_adapter.py:195–203、219–234 | requires_grad关闭、eval、no_grad、冻结特征FP16往返 |
+| music_text_align.py:215–227、258–273 | 固定音乐特征cache，optimizer只有adapter，骨干出现梯度即报错 |
+| music_text_contrastive.py:181–206、225–270 | 冻结bundle/cache和预计算静音，正负分支只调用adapter |
+| music_encoder_adapter.py:80–86 | 已有可微mel→固定统计→conv→Conformer，可用于在线骨干训练 |
+
+下一实现须恢复实际dense参数梯度、在线waveform前向、骨干和adapter优化器分组，并验证梯度有限/非零及权重真的更新；仅改freeze_backbone布尔值不够。未执行的SSL head/cls/quantizer及本机Conformer pos_conv_embed保持冻结，不按注册数虚称全更新。可以复用冻结教师H/图context及原波形缓存，不能继续用旧dense特征代表骨干微调，也不能复用更新前的静音特征代表当前模型。
+
+#### 28.23.3 同条件的缺口与不能夸大的归因
+
+旧batch根据teacher长度设query_count和loss mask（music_text_align.py:163–171、260）；序列score也用teacher mask选学生位置（music_text_contrastive.py:38–58）。生成却输出qmax1423并预测长度截取（music_text_adapter.py:241–246、286–301）。参数链一致不等于有效长度/评分范围/packed一致。
+
+但adapter没有query self-attention、采用绝对query位置，length head不依赖query数（music_text_adapter.py:153–159）；相同输入的共同前缀数学上相同，只有算子数值误差可能不同。因此不能说GT控制query数必然改变已有token或就是视频失败根因。实际需解决学生预测有效范围、超teacher尾部、长度读出及打包的一致性。GT mask作为监督合法，不能当作学生部署mask。
+
+共享可微学生前向应仅接音乐、音频有效长度及安全图context，统一在线预处理→全qmax→自身预测长度/mask→raw tail截取；GT长度只作length loss标签，teacher mask仅用于全量raw输出回归。序列对比从学生预测有效区间及teacher自身有效区间分别取样，允许长度不同，不把teacher答案用于学生条件。整数截取不对长度可导，先沿用直接log长度监督，不擅加STE。训练不能经过detach子进程proxy或no_grad的generate。
+
+图prefix/取context/resize/静音结构和后续prefix＋tail/tags/packed必须与部署共用规则并实际核验。冻结教师缓存可复用的前提是同图context确与学生无动作文字prefix一致，而不是仅形状一致。**表示训练仍不等于每步经过DiT学习生成行为**；同学生条件构造解决协议问题，不是已证明文本同等控制。
+
+#### 28.23.4 下一轮最小判别设计（拟议，未实现/未运行）
+
+先统一在线学生协议，再同起点做A冻结骨干/训练adapter与B训练实际dense骨干＋完整adapter；B是主线，A只是归因对照。两组相同波形/1800–200划分、同query/自身长度/精度/BN政策、同raw锚定＋长度＋双真实音乐负例序列loss；复用同一已审核H侧完整checkpoint，初始化来源及SHA显式记录，不混用旧32D音频adapter。共同协议相对历史实验还改变有效评分/精度，故新旧差异不能单独归因骨干，A/B才隔离训练scope。
+
+建议B组骨干保持eval行为但允许dense参数梯度，固定BN running统计、关闭dropout/LayerDrop/随机增强、BN affine仍训练；A组采用相同eval/统计/随机层策略，但骨干包含BN affine全部冻结；每次wrapper.train后恢复该策略。首先验证FP32，不保留为冻结cache设计的FP16往返；如需AMP/checkpointing先实测并记录。checkpoint须适配新scope/BN/精度metadata及严格完整重载，不能标成旧冻结FP16协议。骨干学习率分组/有效batch/更新预算由在线显存和梯度自测后固定，不假设adapter耗时或同学习率可直接迁移。
+
+B组检查实际dense bone/adapter有限非零梯度与实际权重变化；A组检查bone无梯度且权重不变、仅adapter更新；两组冻结H3不变、BN running统计不变；同输入训练可微/eval/独立部署的raw H、预测长度、截取、prefix/tags/packed实际比较。两组训练后均做固定三人物joint/aswap各3，必要zero joint同三图3，保留质量失败并实际看视频；研究长度/表示门槛不再阻止用户授权诊断。技术条件损坏与视频效果负结果区分，旧产物不覆盖。
+
+#### 28.23.5 已知证据、待判别项与边界
+
+已证实H侧未训骨干、raw回归主要共享模板、含zero对比有静音捷径、双真实负例只有有限表示信号、全映射已进文本侧且用户仍否决视频。当前失败不能再归为遗漏最后adapter，也不能否定“音乐骨干＋adapter共同训练”的完整idea。
+
+待判别项包括固定音乐特征的语义可塑性、逐词MSE平均化、soft-Chamfer词序缺失、预测尾部/packed长度、图context捷径及参考人物保真；没有证据支持某项是唯一根因，也不保证解冻必然解决。音乐侧表示改善而视频仍失败时，才讨论冻结DiT预测一致性等更直接的行为监督；新增DiT/video/生成预测loss仍需单独明确授权，本次没有加入。
+
+**本次实际范围：** 完成源码只读核查、目标复述、纠正分析和既有文档更新；在线骨干与共享学生条件新代码、实际梯度更新及新训练/视频均未完成/未运行。文档发布不是训练完成，整体音乐替代文本编舞目标仍未达成。完整修正方案见plans/music_encoder_replacement_20261016.md的同日纠正节；历史负结果和用户反馈不删除。

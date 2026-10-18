@@ -1,5 +1,13 @@
 # 专用音乐 encoder 替换 H3：候选比较＋两条训练路线
 
+## 当前主线与纠正（2026-10-18）
+
+**以本节及下文“音乐骨干必须参与训练、学生条件统一”为当前范围；其余按日期记录历史方案与结果，不应将旧音频接口或冻结音乐骨干的阶段配置当作当前要求。**
+
+目标是训练音乐encoder的实际dense骨干＋完整raw H adapter，让配乐在只输入音乐和参考图时承担H3原动作文本的控制作用。音乐输出接原生文本encoder的输出hidden侧，再进入冻结DiT的文本条件入口；不是让音乐重新经过文本encoder，也不是检索/生成动作文字后提示H3。H3文本encoder、DiT及VAE保持冻结，音乐骨干必须参与训练。训练、验证、部署的学生条件仅依赖音乐/参考图，共享全量query输出、自身预测长度、截取、prefix/tags及packed构造。教师caption/长度只作监督，不决定学生实际条件。
+
+截至本次纠正，既有H文本侧实验仍是adapter-only且视频效果为负；在线骨干训练与统一学生条件的新实现尚未完成，尚未启动新训练。新增DiT/video/生成预测loss仍需单独明确授权。
+
 ## 用户确认的范围
 - 当前改用专用音乐 encoder，视频生成也使用同一个微调 encoder；不是只算CLIP分数，也不是额外MERT残差注入。
 - 同时尝试 **严格CLIP** 和 **原生latent桥接＋CLIP**，允许桥接监督。冻结H3文本encoder、DiT及audio decoder；不用caption检索，不增加DiT/video loss。
@@ -280,6 +288,84 @@
 - 九个真实预测长度：原/换/零三case分别415/393/239、236/231/182、312/315/196；长度改变也改变DiT packed，不能把像素变化单独归因music语义内容。原/换RGB MAE .04242/.01684/.00913，原/零 .05348/.05145/.02021，均为未对齐像素代理，不是pose/音乐准确度。
 - 原8766保留全部旧16模型/7预设和样本/评分，追加两个diag组后18模型/8预设，第一【H序列CLIP·训练后直接推理】MSE基线/CLIP原权重候选/候选零音乐；joint三列、aswap零音乐列明确无结果。页面/manifest200、9新增视频Range206、跨节点manifest200通过；不替换旧权重或媒体。
 - 本次“只需推理”的实验已完成技术和采样视觉诊断，音乐替代动作文本的整体目标仍未达到。未来先实际推理验证旧权重，再决定是否重训；原生H维度、CLIP表示指标、长度gate都不替代视频效果验收。未宣称连续听看或新用户认可，未重新训练，length头/DiT预测监督未获授权仍不做。
+
+## 2026-10-18 用户纠正：音乐骨干必须参与训练、学生条件统一
+
+### 1. 用户原意与助手偏差
+
+用户原话：“为什么不训练encoder的骨干?就是要训练才对啊.”、“还是需要完全对齐训练和生成时的情况.”，并要求准确复述任务idea、进一步分析和判别、同步文档并推送。
+
+```text
+监督教师：同参考图结构prefix＋舞种/中性代词MotionScript
+          → 冻结H3文本encoder → 原生raw H动作tail
+
+训练/部署学生：舞蹈配乐＋无动作文字的参考图结构context
+              → 可训练音乐encoder实际dense骨干
+              → 可训练完整adapter（包含最后5120投影、长度头）
+              → 自身预测raw H有效tail
+              → 保留图prefix/tags，按实际长度打包
+              → 冻结H3 DiT文本condition_proj/token_refiner → 视频
+```
+
+训练教师可以提供文字目标，但学生始终不读caption、ID答案或GT条件长度；真实音乐不能另从原生音频分支提供信息。reference/retake仍采用已核验的固定静音，播放配乐与模型条件分开记录。先不加人物自然语言、不做后置首帧固定。任务是建立音乐到编舞的可用控制，不是要求同一音乐只能有一份caption，或与给文字的视频逐像素完全相同。
+
+之前冻结公开MusicFM只是助手选择的固定特征读出对照，不是用户要求冻结，也不能再当作完整主线。历史音频替换CLIP阶段确实训练过音乐骨干；后来的raw H回归及H序列InfoNCE阶段却没有，两阶段不能混为一谈。
+
+### 2. 现有代码核实，不以配置名称代替真实梯度
+
+- `scripts_omnidance/exp/ms/music_text_adapter.py:195–203`关闭骨干requires_grad并保持eval；`:219–234`使用no_grad及冻结特征FP16往返。
+- `music_text_align.py:215–227`加载固定特征、建立冻结wrapper，优化器只含adapter；`:258–273`直接调用adapter且禁止骨干梯度。
+- `music_text_contrastive.py:181–206`使用冻结音乐特征bundle/cache并预计算静音；`:225–270`只优化adapter，对正/负音乐也不执行在线骨干。
+- `music_encoder_adapter.py:80–86`已有可微mel→固定统计归一化→conv→Conformer路径。需要恢复实际执行dense参数的requires_grad，不是仅把freeze_backbone布尔值改为false。SSL linear/cls/quantizer和本机未执行的Conformer pos_conv_embed不属于本轮更新范围。
+
+新实现须使用真实waveform在线前向并反传，正负音乐均执行当前骨干；允许缓存原始波形、冻结教师H及图context，但旧音乐dense特征不得用于骨干训练。预计算静音也不能代表更新后骨干的静音输出。优化器、裁剪和检查覆盖实际dense骨干＋完整adapter，分别报告注册参数、声明可训练参数、获得梯度/实际更新参数及未执行参数原因。
+
+### 3. 训练/生成差异的准确归因
+
+旧训练在`music_text_align.py:163–171`用GT长度决定query_count，`:260`按teacher宽度前向；序列score在`music_text_contrastive.py:38–58`也按teacher mask选学生位置。部署在`music_text_adapter.py:241–246、286–301`则全qmax1423前向，再exp/round/clamp预测长度并截取。
+
+adapter没有query self-attention，query位置绝对编码，length head不依赖query_count（`music_text_adapter.py:153–159`）。所以相同音乐/context下已有位置的前缀数学上保持相同，可能存在算子数值误差；**不能把变长query本身说成已证实的前缀改变或唯一失败原因**。真正未统一的是学生有效条件长度、预测超出teacher时的尾部监督、CLIP使用的学生有效范围与部署packed布局。teacher mask作loss监督合法，但不能替代学生自身条件mask，也不能把完整权重重载一致扩大为条件/行为完全一致。
+
+### 4. 下一轮共享学生前向协议（待实现）
+
+定义一条可微、无caption/GTlength参数的共享学生构造：
+
+```text
+waveform32k＋waveform有效长度＋安全图context
+ → 同重采样/声道/裁剪/补齐规则的在线dense骨干
+ → 全qmax raw_tokens＋log_length
+ → 自身predicted_length＋student_valid_mask
+ → 同一raw tail截取
+ → 同prefix/tags拼接及原PackedBuilder
+```
+
+训练、验证、部署调用同一学生逻辑；推理proxy的detach/子进程缓存及generate的no_grad只适用于部署，训练直接调用可微共享模块。表示loss可以在全qmax输出上用teacher mask监督raw H，GT长度仍可训练length head，但不能进入学生构造。序列对比必须分别从学生预测有效区间、teacher自身有效区间取样，不用teacher长度替代学生长度，也不要求两者序列等长。exp/round/整数截取不提供长度梯度，首轮保留直接log长度监督，不私自增加STE。
+
+prefix/context沿用同图、同静音结构、同resize和同TC取点，验证冻结teacher缓存中的prefix不受后续动作文字影响；实际部署raw H保持原幅值，不做loss中的标准化/L2。检查完整prefix＋tail、tags、dtype及packed位置，而不是只检查tail shape。**当前训练loss仍只监督音乐侧表示，构造共享条件不等于每步已经经过DiT学习生成行为。**
+
+### 5. 训练态/部署态与精度策略（待实现、须实测）
+
+首轮B组音乐骨干保持eval行为但启用参数梯度：固定BN running统计、关闭dropout/LayerDrop及随机增强；BN affine与实际dense参数仍可训练。A组采用相同eval/统计/随机层策略，但骨干全部冻结，包含BN affine。每次wrapper.train()后重新施加该策略，不能把eval误认为冻结权重。优先沿已有骨干FP32路径验证，并取消为历史冻结特征缓存服务的FP16往返；两对照及部署采用同精度协议。若显存需要AMP/activation checkpointing，应先完成独立数值/梯度检查并写入protocol，不能静默切换。
+
+checkpoint须记录真实训练scope、统计/随机层/精度政策，并加载完整骨干、adapter、最后投影和长度头。现有metadata按requires_grad计数，且preprocessing校验固定冻结FP16规则，新模式必须明确升级/区分协议并验证重载，不伪装为旧协议。
+
+### 6. 判别顺序与最小对照（拟议，未运行）
+
+先实现共同在线学生协议，再同起点比较A冻结骨干/训练adapter与B训练实际dense骨干＋adapter；A仅作归因对照，B才是用户目标。两组均在线读相同波形、相同学生长度/精度/BN策略，复用同一已审核完整checkpoint和1800/200划分，沿用raw幅值锚定＋长度＋双真实音乐负例序列对比，不新增生成loss。初始化明确来自哪次H侧权重，不能把旧32D音频adapter当成raw H adapter。在线骨干的显存/吞吐、有效batch及学习率分组先实测再固定，不能沿用adapter训练耗时或同学习率作保证。
+
+共同协议相对历史配方改变了query/有效评分/精度，不能把新旧差异单独归因骨干；A/B才隔离是否训练骨干。B组验收实际dense骨干及adapter的有限非零梯度和真实权重变化；A组验收骨干无梯度且全部权重不变、仅adapter更新。两组BN running统计保持不变、冻结H3无梯度/更新；相同输入的可微训练前向、eval及独立部署核对raw H、预测长度、截取和条件布局。随后两组均做固定三人物joint/aswap各3，必要zero joint同三图3；研究质量指标失败仍保留诊断视频，不用长度门槛阻止用户授权推理。技术损坏如非有限条件与质量负结果必须区分。
+
+对照继续检查正确/错配/静音、train位置均值、预测长度混杂及参考保真。可先作不新增视频的相同长度token内容差异诊断；如额外做固定长度视频干预，应单列为诊断，不冒充默认共享部署，也不自动扩人物或配置。
+
+### 7. 现有失败的证据边界
+
+- 已证实：本次H侧未训练骨干；raw回归正确/错配MSE近等且不如train位置均值；含静音负例主要学有无音乐；双真实负例62%只是表示信号；完整映射已经进入文本侧，用户仍否决视频动作。这些不能归为“最后adapter没有加载”。
+- 待判别：固定音乐特征是否缺舞蹈语义可塑性、逐词回归平均化、序列对比忽略词序、预测尾部/条件长度、图context捷径及参考保真分别影响多少。音乐与caption不是唯一配对编舞，不能仅归咎于数据错或宣称全部路线不可能。
+- 尚无证据：解冻骨干必然恢复舞蹈、表示相似必然产生文本同等控制，或新条件协议单独足以解决视频问题。如果音乐侧表示改善而视频仍失败，才进一步讨论冻结DiT预测一致性等生成行为监督；该新增loss仍须独立明确授权，不在本次文档修正中实施。
+
+### 8. 本次实际完成范围
+
+本次仅完成当前代码只读核查、用户目标复述、偏差与候选修正分析及文档同步。既有训练/视频负结果保持不变；在线骨干、共享学生前向、梯度更新及新视频尚未实现/运行。文档发布不是训练完成，更不是音乐编舞目标达成；后续代码实现与实验需按上述协议具体化和验收。
 
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）

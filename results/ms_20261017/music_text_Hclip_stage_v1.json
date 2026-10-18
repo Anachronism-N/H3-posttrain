@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-18",
+  "goal": "Predict the native H3 text condition raw H sequence from music, with the entire same adapter executed during deployment",
+  "not_a_repeat_of": ["old normalized pooled CLIP global token injection", "pure per-word-position MSE alone"],
+  "teacher": "existing native contextual raw H action tail [L,5120], reference image prefix retained separately",
+  "student": "existing raw-H adapter checkpoint continued; full dense MusicFM and structural image context -> raw H action tail",
+  "backbone_scope": "public MusicFM remains frozen eval; this controlled loss comparison changes adapter supervision only",
+  "loss": {
+    "anchor": "raw MSE divided by train teacher energy + log length MSE",
+    "contrastive": "same-reference-context correct/wrong-nonidentical-caption/actual-silence three-way InfoNCE on actual predicted raw sequence",
+    "sequence_similarity": "per-token cosine matrix -> bidirectional soft-Chamfer logmeanexp temperature0.1, then candidate temperature0.07",
+    "loss_sampling": "up to64 evenly spaced valid teacher positions, identical indices for all student branches",
+    "train_only_mean_std": "used only for loss computation, never applied to deployed raw H",
+    "generated_token_pooling": false,
+    "extra_train_only_semantic_head": false,
+    "video_or_dit_loss": false
+  },
+  "synthetic_tests": {
+    "correct_scores_above_wrong_and_zero": true,
+    "all_three_prediction_gradients_finite": true,
+    "invalid_padding_ignored": true,
+    "content_similarity_does_not_assume_same_word_index": true,
+    "tied_three_candidate_accuracy": 0.3333333333333333,
+    "real_music_or_generation_gain_proven_by_these_tests": false
+  },
+  "execution": {
+    "smallfit_job": "YiWKXp",
+    "smallfit_train_val": [8, 8],
+    "smallfit_steps": 300,
+    "current_stage": "audited existing targets/features load on N5GPU7, no reported training updates yet",
+    "formal_pair": "same initialization MSE-only versus H sequence contrastive, each train1800/val200/1875 updates; starts only after implementation sanity checks",
+    "all_experiments_complete": false
+  },
+  "acceptance": "Complete weight and cached/online checks, then same-context correct music superiority over wrong/zero with raw amplitude and predicted length preserved; generation only for a candidate passing music-dependency checks",
+  "constraints": "No external semantic action/identity prompt; H3 frozen; native reference and retake use identical silence; no model weights or media published"
+}

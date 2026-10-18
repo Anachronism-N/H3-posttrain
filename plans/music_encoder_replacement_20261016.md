@@ -219,6 +219,14 @@
 - **本轮技术闭环完成，效果为负结果**：旧完整链能注入但单token未建立增益；原生rawtoken训练/部署同链已实现，直接逐词位置回归主要拟合共享文本分布/均值，正确音乐未优于错配且不如train位置mean。生成也未建立可用音乐舞蹈增量，参考保真不足。不能把所有失败归因丢adapter，也不能否定文本侧全路线。
 - 本轮训练/推理/完整解码/表示依赖审计和采样视觉分析均实际完成；没有宣称连续音画人评、穷尽偏好打分或三个case统计显著。不继续盲目扩数据/扫参数，后续应针对序列监督/音乐条件依赖设计对照；如采用生成预测loss需独立授权，ID/首帧/A输入端仍后置。
 
+## 2026-10-18 下一轮：直接原生H序列的音乐反事实CLIP
+- 上一轮已经直接预测原生H的动作rawtail[L,5120]，未pool/单位化部署；问题是纯逐词位置回归学共享模板，不能把这负结果当CLIP失败。本轮完整图prefix保留，音乐预测tail实际进入DiT，H3/骨干/TC/VAE冻结，无新增video/DiT/FMloss。
+- 同已审计rawHcheckpoint起点，MSE-only续训与同MSEanchor+H序列InfoNCE两组；数据1800/200、lr3e-4、batch8/1875更新一致。复用现checkpoint和2000teacher/features，不重编码模型；骨干目前公开MusicFM冻结，真实“训好”指已有adapter，不谎称骨干微调。旧CLIP骨干迁移需单变量后续，不混缓存。
+- loss直接对actualrawZ和teacherH有效序列，trainH的固定mean/std只用于loss计算；每anchor最多均匀64有效token，correct/wrong/真实静音共享同图context/采样位置，不用预测长度评分。逐tokencos矩阵双向soft-Chamfer聚为标量(温度.1)，再3-wayInfoNCE温度.07；不是生成tokenpool，也不是双向batchCLIP，更不把不同caption第j词当天然同义。
+- 负音乐排除self和完全相同caption；实际近重复候选隔离沿原split。三分支对adapter反传，teacher/stat/bone不求梯度，生成仍raw完整映射/预测长度，无新增trainonlyhead。
+- synthetic正项>错配/零项、三分支梯度有限、padding忽略、token排列不假设同词、ties公平1/3通过。真实8条300步验证YiWKXp已N5GPU7启动；完整2k目标IO加载单列，不称GPU训练。随后同起点两组独立正式对照，checkpoint+online/length+musicdependence门禁，均值基线不能通过音乐choice。
+- 成功验收不只CLIP loss下降：correct优于wrong/zero、优于init和meanchoice(1/3)、raw幅值/长度保持，独立权重全tensorhashfinite/完整部署。仅通过候选固定三人物joint/aswapeach3+必要zerojoint3生成；未通过发布实证负结果，不重复上卡生成已知collapse模型，不擅自增加DiTloss。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

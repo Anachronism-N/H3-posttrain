@@ -192,6 +192,13 @@
 - best/last完整checkpoint、所有adapter梯度、cached/online相对RMS1.5386e-6和预测长度385一致验收通过。正式NFcYQG已N5 GPU7启动1800train/200val、1875步、batch8、lr3e-4/cos0/train均log长度bias，公开骨干冻结eval；新目录`music_text_train1800_raw_neutral_v2`，未重启失败v1。加载/审计未结束时不把它称有效GPU更新完成。
 - 新生成followup读取明确formal_summary/新v2报告，旧失败OYdbCB不继续称存活，零音乐与三case输出树只在正式门禁通过后创建。
 
+### 旧完整链六视频实际验收与受限结论
+- AT358S六sampler均exit0，三人物joint/aswap完整124帧/音轨解码全通过，原生两路静音hash不变、旧CLIPhead实际部署执行、没有外部语义prompt。
+- 六真实音乐旧全链embedding确实区分：同case原/换音乐cosine为-.14028/.14883/.07284；但两组六时间采样图实际Read，三人物整体动作顺序接近，只有细节和后段变化；楼梯仍深蓝衣裤/肩包，参考浅黄上衣/灰裤不保真。
+- joint/aswap全124帧RGB MAE(.01866/.01744/.01026，像素0–1)不是音乐准确度，所有配对无完全相同帧。采样图不是连续听看、caption不是音乐唯一真值；目前未建立该单token尺度配方的可用音乐控制增量，不能把差异小归因旧head完全没运行，也不能否定所有原生逐token方案。
+- 8766原入口已重载工具管理yonqEA，保留旧11模型/4预设，新增三列完整旧链/原raw教师/中性教师，合计14模型/3人物/6预设；页面/manifest200、15新增视频Range206核验。第一新预设【10-18 文本侧·旧完整CLIP链】，第二【10-18 接口教师oracle·不是音乐预测】。teacher不能冒充音乐预测成绩。
+- 新正式NFcYQG仍正常读取teacher文件；已完成小集门禁不等于正式数据泛化或视频效果，新4GfX7J等正式报告接续生成。此处只结束旧完整链诊断，不缩小全实验目标。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

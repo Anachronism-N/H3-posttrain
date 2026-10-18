@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-18",
+  "configuration": "text_legacy_fullclip_v1",
+  "model": "trained MusicFM6000/lambda0/1875 + original32Dadapter + mean/std pooling + original CLIPhead + L2, all executed",
+  "injection": "one5120 token appended after the image structural prefix; scale272.4553528 from1800train text mean/std",
+  "scope": "Single global-token recipe; not exact inverse L2 or native per-token hidden reconstruction",
+  "native_music_audio_bypass": false,
+  "external_semantic_text": false,
+  "sampler_jobs": {"expected": 6, "exit_zero": 6},
+  "integrity": {"complete124_frame_video_audio_decodes": 6, "resolution": [704, 1280], "fps": 24},
+  "visual_review": {
+    "method": "Two actual reference-plus-six-time-frame mosaics covering the three source people and joint/aswap; not continuous audio listening or calibrated music judgement",
+    "case1": "Small arm gestures and back-leg lift visible; navy outfit and shoulder bag replace pale yellow top/grey trousers. Joint/aswap share the same overall sequence with limited later differences.",
+    "case2": "Hand near face, arm raised/head-side gestures; joint/aswap remain close. Legs cropped; cannot verify steps.",
+    "case3": "Small single-arm and torso/weight changes; joint/aswap remain close. No clear complete target-caption sequence established."
+  },
+  "actual_embedding_original_swapped_cosines": [-0.1402825117111206, 0.1488303542137146, 0.07284452766180038],
+  "pixel_original_swapped_mae_unit0to1": [0.018658155102222677, 0.017436533753249432, 0.010256132156017327],
+  "pixel_metric_is_not_music_accuracy": true,
+  "conclusion": "The complete old trained chain can run through the text condition interface and its outputs differ across music. This single-token standardized-CLIP-direction recipe has not established stronger usable dance/music control; reference clothing drift persists. Do not attribute the previous lack of control solely to an omitted CLIPhead. Failure of this recipe does not invalidate native raw-token sequence alignment or all possible global-token interfaces.",
+  "next": "Continue the already approved raw-token model training and three-case generation; do not change frozen H3 or add external action text"
+}

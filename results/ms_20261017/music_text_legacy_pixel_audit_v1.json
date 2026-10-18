@@ -1,0 +1,37 @@
+{
+  "complete": true,
+  "cases": [
+    {
+      "sample_id": "wJPptuhclZmKAEWs",
+      "frames": 124,
+      "identical_frame_count": 0,
+      "joint_aswap_mean_absolute_pixel_difference": 0.018658155102222677,
+      "joint_aswap_p95_absolute_pixel_difference": 0.030787346791476006,
+      "joint_adjacent_frame_difference": 0.018738077374220622,
+      "aswap_adjacent_frame_difference": 0.018735727772298382
+    },
+    {
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "frames": 124,
+      "identical_frame_count": 0,
+      "joint_aswap_mean_absolute_pixel_difference": 0.017436533753249432,
+      "joint_aswap_p95_absolute_pixel_difference": 0.03782203756272792,
+      "joint_adjacent_frame_difference": 0.008534146443471252,
+      "aswap_adjacent_frame_difference": 0.007909595610467883
+    },
+    {
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "frames": 124,
+      "identical_frame_count": 0,
+      "joint_aswap_mean_absolute_pixel_difference": 0.010256132156017327,
+      "joint_aswap_p95_absolute_pixel_difference": 0.013073899550363418,
+      "joint_adjacent_frame_difference": 0.006729329353183266,
+      "aswap_adjacent_frame_difference": 0.006600023930650053
+    }
+  ],
+  "pixel_range": [
+    0,
+    1
+  ],
+  "scope": "Unaligned RGB difference only, not pose/music/adherence/quality accuracy; fixed same image seed three people"
+}

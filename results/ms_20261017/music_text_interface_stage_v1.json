@@ -73,7 +73,8 @@
   },
   "music_features": {"complete": true, "count": 2000, "independent_file_sha_and_tensor_finite_union_audit": true},
   "formal_music_text_training_started": false,
-  "teacher_cache_state": "Four TC-only shards running for train1800 and val200; original smoke excluded",
+  "teacher_cache_state": "Four TC-only shards completed exit0, unique union2000 covers train1800/val200; SHA reread currently waiting on CephFS in the live original pipeline; original smoke excluded",
+  "neutral_teacher_lengths": {"train_mean": 431.15444444444444, "train_max": 1423, "val_above_train_max": 0},
   "train_pipeline_state": "Managed event-driven cache audit -> 8-item small-fit -> formal1875-step training registered; registration is not completion",
   "next_gate": "Complete teacher cache and SHA/protocol audit, pass real small-fit, then train full adapter and verify cached/online checkpoint deployment before three-case generation"
 }

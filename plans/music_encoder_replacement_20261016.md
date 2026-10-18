@@ -167,10 +167,13 @@
 - 真实MusicFM+随机adapter完整checkpoint经H3→隔离music进程部署，原始token输出逐值与保存前前向一致；未输入GTcaption/GTlength，最后投影实际执行。这是部署全链自测，不是训练或音乐控制效果。35步合成小集loss5.2639→1.4235，仅说明训练梯度可用。
 
 ### 接续训练配置与验收门禁
-- 教师缓存管理`xoMaSk`四分片运行；`Vrzqj3`以inotify和真实cache manager PID/pidfd等待完成事件，完成后先全2000教师文件SHA/并集/transform协议核验，不sleep/poll、不重复启动。
+- 教师缓存管理`xoMaSk`四分片全部exit0，finished报告/唯一并集2000覆盖1800train/200val；中性原文train均431.154tokens、最长1423，val无超过train上限。这是报告和覆盖检查，完整tensor/hash仍由后续审计验收，不以marker冒充。
+- `Vrzqj3`已从inotify等待进入全2000教师文件SHA重读；PID192857存活，CephFS `generic_file_buffered_read`，fd指向的教师PT持续推进。该IO等待不是GPU训练，不重复启动或删锁/kill正常队列。
 - 随后N5 GPU7串行执行8条small-fit 300更新、再clean1800正式1875更新/val200，每批8、adapter lr1e-4；raw MSE用train教师能量作标量损失尺度，加cosine和log长度loss，部署输出仍原始hidden不单位化。小集回归不改善、梯度scope/finite错误、checkpoint完整重载或缓存/在线训练权重检查失败时停止，不越门禁正式训练。
 - 全部candidate/last权重保存完整冻结MusicFM及adapter，不只保存训练head；训练生成前向同一最终投影。checkpoint输出strict重载必须逐值一致；cached/online训练后实测相对误差≤.01且预测长度相同，报告具体误差而非以形状宣称完全一致。
 - 训练前审查补齐门禁：small-fit除rawMSE改善，还要求log长度loss改善及训练长度MAE≤max(2,平均长度5%)；验证选candidate同时计入长度loss。best和last均检查保存时输出、完整strict重载与online预测长度/误差，不用只验last代替所选best。验证超过train Qmax的文本只计可表示前缀并明确报告数量，不声称完整token重建。
+- `OYdbCB`以真实训练pipeline PID192857/inotify等待正式验收报告，通过后自动核实所选checkpoint SHA→三节点joint/aswap六条部署→同三人物zero music joint三条→默认六条完整解码。zero只置零新text adapter音乐输入，原生音频保持固定静音，真实音乐仍用于mux，避免干预与播放混淆。生成后仍需零音乐完整解码/连续视觉和音乐效果/发布，不把后台注册当完成。
+- 音乐隔离进程与H3共用GPU，新学生unit在完成TC前向并取安全图context后先offloadTC，再执行独立音乐进程，避免额外骨干冷加载OOM。原始图prefix输出保留，仍不通过caption查表。
 - 该阶段配置/管理队列已经建立，不等于真实训练结束。生成效果由后续三人物joint/aswap正确/错配/零音乐验证，不能拿teacher oracle/检索/token loss替代。
 
 ## 官方证据

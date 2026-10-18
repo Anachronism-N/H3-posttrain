@@ -87,7 +87,10 @@ def student_text_embedder(checkpoint):
             input_ids = self.preprocess_ref_blocks(pipe, prompt, ref_blocks)[0]
             lp = prefix_length(pipe.tokenizer, prompt, input_ids)
             hidden = encoded['prompt_embeds']
-            tail = self.proxy(self.waveform, hidden[lp - 1])
+            # The isolated music process shares this GPU; release the completed text encoder first.
+            context = hidden[lp - 1].detach().cpu()
+            pipe.load_models_to_device([])
+            tail = self.proxy(self.waveform, context)
             return replace_tail(hidden[:lp], encoded['text_token_tags'][:lp], tail)
 
     return StudentTextTailEmbedder()

@@ -36,6 +36,7 @@ p.add_argument("--music_encoder_ckpt", default="", help="Trained dedicated music
 p.add_argument("--audio_tail_mode", default="legacy", choices=["legacy", "repeat_clean"], help="Controlled audio-padding probe: legacy regenerates padded target audio; repeat_clean keeps the repeated clean latent fixed at AdaLN time=1")
 p.add_argument("--fixed_native_silence", action="store_true", help="Fixed 5.0625s silence for BOTH native audio conditions; original music is only muxed")
 p.add_argument("--music_text_ckpt", default="", help="Full trained MusicFM and raw text-token adapter; only music plus reference image, no caption lookup")
+p.add_argument("--music_text_zero_input", action="store_true", help="Zero music ONLY into the deployed text adapter; original audio is still muxed")
 p.add_argument("--text_hidden_oracle", default="", help="Supervision-only JSON audio_id -> {prompt, source}; raw hidden tail replaces empty student text")
 p.add_argument("--text_oracle_cache_dir", default="", help="Existing new directory for oracle targets and strict condition-equivalence reports")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
@@ -65,6 +66,8 @@ if a.text_oracle_cache_dir and not a.text_hidden_oracle:
 if a.music_text_ckpt and (a.text_hidden_oracle or a.prompt_mode != 'empty' or not a.fixed_native_silence or
                          a.mode != 'bi' or a.cfg != 1):
     p.error('Music text deployment requires empty prompt, fixed native silence, bi CFG1 and no oracle')
+if a.music_text_zero_input and not a.music_text_ckpt:
+    p.error('Zero text-adapter music input requires a deployed music text checkpoint')
 
 csv.field_size_limit(10 ** 9)
 E = "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp"
@@ -202,7 +205,7 @@ def generate(prompt, img, wav, sr):
     inputs_posi = {"prompt": prompt}; inputs_nega = {"negative_prompt": " "}
     condition_wav = torch.zeros((2, round(5.0625 * sr)), dtype=torch.float32) if a.fixed_native_silence else wav
     if TEXT_STUDENT is not None:
-        TEXT_STUDENT.set_waveform(wav)
+        TEXT_STUDENT.set_waveform(torch.zeros_like(wav) if a.music_text_zero_input else wav)
     sh = {"cfg_scale": a.cfg, "height": a.height, "width": a.width, "num_frames": 124, "seed": a.seed, "rand_device": "cpu",
           "tiled": True, "tile_size": 256, "tile_overlap": 64, "use_gradient_checkpointing": False, "use_gradient_checkpointing_offload": False,
           "keyframes": None, "keyframe_indices": None,
@@ -397,6 +400,7 @@ for c, r, dst in todo:
           music_encoder_ckpt=a.music_encoder_ckpt or None,
           native_audio_condition='fixed_silence' if a.fixed_native_silence else 'input_music',
           text_hidden_oracle=bool(TEXT_ORACLE), music_text_ckpt=a.music_text_ckpt or None,
+          music_text_zero_input=a.music_text_zero_input,
           waveform_loader='music_clip_bridge.load_audio' if TEXT_STUDENT is not None else 'librosa')), flush=True)
     video = generate(prompt, img, wav, sr)
     write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)

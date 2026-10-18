@@ -264,6 +264,15 @@
 - 最有希望的表示信号是双真实负例weight1的62%(pair-wise随机50%)，这不是舞蹈/音乐准确率；固定val200的单错配对照、配置选择偏差、caption非唯一编舞限制保留。没有声称音乐已经代替文本。
 - 本轮直接原生H序列对比监督验证结束：MSE单独未有效，含静音InfoNCE容易学有无音乐，真实音乐负例出现弱正确依赖，但长度泛化和原生序列回归不足，且MSE仍不如train位置mean。不能否定直接H或CLIP所有路线，不继续盲目增步/数据扫参数；后续优先解决语义序列/长度接口和训练目标，而非再次验证同维度。未新增DiT/video loss或动作prompt。
 
+## 用户纠正后：上一轮H序列CLIP原权重直接生成诊断（2026-10-18）
+- 用户指出训练后应先看实际视频，不能继续用表示侧门槛代替生成。上一条lengthhead校准方案未获批准，本轮不校准/不重训，直接加载双真实音乐负例lengthweight1原checkpoint，SHA895868746f3fdec2b58acdae7fe1345d9c5670195e1850aef714a6930c301f45。
+- 原musicdependencygate=false与lengthMAE146.06记录完整保留；质量门槛不是禁止用户授权诊断推理的安全/权限限制。本次明确diagnostic_only=true/quality_gate_passed=false，任何新视频都不是先验认定模型已通过验收。
+- 新模型完整MusicFM+已训rawHadapter+最后5120投影+预测长度进入DiT原文本condition_proj/token_refiner；H3文本encoder只产生图结构prefix，音乐不会再穿过原textencoder50层。不用GTcaption/GTlength，外部只音乐+图，两路原生reference/retake始终固定静音，zero只改变adapter音乐输入，播放仍原音轨。
+- 六节点模型/环境/GPU和主机cgroup准入已核实：N1/N4/N8各GPU7做joint/aswap6，N2/N3/N6各GPU7并行zerojoint3。工具管理O2BQ7w和8D3w1U已启动，原H3模型路径/上下游依赖不改，既有视频/权重/失败日志不覆盖。同node一个coldloader，default两个shard串行，真实计算与占卡进程分开统计。
+- 输出新tag text_Hclip_realneg_diag_v1、text_Hclip_realneg_diag_zero_v1；复用现sampler和启动器，原模型权重和研究gate函数均未修改。ms/music_text_diagnostic.py记录明确授权/qualityfalse及9日志/全音画/预测length/staticnative hash审计，ms/music_text_review.py按完整审计追加诊断预设，保留既有16模型7预设和评分。
+- 必须完成9video124frame/24fps/704p音画decode、实际prompt/图/音轨/seed/checkpointsha/rawH长度/最后投影/mux/静音hash核对；实际查看原音乐/换音乐/zero对照并复用旧MSE基线。采样帧/像素/姿态差不等于连续音画准确度，长度改变packed仍是混杂；不拿62%表征成绩替代实际视频结果。
+- 当前管理任务在读取旧checkpoint准备指令，还没有新视频完成，不将启动/排期称实验完成。后续实际结果与完整审计/代码/结论发表既定GitHub，不上传媒体/权重/PTfeatures/凭据。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

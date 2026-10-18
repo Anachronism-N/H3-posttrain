@@ -1,0 +1,63 @@
+{
+  "experiment": "Unchanged previous native-H sequence CLIP model, diagnostic inference only",
+  "diagnostic_only": true,
+  "quality_gate_passed": false,
+  "previous_quality_gate_preserved": true,
+  "authorization": "User explicitly requested post-training video inference without prior length calibration",
+  "calibration_or_new_training": false,
+  "checkpoint": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_Hclip_realneg_d1800_s1875_v2/last.pt",
+  "checkpoint_sha256": "895868746f3fdec2b58acdae7fe1345d9c5670195e1850aef714a6930c301f45",
+  "checkpoint_summary_sha256": "a81cd06ee7b94ee81fc7b01b2dc557b67a87b18dbd55954b68cc26b0bae1fc6c",
+  "original_representation": {
+    "correct_beats_wrong_fraction": 0.62,
+    "correct_minus_wrong_score": 0.00633889599936083,
+    "length_mae": 146.06
+  },
+  "source_people": [
+    "wJPptuhclZmKAEWs",
+    "wJPrpFsThWAcBQIw",
+    "wJQTclrlOLEYYfTB"
+  ],
+  "groups": [
+    {
+      "tag": "text_Hclip_realneg_diag_v1",
+      "conditions": [
+        "joint",
+        "aswap"
+      ],
+      "expected": 6,
+      "job_handle": "O2BQ7w"
+    },
+    {
+      "tag": "text_Hclip_realneg_diag_zero_v1",
+      "conditions": [
+        "joint"
+      ],
+      "expected": 3,
+      "job_handle": "8D3w1U"
+    }
+  ],
+  "native_reference_and_retake_audio": "same_fixed_silence",
+  "semantic_prompt": " ",
+  "music_route": "Full trained adapter raw H tail -> original DiT text condition_proj and token_refiner",
+  "music_tokens_reencoded_by_native_text_encoder": false,
+  "teacher_caption_at_inference": false,
+  "predicted_length_not_ground_truth": true,
+  "input_backbone": "public pretrained MusicFM, frozen during adapter training",
+  "settings": {
+    "height": 1280,
+    "width": 704,
+    "fps": 24,
+    "frames": 124,
+    "steps": 50,
+    "shift": 12,
+    "audio_shift": 3,
+    "seed": 42,
+    "mode": "bi",
+    "cfg": 1,
+    "audio_tail_mode": "repeat_clean"
+  },
+  "resource_use": "Six nodes, one admitted H3 cold loader per node; three normal and three zero queues",
+  "previous_MSE_baseline": "text_trained1800_v2 / text_trained1800_zero_v2, existing videos reused",
+  "scope": "No claim of completed musical quality or of passing the original length gate"
+}

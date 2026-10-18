@@ -130,12 +130,24 @@ def dependence(model, ids, targets, features, mean, std, positional_mean, teache
                 predicted_length_not_used_to_score=True, scope='Native raw H representation and music dependence, not generation adherence')
 
 
+def accepted_checkpoint(directory):
+    directory = Path(directory)
+    report = json.loads((directory / 'finished.json').read_text())
+    checkpoint = directory / 'last.pt'
+    if (not report['complete'] or not report['musical_dependency_gate']
+            or not report['complete_checkpoint_roundtrip_exact'] or not report['predicted_length_same']
+            or sha256(checkpoint) != report['checkpoint_sha256']):
+        raise ValueError('Native-H candidate has not passed completed musical-dependency/deployment gates')
+    return checkpoint
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--init', type=Path, required=True)
     parser.add_argument('--split', type=Path, required=True)
-    parser.add_argument('--targets', nargs='+', type=Path, required=True)
-    parser.add_argument('--features', nargs='+', type=Path, required=True)
+    parser.add_argument('--targets', nargs='+', type=Path)
+    parser.add_argument('--features', nargs='+', type=Path)
+    parser.add_argument('--bundle', type=Path, help='SHA-verified local numerical copy of the existing2000 inputs')
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--clip_weight', type=float, default=1.)
     parser.add_argument('--steps', type=int, default=1875)
@@ -151,14 +163,37 @@ def main():
     torch.manual_seed(42)
     random.seed(42)
     train, val = read_split(args.split)
-    targets, protocols = load_targets(args.targets, set(train + val), sha256(args.split))
+    bundle_sha = None
+    if args.bundle:
+        report = json.loads(args.bundle.with_suffix('.json').read_text())
+        bundle_sha = sha256(args.bundle)
+        if not report['complete'] or bundle_sha != report['sha256']:
+            raise ValueError('Local input bundle fails SHA validation')
+        bundle = torch.load(args.bundle, map_location='cpu', weights_only=True)
+        metadata = bundle['metadata']
+        if (metadata['split_sha256'] != sha256(args.split) or metadata['init_sha256'] != sha256(args.init)
+                or metadata['train_ids'] != train or metadata['val_ids'] != val):
+            raise ValueError('Local input bundle does not match exact initialization/split')
+        targets, protocols, features = bundle['targets'], bundle['protocols'], bundle['features']
+        if set(targets) != set(train + val) or set(features) != set(train + val):
+            raise ValueError('Local input bundle has missing or extra target/music IDs')
+        mean, std, position_mean, teacher_energy = (bundle['mean'], bundle['std'], bundle['position_mean'], bundle['teacher_energy'])
+    else:
+        if not args.targets or not args.features:
+            parser.error('Require a verified bundle or all target/feature shards')
+        targets, protocols = load_targets(args.targets, set(train + val), sha256(args.split))
     model = load_music_text_checkpoint(args.init, expected_backend='musicfm').cuda()
     if not model.freeze_backbone:
         raise ValueError('This controlled experiment requires the frozen original backbone')
-    features = load_features(args.features, set(train + val), sha256(args.split), model.backbone)
-    if any(value.dtype != torch.float16 or value.shape != (2, 127, 1024) for value in features.values()):
+    if not args.bundle:
+        features = load_features(args.features, set(train + val), sha256(args.split), model.backbone)
+        mean, std, position_mean, teacher_energy = native_statistics(targets, train, model.adapter.qmax)
+    if any(value.dtype != torch.float16 or value.shape != (2, 127, 1024) or not torch.isfinite(value).all() for value in features.values()):
         raise ValueError('Require the audited full127-frame FP16 dense feature cache')
-    mean, std, position_mean, teacher_energy = native_statistics(targets, train, model.adapter.qmax)
+    if (mean.shape != (5120,) or std.shape != (5120,) or position_mean.shape != (model.adapter.qmax, 5120)
+            or not torch.isfinite(mean).all() or not torch.isfinite(std).all() or torch.any(std <= 0)
+            or not math.isfinite(teacher_energy) or teacher_energy <= 0):
+        raise ValueError('Invalid train-only native H statistics')
     if args.small_fit:
         train = train[:args.small_fit]
         val = val[:min(args.small_fit, len(val))]
@@ -173,13 +208,14 @@ def main():
                     deployed_output='unaltered_raw_native_H_tail', sampling='up_to64_evenly_spaced_valid_tokens_loss_only',
                     counterfactuals='correct/wrong_nonidentical_caption/actual_silence_same_reference_context_and_indices',
                     loss='rawMSE/train_teacher_energy + log_length_MSE + clip_weight*same_context_sequence_InfoNCE',
-                    backbone_frozen_eval=True, no_dit_video_loss=True)
+                    backbone_frozen_eval=True, no_dit_video_loss=True, numerical_input_bundle_sha256=bundle_sha)
     write_new(args.out / 'plan.json', protocol)
     write_new(args.out / 'loss_statistics.pt', dict(mean=mean.cpu(), std=std.cpu(), position_mean=position_mean.cpu(),
                                                    full_train_count=len(read_split(args.split)[0]), teacher_energy=teacher_energy), binary=True)
     initial = dependence(model, val, targets, features, mean, std, position_mean, teacher_energy, zero_features, zero_lengths, args.batch_size)
     initial_fit = dependence(model, train[:min(32, len(train))], targets, features, mean, std, position_mean, teacher_energy, zero_features, zero_lengths, args.batch_size)
-    write_new(args.out / 'initial_validation.json', initial)
+    initial_regression = evaluate(model.adapter, val, targets, features, args.batch_size, teacher_energy)
+    write_new(args.out / 'initial_validation.json', dict(**initial, regression=initial_regression))
     write_new(args.out / 'initial_train_probe.json', initial_fit)
     optimizer = torch.optim.AdamW(model.adapter.parameters(), lr=args.lr, weight_decay=0.01)
     started = time.monotonic()
@@ -254,9 +290,12 @@ def main():
     final = history[-1]['validation']['macro']
     gate = (final['tie_aware_correct_top1'] > 1 / 3 and final['correct_minus_wrong_score'] > 1e-3
             and final['correct_minus_zero_score'] > 1e-3 and final['correct_beats_wrong_fraction'] > 0.5
-            and final['raw_mse'] <= initial['macro']['raw_mse'] * 1.05)
+            and final['raw_mse'] <= initial['macro']['raw_mse'] * 1.05
+            and history[-1]['regression']['length_mae'] <= initial_regression['length_mae'] * 1.05
+            and 0.1 <= final['student_teacher_energy_ratio'] <= 2)
     summary = dict(complete=True, steps=args.steps, actual_items_seen=items_seen, protocol=protocol,
-                   final=final, initial=initial['macro'], final_train_probe=history[-1]['train_probe']['macro'],
+                   final=final, initial=initial['macro'], final_regression=history[-1]['regression'],
+                   initial_regression=initial_regression, final_train_probe=history[-1]['train_probe']['macro'],
                    complete_checkpoint_roundtrip_exact=True, cached_online_relative_rms=relative,
                    predicted_length_same=bool(length_same), checkpoint_sha256=sha256(checkpoint_path),
                    all_adapter_layers_gradient_checked=gradient_checked, musical_dependency_gate=bool(gate),

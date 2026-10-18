@@ -20,6 +20,55 @@ def digest(path):
     return h.hexdigest()
 
 
+def prepare_contrastive_bundle(root, out):
+    import torch
+    from music_text_align import read_split, load_targets, load_features
+    from music_text_adapter import load_music_text_checkpoint, PREPROCESSING
+    from music_text_contrastive import native_statistics
+    root, out = Path(root), Path(out)
+    if out.exists() or not out.parent.is_dir():
+        raise FileExistsError('Bundle requires a new path and existing parent')
+    exp = root / 'logs_omnidance/exp/MS'
+    split_path = exp / 'music_scale_v4_train1800_split.json'
+    init = exp / 'music_text_train1800_raw_neutral_v2/candidate_step1875.pt'
+    train, val = read_split(split_path)
+    targets, protocols = load_targets([exp / f'music_text_targets_neutral_v1_s{i}' for i in range(4)],
+                                      set(train + val), digest(split_path))
+    model = load_music_text_checkpoint(init, expected_backend='musicfm')
+    features = load_features([exp / f'music_text_features_v1_s{i}.pt' for i in range(2)],
+                             set(train + val), digest(split_path), model.backbone)
+    mean, std, position_mean, teacher_energy = native_statistics(targets, train, model.adapter.qmax)
+    source_init_sha = digest(init)
+    snapshot = out.with_name(out.stem + '_init.pt')
+    if snapshot.exists():
+        raise FileExistsError('Refuse existing bundle checkpoint snapshot')
+    with init.open('rb') as source, snapshot.open('xb') as target:
+        for block in iter(lambda: source.read(4 * 1024 * 1024), b''):
+            target.write(block)
+    if digest(snapshot) != source_init_sha:
+        raise ValueError('Local snapshot differs from audited initial checkpoint')
+    state = dict(targets=targets, features=features, protocols=protocols,
+                 mean=mean, std=std, position_mean=position_mean, teacher_energy=teacher_energy,
+                 metadata=dict(format_version=1, split_sha256=digest(split_path), init_sha256=source_init_sha,
+                               local_init=str(snapshot), count=len(targets), train_ids=train, val_ids=val,
+                               query_max=model.adapter.qmax, preprocessing=PREPROCESSING,
+                               targets_validated_by_original_file_sha=True, weights_frozen=True))
+    with out.open('xb') as stream:
+        torch.save(state, stream)
+    reread = torch.load(out, map_location='cpu', weights_only=True)
+    if reread['metadata'] != state['metadata'] or set(reread['targets']) != set(train + val):
+        raise ValueError('Local bundle roundtrip failed')
+    if not all(torch.equal(value, reread['features'][sid]) for sid, value in features.items()):
+        raise ValueError('Feature bundle changed tensors')
+    report = dict(complete=True, path=str(out), sha256=digest(out), local_init=str(snapshot),
+                  init_sha256=source_init_sha, count=len(targets), train=len(train), val=len(val),
+                  teacher_energy=teacher_energy, query_max=model.adapter.qmax,
+                  scope='Validated numerical copies of existing inputs, no new training or data split')
+    with out.with_suffix('.json').open('x') as stream:
+        json.dump(report, stream, indent=2)
+    print(json.dumps(dict(event='inputs_bundled', **report)), flush=True)
+
+
 def wait_for_target_shards(directories, manager_pid):
     marker = 'finished.json'
     missing = [path for path in directories if not (path / marker).is_file()]

@@ -227,6 +227,12 @@
 - synthetic正项>错配/零项、三分支梯度有限、padding忽略、token排列不假设同词、ties公平1/3通过。真实8条300步验证YiWKXp已N5GPU7启动；完整2k目标IO加载单列，不称GPU训练。随后同起点两组独立正式对照，checkpoint+online/length+musicdependence门禁，均值基线不能通过音乐choice。
 - 成功验收不只CLIP loss下降：correct优于wrong/zero、优于init和meanchoice(1/3)、raw幅值/长度保持，独立权重全tensorhashfinite/完整部署。仅通过候选固定三人物joint/aswapeach3+必要zerojoint3生成；未通过发布实证负结果，不重复上卡生成已知collapse模型，不擅自增加DiTloss。
 
+### 原生H序列对比小集已验收，正式同起点双配置执行
+- YiWKXp 8train/8val、300步exit0、全部adapter梯度/strictreload/online通过，train三选一100%、correct-wrong margin.358；8val三选一50%但平均correct-wrong为-.00144，泛化门禁未通过，不生成小集模型。teacherH是原生raw序列，动作分支内容可学习，不等于可推广。
+- 反复CephFS数千PT读取是IO成本，已在N5本地/tmp压紧原2000targets/features+fulltrainmean/std为10.17GB数值副本，bundleSHA e1ed384b6da2f001a639dd858be2cb7e558f6224cb075dc3e0cd91aaca347bf2。原checkpoint byte-exact快照SHA cbb79c...；newoutput/usebundle验证exactsplit/init SHA，未重编码或改监督。bundle阶段漏offline造成HEAD失败重试最终使用本地缓存，记录不删，后续各训练全部HF/TRANSFORMERS offline。
+- GtF0SW N5 GPU6 MSE-only权重0 / GPU7 H序列InfoNCE权重1，同init/split/batch8/lr3e-4/1875步并行。训练raw最终映射不变，loss固定读出；本地加载后真实step1 rawMSE均5.29986，证明初始前向相同。纯MSE和HCLIP区别只新增对比loss。
+- 补门禁：长度MAE不得超init5%、raw能量比.1–2，模型可区分wrong/zero且原MSE不无解释退化；accepted_checkpoint明确拒绝音乐门禁失败或未完整验收权重，不能只写generate_only_if声明而实际照常生成。固定length采样用于loss不是部署GTlength。
+
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）
 - https://huggingface.co/OpenMuQ/MuQ-large-msd-iter/raw/main/config.json （1024dim、label_rate25）

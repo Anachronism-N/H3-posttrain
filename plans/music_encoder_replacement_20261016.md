@@ -170,6 +170,7 @@
 - 教师缓存管理`xoMaSk`四分片运行；`Vrzqj3`以inotify和真实cache manager PID/pidfd等待完成事件，完成后先全2000教师文件SHA/并集/transform协议核验，不sleep/poll、不重复启动。
 - 随后N5 GPU7串行执行8条small-fit 300更新、再clean1800正式1875更新/val200，每批8、adapter lr1e-4；raw MSE用train教师能量作标量损失尺度，加cosine和log长度loss，部署输出仍原始hidden不单位化。小集回归不改善、梯度scope/finite错误、checkpoint完整重载或缓存/在线训练权重检查失败时停止，不越门禁正式训练。
 - 全部candidate/last权重保存完整冻结MusicFM及adapter，不只保存训练head；训练生成前向同一最终投影。checkpoint输出strict重载必须逐值一致；cached/online训练后实测相对误差≤.01且预测长度相同，报告具体误差而非以形状宣称完全一致。
+- 训练前审查补齐门禁：small-fit除rawMSE改善，还要求log长度loss改善及训练长度MAE≤max(2,平均长度5%)；验证选candidate同时计入长度loss。best和last均检查保存时输出、完整strict重载与online预测长度/误差，不用只验last代替所选best。验证超过train Qmax的文本只计可表示前缀并明确报告数量，不声称完整token重建。
 - 该阶段配置/管理队列已经建立，不等于真实训练结束。生成效果由后续三人物joint/aswap正确/错配/零音乐验证，不能拿teacher oracle/检索/token loss替代。
 
 ## 官方证据

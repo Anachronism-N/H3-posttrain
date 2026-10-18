@@ -175,7 +175,7 @@ def batch_tensors(ids, targets, features, query_max):
 @torch.no_grad()
 def evaluate(adapter, ids, targets, features, batch_size, teacher_energy):
     adapter.eval()
-    accum = dict(raw_mse=0., cosine_loss=0., length_mae=0., student_energy=0., teacher_energy=0., zero_mse=0.)
+    accum = dict(raw_mse=0., cosine_loss=0., length_mae=0., log_length_mse=0., student_energy=0., teacher_energy=0., zero_mse=0.)
     tokens = 0
     for start in range(0, len(ids), batch_size):
         batch = ids[start:start + batch_size]
@@ -190,7 +190,8 @@ def evaluate(adapter, ids, targets, features, batch_size, teacher_energy):
         accum['teacher_energy'] += float(target[mask].float().square().mean()) * n
         accum['zero_mse'] += float(target[mask].square().mean()) * n
         accum['length_mae'] += float((predicted_lengths(log_length, adapter.qmax) - lengths).abs().sum())
-    result = {key: value / (len(ids) if key == 'length_mae' else tokens) for key, value in accum.items()}
+        accum['log_length_mse'] += float((log_length.float() - lengths.float().log()).square().sum())
+    result = {key: value / (len(ids) if key in ('length_mae', 'log_length_mse') else tokens) for key, value in accum.items()}
     result.update(candidates=len(ids), valid_tokens=tokens, mse_over_train_teacher_energy=result['raw_mse'] / teacher_energy,
                   student_teacher_energy_ratio=result['student_energy'] / max(result['teacher_energy'], 1e-12),
                   student_rms=math.sqrt(result['student_energy']), teacher_rms=math.sqrt(result['teacher_energy']),
@@ -235,7 +236,7 @@ def train_adapter(args):
     write_new(args.out / 'plan.json', protocol)
     gradient_checked = False
     started = time.monotonic()
-    best, best_step = float('inf'), None
+    best, best_step, best_forward = float('inf'), None, None
     order, cursor = [], 0
     history = []
     items_seen = 0
@@ -275,16 +276,24 @@ def train_adapter(args):
         if step % args.eval_every == 0 or step == args.steps:
             metric = evaluate(adapter, val, targets, features, args.batch_size, teacher_energy)
             fit_metric = evaluate(adapter, train[:min(32, len(train))], targets, features, args.batch_size, teacher_energy)
-            score = metric['raw_mse'] / teacher_energy + metric['cosine_loss']
+            score = metric['raw_mse'] / teacher_energy + metric['cosine_loss'] + metric['log_length_mse']
             record = dict(step=step, val=metric, train_probe=fit_metric, seconds=time.monotonic() - started)
             history.append(record)
             write_new(args.out / f'metrics_step{step}.json', record)
             if score < best:
                 best, best_step = score, step
                 save_music_text_checkpoint(args.out / f'candidate_step{step}.pt', wrapper)
+                probe_music, probe_context, probe_lengths, _, _, _ = batch_tensors(val[:1], targets, features, query_max)
+                with torch.no_grad():
+                    best_forward = tuple(value.detach().cpu() for value in adapter(probe_music, probe_context, probe_lengths))
             print(json.dumps(dict(event='validation', **record)), flush=True)
-    if args.small_fit and history[-1]['train_probe']['raw_mse'] >= initial_probe['raw_mse']:
-        raise ValueError('Small-fit token regression did not improve; refuse formal-training acceptance')
+    if args.small_fit:
+        final_probe = history[-1]['train_probe']
+        length_tolerance = max(2., 0.05 * sum(len(targets[sid]['tail']) for sid in train) / len(train))
+        if (final_probe['raw_mse'] >= initial_probe['raw_mse']
+                or final_probe['length_mae'] > length_tolerance
+                or final_probe['log_length_mse'] >= initial_probe['log_length_mse']):
+            raise ValueError('Small-fit token or length regression failed; refuse formal-training acceptance')
     wrapper.eval()
     final_path = args.out / 'last.pt'
     save_music_text_checkpoint(final_path, wrapper)
@@ -310,11 +319,29 @@ def train_adapter(args):
                         same_loader_and_all_layers=True, exact_raw=torch.equal(online[0], new[0]))
     if online_check['predicted_length_cached'] != online_check['predicted_length_online']:
         raise ValueError('Cached/online inference predicts a different token count')
+    del fresh, online
+    best_path = args.out / f'candidate_step{best_step}.pt'
+    selected = load_music_text_checkpoint(best_path, expected_backend='musicfm', expected_query_max=query_max).cuda()
+    with torch.no_grad():
+        selected_cached = selected.adapter(music, context, music_lengths)
+        selected_online = selected(waveform, context)
+    if not all(torch.equal(actual.cpu(), expected) for actual, expected in zip(selected_cached, best_forward)):
+        raise ValueError('Selected checkpoint differs from its saved-step deployment output')
+    selected_delta = selected_online[0] - selected_cached[0]
+    selected_relative = float(selected_delta.square().mean().sqrt() / selected_cached[0].square().mean().sqrt().clamp_min(1e-12))
+    selected_check = dict(relative_rms=selected_relative, max_abs=float(selected_delta.abs().max()),
+                          predicted_length_cached=int(predicted_lengths(selected_cached[1], query_max)[0]),
+                          predicted_length_online=int(predicted_lengths(selected_online[1], query_max)[0]),
+                          exact_saved_step=True, checkpoint_sha256=sha256(best_path))
+    if (not math.isfinite(selected_relative) or selected_relative > 0.01
+            or selected_check['predicted_length_cached'] != selected_check['predicted_length_online']):
+        raise ValueError('Selected checkpoint cached/online condition mismatch')
     summary = dict(complete=True, steps=args.steps, train_count=len(train), val_count=len(val),
                    best_step=best_step, best_checkpoint=str(args.out / f'candidate_step{best_step}.pt'),
                    last_checkpoint_sha256=sha256(final_path), adapter_parameters=sum(p.numel() for p in adapter.parameters()),
                    all_adapter_layers_gradient_checked=gradient_checked, backbone_frozen=True,
                    real_feature_checkpoint_roundtrip_exact=True, cached_online_deployment=online_check,
+                   selected_checkpoint_deployment=selected_check,
                    seconds=time.monotonic() - started,
                    cuda_peak_bytes=torch.cuda.max_memory_allocated(), history=history, initial_train_probe=initial_probe,
                    actual_training_items_seen=items_seen,

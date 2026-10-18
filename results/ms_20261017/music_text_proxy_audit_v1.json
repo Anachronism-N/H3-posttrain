@@ -1,0 +1,10 @@
+{
+  "complete": true,
+  "real_backbone": true,
+  "untrained_adapter": true,
+  "proxy_raw_output_exact": true,
+  "predicted_tokens": 1,
+  "checkpoint_sha256": "8b24a753081b5c421aa482c4dbe12fb39fa7222c61a7d59ef75a9548d594f005",
+  "all_adapter_layers_deployed": true,
+  "ground_truth_caption_input": false
+}

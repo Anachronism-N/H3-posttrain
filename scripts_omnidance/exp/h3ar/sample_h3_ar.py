@@ -35,6 +35,7 @@ p.add_argument("--native_audio_ckpt", default="", help="Native audio-side CLIP c
 p.add_argument("--music_encoder_ckpt", default="", help="Trained dedicated music encoder plus adapter replaces reference and target audio encoding; not a residual/text hook")
 p.add_argument("--audio_tail_mode", default="legacy", choices=["legacy", "repeat_clean"], help="Controlled audio-padding probe: legacy regenerates padded target audio; repeat_clean keeps the repeated clean latent fixed at AdaLN time=1")
 p.add_argument("--fixed_native_silence", action="store_true", help="Fixed 5.0625s silence for BOTH native audio conditions; original music is only muxed")
+p.add_argument("--music_text_ckpt", default="", help="Full trained MusicFM and raw text-token adapter; only music plus reference image, no caption lookup")
 p.add_argument("--text_hidden_oracle", default="", help="Supervision-only JSON audio_id -> {prompt, source}; raw hidden tail replaces empty student text")
 p.add_argument("--text_oracle_cache_dir", default="", help="Existing new directory for oracle targets and strict condition-equivalence reports")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
@@ -61,10 +62,13 @@ if a.fixed_native_silence and a.audio_tail_mode != "repeat_clean":
     p.error("Fixed native silence requires repeat_clean, including the padded tail")
 if a.text_oracle_cache_dir and not a.text_hidden_oracle:
     p.error("Oracle cache directory requires the explicit oracle mode")
+if a.music_text_ckpt and (a.text_hidden_oracle or a.prompt_mode != 'empty' or not a.fixed_native_silence or
+                         a.mode != 'bi' or a.cfg != 1):
+    p.error('Music text deployment requires empty prompt, fixed native silence, bi CFG1 and no oracle')
 
 csv.field_size_limit(10 ** 9)
 E = "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp"
-cap = {r["sample_id"]: r["motion_caption"] for r in csv.DictReader(open(f"{E}/E10/val47_motion_captions.csv"))}
+cap = {} if a.music_text_ckpt else {r["sample_id"]: r["motion_caption"] for r in csv.DictReader(open(f"{E}/E10/val47_motion_captions.csv"))}
 jobs = []
 for c in a.conds.split(","):
     rows = list(csv.DictReader(open(f"{a.csv_dir}/full_{c}.csv")))
@@ -98,7 +102,17 @@ pipe = MiniMaxH3Pipeline.from_pretrained(
     **({"vram_limit": torch.cuda.mem_get_info("cuda")[1] / (1024 ** 3) - 5} if a.height > 832 else {}),  # official-res (as e3/oos scripts)
 )
 TEXT_ORACLE = None
+TEXT_STUDENT = None
 ORACLE_CAPTIONS = None
+if a.music_text_ckpt:
+    from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
+    sys.path.insert(0, os.path.join(HERE, '..', 'ms'))
+    from music_text_infer import student_text_embedder
+    from music_text_condition import tensor_sha256
+    TEXT_STUDENT = student_text_embedder(a.music_text_ckpt)
+    matches = [i for i, unit in enumerate(pipe.units) if isinstance(unit, MiniMaxH3Unit_PromptEmbedder)]
+    assert len(matches) == 1, 'Expected exactly one original prompt embedder'
+    pipe.units[matches[0]] = TEXT_STUDENT
 if a.text_hidden_oracle:
     import json
     from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
@@ -187,6 +201,8 @@ def generate(prompt, img, wav, sr):
     pipe.scheduler_audio.set_timesteps(a.steps, shift=a.audio_shift)
     inputs_posi = {"prompt": prompt}; inputs_nega = {"negative_prompt": " "}
     condition_wav = torch.zeros((2, round(5.0625 * sr)), dtype=torch.float32) if a.fixed_native_silence else wav
+    if TEXT_STUDENT is not None:
+        TEXT_STUDENT.set_waveform(wav)
     sh = {"cfg_scale": a.cfg, "height": a.height, "width": a.width, "num_frames": 124, "seed": a.seed, "rand_device": "cpu",
           "tiled": True, "tile_size": 256, "tile_overlap": 64, "use_gradient_checkpointing": False, "use_gradient_checkpointing_offload": False,
           "keyframes": None, "keyframe_indices": None,
@@ -213,6 +229,12 @@ def generate(prompt, img, wav, sr):
     models = {n: getattr(pipe, n) for n in pipe.in_iteration_models}
     lat0 = sh["video_latents"].clone()
     T = lat0.shape[2]
+    if TEXT_STUDENT is not None:
+        assert not torch.count_nonzero(sh['denoise_mask_audio'])
+        print('[music text native isolation] ' + _json.dumps(dict(
+              waveform_sha256=tensor_sha256(condition_wav), reference_sha256=tensor_sha256(sh['ref_audio_anchor']),
+              retake_sha256=tensor_sha256(sh['input_latents_audio']), mask_sha256=tensor_sha256(sh['denoise_mask_audio']),
+              native_music_bypass=False, all_target_audio_clean=True)), flush=True)
     if TEXT_ORACLE is not None:
         from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PackedSequenceBuilder
         teacher_posi = dict(inputs_posi, **TEXT_ORACLE.teacher_output)
@@ -326,10 +348,17 @@ for c, r, dst in todo:
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     img = Image.open(r["image_path"]).convert("RGB")
     sr = pipe.audio_vae.sample_rate
-    y, _ = librosa.load(a.audio_override or r["audio_path"], sr=sr, mono=False, duration=dur)
-    wav = torch.from_numpy(y if y.ndim == 2 else y[None]).float()
-    if wav.shape[0] == 1:
-        wav = wav.repeat(2, 1)
+    if TEXT_STUDENT is not None:
+        from pathlib import Path
+        from music_clip_bridge import load_audio
+        audio_path = Path(a.audio_override or r['audio_path'])
+        assert sr == 32000
+        wav, _ = load_audio(audio_path.stem, audio_root=audio_path.parent)
+    else:
+        y, _ = librosa.load(a.audio_override or r["audio_path"], sr=sr, mono=False, duration=dur)
+        wav = torch.from_numpy(y if y.ndim == 2 else y[None]).float()
+        if wav.shape[0] == 1:
+            wav = wav.repeat(2, 1)
     body = cap.get(r.get("swap_src") or r["sample_id"], r["prompt"]) if a.prompt_mode in ("motion", "music") else r["prompt"]
     if a.prompt_mode == "music":
         bt = [t for t in BEATS.get(r["audio_path"], []) if t < dur]
@@ -367,7 +396,8 @@ for c, r, dst in todo:
           image_path=r["image_path"], audio_path=a.audio_override or r["audio_path"], seed=a.seed,
           music_encoder_ckpt=a.music_encoder_ckpt or None,
           native_audio_condition='fixed_silence' if a.fixed_native_silence else 'input_music',
-          text_hidden_oracle=bool(TEXT_ORACLE))), flush=True)
+          text_hidden_oracle=bool(TEXT_ORACLE), music_text_ckpt=a.music_text_ckpt or None,
+          waveform_loader='music_clip_bridge.load_audio' if TEXT_STUDENT is not None else 'librosa')), flush=True)
     video = generate(prompt, img, wav, sr)
     write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)
     if SOFT is not None:

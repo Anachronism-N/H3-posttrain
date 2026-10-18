@@ -1,0 +1,34 @@
+{
+  "complete": true,
+  "expected": 2000,
+  "union": 2000,
+  "shards": [
+    {
+      "shard": 0,
+      "count": 1000,
+      "sha256": "5cb7b8c083c1d75fcdc19db118f9045d570e2b4aab541cf6fb6ea532dcc43fb1",
+      "seconds": 430.9227218190208,
+      "backbone_weights_sha256": "218b483a0256ddef736267425fabb166fd97008983696bb9270def464b47bded"
+    },
+    {
+      "shard": 1,
+      "count": 1000,
+      "sha256": "499d8f487f0947800d22243ee84ae38b342b688caa6c010e3bbf48a4a1255756",
+      "seconds": 420.73938613943756,
+      "backbone_weights_sha256": "218b483a0256ddef736267425fabb166fd97008983696bb9270def464b47bded"
+    }
+  ],
+  "all_tensors_finite": true,
+  "shared_preprocessing": {
+    "input_sample_rate": 32000,
+    "backbone_sample_rate": 24000,
+    "channels": 2,
+    "channel_order": "left_right",
+    "resample": "torchaudio.functional.resample_default",
+    "waveform_normalization": "none",
+    "dense_padding": "after_backbone_with_explicit_valid_mask",
+    "dense_quantization": "float16_roundtrip_for_cached_and_online_features",
+    "position_encoding": "absolute_feature_index_sinusoidal_plus_stereo"
+  },
+  "scope": "frozen_music_features_not_trained_adapter"
+}

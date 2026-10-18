@@ -18,6 +18,7 @@ PREPROCESSING = {
     'resample': 'torchaudio.functional.resample_default',
     'waveform_normalization': 'none',
     'dense_padding': 'after_backbone_with_explicit_valid_mask',
+    'dense_quantization': 'float16_roundtrip_for_cached_and_online_features',
     'position_encoding': 'absolute_feature_index_sinusoidal_plus_stereo',
 }
 BACKENDS = {'muq', 'musicfm', 'mert'}
@@ -228,6 +229,9 @@ class MusicToH3Text(nn.Module):
                                        dtype=torch.long)
         maximum = int(feature_lengths.max())
         features = torch.stack([F.pad(value, (0, 0, 0, maximum - value.shape[1])) for value in encoded])
+        if self.freeze_backbone:
+            # Match the FP16 feature cache numerically, including during online deployment.
+            features = features.half().float()
         return features, feature_lengths
 
     def forward(self, waveform, context, waveform_lengths=None, query_count=None):

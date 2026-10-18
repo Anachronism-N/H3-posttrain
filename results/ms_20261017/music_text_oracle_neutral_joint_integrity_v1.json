@@ -1,0 +1,101 @@
+{
+  "complete": true,
+  "expected": 3,
+  "rows": [
+    {
+      "case": {
+        "condition": "joint",
+        "shard": 0,
+        "sample_id": "wJPptuhclZmKAEWs",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+        "filename": "wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4"
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 16973 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 16784 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 183 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      }
+    },
+    {
+      "case": {
+        "condition": "joint",
+        "shard": 1,
+        "sample_id": "wJPrpFsThWAcBQIw",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+        "filename": "wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4"
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 8932 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 8744 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 181 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      }
+    },
+    {
+      "case": {
+        "condition": "joint",
+        "shard": 2,
+        "sample_id": "wJQTclrlOLEYYfTB",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+        "filename": "wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4"
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 10888 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10692 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 189 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      }
+    }
+  ],
+  "mosaic": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/joint_mosaic.png",
+  "scope": "neutral-pronoun teacher oracle only"
+}

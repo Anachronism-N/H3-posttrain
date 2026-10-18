@@ -53,11 +53,27 @@
     "joint_complete_124_frame_audio_video_decode": 3,
     "joint_sampled_frame_visual_review": "Turning, stepping and arm movements are visible. Staircase reference woman becomes a male-presenting person with different clothing; identity fidelity fails. Original MS male pronouns are a possible confound, not a verified cause. These are teacher conditions, not predictions from music.",
     "continuous_music_adherence_review_completed": false,
-    "aswap_state_at_this_record": "running",
-    "all_six_complete": false,
+    "aswap_state_at_this_record": "complete_exit_zero",
+    "all_six_complete": true,
+    "all_six_124_frame_audio_video_decode": true,
+    "aswap_sampled_frame_visual_review": "All three show arm/leg and torso changes. Staircase retains female appearance, pale yellow top and grey trousers, unlike original-MS joint oracle. This differs in teacher caption and length, so it does not isolate pronouns causally.",
+    "all_native_audio_conditions_identical": true,
     "music_prediction": false,
     "caption_sources": "joint uses original MotionScript plus genre; swap has explicitly labeled video-observed VLM fallback because original MS is unavailable"
   },
+  "neutral_teacher_diagnostic": {
+    "complete": true,
+    "joint_videos": 3,
+    "all_sampler_exit_zero": true,
+    "complete_124_frame_audio_video_decode": true,
+    "teacher_only_transform": "gender_pronouns_to_dancer_v1",
+    "same_image_seed_and_native_silence": true,
+    "sampled_visual_review": "Staircase female appearance and pale yellow top/grey trousers restored. Other reference people also retained; turns, steps and arm motions visible. No claim of unique cause or calibrated music adherence.",
+    "student_external_semantic_text_added": false
+  },
+  "music_features": {"complete": true, "count": 2000, "independent_file_sha_and_tensor_finite_union_audit": true},
   "formal_music_text_training_started": false,
-  "next_gate": "Finish six oracle clips and video inspection before formal adapter training"
+  "teacher_cache_state": "Four TC-only shards running for train1800 and val200; original smoke excluded",
+  "train_pipeline_state": "Managed event-driven cache audit -> 8-item small-fit -> formal1875-step training registered; registration is not completion",
+  "next_gate": "Complete teacher cache and SHA/protocol audit, pass real small-fit, then train full adapter and verify cached/online checkpoint deployment before three-case generation"
 }

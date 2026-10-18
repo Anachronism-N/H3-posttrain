@@ -1,0 +1,13 @@
+{
+  "real_audio_id": "AAcaGYtiTozEttaF",
+  "feature_shape": [
+    2,
+    127,
+    1024
+  ],
+  "feature_exact": false,
+  "feature_max_abs": 0.00390625,
+  "feature_rms": 0.0001986486022360623,
+  "adapter_max_abs": 3.254413604736328e-05,
+  "scope": "real batch8-cache versus batch1-online frozen backbone, random untrained adapter"
+}

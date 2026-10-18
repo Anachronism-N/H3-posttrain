@@ -149,7 +149,31 @@ class OracleTextTailEmbedder(MiniMaxH3Unit_PromptEmbedder):
             raise ValueError('Oracle packed/DiT equivalence gate failed')
 
 
-def build_oracle_captions(exp_root, out):
+def neutralize_gender_pronouns(text):
+    import re
+    possessive_nouns = {'hand', 'hands', 'arm', 'arms', 'elbow', 'elbows', 'shoulder', 'shoulders',
+                        'foot', 'feet', 'leg', 'legs', 'knee', 'knees', 'ankle', 'ankles',
+                        'hip', 'hips', 'torso', 'body', 'head', 'neck', 'face', 'waist', 'chest',
+                        'left', 'right', 'both', 'back', 'pose', 'position', 'stance', 'weight'}
+    changes = []
+
+    def replace(match):
+        original = match.group()
+        word = original.lower()
+        following = re.match(r'\s+([A-Za-z]+)', text[match.end():])
+        possessive = word == 'his' or (word == 'her' and following is not None
+                                       and following[1].lower() in possessive_nouns)
+        replacement = "the dancer's" if possessive else 'the dancer'
+        if original[0].isupper():
+            replacement = replacement[0].upper() + replacement[1:]
+        changes.append(dict(start=match.start(), end=match.end(), original=original, replacement=replacement))
+        return replacement
+
+    normalized = re.sub(r'\b(?:he|she|his|her|him|himself|herself)\b', replace, text, flags=re.IGNORECASE)
+    return normalized, changes
+
+
+def build_oracle_captions(exp_root, out, neutral_teacher=False):
     import csv
     root = Path(exp_root)
     genres = {entry['sid']: entry['label']['genre'] for entry in
@@ -182,7 +206,13 @@ def build_oracle_captions(exp_root, out):
                 raise ValueError('Empty supervision caption: ' + audio_id)
             if audio_id in genres:
                 caption = f'Dance style: {genres[audio_id]}. ' + caption
-            captions[audio_id] = dict(prompt=caption, source=source,
+            original_caption = caption
+            changes = []
+            if neutral_teacher:
+                caption, changes = neutralize_gender_pronouns(caption)
+            captions[audio_id] = dict(prompt=caption, source=source, original_prompt=original_caption,
+                                      teacher_transform='gender_pronouns_to_dancer_v1' if neutral_teacher else 'none',
+                                      replacements=changes,
                                       caveat='Paired dance description, not unique choreography required by music')
     if len(captions) != 6:
         raise ValueError('Expected six distinct original/swap music sources')
@@ -197,7 +227,8 @@ if __name__ == '__main__':
     parser.add_argument('--build_oracle_captions', action='store_true')
     parser.add_argument('--exp_root', type=Path)
     parser.add_argument('--out', type=Path)
+    parser.add_argument('--neutral_teacher', action='store_true', help='Only teacher pronouns change; actions and student input unchanged')
     args = parser.parse_args()
     if not args.build_oracle_captions or args.exp_root is None or args.out is None:
         parser.error('Require --build_oracle_captions --exp_root --out')
-    build_oracle_captions(args.exp_root, args.out)
+    build_oracle_captions(args.exp_root, args.out, neutral_teacher=args.neutral_teacher)

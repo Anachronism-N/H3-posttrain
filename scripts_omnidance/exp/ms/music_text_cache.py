@@ -16,7 +16,7 @@ from diffsynth.pipelines.minimax_h3_audio_video import (
     MiniMaxH3Pipeline, ModelConfig, MiniMaxH3Unit_PromptEmbedder,
     MiniMaxH3Unit_ReferenceEncoder,
 )
-from music_text_condition import prefix_length, tensor_sha256, write_new
+from music_text_condition import prefix_length, tensor_sha256, write_new, neutralize_gender_pronouns
 
 
 def sha256(path):
@@ -27,12 +27,13 @@ def sha256(path):
     return digest.hexdigest()
 
 
-def target_prompt(entry):
+def target_prompt(entry, neutral_teacher=False):
     text = entry['motion_original']
     genre = entry['dims']['genre']
     if not text.strip() or not genre.strip() or genre == 'generation_holdout':
         raise ValueError('Target requires original motion and a declared dance genre')
-    return f'Dance style: {genre}. ' + text
+    prompt = f'Dance style: {genre}. ' + text
+    return neutralize_gender_pronouns(prompt)[0] if neutral_teacher else prompt
 
 
 def main():
@@ -43,6 +44,7 @@ def main():
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--shard', type=int, default=0)
     parser.add_argument('--nshard', type=int, default=1)
+    parser.add_argument('--neutral_teacher', action='store_true', help='Only normalize teacher gender pronouns, preserve original actions')
     parser.add_argument('--preflight', action='store_true', help='CPU-only image presence and token lengths; --out is a new JSON report')
     parser.add_argument('--max_items', type=int, default=0, help='Explicit smoke subset, never called the full split')
     parser.add_argument('--w', type=Path, default=Path('/dev/shm/h3/Ref2VA'))
@@ -63,13 +65,13 @@ def main():
     for sid in ids:
         if Path(sid).name != sid or sid in ('.', '..'):
             raise ValueError('Invalid sample ID')
-        target_prompt(caps[sid])
+        target_prompt(caps[sid], args.neutral_teacher)
         if not (args.image_root / (sid + '.png')).is_file():
             raise FileNotFoundError(args.image_root / (sid + '.png'))
     if args.preflight:
         from transformers import AutoTokenizer
         tokenizer = AutoTokenizer.from_pretrained(str(args.w / 'processor'), local_files_only=True)
-        lengths = {sid: len(tokenizer(target_prompt(caps[sid]), add_special_tokens=False)['input_ids']) for sid in ids}
+        lengths = {sid: len(tokenizer(target_prompt(caps[sid], args.neutral_teacher), add_special_tokens=False)['input_ids']) for sid in ids}
         train_lengths = [lengths[sid] for sid in ids if sid in set(train)]
         report = dict(kind='CPU_preflight_not_teacher_encoding', complete=True,
                       caps_sha256=sha256(args.caps), split_sha256=sha256(args.split),
@@ -86,7 +88,8 @@ def main():
                   ids=ids, shard=args.shard, nshard=args.nshard, explicit_subset=args.max_items,
                   interface='raw_h3_last_hidden_5120_tail_replacement',
                   reference_image_short_edge=2048, structural_audio_label=True,
-                  semantic_student_prompt=' ', final_norm='Identity', caption_fields=['dims.genre', 'motion_original'])
+                  semantic_student_prompt=' ', final_norm='Identity', caption_fields=['dims.genre', 'motion_original'],
+                  teacher_transform='gender_pronouns_to_dancer_v1' if args.neutral_teacher else 'none')
     weights = sorted(glob.glob(str(args.w / 'text_encoder/model*.safetensors')))
     if not weights:
         raise FileNotFoundError(args.w / 'text_encoder')
@@ -94,6 +97,7 @@ def main():
     source['model_files_metadata'] = [dict(path=path, size=Path(path).stat().st_size,
                                          mtime_ns=Path(path).stat().st_mtime_ns) for path in weights]
     write_new(args.out / 'plan.json', source)
+    protocol_sha256 = sha256(args.out / 'plan.json')
     vram = dict(offload_dtype=torch.bfloat16, offload_device='cuda', onload_dtype=torch.bfloat16,
                 onload_device='cuda', preparing_dtype=torch.bfloat16, preparing_device='cuda',
                 computation_dtype=torch.bfloat16, computation_device='cuda')
@@ -114,7 +118,7 @@ def main():
                 prepared = image.convert('RGB').resize((w, h), Image.LANCZOS)
             ref_blocks = [dict(kind='image', prepared_image=prepared, ref_audio_t=0),
                           dict(kind='audio', ref_audio_t=203)]
-            prompt = target_prompt(caps[sid])
+            prompt = target_prompt(caps[sid], args.neutral_teacher)
             ids_tensor, tags = prompt_unit.preprocess_ref_blocks(pipe, prompt, ref_blocks)[:2]
             lp = prefix_length(pipe.tokenizer, prompt, ids_tensor)
             encoded = prompt_unit.process(pipe, prompt, ref_blocks=ref_blocks)
@@ -129,10 +133,13 @@ def main():
             if (before.st_size, before.st_mtime_ns) != (after.st_size, after.st_mtime_ns):
                 raise RuntimeError('Reference image changed: ' + sid)
             metadata = dict(sample_id=sid, image_path=str(image_path), image_sha256=image_sha,
-                            prompt=prompt, caption_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
+                            prompt=prompt, original_prompt=target_prompt(caps[sid]),
+                            teacher_replacements=neutralize_gender_pronouns(target_prompt(caps[sid]))[1] if args.neutral_teacher else [],
+                            caption_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
                             prefix_length=lp, tail_length=len(tail), prepared_image_size=[w, h],
                             tail_sha256=tensor_sha256(tail), context_sha256=tensor_sha256(context),
-                            source_protocol=source)
+                            source_protocol_path=str(args.out / 'plan.json'),
+                            source_protocol_sha256=protocol_sha256)
             path = args.out / (sid + '.pt')
             write_new(path, dict(metadata=metadata, tail=tail, prefix_context=context,
                                  token_ids=ids_tensor.cpu(), prefix_tags=tags[:lp]), binary=True)

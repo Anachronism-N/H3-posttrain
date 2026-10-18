@@ -160,7 +160,17 @@
 - 三条joint sampler exit0，完整124帧/24fps/704×1280及音轨解码通过，三人物×参考图+六时间采样帧对照图已实际查看。可以看到转身、步移、手臂变化；不能把采样帧观察等同连续听看或音乐正确度。
 - 楼梯参考人物为女性浅黄上衣/灰裤，oracle输出男性外观、深色衣裤，人物保真失败。原版MS中的His/He可能提供错误性别语义，但无去代词反事实前不认定是唯一原因；过去原生empty也有参考衣着漂移。不要把接口精确回填成功包装成全部生成质量验收通过。
 - N2两条TC-only教师缓存真实exit0，未加载video/audio VAE；实际tail462/479、prefix7437。只验证提取程序，不冒称全1800/200缓存完成。
-- 三条aswap仍由原管理队列运行。后续先核验全六结果与人物/监督标签问题，再决定教师去性别代词或仅ID文本的最小对照；保持动作原文与修改来源可追溯，不直接训入明显错误身份目标。
+- 原管理队列六条均exit0，全六124帧/音轨完整解码完成，各音乐条件的原生静音输入/ref/retake/mask hash完全一致。aswap六时间采样图已Read：楼梯浅黄上衣/灰裤及女性外观保留，其他两case也有抬臂/腿部/躯干动作。与joint的caption来源和长度都不同，不能直接把差别归因代词，更不能当训练音乐增量。
+- 独立SFoT83三个joint已exit0且完整音画解码通过，同图/seed/native静音不变，仅teacher将He/She/His/Her等转换为the dancer，原动作/舞种/顺序保留并记录replacement。采样图实际Read：楼梯女性外观、浅黄上衣和灰裤恢复，仍有转身/步移/手臂动作；红衣和商店人物也基本保留。支持教师性别措辞是影响因素，不称唯一根因或普适保证。学生未加ID或其他语义文字，首帧未固定。
+- 选择中性代词版为首轮教师目标，已启动N2/N3/N6/N7四分片TC-only提取完整1800train/200val。旧两条原代词smoke缓存不混入新训练。
+- N2/N3两音乐分片均exit0，独立重读2000条并集、shape/finite和文件SHA通过；公开骨干冻结eval。缓存/在线部署统一FP16 roundtrip、32k读取/24k重采样。实测batch8缓存与batch1在线并非逐值相同：特征max abs .00390625/RMS .000198649，随机adapter max abs3.2544e-5，属待训练权重复核的数值偏差，不伪称完全一致。
+- 真实MusicFM+随机adapter完整checkpoint经H3→隔离music进程部署，原始token输出逐值与保存前前向一致；未输入GTcaption/GTlength，最后投影实际执行。这是部署全链自测，不是训练或音乐控制效果。35步合成小集loss5.2639→1.4235，仅说明训练梯度可用。
+
+### 接续训练配置与验收门禁
+- 教师缓存管理`xoMaSk`四分片运行；`Vrzqj3`以inotify和真实cache manager PID/pidfd等待完成事件，完成后先全2000教师文件SHA/并集/transform协议核验，不sleep/poll、不重复启动。
+- 随后N5 GPU7串行执行8条small-fit 300更新、再clean1800正式1875更新/val200，每批8、adapter lr1e-4；raw MSE用train教师能量作标量损失尺度，加cosine和log长度loss，部署输出仍原始hidden不单位化。小集回归不改善、梯度scope/finite错误、checkpoint完整重载或缓存/在线训练权重检查失败时停止，不越门禁正式训练。
+- 全部candidate/last权重保存完整冻结MusicFM及adapter，不只保存训练head；训练生成前向同一最终投影。checkpoint输出strict重载必须逐值一致；cached/online训练后实测相对误差≤.01且预测长度相同，报告具体误差而非以形状宣称完全一致。
+- 该阶段配置/管理队列已经建立，不等于真实训练结束。生成效果由后续三人物joint/aswap正确/错配/零音乐验证，不能拿teacher oracle/检索/token loss替代。
 
 ## 官方证据
 - https://github.com/tencent-ailab/MuQ （24kHz、FP32、公开MSD权重与论文差异、权重CC-BY-NC）

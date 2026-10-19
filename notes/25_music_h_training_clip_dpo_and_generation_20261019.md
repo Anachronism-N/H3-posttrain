@@ -370,3 +370,32 @@ CUDA_VISIBLE_DEVICES=6 OMP_NUM_THREADS=2 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
 ```
 
 下一步不再自动扫描相同CLIP/MSE更多步数或校准length。若进一步采用冻结H3的去噪预测一致性监督，只优化MusicFM和完整adapter，需要单独明确授权，因为此前限定不加DiT/video/生成预测loss；本诊断没有越过该边界。只读探索代理本次再次上游错误退出，没有可用结论，以上由主线程代码读取和实际结果核验完成。
+
+## 2026-10-19 新授权的冻结H3预测监督：真实梯度通过，受控训练执行中
+
+用户通过明确选项**“授权小规模实验”**批准：新增冻结H3去噪预测一致性loss，仅优化MusicFM实际dense骨干和完整adapter，先验梯度/显存，再有无loss小实验及固定3case视频；生成仍仅音乐+参考图，教师动作文字只监督。H3文本encoder/DiT/VAE不训练，不恢复动作prompt，不采用GT FM velocity target。此授权仅适用本小实验，历史“未授权新生成loss”不能再当当前阻塞，也不代表允许任意其他loss/扩量。
+
+### 精确VJP边界与真实输入
+
+两套不同Transformers环境不混装，使用`music_text_behavior.py`的prepare/export/h3_vjp/music_vjp/update阶段：音乐环境生成学生全qmax、自身length和FP32tail；H3环境把同一FP32tail置leaf，按原BF16 cast/replace_tail/自己的packed进入原冻结DiT，与仅teacher监督条件的同noisy video/audio/time预测比较，返回dL/dtail；音乐环境按同checkpoint/wave/context重算，要求torch.equal完整tail后明确反传VJP。不是使用detach推理代理训练：数据边界虽存盘，精确链式梯度显式返回，重算失败不更新。离散length round/long不传此loss梯度，保留原loglength监督使全部42adapter仍共同训练。
+
+主线程在N5真实读取原hr索引，1800train/200val全部匹配；选择原3train `AAcaGYtiTozEttaF/ACYTcnkJDuOfXBiA/ACjmBvCtqPhuyLRS`、1val `QcXTBHnhvaKIOlgH`，三生成人物继续独立。原hr `input_latents [1,24,37,80,44]`用于构造两路相同noisy state，不当velocity标签。原参考latent7424×96、实际prepared image2048×3712、空prefix7437×5120与原cache前缀逐值exact；不借用caption-conditioned prefix或teacher长度决定学生。
+
+两路native音频换为同162000样本32k静音经冻结原audio-VAE编码、retake尾部repeat_clean及全零mask；不是填零latent。实际BF16reference/retake哈希与既有部署完全相同。缓存encode_audio返回FP32，初次model_fn index_copy dtype报错；在H3使用边界显式转BF16，与生成单位处理相同。mask缓存原为广播展开[2,32,207]，实际前向取[2,1,207]全零使形状也与部署一致；两种全零广播在模型中相同，但不把不同形状tensor hash冒称exact。数值PT和optimizer不公开。
+
+### 短时长及全124帧实际梯度／显存
+
+- 2个video latent帧smoke：teacher length509、学生自身length352，各自packed17984/17856；prediction MSE0.04043576，FP32 tail grad norm0.08267116。DiT全state hash前后不变、无参数grad；VJP重算精确到MusicFM400个dense tensor＋38个内容adapter tensor，全部有限非零。lengthhead4tensor没有此loss梯度，是预期离散length边界，后续保留length loss。没有optimizer更新。
+- 原37latent/704p/124帧、单GPU79.25GiB：teacher/student前向可运行，反向checkpoint重算MLP申请1.30GiB时OOM；不能以短测试通过说全长可训。
+- 尝试MLP逐token1024分块，BF16输出/梯度parity预设门槛未通过，拒绝用于训练，没有放宽门槛或修改原H3实现。该失败没有产生新VJP权重更新。
+- 改为**原DiT后半blocks跨第二GPU**，只移动设备、不分块算子/换attention/量化；float device copy保留autograd，原block non-reentrant activation checkpoint＋CPU保存激活。全37latent成功：prediction MSE0.02112872、tail grad norm0.01231660，teacher/student各自packed48768/48640，DiT全参数buffer hash不变、参数grad absent。两GPU峰值50.03/48.33GiB，prediction区间289.005s，不含模型加载/模型hash，也非未来耗时预测。使用torch attention。此前2latent损失不可与37latent损失当改进比较。
+
+公开元报告`music_text_behavior_smoke_v1_cache.json`、`music_text_behavior_smoke_v2_h3_vjp.json`、`music_text_behavior_smoke_v2_music_vjp.json`、`music_text_behavior_full37_twogpu_v3_h3_vjp.json`。只读探索代理已完成静态接口核查；真正CUDA梯度/显存结论来自上述实际工具产物，不来自代理推断。启动器一次Python3.11 fstring嵌套引号语法错误，未启动GPU，修正并保留失败日志。
+
+### 有无loss受控小实验（尚未宣称完成）
+
+两组从已完整验收C300同一checkpoint SHA`189a0a74...f605`起点，独立AdamW零初始optimizer；同3个train，固定顺序轮转两遍，**6更新/6曝光、batch1**，bone1e-5/adapter1e-4、weight decay0、global gradclip1。每次存完整音乐checkpoint与匹配optimizer state，后续重载恢复Adam历史，不把逐步重新初始化optimizer当连续训练。
+
+共同原表示loss=`rawMSE/Etrain + 0.01*loglength_MSE + sequence_NCE(two_real_negatives)/temperature0.07`，使用全原train池确定同wrong/second，NCE权重1（从C300延续，不重设warmup）。唯一改动为prediction组额外`MSE(v_student,v_teacher)`权重1；control权重0。训练样本同GT noisy state `x=.1*z+.9*noise(seed42)`，teacher仅监督，双方native静音、参考和时间相同，各自文本尾长/原packed。第一预测VJP复用同起点已核验full37产物，须export内容SHA一致才可消费。其后更新均重算当前完整学生VJP。
+
+最终保存完整V2模型、实际400bone/42adapter更新审计、全200表示val和独立部署；另比较同1val的原始/控制/预测三权重对同frozen teacher的预测误差，不将3train拟合当泛化。随后每配置仍独立固定3源人物joint/aswap/zerojoint，共18新视频，完整音画/input/部署审计及实际评审，旧C3009视频复用对照。不因新loss梯度大或small train下降宣称编舞增量；没有完成前不关闭本轮任务。

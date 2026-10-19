@@ -1,0 +1,2222 @@
+{
+  "complete": true,
+  "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+  "exact_student_tail_replay": true,
+  "frozen_h3_vjp_report": "/tmp/music_text_behavior_smoke_v2_vjp.json",
+  "groups": {
+    "backbone": {
+      "tensors": 400,
+      "squared_norm_sum": 0.0005040546721626903,
+      "nonzero_tensors": 400,
+      "rows": [
+        {
+          "name": "backbone.model.conv.conv.0.conv1.weight",
+          "norm": 0.0057595763355493546,
+          "elements": 4608
+        },
+        {
+          "name": "backbone.model.conv.conv.0.conv1.bias",
+          "norm": 0.004327542148530483,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.0.bn1.weight",
+          "norm": 7.892895519034937e-05,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.0.bn1.bias",
+          "norm": 9.720263915369287e-05,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.0.conv2.weight",
+          "norm": 0.0015367968007922173,
+          "elements": 2359296
+        },
+        {
+          "name": "backbone.model.conv.conv.0.conv2.bias",
+          "norm": 4.4504908146336675e-05,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.0.bn2.weight",
+          "norm": 0.00026977265952154994,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.0.bn2.bias",
+          "norm": 0.0002615582197904587,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.0.conv3.weight",
+          "norm": 0.0021641922648996115,
+          "elements": 4608
+        },
+        {
+          "name": "backbone.model.conv.conv.0.conv3.bias",
+          "norm": 0.0013292639050632715,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.0.bn3.weight",
+          "norm": 0.00027370688621886075,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.0.bn3.bias",
+          "norm": 0.0002615582197904587,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.1.conv1.weight",
+          "norm": 0.0016294008819386363,
+          "elements": 2359296
+        },
+        {
+          "name": "backbone.model.conv.conv.1.conv1.bias",
+          "norm": 0.000107891159132123,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.1.bn1.weight",
+          "norm": 0.0001464477099943906,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.1.bn1.bias",
+          "norm": 0.00013545317051466554,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.1.conv2.weight",
+          "norm": 0.0017130118794739246,
+          "elements": 2359296
+        },
+        {
+          "name": "backbone.model.conv.conv.1.conv2.bias",
+          "norm": 8.628548675915226e-05,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.1.bn2.weight",
+          "norm": 0.00019286030146759003,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.1.bn2.bias",
+          "norm": 0.00014441661187447608,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.1.conv3.weight",
+          "norm": 0.0008567673503421247,
+          "elements": 2359296
+        },
+        {
+          "name": "backbone.model.conv.conv.1.conv3.bias",
+          "norm": 5.1907340093748644e-05,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.1.bn3.weight",
+          "norm": 0.00018510321388021111,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.conv.1.bn3.bias",
+          "norm": 0.00014441661187447608,
+          "elements": 512
+        },
+        {
+          "name": "backbone.model.conv.linear.weight",
+          "norm": 0.00292570679448545,
+          "elements": 16777216
+        },
+        {
+          "name": "backbone.model.conv.linear.bias",
+          "norm": 4.6914705308154225e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layer_norm.weight",
+          "norm": 0.0002930489426944405,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layer_norm.bias",
+          "norm": 0.00045168917858973145,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn1_layer_norm.weight",
+          "norm": 4.7197347157634795e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn1_layer_norm.bias",
+          "norm": 3.551687768776901e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn1.intermediate_dense.weight",
+          "norm": 0.0006126461084932089,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn1.intermediate_dense.bias",
+          "norm": 2.128051346517168e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn1.output_dense.weight",
+          "norm": 0.0006132415728643537,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn1.output_dense.bias",
+          "norm": 2.3412814698531292e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn_layer_norm.weight",
+          "norm": 0.000198315319721587,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn_layer_norm.bias",
+          "norm": 0.00017200637375935912,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn.linear_q.weight",
+          "norm": 0.0013934189919382334,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn.linear_q.bias",
+          "norm": 6.732296606060117e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn.linear_k.weight",
+          "norm": 0.0012329642195254564,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn.linear_k.bias",
+          "norm": 4.97568826418604e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn.linear_v.weight",
+          "norm": 0.0008497110102325678,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn.linear_v.bias",
+          "norm": 5.2798019169131294e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn.linear_out.weight",
+          "norm": 0.0014210024382919073,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.self_attn.linear_out.bias",
+          "norm": 3.819951962213963e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.conv_module.layer_norm.weight",
+          "norm": 2.526370735722594e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.conv_module.layer_norm.bias",
+          "norm": 2.6991490813088603e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.conv_module.pointwise_conv1.weight",
+          "norm": 0.0004685038875322789,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.conv_module.depthwise_conv.weight",
+          "norm": 0.00026425457326695323,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.conv_module.batch_norm.weight",
+          "norm": 3.882628880091943e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.conv_module.batch_norm.bias",
+          "norm": 2.955636773549486e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.conv_module.pointwise_conv2.weight",
+          "norm": 0.0006751273176632822,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn2_layer_norm.weight",
+          "norm": 2.3020866137812845e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn2_layer_norm.bias",
+          "norm": 2.288570067321416e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn2.intermediate_dense.weight",
+          "norm": 0.00038527941796928644,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn2.intermediate_dense.bias",
+          "norm": 1.4248747902456671e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn2.output_dense.weight",
+          "norm": 0.00039069188642315567,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.ffn2.output_dense.bias",
+          "norm": 1.8867944163503125e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.final_layer_norm.weight",
+          "norm": 0.000322177802445367,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.0.final_layer_norm.bias",
+          "norm": 0.0002241005568066612,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn1_layer_norm.weight",
+          "norm": 7.623636338394135e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn1_layer_norm.bias",
+          "norm": 6.47769047645852e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn1.intermediate_dense.weight",
+          "norm": 0.001186343259178102,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn1.intermediate_dense.bias",
+          "norm": 4.9605467211222276e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn1.output_dense.weight",
+          "norm": 0.0014854351757094264,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn1.output_dense.bias",
+          "norm": 0.0001066903059836477,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn_layer_norm.weight",
+          "norm": 0.00014546916645485908,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn_layer_norm.bias",
+          "norm": 0.00019434136629570276,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn.linear_q.weight",
+          "norm": 0.0005346708348952234,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn.linear_q.bias",
+          "norm": 3.106862641288899e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn.linear_k.weight",
+          "norm": 0.0006615158636122942,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn.linear_k.bias",
+          "norm": 5.08322897663227e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn.linear_v.weight",
+          "norm": 0.0022914933506399393,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn.linear_v.bias",
+          "norm": 0.00018263612582813948,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn.linear_out.weight",
+          "norm": 0.0031870899256318808,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.self_attn.linear_out.bias",
+          "norm": 0.00020582706201821566,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.conv_module.layer_norm.weight",
+          "norm": 6.020468572387472e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.conv_module.layer_norm.bias",
+          "norm": 7.506750262109563e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.conv_module.pointwise_conv1.weight",
+          "norm": 0.0012132411357015371,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.conv_module.depthwise_conv.weight",
+          "norm": 0.0006163835641928017,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.conv_module.batch_norm.weight",
+          "norm": 0.00010705317254178226,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.conv_module.batch_norm.bias",
+          "norm": 0.00010026341624325141,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.conv_module.pointwise_conv2.weight",
+          "norm": 0.0017618680140003562,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn2_layer_norm.weight",
+          "norm": 3.969574754592031e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn2_layer_norm.bias",
+          "norm": 4.661176717490889e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn2.intermediate_dense.weight",
+          "norm": 0.000850553740747273,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn2.intermediate_dense.bias",
+          "norm": 3.423684393055737e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn2.output_dense.weight",
+          "norm": 0.0012288783909752965,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.ffn2.output_dense.bias",
+          "norm": 9.486798080615699e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.final_layer_norm.weight",
+          "norm": 0.00044623439316637814,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.1.final_layer_norm.bias",
+          "norm": 0.00023066803987603635,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn1_layer_norm.weight",
+          "norm": 5.8971665566787124e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn1_layer_norm.bias",
+          "norm": 7.715974061284214e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn1.intermediate_dense.weight",
+          "norm": 0.001003877492621541,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn1.intermediate_dense.bias",
+          "norm": 4.624867142410949e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn1.output_dense.weight",
+          "norm": 0.0014894476626068354,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn1.output_dense.bias",
+          "norm": 0.00010909503180300817,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn_layer_norm.weight",
+          "norm": 0.0001259295386262238,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn_layer_norm.bias",
+          "norm": 0.00017246852803509682,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn.linear_q.weight",
+          "norm": 0.0006156910676509142,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn.linear_q.bias",
+          "norm": 3.370910053490661e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn.linear_k.weight",
+          "norm": 0.0006571018020622432,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn.linear_k.bias",
+          "norm": 4.7059400647142535e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn.linear_v.weight",
+          "norm": 0.002104752464219928,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn.linear_v.bias",
+          "norm": 0.00016504325321875513,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn.linear_out.weight",
+          "norm": 0.002644781256094575,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.self_attn.linear_out.bias",
+          "norm": 0.00019930269627366215,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.conv_module.layer_norm.weight",
+          "norm": 3.3870375773403794e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.conv_module.layer_norm.bias",
+          "norm": 4.5364231482381e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.conv_module.pointwise_conv1.weight",
+          "norm": 0.0007637532544322312,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.conv_module.depthwise_conv.weight",
+          "norm": 0.0004107945424038917,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.conv_module.batch_norm.weight",
+          "norm": 6.648337875958532e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.conv_module.batch_norm.bias",
+          "norm": 7.115295738913119e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.conv_module.pointwise_conv2.weight",
+          "norm": 0.001515883719548583,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn2_layer_norm.weight",
+          "norm": 3.470739829936065e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn2_layer_norm.bias",
+          "norm": 4.275609535397962e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn2.intermediate_dense.weight",
+          "norm": 0.0007003881619311869,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn2.intermediate_dense.bias",
+          "norm": 2.7381878680898808e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn2.output_dense.weight",
+          "norm": 0.0012166486121714115,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.ffn2.output_dense.bias",
+          "norm": 9.688959835330024e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.final_layer_norm.weight",
+          "norm": 0.00047686221660114825,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.2.final_layer_norm.bias",
+          "norm": 0.00022946414537727833,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn1_layer_norm.weight",
+          "norm": 3.448577626841143e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn1_layer_norm.bias",
+          "norm": 4.478523260331713e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn1.intermediate_dense.weight",
+          "norm": 0.0006879406282678246,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn1.intermediate_dense.bias",
+          "norm": 3.056280911550857e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn1.output_dense.weight",
+          "norm": 0.0014406144618988037,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn1.output_dense.bias",
+          "norm": 0.00011152197839692235,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn_layer_norm.weight",
+          "norm": 0.00010209063475485891,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn_layer_norm.bias",
+          "norm": 0.00014542651479132473,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn.linear_q.weight",
+          "norm": 0.0005118154222145677,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn.linear_q.bias",
+          "norm": 3.034020664927084e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn.linear_k.weight",
+          "norm": 0.0005136309773661196,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn.linear_k.bias",
+          "norm": 3.185972319297292e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn.linear_v.weight",
+          "norm": 0.0018252194859087467,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn.linear_v.bias",
+          "norm": 0.00015711781452409923,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn.linear_out.weight",
+          "norm": 0.002264138078317046,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.self_attn.linear_out.bias",
+          "norm": 0.00021919194841757417,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.conv_module.layer_norm.weight",
+          "norm": 3.36316843458917e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.conv_module.layer_norm.bias",
+          "norm": 4.1334500565426424e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.conv_module.pointwise_conv1.weight",
+          "norm": 0.0007848716340959072,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.conv_module.depthwise_conv.weight",
+          "norm": 0.0002818421635311097,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.conv_module.batch_norm.weight",
+          "norm": 5.455887730931863e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.conv_module.batch_norm.bias",
+          "norm": 7.127728895284235e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.conv_module.pointwise_conv2.weight",
+          "norm": 0.0013159980298951268,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn2_layer_norm.weight",
+          "norm": 2.5931127311196178e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn2_layer_norm.bias",
+          "norm": 3.196920079062693e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn2.intermediate_dense.weight",
+          "norm": 0.0005732873105444014,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn2.intermediate_dense.bias",
+          "norm": 2.3649592549190857e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn2.output_dense.weight",
+          "norm": 0.0012203622609376907,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.ffn2.output_dense.bias",
+          "norm": 0.00010634300269884989,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.final_layer_norm.weight",
+          "norm": 0.0004848481039516628,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.3.final_layer_norm.bias",
+          "norm": 0.00022348822676576674,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn1_layer_norm.weight",
+          "norm": 3.755340731004253e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn1_layer_norm.bias",
+          "norm": 5.394202162278816e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn1.intermediate_dense.weight",
+          "norm": 0.0006153674912638962,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn1.intermediate_dense.bias",
+          "norm": 2.8266616936889477e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn1.output_dense.weight",
+          "norm": 0.0014149091439321637,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn1.output_dense.bias",
+          "norm": 0.00010767717321868986,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn_layer_norm.weight",
+          "norm": 7.21823307685554e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn_layer_norm.bias",
+          "norm": 0.000134509609779343,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn.linear_q.weight",
+          "norm": 0.00022866320796310902,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn.linear_q.bias",
+          "norm": 1.4673019904876128e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn.linear_k.weight",
+          "norm": 0.00024145690258592367,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn.linear_k.bias",
+          "norm": 1.76492750535856e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn.linear_v.weight",
+          "norm": 0.0012225433019921184,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn.linear_v.bias",
+          "norm": 0.00013233546633273363,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn.linear_out.weight",
+          "norm": 0.0016703397268429399,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.self_attn.linear_out.bias",
+          "norm": 0.00021691519941668957,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.conv_module.layer_norm.weight",
+          "norm": 2.8737047614413314e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.conv_module.layer_norm.bias",
+          "norm": 4.018700565211475e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.conv_module.pointwise_conv1.weight",
+          "norm": 0.0006096517317928374,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.conv_module.depthwise_conv.weight",
+          "norm": 0.00030180028988979757,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.conv_module.batch_norm.weight",
+          "norm": 5.149345815880224e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.conv_module.batch_norm.bias",
+          "norm": 7.604243728565052e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.conv_module.pointwise_conv2.weight",
+          "norm": 0.0011811532313004136,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn2_layer_norm.weight",
+          "norm": 2.1439871488837525e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn2_layer_norm.bias",
+          "norm": 3.0587172659579664e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn2.intermediate_dense.weight",
+          "norm": 0.0005252992850728333,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn2.intermediate_dense.bias",
+          "norm": 2.2043983335606754e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn2.output_dense.weight",
+          "norm": 0.0011877475772053003,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.ffn2.output_dense.bias",
+          "norm": 0.00010561186354607344,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.final_layer_norm.weight",
+          "norm": 0.0004899183986708522,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.4.final_layer_norm.bias",
+          "norm": 0.00021632392599713057,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn1_layer_norm.weight",
+          "norm": 2.9521042961278e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn1_layer_norm.bias",
+          "norm": 3.98339907405898e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn1.intermediate_dense.weight",
+          "norm": 0.0005597041454166174,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn1.intermediate_dense.bias",
+          "norm": 2.5888974050758407e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn1.output_dense.weight",
+          "norm": 0.0014005154371261597,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn1.output_dense.bias",
+          "norm": 0.00010573310282779858,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn_layer_norm.weight",
+          "norm": 8.542216528439894e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn_layer_norm.bias",
+          "norm": 0.0001309674116782844,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn.linear_q.weight",
+          "norm": 0.0003125937073491514,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn.linear_q.bias",
+          "norm": 1.5435743989655748e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn.linear_k.weight",
+          "norm": 0.00033362233079969883,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn.linear_k.bias",
+          "norm": 2.4588091979138582e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn.linear_v.weight",
+          "norm": 0.0012985286302864552,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn.linear_v.bias",
+          "norm": 0.0001283652673009783,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn.linear_out.weight",
+          "norm": 0.0017445414559915662,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.self_attn.linear_out.bias",
+          "norm": 0.00021353569172788411,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.conv_module.layer_norm.weight",
+          "norm": 2.6807732865563594e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.conv_module.layer_norm.bias",
+          "norm": 3.480356463114731e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.conv_module.pointwise_conv1.weight",
+          "norm": 0.0005546241882257164,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.conv_module.depthwise_conv.weight",
+          "norm": 0.000233064653002657,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.conv_module.batch_norm.weight",
+          "norm": 4.2438958189450204e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.conv_module.batch_norm.bias",
+          "norm": 6.977622979320586e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.conv_module.pointwise_conv2.weight",
+          "norm": 0.0010127548594027758,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn2_layer_norm.weight",
+          "norm": 1.809970308386255e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn2_layer_norm.bias",
+          "norm": 2.3212176529341377e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn2.intermediate_dense.weight",
+          "norm": 0.00042240708717145026,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn2.intermediate_dense.bias",
+          "norm": 1.747026908560656e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn2.output_dense.weight",
+          "norm": 0.0010848389938473701,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.ffn2.output_dense.bias",
+          "norm": 0.00010433320130687207,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.final_layer_norm.weight",
+          "norm": 0.0005009841406717896,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.5.final_layer_norm.bias",
+          "norm": 0.00022569199791178107,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn1_layer_norm.weight",
+          "norm": 4.349334631115198e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn1_layer_norm.bias",
+          "norm": 4.6408167690970004e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn1.intermediate_dense.weight",
+          "norm": 0.0006532958359457552,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn1.intermediate_dense.bias",
+          "norm": 3.0309152862173505e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn1.output_dense.weight",
+          "norm": 0.0014146498870104551,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn1.output_dense.bias",
+          "norm": 0.00010975410259561613,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn_layer_norm.weight",
+          "norm": 9.22440376598388e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn_layer_norm.bias",
+          "norm": 0.0001480159698985517,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn.linear_q.weight",
+          "norm": 0.0005935641820542514,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn.linear_q.bias",
+          "norm": 3.4416782000334933e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn.linear_k.weight",
+          "norm": 0.0006125726504251361,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn.linear_k.bias",
+          "norm": 4.54110967579302e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn.linear_v.weight",
+          "norm": 0.0019027766538783908,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn.linear_v.bias",
+          "norm": 0.00014508973981719464,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn.linear_out.weight",
+          "norm": 0.0022402543108910322,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.self_attn.linear_out.bias",
+          "norm": 0.00021731958258897066,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.conv_module.layer_norm.weight",
+          "norm": 2.7954059987678193e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.conv_module.layer_norm.bias",
+          "norm": 4.112705573788844e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.conv_module.pointwise_conv1.weight",
+          "norm": 0.0006162819336168468,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.conv_module.depthwise_conv.weight",
+          "norm": 0.0002584582834970206,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.conv_module.batch_norm.weight",
+          "norm": 5.049313767813146e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.conv_module.batch_norm.bias",
+          "norm": 7.216691301437095e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.conv_module.pointwise_conv2.weight",
+          "norm": 0.0011407891288399696,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn2_layer_norm.weight",
+          "norm": 1.8653869119589217e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn2_layer_norm.bias",
+          "norm": 2.5042545530595817e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn2.intermediate_dense.weight",
+          "norm": 0.00043859315337613225,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn2.intermediate_dense.bias",
+          "norm": 1.8503065803088248e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn2.output_dense.weight",
+          "norm": 0.0011511711636558175,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.ffn2.output_dense.bias",
+          "norm": 0.00010519679199205711,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.final_layer_norm.weight",
+          "norm": 0.0005006791325286031,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.6.final_layer_norm.bias",
+          "norm": 0.00025015961728058755,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn1_layer_norm.weight",
+          "norm": 4.0687722503207624e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn1_layer_norm.bias",
+          "norm": 4.3727424781536683e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn1.intermediate_dense.weight",
+          "norm": 0.0006802579737268388,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn1.intermediate_dense.bias",
+          "norm": 3.0717950721737e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn1.output_dense.weight",
+          "norm": 0.0015554132405668497,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn1.output_dense.bias",
+          "norm": 0.000120813179819379,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn_layer_norm.weight",
+          "norm": 0.00011531986092450097,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn_layer_norm.bias",
+          "norm": 0.00019575399346649647,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn.linear_q.weight",
+          "norm": 0.00048698330647312105,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn.linear_q.bias",
+          "norm": 3.363008363521658e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn.linear_k.weight",
+          "norm": 0.0005246284417808056,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn.linear_k.bias",
+          "norm": 4.067325469481187e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn.linear_v.weight",
+          "norm": 0.0022090317215770483,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn.linear_v.bias",
+          "norm": 0.00018353595805820078,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn.linear_out.weight",
+          "norm": 0.0030494362581521273,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.self_attn.linear_out.bias",
+          "norm": 0.0002493846113793552,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.conv_module.layer_norm.weight",
+          "norm": 3.7744364817626774e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.conv_module.layer_norm.bias",
+          "norm": 4.951451046508737e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.conv_module.pointwise_conv1.weight",
+          "norm": 0.0007538076024502516,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.conv_module.depthwise_conv.weight",
+          "norm": 0.000329025206156075,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.conv_module.batch_norm.weight",
+          "norm": 6.712863250868395e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.conv_module.batch_norm.bias",
+          "norm": 8.669214003020898e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.conv_module.pointwise_conv2.weight",
+          "norm": 0.0015987248625606298,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn2_layer_norm.weight",
+          "norm": 3.0495415558107197e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn2_layer_norm.bias",
+          "norm": 3.6102996091358364e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn2.intermediate_dense.weight",
+          "norm": 0.0006774290814064443,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn2.intermediate_dense.bias",
+          "norm": 2.696895353437867e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn2.output_dense.weight",
+          "norm": 0.001445115078240633,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.ffn2.output_dense.bias",
+          "norm": 0.00012158547906437889,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.final_layer_norm.weight",
+          "norm": 0.0005047799786552787,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.7.final_layer_norm.bias",
+          "norm": 0.00029280484886839986,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn1_layer_norm.weight",
+          "norm": 7.356618880294263e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn1_layer_norm.bias",
+          "norm": 6.342100095935166e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn1.intermediate_dense.weight",
+          "norm": 0.000982019118964672,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn1.intermediate_dense.bias",
+          "norm": 4.3008669308619574e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn1.output_dense.weight",
+          "norm": 0.001800463767722249,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn1.output_dense.bias",
+          "norm": 0.00013841388863511384,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn_layer_norm.weight",
+          "norm": 0.00017802842194214463,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn_layer_norm.bias",
+          "norm": 0.0002393119502812624,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn.linear_q.weight",
+          "norm": 0.0005176715785637498,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn.linear_q.bias",
+          "norm": 3.658438436104916e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn.linear_k.weight",
+          "norm": 0.0005765330279245973,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn.linear_k.bias",
+          "norm": 4.330266180352371e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn.linear_v.weight",
+          "norm": 0.003031487576663494,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn.linear_v.bias",
+          "norm": 0.00023676366254221648,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn.linear_out.weight",
+          "norm": 0.003295070258900523,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.self_attn.linear_out.bias",
+          "norm": 0.0002635636192280799,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.conv_module.layer_norm.weight",
+          "norm": 4.1437975596636534e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.conv_module.layer_norm.bias",
+          "norm": 5.524678635993041e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.conv_module.pointwise_conv1.weight",
+          "norm": 0.0009712573955766857,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.conv_module.depthwise_conv.weight",
+          "norm": 0.00043311718036420643,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.conv_module.batch_norm.weight",
+          "norm": 7.325756450882182e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.conv_module.batch_norm.bias",
+          "norm": 9.129801037488505e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.conv_module.pointwise_conv2.weight",
+          "norm": 0.001918833702802658,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn2_layer_norm.weight",
+          "norm": 4.721473669633269e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn2_layer_norm.bias",
+          "norm": 5.151125878910534e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn2.intermediate_dense.weight",
+          "norm": 0.0010219387477263808,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn2.intermediate_dense.bias",
+          "norm": 3.9058937545632944e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn2.output_dense.weight",
+          "norm": 0.001700366847217083,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.ffn2.output_dense.bias",
+          "norm": 0.00012970830721314996,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.final_layer_norm.weight",
+          "norm": 0.0004930740687996149,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.8.final_layer_norm.bias",
+          "norm": 0.0003397990367375314,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn1_layer_norm.weight",
+          "norm": 9.462825983064249e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn1_layer_norm.bias",
+          "norm": 8.508606697432697e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn1.intermediate_dense.weight",
+          "norm": 0.0014557208633050323,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn1.intermediate_dense.bias",
+          "norm": 6.139952165540308e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn1.output_dense.weight",
+          "norm": 0.002105790190398693,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn1.output_dense.bias",
+          "norm": 0.0001618479727767408,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn_layer_norm.weight",
+          "norm": 0.000206911179702729,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn_layer_norm.bias",
+          "norm": 0.0003131320409011096,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn.linear_q.weight",
+          "norm": 0.001015073386952281,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn.linear_q.bias",
+          "norm": 5.714071085094474e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn.linear_k.weight",
+          "norm": 0.001253085327334702,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn.linear_k.bias",
+          "norm": 7.311594038550417e-12,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn.linear_v.weight",
+          "norm": 0.003765045665204525,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn.linear_v.bias",
+          "norm": 0.0002614289987832308,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn.linear_out.weight",
+          "norm": 0.004335620440542698,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.self_attn.linear_out.bias",
+          "norm": 0.00032022714731283486,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.conv_module.layer_norm.weight",
+          "norm": 9.340476390207186e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.conv_module.layer_norm.bias",
+          "norm": 0.00012093663099221885,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.conv_module.pointwise_conv1.weight",
+          "norm": 0.0019159327493980527,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.conv_module.depthwise_conv.weight",
+          "norm": 0.0006190909771248698,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.conv_module.batch_norm.weight",
+          "norm": 0.0001161563050118275,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.conv_module.batch_norm.bias",
+          "norm": 0.00011691435793181881,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.conv_module.pointwise_conv2.weight",
+          "norm": 0.002433106070384383,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn2_layer_norm.weight",
+          "norm": 6.95483831805177e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn2_layer_norm.bias",
+          "norm": 7.779437873978168e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn2.intermediate_dense.weight",
+          "norm": 0.001566325780004263,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn2.intermediate_dense.bias",
+          "norm": 5.970328857074492e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn2.output_dense.weight",
+          "norm": 0.0021286914125084877,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.ffn2.output_dense.bias",
+          "norm": 0.00014889644808135927,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.final_layer_norm.weight",
+          "norm": 0.0004718185809906572,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.9.final_layer_norm.bias",
+          "norm": 0.00044445012463256717,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn1_layer_norm.weight",
+          "norm": 0.00012838233669754118,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn1_layer_norm.bias",
+          "norm": 0.00012124748900532722,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn1.intermediate_dense.weight",
+          "norm": 0.002195151289924979,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn1.intermediate_dense.bias",
+          "norm": 9.010748181026429e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn1.output_dense.weight",
+          "norm": 0.00287311477586627,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn1.output_dense.bias",
+          "norm": 0.00021036327234469354,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn_layer_norm.weight",
+          "norm": 0.00039898595423437655,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn_layer_norm.bias",
+          "norm": 0.00048081105342134833,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn.linear_q.weight",
+          "norm": 0.0013799594016745687,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn.linear_q.bias",
+          "norm": 7.045803795335814e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn.linear_k.weight",
+          "norm": 0.00202415999956429,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn.linear_k.bias",
+          "norm": 1.4262273653753432e-11,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn.linear_v.weight",
+          "norm": 0.006100974977016449,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn.linear_v.bias",
+          "norm": 0.00036101258592680097,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn.linear_out.weight",
+          "norm": 0.004922815598547459,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.self_attn.linear_out.bias",
+          "norm": 0.0002496799861546606,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.conv_module.layer_norm.weight",
+          "norm": 0.00010133413888979703,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.conv_module.layer_norm.bias",
+          "norm": 0.0001263028389075771,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.conv_module.pointwise_conv1.weight",
+          "norm": 0.0019959271885454655,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.conv_module.depthwise_conv.weight",
+          "norm": 0.0016302827280014753,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.conv_module.batch_norm.weight",
+          "norm": 0.00017012959870044142,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.conv_module.batch_norm.bias",
+          "norm": 0.0001496030599810183,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.conv_module.pointwise_conv2.weight",
+          "norm": 0.002296057064086199,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn2_layer_norm.weight",
+          "norm": 0.0001343192852800712,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn2_layer_norm.bias",
+          "norm": 0.00014931891928426921,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn2.intermediate_dense.weight",
+          "norm": 0.00208167708478868,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn2.intermediate_dense.bias",
+          "norm": 7.708946941420436e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn2.output_dense.weight",
+          "norm": 0.002180711831897497,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.ffn2.output_dense.bias",
+          "norm": 0.00010894015576923266,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.final_layer_norm.weight",
+          "norm": 0.0003161310451105237,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.10.final_layer_norm.bias",
+          "norm": 0.0004033598816022277,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn1_layer_norm.weight",
+          "norm": 0.00012348128075245768,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn1_layer_norm.bias",
+          "norm": 0.00013900855265092105,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn1.intermediate_dense.weight",
+          "norm": 0.0021808380261063576,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn1.intermediate_dense.bias",
+          "norm": 9.061817399924621e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn1.output_dense.weight",
+          "norm": 0.002684658858925104,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn1.output_dense.bias",
+          "norm": 0.00018864164303522557,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn_layer_norm.weight",
+          "norm": 0.00030402623815461993,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn_layer_norm.bias",
+          "norm": 0.0005084691802039742,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn.linear_q.weight",
+          "norm": 0.0012482935562729836,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn.linear_q.bias",
+          "norm": 6.932249380042776e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn.linear_k.weight",
+          "norm": 0.0013065775856375694,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn.linear_k.bias",
+          "norm": 1.0572869836578125e-11,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn.linear_v.weight",
+          "norm": 0.006816248409450054,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn.linear_v.bias",
+          "norm": 0.00041609114850871265,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn.linear_out.weight",
+          "norm": 0.003541697049513459,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.self_attn.linear_out.bias",
+          "norm": 0.0002785375399980694,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.conv_module.layer_norm.weight",
+          "norm": 0.00013072157162241638,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.conv_module.layer_norm.bias",
+          "norm": 0.00016955568571574986,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.conv_module.pointwise_conv1.weight",
+          "norm": 0.0028027561493217945,
+          "elements": 2097152
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.conv_module.depthwise_conv.weight",
+          "norm": 0.002018152503296733,
+          "elements": 31744
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.conv_module.batch_norm.weight",
+          "norm": 0.00022297869145404547,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.conv_module.batch_norm.bias",
+          "norm": 0.00018565876234788448,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.conv_module.pointwise_conv2.weight",
+          "norm": 0.0024092625826597214,
+          "elements": 1048576
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn2_layer_norm.weight",
+          "norm": 6.830886559328064e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn2_layer_norm.bias",
+          "norm": 7.382116746157408e-05,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn2.intermediate_dense.weight",
+          "norm": 0.0014392302837222815,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn2.intermediate_dense.bias",
+          "norm": 5.281054836814292e-05,
+          "elements": 4096
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn2.output_dense.weight",
+          "norm": 0.0015471894294023514,
+          "elements": 4194304
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.ffn2.output_dense.bias",
+          "norm": 0.00010435182775836438,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.final_layer_norm.weight",
+          "norm": 0.0003304536221548915,
+          "elements": 1024
+        },
+        {
+          "name": "backbone.model.conformer.layers.11.final_layer_norm.bias",
+          "norm": 0.0004591599863488227,
+          "elements": 1024
+        }
+      ]
+    },
+    "adapter": {
+      "tensors": 38,
+      "squared_norm_sum": 0.5812194799081107,
+      "nonzero_tensors": 38,
+      "rows": [
+        {
+          "name": "adapter.stereo_positions",
+          "norm": 0.00010174208000535145,
+          "elements": 512
+        },
+        {
+          "name": "adapter.memory_projection.weight",
+          "norm": 0.0036014507059007883,
+          "elements": 262144
+        },
+        {
+          "name": "adapter.memory_projection.bias",
+          "norm": 0.00014384555106516927,
+          "elements": 256
+        },
+        {
+          "name": "adapter.query_positions.weight",
+          "norm": 0.0010211355984210968,
+          "elements": 364288
+        },
+        {
+          "name": "adapter.context_projection.weight",
+          "norm": 0.0729786604642868,
+          "elements": 1310720
+        },
+        {
+          "name": "adapter.context_projection.bias",
+          "norm": 0.00030980247538536787,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.0.query_norm.weight",
+          "norm": 1.2284804142836947e-05,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.0.query_norm.bias",
+          "norm": 1.030281691782875e-05,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.0.memory_norm.weight",
+          "norm": 0.0001318829890806228,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.0.memory_norm.bias",
+          "norm": 0.00014224906044546515,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.0.cross_attention.in_proj_weight",
+          "norm": 0.002750086598098278,
+          "elements": 196608
+        },
+        {
+          "name": "adapter.blocks.0.cross_attention.in_proj_bias",
+          "norm": 0.00017715428839437664,
+          "elements": 768
+        },
+        {
+          "name": "adapter.blocks.0.cross_attention.out_proj.weight",
+          "norm": 0.009190755896270275,
+          "elements": 65536
+        },
+        {
+          "name": "adapter.blocks.0.cross_attention.out_proj.bias",
+          "norm": 0.0003098076849710196,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.0.ffn_norm.weight",
+          "norm": 0.0001053550950018689,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.0.ffn_norm.bias",
+          "norm": 0.0001007076061796397,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.0.ffn.0.weight",
+          "norm": 0.0025552730076014996,
+          "elements": 262144
+        },
+        {
+          "name": "adapter.blocks.0.ffn.0.bias",
+          "norm": 0.00014674935664515942,
+          "elements": 1024
+        },
+        {
+          "name": "adapter.blocks.0.ffn.2.weight",
+          "norm": 0.025246577337384224,
+          "elements": 262144
+        },
+        {
+          "name": "adapter.blocks.0.ffn.2.bias",
+          "norm": 0.0003095195861533284,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.1.query_norm.weight",
+          "norm": 9.972586667572614e-06,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.1.query_norm.bias",
+          "norm": 9.923047400661744e-06,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.1.memory_norm.weight",
+          "norm": 0.00013696223322767764,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.1.memory_norm.bias",
+          "norm": 0.00013733164814766496,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.1.cross_attention.in_proj_weight",
+          "norm": 0.002633534139022231,
+          "elements": 196608
+        },
+        {
+          "name": "adapter.blocks.1.cross_attention.in_proj_bias",
+          "norm": 0.0001705608592601493,
+          "elements": 768
+        },
+        {
+          "name": "adapter.blocks.1.cross_attention.out_proj.weight",
+          "norm": 0.0056618633680045605,
+          "elements": 65536
+        },
+        {
+          "name": "adapter.blocks.1.cross_attention.out_proj.bias",
+          "norm": 0.00030949851498007774,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.1.ffn_norm.weight",
+          "norm": 8.430596790276468e-05,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.1.ffn_norm.bias",
+          "norm": 8.322616486111656e-05,
+          "elements": 256
+        },
+        {
+          "name": "adapter.blocks.1.ffn.0.weight",
+          "norm": 0.0023503366392105818,
+          "elements": 262144
+        },
+        {
+          "name": "adapter.blocks.1.ffn.0.bias",
+          "norm": 0.00013447120727505535,
+          "elements": 1024
+        },
+        {
+          "name": "adapter.blocks.1.ffn.2.weight",
+          "norm": 0.03256281092762947,
+          "elements": 262144
+        },
+        {
+          "name": "adapter.blocks.1.ffn.2.bias",
+          "norm": 0.00030962901655584574,
+          "elements": 256
+        },
+        {
+          "name": "adapter.output_norm.weight",
+          "norm": 0.014765516854822636,
+          "elements": 256
+        },
+        {
+          "name": "adapter.output_norm.bias",
+          "norm": 0.014493923634290695,
+          "elements": 256
+        },
+        {
+          "name": "adapter.raw_output.weight",
+          "norm": 0.7569209933280945,
+          "elements": 1310720
+        },
+        {
+          "name": "adapter.raw_output.bias",
+          "norm": 0.026087753474712372,
+          "elements": 5120
+        }
+      ]
+    },
+    "length_head": {
+      "tensors": 0,
+      "squared_norm_sum": 0,
+      "nonzero_tensors": 0,
+      "rows": []
+    }
+  },
+  "parameters_and_buffers_unchanged": true,
+  "optimizer_updates": 0,
+  "length_head_requires_separate_existing_length_loss": true,
+  "scope": "Exact chain-rule VJP replay of frozen-H3 condition loss; no optimizer step or generation claim"
+}

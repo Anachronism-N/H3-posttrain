@@ -1,0 +1,50 @@
+{
+  "complete": true,
+  "sample_id": "AAcaGYtiTozEttaF",
+  "loss": 0.02112872153520584,
+  "original_tail_sha256": "0fbe4726071ca3e823a1c108e170f9c762d620af7e66eca14563b56ed4d12508",
+  "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+  "cache_sha256": "1109241f6871a05e849c740af9f8c03461efba98e9ce42feb971f926d213d87e",
+  "export_sha256": "9f27d5229b2ee208429c5f06722c96e9970730ccd4b3c56d42ee8d0f555ec567",
+  "teacher_prediction_sha256": "2cb376001de2142a8a84be6d98248bf8b1d07d13d209cf68407d35b5789216e2",
+  "student_prediction_sha256": "db3761109af680c7614900574a911179d3e15d722a6ea6201d243febb84e507a",
+  "teacher_length": 509,
+  "student_length": 352,
+  "h3_state_hashes_unchanged": true,
+  "h3_parameter_gradients_absent": true,
+  "student_condition_gradient_norm": 0.012316602282226086,
+  "teacher_and_student_use_same_noisy_latents": true,
+  "teacher_no_grad": true,
+  "own_packed_sequence_lengths": [
+    48768,
+    48640
+  ],
+  "sigma": 0.9,
+  "noise_seed": 42,
+  "latent_frames": 37,
+  "native_music_bypass": false,
+  "frozen_cache_native_audio_metadata": {
+    "cache_path": "/opt/h3cache/hr/2/0.pth",
+    "cache_sha256": "20b6733664175b616e22cedbd61a6b174bbc2b3520de2245379e3bc572eb9f84",
+    "image_sha256": "399fe8baaf159ff5c4934289f355c3139d0f33388e225026d99921954d91eeef",
+    "teacher_caption_sha256": "24a0a31b05a933f06a0632fe39d8fcae5f5a27de50fc4e4e5c25f086a26bed70",
+    "prepared_image_size": [
+      2048,
+      3712
+    ],
+    "prefix_exact": true,
+    "native_music_bypass": false,
+    "silence_waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+    "ref_audio_sha256": "a808b6babfafca95903414d924072343918441b00e218b3e46e2f7243bd9755e",
+    "retake_sha256": "d679711050305db104ecce86090430e2204872c7d069ce56e1b5aa289ffc5a72",
+    "mask_sha256": "854366c9d4056ede4bb2a87f1c8335c7e8f6682af283abe23202856d29a629c0"
+  },
+  "attention_implementation": "torch",
+  "mlp_chunk_tokens": 0,
+  "pointwise_mlp_parity": [],
+  "h3_second_device": "cuda:1",
+  "cuda_second_peak_bytes": 51890562560,
+  "cuda_peak_bytes": 53718589440,
+  "prediction_seconds": 289.0049306023866,
+  "scope": "Frozen teacher/student video velocity consistency and leaf VJP, not GT velocity regression or generation acceptance"
+}

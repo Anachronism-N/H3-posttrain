@@ -10,6 +10,14 @@
 
 **2026-10-19执行接续：** 拉取`013f236`新增说明后，在线骨干＋完整adapter、预测有效区间共享及V2完整checkpoint已实现。3train+1val空语义图context逐值审计、A/B真实4样本3更新梯度/权重变化、独立部署及原生prefix/tags/packed验收已通过；B实际400个dense骨干tensor更新，A骨干不变。A/B/C同起点100与300步共六组训练及54个原/换/零音乐视频已完整验收并发布，最终清单30模型/3人物/13预设。音乐骨干真实更新、共享学生条件和完整部署已证实，但本配方仍未建立可用音乐编舞或明显骨干训练收益；实验完成不等于目标效果达成。完整代码入口、协议、实测与最终受限结论见`notes/25_music_h_training_clip_dpo_and_generation_20261019.md`执行接续节及`results/ms_20261017/music_text_online_*`报告，旧阶段负结果保留。
 
+## 2026-10-19 新授权：冻结H3预测一致性小规模实验
+
+用户已明确选择“授权小规模实验”：允许新增冻结H3去噪预测一致性loss，仅更新MusicFM实际dense骨干和完整raw H adapter；先验证实际条件梯度、冻结权重及显存，再做有／无该loss受控对照和固定三个case视频。学生依旧仅输入音乐与参考图，教师动作文字只作监督；H3文本encoder、DiT和VAE不训练，不恢复生成动作prompt。此授权取代下文历史阶段“完全不加DiT/video loss”对此特定小实验的限制，不代表允许GT FM目标、其他生成loss或扩量扫描。
+
+两套依赖环境按精确链式法则连接：音乐环境输出完整学生自身预测tail；H3环境以同一FP32 tail为leaf，经过原BF16cast/replace_tail/packed/冻结DiT，计算teacher无梯度与student有梯度的预测MSE，返回tail VJP；音乐环境按同完整checkpoint、wave/context重算并逐值复现tail后反传VJP。该边界不同于detach推理代理：梯度被显式回传，重算失败即不更新。预测长度round/long仍不传行为梯度，保留原长度监督；teacher长度从不决定student tail或packed。
+
+首个真实缓存3train+1val与原1800/200 split一致，实际704×1280/124帧训练latent及参考图anchor来自N5原hr缓存，空prefix与旧cache对应prefix逐值exact；两路native真实音乐替换为同5.0625秒静音波形经过冻结原audio-VAE的reference/retake（含尾部repeat_clean，mask全零），不是填零latent。先截取2个video latent帧作显存/梯度smoke，不能将短时长测试当124帧训练通过；随后原37 latent全长检查。teacher/student使用相同noisy video/audio、time、reference/full prefix，各按自身尾长构建原packed。
+
 ## 用户确认的范围
 - 当前改用专用音乐 encoder，视频生成也使用同一个微调 encoder；不是只算CLIP分数，也不是额外MERT残差注入。
 - 同时尝试 **严格CLIP** 和 **原生latent桥接＋CLIP**，允许桥接监督。冻结H3文本encoder、DiT及audio decoder；不用caption检索，不增加DiT/video loss。

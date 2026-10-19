@@ -1,0 +1,17 @@
+{
+  "complete": true,
+  "groups": [
+    {
+      "name": "A",
+      "exit_code": 0,
+      "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_online_A_s300_zero_v1"
+    },
+    {
+      "name": "B",
+      "exit_code": 0,
+      "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_online_B_s300_zero_v1"
+    }
+  ],
+  "expected_videos": 6,
+  "full_decode_checked": false
+}

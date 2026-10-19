@@ -1,0 +1,24 @@
+{
+  "complete": true,
+  "technical_audit": "music_text_online_C_s100_all9_audit_v1.json",
+  "scope": "Six sampled frames of each completed original/swapped/zero video; not continuous listening, quantitative beat adherence or user ratings",
+  "videos": 9,
+  "source_people": 3,
+  "single_parameter_ablation": "length_weight0.01 versus B length_weight1; same full-backbone/adapter initialization, data, order, budget and student condition",
+  "assessment": {
+    "usable_music_choreography_established": false,
+    "length_weight_reduction_generation_gain_established": false,
+    "staircase": "Original and swapped retain arm gestures and rear leg curl; zero also follows the same general motif. White/blue sportswear and a bag replace the reference light-yellow top and grey trousers.",
+    "red_outfit": "Original/swapped largely retain face/mouth gesture, head turn and one-arm lift; zero changes the later arm extension and opens both arms at the final sampled frame, but does not establish song-conditioned choreography.",
+    "shop": "Original/swapped/zero retain mostly stationary single-arm gestures with small shifts, rather than a clearly distinct dance sequence.",
+    "observed_condition_response": true,
+    "new_user_feedback": false,
+    "rhythm_or_caption_adherence_scored": false
+  },
+  "limitations": [
+    "Predicted effective H lengths and packed layouts change across original/swapped/zero inputs.",
+    "Pixel MAE and local pose changes are not proof of matching the song or paired caption.",
+    "These observations concern the 100-update model; the 300-update models must be assessed separately.",
+    "Four-sample gradient magnitudes do not prove that length loss is the sole cause of weak control."
+  ]
+}

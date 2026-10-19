@@ -1,0 +1,13 @@
+{
+  "complete": true,
+  "expected_videos": 27,
+  "groups": [
+    "text_online_A_s300_v1",
+    "text_online_A_s300_zero_v1",
+    "text_online_B_s300_v1",
+    "text_online_B_s300_zero_v1",
+    "text_online_C_len001_s300_v1",
+    "text_online_C_len001_s300_zero_v1"
+  ],
+  "prior_manager_errors_preserved": true
+}

@@ -1,0 +1,29 @@
+{
+  "complete": true,
+  "scope": "Six sampled frames per video; not continuous audiovisual listening or a new user rating",
+  "technical_audit": "music_text_online_AB_s100_all18_audit_v1.json",
+  "configurations": ["text_online_A_s100_v1", "text_online_A_s100_zero_v1", "text_online_B_s100_v1", "text_online_B_s100_zero_v1"],
+  "videos": 18,
+  "source_people": 3,
+  "native_real_music_bypass": false,
+  "student_inputs": ["music", "reference_image_structural_context"],
+  "semantic_action_text_at_generation": false,
+  "assessment": {
+    "usable_music_choreography_established": false,
+    "backbone_training_increment_established": false,
+    "observed_condition_response": "Original/swapped/zero inputs change some poses; the general small-gesture motif remains similar.",
+    "reference_fidelity": "The staircase reference's light-yellow top and grey trousers still become white/blue sportswear and a small bag in several outputs.",
+    "staircase": "Small arm gestures, leg curl and local pose changes persist in both A/B and zero input; no sampled-frame evidence of a substantially richer choreography.",
+    "red_outfit": "Head turn and hand/arm near face or mouth remain common across original, swapped and zero conditions; B swapped has local timing/pose differences.",
+    "shop": "Mostly stationary single-arm gestures and small weight shifts across A/B original, swapped and zero; sampled frames do not establish dance-control gain.",
+    "visual_quality": "No obvious gross frame corruption in sampled frames; this is not a quantified sharpness or complete visual-quality verdict.",
+    "rhythm_or_caption_adherence_scored": false,
+    "new_user_feedback": false
+  },
+  "limitations": [
+    "Predicted token lengths differ and change packed layouts, so video differences cannot be attributed only to learned music semantics.",
+    "Unaligned RGB MAE is not musical adherence or pose accuracy.",
+    "One hundred updates do not establish convergence; three-hundred-update comparisons and their videos remain separate work.",
+    "Technical integrity and correct full-model deployment are not proof of successful music-to-choreography learning."
+  ]
+}

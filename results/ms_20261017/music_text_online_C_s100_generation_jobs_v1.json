@@ -1,0 +1,44 @@
+{
+  "complete": true,
+  "groups": [
+    {
+      "tag": "text_online_C_len001_s100_v1",
+      "exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_oracle_generate.py",
+        "--root",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff",
+        "--checkpoint",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s100_v1/last.pt",
+        "--out",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_online_C_len001_s100_v1",
+        "--hosts",
+        "root@28.216.17.70",
+        "root@28.216.19.213",
+        "root@28.216.19.225"
+      ]
+    },
+    {
+      "tag": "text_online_C_len001_s100_zero_v1",
+      "exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_oracle_generate.py",
+        "--root",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff",
+        "--checkpoint",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s100_v1/last.pt",
+        "--out",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_online_C_len001_s100_zero_v1",
+        "--hosts",
+        "root@28.216.17.70",
+        "root@28.216.19.213",
+        "root@28.216.19.225",
+        "--joint_only",
+        "--zero_input"
+      ]
+    }
+  ],
+  "expected_videos": 9
+}

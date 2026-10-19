@@ -1,0 +1,28 @@
+{
+  "complete": true,
+  "technical_audit": "music_text_online_ABC_s300_all27_audit_v2.json",
+  "scope": "Reference images and six sampled frames at0/1/2/3/4/5.125 seconds per video; not continuous audiovisual listening, beat scoring or new user ratings",
+  "videos": 27,
+  "source_people": 3,
+  "configurations": ["A frozen backbone, length_weight1", "B trainable dense backbone, length_weight1", "C trainable dense backbone, length_weight0.01"],
+  "assessment": {
+    "usable_music_choreography_established": false,
+    "backbone_training_generation_gain_established": false,
+    "length_weight_reduction_generation_gain_established": false,
+    "observed_music_condition_response": true,
+    "staircase": "All original/swapped/zero configurations retain small arm gestures and rear leg curls. The light-yellow top and grey trousers still become white/blue sportswear, often with a bag. B original and swapped share the same main motif; zero changes some positions and poses.",
+    "red_outfit": "Most configurations retain hand-to-mouth, hand behind head and small upper-body gestures. A swapped and C zero show larger late two-arm movement; larger movement is not evidence of correct music-conditioned choreography, particularly when present in zero input.",
+    "shop": "Mostly stationary single-arm gestures and small weight shifts across all three models and zero inputs. Local differences remain, but the sampled sequences do not demonstrate substantially different song-driven dance plans.",
+    "visual_quality": "No obvious catastrophic frame corruption in inspected samples. No quantitative sharpness equivalence or full continuous visual-quality verdict is claimed.",
+    "caption_or_rhythm_accuracy_measured": false,
+    "new_user_feedback": false
+  },
+  "evidence_boundaries": [
+    "All300 models completed training and complete deployment/layout audits; the updated dense backbone was actually used.",
+    "Correct/wrong music representation diagnostics remain weak and train positional-mean H still has lower validation MSE.",
+    "Prediction-length changes also change packed layout; RGB differences do not isolate semantic control.",
+    "Length gradients were larger than semantic-loss gradients in four selected samples, but the length0.01 ablation did not establish a useful generation gain or a sole root cause.",
+    "One hundred and three hundred updates are bounded budget checks, not evidence of full convergence or impossibility of the overall music-to-H idea.",
+    "No DiT/video/denoising-prediction loss was introduced. Further generation-behavior supervision requires separate authorization."
+  ]
+}

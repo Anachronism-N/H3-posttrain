@@ -1,0 +1,341 @@
+{
+  "complete": true,
+  "page_status": 200,
+  "manifest_status": 200,
+  "models": 30,
+  "presets": 13,
+  "source_people": 3,
+  "range_verified_videos": 54,
+  "rows": [
+    {
+      "tag": "text_online_A_s100_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s100_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s100_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s100_v1",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s100_v1",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s100_v1",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s100_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s100_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s100_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s100_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s100_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s100_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s100_v1",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s100_v1",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s100_v1",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s100_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s100_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s100_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s100_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s100_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s100_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s100_v1",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s100_v1",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s100_v1",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s100_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s100_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s100_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s300_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s300_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s300_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s300_v1",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s300_v1",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s300_v1",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s300_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s300_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_A_s300_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s300_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s300_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s300_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s300_v1",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s300_v1",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s300_v1",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s300_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s300_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_B_s300_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s300_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s300_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s300_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s300_v1",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s300_v1",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s300_v1",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s300_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s300_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "range_status": 206
+    },
+    {
+      "tag": "text_online_C_len001_s300_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "range_status": 206
+    }
+  ],
+  "cross_node": {
+    "status": 200,
+    "models": 30
+  },
+  "preserved_original_samples_models_and_presets": true,
+  "musical_quality_accepted": false
+}

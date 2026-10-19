@@ -347,3 +347,26 @@ B300正确−静音score -0.005302，C300为+0.002735；这是各自预测长度
 八节点最终只读核查无本轮训练/采样/推理/审计进程，GPU7各975MiB/100%为占卡程序，不计实验利用率；保留工具管理的8766评审服务。实际六组优化GPU时间合计约23.70分钟（A10066.514+B100142.618+C100143.304+A300198.787+B300433.236+C300437.327秒），不含IO/验证/存权重/生成，不能以holder100%或启动器总时长替代。生成主要利用八节点各一张卡、每节点一个H3冷加载。
 
 最终独立复核代理Explore-1因守护进程内存不足未启动、没有产出；主线程随后直接检查六组protocol、200val、实际更新scope、完整部署、54唯一视频日志SHA及解码记录、最终清单原模型/预设保留，检查通过。不能冒称失败代理提供了独立分析。
+
+## 2026-10-19 后续只读消融：同长度评分没有改变弱音乐判别结论
+
+用户要求持续推进后，先复用已完成A/B/C300完整权重和N5本地waveform/teacher bundle，**零optimizer更新、不校准长度头、不改生成条件、不新增视频**。初步保存结果中score margin与“正确预测长度比wrong更接近teacher长度”的Pearson相关分别0.62516/0.47793/0.74488；但相关性不是长度捷径的因果证据，且自然预测长度相同的样本仅2/4/1条，不能用该小子集判别。
+
+实际消融对每个200val样本的正确/两真实wrong/zero四个输出，先按原学生自身长度重算旧score，再使用四者预测长度最小值的共同可见query交集作为**评分mask**。teacher原有效区间仍仅用于监督，交集长度也不馈入学生；原生学生生成的raw H、log长度、截断tail完全不改。该实验只消除同一次候选评分中的长度选择差异，**不是固定H3 packed布局的视频实验**，也没有引入teacher长度部署。
+
+N5 GPU6完成三模型各200val两次独立执行：最初临时命令与正式`music_text_diagnostic.py --common_interval`入口600条case和统计逐值相同；原score最大绝对误差0、原预测长度全部exact，完整checkpoint SHA/bundle SHA及所有state参数/buffers与原weight audit一致，运行前后不变。报告`results/ms_20261017/music_text_online_s300_common_interval_diagnostic_v2.json`。
+
+| 300步模型 | 原correct>wrong | 共同区间correct>wrong | 共同区间margin wrong | 共同teacher交集MSE正确更优 |
+|---|---:|---:|---:|---:|
+| A冻结 | 47.5% | 47.5% | -0.00024197 | 50.0% |
+| B骨干联训length1 | 45.5% | 45.5% | -0.00026837 | 47.5% |
+| C骨干联训length0.01 | 51.5% | 51.5% | +0.00036668 | 52.0% |
+
+两真实wrong的共同区间胜率分别A47.5%/57.5%、B45.5%/45.5%、C51.5%/58.5%；共同区间correct>zero为53.0%/21.0%/74.5%。zero可分不能替代真实音乐语义判别。固定query交集后score变化很小，三个模型对第一真实wrong胜率均不变，**不能把原score弱判别或C的轻微正margin单独归咎于评分长度差**。该结果也不排除长度在原H3视频布局中的影响、不证明内容条件足够、不判定唯一根因；视频反事实混淆仍未在同布局干预下测过。
+
+复现入口（在已核验N5环境执行，输出必须是新路径）：
+```sh
+CUDA_VISIBLE_DEVICES=6 OMP_NUM_THREADS=2 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 /opt/venv_music/bin/python scripts_omnidance/exp/ms/music_text_diagnostic.py --common_interval --exp_root /apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp --bundle /tmp/music_text_online_inputs_v1.pt --runs music_text_online_A_s300_v1 music_text_online_B_s300_v1 music_text_online_C_len001_s300_v1 --out /apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_s300_common_interval_reproduction.json
+```
+
+下一步不再自动扫描相同CLIP/MSE更多步数或校准length。若进一步采用冻结H3的去噪预测一致性监督，只优化MusicFM和完整adapter，需要单独明确授权，因为此前限定不加DiT/video/生成预测loss；本诊断没有越过该边界。只读探索代理本次再次上游错误退出，没有可用结论，以上由主线程代码读取和实际结果核验完成。

@@ -319,7 +319,114 @@ def online_audit_main():
     print(json.dumps(dict(event='online_all_audited', passed=expected_count, out=str(args.out), pixel_pairs=pixel_pairs)), flush=True)
 
 
+def common_interval_main():
+    import numpy as np
+    import torch
+    from music_text_adapter import load_music_text_checkpoint
+    from music_text_contrastive import (
+        _online_batch, _online_conditions, _online_scores, _state_hashes, score_samples,
+    )
+    parser = argparse.ArgumentParser(description='Read-only scoring-length ablation of completed online checkpoints')
+    parser.add_argument('--common_interval', action='store_true', required=True)
+    parser.add_argument('--exp_root', type=Path, required=True)
+    parser.add_argument('--bundle', type=Path, required=True)
+    parser.add_argument('--runs', nargs='+', required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if (args.out.exists() or not args.out.parent.is_dir() or len(set(args.runs)) != len(args.runs)
+            or any(Path(name).name != name or name in ('.', '..') for name in args.runs)):
+        parser.error('Require unique path-free run names and a new report with an existing parent')
+    torch.set_num_threads(2)
+    torch.manual_seed(42)
+    torch.cuda.manual_seed_all(42)
+    bundle_hash = sha256(args.bundle)
+    bundle = torch.load(args.bundle, map_location='cpu', weights_only=True)
+    mean, std = bundle['mean'].cuda(), bundle['std'].cuda()
+    models = []
+    for run in args.runs:
+        directory = args.exp_root / 'MS' / run
+        summary = json.loads((directory / 'finished.json').read_text())
+        checkpoint = directory / 'last.pt'
+        if (summary.get('complete') is not True or sha256(checkpoint) != summary['checkpoint_sha256']
+                or bundle_hash != summary['protocol']['online_bundle_sha256']):
+            raise ValueError('Completed checkpoint or waveform bundle identity differs from its training record')
+        ids = summary['protocol']['validation_ids']
+        saved = json.loads((directory / 'final_validation.json').read_text())
+        if ids != bundle['metadata']['val_ids'] or saved['candidates'] != len(ids):
+            raise ValueError('Validation pool differs from the completed experiment')
+        lookup = {row['sample_id']: row for row in saved['cases']}
+        if len(lookup) != len(ids) or set(lookup) != set(ids):
+            raise ValueError('Saved validation rows are missing or duplicated')
+        model = load_music_text_checkpoint(checkpoint, expected_backend='musicfm').cuda().eval()
+        before = _state_hashes(model)
+        if before != json.loads((directory / 'weight_update_audit.json').read_text())['after_sha256']:
+            raise ValueError('Loaded parameters or buffers differ from the completed weight audit')
+        rows, maximum_error = [], 0.
+        with torch.no_grad():
+            for start in range(0, len(ids), summary['protocol']['microbatch']):
+                names = ids[start:start + summary['protocol']['microbatch']]
+                wave, context, target, lengths, teacher_mask = _online_batch(names, bundle, model.adapter.qmax)
+                conditions, wrong_ids, second_ids = _online_conditions(model, names, ids, bundle, context, 1)
+                zero = model.student_condition(torch.zeros_like(wave), context)
+                outputs = conditions + [zero]
+                native = _online_scores(outputs, target, teacher_mask, mean, std)
+                predicted = torch.stack([output['lengths'] for output in outputs], dim=1)
+                common_lengths = predicted.min(dim=1).values
+                common_mask = torch.arange(model.adapter.qmax, device='cuda')[None] < common_lengths[:, None]
+                common = torch.stack([score_samples(output['raw_tokens'], target, teacher_mask, mean, std,
+                                                     student_mask=common_mask) for output in outputs], dim=1)
+                for i, sid in enumerate(names):
+                    old = lookup[sid]
+                    if (wrong_ids[i] != old['wrong_audio_id'] or second_ids[i] != old['second_audio_id']
+                            or predicted[i].tolist() != old['predicted_lengths'] + [old['zero_length']]):
+                        raise ValueError('Original counterfactual IDs or predicted lengths were not reproduced')
+                    error = max(abs(a - b) for a, b in zip(native[i].tolist(), old['scores'] + [old['zero_score']]))
+                    maximum_error = max(maximum_error, error)
+                    if error > 1e-6:
+                        raise ValueError('Original scores were not reproduced: ' + sid)
+                    overlap = min(int(common_lengths[i]), int(lengths[i]))
+                    rows.append(dict(sample_id=sid, wrong_audio_id=wrong_ids[i], second_audio_id=second_ids[i],
+                        target_length_supervision_only=int(lengths[i]), predicted_lengths_original=predicted[i].tolist(),
+                        common_score_interval=int(common_lengths[i]), native_scores_reproduced=native[i].tolist(),
+                        common_interval_scores=common[i].tolist(),
+                        common_interval_margin_wrong=float(common[i, 0] - common[i, 1]),
+                        common_interval_margin_second=float(common[i, 0] - common[i, 2]),
+                        common_interval_margin_zero=float(common[i, 0] - common[i, 3]),
+                        shared_teacher_overlap_mse=[float((output['raw_tokens'][i, :overlap] - target[i, :overlap]).square().mean())
+                                                    for output in outputs], overlap_length_supervision_only=overlap))
+                del conditions, outputs, zero, native, common, wave, context, target
+        if before != _state_hashes(model):
+            raise ValueError('Read-only evaluation changed model parameters or buffers')
+        native_margin = [row['native_scores_reproduced'][0] - row['native_scores_reproduced'][1] for row in rows]
+        closeness = [abs(row['predicted_lengths_original'][1] - row['target_length_supervision_only'])
+                     - abs(row['predicted_lengths_original'][0] - row['target_length_supervision_only']) for row in rows]
+        correlation = float(np.corrcoef(native_margin, closeness)[0, 1]) if np.std(native_margin) > 0 and np.std(closeness) > 0 else None
+        stats = dict(native_margin_wrong_mean=float(np.mean(native_margin)),
+                     native_margin_vs_target_length_closeness_pearson=correlation,
+                     common_score_interval_mean=float(np.mean([row['common_score_interval'] for row in rows])),
+                     common_teacher_overlap_correct_better_fraction=float(np.mean([
+                         row['shared_teacher_overlap_mse'][1] - row['shared_teacher_overlap_mse'][0] > 1e-6 for row in rows])))
+        for key in ('wrong', 'second', 'zero'):
+            margins = np.asarray([row['common_interval_margin_' + key] for row in rows])
+            stats['common_interval_margin_' + key + '_mean'] = float(margins.mean())
+            stats['common_interval_correct_beats_' + key + '_fraction'] = float((margins > 1e-6).mean())
+        models.append(dict(run=run, steps=summary['steps'], checkpoint_sha256=summary['checkpoint_sha256'],
+                           candidates=len(rows), native_scores_max_abs_error=maximum_error,
+                           original_lengths_exact=True, parameters_and_buffers_unchanged=True,
+                           statistics=stats, cases=rows))
+        print(json.dumps(dict(event='common_interval_model_finished', run=run, statistics=stats)), flush=True)
+        del model
+        torch.cuda.empty_cache()
+    atomic_write_new(args.out, dict(complete=True, models=models, bundle_sha256=bundle_hash, optimizer_updates=0,
+        student_generation_condition_changed=False, student_reads_caption_or_teacher_length=False,
+        evaluation_only_student_mask='Same per-case min of correct/two_wrong/zero predicted lengths; common visible query intersection',
+        teacher_interval='GT mask remains supervision only', native_output_and_score_reproduction_verified=True,
+        scope='Read-only representation diagnostic, not equal-layout video intervention, new training or causal proof'))
+
+
 def main():
+    if '--common_interval' in __import__('sys').argv:
+        return common_interval_main()
     if '--online' in __import__('sys').argv:
         return online_audit_main()
     parser = argparse.ArgumentParser(description=__doc__)

@@ -1,0 +1,55 @@
+{
+  "complete": true,
+  "sample_id": "QcXTBHnhvaKIOlgH",
+  "loss": 0.029219450429081917,
+  "original_tail_sha256": "28e2f3d7566d957e16075ef34bcafa7ea522342a6130b3080762b2f18735976a",
+  "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+  "cache_sha256": "1109241f6871a05e849c740af9f8c03461efba98e9ce42feb971f926d213d87e",
+  "export_sha256": "78dd7e3ac1b051766bcfc24d37b8403e5c2be69e4cebb157bcce51cd8fdd6187",
+  "teacher_prediction_sha256": "fe4867621ba80a1c9221de586c2e0f0948786d9e25db6ceaa634aa368b841692",
+  "student_prediction_sha256": "b86ea7f6512d06554b312128465d6ed4d2331b2c0d0df3925ab9420f56a4fb32",
+  "teacher_length": 212,
+  "student_length": 262,
+  "h3_state_hashes_unchanged": true,
+  "h3_parameter_gradients_absent": true,
+  "student_condition_gradient_norm": 0.012392885982990265,
+  "teacher_and_student_use_same_noisy_latents": true,
+  "teacher_no_grad": true,
+  "own_packed_sequence_lengths": [
+    48512,
+    48512
+  ],
+  "sigma": 0.9,
+  "noise_seed": 42,
+  "latent_frames": 37,
+  "native_music_bypass": false,
+  "frozen_cache_native_audio_metadata": {
+    "cache_path": "/opt/h3cache/hr/5/616.pth",
+    "cache_sha256": "0f87882ff17a161f726676ce025ad8c1038a71881a7c0b5f44c4ad24bf55b768",
+    "image_sha256": "39dd12f264056d45f90d8909d6712524516d189d5c66d6b10086aa189ea1d01e",
+    "teacher_caption_sha256": "10ca3f6083dcea41cc21089f1cee5343bac41611bac0c1f0564e7aeee0dadb0d",
+    "prepared_image_size": [
+      2048,
+      3712
+    ],
+    "prefix_exact": true,
+    "native_music_bypass": false,
+    "silence_waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+    "ref_audio_sha256": "a808b6babfafca95903414d924072343918441b00e218b3e46e2f7243bd9755e",
+    "retake_sha256": "d679711050305db104ecce86090430e2204872c7d069ce56e1b5aa289ffc5a72",
+    "mask_sha256": "854366c9d4056ede4bb2a87f1c8335c7e8f6682af283abe23202856d29a629c0"
+  },
+  "actual_native_audio_sha256": {
+    "ref_audio_anchor": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+    "input_latents_audio": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+    "denoise_mask_audio": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1"
+  },
+  "attention_implementation": "torch",
+  "mlp_chunk_tokens": 0,
+  "pointwise_mlp_parity": [],
+  "h3_second_device": "cuda:1",
+  "cuda_second_peak_bytes": 51838996992,
+  "cuda_peak_bytes": 53665089536,
+  "prediction_seconds": 291.28913661651313,
+  "scope": "Frozen teacher/student video velocity consistency and leaf VJP, not GT velocity regression or generation acceptance"
+}

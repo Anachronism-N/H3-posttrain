@@ -1,0 +1,29 @@
+{
+  "complete": true,
+  "rows": [
+    {
+      "name": "init",
+      "report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_heldout_s6_v1_init_vjp.json",
+      "loss": 0.029219450429081917,
+      "student_length": 262,
+      "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605"
+    },
+    {
+      "name": "control",
+      "report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_heldout_s6_v1_control_vjp.json",
+      "loss": 0.02999355085194111,
+      "student_length": 389,
+      "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816"
+    },
+    {
+      "name": "prediction",
+      "report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_heldout_s6_v1_prediction_vjp.json",
+      "loss": 0.028939004987478256,
+      "student_length": 393,
+      "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1"
+    }
+  ],
+  "selected_val_samples": 1,
+  "optimizer_updates": 0,
+  "scope": "Same heldout reference, noise, full124-frame latents and frozen teacher; one sample is not generalization or generation quality"
+}

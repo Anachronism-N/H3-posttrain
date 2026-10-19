@@ -1,0 +1,23 @@
+{
+  "complete": true,
+  "expected_videos": 18,
+  "groups": [
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "exit_code": 0
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "exit_code": 0
+    },
+    {
+      "tag": "text_behavior_control_s6_zero_v1",
+      "exit_code": 0
+    },
+    {
+      "tag": "text_behavior_prediction_s6_zero_v1",
+      "exit_code": 0
+    }
+  ],
+  "full_decode_checked": false
+}

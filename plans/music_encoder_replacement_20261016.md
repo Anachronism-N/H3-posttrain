@@ -18,6 +18,8 @@
 
 首个真实缓存3train+1val与原1800/200 split一致，实际704×1280/124帧训练latent及参考图anchor来自N5原hr缓存，空prefix与旧cache对应prefix逐值exact；两路native真实音乐替换为同5.0625秒静音波形经过冻结原audio-VAE的reference/retake（含尾部repeat_clean，mask全零），不是填零latent。先截取2个video latent帧作显存/梯度smoke，不能将短时长测试当124帧训练通过；随后原37 latent全长检查。teacher/student使用相同noisy video/audio、time、reference/full prefix，各按自身尾长构建原packed。
 
+**该授权小实验最终状态：** 两卡原37latent/124帧条件反传已通过，6更新有无预测loss0/1两组均完整训练／200val／当前全checkpoint与部署验收，18新视频全部解码、日志/媒体SHA核验并追加34模型/3人物/15预设；旧30模型保留，总72视频可审阅。同1val预测MSE loss1比control低3.516%、比初始低0.960%，但两组全200val第一wrong胜率同为50.5%、采样视觉未建立可用编舞增量。此是可行性及初步效果小实验完成，不称收敛/泛化成功。全部实际证据与受限结论见notes/25“冻结H3预测监督小实验最终结果”及results/ms_20261017/music_text_behavior_*；不自动扩量/改首帧/恢复动作文字。
+
 ## 用户确认的范围
 - 当前改用专用音乐 encoder，视频生成也使用同一个微调 encoder；不是只算CLIP分数，也不是额外MERT残差注入。
 - 同时尝试 **严格CLIP** 和 **原生latent桥接＋CLIP**，允许桥接监督。冻结H3文本encoder、DiT及audio decoder；不用caption检索，不增加DiT/video loss。

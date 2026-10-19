@@ -1269,3 +1269,11 @@ B组检查实际dense bone/adapter有限非零梯度与实际权重变化；A组
 已接续一基N5 28.216.19.137 GPU6/7的A/B100步同起点对照，有效batch8/micro2、同seed/order/split1800–200、bone1e-5/adapter1e-4、双真实负例（不同ID/caption hash，不冒称验证源歌曲互异）；rawMSE按有效tokens累计，length/NCE按样本累计，修复微批划分会改变MSE目标的问题。正式全200val及完整部署完成后直接生成固定三人物joint/aswap，必要zero同三图，再看是否继续300/原预算。当前尚不宣称新视频完成或音乐编舞改善；技术布局准入与研究质量门槛分开，不再以表示指标挡推理。
 
 完整实现/指标/边界持续记录notes/25执行接续节，报告为results/ms_20261017/music_text_online_context_audit_v1.json、music_text_online_smoke_{A,B}_v1.json及对应weight/layout审计；训练/生成队列使用工具管理SSH前台子进程，不改活跃源码、不覆盖旧结果，实际GPU计算与holder分开。
+
+### 28.25 已授权冻结H3预测一致性小实验完成（2026-10-19）
+
+用户随后明确授权小规模新增冻结H3去噪预测一致性loss，只更新MusicFM实际dense骨干和完整adapter，生成依旧仅音乐+参考图，不训H3、不恢复文字；此前禁止新loss仅为历史阶段。真实全704p/124帧条件梯度通过显式tail VJP到音乐骨干（单卡全长MLP反向OOM，两卡原blocks模型并行通过，未放宽失败的chunk parity门槛）。同C300起点有无loss0/1、3train轮转6更新两组完整训练/200val/独立部署/原packed通过，均400bone＋42adapter更新、Adam442tensor连续step6、H3冻结权重不变。
+
+同1val预测MSE：init0.02921945、control0.02999355、prediction0.02893900；预测监督相对control低3.516%、相对init低0.960%，仅单样本单时间噪声，非泛化显著性。两组200val第一wrong胜率均50.5%、三候选top1均34.5%。18新原/换/零视频全部124帧音画解码/输入/媒体日志SHA核验，采样帧视觉仍以小手势、勾腿、手到嘴/头后及原地单臂为主，局部改变存在，但未建立可用编舞收益；不因6更新负效果否定预测监督idea或冒称收敛。
+
+最终8766：34模型/3人物/15预设，原30模型和旧评分/预设保留，总72新旧视频Range206、跨节点清单200。完整源码与实际29阶段命令、每次6个full37 VJP元记录、两组完整权重/200val/部署、留出三路预测、18视频/视觉/独立验收与访问报告，以及限制和错误恢复，见notes/25最终小实验节与results/ms_20261017/music_text_behavior_*。八节点本轮训练/采样/VJP进程均结束，仅保留评审服务；未启动更多扫描、首帧、身份文字或单独length校准。

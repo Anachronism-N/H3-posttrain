@@ -399,3 +399,43 @@ CUDA_VISIBLE_DEVICES=6 OMP_NUM_THREADS=2 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
 共同原表示loss=`rawMSE/Etrain + 0.01*loglength_MSE + sequence_NCE(two_real_negatives)/temperature0.07`，使用全原train池确定同wrong/second，NCE权重1（从C300延续，不重设warmup）。唯一改动为prediction组额外`MSE(v_student,v_teacher)`权重1；control权重0。训练样本同GT noisy state `x=.1*z+.9*noise(seed42)`，teacher仅监督，双方native静音、参考和时间相同，各自文本尾长/原packed。第一预测VJP复用同起点已核验full37产物，须export内容SHA一致才可消费。其后更新均重算当前完整学生VJP。
 
 最终保存完整V2模型、实际400bone/42adapter更新审计、全200表示val和独立部署；另比较同1val的原始/控制/预测三权重对同frozen teacher的预测误差，不将3train拟合当泛化。随后每配置仍独立固定3源人物joint/aswap/zerojoint，共18新视频，完整音画/input/部署审计及实际评审，旧C3009视频复用对照。不因新loss梯度大或small train下降宣称编舞增量；没有完成前不关闭本轮任务。
+
+## 冻结H3预测监督小实验最终结果（2026-10-19）
+
+两组均正确完成6更新/6曝光，同3train轮转两遍。实际校验除behavior_weight0/1外所有protocol字段相同、样本/负例顺序相同、首步原base loss逐值相等；独立读取两组optimizer.pt：442参数tensor均有有限Adam状态，全部step=6、checkpoint SHA/init SHA/history绑定，证明保存恢复后不是每步重置Adam。两组均400个dense骨干tensor与42adapter tensor更新，冻结参数/buffers不变；全200val、完整V2重载/独立尾部、真实空prefix/原packed均通过。
+
+终点完整权重SHA：control `85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816`；prediction `c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1`。数值权重/optimizer不公开；元审计为`music_text_behavior_{control,prediction}_s6_v1_{summary,weights,val200,layout}.json`及`music_text_behavior_s6_v1_training_jobs.json`。每一次实际full37 H3 VJP均无H3参数梯度/哈希变化、与当次train ID/loss/history一致，六次完整元记录为`music_text_behavior_s6_v1_all_training_vjp_audit.json`；29个实际阶段命令及日志SHA为`music_text_behavior_s6_v1_reproduction_commands.json`。复现必须选择新输出路径，不覆盖本轮产物。
+
+### 留出行为误差：有微小信号，不能称泛化成功
+
+用固定1val `QcXTBHnhvaKIOlgH`、同sigma0.9/noise_seed42、同完整124帧noisy state/native静音/reference/fullprefix评估初始C300/control/prediction；三路teacher_prediction SHA完全相同，H3固定参数前后不变。各student仍用自身预测长度，各自原packed。
+
+| 模型 | 同留出teacher预测MSE | student自身长度 | 全200val correct>第一wrong | raw H MSE | 长度MAE |
+|---|---:|---:|---:|---:|---:|
+| 初始化C300 | 0.02921945 | 262 | 51.5% | 5.33456 | 142.34 |
+| 原表示loss control，6更新 | 0.02999355 | 389 | 50.5% | 5.33036 | 150.31 |
+| 加预测loss1，6更新 | 0.02893900 | 393 | 50.5% | 5.33050 | 151.12 |
+
+prediction相比control该**单样本单噪声单时间**MSE低3.516%，相对init仅低0.960%；control反而略高于init。此为小规模行为信号，非泛化显著性、卡点准确率或可用舞蹈结论。全200val三候选tie-aware top1 control/prediction均34.5%，第一wrong胜率均50.5%，第二wrong52.0%/52.5%，没有清楚语义判优。训练3个ID第二次经过时prediction loss相对第一次：.02112872→.02018517、.01396171→.01433093、.01772999→.01766812；不同ID损失不能作为统一单调下降曲线，且这不是同固定最终模型对全train的独立评估。
+
+详见`music_text_behavior_heldout_s6_v1_compare.json`及三路`music_text_behavior_heldout_s6_v1_{init,control,prediction}_vjp.json`。该留出没有optimizer更新，不将teacher tail/length输入学生；查询长度和packed仍变，不能用误差下降孤立证明学到了歌曲语义。
+
+### 18新视频正确结束，采样视觉未建立编舞增量
+
+每组固定三参考人物原/换各3、zero joint3，共18新视频exit0。`music_text_behavior_s6_v1_all18_audit.json` complete=true、expected=passed=18，704×1280/24fps/124帧全部逐帧与选定音轨完整解码、empty student/native固定静音/完整当前音乐checkpoint及预测length验证通过。主线程另核对18个真实媒体SHA、日志SHA、无oracle/teacher文字和最后adapter投影，以及两组真实训练协议；`music_text_behavior_s6_v1_independent_audit.json`。未独立核实mux逐值相等、声明流数量，false不改。
+
+实际Read六套reference＋0/1/2/3/4/5.125秒采样图，记录`music_text_behavior_s6_v1_visual.json`，不是连续听看或新用户评分：
+- 楼梯原/换/零两组仍转身、小手势、后勾腿；prediction局部腿动作时间与control不同，但浅黄衣灰裤仍替为白蓝运动衣裤并增加小包；未见丰富且歌曲特定的编排增量。
+- 红衣两组仍手到嘴边／头后／单臂抬起母题，zero后段姿态有局部变化，不能将变化本身当正确歌曲控制。
+- 商店主要原地单臂和小重心变化，prediction原曲某采样帧双臂幅度较大，但换/零与整体舞步没有构成可靠编舞收益证据。
+- 没有检查帧层面的灾难性坏帧，不冒称量化清晰度等价或完整连续画质通过。
+
+原/换RGB MAE：control .02377/.01608/.02628、prediction .02084/.01789/.02480；原/换/零长度control493/471/371、305/416/248、400/352/226，prediction495/474/373、307/419/250、401/354/228。两模型同variant长度相近，但没有硬固定布局；RGB差非pose/卡点accuracy，不能作为正效果或统计等价。
+
+### 交付与当前判断
+
+**本次已证实**全124帧冻结H3预测loss可经BF16cast和精确VJP进入MusicFM真实dense骨干及完整内容adapter；原length监督训练其余4个lengthhead参数。单卡MLP反向OOM后两卡split-block正确完成，不用量化/放宽chunk parity或训练H3。**未证实**6更新配方带来可用编舞或可靠泛化增益，不能据此否定预测监督更大方案，也不把仅3train/6exposure当收敛。
+
+8766新清单`manifest_music_text_behavior_s6_final_v1.json`为34模型/3人物/15预设，原30模型/全部旧预设/评分映射保留；新首预设【冻结H3预测监督·6更新】原C300/原表示loss对照/预测loss1，先joint后aswap；第二预设比较两组原与零音乐，仅joint。总72视频Range206、主页/清单200、N2跨节点200，文件`music_text_behavior_s6_v1_review_access.json`。保留旧54视频，不发布任何模型/音视频/optimizer。
+
+八节点最终实际只读核查没有本轮训练、行为VJP、学生infer或采样/解码进程，仅保留工具管理评审服务。主线程完成上述所有检查；额外只读VJP审计代理因上游错误未提供结论，不伪称其独立验收通过。方案/复现代码/所有已完成报告及受限分析公开，任务收尾不等于音乐替代动作文字的总体目标成功。未启动后置首帧、身份文字、单独长度校准、更多数据/更新扫描或其他生成loss。

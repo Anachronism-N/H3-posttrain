@@ -1,0 +1,20 @@
+{
+  "complete": true,
+  "configurations": [
+    {
+      "name": "control",
+      "checkpoint": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+      "steps": 6,
+      "behavior_weight": 0
+    },
+    {
+      "name": "prediction",
+      "checkpoint": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+      "steps": 6,
+      "behavior_weight": 1
+    }
+  ],
+  "selected_train": 3,
+  "heldout_small_val": 1,
+  "full_representation_validation": 200
+}

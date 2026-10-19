@@ -18,6 +18,7 @@ def main():
     mode.add_argument('--online_only', action='store_true', help='Append completed online A/B and their zero-input controls')
     mode.add_argument('--online_abc', action='store_true', help='Append completed A/B/C budget comparison and all zero-input controls')
     mode.add_argument('--length_ablation', action='store_true', help='Append C length-weight0.01 and its zero-input control')
+    mode.add_argument('--behavior_only', action='store_true', help='Append audited six-update control/prediction-supervised music models')
     parser.add_argument('--online_steps', type=int, default=100)
     args = parser.parse_args()
     if args.out.exists() or not args.out.parent.is_dir():
@@ -74,6 +75,15 @@ def main():
             description = f'在线{name} {args.online_steps}步：' + ('骨干冻结同协议对照' if name == 'A' else '骨干和完整adapter联训，长度权重0.01' if name == 'C_len001' else '骨干和完整adapter联训，长度权重1')
             description += '；仅音乐+参考图，学生自己预测raw H有效序列，原生音频固定静音；' + ('学生音乐置零，仍配原曲，仅joint三条' if zero else 'joint/aswap固定三人物，技术验收不代表音乐质量通过')
             configurations.append((tag, ['joint'] if zero else ['joint', 'aswap'], description))
+    if args.behavior_only:
+        configurations = []
+        for name, zero in (('control', False), ('prediction', False), ('control', True), ('prediction', True)):
+            tag = f'text_behavior_{name}_s6' + ('_zero' if zero else '') + '_v1'
+            description = ('同C300起点，3train/6更新，骨干+完整adapter共同训练；'
+                + ('新增冻结H3原124帧预测一致性loss1，显式条件VJP' if name == 'prediction' else '原表示loss对照，无H3预测loss')
+                + '；学生仅音乐+参考图，自身长度和完整raw H，native固定静音；'
+                + ('学生音乐置零、仍配原曲，仅joint三条' if zero else '原/换音乐各三条，技术验收不是舞蹈收益声明'))
+            configurations.append((tag, ['joint'] if zero else ['joint', 'aswap'], description))
     new_models = []
     for tag, conditions, description in configurations:
         group = 'H3AR/val_musicreplace_' + tag
@@ -107,7 +117,7 @@ def main():
                     or final.get('quality_gate_passed') is not False):
                 raise ValueError('Candidate diagnostics must preserve the failed quality gate and complete nine-video audit')
             record.update(diagnostic_only=True, quality_gate_passed=False)
-        if args.online_only or args.length_ablation or args.online_abc:
+        if args.online_only or args.length_ablation or args.online_abc or args.behavior_only:
             final_report = Path(integrity.get('final_online_report', ''))
             if not final_report.is_file():
                 raise ValueError('Online review requires completed all18 input/audio/video audit')
@@ -136,13 +146,30 @@ def main():
                 raise ValueError('Online displayed training scope or zero-input variant differs from the audited videos')
             record['label'] = f'在线{name}·' + ('长度权重0.01' if name == 'C' else '骨干联合训练' if name == 'B' else '骨干冻结对照') + f'·{args.online_steps}步' + ('·零音乐' if '_zero_' in tag else '')
             record.update(musical_quality_accepted=False, online_backbone_train=name != 'A')
+            if args.behavior_only:
+                variant = 'prediction' if '_prediction_' in tag else 'control'
+                checkpoint_dir = exp / 'MS' / f'music_text_behavior_{variant}_s6_v1_step6'
+                summary = json.loads((checkpoint_dir / 'finished.json').read_text())
+                if (summary.get('complete') is not True or summary.get('steps') != 6
+                        or summary['protocol'].get('backbone_train') is not True
+                        or summary['protocol'].get('behavior_weight') != float(variant == 'prediction')
+                        or any(row['inputs'].get('music_text_ckpt') != str(checkpoint_dir / 'last.pt')
+                               or row['deployment'].get('checkpoint_sha256') != summary['checkpoint_sha256'] for row in group_rows)):
+                    raise ValueError('Behavior supervision variant is not bound to the audited full model')
+                record['label'] = ('预测监督loss1' if variant == 'prediction' else '原表示loss对照') + '·6更新' + ('·零音乐' if '_zero_' in tag else '')
+                record['frozen_h3_prediction_loss_weight'] = float(variant == 'prediction')
         new_models.append(record)
     current = {model['id'] for model in manifest['models']}
     if current & {model['id'] for model in new_models}:
         raise ValueError('Focused manifest already contains new configurations')
     manifest['models'] += new_models
     new_ids = [model['id'] for model in new_models]
-    if args.online_abc:
+    if args.behavior_only:
+        presets = [dict(name='【冻结H3预测监督·6更新】原C300 / 原表示loss对照 / 预测loss1；先joint，再aswap',
+                       cond='joint', view='models', models=['H3AR/val_musicreplace_text_online_C_len001_s300_v1', new_ids[0], new_ids[1]]),
+                   dict(name='【冻结H3预测监督·零音乐】对照 / 对照零音乐 / 预测loss1 / 预测loss1零音乐；仅joint',
+                       cond='joint', view='models', models=[new_ids[0], new_ids[2], new_ids[1], new_ids[3]])]
+    elif args.online_abc:
         presets = [dict(name=f'【在线骨干预算·{args.online_steps}步】A骨干冻结 / B骨干联训length1 / C骨干联训length0.01；先joint后aswap',
                        cond='joint', view='models', models=new_ids[:3]),
                    dict(name=f'【在线骨干预算·{args.online_steps}步·零音乐】B / B零音乐 / C / C零音乐；仅joint',
@@ -178,7 +205,9 @@ def main():
         ]
     manifest['presets'] = presets + manifest['presets']
     manifest['built'] = time.strftime('%Y-%m-%d %H:%M:%S')
-    if args.online_abc:
+    if args.behavior_only:
+        manifest['scope'] += ' Six-update representation-only control and frozen-H3 prediction-supervised full music models appended after all18 video audit; small fitting or condition gradients do not establish choreography gain.'
+    elif args.online_abc:
         manifest['scope'] += ' A/B/C budget comparison and actual zero-input controls appended after all27 technical audit; musical gain is not established by representation scores.'
     elif args.length_ablation:
         manifest['scope'] += ' C length-weight0.01 single-variable backbone/adapter run and actual zero-input control appended after all9 technical audit; no established musical-quality claim.'

@@ -1,0 +1,36 @@
+{
+  "complete": true,
+  "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+  "actual_empty_tc_prefix_used": true,
+  "student_reads_caption_or_target_length": false,
+  "proxy_tail_exact": true,
+  "prompt_embeds_tags_exact": true,
+  "original_packed_builder_exact": true,
+  "prefix_length": 7437,
+  "student_length": 393,
+  "packed_sha256": {
+    "img_pos": "89168cb0a24a77c1b75e976428b6499ad5811c7aeef60a8dc58be85f5eca1955",
+    "audio_pos": "7def8bbb87f1b7a9d9180daefbf43bd36e1c4dd4a2d3a3d7d0a56c7d13f78ef9",
+    "text_pos": "5c047b40b1e3e6132c181fb6db39a61caf80f4a13de8a51e76016d49ad01b0b3",
+    "img_position_ids": "69b3a4b63d0368824c42f45e1b645db5807d8d918b8f8223947742a88bc3f461",
+    "token_tags": "17b8dfa74ec92b197f66e1ed4d7a60e74981a575b5389297637f4271a0954883",
+    "cu_seqlens": "ecbb459b533cb84839b734a14f5887d9fc9e4a59bd960be0480f832d33c2b59d"
+  },
+  "reference_prepared_size": [
+    2048,
+    3712
+  ],
+  "video_shape": [
+    1,
+    24,
+    37,
+    80,
+    44
+  ],
+  "audio_shape": [
+    2,
+    32,
+    207
+  ],
+  "scope": "Actual frozen prefix plus shared student condition and original H3 packed layout; no DiT prediction loss or video quality claim"
+}

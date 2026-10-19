@@ -1,0 +1,1489 @@
+{
+  "complete": true,
+  "expected": 18,
+  "passed": 18,
+  "models": [
+    {
+      "run": "music_text_behavior_control_s6_v1_step6",
+      "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+      "backbone_train": true,
+      "steps": 6,
+      "final": {
+        "correct_minus_wrong_score": 1.652183709666133e-05,
+        "correct_minus_second_score": 0.0005999780469574034,
+        "correct_minus_zero_score": 0.01713232301408425,
+        "tie_aware_top1": 0.345,
+        "raw_mse": 5.3303583931922915,
+        "wrong_raw_mse": 5.3303333139419555,
+        "zero_raw_mse": 5.3353093719482425,
+        "position_mean_mse": 4.815057752132415,
+        "correct_wrong_output_rms": 0.021122936476022005,
+        "length_absolute_error": 150.31,
+        "correct_beats_wrong_fraction": 0.505,
+        "correct_beats_second_fraction": 0.52,
+        "raw_mse_tokenweighted": 5.178393039502806,
+        "wrong_mse_tokenweighted": 5.178383697787106,
+        "zero_mse_tokenweighted": 5.185802535404514,
+        "student_teacher_energy_ratio": 0.5195557099468322
+      }
+    },
+    {
+      "run": "music_text_behavior_prediction_s6_v1_step6",
+      "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+      "backbone_train": true,
+      "steps": 6,
+      "final": {
+        "correct_minus_wrong_score": 3.676856867969036e-05,
+        "correct_minus_second_score": 0.0006055009248666465,
+        "correct_minus_zero_score": 0.016042269639438018,
+        "tie_aware_top1": 0.345,
+        "raw_mse": 5.330499942302704,
+        "wrong_raw_mse": 5.330476689338684,
+        "zero_raw_mse": 5.335210344791412,
+        "position_mean_mse": 4.815057752132415,
+        "correct_wrong_output_rms": 0.021122587842401116,
+        "length_absolute_error": 151.12,
+        "correct_beats_wrong_fraction": 0.505,
+        "correct_beats_second_fraction": 0.525,
+        "raw_mse_tokenweighted": 5.17883877155017,
+        "wrong_mse_tokenweighted": 5.178831499575911,
+        "zero_mse_tokenweighted": 5.18599737947559,
+        "student_teacher_energy_ratio": 0.519824779719861
+      }
+    }
+  ],
+  "rows": [
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "video_sha256": "8f1d5eef911f31340fb6d213eedf928d8c32e625067a19912d356501d589ce71",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/logs/shard_0.log",
+      "log_sha256": "4921f5fd5d134457714c0e20ce04c856b6a1260f63595f3271d696427e8d9070",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+        "input_sha256": "6c42e6c4bbb95f33164e7fa0d46a18eced74a67462fda79c5ef0b91a6af7b8a0",
+        "tail_shape": [
+          493,
+          5120
+        ],
+        "predicted_length": 493,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 14004 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 13816 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 182 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "video_sha256": "c3f6c35be34ba93c52b371bdf362dfccba30be7771c30b3895cb40cccbee38c6",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/logs/shard_1.log",
+      "log_sha256": "6c6f9bd9f120d240ed759ccf92398e019eae76935ea22541a9d58de161c21322",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+        "input_sha256": "448eabf695a14bcbf086d46cc2ab3a4c822d8a4ecf7dcad0cd1c2c97147ac31a",
+        "tail_shape": [
+          305,
+          5120
+        ],
+        "predicted_length": 305,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 7770 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 7584 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 180 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "video_sha256": "8ebb6e97cc2fec3f9daddb686d1fde1c1f813c6b43c01f67ee97fa578c790635",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/logs/shard_2.log",
+      "log_sha256": "26ea668e07a6c7f38d3249f37ab2b33d6ebe65867c1309d77931c6b2b1d3d30e",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+        "input_sha256": "0c4e1b18dfae5eada525d67dc67dbcbedce1e6203e488cc1ede420d60884f6b9",
+        "tail_shape": [
+          400,
+          5120
+        ],
+        "predicted_length": 400,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 10729 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10537 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 185 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+      "video_sha256": "dcb75be66aca0b476e389011e2fbfbec209bc4263335bd40a7d260e442833f10",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/logs/shard_3.log",
+      "log_sha256": "d490497fd0d07ce8917a5e24074233ab656b421a19edea3394d4321906fe096d",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+        "input_sha256": "044e04ae4f4f36bc2278bbaf6c42a00d1ca87c10845c4ed4fea2d5b280bb9315",
+        "tail_shape": [
+          471,
+          5120
+        ],
+        "predicted_length": 471,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 14033 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 13842 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 184 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+      "video_sha256": "179b0e304cb9dd0620feeb70027e0e9a43bb6635e513f2fbd07f45fa72a1b042",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/logs/shard_4.log",
+      "log_sha256": "5299bd8e2d3713f60fe4aa554256d487aae56ac720ea6672cc6d8e63a18482b0",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+        "input_sha256": "8c8fc58de201b80300561bb8160e18f1d5cfe88f0db34af6eb59d54ab41df3e4",
+        "tail_shape": [
+          416,
+          5120
+        ],
+        "predicted_length": 416,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 7818 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 7629 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 183 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+      "video_sha256": "152ea5865f72c7d66c6d3b076ab95a4e22568d925008f611c91416e91716374b",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/logs/shard_5.log",
+      "log_sha256": "d2937147236c1e48f4e46672134bc9050721408a069257183595a8e795087466",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+        "input_sha256": "72d3af03a8a81c6b1f3510372ca7ec04802b1ddb56e6ec376469599f394aacd1",
+        "tail_shape": [
+          352,
+          5120
+        ],
+        "predicted_length": 352,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 10650 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10460 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 184 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_control_s6_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "video_sha256": "c962b0c8d56ed1c21048314de03a57f98b73de9bef309bb944cb2f85494678e9",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/logs/shard_0.log",
+      "log_sha256": "d8a03fdd44ca58201a95cbd74379d6b9b8e33e2e6170e66f9675b083d48aeec8",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+        "music_text_zero_input": true,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+        "input_sha256": "a08894b3b38f41e9f15653d3f4709d86a91d8295ffe393d3066b30db736880e2",
+        "tail_shape": [
+          371,
+          5120
+        ],
+        "predicted_length": 371,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 14218 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 14030 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 182 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": true,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_control_s6_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "video_sha256": "6fb333c134d1ea73e8382a4c082be6aaedfe3a4975e25c3119a3ab465daf3512",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/logs/shard_1.log",
+      "log_sha256": "ff0861571c0b9071ebe065dee6b8bde9a80b0c99f1e7d68c707832563302e982",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+        "music_text_zero_input": true,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+        "input_sha256": "90b1e7ea487a129af74292f0a644fbd3005468ea8617031dacd40e34c4e0c733",
+        "tail_shape": [
+          248,
+          5120
+        ],
+        "predicted_length": 248,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 7828 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 7642 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 180 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": true,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_control_s6_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "video_sha256": "ffc7f6a4c1105acf409ecdb890ca2909127eebae10bf6ed9366b8d4cb3318ab0",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/logs/shard_2.log",
+      "log_sha256": "78a8b865266042eac2646ef625e152637c264ecfb4086cbed1a5d5b99770b9d7",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_control_s6_v1_step6/last.pt",
+        "music_text_zero_input": true,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "85f2bb23d792773a8ac15ff0edd820b34cdd8078ecc1bce1c8ce21f4fc111816",
+        "input_sha256": "0f1df83172581d76ef92ebe47f2bfb3ff662bcc6caa5b9a3be4102dc05b5bf42",
+        "tail_shape": [
+          226,
+          5120
+        ],
+        "predicted_length": 226,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 10605 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10414 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 185 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": true,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "video_sha256": "b2e003de8a333528382ba1145bb28b62a0f04d3bbf3aee1eaaeca1647325b672",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/logs/shard_0.log",
+      "log_sha256": "e98fda66d16da395f81b4d6b8a1349e4a1f2b7f7264e57cb43bcc4b4b8602a1d",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+        "input_sha256": "23a499080545b472891f63143092320813640d73db5d4dcbc7515fd8e20d8ecd",
+        "tail_shape": [
+          495,
+          5120
+        ],
+        "predicted_length": 495,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 14363 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 14175 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 182 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "video_sha256": "d475f1fe85a7fb19a78b6287977fd2353a01c4c0abe6d9c885cff77e9f70bc36",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/logs/shard_1.log",
+      "log_sha256": "95f294ccca55e0c6aef390cbb8a8ddc853077b4a337b8391c7ad78392c0e2272",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+        "input_sha256": "494fae51d17920305601e4e55c6ca2c4b26f1b64e26dde9db5e98acfd0ee5057",
+        "tail_shape": [
+          307,
+          5120
+        ],
+        "predicted_length": 307,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 7726 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 7540 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 180 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "video_sha256": "be5d5edb9f6d06833c42d5c34c2a42bc0f137e7fdf0cb4c0ec5086b9f2555d67",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/logs/shard_2.log",
+      "log_sha256": "c4c52ecd042290c4842819ecb862776bf1141301854c252e79eb799612842c10",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+        "input_sha256": "2b53716ac0cd1104885fd966bf0659b29ab587e34bcccfdfe5db2f12cd5587c6",
+        "tail_shape": [
+          401,
+          5120
+        ],
+        "predicted_length": 401,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 10515 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10323 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 185 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "condition": "aswap",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4",
+      "video_sha256": "174da4c6dce2ef722afef74ee287f454e3c6ddb7bce60a0aa9927007413722a3",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/logs/shard_3.log",
+      "log_sha256": "1f03703669c88601261c689e21a839a32123333246e0b98badba2c8ed83c4833",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaBSZwBFkeJXORH.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+        "input_sha256": "81a83903728570758ed7e4feb2547d6f77e67116d25b04470ade780b33344089",
+        "tail_shape": [
+          474,
+          5120
+        ],
+        "predicted_length": 474,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/aswap/wJPptuhclZmKAEWs_wJaBSZwBFkeJXORH.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 14509 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 14319 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 184 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "condition": "aswap",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4",
+      "video_sha256": "02eaadbca17bd974f5e1112b4c8f3472c7a88daad4e578efc1e3892ce7636281",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/logs/shard_4.log",
+      "log_sha256": "de65bb42fa9973f31fd6b61716f060d2966864034ea5f7b9182497e89d5995d5",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaFwJIRkaRVlcqH.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+        "input_sha256": "86bb9bf4e89e0281913c1416d1e8e8fb3d57295c1e7205ced8c1248756187859",
+        "tail_shape": [
+          419,
+          5120
+        ],
+        "predicted_length": 419,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/aswap/wJPrpFsThWAcBQIw_wJaFwJIRkaRVlcqH.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 7993 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 7804 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 183 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "condition": "aswap",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4",
+      "video_sha256": "f244a7b9e0d792b6da7e452133904d6847c58f6d744fab7977b221cabe953ac5",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/logs/shard_5.log",
+      "log_sha256": "c2dc6afeefa2708fd8783e08547c46b4365cdb3bd025f5e6fed3baf81cd3ec46",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJaLwnbQvvvCeWTb.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+        "input_sha256": "864f334f72f68ad687fb2b1da7a953a14ea18a3a40550990753c29abeeee2ab8",
+        "tail_shape": [
+          354,
+          5120
+        ],
+        "predicted_length": 354,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/aswap/wJQTclrlOLEYYfTB_wJaLwnbQvvvCeWTb.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 10546 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10355 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 184 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": false,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_prediction_s6_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "video_sha256": "22d78952e441ee8d223000318a40d5a9b8c708bb7e1d5363b3abb8934bbfcad0",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/logs/shard_0.log",
+      "log_sha256": "dbfc0fb2cdddf2c2a8dbb16f422d5248e5136498030af2abdd94329e55de3723",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+        "music_text_zero_input": true,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+        "input_sha256": "100c1553e3d4aa6174c92a62f46b964fb2d98eada34c586b2c5705ff5336f575",
+        "tail_shape": [
+          373,
+          5120
+        ],
+        "predicted_length": 373,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 14618 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 14430 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 182 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": true,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_prediction_s6_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "video_sha256": "74dddfcc344948fae7fcc0474fca03e83043397f1866f51748dcc5b779af599e",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/logs/shard_1.log",
+      "log_sha256": "864c509a741480a779bc4dc7ecc7f22fc1e2be9326f4d283d22e2c5917ffd7ad",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+        "music_text_zero_input": true,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+        "input_sha256": "9d282b1d7de270a9296248e6362039191a1a436fce635ad5e7de62e472c9cea2",
+        "tail_shape": [
+          250,
+          5120
+        ],
+        "predicted_length": 250,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 7729 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 7543 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 180 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": true,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    },
+    {
+      "tag": "text_behavior_prediction_s6_zero_v1",
+      "condition": "joint",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "video_sha256": "43621781ebac4fa7b5b481ea7c3b93ce62a30a1b4d59bdfc0bfd99b8b2acaa53",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/logs/shard_2.log",
+      "log_sha256": "49c77f6d14f5a0da45b037422602dd24d53e65b1ce0321b422d111cd0322e1fd",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": " ",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_behavior_prediction_s6_v1_step6/last.pt",
+        "music_text_zero_input": true,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "c148a981c7319bb5c01335efd8b5d78c709b7a43a65dbb56e968ae9212e4e7c1",
+        "input_sha256": "92d66b6d56b25e08f6a7f5a85cb4d8cdcc3663f2372fcc5dfd4f38579b6a2638",
+        "tail_shape": [
+          228,
+          5120
+        ],
+        "predicted_length": 228,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 10359 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10167 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 185 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "backbone_train": true,
+      "zero_input": true,
+      "audio_mux_match_checked": false,
+      "video_quality_acceptance_checked": false
+    }
+  ],
+  "mosaics": [
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "condition": "joint",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/music_text_behavior_s6_v1_all18_audit_joint_mosaic.png"
+    },
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "condition": "aswap",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_v1/music_text_behavior_s6_v1_all18_audit_aswap_mosaic.png"
+    },
+    {
+      "tag": "text_behavior_control_s6_zero_v1",
+      "condition": "joint",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_control_s6_zero_v1/music_text_behavior_s6_v1_all18_audit_joint_mosaic.png"
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "condition": "joint",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/music_text_behavior_s6_v1_all18_audit_joint_mosaic.png"
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "condition": "aswap",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_v1/music_text_behavior_s6_v1_all18_audit_aswap_mosaic.png"
+    },
+    {
+      "tag": "text_behavior_prediction_s6_zero_v1",
+      "condition": "joint",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_behavior_prediction_s6_zero_v1/music_text_behavior_s6_v1_all18_audit_joint_mosaic.png"
+    }
+  ],
+  "pixel_pairs": [
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "original_swapped_rgb_mae": 0.02376680424617183,
+      "original_zero_rgb_mae": 0.05480046783603968,
+      "adjacent_frame_rgb_mae": [
+        0.021870040618700952,
+        0.02170833267983261,
+        0.022751297892593756
+      ],
+      "predicted_lengths": [
+        493,
+        471,
+        371
+      ]
+    },
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "original_swapped_rgb_mae": 0.016083416224817834,
+      "original_zero_rgb_mae": 0.0080466287326999,
+      "adjacent_frame_rgb_mae": [
+        0.008269357878328642,
+        0.008393352258783893,
+        0.008487415013501679
+      ],
+      "predicted_lengths": [
+        305,
+        416,
+        248
+      ]
+    },
+    {
+      "tag": "text_behavior_control_s6_v1",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "original_swapped_rgb_mae": 0.02627746508486809,
+      "original_zero_rgb_mae": 0.02818880108515582,
+      "adjacent_frame_rgb_mae": [
+        0.006893346188362778,
+        0.0064175282056042095,
+        0.006335130365512417
+      ],
+      "predicted_lengths": [
+        400,
+        352,
+        226
+      ]
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "original_swapped_rgb_mae": 0.020839327428069328,
+      "original_zero_rgb_mae": 0.02737157659665231,
+      "adjacent_frame_rgb_mae": [
+        0.02199215783427159,
+        0.02240215205186145,
+        0.02289254665450473
+      ],
+      "predicted_lengths": [
+        495,
+        474,
+        373
+      ]
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "original_swapped_rgb_mae": 0.017893462693468937,
+      "original_zero_rgb_mae": 0.012747345907208059,
+      "adjacent_frame_rgb_mae": [
+        0.007865244620176775,
+        0.008671247880674929,
+        0.007687092718963579
+      ],
+      "predicted_lengths": [
+        307,
+        419,
+        250
+      ]
+    },
+    {
+      "tag": "text_behavior_prediction_s6_v1",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "original_swapped_rgb_mae": 0.024803669282024907,
+      "original_zero_rgb_mae": 0.022762087714527885,
+      "adjacent_frame_rgb_mae": [
+        0.006550599873913982,
+        0.006481718266291953,
+        0.006071638338631246
+      ],
+      "predicted_lengths": [
+        401,
+        354,
+        228
+      ]
+    }
+  ],
+  "all_native_audio_hashes_identical": true,
+  "student_ground_truth_caption_or_length_input": false,
+  "complete_selected_audio_video_decode": true,
+  "audio_mux_match_checked": false,
+  "musical_quality_accepted": false,
+  "scope": "Technical integrity and unaligned pixel proxies only; not pose/music accuracy or continuous listening. Predicted length remains a packed-layout confound."
+}

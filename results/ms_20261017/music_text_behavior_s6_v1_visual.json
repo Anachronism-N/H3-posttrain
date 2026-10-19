@@ -1,0 +1,26 @@
+{
+  "complete": true,
+  "technical_audit": "music_text_behavior_s6_v1_all18_audit.json",
+  "source_people": 3,
+  "videos": 18,
+  "scope": "Reference plus six sampled frames at0/1/2/3/4/5.125 seconds per video, not continuous audiovisual listening or a new user verdict",
+  "models": ["same-init representation-only control, six updates", "same-init frozen-H3 prediction loss1, six updates"],
+  "assessment": {
+    "usable_music_choreography_established": false,
+    "prediction_loss_generation_gain_established": false,
+    "condition_response_observed": true,
+    "staircase": "Control and prediction groups retain arm gestures, turns and rear leg curls across original/swapped/zero music. Some leg timing differs, but rich distinct choreography is not established. Both replace the reference yellow top/grey trousers with white-blue sportswear and add a bag.",
+    "red_outfit": "Control/prediction mostly share hand-to-mouth, hand behind head and single-arm lift motif. Zero music changes the final gesture without establishing correct-song adherence.",
+    "shop": "Mostly stationary single-arm gestures and small shifts. Prediction original has a larger two-arm gesture in one sampled frame, while other conditions remain similar; no reliable song-specific dance increment is established.",
+    "visual_quality": "No obvious catastrophic corruption in inspected frames; no quantified sharpness equivalence or continuous quality acceptance is claimed.",
+    "new_user_feedback": false,
+    "rhythm_or_caption_accuracy_measured": false
+  },
+  "limitations": [
+    "Six updates over three training references is a feasibility and initial-effect probe, not convergence or a definitive negative result for prediction supervision.",
+    "The one heldout prediction MSE improves3.52 percent versus control and0.96 percent versus initialization, but one reference/noise/time cannot establish generalization or music-to-dance quality.",
+    "The full200 representation validation has correct-over-first-wrong fraction50.5 percent for both models.",
+    "Each music variant uses its own predicted length and packed layout; video differences do not isolate content semantics.",
+    "Condition VJP and actual backbone updates prove training connectivity, not useful choreography."
+  ]
+}

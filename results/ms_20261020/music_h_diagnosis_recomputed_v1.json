@@ -1,0 +1,208 @@
+{
+  "head": "5e93a581e6540e6163e994d5f669a964a6822aef",
+  "date_beijing": "2026-10-20",
+  "models": [
+    {
+      "source": "results/ms_20261017/music_text_online_A_s100_val200_v1.json",
+      "samples": 200,
+      "recomputed_macro": {
+        "raw_mse": 5.4594793391227725,
+        "position_mean_mse": 4.815057752132415,
+        "length_absolute_error": 147.415,
+        "correct_beats_wrong_fraction": 0.525,
+        "tie_aware_top1": 0.405
+      },
+      "samples_beating_position_mean": 0,
+      "raw_mse_excess_vs_position_mean_pct": 13.383465373908887,
+      "correct_wrong_output_rms": 0.002918992011109367,
+      "source_file_sha256": "9e8f42acc85aa627f1bd2d8b659980a920287254a3acc67fb6f4797e515756c0",
+      "samples_tying_position_mean": 0
+    },
+    {
+      "source": "results/ms_20261017/music_text_online_B_s100_val200_v1.json",
+      "samples": 200,
+      "recomputed_macro": {
+        "raw_mse": 5.467693507671356,
+        "position_mean_mse": 4.815057752132415,
+        "length_absolute_error": 155.445,
+        "correct_beats_wrong_fraction": 0.545,
+        "tie_aware_top1": 0.4125
+      },
+      "samples_beating_position_mean": 0,
+      "raw_mse_excess_vs_position_mean_pct": 13.554058728577289,
+      "correct_wrong_output_rms": 0.003503392765996978,
+      "source_file_sha256": "b2c77e35a27a1060a78e4e33e98c5a02508d569c2cbfda3889cd2087226432df",
+      "samples_tying_position_mean": 0
+    },
+    {
+      "source": "results/ms_20261017/music_text_online_C_len001_s100_val200_v1.json",
+      "samples": 200,
+      "recomputed_macro": {
+        "raw_mse": 5.469632997512817,
+        "position_mean_mse": 4.815057752132415,
+        "length_absolute_error": 155.885,
+        "correct_beats_wrong_fraction": 0.555,
+        "tie_aware_top1": 0.395
+      },
+      "samples_beating_position_mean": 0,
+      "raw_mse_excess_vs_position_mean_pct": 13.594338408309103,
+      "correct_wrong_output_rms": 0.004719568142900243,
+      "source_file_sha256": "7a157d0f8e17bb5ad3a74aa00d36a8557496991c25e1c38c18178c0e1741f535",
+      "samples_tying_position_mean": 0
+    },
+    {
+      "source": "results/ms_20261017/music_text_online_A_s300_val200_v1.json",
+      "samples": 200,
+      "recomputed_macro": {
+        "raw_mse": 5.372878098487854,
+        "position_mean_mse": 4.815057752132415,
+        "length_absolute_error": 141.07,
+        "correct_beats_wrong_fraction": 0.475,
+        "tie_aware_top1": 0.3625
+      },
+      "samples_beating_position_mean": 0,
+      "raw_mse_excess_vs_position_mean_pct": 11.584914970301252,
+      "correct_wrong_output_rms": 0.01199942609295249,
+      "source_file_sha256": "18bae237aa37082ebaf9b68ae71ef5eb308e566990c6e331e160b325ede4a253",
+      "samples_tying_position_mean": 0
+    },
+    {
+      "source": "results/ms_20261017/music_text_online_B_s300_val200_v1.json",
+      "samples": 200,
+      "recomputed_macro": {
+        "raw_mse": 5.400025033950806,
+        "position_mean_mse": 4.815057752132415,
+        "length_absolute_error": 143.01,
+        "correct_beats_wrong_fraction": 0.455,
+        "tie_aware_top1": 0.305
+      },
+      "samples_beating_position_mean": 0,
+      "raw_mse_excess_vs_position_mean_pct": 12.148707490773702,
+      "correct_wrong_output_rms": 0.03696155719459057,
+      "source_file_sha256": "e3a65e6b746cd6fe10ede6c985d76b77e8bc64dc7872f219e0b1a95d94a40ec5",
+      "samples_tying_position_mean": 0
+    },
+    {
+      "source": "results/ms_20261017/music_text_online_C_len001_s300_val200_v1.json",
+      "samples": 200,
+      "recomputed_macro": {
+        "raw_mse": 5.3345638108253475,
+        "position_mean_mse": 4.815057752132415,
+        "length_absolute_error": 142.34,
+        "correct_beats_wrong_fraction": 0.515,
+        "tie_aware_top1": 0.375
+      },
+      "samples_beating_position_mean": 0,
+      "raw_mse_excess_vs_position_mean_pct": 10.78919683700288,
+      "correct_wrong_output_rms": 0.014755648405989632,
+      "source_file_sha256": "43781438a7b4e8ea29eae64884fdd0425da4f3b2beee7a5497407b78c1dd0dc5",
+      "samples_tying_position_mean": 0
+    },
+    {
+      "source": "results/ms_20261017/music_text_behavior_control_s6_v1_val200.json",
+      "samples": 200,
+      "recomputed_macro": {
+        "raw_mse": 5.3303583931922915,
+        "position_mean_mse": 4.815057752132415,
+        "length_absolute_error": 150.31,
+        "correct_beats_wrong_fraction": 0.505,
+        "tie_aware_top1": 0.345
+      },
+      "samples_beating_position_mean": 0,
+      "raw_mse_excess_vs_position_mean_pct": 10.701857954490123,
+      "correct_wrong_output_rms": 0.021122936476022005,
+      "source_file_sha256": "0a6ea8f40d20eec75132e94fefb4653cfcd5d2f14d4caadfdf34ad7cb7d0b133",
+      "samples_tying_position_mean": 0
+    },
+    {
+      "source": "results/ms_20261017/music_text_behavior_prediction_s6_v1_val200.json",
+      "samples": 200,
+      "recomputed_macro": {
+        "raw_mse": 5.330499942302704,
+        "position_mean_mse": 4.815057752132415,
+        "length_absolute_error": 151.12,
+        "correct_beats_wrong_fraction": 0.505,
+        "tie_aware_top1": 0.345
+      },
+      "samples_beating_position_mean": 0,
+      "raw_mse_excess_vs_position_mean_pct": 10.704797672302435,
+      "correct_wrong_output_rms": 0.021122587842401116,
+      "source_file_sha256": "2f414706bd8a8c35700b102c1293cc719e758003fb4d0ea6cb4856b0faa109a0",
+      "samples_tying_position_mean": 0
+    }
+  ],
+  "behavior_heldout_losses": {
+    "init": 0.029219450429081917,
+    "control": 0.02999355085194111,
+    "prediction": 0.028939004987478256
+  },
+  "behavior_relative_reduction_vs_control": 0.03515908702068882,
+  "behavior_relative_reduction_vs_init": 0.009597902680761439,
+  "training_behavior_vjp_conditions": [
+    {
+      "step": 1,
+      "sample_id": "AAcaGYtiTozEttaF",
+      "sigma": 0.9,
+      "seed": 42,
+      "latent_frames": 37
+    },
+    {
+      "step": 2,
+      "sample_id": "ACYTcnkJDuOfXBiA",
+      "sigma": 0.9,
+      "seed": 42,
+      "latent_frames": 37
+    },
+    {
+      "step": 3,
+      "sample_id": "ACjmBvCtqPhuyLRS",
+      "sigma": 0.9,
+      "seed": 42,
+      "latent_frames": 37
+    },
+    {
+      "step": 4,
+      "sample_id": "AAcaGYtiTozEttaF",
+      "sigma": 0.9,
+      "seed": 42,
+      "latent_frames": 37
+    },
+    {
+      "step": 5,
+      "sample_id": "ACYTcnkJDuOfXBiA",
+      "sigma": 0.9,
+      "seed": 42,
+      "latent_frames": 37
+    },
+    {
+      "step": 6,
+      "sample_id": "ACjmBvCtqPhuyLRS",
+      "sigma": 0.9,
+      "seed": 42,
+      "latent_frames": 37
+    }
+  ],
+  "scope": "Static review and independent recomputation of committed JSON reports. No new GPU training, media playback, human video scores, model updates or claimed root-cause proof.",
+  "schema_version": 1,
+  "code_and_result_baseline": "5e93a581e6540e6163e994d5f669a964a6822aef",
+  "source_snapshot_validation": {
+    "git_blobs_matched": 523,
+    "blob_mismatches": 0,
+    "python_files_parsed": 134,
+    "python_syntax_errors": 0
+  },
+  "validation_relationship": {
+    "unique_validation_ids": 200,
+    "reports": 8,
+    "same_ids_and_order": true,
+    "independent_samples_not_1600": true,
+    "comparison": "Per-case raw H MSE under the same teacher-valid mask; not a video-quality ranking."
+  },
+  "proposed_experiments_executed_this_review": false,
+  "documentation_baseline": "1448e5662d7541cc37d5c0f84bdc0457f2c9d951",
+  "subsequent_documented_user_feedback": {
+    "source": "https://github.com/Anachronism-N/H3-posttrain/blob/1448e5662d7541cc37d5c0f84bdc0457f2c9d951/notes/25_music_h_training_clip_dpo_and_generation_20261019.md#L443",
+    "reported_feedback": "这一轮还是类似摆pose而不是真正的舞蹈",
+    "scope": "Qualitative feedback on the latest round; not per-video scoring of all72 or all historical models. This review did not conduct new user scoring."
+  }
+}

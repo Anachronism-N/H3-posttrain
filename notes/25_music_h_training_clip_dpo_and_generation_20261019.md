@@ -1,10 +1,12 @@
 # H3 音乐条件训练 CLIP 与 DPO 区别及生成流程
 
-更新日期：2026-10-19，北京时间。代码基准：[5fa2be623511eb232db60793de3f142c948258c7](https://github.com/Anachronism-N/H3-posttrain/commit/5fa2be623511eb232db60793de3f142c948258c7)。
+更新日期：2026-10-20，北京时间。当前代码与结果基准：[5e93a581e6540e6163e994d5f669a964a6822aef](https://github.com/Anachronism-N/H3-posttrain/commit/5e93a581e6540e6163e994d5f669a964a6822aef)。最新人工反馈与解决路线基准：[1448e56](https://github.com/Anachronism-N/H3-posttrain/commit/1448e5662d7541cc37d5c0f84bdc0457f2c9d951)。前段早期设计基于 [5fa2be6](https://github.com/Anachronism-N/H3-posttrain/commit/5fa2be623511eb232db60793de3f142c948258c7)，以下已标注历史范围。
 
 目标是训练 MusicFM 的实际 dense 骨干和完整 adapter，让音乐产生能够替代动作文字的 H3 原生条件，最终仅凭音乐和参考图生成舞蹈。H3 文本编码器、DiT 和 VAE 保持冻结。
 
-当前 H 序列代码已经使用 CLIP 式对比损失，但仍冻结 MusicFM，只训练 adapter 和长度头。它属于教师隐状态监督与对比学习，没有采用 DPO。下一步应保留对比目标，实现音乐骨干和 adapter 的在线联合训练，并统一学生条件在训练和生成时的构造方式。联合训练方案尚未实现和运行，不能把现有负结果解释为该方案已经失败。
+**当前状态：音乐实际 dense 骨干与完整 adapter 的在线联合训练、全量 raw H 和自身长度的共享学生条件已经实现并运行。** A/B/C 各 100 与 300 步六组训练及 54 条视频完成；随后冻结 H3 预测一致性小实验完成 3 个训练样本、6 次更新和 18 条视频。工程链路通过，但尚未建立可用音乐编舞；预测监督只有单留出点微小信号，不能当作泛化成功。当前仍不是 DPO。10 月 20 日新增定性人工反馈为“还是类似摆pose而不是真正的舞蹈”；这是最新一轮的总体负评，不是全部 72 条视频的逐例评分。
+
+最新问题分析、独立重算与分阶段解决方案见 [H3 音乐条件问题分析与解决方案](26_music_h_diagnosis_and_solution_plan_20261020.md)。下文早期冻结骨干流程和“执行中”条目保留为历史，不能覆盖已经完成的最终状态；历史“需另行授权”只描述当时范围，不是撤销后来已记录的小实验授权。
 
 本文对应 [实验笔记第 28.21 至 28.23 节](https://github.com/Anachronism-N/H3-posttrain/blob/5fa2be623511eb232db60793de3f142c948258c7/notes/22_h3_bidir_blur_attribution_20261013.md#L1143)。[10 月 14 日方案](24_h3_music_guidance_distillation_plan_20261014.md) 保留为历史阶段记录，其音乐引导方向不能代替当前 H 条件主线。
 
@@ -40,7 +42,7 @@
 
 动作描述和真实 token 长度只作训练标签。生成时不提供动作描述、教师 H 或真实长度。原生 reference 和 retake 音频条件均保持相同的固定静音，真实音乐通过学生 H 分支影响生成，并在生成后作为配乐混入视频。
 
-## 当前已实现的训练流程
+## 早期冻结骨干训练流程
 
 一条样本包含音乐、参考图和对应的动作描述。已有正式划分为 1800 条训练、200 条验证。
 
@@ -54,7 +56,7 @@
 
 批量教师缓存保存 caption 编码中的结构 prefix 最后一行，部署则从空语义 prompt 的结构 prefix 取对应 context。复用缓存需要核验这两种 prefix/context 的等价性，不能仅凭形状相同认定一致，也不能未经验证就推断存在动作文本泄漏。
 
-## 当前损失与 CLIP 的含义
+## 早期损失与 CLIP 的含义
 
 ### 两个训练入口的损失
 
@@ -124,9 +126,9 @@ MSE 也可能让模型趋向多个动作描述的平均表示，需要通过对�
 
 双真实负例候选已经实际生成 9 条诊断视频，涵盖 3 人物的原音乐、换音乐和零输入。用户反馈为“还是完全不像跳舞，动作和之前差不多，而且更换歌曲的差别也不大”。视频技术完整不等于音乐编舞成功。现有结果未达到可用的动作文本替代目标，不能再把问题全部归为漏加载完整 adapter，也不能声称最新候选尚未生成视频。[生成与反馈](https://github.com/Anachronism-N/H3-posttrain/blob/5fa2be623511eb232db60793de3f142c948258c7/notes/22_h3_bidir_blur_attribution_20261013.md#L1181-L1201)
 
-## 下一步联合训练方案
+## 早期联合训练设计
 
-以下为待实现方案，不是当前可直接启动的新训练命令。
+以下保留 5fa2be6 时的联合训练设计。在线入口现已实现并完成六组训练，见后文 2026-10-19 执行与最终验收；本段的原待实现条目不能作为当前缺失判断。
 
 ### 数据与学生前向
 
@@ -162,7 +164,7 @@ adapter 没有 query self-attention，使用绝对 query 位置，相同输入�
 
 这一轮表示训练不包含 DiT/video/生成预测损失。若表示改善仍不能带来视频控制，再单独设计更直接的生成行为监督实验；本方案不承诺仅解冻骨干即可解决所有问题。[联合训练与共享条件方案](https://github.com/Anachronism-N/H3-posttrain/blob/5fa2be623511eb232db60793de3f142c948258c7/notes/22_h3_bidir_blur_attribution_20261013.md#L1203-L1255)
 
-## 当前代码如何复现训练
+## 冻结骨干阶段如何复现训练
 
 以下命令复现已有冻结 MusicFM 的 H 对比阶段，不能训练上述新联合方案。假设已具备经审计、split 和协议一致的教师缓存、音乐特征及完整 raw H 初始 checkpoint。`--targets` 接收含 `finished.json` 和 `plan.json` 的缓存目录；输出目录必须尚不存在，父目录需要已经创建。
 
@@ -181,7 +183,7 @@ H3_REPO=/path/H3-posttrain
   --lr 0.0003 --clip_weight 1 --length_weight 1
 ```
 
-教师缓存入口为 `scripts_omnidance/exp/ms/music_text_cache.py`；冻结音乐特征和回归预训练入口分别是 `music_text_align.py --stage features`、`music_text_align.py --stage train`。这些入口不是骨干联合训练替代品。新增联合入口还需实现在线数据、优化器分组、共享学生条件和新 checkpoint 协议，当前没有一个现成的 `--unfreeze_backbone` 参数完成全部工作。
+教师缓存入口为 `scripts_omnidance/exp/ms/music_text_cache.py`；冻结音乐特征和回归预训练入口分别是 `music_text_align.py --stage features`、`music_text_align.py --stage train`。这些历史入口不是骨干联合训练替代品。当前在线联合入口为 `music_text_contrastive.py --online --backbone_train`，使用 waveform bundle、分组优化器、共享学生条件和 V2 checkpoint；具体旧对照复现及下一步改动见 [最新解决方案](26_music_h_diagnosis_and_solution_plan_20261020.md#对应代码改动位置与复现)。
 
 ## 当前代码如何生成视频
 
@@ -189,7 +191,7 @@ H3_REPO=/path/H3-posttrain
 
 实际视频入口是 `scripts_omnidance/exp/h3ar/sample_h3_ar.py`。`music_text_infer.py` 单独运行只输出 H tail，不生成视频。需要已应用项目补丁的 DiffSynth upstream、Ref2VA 权重、MusicFM 源码和本地权重、ffmpeg，以及 H3 和 MusicFM 两套依赖环境。现有代码保留集群路径，换机器需同步调整这些路径；仅克隆仓库不具备完整运行环境。
 
-现有音乐 proxy 默认解释器为 `/opt/venv_music/bin/python`，sampler 没有 `--music_text_python` 参数。新联合 checkpoint 需要同步适配加载协议后再使用本视频入口。
+现有音乐 proxy 默认解释器为 `/opt/venv_music/bin/python`，sampler 没有 `--music_text_python` 参数。当前加载器已支持在线联合训练的完整 V2 checkpoint，相关模型已通过独立 tail 和原生布局核验；后续若改变模型或协议，还需相应重载与部署验证。
 
 在 `/path/cases/full_joint.csv` 写入：
 

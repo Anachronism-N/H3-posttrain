@@ -233,3 +233,59 @@ for name in names:
 ```
 
 本轮交付为问题分析、实验方案、独立重算和现状文档修正。上述新增教师、交叉训练、梯度干预、多状态行为实验与模型扩宽均未在本轮实施，不把方案推送等同于音乐替代动作文字目标已经完成。
+
+## 2026-10-20 自动执行接续：输出空间与分项梯度零更新诊断
+
+用户随后明确要求按本方案自动推进、修复错误、跟进实验并推送全部结果。此节为后续实际执行状态，不抹除上文当时“未实施”。保留音乐＋参考图学生、冻结H3、完整映射、三生成case；没有启动后置首帧／身份文字／单独长度校准，也没有直接扩大相同loss训练预算。
+
+### 当前执行范围及先验检查
+
+1. 复用已存在neutral教师三joint的原始视频及缓存；它们的完整解码／接口等价已通过，但连续可用舞蹈的人评尚待确认，不重新生成相同原H基线。
+2. 同C300固定checkpoint零更新计算两种输出仿射包络与训练集PCA256投影，再直接进行同原教师长度／图prefix／tags／packed的三case生成诊断。它是**teacher oracle空间诊断，不是音乐预测或学生推理模式变更**，不以GT长度提供给学生主线。
+3. 复用旧小实验已验全37latent VJP，在同一参数状态下分解raw/length/NCE/prediction梯度；不再次装载冻结H3，不更新任何参数/buffer或正式optimizer。
+
+源码保持旧oracle identity和预测等价门禁；投影走独立`ProjectedTeacherTailEmbedder`／`--text_hidden_projection`，只要求投影的原长度和原packed/前缀一致，允许预测改变作为诊断结果。旧oracle缓存**没有完整prefix**，仅context/tags/ids/tail；新路径运行原空prompt编码当前参考图，逐值比较context/ids/tags后再拼接。不能把缓存context一行冒称全prefix缓存。原/投影共享同次实际prefix，原packed由相同参考shape和原教师tail重新构造并逐值比较。
+
+### 实际数值投影结果
+
+完整checkpoint C300 SHA仍为`189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605`，waveform/teacher bundle与原训练SHA一致。数值不修改原checkpoint或teacher缓存。
+
+- W宽松仿射包络：中心b，float64 SVD按`max(shape)*eps64*smax`数值rank选基，实际rank256，Gram最大误差约1.2e-13。
+- LN仿射包络：中心`b+Wβ`，对`Wdiag(γ)Z`求基，Z是零均值空间1⊥的255维正交基，实际rank255。它比W包络更准确，但仍不约束LayerNorm方差／可达半径，**仍是放松下界而非可达到的音乐输出**。
+- train-PCA256：精确FP64计算全部1800train有效tail token的中心；每项最多16个确定性等距token（总28800），采样按原长度/采样数加权，`torch.pca_lowrank(q=288,niter=4,seed42)`近似主空间再正交化。没有prefix/padding/val/三生成case参与拟合，不把近似协方差或随机SVD宣称全量精确最优PCA。空间中心与W包络不同，因此差异应归于当前已学仿射空间整体（中心和方向），不能只归为旋转方向。
+
+| 条件空间 | 同200val原raw H投影MSE | 三独立生成case投影MSE（楼梯／红衣／商店） |
+|---|---:|---|
+| 当前W256包络 | 4.84153 | 5.24636／4.97505／4.83517 |
+| 当前LN255包络 | 4.84251 | 5.24740／4.97603／4.83594 |
+| train-only近似PCA256 | 0.72084 | 0.86075／0.71350／0.71105 |
+
+三个oracle原教师token数228／199／323全部保持；投影幂等最大误差<6e-12，实际BF16cast误差单列。另有最初v1以采样均值为中心的探索产物保留，**实际生成采用v2全train中心及加权采样结果**，不能混用两个PCA数值。
+
+数值提示当前已学公共输出空间与教师空间存在较大偏差；同秩PCA重构较好尚不证明视频／舞蹈更好，也不证明256维必然足够。完整元报告为`results/ms_20261020/music_text_projection_C300_v2_numeric.json`，数值basis与tails PT仅保存在实验目录，不公开权重或媒体。
+
+CPU验证覆盖秩亏SVD、投影幂等、正交残差、空间内identity；实际9份payload及mock prefix拼接通过（最初fixture缺tokenizer对象已修正，仅fixture错误，未启动GPU）。真实空prefix/context及packed必须在每条实际采样日志再次验收，不能用CPUfixture代替。
+
+### 三个实际监督点的梯度分项结果
+
+复用旧prediction小实验第1／2／3次更新前的各自checkpoint和对应wave/context/full37 VJP；每个点内部所有loss参数状态与噪声state相同，**三个点之间checkpoint不同**，是三个已发生监督点的局部诊断，不冒称同一模型的全train统计。使用实际权重`raw/Etrain、length*.01、NCE*1、prediction*1`，所有参数/buffers原样，optimizer更新0。
+
+| 监督点 | bone：NCE norm | bone：prediction norm | content adapter：NCE／prediction norm | bone NCE/prediction cosine | content NCE/prediction cosine |
+|---|---:|---:|---|---:|---:|
+| 第1点，AAca… | 1.62339 | 0.00123263 | 0.52392／0.13578 | 0.80600 | -0.00829 |
+| 第2点，ACYT… | 1.93829 | 0.00412092 | 0.47310／0.36064 | -0.00104 | 0.00605 |
+| 第3点，ACjm… | 2.82799 | 0.00007722 | 0.64572／0.04886 | -0.10660 | -0.00972 |
+
+实际分项和与单次combined derivative数值比较relative-L2误差6.55e-5／5.37e-5／6.75e-6（FP32计算，预定容差1e-4），总norm1.73476／2.04070／3.11576，global clip系数.57645／.49003／.32095。总norm与旧实际训练对应点吻合；没有用surrogate dot scalar冒称prediction loss值。lengthhead预测梯度为零，方向cos=null，保留原长度监督。
+
+**目前支持的局部判断：** bone的行为梯度norm在这三点比NCE小约1320／470／36600倍；内容adapter的行为梯度并非总可忽略，夹角接近正交。不是证据支持全参数强反向冲突，也不能说global clip单独压制prediction（它统一缩放总梯度），更不能由norm比例断言Adam真实更新份额。本轮没有复制moments做虚拟Adam一步，`optimizer_virtual_steps_performed=0`保留；后续只在准确moment/step/参数快照和预算明确时补测，不因当前norm小直接任意乘100。
+
+完整逐组未加权／实际加权norm、dot/cos与求和误差见`music_text_prediction_components_C300_v1.json`、`music_text_prediction_components_step2_v1.json`、`music_text_prediction_components_step3_v1.json`。结果补上原文“尚无分项梯度报告”的缺口，但尚未证明连续舞蹈失败的唯一原因。
+
+### 视频队列与后续决策
+
+三种空间各固定3joint共9新视频已用八节点各一张卡启动，每节点一个H3冷加载；PCA两节点的第三case在同节点前任务完成后串行，旧neutral3视频复用。实际日志已核实投影identity/source SHA、空语义输入、原teacher长度、同参考prefix ids/tags/context、原packed exact、native静音无真实音乐旁路。**截至本节记录，视频仍在采样，完整解码与连续人评未宣称完成。** 独立读码审计未发现实质bug，但不替代视频结果。
+
+完成后仅新增投影诊断清单和“先复审教师上界”预设，保留原34模型／旧预设和评分。若teacher本身不合格，先修描述事实与目标，不因输出投影MSE改善直接开学生大训练；若当前包络视频差但PCA同秩可用，优先研究仿射空间/语义映射学习；若同秩都损害控制再按同train中心嵌套PCA512考察，不能只据raw MSE扩宽架构。
+
+后续交叉正例12+4的留出必须按(图ID,音乐源ID)屏蔽所有正负分支并审计init历史曝光，过滤语义近歌后不足负例不得回填留出；当前单sid代码不可直接复用组合ID。当前还未做交叉正例训练、多sigma/noise行为训练、stop-gradient长度分支或扩宽，均按教师上界和上述机制诊断结果决定具体单变量协议，不同时更改全部因素。

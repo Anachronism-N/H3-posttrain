@@ -39,6 +39,7 @@ p.add_argument("--music_text_ckpt", default="", help="Full trained MusicFM and r
 p.add_argument("--music_text_zero_input", action="store_true", help="Zero music ONLY into the deployed text adapter; original audio is still muxed")
 p.add_argument('--music_text_legacy_clip', action='store_true', help='Use complete old encoder/adapter/CLIPhead as one scaled text token; no retraining')
 p.add_argument("--text_hidden_oracle", default="", help="Supervision-only JSON audio_id -> {prompt, source}; raw hidden tail replaces empty student text")
+p.add_argument('--text_hidden_projection', default='', help='Same-length projected teacher manifest; diagnostic only, not music prediction')
 p.add_argument("--text_oracle_cache_dir", default="", help="Existing new directory for oracle targets and strict condition-equivalence reports")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
 p.add_argument("--body_key", default="timed", help="timed | calm | energetic")
@@ -67,12 +68,16 @@ if a.text_oracle_cache_dir and not a.text_hidden_oracle:
 if a.music_text_ckpt and (a.text_hidden_oracle or a.prompt_mode != 'empty' or not a.fixed_native_silence or
                          a.mode != 'bi' or a.cfg != 1):
     p.error('Music text deployment requires empty prompt, fixed native silence, bi CFG1 and no oracle')
+if a.text_hidden_projection and (a.text_hidden_oracle or a.music_text_ckpt or a.mode != 'bi' or a.cfg != 1
+                                 or a.prompt_mode != 'empty' or not a.fixed_native_silence
+                                 or a.conds != 'joint' or a.audio_override):
+    p.error('Projected teacher requires only three joint cases, empty text, fixed silence and bi CFG1; no trained music/oracle mixing')
 if (a.music_text_zero_input or a.music_text_legacy_clip) and not a.music_text_ckpt:
     p.error('Zero/legacy text-adapter input requires an explicit music text checkpoint')
 
 csv.field_size_limit(10 ** 9)
 E = "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp"
-cap = {} if a.music_text_ckpt else {r["sample_id"]: r["motion_caption"] for r in csv.DictReader(open(f"{E}/E10/val47_motion_captions.csv"))}
+cap = {} if a.music_text_ckpt or a.text_hidden_projection else {r["sample_id"]: r["motion_caption"] for r in csv.DictReader(open(f"{E}/E10/val47_motion_captions.csv"))}
 jobs = []
 for c in a.conds.split(","):
     rows = list(csv.DictReader(open(f"{a.csv_dir}/full_{c}.csv")))
@@ -106,6 +111,7 @@ pipe = MiniMaxH3Pipeline.from_pretrained(
     **({"vram_limit": torch.cuda.mem_get_info("cuda")[1] / (1024 ** 3) - 5} if a.height > 832 else {}),  # official-res (as e3/oos scripts)
 )
 TEXT_ORACLE = None
+TEXT_PROJECTION = None
 TEXT_STUDENT = None
 ORACLE_CAPTIONS = None
 if a.music_text_ckpt:
@@ -127,6 +133,14 @@ if a.text_hidden_oracle:
     matches = [i for i, unit in enumerate(pipe.units) if isinstance(unit, MiniMaxH3Unit_PromptEmbedder)]
     assert len(matches) == 1, 'Expected exactly one original prompt embedder'
     pipe.units[matches[0]] = TEXT_ORACLE
+if a.text_hidden_projection:
+    from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
+    sys.path.insert(0, os.path.join(HERE, '..', 'ms'))
+    from music_text_condition import ProjectedTeacherTailEmbedder, tensor_sha256
+    TEXT_PROJECTION = ProjectedTeacherTailEmbedder(a.text_hidden_projection)
+    matches = [i for i, unit in enumerate(pipe.units) if isinstance(unit, MiniMaxH3Unit_PromptEmbedder)]
+    assert len(matches) == 1, 'Expected exactly one original prompt embedder'
+    pipe.units[matches[0]] = TEXT_PROJECTION
 if a.fixed_native_silence:
     pipe.audio_cond_noise_aug = 1.0
 if a.music_encoder_ckpt:
@@ -265,6 +279,20 @@ def generate(prompt, img, wav, sr):
                             all_target_audio_clean=True, native_music_bypass=False)
         TEXT_ORACLE.finish_audit(packed_equal, difference(student_v, teacher_v), native_audio)
         del teacher_v, student_v, teacher_posi
+    if TEXT_PROJECTION is not None:
+        from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PackedSequenceBuilder
+        original_packed = MiniMaxH3Unit_PackedSequenceBuilder().process(
+            pipe, video_latents=sh['video_latents'], audio_latents=sh['audio_latents'],
+            ref_blocks=sh['ref_blocks'], **TEXT_PROJECTION.original_output)['packed']
+        packed = inputs_posi['packed']
+        packed_equal = original_packed.keys() == packed.keys() and all(
+            torch.equal(value, packed[key]) if torch.is_tensor(value) else value == packed[key]
+            for key, value in original_packed.items())
+        assert not torch.count_nonzero(sh['denoise_mask_audio'])
+        TEXT_PROJECTION.finish_layout_audit(packed_equal, dict(
+            waveform_sha256=tensor_sha256(condition_wav), reference_sha256=tensor_sha256(sh['ref_audio_anchor']),
+            retake_sha256=tensor_sha256(sh['input_latents_audio']), mask_sha256=tensor_sha256(sh['denoise_mask_audio']),
+            native_music_bypass=False, all_target_audio_clean=True))
     if MUSIC:
         stem = os.path.basename(CUR_AUDIO[0])[:-4]
         if isinstance(pipe.dit.od_music, MU.MusicMoE):  # M2: MERT + beat + CLAP + H3 audio-VAE latent of the music
@@ -396,13 +424,16 @@ for c, r, dst in todo:
         TEXT_ORACLE.set_case(entry['prompt'], dict(sample_id=r['sample_id'], audio_id=audio_id,
                               condition=c, image_path=r['image_path'], audio_path=r['audio_path'],
                               caption_source=entry['source']))
+    if TEXT_PROJECTION is not None:
+        TEXT_PROJECTION.set_case(r['sample_id'], r['image_path'], r['audio_path'])
     print('[h3ar] input_conditions ' + _json.dumps(dict(prompt_mode=a.prompt_mode, semantic_text=prompt,
           image_path=r["image_path"], audio_path=a.audio_override or r["audio_path"], seed=a.seed,
           music_encoder_ckpt=a.music_encoder_ckpt or None,
           native_audio_condition='fixed_silence' if a.fixed_native_silence else 'input_music',
           text_hidden_oracle=bool(TEXT_ORACLE), music_text_ckpt=a.music_text_ckpt or None,
           music_text_zero_input=a.music_text_zero_input, legacy_clip_complete_chain=a.music_text_legacy_clip,
-          waveform_loader='music_clip_bridge.load_audio' if TEXT_STUDENT is not None else 'librosa')), flush=True)
+          waveform_loader='music_clip_bridge.load_audio' if TEXT_STUDENT is not None else 'librosa',
+          text_hidden_projection=a.text_hidden_projection or None)), flush=True)
     video = generate(prompt, img, wav, sr)
     write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)
     if SOFT is not None:

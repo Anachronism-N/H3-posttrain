@@ -420,9 +420,108 @@ def update_music(args):
                          checkpoint_sha256=current_sha, final_validation=args.finalize)), flush=True)
 
 
+def gradient_components(args):
+    from music_text_adapter import load_music_text_checkpoint, masked_token_loss, length_loss
+    from music_text_contrastive import _online_batch, _online_conditions, _online_scores, _state_hashes
+    import math
+    export = torch.load(args.input, map_location='cpu', weights_only=True)
+    vjp = torch.load(args.vjp, map_location='cpu', weights_only=True)
+    bundle = torch.load(args.bundle, map_location='cpu', weights_only=True)
+    if (digest(args.checkpoint) != export['checkpoint_sha256'] or digest(args.bundle) != export['bundle_sha256']
+            or vjp['checkpoint_sha256'] != export['checkpoint_sha256']
+            or vjp['export_sha256'] != digest(args.input) or vjp['original_tail_sha256'] != export['tail_sha256']
+            or vjp['h3_state_hashes_unchanged'] is not True or vjp['latent_frames'] != 37
+            or export['sample_id'] not in bundle['metadata']['train_ids']):
+        raise ValueError('Require the exact existing full-length train VJP and its original checkpoint/input')
+    model = load_music_text_checkpoint(args.checkpoint, expected_backend='musicfm').cuda()
+    model.configure_online_training(True).train()
+    before = _state_hashes(model)
+    sid = export['sample_id']
+    wave, context, target, lengths, mask = _online_batch([sid], bundle, model.adapter.qmax)
+    if not torch.equal(wave[0].cpu(), export['waveform']) or not torch.equal(context[0].cpu(), export['context'].float()):
+        raise ValueError('Diagnostic waveform or structural context changed')
+    conditions, first, second = _online_conditions(model, [sid], bundle['metadata']['train_ids'], bundle, context, 1)
+    tail = conditions[0]['tails'][0]
+    if not torch.equal(tail.detach().cpu(), export['tail']):
+        raise ValueError('Gradient diagnostic does not reproduce the exported original tail')
+    raw = masked_token_loss(conditions[0]['raw_tokens'], target, mask)['raw_mse']
+    ll = length_loss(conditions[0]['log_length'], lengths, model.adapter.qmax)
+    scores = _online_scores(conditions, target, mask, bundle['mean'].cuda(), bundle['std'].cuda())
+    nce = torch.nn.functional.cross_entropy(scores / 0.07, torch.zeros(1, device='cuda', dtype=torch.long))
+    tail_gradient = vjp['tail_gradient'].cuda()
+    if tail_gradient.shape != tail.shape or not torch.isfinite(tail_gradient).all():
+        raise ValueError('Invalid condition VJP')
+    losses = {'raw_mse': raw, 'log_length': ll, 'sequence_nce': nce,
+              'prediction_vjp': (tail * tail_gradient.detach()).sum()}
+    weights = {'raw_mse': 1. / bundle['teacher_energy'], 'log_length': 0.01,
+               'sequence_nce': 1., 'prediction_vjp': 1.}
+    parameters = [(name, p) for name, p in model.named_parameters() if p.requires_grad]
+    params = [p for _, p in parameters]
+    stored = {}
+    for name, loss in losses.items():
+        gradients = torch.autograd.grad(loss, params, retain_graph=True, allow_unused=True)
+        if any(g is not None and not torch.isfinite(g).all() for g in gradients):
+            raise ValueError('Nonfinite component gradient: ' + name)
+        stored[name] = [g.detach().cpu() if g is not None else None for g in gradients]
+        del gradients
+    total_loss = sum(weights[name] * loss for name, loss in losses.items())
+    total = torch.autograd.grad(total_loss, params, allow_unused=True)
+    total_cpu = [g.detach().cpu() if g is not None else None for g in total]
+    del total
+    groups = {'backbone': [], 'content_adapter': [], 'length_head': []}
+    for i, (name, _) in enumerate(parameters):
+        key = 'backbone' if name.startswith('backbone.') else 'length_head' if name.startswith('adapter.length_head.') else 'content_adapter'
+        groups[key].append(i)
+    maximum_error, squared_error, total_squared = 0., 0., 0.
+    for i, (_, p) in enumerate(parameters):
+        summed = sum((stored[key][i].double() * weights[key] for key in losses if stored[key][i] is not None),
+                     torch.zeros(p.shape, dtype=torch.float64))
+        reference = total_cpu[i].double() if total_cpu[i] is not None else torch.zeros_like(summed)
+        difference = summed - reference
+        maximum_error = max(maximum_error, float(difference.abs().max()))
+        squared_error += float(difference.square().sum())
+        total_squared += float(reference.square().sum())
+    relative_error = math.sqrt(squared_error / max(total_squared, 1e-30))
+    if relative_error > 1e-4:
+        raise ValueError('Component sum does not match the independent total derivative')
+    report_groups = {}
+    for group, indices in groups.items():
+        components = {}
+        norms = {}
+        for key in losses:
+            squared = sum(float(stored[key][i].double().square().sum()) for i in indices if stored[key][i] is not None)
+            norms[key] = math.sqrt(squared) * weights[key]
+            components[key] = dict(unweighted_gradient_norm=math.sqrt(squared), actual_weight=weights[key],
+                weighted_gradient_norm=norms[key], tensors_with_gradient=sum(stored[key][i] is not None for i in indices))
+        pairs = []
+        keys = list(losses)
+        for a in range(len(keys)):
+            for b in range(a + 1, len(keys)):
+                ka, kb = keys[a], keys[b]
+                dot = sum(float((stored[ka][i].double() * stored[kb][i].double()).sum())
+                          for i in indices if stored[ka][i] is not None and stored[kb][i] is not None)
+                dot *= weights[ka] * weights[kb]
+                pairs.append(dict(first=ka, second=kb, weighted_dot=dot,
+                                  cosine=dot / (norms[ka] * norms[kb]) if norms[ka] * norms[kb] > 0 else None))
+        report_groups[group] = dict(parameter_tensors=len(indices), components=components, pairwise=pairs)
+    if before != _state_hashes(model) or any(p.grad is not None for p in model.parameters()):
+        raise ValueError('Diagnostic changed weights/buffers or accumulated .grad')
+    total_norm = math.sqrt(total_squared)
+    save_new(args.out, dict(complete=True, checkpoint_sha256=export['checkpoint_sha256'], sample_id=sid,
+        source_export_sha256=digest(args.input), source_vjp_sha256=digest(args.vjp),
+        original_tail_replay_exact=True, optimizer_updates=0, parameters_and_buffers_unchanged=True,
+        prediction_loss_value=vjp['loss'], original_loss_values={key: float(value.detach()) for key, value in losses.items() if key != 'prediction_vjp'},
+        prediction_surrogate_value_not_a_loss=True, groups=report_groups,
+        component_sum_max_abs_error=maximum_error, component_sum_relative_l2_error=relative_error,
+        actual_combined_gradient_norm=total_norm, global_clip_coefficient=min(1., 1. / (total_norm + 1e-6)),
+        optimizer_virtual_steps_performed=0, scope='One same-state train example: exact VJP component competition, not Adam contribution or global causal proof'))
+    print(json.dumps(dict(event='behavior_gradient_components_finished', total_norm=total_norm,
+                         sum_relative_error=relative_error)), flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--stage', required=True, choices=['prepare', 'export', 'h3_vjp', 'music_vjp', 'update'])
+    parser.add_argument('--stage', required=True, choices=['prepare', 'export', 'h3_vjp', 'music_vjp', 'update', 'gradients'])
     parser.add_argument('--exp_root', type=Path, default=ROOT / 'diff/logs_omnidance/exp')
     parser.add_argument('--weights', type=Path, default=Path('/dev/shm/h3/Ref2VA'))
     parser.add_argument('--cache_list', type=Path, default=Path('/opt/h3cache/posi_list_hr.tsv'))
@@ -446,7 +545,8 @@ def main():
         parser.error('Require new output, valid selected index, latent length and noise level')
     required = dict(prepare=[], export=['checkpoint', 'bundle', 'cache'],
                     h3_vjp=['input', 'cache'], music_vjp=['checkpoint', 'input', 'vjp'],
-                    update=['checkpoint', 'input', 'cache', 'bundle'])
+                    update=['checkpoint', 'input', 'cache', 'bundle'],
+                    gradients=['checkpoint', 'input', 'bundle', 'vjp'])
     if any(getattr(args, key) is None for key in required[args.stage]):
         parser.error('Missing input path for stage ' + args.stage)
     torch.set_num_threads(2)
@@ -455,7 +555,7 @@ def main():
     if args.stage == 'update' and args.behavior_weight and args.vjp is None:
         parser.error('Behavior-supervised update requires a checked H3 VJP')
     {'prepare': prepare, 'export': export_music, 'h3_vjp': h3_vjp,
-     'music_vjp': music_vjp, 'update': update_music}[args.stage](args)
+     'music_vjp': music_vjp, 'update': update_music, 'gradients': gradient_components}[args.stage](args)
 
 
 if __name__ == '__main__':

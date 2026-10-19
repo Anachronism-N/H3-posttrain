@@ -149,6 +149,81 @@ class OracleTextTailEmbedder(MiniMaxH3Unit_PromptEmbedder):
             raise ValueError('Oracle packed/DiT equivalence gate failed')
 
 
+class ProjectedTeacherTailEmbedder(MiniMaxH3Unit_PromptEmbedder):
+    """Explicit same-length teacher-space diagnostic, never a trained music path."""
+    def __init__(self, manifest_path):
+        super().__init__()
+        self.manifest_path = Path(manifest_path)
+        self.manifest_sha256 = hashlib.sha256(self.manifest_path.read_bytes()).hexdigest()
+        self.manifest = json.loads(self.manifest_path.read_text())
+        if (self.manifest.get('complete') is not True or self.manifest.get('diagnostic_only') is not True
+                or self.manifest.get('format_version') != 1
+                or self.manifest.get('kind') != 'projected_teacher_not_music_prediction'
+                or self.manifest.get('teacher_length_for_oracle_only') is not True
+                or self.manifest.get('changes_student_deployment') is not False
+                or len(self.manifest.get('cases', {})) != 3):
+            raise ValueError('Require a complete explicit three-person projected-teacher manifest')
+        self.record = None
+        self.original_output = None
+        self.report = None
+
+    def set_case(self, sample_id, image_path, audio_path):
+        entry = self.manifest['cases'][sample_id]
+        if (str(Path(image_path)) != entry['image_path'] or str(Path(audio_path)) != entry['audio_path']
+                or hashlib.sha256(Path(image_path).read_bytes()).hexdigest() != entry['image_sha256']):
+            raise ValueError('Projected teacher is not bound to the current reference and music case')
+        path = Path(entry['path'])
+        if hashlib.sha256(path.read_bytes()).hexdigest() != entry['file_sha256']:
+            raise ValueError('Projected raw tail file changed')
+        source = Path(entry['oracle_source'])
+        if hashlib.sha256(source.read_bytes()).hexdigest() != entry['oracle_sha256']:
+            raise ValueError('Source oracle changed since projection')
+        record = torch.load(path, map_location='cpu', weights_only=True)
+        if (record['sample_id'] != sample_id or record['variant'] != entry['variant']
+                or record['tail'].shape != record['original_tail'].shape
+                or len(record['tail']) != entry['teacher_tokens']
+                or tensor_sha256(record['original_tail']) != entry['original_teacher_tail_sha256']
+                or hashlib.sha256(record['tail'].contiguous().view(torch.uint8).numpy().tobytes()).hexdigest()
+                    != entry['projected_tail_sha256']):
+            raise ValueError('Projected teacher tail length, identity or source hash mismatch')
+        self.record = record
+        self.report = dict(sample_id=sample_id, variant=entry['variant'], manifest_sha256=self.manifest_sha256,
+            projected_file_sha256=entry['file_sha256'], oracle_source_sha256=entry['oracle_sha256'],
+            projection_tail_sha256=tensor_sha256(record['tail']), teacher_tokens=entry['teacher_tokens'],
+            image_path=str(image_path), audio_path=str(audio_path), teacher_length_for_diagnostic_only=True,
+            music_prediction=False, semantic_student_prompt=' ', original_packed_layout_checked=False)
+        self.original_output = None
+
+    def process(self, pipe, prompt, keyframes=None, ref_blocks=None, height=None, width=None, text_embedding=None):
+        if (prompt != ' ' or self.record is None or not ref_blocks or keyframes or text_embedding is not None):
+            raise ValueError('Projection diagnostic requires empty semantic text, current reference and a declared case')
+        encoded = super().process(pipe, prompt, ref_blocks=ref_blocks, height=height, width=width)
+        ids, tags = self.preprocess_ref_blocks(pipe, prompt, ref_blocks)[:2]
+        lp = prefix_length(pipe.tokenizer, prompt, ids)
+        if (not torch.equal(ids[:lp].cpu(), self.record['prefix_ids'])
+                or not torch.equal(tags[:lp].cpu(), self.record['prefix_tags'])
+                or not torch.equal(encoded['prompt_embeds'][lp - 1].cpu(), self.record['prefix_context'])):
+            raise ValueError('Actual empty reference prefix differs from the source oracle')
+        prefix = encoded['prompt_embeds'][:lp]
+        prefix_tags = encoded['text_token_tags'][:lp]
+        self.original_output = replace_tail(prefix, prefix_tags, self.record['original_tail'])
+        output = replace_tail(prefix, prefix_tags, self.record['tail'])
+        if (output['prompt_embeds'].shape != self.original_output['prompt_embeds'].shape
+                or not torch.equal(output['text_token_tags'], self.original_output['text_token_tags'])):
+            raise ValueError('Projected teacher changed length or modality tags')
+        self.report.update(prefix_ids_tags_context_exact=True, prefix_length=lp,
+                           prefix_sha256=tensor_sha256(prefix))
+        return output
+
+    def finish_layout_audit(self, packed_equal, native_audio):
+        if not packed_equal or self.original_output is None:
+            raise ValueError('Projected teacher changed the original packed layout')
+        self.report.update(original_packed_layout_checked=True, original_packed_exact=True,
+                           native_audio=native_audio,
+                           scope='Teacher projection with identical length/layout, not identity-prediction equivalence or music deployment')
+        print('[music text projection] ' + json.dumps(self.report, allow_nan=False), flush=True)
+
+
 def neutralize_gender_pronouns(text):
     import re
     possessive_nouns = {'hand', 'hands', 'arm', 'arms', 'elbow', 'elbows', 'shoulder', 'shoulders',

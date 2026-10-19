@@ -1,0 +1,226 @@
+{
+  "complete": true,
+  "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+  "sample_id": "AAcaGYtiTozEttaF",
+  "source_export_sha256": "9f27d5229b2ee208429c5f06722c96e9970730ccd4b3c56d42ee8d0f555ec567",
+  "source_vjp_sha256": "27e12102d3766ebb830df3580e98bc391a864ca1f77b60167c380010b83d61ff",
+  "original_tail_replay_exact": true,
+  "optimizer_updates": 0,
+  "parameters_and_buffers_unchanged": true,
+  "prediction_loss_value": 0.02112872153520584,
+  "original_loss_values": {
+    "raw_mse": 5.074289321899414,
+    "log_length": 0.1352282613515854,
+    "sequence_nce": 1.035902500152588
+  },
+  "prediction_surrogate_value_not_a_loss": true,
+  "groups": {
+    "backbone": {
+      "parameter_tensors": 400,
+      "components": {
+        "raw_mse": {
+          "unweighted_gradient_norm": 0.04358998784335802,
+          "actual_weight": 0.07196662545535044,
+          "weighted_gradient_norm": 0.0031370243287262255,
+          "tensors_with_gradient": 400
+        },
+        "log_length": {
+          "unweighted_gradient_norm": 1.7185364552142222,
+          "actual_weight": 0.01,
+          "weighted_gradient_norm": 0.017185364552142222,
+          "tensors_with_gradient": 400
+        },
+        "sequence_nce": {
+          "unweighted_gradient_norm": 1.623392862662477,
+          "actual_weight": 1.0,
+          "weighted_gradient_norm": 1.623392862662477,
+          "tensors_with_gradient": 400
+        },
+        "prediction_vjp": {
+          "unweighted_gradient_norm": 0.0012326275809682286,
+          "actual_weight": 1.0,
+          "weighted_gradient_norm": 0.0012326275809682286,
+          "tensors_with_gradient": 400
+        }
+      },
+      "pairwise": [
+        {
+          "first": "raw_mse",
+          "second": "log_length",
+          "weighted_dot": 4.1067890507058066e-05,
+          "cosine": 0.7617733223638377
+        },
+        {
+          "first": "raw_mse",
+          "second": "sequence_nce",
+          "weighted_dot": 0.004908797321214721,
+          "cosine": 0.9639035547186544
+        },
+        {
+          "first": "raw_mse",
+          "second": "prediction_vjp",
+          "weighted_dot": 3.304867632419474e-06,
+          "cosine": 0.8546814963460333
+        },
+        {
+          "first": "log_length",
+          "second": "sequence_nce",
+          "weighted_dot": 0.019696555510451148,
+          "cosine": 0.7060052049989336
+        },
+        {
+          "first": "log_length",
+          "second": "prediction_vjp",
+          "weighted_dot": 1.5239272757745597e-05,
+          "cosine": 0.7194052649596548
+        },
+        {
+          "first": "sequence_nce",
+          "second": "prediction_vjp",
+          "weighted_dot": 0.0016128299449557246,
+          "cosine": 0.8059963310258702
+        }
+      ]
+    },
+    "content_adapter": {
+      "parameter_tensors": 38,
+      "components": {
+        "raw_mse": {
+          "unweighted_gradient_norm": 0.3252096983292305,
+          "actual_weight": 0.07196662545535044,
+          "weighted_gradient_norm": 0.02340424455410724,
+          "tensors_with_gradient": 38
+        },
+        "log_length": {
+          "unweighted_gradient_norm": 1.0814302308142727,
+          "actual_weight": 0.01,
+          "weighted_gradient_norm": 0.010814302308142728,
+          "tensors_with_gradient": 5
+        },
+        "sequence_nce": {
+          "unweighted_gradient_norm": 0.5239247362589039,
+          "actual_weight": 1.0,
+          "weighted_gradient_norm": 0.5239247362589039,
+          "tensors_with_gradient": 38
+        },
+        "prediction_vjp": {
+          "unweighted_gradient_norm": 0.13577711300852197,
+          "actual_weight": 1.0,
+          "weighted_gradient_norm": 0.13577711300852197,
+          "tensors_with_gradient": 38
+        }
+      },
+      "pairwise": [
+        {
+          "first": "raw_mse",
+          "second": "log_length",
+          "weighted_dot": 5.391975423258584e-06,
+          "cosine": 0.02130368690014441
+        },
+        {
+          "first": "raw_mse",
+          "second": "sequence_nce",
+          "weighted_dot": 0.0017715204501641104,
+          "cosine": 0.14447165211566226
+        },
+        {
+          "first": "raw_mse",
+          "second": "prediction_vjp",
+          "weighted_dot": -2.3289119451611132e-05,
+          "cosine": -0.007328783136101131
+        },
+        {
+          "first": "log_length",
+          "second": "sequence_nce",
+          "weighted_dot": 0.0001873356639946592,
+          "cosine": 0.03306382203141342
+        },
+        {
+          "first": "log_length",
+          "second": "prediction_vjp",
+          "weighted_dot": 1.0233505663187277e-05,
+          "cosine": 0.006969463664110911
+        },
+        {
+          "first": "sequence_nce",
+          "second": "prediction_vjp",
+          "weighted_dot": -0.0005898052921758577,
+          "cosine": -0.0082911198202006
+        }
+      ]
+    },
+    "length_head": {
+      "parameter_tensors": 4,
+      "components": {
+        "raw_mse": {
+          "unweighted_gradient_norm": 0.0,
+          "actual_weight": 0.07196662545535044,
+          "weighted_gradient_norm": 0.0,
+          "tensors_with_gradient": 0
+        },
+        "log_length": {
+          "unweighted_gradient_norm": 15.759625221615565,
+          "actual_weight": 0.01,
+          "weighted_gradient_norm": 0.15759625221615564,
+          "tensors_with_gradient": 4
+        },
+        "sequence_nce": {
+          "unweighted_gradient_norm": 0.0,
+          "actual_weight": 1.0,
+          "weighted_gradient_norm": 0.0,
+          "tensors_with_gradient": 0
+        },
+        "prediction_vjp": {
+          "unweighted_gradient_norm": 0.0,
+          "actual_weight": 1.0,
+          "weighted_gradient_norm": 0.0,
+          "tensors_with_gradient": 0
+        }
+      },
+      "pairwise": [
+        {
+          "first": "raw_mse",
+          "second": "log_length",
+          "weighted_dot": 0.0,
+          "cosine": null
+        },
+        {
+          "first": "raw_mse",
+          "second": "sequence_nce",
+          "weighted_dot": 0.0,
+          "cosine": null
+        },
+        {
+          "first": "raw_mse",
+          "second": "prediction_vjp",
+          "weighted_dot": 0.0,
+          "cosine": null
+        },
+        {
+          "first": "log_length",
+          "second": "sequence_nce",
+          "weighted_dot": 0.0,
+          "cosine": null
+        },
+        {
+          "first": "log_length",
+          "second": "prediction_vjp",
+          "weighted_dot": 0.0,
+          "cosine": null
+        },
+        {
+          "first": "sequence_nce",
+          "second": "prediction_vjp",
+          "weighted_dot": 0.0,
+          "cosine": null
+        }
+      ]
+    }
+  },
+  "component_sum_max_abs_error": 6.198708026178279e-06,
+  "component_sum_relative_l2_error": 6.553286166128609e-05,
+  "actual_combined_gradient_norm": 1.7347599165738863,
+  "global_clip_coefficient": 0.5764483107994948,
+  "optimizer_virtual_steps_performed": 0,
+  "scope": "One same-state train example: exact VJP component competition, not Adam contribution or global causal proof"
+}

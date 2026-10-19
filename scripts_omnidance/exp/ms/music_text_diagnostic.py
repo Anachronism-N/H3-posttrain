@@ -424,7 +424,297 @@ def common_interval_main():
         scope='Read-only representation diagnostic, not equal-layout video intervention, new training or causal proof'))
 
 
+def projection_basis(matrix):
+    import torch
+    if matrix.ndim != 2 or not torch.isfinite(matrix).all():
+        raise ValueError('Projection requires a finite matrix')
+    u, values, _ = torch.linalg.svd(matrix.double(), full_matrices=False)
+    tolerance = max(matrix.shape) * torch.finfo(torch.float64).eps * float(values[0])
+    rank = int((values > tolerance).sum())
+    if rank < 1:
+        raise ValueError('Projection space has zero numerical rank')
+    basis = u[:, :rank]
+    error = float((basis.T @ basis - torch.eye(rank, device=basis.device, dtype=basis.dtype)).abs().max())
+    if error > 1e-8:
+        raise ValueError('Projection basis is not orthonormal')
+    return basis, dict(numerical_rank=rank, svd_dtype='float64', rank_tolerance=tolerance,
+                       basis_orthogonality_max_abs=error, singular_values=values.tolist())
+
+
+def project_raw_tokens(tail, center, basis):
+    import torch
+    value = tail.double() - center.double()
+    projected = center.double() + (value @ basis.double()) @ basis.double().T
+    if projected.shape != tail.shape or not torch.isfinite(projected).all():
+        raise ValueError('Invalid projected raw condition')
+    return projected
+
+
+def projection_main():
+    import hashlib
+    import torch
+    from music_text_behavior import save_new
+    parser = argparse.ArgumentParser(description='No-update oracle projection into current output spaces and train-only PCA')
+    parser.add_argument('--projection', action='store_true', required=True)
+    parser.add_argument('--exp_root', type=Path, required=True)
+    parser.add_argument('--checkpoint', type=Path, required=True)
+    parser.add_argument('--bundle', type=Path, required=True)
+    parser.add_argument('--oracle_cache', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if args.out.exists() or not args.out.parent.is_dir():
+        parser.error('Require new projection directory and an existing parent')
+    torch.set_num_threads(2)
+    torch.manual_seed(42)
+    torch.cuda.manual_seed_all(42)
+    summary = json.loads((args.checkpoint.parent / 'finished.json').read_text())
+    checkpoint_sha = sha256(args.checkpoint)
+    bundle_sha = sha256(args.bundle)
+    if (summary.get('complete') is not True or checkpoint_sha != summary['checkpoint_sha256']
+            or summary['protocol']['online_bundle_sha256'] != bundle_sha):
+        raise ValueError('Projection sources differ from the completed training identity')
+    checkpoint = torch.load(args.checkpoint, map_location='cpu', weights_only=True)
+    if checkpoint['metadata'].get('format_version') != 2:
+        raise ValueError('Require an audited complete online checkpoint')
+    state = checkpoint['model']
+    w = state['adapter.raw_output.weight'].cuda().double()
+    b = state['adapter.raw_output.bias'].cuda().double()
+    gamma = state['adapter.output_norm.weight'].cuda().double()
+    beta = state['adapter.output_norm.bias'].cuda().double()
+    if w.shape != (5120, 256) or b.shape != (5120,) or gamma.shape != (256,):
+        raise ValueError('Unexpected fixed adapter output structure')
+    w_basis, w_meta = projection_basis(w)
+    zero_sum = torch.zeros(256, 255, dtype=torch.float64, device='cuda')
+    zero_sum[:255] = torch.eye(255, device='cuda', dtype=torch.float64)
+    zero_sum[-1] = -1
+    zero_sum, _ = torch.linalg.qr(zero_sum, mode='reduced')
+    ln_basis, ln_meta = projection_basis((w * gamma[None]) @ zero_sum)
+    ln_center = b + w @ beta
+    bundle = torch.load(args.bundle, map_location='cpu', weights_only=True)
+    train = bundle['metadata']['train_ids']
+    if train != summary['protocol']['train_ids'] or len(train) != len(set(train)):
+        raise ValueError('PCA train pool is not the declared original train pool')
+    samples, sampling, sample_weights = [], [], []
+    train_sum = torch.zeros(5120, dtype=torch.float64)
+    train_token_count = 0
+    for sid in train:
+        tail = bundle['targets'][sid]['tail']
+        train_sum += tail.double().sum(0)
+        train_token_count += len(tail)
+        indices = torch.linspace(0, len(tail) - 1, min(16, len(tail))).round().long()
+        samples.append(tail[indices].float())
+        sample_weights.append(torch.full((len(indices),), (len(tail) / len(indices)) ** 0.5))
+        sampling.append(dict(sample_id=sid, original_tokens=len(tail), selected_indices=indices.tolist()))
+    matrix = torch.cat(samples).cuda()
+    center = (train_sum / train_token_count).cuda()
+    centered = (matrix - center.float()) * torch.cat(sample_weights).cuda()[:, None]
+    _, singular, directions = torch.pca_lowrank(centered, q=288, center=False, niter=4)
+    pca_basis = directions[:, :256].double()
+    pca_basis, _ = torch.linalg.qr(pca_basis, mode='reduced')
+    pca_meta = dict(algorithm='torch.pca_lowrank_randomized', rank=256, oversampled_rank=288,
+        power_iterations=4, seed=42, compute_dtype='float32', train_samples=len(train),
+        sampled_tokens=len(matrix), max_tokens_per_train_item=16,
+        center_source='Exact FP64 mean of all valid training tail tokens', full_train_tokens=train_token_count,
+        covariance_sampling='Deterministic evenly-spaced tokens, weighted by original item length/selected count; approximate',
+        sampling=sampling, prefix_and_padding_used=False, validation_used=False,
+        exact_optimal_pca_claim=False, retained_sample_energy_fraction=float(
+            ((centered.double() @ pca_basis).square().sum() / centered.double().square().sum())))
+    variants = {'w256': (b, w_basis, w_meta), 'ln255': (ln_center, ln_basis, ln_meta),
+                'pca256': (center, pca_basis, pca_meta)}
+    del matrix, centered, checkpoint
+    cases = [case for case in fixed_cases(args.exp_root) if case['condition'] == 'joint']
+    oracle_records = []
+    for case in cases:
+        source = args.oracle_cache / (Path(case['filename']).stem + '.pt')
+        record = torch.load(source, map_location='cpu', weights_only=True)
+        meta = record['metadata']
+        if (meta['kind'] != 'oracle_teacher_hidden_not_music_prediction'
+                or meta['case']['sample_id'] != case['sample_id'] or meta['case']['audio_path'] != case['audio_path']
+                or meta['case']['condition'] != 'joint' or meta['tail_length'] != len(record['tail'])):
+            raise ValueError('Require the existing neutral same-reference joint oracle')
+        image_path = Path(meta['case']['image_path'])
+        oracle_records.append((case, source, record, sha256(image_path)))
+    args.out.mkdir()
+    manifests, reports = [], []
+    for name, (projection_center, basis, metadata) in variants.items():
+        entries = {}
+        variant_rows = []
+        numeric = args.out / (name + '_space.pt')
+        save_new(numeric, dict(center=projection_center.cpu(), basis=basis.cpu()), binary=True)
+        for case, source, record, image_sha in oracle_records:
+            original = record['tail'].cuda().double()
+            projected = project_raw_tokens(original, projection_center, basis)
+            repeated = project_raw_tokens(projected, projection_center, basis)
+            if float((repeated - projected).abs().max()) > 1e-6:
+                raise ValueError('Affine projection is not idempotent')
+            deployed = projected.to(torch.bfloat16).cpu()
+            metrics = dict(raw_mse=float((original - projected).square().mean()),
+                raw_relative_rms=float((original - projected).norm() / original.norm().clamp_min(1e-12)),
+                bf16_deployed_mse=float((original.cpu() - deployed.double()).square().mean()),
+                bf16_quantization_mse=float((projected.cpu() - deployed.double()).square().mean()),
+                projection_idempotence_max_abs=float((repeated - projected).abs().max()),
+                teacher_tokens=len(original), deployed_tokens=len(deployed))
+            path = args.out / (name + '_' + case['sample_id'] + '.pt')
+            payload = dict(tail=deployed, original_tail=record['tail'], prefix_context=record['prefix_context'],
+                prefix_tags=record['prefix_tags'], prefix_ids=record['token_ids'][:len(record['prefix_tags'])],
+                sample_id=case['sample_id'], variant=name, oracle_file_sha256=sha256(source), metrics=metrics)
+            save_new(path, payload, binary=True)
+            entries[case['sample_id']] = dict(path=str(path), file_sha256=sha256(path),
+                image_path=record['metadata']['case']['image_path'], image_sha256=image_sha,
+                audio_path=case['audio_path'], oracle_source=str(source), oracle_sha256=sha256(source),
+                projected_tail_sha256=hashlib.sha256(deployed.contiguous().view(torch.uint8).numpy().tobytes()).hexdigest(),
+                original_teacher_tail_sha256=record['metadata']['teacher_tail_sha256'],
+                teacher_tokens=len(original), variant=name)
+            variant_rows.append(dict(sample_id=case['sample_id'], metrics=metrics))
+        validation = []
+        for sid in bundle['metadata']['val_ids']:
+            original = bundle['targets'][sid]['tail'].cuda().double()
+            projected = project_raw_tokens(original, projection_center, basis)
+            validation.append(dict(sample_id=sid, tokens=len(original), raw_mse=float((original - projected).square().mean())))
+        manifest = args.out / (name + '_manifest.json')
+        atomic_write_new(manifest, dict(complete=True, format_version=1, diagnostic_only=True,
+            kind='projected_teacher_not_music_prediction', variant=name, cases=entries,
+            checkpoint_sha256=checkpoint_sha, bundle_sha256=bundle_sha,
+            teacher_length_for_oracle_only=True, changes_student_deployment=False,
+            output_space=str(numeric), output_space_sha256=sha256(numeric)))
+        manifests.append(str(manifest))
+        reports.append(dict(variant=name, space_metadata=metadata, generation_cases=variant_rows,
+            validation_projection_rows=validation, validation_projection_macro_mse=sum(r['raw_mse'] for r in validation) / len(validation),
+            oracle_manifest=str(manifest), interpretation='Relaxed affine-envelope or sampled train-PCA projection; not reachable student outputs or generation gain'))
+    report = dict(complete=True, optimizer_updates=0, checkpoint_sha256=checkpoint_sha,
+        bundle_sha256=bundle_sha, source_people=3, variants=reports, manifests=manifests,
+        teacher_baseline_reused=str(args.oracle_cache.parent), pca_uses_train_only=True,
+        scope='Numerical projection and same-length teacher-oracle inputs only; video decoding and human dance-quality review are separate')
+    atomic_write_new(args.out / 'finished.json', report)
+    print(json.dumps(dict(event='teacher_projection_inputs_finished', manifests=manifests,
+                         generation_video_jobs_expected=9, optimizer_updates=0)), flush=True)
+
+
+def projection_audit_main():
+    import decord
+    import numpy as np
+    from PIL import Image, ImageDraw
+    parser = argparse.ArgumentParser(description='Complete same-length projected-teacher video audit with reused neutral teacher baseline')
+    parser.add_argument('--projection_audit', action='store_true', required=True)
+    parser.add_argument('--exp_root', type=Path, required=True)
+    parser.add_argument('--projection_dir', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if args.out.exists() or not args.out.parent.is_dir():
+        parser.error('Require a new report and existing parent')
+    inputs = json.loads((args.projection_dir / 'finished.json').read_text())
+    if inputs.get('complete') is not True or inputs.get('optimizer_updates') != 0:
+        raise ValueError('Projection inputs are incomplete or involved training')
+    cases = [case for case in fixed_cases(args.exp_root) if case['condition'] == 'joint']
+    rows, mosaics, pending_images, pending_markers = [], [], [], []
+    baseline = args.exp_root / 'H3AR/val_musicreplace_text_oracle_neutral_v1'
+    specs = [('neutral_teacher_reused', baseline, None)] + [
+        (name, args.exp_root / 'H3AR' / ('val_musicreplace_text_projection_C300_' + name + '_v2'),
+         args.projection_dir / (name + '_manifest.json')) for name in ('w256', 'ln255', 'pca256')]
+    for variant, directory, manifest_path in specs:
+        jobs = json.loads((directory / 'jobs.json').read_text())
+        if jobs.get('all_sampler_jobs_exit_zero') is not True or jobs['expected'] != 3:
+            raise ValueError('Projection group has incomplete sampler jobs')
+        manifest = json.loads(manifest_path.read_text()) if manifest_path else None
+        grid = Image.new('RGB', (176 * 7, 348 * 3), 'white')
+        draw = ImageDraw.Draw(grid)
+        group_rows = []
+        for index, case in enumerate(cases):
+            evidence = successful_log(directory / 'logs', case, require_replacement=False, require_empty_prompt=True)
+            if evidence is None:
+                raise ValueError('Missing matching successful projection/baseline generation log')
+            log_path, log_sha, _, _ = evidence
+            text = log_path.read_text()
+            actual = one_record(text, '[h3ar] input_conditions ')
+            projection = None
+            if manifest_path:
+                projection = one_record(text, '[music text projection] ')
+                entry = manifest['cases'][case['sample_id']]
+                if (actual.get('text_hidden_projection') != str(manifest_path) or actual.get('music_text_ckpt') is not None
+                        or actual.get('text_hidden_oracle') is not False or projection.get('variant') != variant
+                        or projection.get('manifest_sha256') != sha256(manifest_path)
+                        or projection.get('prefix_ids_tags_context_exact') is not True
+                        or projection.get('original_packed_exact') is not True
+                        or projection.get('music_prediction') is not False
+                        or projection.get('teacher_tokens') != entry['teacher_tokens']
+                        or projection.get('projected_file_sha256') != sha256(Path(entry['path']))
+                        or projection.get('oracle_source_sha256') != sha256(Path(entry['oracle_source']))):
+                    raise ValueError('Projected condition identity, source or same-layout evidence failed')
+                native = projection['native_audio']
+            else:
+                records = jobs['condition_reports']
+                native = next(record['native_audio'] for record in records
+                              if record['case']['sample_id'] == case['sample_id'])
+                if actual.get('text_hidden_oracle') is not True or actual.get('music_text_ckpt') is not None:
+                    raise ValueError('Baseline is not the reused neutral teacher oracle')
+            if (actual.get('native_audio_condition') != 'fixed_silence'
+                    or native.get('native_music_bypass') is not False or native.get('all_target_audio_clean') is not True):
+                raise ValueError('Real music bypass or incorrect native silence')
+            video = directory / 'joint' / case['filename']
+            before = signature(video)
+            integrity = probe_video(video)
+            reader = decord.VideoReader(str(video), num_threads=1)
+            with Image.open(actual['image_path']) as image:
+                reference = image.convert('RGB')
+            images = [reference] + [Image.fromarray(reader[f].asnumpy()) for f in (0, 24, 48, 72, 96, 123)]
+            for column, image in enumerate(images):
+                grid.paste(image.resize((176, 320)), (176 * column, 348 * index + 28))
+                draw.text((176 * column + 3, 348 * index + 6),
+                          case['sample_id'] if column == 0 else str((0, 24, 48, 72, 96, 123)[column - 1] / 24) + 's', fill='black')
+            row = dict(variant=variant, sample_id=case['sample_id'], condition='joint',
+                video_path=str(video), video_sha256=sha256(video), audio_path=case['audio_path'],
+                log_path=str(log_path), log_sha256=log_sha, inputs=actual, projection=projection,
+                native_audio=native, integrity=integrity, baseline_reused=manifest_path is None,
+                diagnostic_only=True, musical_quality_accepted=False)
+            if signature(video) != before or sha256(log_path) != log_sha:
+                raise ValueError('Projection video/log changed during audit')
+            rows.append(row)
+            group_rows.append(row)
+        mosaic = directory / (args.out.stem + '_joint_mosaic.png')
+        if mosaic.exists():
+            raise FileExistsError(mosaic)
+        pending_images.append((mosaic, grid))
+        mosaics.append(dict(variant=variant, path=str(mosaic)))
+        if manifest_path:
+            marker = directory / 'projection_integrity.json'
+            if marker.exists():
+                raise FileExistsError(marker)
+            pending_markers.append((marker, dict(complete=True, expected=3, passed=3, rows=group_rows,
+                final_projection_report=str(args.out), diagnostic_only=True, teacher_length_only=True)))
+        print(json.dumps(dict(event='projection_group_full_decoded', variant=variant, videos=3)), flush=True)
+    if len(rows) != 12 or any(len({row['native_audio'][key] for row in rows}) != 1
+                             for key in ('waveform_sha256', 'reference_sha256', 'retake_sha256', 'mask_sha256')):
+        raise ValueError('All twelve same-reference teacher/projection clips must have identical native silence')
+    pairs = []
+    for sid in [case['sample_id'] for case in cases]:
+        selected = [next(row for row in rows if row['sample_id'] == sid and row['variant'] == name)
+                    for name in ('neutral_teacher_reused', 'w256', 'ln255', 'pca256')]
+        readers = [decord.VideoReader(row['video_path'], num_threads=1) for row in selected]
+        differences = [[], [], []]
+        for frame in range(124):
+            values = [reader[frame].asnumpy().astype(np.float32) / 255 for reader in readers]
+            for index in range(3):
+                differences[index].append(float(np.abs(values[0] - values[index + 1]).mean()))
+        pairs.append(dict(sample_id=sid, teacher_vs_projection_rgb_mae={
+            name: float(np.mean(value)) for name, value in zip(('w256', 'ln255', 'pca256'), differences)}))
+    result = dict(complete=True, expected_new=9, passed_new=9, baseline_reused=3, expected=12, passed=12,
+                  rows=rows, mosaics=mosaics, pixel_pairs=pairs, same_teacher_lengths_and_original_packed_verified=True,
+                  all_native_silence_hashes_identical=True, optimizer_updates=0,
+                  continuous_human_review='pending', musical_gain_accepted=False,
+                  scope='Projected teacher-oracle space diagnostic, not learned music generation; RGB proxies are not dance-quality scores')
+    for path, image in pending_images:
+        with path.open('xb') as stream:
+            image.save(stream, format='PNG')
+    atomic_write_new(args.out, result)
+    for path, record in pending_markers:
+        atomic_write_new(path, record)
+
+
 def main():
+    if '--projection_audit' in __import__('sys').argv:
+        return projection_audit_main()
+    if '--projection' in __import__('sys').argv:
+        return projection_main()
     if '--common_interval' in __import__('sys').argv:
         return common_interval_main()
     if '--online' in __import__('sys').argv:

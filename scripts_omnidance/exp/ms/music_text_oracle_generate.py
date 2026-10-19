@@ -16,6 +16,7 @@ def main():
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument('--caps', type=Path)
     source.add_argument('--checkpoint', type=Path, help='Deploy a trained complete raw-text model, never the oracle')
+    source.add_argument('--projection', type=Path, help='Same-length projected teacher manifest; not trained music generation')
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--hosts', nargs='+', required=True)
     parser.add_argument('--gpu', type=int, default=7)
@@ -35,6 +36,12 @@ def main():
         caps = json.loads(args.caps.read_text())
         if len(caps) != 6 or any(not value.get('source') for value in caps.values()):
             parser.error('Require six source-declared oracle supervision captions')
+    elif args.projection:
+        projected = json.loads(args.projection.read_text())
+        if (not args.joint_only or projected.get('complete') is not True
+                or projected.get('kind') != 'projected_teacher_not_music_prediction'
+                or projected.get('diagnostic_only') is not True or len(projected.get('cases', {})) != 3):
+            parser.error('Projection requires a complete three-joint diagnostic manifest')
     elif not args.checkpoint.is_file():
         parser.error('Require an existing complete music text checkpoint')
     sampler = args.root / 'scripts_omnidance/exp/h3ar/sample_h3_ar.py'
@@ -44,13 +51,16 @@ def main():
     (args.out / 'cache').mkdir()
     from music_generation_validate import atomic_write_new as write_new
     code_sha = hashlib.sha256(sampler.read_bytes()).hexdigest()
-    write_new(args.out / 'plan.json', dict(kind='teacher_oracle_not_trained_music_model' if args.caps else 'trained_music_text_deployment',
+    write_new(args.out / 'plan.json', dict(kind='projected_teacher_not_music_prediction' if args.projection else 'teacher_oracle_not_trained_music_model' if args.caps else 'trained_music_text_deployment',
               source_people=3, conditions=conditions, videos=expected, hosts=args.hosts,
               sampler_sha256=code_sha, supervision_caps_sha256=hashlib.sha256(args.caps.read_bytes()).hexdigest() if args.caps else None,
               checkpoint_sha256=hashlib.sha256(args.checkpoint.read_bytes()).hexdigest() if args.checkpoint else None,
               native_audio='same_fixed_silence_reference_and_retake', semantic_student_prompt=' ',
               raw_text_tail_replacement=True, no_training=True, student_uses_caption=bool(args.caps),
-              zero_music_input=args.zero_input, legacy_clip_complete_chain=args.legacy_clip))
+              zero_music_input=args.zero_input, legacy_clip_complete_chain=args.legacy_clip,
+              projection_manifest=str(args.projection) if args.projection else None,
+              projection_manifest_sha256=hashlib.sha256(args.projection.read_bytes()).hexdigest() if args.projection else None,
+              projection_teacher_length_only=bool(args.projection)))
     queues = [list(range(expected))[i::len(args.hosts)] for i in range(len(args.hosts))]
     guard = guard_code(str(sampler), str(holder), args.gpu)
 
@@ -76,6 +86,8 @@ def main():
                        '--audio_tail_mode', 'repeat_clean', '--fixed_native_silence']
             if args.caps:
                 command += ['--text_hidden_oracle', str(args.caps), '--text_oracle_cache_dir', str(args.out / 'cache')]
+            elif args.projection:
+                command += ['--text_hidden_projection', str(args.projection)]
             else:
                 command += ['--music_text_ckpt', str(args.checkpoint)]
                 if args.zero_input:
@@ -97,6 +109,18 @@ def main():
     with ThreadPoolExecutor(max_workers=len(args.hosts)) as executor:
         jobs = [job for queue in executor.map(run_queue, zip(args.hosts, queues)) for job in queue]
     reports = [json.loads(path.read_text()) for path in (args.out / 'cache').glob('*.json')]
+    if args.projection:
+        import re
+        reports = []
+        for job in jobs:
+            text = Path(job['log']).read_text()
+            records = re.findall(r'^\[music text projection\] (.+)$', text, flags=re.MULTILINE)
+            if len(records) != 1 or '[h3ar] done' not in text:
+                raise ValueError('Missing complete projected-teacher layout evidence')
+            record = json.loads(records[0])
+            if record.get('original_packed_exact') is not True or record.get('music_prediction') is not False:
+                raise ValueError('Projected teacher layout changed or is mislabeled as music prediction')
+            reports.append(dict(status='passed', native_audio=record['native_audio'], projection=record))
     if args.checkpoint:
         import re
         reports = []
@@ -117,7 +141,7 @@ def main():
     final = dict(all_sampler_jobs_exit_zero=passed, expected=expected, jobs=jobs, condition_reports=reports,
                  native_silence_identical_across_all_music_and_images=native_same,
                  complete_video_decode_checked=False,
-                 scope='Teacher hidden oracle, not music prediction or a trained model result' if args.caps else 'Trained shared raw-text adapter, original native music conditions disabled')
+                 scope='Same-length projected teacher, not music prediction or identity-velocity equivalence' if args.projection else 'Teacher hidden oracle, not music prediction or a trained model result' if args.caps else 'Trained shared raw-text adapter, original native music conditions disabled')
     write_new(args.out / 'jobs.json', final)
     print(json.dumps(dict(expected=expected, finished=len(jobs), oracle_conditions_passed=passed,
                           out=str(args.out))), flush=True)

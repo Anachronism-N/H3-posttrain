@@ -19,6 +19,7 @@ def main():
     mode.add_argument('--online_abc', action='store_true', help='Append completed A/B/C budget comparison and all zero-input controls')
     mode.add_argument('--length_ablation', action='store_true', help='Append C length-weight0.01 and its zero-input control')
     mode.add_argument('--behavior_only', action='store_true', help='Append audited six-update control/prediction-supervised music models')
+    mode.add_argument('--projection_only', action='store_true', help='Append audited same-length projected teacher diagnostics, not music models')
     parser.add_argument('--online_steps', type=int, default=100)
     args = parser.parse_args()
     if args.out.exists() or not args.out.parent.is_dir():
@@ -84,11 +85,17 @@ def main():
                 + '；学生仅音乐+参考图，自身长度和完整raw H，native固定静音；'
                 + ('学生音乐置零、仍配原曲，仅joint三条' if zero else '原/换音乐各三条，技术验收不是舞蹈收益声明'))
             configurations.append((tag, ['joint'] if zero else ['joint', 'aswap'], description))
+    if args.projection_only:
+        configurations = [('text_projection_C300_' + name + '_v2', ['joint'],
+            '教师输出空间投影诊断，不是音乐预测：' + label
+            + '；同neutral教师token长度/图prefix/tags/原packed/native静音，零训练，不声明舞蹈质量通过')
+            for name, label in [('w256', '当前W256宽松仿射包络'), ('ln255', '包含LayerNorm零均值约束的255维仿射包络'),
+                                ('pca256', '仅1800train有效tail拟合的近似PCA256，全train中心')]]
     new_models = []
     for tag, conditions, description in configurations:
         group = 'H3AR/val_musicreplace_' + tag
         directory = exp / group
-        marker = directory / ('all6_integrity.json' if len(conditions) == 2 else 'joint_integrity.json')
+        marker = directory / ('projection_integrity.json' if args.projection_only else 'all6_integrity.json' if len(conditions) == 2 else 'joint_integrity.json')
         integrity = json.loads(marker.read_text())
         if integrity.get('complete') is not True:
             raise ValueError('Incomplete video integrity report: ' + str(marker))
@@ -158,13 +165,42 @@ def main():
                     raise ValueError('Behavior supervision variant is not bound to the audited full model')
                 record['label'] = ('预测监督loss1' if variant == 'prediction' else '原表示loss对照') + '·6更新' + ('·零音乐' if '_zero_' in tag else '')
                 record['frozen_h3_prediction_loss_weight'] = float(variant == 'prediction')
+        if args.projection_only:
+            final_path = Path(integrity['final_projection_report'])
+            final = json.loads(final_path.read_text())
+            variant = next(name for name in ('w256', 'ln255', 'pca256') if '_' + name + '_' in tag)
+            rows = [row for row in final['rows'] if row['variant'] == variant]
+            expected_rows = {(case['sample_id'], str(directory / 'joint' / case['filename']), case['audio_path'])
+                             for case in fixed_cases(exp) if case['condition'] == 'joint'}
+            if (final.get('complete') is not True or final.get('expected') != 12 or final.get('passed') != 12
+                    or final.get('passed_new') != 9 or final.get('baseline_reused') != 3
+                    or final.get('same_teacher_lengths_and_original_packed_verified') is not True
+                    or final.get('all_native_silence_hashes_identical') is not True
+                    or len(final['rows']) != 12 or len(rows) != 3 or integrity.get('expected') != 3
+                    or integrity.get('passed') != 3 or integrity.get('rows') != rows
+                    or {(row['sample_id'], row['video_path'], row['audio_path']) for row in rows} != expected_rows
+                    or any(row['projection'].get('original_packed_exact') is not True
+                           or row['projection'].get('variant') != variant or row['projection'].get('music_prediction') is not False
+                           for row in rows)):
+                raise ValueError('Projection review is not bound to completed same-layout teacher cases')
+            record.update(label='教师空间·' + variant, diagnostic_only=True, music_prediction=False,
+                          teacher_length_for_diagnostic_only=True, musical_quality_accepted=False)
         new_models.append(record)
     current = {model['id'] for model in manifest['models']}
     if current & {model['id'] for model in new_models}:
         raise ValueError('Focused manifest already contains new configurations')
     manifest['models'] += new_models
     new_ids = [model['id'] for model in new_models]
-    if args.behavior_only:
+    if args.projection_only:
+        teacher = 'H3AR/val_musicreplace_text_oracle_neutral_v1'
+        if teacher not in current:
+            raise ValueError('Projection review must retain the existing neutral teacher baseline')
+        presets = [dict(name='【教师输出空间·零训练同长度】原neutral教师 / 当前W256 / LN255 / train-PCA256；仅joint，不是音乐预测',
+                        cond='joint', view='models', models=[teacher, *new_ids]),
+                   dict(name='【先复审教师舞蹈上界】原neutral教师 / C300 / 六步control / 六步prediction；仅joint',
+                        cond='joint', view='models', models=[teacher, 'H3AR/val_musicreplace_text_online_C_len001_s300_v1',
+                            'H3AR/val_musicreplace_text_behavior_control_s6_v1', 'H3AR/val_musicreplace_text_behavior_prediction_s6_v1'])]
+    elif args.behavior_only:
         presets = [dict(name='【冻结H3预测监督·6更新】原C300 / 原表示loss对照 / 预测loss1；先joint，再aswap',
                        cond='joint', view='models', models=['H3AR/val_musicreplace_text_online_C_len001_s300_v1', new_ids[0], new_ids[1]]),
                    dict(name='【冻结H3预测监督·零音乐】对照 / 对照零音乐 / 预测loss1 / 预测loss1零音乐；仅joint',
@@ -205,7 +241,9 @@ def main():
         ]
     manifest['presets'] = presets + manifest['presets']
     manifest['built'] = time.strftime('%Y-%m-%d %H:%M:%S')
-    if args.behavior_only:
+    if args.projection_only:
+        manifest['scope'] += ' Same-length teacher projection diagnostics and reused neutral teacher added after full12 audit; no music-model update or continuous human acceptance claim.'
+    elif args.behavior_only:
         manifest['scope'] += ' Six-update representation-only control and frozen-H3 prediction-supervised full music models appended after all18 video audit; small fitting or condition gradients do not establish choreography gain.'
     elif args.online_abc:
         manifest['scope'] += ' A/B/C budget comparison and actual zero-input controls appended after all27 technical audit; musical gain is not established by representation scores.'

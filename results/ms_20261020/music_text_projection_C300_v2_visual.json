@@ -1,0 +1,32 @@
+{
+  "complete": true,
+  "technical_audit": "music_text_projection_C300_v2_all12_audit.json",
+  "new_videos": 9,
+  "reused_teacher_videos": 3,
+  "source_people": 3,
+  "scope": "Reference plus six sampled frames at0/1/2/3/4/5.125 seconds, not continuous audiovisual listening or human dance acceptance",
+  "teacher_projection_not_music_prediction": true,
+  "optimizer_updates": 0,
+  "observations": {
+    "neutral_teacher": "Staircase teacher retains yellow top/grey trousers, with visible steps, turning and arm extension. Red and shop teachers show changing bilateral arm gestures and weight/stance shifts. These sampled events are not certification of continuous usable dancing or song adherence.",
+    "w256": "Staircase changes to dark blue sportswear and small bag, mostly hand gestures and rear leg curl. Red changes toward hand-to-mouth/behind-head/raised-arm motif. Shop has mostly stationary limited arm motion. Projection changes visible control despite preserving source length and packed layout.",
+    "ln255": "Similar visible motif to W256; staircase sportswear changes persist, red face/head arm motif and low-amplitude shop arm changes remain. No meaningful improvement over W is established by sampled frames.",
+    "pca256": "Red and shop sampled arm/stance sequence is closer to the raw neutral teacher than W/LN. Staircase retains larger turn, step and arm extension but still drifts to white-blue sportswear/bag. Approximate PCA has not established identity preservation or usable music-controlled choreography."
+  },
+  "interpretation": {
+    "current_output_space_control_degradation_observed_in_samples": true,
+    "same_rank_alternative_more_teacher_like_for_two_cases": true,
+    "necessary_width_increase_proved": false,
+    "music_encoder_learned_semantics_proved": false,
+    "projection_is_reachable_student_output_proved": false,
+    "teacher_continuous_human_acceptance": "pending",
+    "student_training_started_in_this_stage": false
+  },
+  "limitations": [
+    "W and PCA have different affine centers and directions; differences concern the complete learned output space, not only basis orientation.",
+    "LN255 is an affine-envelope relaxation and does not enforce LayerNorm radius or actual music-conditioned reachability.",
+    "PCA center uses all valid train-only tokens, but its covariance basis is a deterministic weighted-sample randomized approximation.",
+    "Teacher ground-truth token lengths are used only in this explicit oracle diagnostic, not in music student deployment.",
+    "RGB differences and sampled pose changes are not beat, dance-quality or generalization metrics."
+  ]
+}

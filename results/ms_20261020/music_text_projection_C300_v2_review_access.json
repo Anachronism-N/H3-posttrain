@@ -1,0 +1,42 @@
+{
+  "complete": true,
+  "manifest_http_status": 200,
+  "models": 37,
+  "source_people": 3,
+  "presets": 17,
+  "range_verified_unique_videos": 84,
+  "previous_music_videos": 72,
+  "new_projection_teacher_videos": 9,
+  "reused_neutral_teacher_videos": 3,
+  "old_models_samples_presets_preserved": true,
+  "cross_node": {
+    "status": 200,
+    "models": 37,
+    "presets": 17
+  },
+  "continuous_teacher_human_review": "pending",
+  "first_presets": [
+    {
+      "name": "【教师输出空间·零训练同长度】原neutral教师 / 当前W256 / LN255 / train-PCA256；仅joint，不是音乐预测",
+      "cond": "joint",
+      "view": "models",
+      "models": [
+        "H3AR/val_musicreplace_text_oracle_neutral_v1",
+        "H3AR/val_musicreplace_text_projection_C300_w256_v2",
+        "H3AR/val_musicreplace_text_projection_C300_ln255_v2",
+        "H3AR/val_musicreplace_text_projection_C300_pca256_v2"
+      ]
+    },
+    {
+      "name": "【先复审教师舞蹈上界】原neutral教师 / C300 / 六步control / 六步prediction；仅joint",
+      "cond": "joint",
+      "view": "models",
+      "models": [
+        "H3AR/val_musicreplace_text_oracle_neutral_v1",
+        "H3AR/val_musicreplace_text_online_C_len001_s300_v1",
+        "H3AR/val_musicreplace_text_behavior_control_s6_v1",
+        "H3AR/val_musicreplace_text_behavior_prediction_s6_v1"
+      ]
+    }
+  ]
+}

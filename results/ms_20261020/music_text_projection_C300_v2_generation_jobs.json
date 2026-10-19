@@ -1,0 +1,65 @@
+{
+  "complete": true,
+  "expected_videos": 9,
+  "source_people": 3,
+  "groups": [
+    {
+      "variant": "w256",
+      "exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_oracle_generate.py",
+        "--root",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff",
+        "--projection",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_projection_C300_v2/w256_manifest.json",
+        "--out",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_projection_C300_w256_v2",
+        "--hosts",
+        "root@28.216.19.69",
+        "root@28.216.17.70",
+        "root@28.216.19.213",
+        "--joint_only"
+      ]
+    },
+    {
+      "variant": "ln255",
+      "exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_oracle_generate.py",
+        "--root",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff",
+        "--projection",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_projection_C300_v2/ln255_manifest.json",
+        "--out",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_projection_C300_ln255_v2",
+        "--hosts",
+        "root@28.216.19.143",
+        "root@28.216.19.225",
+        "root@28.216.18.136",
+        "--joint_only"
+      ]
+    },
+    {
+      "variant": "pca256",
+      "exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_oracle_generate.py",
+        "--root",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff",
+        "--projection",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_projection_C300_v2/pca256_manifest.json",
+        "--out",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_projection_C300_pca256_v2",
+        "--hosts",
+        "root@28.216.19.137",
+        "root@28.216.18.144",
+        "--joint_only"
+      ]
+    }
+  ],
+  "full_decode_checked": false,
+  "baseline_teacher_reused": true
+}

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/opt/venv_music/bin/python",
+    "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/music_text_infer.py",
+    "--checkpoint",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_no_tc_smoke_v1/last.pt",
+    "--checkpoint_sha256",
+    "bcf3fa34e69935adb2a0a471c8114292e0fa524e78dc198faf4bdc725e3d24df",
+    "--input",
+    "/tmp/music_online_deploy_z3mj2aea/input.pt",
+    "--out",
+    "/tmp/music_online_deploy_z3mj2aea/result.pt"
+  ],
+  "returncode": 0,
+  "stdout": "{\"event\": \"deployed_raw_text\", \"tokens\": 337, \"query_max\": 1423, \"checkpoint_sha256\": \"bcf3fa34e69935adb2a0a471c8114292e0fa524e78dc198faf4bdc725e3d24df\", \"legacy_clip_complete_chain\": false, \"context_policy\": \"music_only_global_bias\"}\n",
+  "stderr": "/usr/local/lib64/python3.11/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.\n  import pynvml  # type: ignore[import]\n",
+  "input_keys": [
+    "waveform"
+  ],
+  "context_policy": "music_only_global_bias",
+  "inference_source_sha256": "a3eafe6a7da83efe342a3c3ff9dfe4ae91f954507ab6a007b90e935264fef939"
+}

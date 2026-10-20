@@ -14,7 +14,23 @@
     "models": 37,
     "presets": 17
   },
-  "continuous_teacher_human_review": "pending",
+  "continuous_teacher_human_review": "received_preset_level",
+  "continuous_teacher_human_review_at_access_check": "pending",
+  "human_review": {
+    "date": "2026-10-20",
+    "source": "explicit_user_conversation_feedback",
+    "scope": "Qualitative continuous review of the two existing presets, not per-case numerical scores",
+    "original_feedback": "val_musicreplace_text_oracle_neutral_v1是舞蹈,其他几个在【先复审教师舞蹈上界】中的配置都是摆pose. 教师空间·pca256是唯一像舞蹈的,但是存在一些肢体反转等的问题,其他的教师空间·w256和教师空间·ln256还是类似摆pose",
+    "neutral_teacher": "dance",
+    "C300_control_prediction_students": "posing_not_dance",
+    "pca256_projected_teacher": "only_projection_like_dance_with_limb_reversal_and_other_problems",
+    "w256_and_ln255_projected_teachers": "posing_not_dance",
+    "ln_label_note": "User called the LN variant ln256; the existing experiment is LN255 with actual affine rank 255",
+    "per_case_scores_provided": false,
+    "music_control_accepted": false,
+    "complete_visual_quality_accepted": false,
+    "student_music_dance_goal_achieved": false
+  },
   "first_presets": [
     {
       "name": "【教师输出空间·零训练同长度】原neutral教师 / 当前W256 / LN255 / train-PCA256；仅joint，不是音乐预测",

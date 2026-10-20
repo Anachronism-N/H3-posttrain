@@ -40,6 +40,8 @@ p.add_argument("--music_text_zero_input", action="store_true", help="Zero music 
 p.add_argument('--music_text_legacy_clip', action='store_true', help='Use complete old encoder/adapter/CLIPhead as one scaled text token; no retraining')
 p.add_argument("--text_hidden_oracle", default="", help="Supervision-only JSON audio_id -> {prompt, source}; raw hidden tail replaces empty student text")
 p.add_argument('--text_hidden_projection', default='', help='Same-length projected teacher manifest; diagnostic only, not music prediction')
+p.add_argument('--no_text_encoder', action='store_true', help='Do not load or call text encoder/tokenizer/processor; music tokens alone occupy the text condition rows')
+p.add_argument('--no_tc_teacher_cache', default='', help='Existing teacher tail cache for a no-TC tail-only diagnostic, never music prediction')
 p.add_argument("--text_oracle_cache_dir", default="", help="Existing new directory for oracle targets and strict condition-equivalence reports")
 p.add_argument("--body_json", default="", help="music_caption.py output; replaces the per-video description (template kept)")
 p.add_argument("--body_key", default="timed", help="timed | calm | energetic")
@@ -74,10 +76,18 @@ if a.text_hidden_projection and (a.text_hidden_oracle or a.music_text_ckpt or a.
     p.error('Projected teacher requires only three joint cases, empty text, fixed silence and bi CFG1; no trained music/oracle mixing')
 if (a.music_text_zero_input or a.music_text_legacy_clip) and not a.music_text_ckpt:
     p.error('Zero/legacy text-adapter input requires an explicit music text checkpoint')
+if a.no_tc_teacher_cache and not a.no_text_encoder:
+    p.error('Cached teacher tail-only diagnostic requires no_text_encoder')
+if a.no_text_encoder and (bool(a.music_text_ckpt) == bool(a.no_tc_teacher_cache)
+        or a.text_hidden_oracle or a.text_hidden_projection or a.music_text_legacy_clip
+        or a.prompt_mode != 'empty' or not a.fixed_native_silence or a.mode != 'bi' or a.cfg != 1
+        or a.body_json or a.soft_text or a.soft_tokens or a.prompt_prefix
+        or (a.no_tc_teacher_cache and (a.conds != 'joint' or a.audio_override))):
+    p.error('No-TC requires exactly music checkpoint or cached teacher tail; no text injection, fixed silence and bi CFG1')
 
 csv.field_size_limit(10 ** 9)
 E = "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp"
-cap = {} if a.music_text_ckpt or a.text_hidden_projection else {r["sample_id"]: r["motion_caption"] for r in csv.DictReader(open(f"{E}/E10/val47_motion_captions.csv"))}
+cap = {} if a.music_text_ckpt or a.text_hidden_projection or a.no_text_encoder else {r["sample_id"]: r["motion_caption"] for r in csv.DictReader(open(f"{E}/E10/val47_motion_captions.csv"))}
 jobs = []
 for c in a.conds.split(","):
     rows = list(csv.DictReader(open(f"{a.csv_dir}/full_{c}.csv")))
@@ -101,28 +111,42 @@ vram = dict(offload_dtype=torch.bfloat16, offload_device="cpu", onload_dtype=tor
 W = a.w
 pipe = MiniMaxH3Pipeline.from_pretrained(
     torch_dtype=torch.bfloat16, device="cuda",
-    model_configs=[
-        ModelConfig(path=sorted(glob.glob(f"{W}/text_encoder/model*.safetensors")), **vram),
+    model_configs=([ModelConfig(path=sorted(glob.glob(f"{W}/text_encoder/model*.safetensors")), **vram)]
+                   if not a.no_text_encoder else []) + [
         ModelConfig(path=sorted(glob.glob(f"{W}/transformer/model*.safetensors")), **vram),
         ModelConfig(path=f"{W}/video_vae/source/model.safetensors", **vram),
         ModelConfig(path=f"{W}/audio_vae/model.safetensors", **vram),
     ],
-    processor_config=ModelConfig(path=f"{W}/processor/"),
+    processor_config=None if a.no_text_encoder else ModelConfig(path=f"{W}/processor/"),
     **({"vram_limit": torch.cuda.mem_get_info("cuda")[1] / (1024 ** 3) - 5} if a.height > 832 else {}),  # official-res (as e3/oos scripts)
 )
 TEXT_ORACLE = None
 TEXT_PROJECTION = None
 TEXT_STUDENT = None
+TEXT_NO_TC_TEACHER = None
 ORACLE_CAPTIONS = None
+if a.no_text_encoder:
+    assert pipe.text_encoder is None and pipe.tokenizer is None and pipe.processor is None, 'No-TC must not load text encoder or processor'
+    print('[h3ar] no_text_encoder: text encoder, tokenizer and processor omitted; no blank text or TC prefix', flush=True)
 if a.music_text_ckpt:
     from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
     sys.path.insert(0, os.path.join(HERE, '..', 'ms'))
     from music_text_infer import student_text_embedder
     from music_text_condition import tensor_sha256
-    TEXT_STUDENT = student_text_embedder(a.music_text_ckpt, legacy_clip=a.music_text_legacy_clip)
+    TEXT_STUDENT = student_text_embedder(a.music_text_ckpt, legacy_clip=a.music_text_legacy_clip,
+                                        no_text_encoder=a.no_text_encoder)
     matches = [i for i, unit in enumerate(pipe.units) if isinstance(unit, MiniMaxH3Unit_PromptEmbedder)]
     assert len(matches) == 1, 'Expected exactly one original prompt embedder'
     pipe.units[matches[0]] = TEXT_STUDENT
+if a.no_tc_teacher_cache:
+    from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
+    sys.path.insert(0, os.path.join(HERE, '..', 'ms'))
+    from music_text_infer import cached_teacher_tail_embedder
+    from music_text_condition import tensor_sha256
+    TEXT_NO_TC_TEACHER = cached_teacher_tail_embedder(a.no_tc_teacher_cache)
+    matches = [i for i, unit in enumerate(pipe.units) if isinstance(unit, MiniMaxH3Unit_PromptEmbedder)]
+    assert len(matches) == 1, 'Expected exactly one original prompt embedder'
+    pipe.units[matches[0]] = TEXT_NO_TC_TEACHER
 if a.text_hidden_oracle:
     import json
     from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
@@ -217,7 +241,7 @@ if a.mode == "ar":
 def generate(prompt, img, wav, sr):
     pipe.scheduler.set_timesteps(a.steps, shift=a.shift)
     pipe.scheduler_audio.set_timesteps(a.steps, shift=a.audio_shift)
-    inputs_posi = {"prompt": prompt}; inputs_nega = {"negative_prompt": " "}
+    inputs_posi = {"prompt": prompt}; inputs_nega = {"negative_prompt": None if a.no_text_encoder else " "}
     condition_wav = torch.zeros((2, round(5.0625 * sr)), dtype=torch.float32) if a.fixed_native_silence else wav
     if TEXT_STUDENT is not None:
         TEXT_STUDENT.set_waveform(torch.zeros_like(wav) if a.music_text_zero_input else wav)
@@ -247,6 +271,20 @@ def generate(prompt, img, wav, sr):
     models = {n: getattr(pipe, n) for n in pipe.in_iteration_models}
     lat0 = sh["video_latents"].clone()
     T = lat0.shape[2]
+    if a.no_text_encoder:
+        assert prompt is None and pipe.text_encoder is None and pipe.tokenizer is None and pipe.processor is None
+        assert sh['ref_visual_anchor'] is not None and sh['ref_visual_anchor'].numel() > 0
+        assert not torch.count_nonzero(sh['denoise_mask_audio'])
+        assert inputs_posi['prompt_embeds'].shape[0] == len(inputs_posi['packed']['text_pos'])
+        assert torch.all(inputs_posi['text_token_tags'] == 1)
+        print('[no tc native isolation] ' + _json.dumps(dict(
+              waveform_sha256=tensor_sha256(condition_wav), reference_sha256=tensor_sha256(sh['ref_audio_anchor']),
+              retake_sha256=tensor_sha256(sh['input_latents_audio']), mask_sha256=tensor_sha256(sh['denoise_mask_audio']),
+              native_music_bypass=False, all_target_audio_clean=True, text_encoder_loaded=False,
+              tokenizer_loaded=False, processor_loaded=False, text_encoder_calls=0, semantic_text=None,
+              prefix_tokens=0, prompt_embeds_shape=list(inputs_posi['prompt_embeds'].shape),
+              visual_reference_rows=sh['ref_visual_anchor'].shape[0],
+              visual_reference_sha256=tensor_sha256(sh['ref_visual_anchor']))), flush=True)
     if TEXT_STUDENT is not None:
         assert not torch.count_nonzero(sh['denoise_mask_audio'])
         print('[music text native isolation] ' + _json.dumps(dict(
@@ -391,7 +429,7 @@ for c, r, dst in todo:
         wav = torch.from_numpy(y if y.ndim == 2 else y[None]).float()
         if wav.shape[0] == 1:
             wav = wav.repeat(2, 1)
-    body = cap.get(r.get("swap_src") or r["sample_id"], r["prompt"]) if a.prompt_mode in ("motion", "music") else r["prompt"]
+    body = None if a.no_text_encoder else (cap.get(r.get("swap_src") or r["sample_id"], r["prompt"]) if a.prompt_mode in ("motion", "music") else r["prompt"])
     if a.prompt_mode == "music":
         bt = [t for t in BEATS.get(r["audio_path"], []) if t < dur]
         if len(bt) >= 2:
@@ -414,7 +452,7 @@ for c, r, dst in todo:
         body = a.prompt_prefix + " " + body
     # empty: text prompt " " (same as the CFG negative) -> isolates what image + audio alone drive
     # generic: H3 template (reference/audio bindings) + one generic dance sentence, no per-video description
-    prompt = " " if a.prompt_mode == "empty" else h3_prompt(body, generic=(c == "audio_only" or a.prompt_mode == "generic"))
+    prompt = None if a.no_text_encoder else (" " if a.prompt_mode == "empty" else h3_prompt(body, generic=(c == "audio_only" or a.prompt_mode == "generic")))
     if TEXT_ORACLE is not None:
         from pathlib import Path
         audio_id = Path(a.audio_override or r['audio_path']).stem
@@ -426,6 +464,8 @@ for c, r, dst in todo:
                               caption_source=entry['source']))
     if TEXT_PROJECTION is not None:
         TEXT_PROJECTION.set_case(r['sample_id'], r['image_path'], r['audio_path'])
+    if TEXT_NO_TC_TEACHER is not None:
+        TEXT_NO_TC_TEACHER.set_case(r['sample_id'], r['image_path'], r['audio_path'])
     print('[h3ar] input_conditions ' + _json.dumps(dict(prompt_mode=a.prompt_mode, semantic_text=prompt,
           image_path=r["image_path"], audio_path=a.audio_override or r["audio_path"], seed=a.seed,
           music_encoder_ckpt=a.music_encoder_ckpt or None,
@@ -433,7 +473,9 @@ for c, r, dst in todo:
           text_hidden_oracle=bool(TEXT_ORACLE), music_text_ckpt=a.music_text_ckpt or None,
           music_text_zero_input=a.music_text_zero_input, legacy_clip_complete_chain=a.music_text_legacy_clip,
           waveform_loader='music_clip_bridge.load_audio' if TEXT_STUDENT is not None else 'librosa',
-          text_hidden_projection=a.text_hidden_projection or None)), flush=True)
+          text_hidden_projection=a.text_hidden_projection or None,
+          no_text_encoder=a.no_text_encoder, no_tc_teacher_cache=a.no_tc_teacher_cache or None,
+          text_encoder_loaded=pipe.text_encoder is not None)), flush=True)
     video = generate(prompt, img, wav, sr)
     write_video_audio(video=video, audio=wav, output_path=dst, fps=24, audio_sample_rate=sr)
     if SOFT is not None:

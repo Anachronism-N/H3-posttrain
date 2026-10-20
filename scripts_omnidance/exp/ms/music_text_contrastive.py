@@ -9,7 +9,8 @@ import time
 import torch
 from torch.nn import functional as F
 
-from music_text_adapter import load_music_text_checkpoint, save_music_text_checkpoint, length_loss, masked_token_loss
+from music_text_adapter import (load_music_text_checkpoint, save_music_text_checkpoint, length_loss,
+                                masked_token_loss, convert_music_text_to_no_text_encoder)
 from music_text_align import read_split, load_targets, load_features, batch_tensors, evaluate, sha256, write_new
 
 
@@ -195,9 +196,10 @@ def _refresh_online_reservation():
             reservation.touch()
 
 
-def _online_batch(ids, bundle, qmax):
+def _online_batch(ids, bundle, qmax, context_free=False):
     wave = torch.stack([bundle['waveforms'][sid] for sid in ids]).cuda()
-    context = torch.stack([bundle['targets'][sid]['prefix_context'] for sid in ids]).cuda().float()
+    context = None if context_free else torch.stack(
+        [bundle['targets'][sid]['prefix_context'] for sid in ids]).cuda().float()
     tails = [bundle['targets'][sid]['tail'] for sid in ids]
     if any(len(value) > qmax for value in tails):
         raise ValueError('Teacher exceeds the train-only query bound')
@@ -213,6 +215,8 @@ def _online_scores(conditions, teacher, teacher_mask, mean, std):
 
 
 def _online_conditions(model, ids, candidates, bundle, context, offset):
+    if model.adapter.context_policy == 'music_only_global_bias' and context is not None:
+        raise ValueError('noTC online conditions forbid cached or external context')
     targets = bundle['targets']
     first = mismatched_ids(ids, candidates, targets, offset=offset)
     second = mismatched_ids(ids, candidates, targets, offset=offset + 1, excluded=first)
@@ -231,7 +235,8 @@ def _evaluate_online(model, ids, candidates, bundle, mean, std, position_mean, b
     for start in range(0, len(ids), batch_size):
         _refresh_online_reservation()
         names = ids[start:start + batch_size]
-        wave, context, target, lengths, mask = _online_batch(names, bundle, model.adapter.qmax)
+        wave, context, target, lengths, mask = _online_batch(
+            names, bundle, model.adapter.qmax, context_free=model.adapter.context_policy == 'music_only_global_bias')
         conditions, wrong_ids, second_ids = _online_conditions(model, names, candidates, bundle, context, 1)
         zero = model.student_condition(torch.zeros_like(wave), context)
         scores = _online_scores(conditions, target, mask, mean, std)
@@ -276,9 +281,13 @@ def _online_deployment_audit(model, checkpoint, wave, context, out):
     import subprocess
     import tempfile
     from music_text_adapter import load_music_text_checkpoint
+    context_free = model.adapter.context_policy == 'music_only_global_bias'
+    if context_free and context is not None:
+        raise ValueError('noTC deployment audit forbids external/cached context')
+    probe_context = None if context_free else context[:1]
     model.train()
     with torch.enable_grad():
-        train_condition = model.student_condition(wave[:1], context[:1])
+        train_condition = model.student_condition(wave[:1], probe_context)
     if not train_condition['raw_tokens'].requires_grad or not train_condition['log_length'].requires_grad:
         raise ValueError('Training student condition lost its graph')
     expected = {key: train_condition[key].detach().cpu() for key in ('raw_tokens', 'log_length', 'lengths', 'valid_mask')}
@@ -286,13 +295,13 @@ def _online_deployment_audit(model, checkpoint, wave, context, out):
     del train_condition
     model.eval()
     with torch.no_grad():
-        actual = model.student_condition(wave[:1], context[:1])
+        actual = model.student_condition(wave[:1], probe_context)
         if not all(torch.equal(expected[key], actual[key].cpu()) for key in expected):
             raise ValueError('Train/eval student construction differs')
     del actual
     fresh = load_music_text_checkpoint(checkpoint, expected_backend='musicfm').cuda().eval()
     with torch.no_grad():
-        actual = fresh.student_condition(wave[:1], context[:1])
+        actual = fresh.student_condition(wave[:1], probe_context)
         if not all(torch.equal(expected[key], actual[key].cpu()) for key in expected):
             raise ValueError('Full checkpoint changes online student condition')
     del actual, fresh
@@ -300,34 +309,128 @@ def _online_deployment_audit(model, checkpoint, wave, context, out):
     torch.cuda.empty_cache()
     with tempfile.TemporaryDirectory(prefix='music_online_deploy_') as directory:
         inp, result = Path(directory) / 'input.pt', Path(directory) / 'result.pt'
-        torch.save(dict(waveform=wave[0].cpu(), context=context[0].cpu()), inp)
+        inputs = dict(waveform=wave[0].cpu())
+        if not context_free:
+            inputs['context'] = context[0].cpu()
+        torch.save(inputs, inp)
         command = [__import__('sys').executable, str(Path(__file__).with_name('music_text_infer.py')),
                    '--checkpoint', str(checkpoint), '--checkpoint_sha256', sha256(checkpoint),
                    '--input', str(inp), '--out', str(result)]
         completed = subprocess.run(command, capture_output=True, text=True, env=os.environ.copy())
         write_new(out / 'independent_deployment_process.json', dict(command=command, returncode=completed.returncode,
-                    stdout=completed.stdout, stderr=completed.stderr))
+                    stdout=completed.stdout, stderr=completed.stderr, input_keys=sorted(inputs),
+                    context_policy=model.adapter.context_policy,
+                    inference_source_sha256=sha256(Path(__file__).with_name('music_text_infer.py'))))
         if completed.returncode:
             raise RuntimeError('Independent deployment failed: ' + completed.stderr[-4000:])
         deployed = torch.load(result, map_location='cpu', weights_only=True)
-    if not torch.equal(expected_tail, deployed['tail']) or int(expected['lengths'][0]) != deployed['predicted_length']:
-        raise ValueError('Independent inference changes actual deployed tail')
+    if (not torch.equal(expected_tail, deployed['tail'])
+            or int(expected['lengths'][0]) != deployed['predicted_length']
+            or deployed.get('context_policy', 'tc_prefix_context') != model.adapter.context_policy
+            or deployed.get('checkpoint_sha256') != sha256(checkpoint)):
+        raise ValueError('Independent inference changes actual deployed tail, length, checkpoint or context policy')
     # H3 prefix/tags/packed parity is audited separately in the H3 environment.
-    write_new(out / 'deployment_probe.pt', dict(waveform=wave[0].cpu(), context=context[0].cpu(),
-              tail=expected_tail, length=int(expected['lengths'][0]), checkpoint_sha256=sha256(checkpoint)), binary=True)
+    probe = dict(waveform=wave[0].cpu(), tail=expected_tail, length=int(expected['lengths'][0]),
+                 checkpoint_sha256=sha256(checkpoint))
+    if not context_free:
+        probe['context'] = context[0].cpu()
+    write_new(out / 'deployment_probe.pt', probe, binary=True)
     return dict(train_eval_raw_length_mask_exact=True, complete_checkpoint_condition_exact=True,
                 independent_inference_tail_exact=True, training_graph_present=True,
+                context_policy=model.adapter.context_policy, cached_context_read=not context_free,
                 h3_prefix_tags_packed_checked=False)
+
+
+def _verify_online_initialization(init, bundle_init_sha256, bundle_sha256):
+    actual_sha256 = sha256(init)
+    if actual_sha256 == bundle_init_sha256:
+        return actual_sha256, None
+    finished_path = init.parent / 'finished.json'
+    if init.name != 'last.pt' or not finished_path.is_file():
+        raise ValueError('Changed online initialization requires the completed C300 parent last.pt')
+    finished = json.loads(finished_path.read_text())
+    protocol = finished.get('protocol', {})
+    if (finished.get('complete') is not True or type(finished.get('steps')) is not int
+            or finished['steps'] != 300 or protocol.get('steps') != 300
+            or finished.get('checkpoint_sha256') != actual_sha256
+            or protocol.get('init_sha256') != bundle_init_sha256
+            or protocol.get('online_bundle_sha256') != bundle_sha256):
+        raise ValueError('C300 initialization must bind its finished checkpoint SHA, original init and online bundle')
+    return actual_sha256, dict(finished=str(finished_path), finished_sha256=sha256(finished_path),
+                               checkpoint_sha256=actual_sha256, steps=300,
+                               init_sha256=bundle_init_sha256, online_bundle_sha256=bundle_sha256)
+
+
+def _load_output_space_manifest(path, checkpoint_sha256, bundle_sha256, train_ids, parent_finished_sha256):
+    manifest = json.loads(path.read_text())
+    finished_path = path.parent / 'finished.json'
+    finished = json.loads(finished_path.read_text())
+    variant = manifest.get('variant')
+    if (manifest.get('complete') is not True or manifest.get('format_version') != 1
+            or manifest.get('diagnostic_only') is not True
+            or manifest.get('kind') != 'projected_teacher_not_music_prediction'
+            or manifest.get('teacher_length_for_oracle_only') is not True
+            or manifest.get('changes_student_deployment') is not False
+            or manifest.get('checkpoint_sha256') != checkpoint_sha256
+            or manifest.get('bundle_sha256') != bundle_sha256
+            or finished.get('complete') is not True or finished.get('optimizer_updates') != 0
+            or finished.get('checkpoint_sha256') != checkpoint_sha256
+            or finished.get('bundle_sha256') != bundle_sha256
+            or finished.get('checkpoint_summary_sha256') != parent_finished_sha256
+            or finished.get('pca_uses_train_only') is not True
+            or variant not in ('w256', 'ln255', 'pca256', 'pca256n', 'pca512n')
+            or str(path.resolve()) not in {str(Path(item).resolve()) for item in finished.get('manifests', [])}):
+        raise ValueError('Output-space manifest must bind a completed read-only train-only diagnostic to this checkpoint/bundle')
+    rows = [item for item in finished.get('variants', []) if item.get('variant') == variant]
+    if len(rows) != 1 or Path(rows[0]['oracle_manifest']).resolve() != path.resolve():
+        raise ValueError('Output space must be the unique declared completed diagnostic variant')
+    space_metadata = rows[0].get('space_metadata')
+    if not isinstance(space_metadata, dict):
+        raise ValueError('Output space requires complete source metadata')
+    if variant.startswith('pca'):
+        sampling = space_metadata.get('sampling', [])
+        if (space_metadata.get('validation_used') is not False
+                or space_metadata.get('prefix_and_padding_used') is not False
+                or space_metadata.get('train_samples') != len(train_ids)
+                or [item.get('sample_id') for item in sampling] != train_ids):
+            raise ValueError('PCA output-space fitting must use exactly the declared full train-only token pool')
+    elif (space_metadata.get('svd_dtype') != 'float64'
+          or type(space_metadata.get('numerical_rank')) is not int):
+        raise ValueError('Checkpoint-derived output space requires its exact FP64 SVD metadata')
+    if 'space_metadata' in manifest and manifest['space_metadata'] != space_metadata:
+        raise ValueError('Manifest output-space metadata differs from completed diagnostic')
+    if 'train_ids' in manifest and manifest['train_ids'] != train_ids:
+        raise ValueError('Manifest train pool differs from online bundle')
+    numeric = Path(manifest['output_space'])
+    source_sha256 = sha256(numeric)
+    if source_sha256 != manifest.get('output_space_sha256'):
+        raise ValueError('Output-space numerical artifact SHA mismatch')
+    state = torch.load(numeric, map_location='cpu', weights_only=True)
+    if not isinstance(state, dict) or set(state) != {'center', 'basis'}:
+        raise ValueError('Output-space numerical artifact must contain only center and basis')
+    rank = space_metadata.get('rank', space_metadata.get('numerical_rank'))
+    if (type(rank) is not int or not isinstance(state['basis'], torch.Tensor)
+            or state['basis'].ndim != 2 or state['basis'].shape[1] != rank):
+        raise ValueError('Output-space basis rank differs from completed diagnostic metadata')
+    source = dict(manifest=str(path), manifest_sha256=sha256(path), finished=str(finished_path),
+                  finished_sha256=sha256(finished_path), artifact=str(numeric), output_space_sha256=source_sha256,
+                  checkpoint_sha256=checkpoint_sha256, checkpoint_summary_sha256=parent_finished_sha256,
+                  online_bundle_sha256=bundle_sha256, variant=variant, space_metadata=space_metadata)
+    return state, source
 
 
 def online_main():
     parser = argparse.ArgumentParser(description='Online MusicFM dense backbone + complete raw H adapter')
     parser.add_argument('--online', action='store_true', required=True)
     parser.add_argument('--online_bundle', type=Path, required=True)
+    parser.add_argument('--output_space_manifest', type=Path,
+                        help='Completed checkpoint-W or train-only PCA manifest bound to this init checkpoint and online bundle')
     parser.add_argument('--init', type=Path, required=True)
     parser.add_argument('--split', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--backbone_train', action='store_true')
+    parser.add_argument('--no_text_encoder', action='store_true',
+                        help='Convert verified legacy C300 to pure music/global-bias conditioning; never read cached TC context')
     parser.add_argument('--steps', type=int, default=100)
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--microbatch', type=int, default=2)
@@ -357,12 +460,20 @@ def online_main():
         raise ValueError('Online bundle must contain teacher labels and waveforms, never cached student features')
     train, val = read_split(args.split)
     metadata = bundle['metadata']
+    run_init_sha256, parent_c300 = _verify_online_initialization(args.init, metadata['init_sha256'], bundle_hash)
     if (metadata['format_version'] != 1 or metadata['split_sha256'] != sha256(args.split)
             or metadata['train_ids'] != train or metadata['val_ids'] != val
-            or metadata['init_sha256'] != sha256(args.init)
             or metadata['student_feature_cache_used'] is not False
             or set(bundle['targets']) != set(train + val) or set(bundle['waveforms']) != set(train + val)):
         raise ValueError('Online bundle/initialization/split mismatch')
+    if args.no_text_encoder and parent_c300 is None:
+        raise ValueError('--no_text_encoder requires the verified completed legacy C300 common initialization')
+    space_state, space_source = None, None
+    if args.output_space_manifest:
+        if parent_c300 is None:
+            raise ValueError('Output-space student comparisons must start from the verified completed C300 checkpoint')
+        space_state, space_source = _load_output_space_manifest(
+            args.output_space_manifest, run_init_sha256, bundle_hash, train, parent_c300['finished_sha256'])
     from music_clip_bridge import load_audio
     for sid in (train[0], train[1], val[0]):
         if not torch.equal(bundle['waveforms'][sid], load_audio(sid)[0]):
@@ -380,13 +491,66 @@ def online_main():
     qmax = model.adapter.qmax
     if position_mean.shape != (qmax, 5120) or max(len(bundle['targets'][sid]['tail']) for sid in train) != qmax:
         raise ValueError('Query bound must come from full train only')
+    context_conversion = None
+    if args.no_text_encoder:
+        model.eval()
+        with torch.no_grad():
+            features, feature_lengths = model.dense_features(bundle['waveforms'][val[0]][None].cuda())
+        context_conversion = convert_music_text_to_no_text_encoder(model, features, feature_lengths)
+        context_conversion.update(source_checkpoint_sha256=run_init_sha256, probe_sample_id=val[0])
+        del features, feature_lengths
+    elif model.adapter.context_policy != 'tc_prefix_context':
+        raise ValueError('Music-only checkpoints require an explicit noTC training protocol; legacy path must not supply context')
+    context_free = model.adapter.context_policy == 'music_only_global_bias'
+    projection_initial_state = None
+    if space_state is not None:
+        if model.adapter.output_basis is not None:
+            raise ValueError('C300 common initialization must not already have an output-space projection')
+        before_projection = _state_hashes(model)
+        probe_id = val[0]
+        model.eval()
+        with torch.no_grad():
+            probe_wave = bundle['waveforms'][probe_id][None].cuda()
+            probe_context = None if context_free else bundle['targets'][probe_id]['prefix_context'][None].cuda().float()
+            features, feature_lengths = model.dense_features(probe_wave)
+            original_raw, original_length = model.adapter(features, probe_context, feature_lengths)
+            model.adapter.set_output_space(space_state['center'], space_state['basis'],
+                                           space_source['output_space_sha256'])
+            projected_raw, projected_length = model.adapter(features, probe_context, feature_lengths)
+        after_projection = _state_hashes(model)
+        added = sorted(set(after_projection) - set(before_projection))
+        changed = [name for name in before_projection if before_projection[name] != after_projection.get(name)]
+        if (changed or added != ['adapter.output_basis', 'adapter.output_center']
+                or not torch.equal(original_length, projected_length)):
+            raise ValueError('Installing a fixed output space must only add buffers and leave all initial parameters/lengths unchanged')
+        delta = projected_raw - original_raw
+        projection_initial_state = dict(probe_sample_id=probe_id, probe_queries=qmax,
+            added_persistent_buffers=added, changed_existing_state=[], optimizer_updates=0,
+            raw_output_changed_before_training=not torch.equal(original_raw, projected_raw),
+            raw_projection_delta_rms=float(delta.square().mean().sqrt()),
+            raw_projection_relative_rms=float(delta.norm() / original_raw.norm().clamp_min(1e-12)),
+            log_length_unchanged=True, width=model.adapter.width,
+            affine_difference_rank_upper_bound=min(model.adapter.width - 1, model.adapter.output_basis.shape[1]),
+            full_fixed_basis_reachability_claim=False,
+            limitation='Trainable output_norm LayerNorm imposes width-1 affine envelope; nonlinear normalized queries are further constrained')
+        del features, feature_lengths, original_raw, original_length, projected_raw, projected_length, delta, probe_wave, probe_context
     if args.small_fit:
         train = train[:args.small_fit]
         val = val[:min(len(val), args.small_fit)]
     if args.validation_count:
         val = val[:args.validation_count]
     args.out.mkdir()
-    protocol = dict(init=str(args.init), init_sha256=sha256(args.init), online_bundle_sha256=bundle_hash,
+    protocol = dict(init=str(args.init), init_sha256=run_init_sha256, run_init_sha256=run_init_sha256,
+        bundle_init_sha256=metadata['init_sha256'], parent_c300=parent_c300,
+        output_space_source=space_source, output_space=model.adapter.output_space_metadata(),
+        projection_initial_state=projection_initial_state, optimizer_state='new_AdamW_not_resumed',
+        adapter_width=model.adapter.width, adapter_heads=model.adapter.heads,
+        no_text_encoder=args.no_text_encoder, context_policy=model.adapter.context_policy,
+        context_conversion=context_conversion, student_cached_context_read=not context_free,
+        student_inputs='music_waveform_only_global_trainable_bias' if context_free else 'music_waveform_and_cached_tc_prefix_context',
+        text_encoder_called=False, teacher_hidden_and_length_for_supervision_only=True,
+        student_image_condition=False, reference_image_scope='downstream_H3_visual_VAE_only',
+        online_bundle_sha256=bundle_hash,
         split_sha256=sha256(args.split), train_ids=train, validation_ids=val, steps=args.steps,
         batch_size=args.batch_size, microbatch=args.microbatch, accumulation=args.batch_size // args.microbatch,
         backbone_train=args.backbone_train, backbone_lr=args.backbone_lr, adapter_lr=args.adapter_lr,
@@ -430,7 +594,7 @@ def online_main():
         batch_tokens = sum(len(bundle['targets'][sid]['tail']) for sid in ids)
         for start in range(0, len(ids), args.microbatch):
             names = ids[start:start + args.microbatch]
-            wave, context, target, lengths, mask = _online_batch(names, bundle, qmax)
+            wave, context, target, lengths, mask = _online_batch(names, bundle, qmax, context_free=context_free)
             conditions, _, _ = _online_conditions(model, names, train, bundle, context, step % (len(train) - 1) + 1)
             mse = masked_token_loss(conditions[0]['raw_tokens'], target, mask)['raw_mse']
             ll = length_loss(conditions[0]['log_length'], lengths, qmax)
@@ -480,7 +644,7 @@ def online_main():
     checkpoint = args.out / 'last.pt'
     model.eval()
     save_music_text_checkpoint(checkpoint, model)
-    wave, context, _, _, _ = _online_batch(val[:1], bundle, qmax)
+    wave, context, _, _, _ = _online_batch(val[:1], bundle, qmax, context_free=context_free)
     del optimizer
     deployment = _online_deployment_audit(model, checkpoint, wave, context, args.out)
     summary = dict(complete=True, protocol=protocol, steps=args.steps, actual_items_seen=items_seen,

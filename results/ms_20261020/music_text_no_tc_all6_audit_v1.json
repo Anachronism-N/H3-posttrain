@@ -1,0 +1,859 @@
+{
+  "complete": true,
+  "no_tc_complete": true,
+  "expected": 6,
+  "passed": 6,
+  "expected_new": 6,
+  "passed_new": 6,
+  "baseline_reused_new_count": 0,
+  "reused_baselines": [
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_online_C_len001_s300_v1"
+  ],
+  "generation_bindings": [
+    {
+      "tag": "text_no_tc_teacher_v1",
+      "directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1",
+      "kind": "cached_teacher_tail_only_no_tc_diagnostic"
+    },
+    {
+      "tag": "text_no_tc_C300_v1",
+      "directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1",
+      "kind": "legacy_checkpoint_no_tc_music_only_diagnostic"
+    }
+  ],
+  "rows": [
+    {
+      "tag": "text_no_tc_teacher_v1",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "condition": "joint",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "video_sha256": "6a6aeaa07282e061c23b500df8fe0e8a83c9ca47e65e1d9c35fa9d2c9efad907",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/logs/shard_0.log",
+      "log_sha256": "f7ab14541f3bcc62c707434536813a1f0abfe0a8d41f2c187f877c7e55529640",
+      "image_sha256": "530543b232b4315918bc503adcc1ebf1e0d0a0df149394c504abd94650193c13",
+      "audio_sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": null,
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": null,
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "librosa",
+        "text_hidden_projection": null,
+        "no_text_encoder": true,
+        "no_tc_teacher_cache": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+        "text_encoder_loaded": false
+      },
+      "no_tc_condition": {
+        "kind": "cached_teacher_tail_only_no_tc_diagnostic",
+        "teacher_only_diagnostic": true,
+        "music_prediction": false,
+        "context_source": "none_teacher_tail_only_diagnostic",
+        "source_sha256": "6d113155141f009ea39fe1818761334f18d1a15ba18d41c4e7d3fb24adec8365",
+        "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.pt",
+        "original_teacher_tokens": 228,
+        "teacher_tail_sha256": "c9506d70e8bb0e76158090affde1d832aef771022fd05d81338c81b32029c31a",
+        "sample_id": "wJPptuhclZmKAEWs",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+        "student_reads_caption": false,
+        "loaded": false,
+        "calls": 0,
+        "semantic_text": null,
+        "processor_loaded": false,
+        "tokenizer_loaded": false,
+        "prefix_length": 0,
+        "tail_shape": [
+          228,
+          5120
+        ],
+        "predicted_length": 228,
+        "raw_sha256": "52ebc1e15db9c2c99b0b54b9a282f9cda2b6139ec68930768a55404e0dbe9dae"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true,
+        "text_encoder_loaded": false,
+        "tokenizer_loaded": false,
+        "processor_loaded": false,
+        "text_encoder_calls": 0,
+        "semantic_text": null,
+        "prefix_tokens": 0,
+        "prompt_embeds_shape": [
+          228,
+          5120
+        ],
+        "visual_reference_rows": 7424,
+        "visual_reference_sha256": "9a20a47b2200ceb55381800ed1a625419d41834bdce1648f2589734f1fa40996"
+      },
+      "deployment": null,
+      "source": {
+        "cache_dir": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+        "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.pt",
+        "source_sha256": "6d113155141f009ea39fe1818761334f18d1a15ba18d41c4e7d3fb24adec8365",
+        "teacher_tail_sha256": "c9506d70e8bb0e76158090affde1d832aef771022fd05d81338c81b32029c31a",
+        "raw_sha256": "52ebc1e15db9c2c99b0b54b9a282f9cda2b6139ec68930768a55404e0dbe9dae",
+        "tail_length": 228,
+        "case": {
+          "sample_id": "wJPptuhclZmKAEWs",
+          "audio_id": "wJPptuhclZmKAEWs",
+          "condition": "joint",
+          "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+          "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav"
+        }
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 16409 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 16219 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 183 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "diagnostic_only": true,
+      "musical_quality_accepted": false
+    },
+    {
+      "tag": "text_no_tc_teacher_v1",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "condition": "joint",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "video_sha256": "a7892d9ed63cbbb3150f3f62071fc980fb4439c4af6b1e31ac203e71f4945eb2",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/logs/shard_1.log",
+      "log_sha256": "542c71f3fab175cae5729660feea4ef55e2f4aea2e2229c0a17ee54d68122800",
+      "image_sha256": "d558ecce44380ae1c1a6450cd6dbcaf72a86f8d51eee0b3fabe53e72831bbc7e",
+      "audio_sha256": "4bb92a07e7e222ff0b2fa694d113a26b5e73dc92ddb937a43fc4e6bd0c5abe29",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": null,
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": null,
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "librosa",
+        "text_hidden_projection": null,
+        "no_text_encoder": true,
+        "no_tc_teacher_cache": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+        "text_encoder_loaded": false
+      },
+      "no_tc_condition": {
+        "kind": "cached_teacher_tail_only_no_tc_diagnostic",
+        "teacher_only_diagnostic": true,
+        "music_prediction": false,
+        "context_source": "none_teacher_tail_only_diagnostic",
+        "source_sha256": "f128c2eb5c5fa05ac267960eb5b98d7928022257e0b13d572fb7db49818a1a8d",
+        "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.pt",
+        "original_teacher_tokens": 199,
+        "teacher_tail_sha256": "be823c653ce392600762e15ea9257f6d7706aea069cf23625d15c0a0cf848a52",
+        "sample_id": "wJPrpFsThWAcBQIw",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+        "student_reads_caption": false,
+        "loaded": false,
+        "calls": 0,
+        "semantic_text": null,
+        "processor_loaded": false,
+        "tokenizer_loaded": false,
+        "prefix_length": 0,
+        "tail_shape": [
+          199,
+          5120
+        ],
+        "predicted_length": 199,
+        "raw_sha256": "bd867be8ed7f2a81709a5b89e2e4a8e1ca85b7afdb3f2eef761cbd2dab1cfd13"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true,
+        "text_encoder_loaded": false,
+        "tokenizer_loaded": false,
+        "processor_loaded": false,
+        "text_encoder_calls": 0,
+        "semantic_text": null,
+        "prefix_tokens": 0,
+        "prompt_embeds_shape": [
+          199,
+          5120
+        ],
+        "visual_reference_rows": 7424,
+        "visual_reference_sha256": "1e216c631bca48ea98db90882ba7b8f3122f3735f5b8baf4f4d1ec216ee16e23"
+      },
+      "deployment": null,
+      "source": {
+        "cache_dir": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+        "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.pt",
+        "source_sha256": "f128c2eb5c5fa05ac267960eb5b98d7928022257e0b13d572fb7db49818a1a8d",
+        "teacher_tail_sha256": "be823c653ce392600762e15ea9257f6d7706aea069cf23625d15c0a0cf848a52",
+        "raw_sha256": "bd867be8ed7f2a81709a5b89e2e4a8e1ca85b7afdb3f2eef761cbd2dab1cfd13",
+        "tail_length": 199,
+        "case": {
+          "sample_id": "wJPrpFsThWAcBQIw",
+          "audio_id": "wJPrpFsThWAcBQIw",
+          "condition": "joint",
+          "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+          "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav"
+        }
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 8401 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 8213 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 181 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "diagnostic_only": true,
+      "musical_quality_accepted": false
+    },
+    {
+      "tag": "text_no_tc_teacher_v1",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "condition": "joint",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "video_sha256": "ebe1282adb98645f0e16b94e8a453368d6c953d274dbe56cece60437a85aeb6a",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/logs/shard_2.log",
+      "log_sha256": "5658648db6511734d47ab9970395280abcc3640a970c32c36bdf69514b1b1b5c",
+      "image_sha256": "f1dc3fe77214a407e0e83f31736c129329d7bb629c8a7a03018191323b2c6255",
+      "audio_sha256": "74c3444c9a7c5a1b38c957762d275ff32ce4d4792d427ea9b154f550ba31ff08",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": null,
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": null,
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "librosa",
+        "text_hidden_projection": null,
+        "no_text_encoder": true,
+        "no_tc_teacher_cache": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+        "text_encoder_loaded": false
+      },
+      "no_tc_condition": {
+        "kind": "cached_teacher_tail_only_no_tc_diagnostic",
+        "teacher_only_diagnostic": true,
+        "music_prediction": false,
+        "context_source": "none_teacher_tail_only_diagnostic",
+        "source_sha256": "f1d864a1bb38cfde9b31536321d5a3594abc8ff56d75e9a496912445cd0cca92",
+        "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.pt",
+        "original_teacher_tokens": 323,
+        "teacher_tail_sha256": "519bdb0dc0581cea21ca6c44b5dc67f1a9025853da785758318c146559c54903",
+        "sample_id": "wJQTclrlOLEYYfTB",
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+        "student_reads_caption": false,
+        "loaded": false,
+        "calls": 0,
+        "semantic_text": null,
+        "processor_loaded": false,
+        "tokenizer_loaded": false,
+        "prefix_length": 0,
+        "tail_shape": [
+          323,
+          5120
+        ],
+        "predicted_length": 323,
+        "raw_sha256": "da3a020b0ed4cf73332dd5f306f332910c2c91c7f7c69697dd49b59d9843eae0"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true,
+        "text_encoder_loaded": false,
+        "tokenizer_loaded": false,
+        "processor_loaded": false,
+        "text_encoder_calls": 0,
+        "semantic_text": null,
+        "prefix_tokens": 0,
+        "prompt_embeds_shape": [
+          323,
+          5120
+        ],
+        "visual_reference_rows": 7424,
+        "visual_reference_sha256": "846c0c951efa80aa2439e58efec0f493bae67f167b23319d3923e9eaa6bd880d"
+      },
+      "deployment": null,
+      "source": {
+        "cache_dir": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+        "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.pt",
+        "source_sha256": "f1d864a1bb38cfde9b31536321d5a3594abc8ff56d75e9a496912445cd0cca92",
+        "teacher_tail_sha256": "519bdb0dc0581cea21ca6c44b5dc67f1a9025853da785758318c146559c54903",
+        "raw_sha256": "da3a020b0ed4cf73332dd5f306f332910c2c91c7f7c69697dd49b59d9843eae0",
+        "tail_length": 323,
+        "case": {
+          "sample_id": "wJQTclrlOLEYYfTB",
+          "audio_id": "wJQTclrlOLEYYfTB",
+          "condition": "joint",
+          "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+          "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav"
+        }
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 10930 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10734 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 189 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "diagnostic_only": true,
+      "musical_quality_accepted": false
+    },
+    {
+      "tag": "text_no_tc_C300_v1",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "condition": "joint",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "video_sha256": "01b7969d681621b213927edb930fd723931069c0999b3c6c13916d066554fa11",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/logs/shard_0.log",
+      "log_sha256": "4754a7ea85dfd0700d17690fba29b75b6e3d5f5d65978b5d633f843df7dc988e",
+      "image_sha256": "530543b232b4315918bc503adcc1ebf1e0d0a0df149394c504abd94650193c13",
+      "audio_sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": null,
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio",
+        "text_hidden_projection": null,
+        "no_text_encoder": true,
+        "no_tc_teacher_cache": null,
+        "text_encoder_loaded": false
+      },
+      "no_tc_condition": {
+        "kind": "legacy_checkpoint_no_tc_music_only_diagnostic",
+        "context_source": "zeros_legacy_checkpoint_compatibility",
+        "old_model_not_trained_for_no_tc": true,
+        "uses_ground_truth_caption": false,
+        "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+        "loaded": false,
+        "calls": 0,
+        "semantic_text": null,
+        "processor_loaded": false,
+        "tokenizer_loaded": false,
+        "prefix_length": 0,
+        "tail_shape": [
+          278,
+          5120
+        ],
+        "predicted_length": 278,
+        "raw_sha256": "aa2ec8046c535789ede5e595d09fe31d0ef8605322807ca3cf2c0c7789129608"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true,
+        "text_encoder_loaded": false,
+        "tokenizer_loaded": false,
+        "processor_loaded": false,
+        "text_encoder_calls": 0,
+        "semantic_text": null,
+        "prefix_tokens": 0,
+        "prompt_embeds_shape": [
+          278,
+          5120
+        ],
+        "visual_reference_rows": 7424,
+        "visual_reference_sha256": "9a20a47b2200ceb55381800ed1a625419d41834bdce1648f2589734f1fa40996"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+        "input_sha256": "e1893651a20d9984f4b64c646079560c759e91f4207536a717047605a3e9d810",
+        "tail_shape": [
+          278,
+          5120
+        ],
+        "predicted_length": 278,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "source": {
+        "checkpoint": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+        "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+        "checkpoint_summary": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/finished.json",
+        "checkpoint_summary_sha256": "9197eb8f5815324c650873bfdcc1c8c5c310596dfa215ac93c4f439b755d2792",
+        "query_max": 1423,
+        "complete_full_raw_checkpoint": true,
+        "old_model_not_trained_for_no_tc": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 11255 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 11067 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 182 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "diagnostic_only": true,
+      "musical_quality_accepted": false
+    },
+    {
+      "tag": "text_no_tc_C300_v1",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "condition": "joint",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "video_sha256": "5c55e432c583034fd8b7d3f6fea12af7d8719e88d0588103983b21c7574bed4c",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/logs/shard_1.log",
+      "log_sha256": "695c5bb20285f0c9f8d6a316ca394d1a7f378ddb73a020d54adf56607af99eaa",
+      "image_sha256": "d558ecce44380ae1c1a6450cd6dbcaf72a86f8d51eee0b3fabe53e72831bbc7e",
+      "audio_sha256": "4bb92a07e7e222ff0b2fa694d113a26b5e73dc92ddb937a43fc4e6bd0c5abe29",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": null,
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio",
+        "text_hidden_projection": null,
+        "no_text_encoder": true,
+        "no_tc_teacher_cache": null,
+        "text_encoder_loaded": false
+      },
+      "no_tc_condition": {
+        "kind": "legacy_checkpoint_no_tc_music_only_diagnostic",
+        "context_source": "zeros_legacy_checkpoint_compatibility",
+        "old_model_not_trained_for_no_tc": true,
+        "uses_ground_truth_caption": false,
+        "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+        "loaded": false,
+        "calls": 0,
+        "semantic_text": null,
+        "processor_loaded": false,
+        "tokenizer_loaded": false,
+        "prefix_length": 0,
+        "tail_shape": [
+          226,
+          5120
+        ],
+        "predicted_length": 226,
+        "raw_sha256": "2c591b75c602c84c6d446aad1b4add3547c0647b66415467538ed11175ae2c4b"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true,
+        "text_encoder_loaded": false,
+        "tokenizer_loaded": false,
+        "processor_loaded": false,
+        "text_encoder_calls": 0,
+        "semantic_text": null,
+        "prefix_tokens": 0,
+        "prompt_embeds_shape": [
+          226,
+          5120
+        ],
+        "visual_reference_rows": 7424,
+        "visual_reference_sha256": "1e216c631bca48ea98db90882ba7b8f3122f3735f5b8baf4f4d1ec216ee16e23"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+        "input_sha256": "256c68ee4c6aabad177bbf28cfc9f5817805b4aca4c10bba794a60eec5f16812",
+        "tail_shape": [
+          226,
+          5120
+        ],
+        "predicted_length": 226,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "source": {
+        "checkpoint": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+        "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+        "checkpoint_summary": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/finished.json",
+        "checkpoint_summary_sha256": "9197eb8f5815324c650873bfdcc1c8c5c310596dfa215ac93c4f439b755d2792",
+        "query_max": 1423,
+        "complete_full_raw_checkpoint": true,
+        "old_model_not_trained_for_no_tc": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 6694 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 6507 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 180 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "diagnostic_only": true,
+      "musical_quality_accepted": false
+    },
+    {
+      "tag": "text_no_tc_C300_v1",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "condition": "joint",
+      "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "video_sha256": "a01acbad8fd99be4c1ed95e75797a9eafa7c166d5c9db405f3852e99de9fcd0f",
+      "log_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/logs/shard_2.log",
+      "log_sha256": "18a617ca71ab4fe2fda80d04015a862eee3c1a5fb78c2e18138f10a72b0218e4",
+      "image_sha256": "f1dc3fe77214a407e0e83f31736c129329d7bb629c8a7a03018191323b2c6255",
+      "audio_sha256": "74c3444c9a7c5a1b38c957762d275ff32ce4d4792d427ea9b154f550ba31ff08",
+      "inputs": {
+        "prompt_mode": "empty",
+        "semantic_text": null,
+        "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+        "seed": 42,
+        "music_encoder_ckpt": null,
+        "native_audio_condition": "fixed_silence",
+        "text_hidden_oracle": false,
+        "music_text_ckpt": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+        "music_text_zero_input": false,
+        "legacy_clip_complete_chain": false,
+        "waveform_loader": "music_clip_bridge.load_audio",
+        "text_hidden_projection": null,
+        "no_text_encoder": true,
+        "no_tc_teacher_cache": null,
+        "text_encoder_loaded": false
+      },
+      "no_tc_condition": {
+        "kind": "legacy_checkpoint_no_tc_music_only_diagnostic",
+        "context_source": "zeros_legacy_checkpoint_compatibility",
+        "old_model_not_trained_for_no_tc": true,
+        "uses_ground_truth_caption": false,
+        "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+        "loaded": false,
+        "calls": 0,
+        "semantic_text": null,
+        "processor_loaded": false,
+        "tokenizer_loaded": false,
+        "prefix_length": 0,
+        "tail_shape": [
+          294,
+          5120
+        ],
+        "predicted_length": 294,
+        "raw_sha256": "db1ff3c615603ae6f02888f8d2cd7e7aa9d7eca2e05f1ca3fbec75461e8d840c"
+      },
+      "native_audio": {
+        "waveform_sha256": "20bfab5a4f53794721fd2736ac4cef3d596aa0a6006135f2a8b315265a04f316",
+        "reference_sha256": "6c839e385a0a3ae8708e4d2b294b5b78c5ee3844c9b5878be97253cda263b2c1",
+        "retake_sha256": "6fdddd057c108176a192d1e85817dcc4c7c6a9f1d302ac4ea1accbc604ad4c0e",
+        "mask_sha256": "7b061ad170f2df722f4cb7fcfceaaf2699716e772afd0469b6ea26bb4322bdf1",
+        "native_music_bypass": false,
+        "all_target_audio_clean": true,
+        "text_encoder_loaded": false,
+        "tokenizer_loaded": false,
+        "processor_loaded": false,
+        "text_encoder_calls": 0,
+        "semantic_text": null,
+        "prefix_tokens": 0,
+        "prompt_embeds_shape": [
+          294,
+          5120
+        ],
+        "visual_reference_rows": 7424,
+        "visual_reference_sha256": "846c0c951efa80aa2439e58efec0f493bae67f167b23319d3923e9eaa6bd880d"
+      },
+      "deployment": {
+        "call": 1,
+        "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+        "input_sha256": "ac1f96a08c3b5bb4b3311bf5617680d35ee9119e899d80219865f88b7c9528ef",
+        "tail_shape": [
+          294,
+          5120
+        ],
+        "predicted_length": 294,
+        "uses_ground_truth_caption": false,
+        "final_adapter_projection_executed": true,
+        "legacy_clip_complete_chain": false,
+        "coordinate_policy": "native_raw_token_prediction"
+      },
+      "source": {
+        "checkpoint": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+        "checkpoint_sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+        "checkpoint_summary": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/finished.json",
+        "checkpoint_summary_sha256": "9197eb8f5815324c650873bfdcc1c8c5c310596dfa215ac93c4f439b755d2792",
+        "query_max": 1423,
+        "complete_full_raw_checkpoint": true,
+        "old_model_not_trained_for_no_tc": true
+      },
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.17, start: 0.000000, bitrate: 10468 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10276 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 185 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      },
+      "diagnostic_only": true,
+      "musical_quality_accepted": false
+    }
+  ],
+  "mosaics": [
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/no_tc_joint_mosaic.png",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/no_tc_joint_mosaic.png"
+  ],
+  "source_artifacts": [
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_no_tc_v1_release.json",
+      "sha256": "ab2ef138d8d7999147d1e19154cf3a63f2bcb4917965377a2e67b17bd16dc355"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/h3ar/sample_h3_ar.py",
+      "sha256": "90fbb3945c0e68c12b09696fc0d2e2752e2642ace6971642149a0e617c7c4db3"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_infer.py",
+      "sha256": "1308ae5f61dbaaec2eca9c5f708791ba14349c417d94af2aef5b47ac273dc821"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_oracle_generate.py",
+      "sha256": "3245b293f04f60a9ab6267f3caaeaea3ffb132981d80aabaee9c575f78bb16e8"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/plan.json",
+      "sha256": "691ffe8fe9cc92cf9d51cd29401158282c315c21b5a1ce754a2ac85849a79b25"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/jobs.json",
+      "sha256": "11bdc418d51cb6203e8c674ffc0793e48cacb32b65f667468c2b70132d967a9b"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.pt",
+      "sha256": "6d113155141f009ea39fe1818761334f18d1a15ba18d41c4e7d3fb24adec8365"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+      "sha256": "530543b232b4315918bc503adcc1ebf1e0d0a0df149394c504abd94650193c13"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.pt",
+      "sha256": "f128c2eb5c5fa05ac267960eb5b98d7928022257e0b13d572fb7db49818a1a8d"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+      "sha256": "d558ecce44380ae1c1a6450cd6dbcaf72a86f8d51eee0b3fabe53e72831bbc7e"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "sha256": "4bb92a07e7e222ff0b2fa694d113a26b5e73dc92ddb937a43fc4e6bd0c5abe29"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.pt",
+      "sha256": "f1d864a1bb38cfde9b31536321d5a3594abc8ff56d75e9a496912445cd0cca92"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+      "sha256": "f1dc3fe77214a407e0e83f31736c129329d7bb629c8a7a03018191323b2c6255"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "sha256": "74c3444c9a7c5a1b38c957762d275ff32ce4d4792d427ea9b154f550ba31ff08"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/plan.json",
+      "sha256": "09940517516f6a99e875360c21d62c90dd70d771ddf96c2e61635dbce2ab8eff"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/jobs.json",
+      "sha256": "898b5b3ddc07cdb3d3f9b03114fe1f1ec6822c6dbe13648c94df019389b6a45d"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+      "sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/finished.json",
+      "sha256": "9197eb8f5815324c650873bfdcc1c8c5c310596dfa215ac93c4f439b755d2792"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+      "sha256": "530543b232b4315918bc503adcc1ebf1e0d0a0df149394c504abd94650193c13"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+      "sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+      "sha256": "d558ecce44380ae1c1a6450cd6dbcaf72a86f8d51eee0b3fabe53e72831bbc7e"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav",
+      "sha256": "4bb92a07e7e222ff0b2fa694d113a26b5e73dc92ddb937a43fc4e6bd0c5abe29"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+      "sha256": "f1dc3fe77214a407e0e83f31736c129329d7bb629c8a7a03018191323b2c6255"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav",
+      "sha256": "74c3444c9a7c5a1b38c957762d275ff32ce4d4792d427ea9b154f550ba31ff08"
+    }
+  ],
+  "code_sha256": {
+    "sampler_sha256": "90fbb3945c0e68c12b09696fc0d2e2752e2642ace6971642149a0e617c7c4db3",
+    "infer_sha256": "1308ae5f61dbaaec2eca9c5f708791ba14349c417d94af2aef5b47ac273dc821",
+    "diagnostic_sha256": "f3d53fa00ef624750fcd7a8177b1245573f11dd3c7fb43248199ef5492b9f16e"
+  },
+  "generation_source_files": {
+    "sampler": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/h3ar/sample_h3_ar.py",
+      "sha256": "90fbb3945c0e68c12b09696fc0d2e2752e2642ace6971642149a0e617c7c4db3"
+    },
+    "infer": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_infer.py",
+      "sha256": "1308ae5f61dbaaec2eca9c5f708791ba14349c417d94af2aef5b47ac273dc821"
+    },
+    "manager": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_oracle_generate.py",
+      "sha256": "3245b293f04f60a9ab6267f3caaeaea3ffb132981d80aabaee9c575f78bb16e8"
+    }
+  },
+  "release_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_no_tc_v1_release.json",
+  "release_report_sha256": "ab2ef138d8d7999147d1e19154cf3a63f2bcb4917965377a2e67b17bd16dc355",
+  "all_native_silence_hashes_identical": true,
+  "same_case_visual_reference_hashes_identical": true,
+  "complete_selected_audio_video_decode": true,
+  "optimizer_updates": 0,
+  "new_interface_trained": false,
+  "musical_gain_accepted": false,
+  "audio_mux_match_checked": false,
+  "continuous_human_review": "pending",
+  "scope": "TC absent, no blank text or prefix; cached teacher tail only and OLD C300 zero-context diagnostic. Independent visual VAE references retained and hashes identical per case. GT music only muxed, not a native condition; source-audio/mux equality not independently checked. Full decode is integrity, not dance quality, music gain or successful training/deployment of a model trained for the new interface."
+}

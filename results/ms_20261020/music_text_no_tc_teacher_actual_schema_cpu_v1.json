@@ -1,0 +1,95 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "gpu_started": false,
+  "expected": 3,
+  "passed": 3,
+  "release_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_no_tc_v1_release.json",
+  "release_sha256": "ab2ef138d8d7999147d1e19154cf3a63f2bcb4917965377a2e67b17bd16dc355",
+  "source_files": {
+    "sampler": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/h3ar/sample_h3_ar.py",
+      "sha256": "90fbb3945c0e68c12b09696fc0d2e2752e2642ace6971642149a0e617c7c4db3"
+    },
+    "infer": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_infer.py",
+      "sha256": "1308ae5f61dbaaec2eca9c5f708791ba14349c417d94af2aef5b47ac273dc821"
+    },
+    "manager": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_oracle_generate.py",
+      "sha256": "3245b293f04f60a9ab6267f3caaeaea3ffb132981d80aabaee9c575f78bb16e8"
+    }
+  },
+  "rows": [
+    {
+      "sample_id": "wJPptuhclZmKAEWs",
+      "length": 228,
+      "visual_reference_rows": 7424,
+      "visual_reference_sha256": "9a20a47b2200ceb55381800ed1a625419d41834bdce1648f2589734f1fa40996",
+      "log_sha256": "f7ab14541f3bcc62c707434536813a1f0abfe0a8d41f2c187f877c7e55529640",
+      "source": {
+        "cache_dir": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+        "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.pt",
+        "source_sha256": "6d113155141f009ea39fe1818761334f18d1a15ba18d41c4e7d3fb24adec8365",
+        "teacher_tail_sha256": "c9506d70e8bb0e76158090affde1d832aef771022fd05d81338c81b32029c31a",
+        "raw_sha256": "52ebc1e15db9c2c99b0b54b9a282f9cda2b6139ec68930768a55404e0dbe9dae",
+        "tail_length": 228,
+        "case": {
+          "sample_id": "wJPptuhclZmKAEWs",
+          "audio_id": "wJPptuhclZmKAEWs",
+          "condition": "joint",
+          "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPptuhclZmKAEWs.png",
+          "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav"
+        }
+      }
+    },
+    {
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "length": 199,
+      "visual_reference_rows": 7424,
+      "visual_reference_sha256": "1e216c631bca48ea98db90882ba7b8f3122f3735f5b8baf4f4d1ec216ee16e23",
+      "log_sha256": "542c71f3fab175cae5729660feea4ef55e2f4aea2e2229c0a17ee54d68122800",
+      "source": {
+        "cache_dir": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+        "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.pt",
+        "source_sha256": "f128c2eb5c5fa05ac267960eb5b98d7928022257e0b13d572fb7db49818a1a8d",
+        "teacher_tail_sha256": "be823c653ce392600762e15ea9257f6d7706aea069cf23625d15c0a0cf848a52",
+        "raw_sha256": "bd867be8ed7f2a81709a5b89e2e4a8e1ca85b7afdb3f2eef761cbd2dab1cfd13",
+        "tail_length": 199,
+        "case": {
+          "sample_id": "wJPrpFsThWAcBQIw",
+          "audio_id": "wJPrpFsThWAcBQIw",
+          "condition": "joint",
+          "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJPrpFsThWAcBQIw.png",
+          "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPrpFsThWAcBQIw.wav"
+        }
+      }
+    },
+    {
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "length": 323,
+      "visual_reference_rows": 7424,
+      "visual_reference_sha256": "846c0c951efa80aa2439e58efec0f493bae67f167b23319d3923e9eaa6bd880d",
+      "log_sha256": "5658648db6511734d47ab9970395280abcc3640a970c32c36bdf69514b1b1b5c",
+      "source": {
+        "cache_dir": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+        "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.pt",
+        "source_sha256": "f1d864a1bb38cfde9b31536321d5a3594abc8ff56d75e9a496912445cd0cca92",
+        "teacher_tail_sha256": "519bdb0dc0581cea21ca6c44b5dc67f1a9025853da785758318c146559c54903",
+        "raw_sha256": "da3a020b0ed4cf73332dd5f306f332910c2c91c7f7c69697dd49b59d9843eae0",
+        "tail_length": 323,
+        "case": {
+          "sample_id": "wJQTclrlOLEYYfTB",
+          "audio_id": "wJQTclrlOLEYYfTB",
+          "condition": "joint",
+          "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/wJQTclrlOLEYYfTB.png",
+          "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJQTclrlOLEYYfTB.wav"
+        }
+      }
+    }
+  ],
+  "current_frozen_manager_schema_accepted": true,
+  "real_media_decode_executed": false,
+  "real_visual_vae_encoding_executed_by_this_check": false,
+  "scope": "Actual existing three successful teacher noTC logs, release SHA, canonical cache/BF16 tail source and native condition fields only; no video decode or quality acceptance"
+}

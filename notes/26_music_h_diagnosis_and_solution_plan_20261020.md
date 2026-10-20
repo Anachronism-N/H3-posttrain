@@ -312,4 +312,123 @@ teacher对投影的未对齐RGB MAE分别：楼梯W.14578/LN.12753/PCA.12092；�
 
 `music_text_projection_C300_v2_review_access.json`核验清单200、N2跨节点200、84个已验唯一视频Range206；计数是此前72音乐模型视频＋本轮9投影视频＋3复用neutral教师视频，不是重新生成12条，也不声称37个模型所有历史视频总数只有84。CPU pure-memory清单fixture验证保留原teacher/三case/旧预设及错误同布局标志拒绝；技术审核不代替连续人评。
 
-本轮零更新空间/梯度诊断与九视频技术生成已经完成。**下一阶段仍缺teacher连续舞蹈的定性验收信息**，不能把用户对学生“摆pose”负评自动套给原teacher，也不能把助手六帧采样当P0通过。按最新方案先请用户复审已有neutral三个case：若teacher也主要摆pose则先修事实/监督；若teacher在对应case可用再落实单变量组合正例／噪声覆盖或有证据的loss平衡。此门控不会阻止已经授权并已完成的诊断推理，但不能凭未知teacher上界开始扩大同目标训练。首帧、身份文字、单独length校准保持后置。
+本轮零更新空间/梯度诊断与九视频技术生成已经完成。**截至该次发布，下一阶段仍缺teacher连续舞蹈的定性验收信息**，不能把用户对学生“摆pose”负评自动套给原teacher，也不能把助手六帧采样当P0通过。按最新方案先请用户复审已有neutral三个case：若teacher也主要摆pose则先修事实/监督；若teacher在对应case可用再落实单变量组合正例／噪声覆盖或有证据的loss平衡。此门控不会阻止已经授权并已完成的诊断推理，但不能凭未知teacher上界开始扩大同目标训练。首帧、身份文字、单独length校准保持后置。
+
+## 2026-10-20 用户连续评审：教师能跳，当前输出空间与学生丢失舞蹈
+
+用户在暂停自动实验后，对两个现有预设明确反馈：
+
+> val_musicreplace_text_oracle_neutral_v1是舞蹈,其他几个在【先复审教师舞蹈上界】中的配置都是摆pose. 教师空间·pca256是唯一像舞蹈的,但是存在一些肢体反转等的问题,其他的教师空间·w256和教师空间·ln256还是类似摆pose
+
+| 配置 | 本次用户定性结论 |
+|---|---|
+| 原neutral教师 | 是舞蹈 |
+| C300音乐学生、六步control、六步prediction | 都是摆pose |
+| train-PCA256投影教师 | 投影组中唯一像舞蹈，但存在肢体反转等问题 |
+| 当前W256及LN255投影教师 | 仍类似摆pose |
+
+用户所称“ln256”对应当前清单的LN投影组；实现及数值报告的实际仿射rank为255，仍记为LN255，不改成新实验或256维结果。本次为两个预设的定性连续评审，没有提供逐case评分、异常时间点、音乐同步或完整外观评分；不补造这些信息。此前“教师人评pending”是历史发布状态，现已收到明确教师舞蹈能力反馈，不再以缺教师上界信息重复等待。教师是舞蹈不等于任意描述事实正确、音乐控制或整体质量均验收通过。
+
+### 更新后的机制判断与优先级
+
+1. **不优先归因为H3或当前教师完全不会跳舞。** 原neutral教师已被用户确认有舞蹈，当前失败发生在条件的压缩、空间学习和音乐预测链路中；其他样本的教师事实审计仍保留，不把三个固定case推广为全训练教师合格。
+2. **已学仿射输出空间是优先处理的具体瓶颈证据。** W/LN实验已经提供真实教师H的最优仿射投影，排除了音乐预测误差，保持原教师长度、图prefix/tags/packed；仍摆pose。因此对该已学空间而言，即使学生更准确地预测包络内系数，也不能保证恢复原教师舞蹈。PCA的中心和方向均不同，不能只归为方向旋转，更不能把放松包络内投影当学生可达输出。
+3. **不把256维判为必然不足或足够。** 同秩PCA保留“像舞蹈”的能力，表明空间学在哪里比单纯秩大小更值得先隔离；PCA存在肢体反转，说明该压缩尚不是质量通过。反转可能来自投影丢失条件信息或生成敏感性，尚不能认定必须扩宽、纯时间顺序错误或PCA坐标正负号导致。
+4. **优先的受控后续候选是train-only PCA仿射输出空间。** 恢复实验后可先比较现有空间与PCA空间的音乐学生，保持音乐dense骨干和内容adapter共同训练、仅音乐/参考图输入、H3冻结、自身长度和完整部署。若使用固定PCA输出basis/center，必须明确这是输出层参数化变化（basis/center固定，音乐骨干及可训练adapter仍联合优化），并先验证系数可达范围和LayerNorm约束，不能仅替换W/b就宣称实现。需要共同初始化/预算且单列空间改变带来的初始条件差异，不同时混入交叉正例、多sigma或新loss权重。
+5. **音乐映射仍未解决。** PCA教师投影不是音乐学生；即使它能跳也不能证明音乐能预测正确条件。新学生必须生成固定三case并保留原/换/零音乐对照。若需要隔离PCA残余肢体异常，可再比较相同train中心的嵌套PCA256/512教师投影；这是备选诊断，不是已批准或已执行的扩宽训练。
+
+该次反馈记录时用户已暂停自动goal，未恢复训练、未进行虚拟Adam步骤，也未自动提交或推送本次本地记录。
+
+## 2026-10-20 宽度与真实入口实验接续计划
+
+用户随后明确要求继续推进并充分利用计算资源，询问256维能否调整、如何减少adapter损害，以及当前哪些实验在运行。本节为正在实现的有限对照计划，不能冒充已完成训练或生成结果。
+
+### 256维是什么，以及改变它不意味着什么
+
+5120是H3原生文本hidden接口维度；256是当前实现者选择的adapter内部宽度，贯穿音乐memory/context投影、query、两层cross attention、FFN、输出LayerNorm、raw_output及长度头。8头只是整除约束，当前每头32维，并没有H3强制要求width256。实现将允许256/512/1024及合法head配置，FFN为4width，checkpoint显式记录并严格按宽度构造。旧256权重不使用strict=False塞入512模型。增加宽度可以扩大潜在输出仿射秩，但会增加参数/显存，不能证明音乐映射或时序监督随之成功。
+
+### 三条并行工作线（运行状态以日志／产物为准）
+
+1. **真实入口分阶段对照，0更新。** 固定三个review case，音乐学生使用完整C300及自身预测长度，原/换/零音乐分别导出。当前空语义参考prefix仍由原TC生成，音乐tail不回TC。比较实际raw5120、冻结condition_proj5376及原两层token_refiner后，分开prefix与tail统计形态、尺度、位置误差及方向。不同长度的自然部署与共同可见区间分别报告，不以训练—部署exact冒充学生—教师exact。优先仅加载TC和真实冻结refiner权重，不更改算子。
+2. **同中心嵌套PCA256/512教师诊断，6新视频。** 一次q544/niter4/seed42的FP32加权采样分解，原全train有效tail的FP64中心不变；一次512列QR后取前256/前512，先验检查嵌套与512残差不大于256。两空间各固定三个case原教师长度、prefix/tags/packed和采样协议，旧neutral教师复用。新PCA256来自新的嵌套分解，不能拿旧独立q288结果当作此次严格嵌套比较。它仅判断提高投影秩是否改善肢体异常，不是音乐模型或宽度训练结果。
+3. **固定输出仿射空间的联合学生对照，各100更新。** 两组均以同完整C300为源，共同保留全部可训练音乐dense及完整adapter，raw5120输出之后应用固定空间投影。W组固定当前W列空间／原bias，PCA组固定train-PCA256空间／train中心；相同结构、原数据顺序、基础loss、length0.01、lr1e-5/1e-4及新optimizer，100步各800正配对曝光。中心/方向整体是处理变量，初始H不同单列。此参数化不删除LN、不新增无约束旁路，仍有每个固定参数状态width256的LN可达限制，不能声称音乐学生可达到任意PCA oracle点。先做CPU宽度／完整重载／空间固定及真实dense梯度审计，再完整200val及两组各三case原/换/零共18视频，不用H指标阻止诊断生成。
+
+初始资源核验：八节点真实SSH采用已存在known-host并核对RSA指纹，保持StrictHostKeyChecking=yes；均有H3本地权重，仅N5仍有原在线waveform/teacher bundle。容器cgroup挂载根是`/sys/fs/cgroup/memory`，初次按/proc完整层级拼路径失败已修正，八节点主机／cgroup均满足180GiB单冷加载准入。占GPU的原进程已核实为hold_gpu.py，不计实验利用率。计划N5分GPU做PCA数值、学生导出和两组训练，其余节点分发教师采样与入口对照；启动前再次逐GPU准入，只释放准确核验的holder，所有运行使用工具管理任务，不用nohup/setsid脱离管理。
+
+不在本轮同时改变组合正例、多sigma/noise、生成loss权重、首帧或独立length校准；不直接扫三档宽度训练。源码、数值报告及实际运行／失败状态随后同步GitHub，媒体与权重不上传。
+
+## 用户进一步明确noTC学生接口：连空白文本也不编码
+
+用户随后明确：
+
+> “实际代码先编码空白文字＋参考图”这个可能是有问题的，我们理论上应该完全不编码文本，空白的也不要输入，直接关掉textencoder，直接用音频token替代原先的文本token。
+
+此要求取代前阶段学生保留空语义TC参考prefix/context的协议。旧学生的音乐tail没有重复经过TC，但整条旧学生路径仍运行TC来构造参考条件；不能将两者混为“TC已经完全关闭”。该设计是否导致了摆pose尚未证明，先按用户新接口执行，不以“原prefix必需”阻止验证。
+
+### 新接口与先验检查
+
+- H3加载列表完全省略text_encoder权重，processor_config=None；断言pipe.text_encoder/tokenizer/processor均None。
+- 正／负prompt都为None，拒绝空白或任何文字／soft hook；新embedder不调用原PromptEmbedder.process或preprocess_ref_blocks。
+- 音乐raw tail独占原文本条件行，全部tags=1，不再拼任何TCprefix；原PackedSequenceBuilder仍把独立视觉VAE参考、固定静音参考音频及目标音画打包。去掉prefix同时改变序列长度／位置，是接口整体干预，不声称只改变文字语义。
+- 参考图保留原ReferenceEncoder视觉VAE条件，记录视觉参考rows/hash；不读取任何TC缓存context给学生。
+
+先生成固定三个case的两组joint：①原neutral教师缓存tail直接输入、无TCprefix；②旧C300完整音乐骨干／adapter直接输出、无TCprefix。第二组为适配旧checkpoint签名暂使用固定zeros5120向量，绝非空白文本编码、不是参考context，也**不是已按noTC训练的新模型**。两组共6视频，保持原图、seed、50步、704×1280、bi CFG1与原生两路固定静音。①是teacher-only接口对照；②是已有模型改变条件接口的免训练诊断。它们不证明新接口训练效果或旧／新协议公平同分布。
+
+上述要求出现时，旧接口W/PCA100步训练与嵌套教师视频尚未启动，已暂停；保留宽度与空间CPU代码但不在旧条件上继续新训练。此前旧C300的三个case原／换／零音乐token导出已真实退出0（N5 GPU6，0更新，不装TC但用旧cachedcontext），仅作历史入口分析；长度分别楼梯413/377/249，红衣243/302/171，商店290/261/160。旧prefix重编码的entry_compare不会自动运行，新学生不能复用它作为noTC验收。
+
+CPU noTC采样器门禁7个夹具通过（两合法／五错误组合）；首次AST夹具截取误含sys.path导致NameError，修正截取范围后通过，是测试夹具问题，未进入GPU。后续须核验真实日志的TC未加载／调用0、semantic_text=null、prefix0、raw tail长度与tags、视觉参考存在、native静音hash及完整124帧解码，再决定共享noTC训练参数化。
+
+### noTC真实入口计算已完成，六视频正在接续验收
+
+六节点真实启动noTC教师tail-only三joint与旧C300 zero-context音乐-only三joint，管理句柄J2gEJo／Q8N3Pt。真实日志已记录省略TC权重、processor/tokenizer均None、semantic_text=null、prefix0、独立视觉VAE参考7424行及hash；原native两路静音与repeat_clean一致。曾在运行中检查六sampler均R态、每张实际实验GPU约76GiB且100%利用率，不拿holder算实验利用。当前teacher三条已经采样exit0；其他任务以最终jobs及全124帧音画审核为准，不把启动或exit0当质量验收。冻结采样源码与发布源hash保存`music_text_no_tc_v1_release.json`；审计必须匹配真实plan/shardheader及该release，不得事后添加运行时不存在的infer字段来冒充启动证据。
+
+同时N5导出、N7冻结原生条件入口比较两阶段均真实exit0，报告`music_text_entry_no_tc_C300_v1_export.json`及`music_text_entry_no_tc_C300_v1_compare.json`。只装载condition_proj与原两层token_refiner的19个真实BF16权重，保留原attention/refiner算子及cu=[0,L,L]，没有加载TC／processor／VAE／50个DiT主blocks；前后module state逐tensorhash不变，参数更新0。教师tail只作比较，不提供给音乐学生。此独立条件入口计算不证明完整H3 packed或视频行为等价。
+
+| case | teacher／原音乐／换音乐／零音乐tail长度 | 教师raw token去token均值后RMS | 原音乐学生同统计 | 教师→学生relative-RMS：raw／condition_proj／refiner |
+|---|---|---:|---:|---|
+| 楼梯 | 228／278／257／157 | 2.31742 | 0.00143366 | 0.64319／0.65621／0.65710 |
+| 红衣 | 199／226／281／157 | 2.27246 | 0.00046252 | 0.61791／0.62972／0.65978 |
+| 商店 | 323／294／265／157 | 2.25266 | 0.00093100 | 0.63246／0.64423／0.62932 |
+
+relative-RMS比较四条件共同可见前157行，各条件仍先按自然长度完成refiner前向；不是固定长度／samepacked干预，也不把文字token序号当视频时间。原音乐学生各token的raw RMS约2.685，去token均值后的变化却极小：在这三个旧checkpoint zero-context诊断样本中，学生接近重复同一个向量，而教师token变化显著。原／换音乐raw共同区间RMS差仅0.00622／0.01430／0.01378。该差异在进入共同refiner之前已经存在；refiner后的相对误差仍在0.629至0.660，并非重复textencoder造成的证据。跨模块绝对MSE因尺度／归一化不同，不直接比较以宣称误差被大幅放大。
+
+限制：这是旧C300从cachedcontext训练分布移到zeros5120的免训练诊断，zeros经过旧context_projection仍保留其bias；不能直接推广为旧原条件下全部样本坍缩，也不能否定新noTC训练。后续正在实现`music_only_global_bias`学生协议：移除context_projection.weight与外部context输入，把旧bias作为可训练global bias并保留所有共享参数，初始化应逐值等于旧zero-context学生。训练／验证／独立部署都必须context=None，不读取TC cache；图仅走下游视觉VAE。该新学生尚未训练完成，旧W/PCA100步仍暂停，先以同新noTC协议受控拟合再选择输出空间／宽度。
+
+CPU宽度256/512/1024、旧默认行为exact与完整checkpoint重载，以及无TC访问／严格30错误日志反例已实际验证并保存JSON。这些是实现门禁，不是实际MusicFM新接口训练或舞蹈质量通过。`entry-diagnostic-dev`、`no-tc-audit-dev`及此前其他代理曾出现模型网关Empty stream／499失败；只记录真实已返回代码、工具测试及GPU产物，不把失败调用当独立审计成功。
+
+### 无TC六视频已完整技术验收，旧学生仍主要小动作
+
+teacher三条J2gEJo与旧学生三条Q8N3Pt均实际exit0。主线程发现审计代理误要求运行时不存在的jobs/header infer_sha等字段，停止其写入并直接改为冻结release＋实际plan/header samplerSHA绑定，不事后篡改生成日志。实际N8六视频审核MTnMZW exit0，`music_text_no_tc_all6_audit_v1.json` expected=passed6：decord124帧和ffmpeg选定视频／音轨完整解码、704×1280/24fps、媒体／日志／图／音频／teacher tail来源SHA、TC组件均未加载／调用0、semantic_text=null／prefix0全部通过。同case两组原视觉VAE参考rows与hash一致，native固定静音四hash全组一致，原C300完整模型SHA不变。技术完成不等于新学生音乐控制成功。
+
+主线程实际Read两组reference＋六时刻mosaic，`music_text_no_tc_v1_visual.json`记录：teacher-tail-only楼梯有步移、抬臂与转背，红衣／商店有更多不同臂部和站姿；旧C300 zero-context主要小手势、后勾腿、手到脸／伸手手势和原地小臂动作。楼梯两组均由参考浅黄衣／灰裤漂移成深色外套／裤子，旧学生另有小包。此观察只限采样帧，不冒连续听看、没有新增用户评分或肢体异常逐帧验收。
+
+新noTC学生保留`global_context_bias`仅作为可训练全局query／长度先验，不是文本／图片context、不来自TC；完整音乐骨干与剩余全部adapter参数共同训练。旧模型转换只删除context_projection.weight并重命名其bias，全共享权重和初始zero-context预测逐值保持；新的训练、验证、推理接口只收waveform、context=None，禁止提供空白文字或缓存prefix。
+
+真实三更新smoke FIMJ4f已exit0：400个dense骨干tensor和41个adapter tensor实际更新，冻结参数／buffer不变，GPU峰值约8.55GiB；训练／eval／完整checkpoint以及真正独立waveform-only worker的tail／自身长度逐值一致，缓存TCcontext没有读取。训练阶段实测约1.8秒，先前资源核查时GPU0%与文件系统等待不是训练仍在计算；它随后正常存盘／部署结束，未证明存储存在持续死锁。报告为`music_text_no_tc_smoke_v1_summary.json`和`music_text_no_tc_smoke_v1_independent_deployment.json`。仅3更新／6次曝光，不当收敛、泛化或视频成功。
+
+随后尝试同C300源、同noTC globalbias条件的小集8train／8val固定W与train-PCA256对照，各100步batch8/micro2、lr1e-5/1e-4、length0.01、clip1和新optimizer，各计划800曝光。AuGFI9／e5ibIZ在来源门禁阶段均exit1、未更新模型：旧数值投影finished缺当前消费者要求的父checkpoint finished SHA。保留失败log，正在用同train／checkpoint重新产生带完整provenance的W/LN/PCA数值输入（3cPcTa，0音乐参数更新／没有运行TC）。不把缺字段简单忽略或偷偷给历史日志添字段。后续接续用新输出目录并生成固定三case原／换／零共18视频；小量拟合只判断当前目标是否能学，不冒全200val或未知音乐泛化结论。
+
+当前评审服务已追加6新视频，清单39模型／3人物／19预设，旧37模型／旧预设／评分保留；清单本机200与N2跨节点200，六新视频Range206实测通过。84此前已验视频保留旧审核，本轮并未重新逐一检查全部90链接。入口与实际访问见`music_text_no_tc_v1_review_access.json`。
+
+### noTC固定空间两组100更新已完成，18视频生成接续
+
+完整来源数值重建3cPcTa exit0，父C300 finished SHA已实际绑定，结果见`music_text_projection_no_tc_training_inputs_v1.json`。重启新目录v2的W／PCA两组utguvt／0s5qBX均exit0、各100更新／800曝光：400dense骨干tensor与41adapter tensor实际改变，固定输出basis/center及冻结参数／buffers不变，context=None全共享；完整checkpoint与独立worker的raw tail／自身长度／policy逐值一致。W checkpoint SHA为`600b91897c8eb8d84ebb0e8498d2f6a363ca5797d119d43a8929f3d7533af379`，PCA为`7ba5a8b7ed2d09ef5645e3c9c8f69d903d2a0a6fc026a6114ee2a983ebb7e0c5`。
+
+| 两组同8train／8val小量对照 | W空间 | train-PCA256空间 |
+|---|---:|---:|
+| train三候选top1 | 87.5% | 100% |
+| train raw H MSE（样本均值） | 5.45656 | 5.27885 |
+| val raw H MSE初始→最终 | 5.29712→5.24840 | 5.26367→5.14308 |
+| val训练位置均值H的MSE | 4.81861 | 4.81861 |
+| val长度MAE | 110.625 | 107.625 |
+| val三候选top1 | 12.5% | 25% |
+
+小集配对辨别能学习，rawtoken却仍未接近教师，且两组val均未优于位置均值baseline。PCA的指标相对好不等于可用舞蹈；只有8val，不称歌曲／人物泛化或全200val。初始化空间中心／方向不同，结论归于固定仿射空间整体，不只方向旋转；width256/LN的可达限制仍在。
+
+两组各固定三case原／换／零共18视频已交四个受管理队列：W正常oD4UQB、PCA正常Wws0fZ、W零wM7D5G、PCA零gtGY28，计划跨八节点18张卡（N1/N2各3，其余各2）。每GPU只跑一个sampler、每节点最多3，仍按主机/cgroup180GiB及准确holder PID准入。**截至这次记录，队列在启动源检查阶段；实际核查四manager于新checkpoint ZIP尾部的CephFS读取D态等待，尚不能宣称18张卡已经开始GPU采样。** 正在写入节点fsync并逐SHA核验；不会以等待超时当完成，不杀未知进程、不放宽来源检查。manager已按checkpointpolicy区分新noTC模型与旧zero-context诊断，独立holder_path显式绑定真实占卡脚本，旧六视频的冻结diff源不改。
+
+共享CephFS读取挂起没有因写入节点fsync立即解除。已停止四个受管理启动器，核实八节点没有留下sampler，四个只含空logs/cache的中止目录改名保存，没有删除／覆盖媒体。随后从写入节点经可信SSH/SCP把完整模型缓存到八节点`/tmp/<run>/last.pt`，每节点两个文件的SHA均与原训练checkpoint一致；不重训、不改权重、不绕过strict known-host。manager新增checkpoint_source，将本地推理缓存及其完整SHA严格绑定canonical finished；审核也支持显式checkpoint_cache_root，不因临时路径改变就丢失模型身份核验。缓存分发实测全部通过，报告`music_text_no_tc_cache_distribution_v1.json`。
+
+缓存方式四队列L6Ukl4／viuxk8／gDywn6／Yq3CH5已实际启动：八节点查到18个sampler，N1 GPU5/6/7、N2 GPU4/6/7，N3至N6 GPU6/7，N7/N8 GPU4/5。它们处于装载／采样阶段，不把CPU活进程等同所有GPU已100%计算；余46张卡仍仅holder待用，不计实验利用率。固定三个case未扩大，为两模型原／换／零音乐的18必要对照。
+
+18视频后续完整decode／noTC无污染／原图VAE参考／来源及采样视觉／review与GitHub发布仍待完成；当前可审阅的是之前六条免训练noTC诊断，不把100更新权重存在当视频效果成功。

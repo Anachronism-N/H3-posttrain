@@ -1,0 +1,19 @@
+{
+  "complete": true,
+  "manifest": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/manifest_music_text_no_tc_v1.json",
+  "manifest_http_status": 200,
+  "models": 39,
+  "source_people": 3,
+  "presets": 19,
+  "new_videos_range_verified": 6,
+  "previously_verified_projection_review_videos": 84,
+  "new_video_range_status": 206,
+  "new_video_range_bytes": 1024,
+  "cross_node": {"host": "28.216.17.70", "exit": 0, "status": 200, "models": 39, "presets": 19},
+  "original_models_samples_presets_scores_preserved": true,
+  "server_task_handle": "8PVIJn",
+  "continuous_new_no_tc_human_review": "pending",
+  "new_interface_trained": false,
+  "musical_gain_accepted": false,
+  "scope": "Actual service and six new-video Range verification; 84 prior videos retain earlier verification, not a new complete 90-video access test or human dance-quality acceptance"
+}

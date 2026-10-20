@@ -1,0 +1,155 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "gpu_started": false,
+  "manager_mock_audit": {
+    "complete": true,
+    "remote_or_gpu_executed": false,
+    "real_native_schema_fixture": true,
+    "music_and_teacher_three_case_commands_checked": true,
+    "no_tc_command_flags_exact": true,
+    "plan_semantic_text_null_and_prefix_zero": true,
+    "no_tc_condition_and_native_log_parsing_passed": true,
+    "strict_true_int_and_bool_identity_checked": true,
+    "native_condition_shape_cross_check": true,
+    "visual_reference_rows_and_sha256_checked": true,
+    "deployment_checkpoint_shape_length_cross_check": true,
+    "teacher_original_tokens_and_source_sha256_checked": true,
+    "passed_source_cases": [
+      "music",
+      "teacher"
+    ],
+    "malformed_evidence_rejected": 30,
+    "rejected_mutations": [
+      "music:condition.calls:bool",
+      "music:condition.calls:float",
+      "music:condition.prefix_length:bool",
+      "music:condition.prefix_length:float",
+      "music:condition.predicted_length:bool",
+      "music:condition.predicted_length:float",
+      "music:condition.predicted_length:int",
+      "music:condition.raw_sha256:str",
+      "music:native.text_encoder_loaded:int",
+      "music:native.tokenizer_loaded:int",
+      "music:native.processor_loaded:int",
+      "music:native.text_encoder_calls:bool",
+      "music:native.text_encoder_calls:float",
+      "music:native.semantic_text:str",
+      "music:native.prefix_tokens:bool",
+      "music:native.prefix_tokens:float",
+      "music:native.prompt_embeds_shape:list",
+      "music:native.visual_reference_rows:bool",
+      "music:native.visual_reference_rows:int",
+      "music:native.visual_reference_sha256:str",
+      "music:native.native_music_bypass:bool",
+      "music:native.all_target_audio_clean:bool",
+      "music:deployment.checkpoint_sha256:str",
+      "music:deployment.tail_shape:list",
+      "music:deployment.predicted_length:float",
+      "music:deployment.uses_ground_truth_caption:bool",
+      "music:deployment.final_adapter_projection_executed:bool",
+      "teacher:condition.original_teacher_tokens:float",
+      "teacher:condition.original_teacher_tokens:bool",
+      "teacher:condition.source_sha256:str"
+    ],
+    "cache_extra_aswap_files_allowed": true
+  },
+  "text_encoder_tokenizer_processor_accesses": 0,
+  "original_prompt_process_and_preprocess_calls": 0,
+  "no_text_encoder_onload_names": [],
+  "zero5120_legacy_context_exact": true,
+  "proxy_calls": 1,
+  "proxy_inputs": [
+    {
+      "waveform_sha256": "bd7c127f9a36265ea51f1f1cf02896d5049fe1967c9c8d2bc314bef48c4e2118",
+      "context_sha256": "8f8308176072b4eb64002df9d1eed488306e8f7e74a6c708ad5f02462b709a42"
+    }
+  ],
+  "no_prefix_exact": true,
+  "bf16_tail_and_all_one_tags_exact": true,
+  "forbidden_inputs_rejected": [
+    "prompt:str",
+    "prompt:str",
+    "text_embedding:Tensor",
+    "keyframes:list",
+    "teacher_image_binding"
+  ],
+  "cached_teacher_case_binding_checked": true,
+  "cached_teacher_prefix_context_and_token_ids_unused": true,
+  "original_packed_builder_exact": true,
+  "packed_independent_reference_positions_exact": true,
+  "independent_vae_reference_tensors_unchanged": true,
+  "actual_vae_encoding_executed": false,
+  "text_shape": [
+    3,
+    5120
+  ],
+  "video_shape": [
+    1,
+    24,
+    2,
+    4,
+    6
+  ],
+  "audio_shape": [
+    2,
+    32,
+    5
+  ],
+  "packed_sha256": {
+    "img_pos": "dab7edfdaf56a47e017e5775cb68f7f54ea8f120b1e4205fb75c43ca41f81d31",
+    "audio_pos": "946a11d0c51b8172e048c53789175835a3ec42d4e19c4b6409b144f0c097f2d8",
+    "text_pos": "bbfdfa1ecf21e2088707583b86fd950b9125c6e9d975b2f5390c1c668688b3e9",
+    "img_position_ids": "176b11caa2bfdaf94dbeca959750682b861033e93450229d100c09caaedef243",
+    "token_tags": "4741a115158ec65ea3631e121fff68c8b6fdce2e00b2ad43f3fd1258c359fc77",
+    "cu_seqlens": "c901e4ad2f7295d08383aa7f434bad941cefe7125ab61db59d42567708c1a829"
+  },
+  "no_tc_conditions": [
+    {
+      "kind": "legacy_checkpoint_no_tc_music_only_diagnostic",
+      "context_source": "zeros_legacy_checkpoint_compatibility",
+      "old_model_not_trained_for_no_tc": true,
+      "uses_ground_truth_caption": false,
+      "checkpoint_sha256": "cpu_mock_full_proxy",
+      "loaded": false,
+      "calls": 0,
+      "semantic_text": null,
+      "processor_loaded": false,
+      "tokenizer_loaded": false,
+      "prefix_length": 0,
+      "tail_shape": [
+        3,
+        5120
+      ],
+      "predicted_length": 3,
+      "raw_sha256": "2ad34b2b9da143823e3a47db38766585f4a0e242cdb7a3d275a3fba870c6fcff"
+    },
+    {
+      "kind": "cached_teacher_tail_only_no_tc_diagnostic",
+      "teacher_only_diagnostic": true,
+      "music_prediction": false,
+      "context_source": "none_teacher_tail_only_diagnostic",
+      "source_sha256": "47343601dd59c150d0cb9e968acc36c391f89464c250464be850683ceab17c52",
+      "source_path": "/tmp/h3_no_tc_cpu__2ueesn7/cpu_sid_cpu_audio.pt",
+      "original_teacher_tokens": 3,
+      "teacher_tail_sha256": "18b3e1bde4c38d721c76a513ab33ab5e6c2ae6604ae02af6fb834fd836b7fc4a",
+      "sample_id": "cpu_sid",
+      "image_path": "/cpu_image.png",
+      "audio_path": "/cpu_audio.wav",
+      "student_reads_caption": false,
+      "loaded": false,
+      "calls": 0,
+      "semantic_text": null,
+      "processor_loaded": false,
+      "tokenizer_loaded": false,
+      "prefix_length": 0,
+      "tail_shape": [
+        3,
+        5120
+      ],
+      "predicted_length": 3,
+      "raw_sha256": "2ad34b2b9da143823e3a47db38766585f4a0e242cdb7a3d275a3fba870c6fcff"
+    }
+  ],
+  "scope": "Strict CPU mock and original packed layout with independent VAE-reference tensors; no real music checkpoint/GPU VAE/DiT/video execution and no new-interface success claim"
+}

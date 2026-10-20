@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-20",
+  "method": "Main assistant Read of two actual reference-plus-six-time mosaics",
+  "continuous_audio_video_human_review": false,
+  "source_mosaics": [
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/no_tc_joint_mosaic.png",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/no_tc_joint_mosaic.png"
+  ],
+  "sample_times_seconds": [0, 1, 2, 3, 4, 5.125],
+  "cases": [
+    {"sample_id": "wJPptuhclZmKAEWs", "teacher_tail_only": "Sampled frames show raised arms, stepping and turns including back view; reference pale-yellow top/light-grey pants changed to dark jacket/trousers and white shirt.", "old_C300_zero_context": "Sampled frames show limited hand gesture and backward leg bend, mostly in place; dark jacket/trousers and small crossbody bag differ from the reference."},
+    {"sample_id": "wJPrpFsThWAcBQIw", "teacher_tail_only": "Sampled arm and elbow positions vary, including crossed and extended arms; red clothing retained in sampled frames.", "old_C300_zero_context": "Sampled frames mainly show hand near face then extended hand/finger gesture with comparatively stable body stance; red clothing retained."},
+    {"sample_id": "wJQTclrlOLEYYfTB", "teacher_tail_only": "Sampled frames show arm sweeps, wider bent-knee stance and weight/pose changes in the shop.", "old_C300_zero_context": "Sampled frames show small arm motions and stable central standing positions, not evidence of complete choreography."}
+  ],
+  "interpretation": "No-TC teacher-tail-only retains more visible motion than unchanged old music student in these sampled frames, but reference appearance drift remains. Neither continuous dance nor music synchronization is certified by the mosaics.",
+  "old_model_not_trained_for_no_tc": true,
+  "new_no_tc_training_completed": false,
+  "musical_gain_accepted": false,
+  "scope": "Six-time sampled visual observations only; not new user review, per-frame limb correctness scoring or proof of a working no-TC music model"
+}

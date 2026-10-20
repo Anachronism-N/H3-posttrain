@@ -1,0 +1,804 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "pure_memory_fixtures": true,
+  "gpu_started": false,
+  "real_video_audio_decode_executed": false,
+  "expected_fixture_rows": 6,
+  "passed_fixture_rows": 6,
+  "strict_rejections": [
+    "semantic_blank",
+    "semantic_empty",
+    "condition_semantic_blank",
+    "TC_calls_bool",
+    "prefix_bool",
+    "TC_loaded",
+    "native_TC_calls_bool",
+    "native_prefix_bool",
+    "no_visual",
+    "visual_rows_bool",
+    "visual_hash_wrong",
+    "native_hash_wrong",
+    "teacher_source_hash_wrong",
+    "teacher_tail_hash_wrong",
+    "teacher_source_sid_wrong",
+    "row_sid_wrong",
+    "count_wrong",
+    "count_bool",
+    "tag_wrong",
+    "student_length_wrong",
+    "student_checkpoint_wrong",
+    "student_zero_context_wrong",
+    "incomplete_media",
+    "same_image_hash_wrong",
+    "review_marker_passed_int",
+    "review_marker_passed_bool",
+    "review_marker_final_no_tc_report_sha256_str",
+    "review_marker_rows_list",
+    "review_marker_tag_str",
+    "jobs_expected_int",
+    "jobs_expected_bool",
+    "jobs_no_text_encoder_bool",
+    "jobs_jobs_list",
+    "last_decode_failure_no_markers"
+  ],
+  "strict_rejection_count": 34,
+  "semantic_none_success_log_accepted_without_empty_prompt_helper": true,
+  "base37_models_preserved": true,
+  "no_tc_review_models": 39,
+  "no_tc_review_only_joint3_per_model": true,
+  "old_presets_samples_scores_unchanged": true,
+  "legacy_default_mode_unchanged": true,
+  "actual_no_tc_audit_dispatch_full6_cpu_mock": true,
+  "final_report_published_before_two_markers": true,
+  "last_decode_failure_publishes_no_report_or_markers": true,
+  "fixture_report": {
+    "complete": true,
+    "no_tc_complete": true,
+    "expected": 6,
+    "passed": 6,
+    "expected_new": 6,
+    "passed_new": 6,
+    "baseline_reused_new_count": 0,
+    "all_native_silence_hashes_identical": true,
+    "same_case_visual_reference_hashes_identical": true,
+    "complete_selected_audio_video_decode": true,
+    "musical_gain_accepted": false,
+    "new_interface_trained": false,
+    "optimizer_updates": 0,
+    "rows": [
+      {
+        "tag": "text_no_tc_teacher_v1",
+        "sample_id": "sid0",
+        "condition": "joint",
+        "audio_path": "/fixture/sid0.wav",
+        "video_path": "/fixture/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/joint/sid0_sid0.mp4",
+        "video_sha256": "797eda4f2302a25a4da48c364fabb0fba95690e7f4cae8be8d11e4524cdbd017",
+        "log_path": "/fixture/log",
+        "log_sha256": "836ff184e7b41b1e13cb5fd89fa1de98dbbab99e9d2918913ff43b86a5c7c213",
+        "image_sha256": "32e46958c7e23f882720fb7501d3ea5c43adb0ce1a05abba8394e117a898962b",
+        "audio_sha256": "f4e07f93680558d0058d90a23749802925770fa29e5f616795260bda528c02be",
+        "inputs": {
+          "semantic_text": null,
+          "no_text_encoder": true,
+          "text_encoder_loaded": false,
+          "image_path": "/fixture/image0.png",
+          "audio_path": "/fixture/sid0.wav",
+          "seed": 42,
+          "native_audio_condition": "fixed_silence",
+          "music_encoder_ckpt": null,
+          "text_hidden_oracle": false,
+          "text_hidden_projection": null,
+          "music_text_zero_input": false,
+          "legacy_clip_complete_chain": false,
+          "music_text_ckpt": null,
+          "no_tc_teacher_cache": "/fixture/cache",
+          "waveform_loader": "librosa"
+        },
+        "no_tc_condition": {
+          "kind": "cached_teacher_tail_only_no_tc_diagnostic",
+          "loaded": false,
+          "semantic_text": null,
+          "processor_loaded": false,
+          "tokenizer_loaded": false,
+          "calls": 0,
+          "prefix_length": 0,
+          "predicted_length": 3,
+          "tail_shape": [
+            3,
+            5120
+          ],
+          "raw_sha256": "d7dbc58b9e5586fcc57c63d98456b09c88ff407e3d850c4fba63b21456b140b6",
+          "teacher_only_diagnostic": true,
+          "music_prediction": false,
+          "student_reads_caption": false,
+          "context_source": "none_teacher_tail_only_diagnostic",
+          "original_teacher_tokens": 3,
+          "sample_id": "sid0",
+          "image_path": "/fixture/image0.png",
+          "audio_path": "/fixture/sid0.wav",
+          "source_path": "/fixture/cache/sid0_sid0.pt",
+          "source_sha256": "18c1831c683bf4e201a131178736d3d753e6071b2330183a8d38c50af94c4d10",
+          "teacher_tail_sha256": "c252eb1af941b973988239e820e905b57a421d7c911c63e0ccf6fb78d0553fb1"
+        },
+        "native_audio": {
+          "native_music_bypass": false,
+          "all_target_audio_clean": true,
+          "text_encoder_loaded": false,
+          "tokenizer_loaded": false,
+          "processor_loaded": false,
+          "semantic_text": null,
+          "text_encoder_calls": 0,
+          "prefix_tokens": 0,
+          "prompt_embeds_shape": [
+            3,
+            5120
+          ],
+          "visual_reference_rows": 1,
+          "visual_reference_sha256": "8fef81788f2bbf8650a1cbb2dea06999af8faeb62253c81397eca623431d6262",
+          "waveform_sha256": "23480f9c69825283714e2cb8c79393eda011b577274d36346bbbc4c4e28ecacf",
+          "reference_sha256": "92375102729c0ce798b6e1fc5a2b61c17f26aad529e92a8a314ae97f20783bae",
+          "retake_sha256": "7e8e1cae3b7e3c31064748b2956a51783905bf1b8e330d91bb11fea18a9fa114",
+          "mask_sha256": "438a5598e8158b2039d7024843855aa90807822ce266ca513ed368940470f376"
+        },
+        "deployment": null,
+        "source": {
+          "cache_dir": "/fixture/cache",
+          "source_path": "/fixture/cache/sid0_sid0.pt",
+          "source_sha256": "18c1831c683bf4e201a131178736d3d753e6071b2330183a8d38c50af94c4d10",
+          "teacher_tail_sha256": "c252eb1af941b973988239e820e905b57a421d7c911c63e0ccf6fb78d0553fb1",
+          "raw_sha256": "d7dbc58b9e5586fcc57c63d98456b09c88ff407e3d850c4fba63b21456b140b6",
+          "tail_length": 3,
+          "case": {
+            "sample_id": "sid0",
+            "audio_id": "sid0",
+            "condition": "joint",
+            "image_path": "/fixture/image0.png",
+            "audio_path": "/fixture/sid0.wav"
+          }
+        },
+        "diagnostic_only": true,
+        "musical_quality_accepted": false,
+        "integrity": {
+          "full_video_audio_decode": true,
+          "ffmpeg_decoded_video_frames": 124,
+          "streams": [
+            {
+              "codec_type": "video",
+              "width": 704,
+              "height": 1280,
+              "decoded_frames": 124,
+              "fps": 24
+            },
+            {
+              "codec_type": "audio"
+            }
+          ]
+        }
+      },
+      {
+        "tag": "text_no_tc_teacher_v1",
+        "sample_id": "sid1",
+        "condition": "joint",
+        "audio_path": "/fixture/sid1.wav",
+        "video_path": "/fixture/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/joint/sid1_sid1.mp4",
+        "video_sha256": "5a3fa2d77c7eb415fb750b61b85a4ee7d8727fce4894fe9bea64247f77e36991",
+        "log_path": "/fixture/log",
+        "log_sha256": "836ff184e7b41b1e13cb5fd89fa1de98dbbab99e9d2918913ff43b86a5c7c213",
+        "image_sha256": "4f0b4896375ad2b7738e36e4e1df97ad7cf0301e42433376b226274448028a7e",
+        "audio_sha256": "b61d40908bc44a2e636ebc6e82a487475468c81526862facf7a1274fa1369583",
+        "inputs": {
+          "semantic_text": null,
+          "no_text_encoder": true,
+          "text_encoder_loaded": false,
+          "image_path": "/fixture/image1.png",
+          "audio_path": "/fixture/sid1.wav",
+          "seed": 42,
+          "native_audio_condition": "fixed_silence",
+          "music_encoder_ckpt": null,
+          "text_hidden_oracle": false,
+          "text_hidden_projection": null,
+          "music_text_zero_input": false,
+          "legacy_clip_complete_chain": false,
+          "music_text_ckpt": null,
+          "no_tc_teacher_cache": "/fixture/cache",
+          "waveform_loader": "librosa"
+        },
+        "no_tc_condition": {
+          "kind": "cached_teacher_tail_only_no_tc_diagnostic",
+          "loaded": false,
+          "semantic_text": null,
+          "processor_loaded": false,
+          "tokenizer_loaded": false,
+          "calls": 0,
+          "prefix_length": 0,
+          "predicted_length": 3,
+          "tail_shape": [
+            3,
+            5120
+          ],
+          "raw_sha256": "e49e92e08a2a71db91994615badfe342c2c542fcf796b22a0e5aa8bc252fcc4d",
+          "teacher_only_diagnostic": true,
+          "music_prediction": false,
+          "student_reads_caption": false,
+          "context_source": "none_teacher_tail_only_diagnostic",
+          "original_teacher_tokens": 3,
+          "sample_id": "sid1",
+          "image_path": "/fixture/image1.png",
+          "audio_path": "/fixture/sid1.wav",
+          "source_path": "/fixture/cache/sid1_sid1.pt",
+          "source_sha256": "fc46efeab7c1807b9dce2b93e8ae91e547b8f5aa4fcf309436783806e14cb747",
+          "teacher_tail_sha256": "dce752a8e4a604a34f812242b41609c4f424e571dedae619e81008506021a626"
+        },
+        "native_audio": {
+          "native_music_bypass": false,
+          "all_target_audio_clean": true,
+          "text_encoder_loaded": false,
+          "tokenizer_loaded": false,
+          "processor_loaded": false,
+          "semantic_text": null,
+          "text_encoder_calls": 0,
+          "prefix_tokens": 0,
+          "prompt_embeds_shape": [
+            3,
+            5120
+          ],
+          "visual_reference_rows": 1,
+          "visual_reference_sha256": "4b30c5f8905066504bb597b691f68c5022eaaed21e840967836cd75d52bdcccf",
+          "waveform_sha256": "23480f9c69825283714e2cb8c79393eda011b577274d36346bbbc4c4e28ecacf",
+          "reference_sha256": "92375102729c0ce798b6e1fc5a2b61c17f26aad529e92a8a314ae97f20783bae",
+          "retake_sha256": "7e8e1cae3b7e3c31064748b2956a51783905bf1b8e330d91bb11fea18a9fa114",
+          "mask_sha256": "438a5598e8158b2039d7024843855aa90807822ce266ca513ed368940470f376"
+        },
+        "deployment": null,
+        "source": {
+          "cache_dir": "/fixture/cache",
+          "source_path": "/fixture/cache/sid1_sid1.pt",
+          "source_sha256": "fc46efeab7c1807b9dce2b93e8ae91e547b8f5aa4fcf309436783806e14cb747",
+          "teacher_tail_sha256": "dce752a8e4a604a34f812242b41609c4f424e571dedae619e81008506021a626",
+          "raw_sha256": "e49e92e08a2a71db91994615badfe342c2c542fcf796b22a0e5aa8bc252fcc4d",
+          "tail_length": 3,
+          "case": {
+            "sample_id": "sid1",
+            "audio_id": "sid1",
+            "condition": "joint",
+            "image_path": "/fixture/image1.png",
+            "audio_path": "/fixture/sid1.wav"
+          }
+        },
+        "diagnostic_only": true,
+        "musical_quality_accepted": false,
+        "integrity": {
+          "full_video_audio_decode": true,
+          "ffmpeg_decoded_video_frames": 124,
+          "streams": [
+            {
+              "codec_type": "video",
+              "width": 704,
+              "height": 1280,
+              "decoded_frames": 124,
+              "fps": 24
+            },
+            {
+              "codec_type": "audio"
+            }
+          ]
+        }
+      },
+      {
+        "tag": "text_no_tc_teacher_v1",
+        "sample_id": "sid2",
+        "condition": "joint",
+        "audio_path": "/fixture/sid2.wav",
+        "video_path": "/fixture/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1/joint/sid2_sid2.mp4",
+        "video_sha256": "83683e419cdffc362d8aed347804e9e7efe8543664553d443893cad9da894484",
+        "log_path": "/fixture/log",
+        "log_sha256": "836ff184e7b41b1e13cb5fd89fa1de98dbbab99e9d2918913ff43b86a5c7c213",
+        "image_sha256": "f3b30c5444d2d29d7849a7b946ae9b6506f86f2a1866be6679cdb22169938aab",
+        "audio_sha256": "ab35592e7f0ca619e3a60f8cbcee0f884b7b5cb176f9ec62067e04fe6faa7913",
+        "inputs": {
+          "semantic_text": null,
+          "no_text_encoder": true,
+          "text_encoder_loaded": false,
+          "image_path": "/fixture/image2.png",
+          "audio_path": "/fixture/sid2.wav",
+          "seed": 42,
+          "native_audio_condition": "fixed_silence",
+          "music_encoder_ckpt": null,
+          "text_hidden_oracle": false,
+          "text_hidden_projection": null,
+          "music_text_zero_input": false,
+          "legacy_clip_complete_chain": false,
+          "music_text_ckpt": null,
+          "no_tc_teacher_cache": "/fixture/cache",
+          "waveform_loader": "librosa"
+        },
+        "no_tc_condition": {
+          "kind": "cached_teacher_tail_only_no_tc_diagnostic",
+          "loaded": false,
+          "semantic_text": null,
+          "processor_loaded": false,
+          "tokenizer_loaded": false,
+          "calls": 0,
+          "prefix_length": 0,
+          "predicted_length": 3,
+          "tail_shape": [
+            3,
+            5120
+          ],
+          "raw_sha256": "5af2e910145fc04eaeb7c2e1b2ee811f9a0029c7149c6199fbd63c5efe395e18",
+          "teacher_only_diagnostic": true,
+          "music_prediction": false,
+          "student_reads_caption": false,
+          "context_source": "none_teacher_tail_only_diagnostic",
+          "original_teacher_tokens": 3,
+          "sample_id": "sid2",
+          "image_path": "/fixture/image2.png",
+          "audio_path": "/fixture/sid2.wav",
+          "source_path": "/fixture/cache/sid2_sid2.pt",
+          "source_sha256": "a6ca47ba1679cab60de80a14b1a78969c8bff4f717248ecaa4fcddfcd4e13da2",
+          "teacher_tail_sha256": "7776ee36357a53de7c98f3d46361d70a47efa59a67a8c117f746bff1ac71f5e2"
+        },
+        "native_audio": {
+          "native_music_bypass": false,
+          "all_target_audio_clean": true,
+          "text_encoder_loaded": false,
+          "tokenizer_loaded": false,
+          "processor_loaded": false,
+          "semantic_text": null,
+          "text_encoder_calls": 0,
+          "prefix_tokens": 0,
+          "prompt_embeds_shape": [
+            3,
+            5120
+          ],
+          "visual_reference_rows": 1,
+          "visual_reference_sha256": "8447aef2fa7b76b90fd644116b605b84fcc191c2792643f972b1aa828b10a868",
+          "waveform_sha256": "23480f9c69825283714e2cb8c79393eda011b577274d36346bbbc4c4e28ecacf",
+          "reference_sha256": "92375102729c0ce798b6e1fc5a2b61c17f26aad529e92a8a314ae97f20783bae",
+          "retake_sha256": "7e8e1cae3b7e3c31064748b2956a51783905bf1b8e330d91bb11fea18a9fa114",
+          "mask_sha256": "438a5598e8158b2039d7024843855aa90807822ce266ca513ed368940470f376"
+        },
+        "deployment": null,
+        "source": {
+          "cache_dir": "/fixture/cache",
+          "source_path": "/fixture/cache/sid2_sid2.pt",
+          "source_sha256": "a6ca47ba1679cab60de80a14b1a78969c8bff4f717248ecaa4fcddfcd4e13da2",
+          "teacher_tail_sha256": "7776ee36357a53de7c98f3d46361d70a47efa59a67a8c117f746bff1ac71f5e2",
+          "raw_sha256": "5af2e910145fc04eaeb7c2e1b2ee811f9a0029c7149c6199fbd63c5efe395e18",
+          "tail_length": 3,
+          "case": {
+            "sample_id": "sid2",
+            "audio_id": "sid2",
+            "condition": "joint",
+            "image_path": "/fixture/image2.png",
+            "audio_path": "/fixture/sid2.wav"
+          }
+        },
+        "diagnostic_only": true,
+        "musical_quality_accepted": false,
+        "integrity": {
+          "full_video_audio_decode": true,
+          "ffmpeg_decoded_video_frames": 124,
+          "streams": [
+            {
+              "codec_type": "video",
+              "width": 704,
+              "height": 1280,
+              "decoded_frames": 124,
+              "fps": 24
+            },
+            {
+              "codec_type": "audio"
+            }
+          ]
+        }
+      },
+      {
+        "tag": "text_no_tc_C300_v1",
+        "sample_id": "sid0",
+        "condition": "joint",
+        "audio_path": "/fixture/sid0.wav",
+        "video_path": "/fixture/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/joint/sid0_sid0.mp4",
+        "video_sha256": "94bd4230160a6c3ce801e2e768cafc5405b3ae73de569eeb83f970950fd2c79b",
+        "log_path": "/fixture/log",
+        "log_sha256": "836ff184e7b41b1e13cb5fd89fa1de98dbbab99e9d2918913ff43b86a5c7c213",
+        "image_sha256": "32e46958c7e23f882720fb7501d3ea5c43adb0ce1a05abba8394e117a898962b",
+        "audio_sha256": "f4e07f93680558d0058d90a23749802925770fa29e5f616795260bda528c02be",
+        "inputs": {
+          "semantic_text": null,
+          "no_text_encoder": true,
+          "text_encoder_loaded": false,
+          "image_path": "/fixture/image0.png",
+          "audio_path": "/fixture/sid0.wav",
+          "seed": 42,
+          "native_audio_condition": "fixed_silence",
+          "music_encoder_ckpt": null,
+          "text_hidden_oracle": false,
+          "text_hidden_projection": null,
+          "music_text_zero_input": false,
+          "legacy_clip_complete_chain": false,
+          "music_text_ckpt": "/fixture/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+          "no_tc_teacher_cache": null,
+          "waveform_loader": "music_clip_bridge.load_audio"
+        },
+        "no_tc_condition": {
+          "kind": "legacy_checkpoint_no_tc_music_only_diagnostic",
+          "loaded": false,
+          "semantic_text": null,
+          "processor_loaded": false,
+          "tokenizer_loaded": false,
+          "calls": 0,
+          "prefix_length": 0,
+          "predicted_length": 2,
+          "tail_shape": [
+            2,
+            5120
+          ],
+          "raw_sha256": "fa7aed0141e479414925b716f42410420c75e4babf8b40b576550fe324a9e7a0",
+          "old_model_not_trained_for_no_tc": true,
+          "uses_ground_truth_caption": false,
+          "context_source": "zeros_legacy_checkpoint_compatibility",
+          "checkpoint_sha256": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef"
+        },
+        "native_audio": {
+          "native_music_bypass": false,
+          "all_target_audio_clean": true,
+          "text_encoder_loaded": false,
+          "tokenizer_loaded": false,
+          "processor_loaded": false,
+          "semantic_text": null,
+          "text_encoder_calls": 0,
+          "prefix_tokens": 0,
+          "prompt_embeds_shape": [
+            2,
+            5120
+          ],
+          "visual_reference_rows": 1,
+          "visual_reference_sha256": "8fef81788f2bbf8650a1cbb2dea06999af8faeb62253c81397eca623431d6262",
+          "waveform_sha256": "23480f9c69825283714e2cb8c79393eda011b577274d36346bbbc4c4e28ecacf",
+          "reference_sha256": "92375102729c0ce798b6e1fc5a2b61c17f26aad529e92a8a314ae97f20783bae",
+          "retake_sha256": "7e8e1cae3b7e3c31064748b2956a51783905bf1b8e330d91bb11fea18a9fa114",
+          "mask_sha256": "438a5598e8158b2039d7024843855aa90807822ce266ca513ed368940470f376"
+        },
+        "deployment": {
+          "checkpoint_sha256": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef",
+          "tail_shape": [
+            2,
+            5120
+          ],
+          "predicted_length": 2,
+          "call": 1,
+          "final_adapter_projection_executed": true,
+          "uses_ground_truth_caption": false,
+          "legacy_clip_complete_chain": false,
+          "input_sha256": "ae7312c9e655c2a4fb5765f56cdad67db6b2103b745644775fde0a63ec3a536d"
+        },
+        "source": {
+          "checkpoint": "/fixture/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+          "checkpoint_sha256": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef",
+          "query_max": 8,
+          "complete_full_raw_checkpoint": true
+        },
+        "diagnostic_only": true,
+        "musical_quality_accepted": false,
+        "integrity": {
+          "full_video_audio_decode": true,
+          "ffmpeg_decoded_video_frames": 124,
+          "streams": [
+            {
+              "codec_type": "video",
+              "width": 704,
+              "height": 1280,
+              "decoded_frames": 124,
+              "fps": 24
+            },
+            {
+              "codec_type": "audio"
+            }
+          ]
+        }
+      },
+      {
+        "tag": "text_no_tc_C300_v1",
+        "sample_id": "sid1",
+        "condition": "joint",
+        "audio_path": "/fixture/sid1.wav",
+        "video_path": "/fixture/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/joint/sid1_sid1.mp4",
+        "video_sha256": "5e67adaea27f1c79e94a454c1897f7dd27fcc4afd4e3529094101f9b88acd33e",
+        "log_path": "/fixture/log",
+        "log_sha256": "836ff184e7b41b1e13cb5fd89fa1de98dbbab99e9d2918913ff43b86a5c7c213",
+        "image_sha256": "4f0b4896375ad2b7738e36e4e1df97ad7cf0301e42433376b226274448028a7e",
+        "audio_sha256": "b61d40908bc44a2e636ebc6e82a487475468c81526862facf7a1274fa1369583",
+        "inputs": {
+          "semantic_text": null,
+          "no_text_encoder": true,
+          "text_encoder_loaded": false,
+          "image_path": "/fixture/image1.png",
+          "audio_path": "/fixture/sid1.wav",
+          "seed": 42,
+          "native_audio_condition": "fixed_silence",
+          "music_encoder_ckpt": null,
+          "text_hidden_oracle": false,
+          "text_hidden_projection": null,
+          "music_text_zero_input": false,
+          "legacy_clip_complete_chain": false,
+          "music_text_ckpt": "/fixture/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+          "no_tc_teacher_cache": null,
+          "waveform_loader": "music_clip_bridge.load_audio"
+        },
+        "no_tc_condition": {
+          "kind": "legacy_checkpoint_no_tc_music_only_diagnostic",
+          "loaded": false,
+          "semantic_text": null,
+          "processor_loaded": false,
+          "tokenizer_loaded": false,
+          "calls": 0,
+          "prefix_length": 0,
+          "predicted_length": 2,
+          "tail_shape": [
+            2,
+            5120
+          ],
+          "raw_sha256": "ccfd81f25ebfa36f9a78e58d1f0874a7e6aea47a2423ef3ea4c94da25bdbcba8",
+          "old_model_not_trained_for_no_tc": true,
+          "uses_ground_truth_caption": false,
+          "context_source": "zeros_legacy_checkpoint_compatibility",
+          "checkpoint_sha256": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef"
+        },
+        "native_audio": {
+          "native_music_bypass": false,
+          "all_target_audio_clean": true,
+          "text_encoder_loaded": false,
+          "tokenizer_loaded": false,
+          "processor_loaded": false,
+          "semantic_text": null,
+          "text_encoder_calls": 0,
+          "prefix_tokens": 0,
+          "prompt_embeds_shape": [
+            2,
+            5120
+          ],
+          "visual_reference_rows": 1,
+          "visual_reference_sha256": "4b30c5f8905066504bb597b691f68c5022eaaed21e840967836cd75d52bdcccf",
+          "waveform_sha256": "23480f9c69825283714e2cb8c79393eda011b577274d36346bbbc4c4e28ecacf",
+          "reference_sha256": "92375102729c0ce798b6e1fc5a2b61c17f26aad529e92a8a314ae97f20783bae",
+          "retake_sha256": "7e8e1cae3b7e3c31064748b2956a51783905bf1b8e330d91bb11fea18a9fa114",
+          "mask_sha256": "438a5598e8158b2039d7024843855aa90807822ce266ca513ed368940470f376"
+        },
+        "deployment": {
+          "checkpoint_sha256": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef",
+          "tail_shape": [
+            2,
+            5120
+          ],
+          "predicted_length": 2,
+          "call": 1,
+          "final_adapter_projection_executed": true,
+          "uses_ground_truth_caption": false,
+          "legacy_clip_complete_chain": false,
+          "input_sha256": "ae7312c9e655c2a4fb5765f56cdad67db6b2103b745644775fde0a63ec3a536d"
+        },
+        "source": {
+          "checkpoint": "/fixture/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+          "checkpoint_sha256": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef",
+          "query_max": 8,
+          "complete_full_raw_checkpoint": true
+        },
+        "diagnostic_only": true,
+        "musical_quality_accepted": false,
+        "integrity": {
+          "full_video_audio_decode": true,
+          "ffmpeg_decoded_video_frames": 124,
+          "streams": [
+            {
+              "codec_type": "video",
+              "width": 704,
+              "height": 1280,
+              "decoded_frames": 124,
+              "fps": 24
+            },
+            {
+              "codec_type": "audio"
+            }
+          ]
+        }
+      },
+      {
+        "tag": "text_no_tc_C300_v1",
+        "sample_id": "sid2",
+        "condition": "joint",
+        "audio_path": "/fixture/sid2.wav",
+        "video_path": "/fixture/exp/H3AR/val_musicreplace_text_no_tc_C300_v1/joint/sid2_sid2.mp4",
+        "video_sha256": "3e9666f3179963c2385e3b99374885e142acbacc17ddcea21b6ee0e1837a3479",
+        "log_path": "/fixture/log",
+        "log_sha256": "836ff184e7b41b1e13cb5fd89fa1de98dbbab99e9d2918913ff43b86a5c7c213",
+        "image_sha256": "f3b30c5444d2d29d7849a7b946ae9b6506f86f2a1866be6679cdb22169938aab",
+        "audio_sha256": "ab35592e7f0ca619e3a60f8cbcee0f884b7b5cb176f9ec62067e04fe6faa7913",
+        "inputs": {
+          "semantic_text": null,
+          "no_text_encoder": true,
+          "text_encoder_loaded": false,
+          "image_path": "/fixture/image2.png",
+          "audio_path": "/fixture/sid2.wav",
+          "seed": 42,
+          "native_audio_condition": "fixed_silence",
+          "music_encoder_ckpt": null,
+          "text_hidden_oracle": false,
+          "text_hidden_projection": null,
+          "music_text_zero_input": false,
+          "legacy_clip_complete_chain": false,
+          "music_text_ckpt": "/fixture/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+          "no_tc_teacher_cache": null,
+          "waveform_loader": "music_clip_bridge.load_audio"
+        },
+        "no_tc_condition": {
+          "kind": "legacy_checkpoint_no_tc_music_only_diagnostic",
+          "loaded": false,
+          "semantic_text": null,
+          "processor_loaded": false,
+          "tokenizer_loaded": false,
+          "calls": 0,
+          "prefix_length": 0,
+          "predicted_length": 2,
+          "tail_shape": [
+            2,
+            5120
+          ],
+          "raw_sha256": "ea809ee5925ce198f1b2015f1416f724eda32da8ee9eb6682458b084f523d766",
+          "old_model_not_trained_for_no_tc": true,
+          "uses_ground_truth_caption": false,
+          "context_source": "zeros_legacy_checkpoint_compatibility",
+          "checkpoint_sha256": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef"
+        },
+        "native_audio": {
+          "native_music_bypass": false,
+          "all_target_audio_clean": true,
+          "text_encoder_loaded": false,
+          "tokenizer_loaded": false,
+          "processor_loaded": false,
+          "semantic_text": null,
+          "text_encoder_calls": 0,
+          "prefix_tokens": 0,
+          "prompt_embeds_shape": [
+            2,
+            5120
+          ],
+          "visual_reference_rows": 1,
+          "visual_reference_sha256": "8447aef2fa7b76b90fd644116b605b84fcc191c2792643f972b1aa828b10a868",
+          "waveform_sha256": "23480f9c69825283714e2cb8c79393eda011b577274d36346bbbc4c4e28ecacf",
+          "reference_sha256": "92375102729c0ce798b6e1fc5a2b61c17f26aad529e92a8a314ae97f20783bae",
+          "retake_sha256": "7e8e1cae3b7e3c31064748b2956a51783905bf1b8e330d91bb11fea18a9fa114",
+          "mask_sha256": "438a5598e8158b2039d7024843855aa90807822ce266ca513ed368940470f376"
+        },
+        "deployment": {
+          "checkpoint_sha256": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef",
+          "tail_shape": [
+            2,
+            5120
+          ],
+          "predicted_length": 2,
+          "call": 1,
+          "final_adapter_projection_executed": true,
+          "uses_ground_truth_caption": false,
+          "legacy_clip_complete_chain": false,
+          "input_sha256": "ae7312c9e655c2a4fb5765f56cdad67db6b2103b745644775fde0a63ec3a536d"
+        },
+        "source": {
+          "checkpoint": "/fixture/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+          "checkpoint_sha256": "47320987f9a49d5b00119b960f247a956773f57543982b8bfcb6da5bb3afd9ef",
+          "query_max": 8,
+          "complete_full_raw_checkpoint": true
+        },
+        "diagnostic_only": true,
+        "musical_quality_accepted": false,
+        "integrity": {
+          "full_video_audio_decode": true,
+          "ffmpeg_decoded_video_frames": 124,
+          "streams": [
+            {
+              "codec_type": "video",
+              "width": 704,
+              "height": 1280,
+              "decoded_frames": 124,
+              "fps": 24
+            },
+            {
+              "codec_type": "audio"
+            }
+          ]
+        }
+      }
+    ],
+    "generation_bindings": [
+      {
+        "tag": "text_no_tc_teacher_v1",
+        "directory": "/fixture/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1",
+        "kind": "cached_teacher_tail_only_no_tc_diagnostic"
+      },
+      {
+        "tag": "text_no_tc_C300_v1",
+        "directory": "/fixture/exp/H3AR/val_musicreplace_text_no_tc_C300_v1",
+        "kind": "legacy_checkpoint_no_tc_music_only_diagnostic"
+      }
+    ],
+    "code_sha256": {
+      "sampler_sha256": "b7a56c61657d4e5cc44636b6f7fe94597cb1d803ab5db4a5ade18fc35cc937e7",
+      "infer_sha256": "92bc2e412115876270c842f18eede00e752babbb9bf6f402ee8c5ab3b6746af2",
+      "diagnostic_sha256": "5a695eea5b00a31f8aef7dbb89c8f798fab371246ac1549afe84b16420707b99"
+    }
+  },
+  "fixture_review_new_models": [
+    {
+      "id": "H3AR/val_musicreplace_text_no_tc_teacher_v1",
+      "label": "noTC·教师tail-only·未训练新接口",
+      "group": "H3AR",
+      "desc": "缓存教师tail-only诊断：旧neutral教师离线raw tokens，teacher长度仅本诊断使用；不是音乐预测；TC完全不加载不调用，无空白文本/无TC图prefix；独立视觉VAE参考保留；GT原曲仅mux、不进native；完整媒体解码仅完整性，不证明画质/音乐收益/新接口训练成功",
+      "conds": {
+        "joint": {
+          "sid0": [
+            "sid0_sid0.mp4"
+          ],
+          "sid1": [
+            "sid1_sid1.mp4"
+          ],
+          "sid2": [
+            "sid2_sid2.mp4"
+          ]
+        }
+      },
+      "metrics": {},
+      "diagnostic_only": true,
+      "no_text_encoder": true,
+      "text_encoder_loaded": false,
+      "text_encoder_calls": 0,
+      "prefix_length": 0,
+      "independent_visual_vae_reference": true,
+      "teacher_only_diagnostic": true,
+      "music_prediction": false,
+      "old_model_not_trained_for_no_tc": false,
+      "new_interface_trained": false,
+      "musical_quality_accepted": false,
+      "no_tc_report": "/fixture/no_tc_report.json",
+      "no_tc_report_sha256": "845e91831319e89c4d656bdb80c278ac09a7230d61e5dfd2e1b1fbb436ac8917"
+    },
+    {
+      "id": "H3AR/val_musicreplace_text_no_tc_C300_v1",
+      "label": "noTC·旧C300·zero-context·未训练新接口",
+      "group": "H3AR",
+      "desc": "旧C300完整MusicFM+adapter：仅音乐tokens，自身预测长度；legacy context严格zero5120，旧模型未按noTC训练；TC完全不加载不调用，无空白文本/无TC图prefix；独立视觉VAE参考保留；GT原曲仅mux、不进native；完整媒体解码仅完整性，不证明画质/音乐收益/新接口训练成功",
+      "conds": {
+        "joint": {
+          "sid0": [
+            "sid0_sid0.mp4"
+          ],
+          "sid1": [
+            "sid1_sid1.mp4"
+          ],
+          "sid2": [
+            "sid2_sid2.mp4"
+          ]
+        }
+      },
+      "metrics": {},
+      "diagnostic_only": true,
+      "no_text_encoder": true,
+      "text_encoder_loaded": false,
+      "text_encoder_calls": 0,
+      "prefix_length": 0,
+      "independent_visual_vae_reference": true,
+      "teacher_only_diagnostic": false,
+      "music_prediction": true,
+      "old_model_not_trained_for_no_tc": true,
+      "new_interface_trained": false,
+      "musical_quality_accepted": false,
+      "no_tc_report": "/fixture/no_tc_report.json",
+      "no_tc_report_sha256": "845e91831319e89c4d656bdb80c278ac09a7230d61e5dfd2e1b1fbb436ac8917"
+    }
+  ],
+  "source_sha256": {
+    "diagnostic": "085f3dc96ae80415b7a4e66f442d5956c6c62aed7d2c7c4da8dbc131360f4e45",
+    "review": "0315ddc7b722fc8f9e21294c0aca5a6b4c66700cfbc5868380878cc064d2db49"
+  },
+  "scope": "Pure-memory audit/review gate fixtures only; media success flags are synthetic and do not prove real decode, generation, VAE execution, quality or music gain"
+}

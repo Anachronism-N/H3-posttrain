@@ -1,0 +1,31 @@
+{
+  "format_version": 1,
+  "release_complete": true,
+  "experiment_complete": false,
+  "scope": "Frozen source release for six no-TC diagnostic videos; not completed video or music-dance quality acceptance",
+  "source_files": {
+    "sampler": {"path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/h3ar/sample_h3_ar.py", "sha256": "90fbb3945c0e68c12b09696fc0d2e2752e2642ace6971642149a0e617c7c4db3"},
+    "infer": {"path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_infer.py", "sha256": "1308ae5f61dbaaec2eca9c5f708791ba14349c417d94af2aef5b47ac273dc821"},
+    "manager": {"path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/ms/music_text_oracle_generate.py", "sha256": "3245b293f04f60a9ab6267f3caaeaea3ffb132981d80aabaee9c575f78bb16e8"}
+  },
+  "source_checkpoint": {"path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/last.pt", "sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605", "old_model_not_trained_for_no_tc": true},
+  "groups": [
+    {"kind": "cached_teacher_tail_only_no_tc_diagnostic", "directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_teacher_v1", "teacher_tail_cache": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache", "hosts": ["28.216.19.69", "28.216.17.70", "28.216.19.213"], "task_handle": "J2gEJo", "expected_videos": 3},
+    {"kind": "legacy_checkpoint_no_tc_music_only_diagnostic", "directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_no_tc_C300_v1", "hosts": ["28.216.19.143", "28.216.19.137", "28.216.19.225"], "task_handle": "Q8N3Pt", "expected_videos": 3}
+  ],
+  "expected_new_videos": 6,
+  "fixed_source_people": 3,
+  "text_encoder_loaded": false,
+  "tokenizer_loaded": false,
+  "processor_loaded": false,
+  "semantic_text": null,
+  "tc_prefix_tokens": 0,
+  "visual_vae_reference_retained": true,
+  "native_audio_condition": "fixed_silence",
+  "old_student_context": "fixed_zeros5120_for_legacy_signature_not_cached_tc_context",
+  "actual_new_no_tc_student_training_performed": false,
+  "raw_entry_comparison_task": "2Ehjy7",
+  "cpu_checks": "music_text_no_tc_cpu_audit_v2.json",
+  "video_full_decode_complete": false,
+  "musical_quality_accepted": false
+}

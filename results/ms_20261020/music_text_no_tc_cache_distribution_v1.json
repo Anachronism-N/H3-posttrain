@@ -1,0 +1,68 @@
+{
+  "complete": true,
+  "source_host": "28.216.19.69",
+  "source_hashes": {
+    "music_text_no_tc_W_fit8_s100_v2": "600b91897c8eb8d84ebb0e8498d2f6a363ca5797d119d43a8929f3d7533af379",
+    "music_text_no_tc_PCA_fit8_s100_v2": "7ba5a8b7ed2d09ef5645e3c9c8f69d903d2a0a6fc026a6114ee2a983ebb7e0c5"
+  },
+  "remote_nodes": [
+    {
+      "host": "28.216.17.70",
+      "checkpoint_hashes": {
+        "music_text_no_tc_W_fit8_s100_v2": "600b91897c8eb8d84ebb0e8498d2f6a363ca5797d119d43a8929f3d7533af379",
+        "music_text_no_tc_PCA_fit8_s100_v2": "7ba5a8b7ed2d09ef5645e3c9c8f69d903d2a0a6fc026a6114ee2a983ebb7e0c5"
+      },
+      "verified": true
+    },
+    {
+      "host": "28.216.19.213",
+      "checkpoint_hashes": {
+        "music_text_no_tc_W_fit8_s100_v2": "600b91897c8eb8d84ebb0e8498d2f6a363ca5797d119d43a8929f3d7533af379",
+        "music_text_no_tc_PCA_fit8_s100_v2": "7ba5a8b7ed2d09ef5645e3c9c8f69d903d2a0a6fc026a6114ee2a983ebb7e0c5"
+      },
+      "verified": true
+    },
+    {
+      "host": "28.216.19.143",
+      "checkpoint_hashes": {
+        "music_text_no_tc_W_fit8_s100_v2": "600b91897c8eb8d84ebb0e8498d2f6a363ca5797d119d43a8929f3d7533af379",
+        "music_text_no_tc_PCA_fit8_s100_v2": "7ba5a8b7ed2d09ef5645e3c9c8f69d903d2a0a6fc026a6114ee2a983ebb7e0c5"
+      },
+      "verified": true
+    },
+    {
+      "host": "28.216.19.137",
+      "checkpoint_hashes": {
+        "music_text_no_tc_W_fit8_s100_v2": "600b91897c8eb8d84ebb0e8498d2f6a363ca5797d119d43a8929f3d7533af379",
+        "music_text_no_tc_PCA_fit8_s100_v2": "7ba5a8b7ed2d09ef5645e3c9c8f69d903d2a0a6fc026a6114ee2a983ebb7e0c5"
+      },
+      "verified": true
+    },
+    {
+      "host": "28.216.19.225",
+      "checkpoint_hashes": {
+        "music_text_no_tc_W_fit8_s100_v2": "600b91897c8eb8d84ebb0e8498d2f6a363ca5797d119d43a8929f3d7533af379",
+        "music_text_no_tc_PCA_fit8_s100_v2": "7ba5a8b7ed2d09ef5645e3c9c8f69d903d2a0a6fc026a6114ee2a983ebb7e0c5"
+      },
+      "verified": true
+    },
+    {
+      "host": "28.216.18.144",
+      "checkpoint_hashes": {
+        "music_text_no_tc_W_fit8_s100_v2": "600b91897c8eb8d84ebb0e8498d2f6a363ca5797d119d43a8929f3d7533af379",
+        "music_text_no_tc_PCA_fit8_s100_v2": "7ba5a8b7ed2d09ef5645e3c9c8f69d903d2a0a6fc026a6114ee2a983ebb7e0c5"
+      },
+      "verified": true
+    },
+    {
+      "host": "28.216.18.136",
+      "checkpoint_hashes": {
+        "music_text_no_tc_W_fit8_s100_v2": "600b91897c8eb8d84ebb0e8498d2f6a363ca5797d119d43a8929f3d7533af379",
+        "music_text_no_tc_PCA_fit8_s100_v2": "7ba5a8b7ed2d09ef5645e3c9c8f69d903d2a0a6fc026a6114ee2a983ebb7e0c5"
+      },
+      "verified": true
+    }
+  ],
+  "model_weights_changed": false,
+  "scope": "Verified internal local caches of complete checkpoints; not training or video success"
+}

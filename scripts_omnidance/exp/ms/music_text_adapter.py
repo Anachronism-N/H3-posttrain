@@ -82,13 +82,13 @@ def _position_encoding(count, width, device, dtype):
 
 
 class _CrossAttentionBlock(nn.Module):
-    def __init__(self):
+    def __init__(self, width=256, heads=8):
         super().__init__()
-        self.query_norm = nn.LayerNorm(256)
-        self.memory_norm = nn.LayerNorm(256)
-        self.cross_attention = nn.MultiheadAttention(256, 8, dropout=0.0, batch_first=True)
-        self.ffn_norm = nn.LayerNorm(256)
-        self.ffn = nn.Sequential(nn.Linear(256, 1024), nn.GELU(), nn.Linear(1024, 256))
+        self.query_norm = nn.LayerNorm(width)
+        self.memory_norm = nn.LayerNorm(width)
+        self.cross_attention = nn.MultiheadAttention(width, heads, dropout=0.0, batch_first=True)
+        self.ffn_norm = nn.LayerNorm(width)
+        self.ffn = nn.Sequential(nn.Linear(width, 4 * width), nn.GELU(), nn.Linear(4 * width, width))
 
     def forward(self, queries, memory, valid_mask):
         normalized_memory = self.memory_norm(memory)
@@ -101,26 +101,80 @@ class _CrossAttentionBlock(nn.Module):
 
 class MusicTextAdapter(nn.Module):
     """qmax comes from training token lengths, never a deployment ground-truth length."""
-    def __init__(self, qmax, feature_dim=1024, raw_dim=5120, width=256):
+    def __init__(self, qmax, feature_dim=1024, raw_dim=5120, width=256, heads=8,
+                 context_policy='tc_prefix_context'):
         super().__init__()
         if type(qmax) is not int or qmax < 1:
             raise ValueError('qmax must be a positive integer from training data')
-        if (feature_dim, raw_dim, width) != (1024, 5120, 256):
-            raise ValueError('This interface requires feature_dim=1024, raw_dim=5120, width=256')
+        if (feature_dim, raw_dim) != (1024, 5120):
+            raise ValueError('This interface requires feature_dim=1024, raw_dim=5120')
+        if (type(width) is not int or width < 2 or width % 2 or type(heads) is not int
+                or heads < 1 or width % heads):
+            raise ValueError('width must be a positive even integer divisible by positive integer heads')
+        if type(context_policy) is not str or context_policy not in ('tc_prefix_context', 'music_only_global_bias'):
+            raise ValueError('Unsupported adapter context_policy')
         self.qmax = qmax
-        self.feature_dim, self.raw_dim, self.width = feature_dim, raw_dim, width
+        self.feature_dim, self.raw_dim, self.width, self.heads = feature_dim, raw_dim, width, heads
+        self.context_policy = context_policy
         self.memory_projection = nn.Linear(feature_dim, width)
         self.stereo_positions = nn.Parameter(torch.empty(2, width))
         self.query_positions = nn.Embedding(qmax, width)
-        self.context_projection = nn.Linear(raw_dim, width)
-        self.blocks = nn.ModuleList([_CrossAttentionBlock(), _CrossAttentionBlock()])
+        if context_policy == 'tc_prefix_context':
+            self.context_projection = nn.Linear(raw_dim, width)
+        else:
+            self.global_context_bias = nn.Parameter(torch.zeros(width))
+        self.blocks = nn.ModuleList([_CrossAttentionBlock(width, heads), _CrossAttentionBlock(width, heads)])
         self.output_norm = nn.LayerNorm(width)
         self.raw_output = nn.Linear(width, raw_dim)
         self.length_head = nn.Sequential(nn.Linear(2 * width, width), nn.GELU(), nn.Linear(width, 1))
         nn.init.normal_(self.stereo_positions, std=0.02)
         nn.init.normal_(self.query_positions.weight, std=0.02)
+        self.register_buffer('output_center', None, persistent=True)
+        self.register_buffer('output_basis', None, persistent=True)
+        self.output_space_source_sha256 = None
 
-    def forward(self, features, context, feature_lengths=None, query_count=None):
+    def _apply(self, fn, recurse=True):
+        # Module.half()/to(dtype=...) must not quantize the fixed FP32 affine space.
+        fixed = {name: self._buffers[name] for name in ('output_center', 'output_basis')}
+        result = super()._apply(fn, recurse=recurse)
+        for name, original in fixed.items():
+            if original is not None:
+                self._buffers[name] = original.to(device=self._buffers[name].device, dtype=torch.float32)
+        return result
+
+    def set_output_space(self, center, basis, source_sha256):
+        for name, value in (('output_center', center), ('output_basis', basis)):
+            _finite(value, name)
+            if not value.is_floating_point():
+                raise ValueError(name + ' must be floating-point')
+        if (center.shape != (self.raw_dim,) or basis.ndim != 2 or basis.shape[0] != self.raw_dim
+                or not 1 <= basis.shape[1] <= self.raw_dim):
+            raise ValueError('Affine output space requires center [5120] and basis [5120,K], 1<=K<=5120')
+        if (type(source_sha256) is not str or len(source_sha256) != 64
+                or any(char not in '0123456789abcdef' for char in source_sha256)):
+            raise ValueError('Output space requires its lowercase artifact SHA256')
+        device = self.raw_output.weight.device
+        center = center.detach().to(device=device, dtype=torch.float32).clone()
+        basis = basis.detach().to(device=device, dtype=torch.float32).clone()
+        _finite(center, 'FP32 output_center')
+        _finite(basis, 'FP32 output_basis')
+        with torch.autocast(device_type=device.type, enabled=False):
+            gram = basis.T @ basis
+        if not torch.allclose(gram, torch.eye(basis.shape[1], device=device), rtol=0, atol=1e-5):
+            raise ValueError('Output basis must have orthonormal columns within absolute tolerance 1e-5')
+        self.output_center, self.output_basis = center, basis
+        self.output_space_source_sha256 = source_sha256
+        return self
+
+    def output_space_metadata(self):
+        if self.output_basis is None:
+            return {'mode': 'none'}
+        return dict(mode='fixed_affine_projection', rank=self.output_basis.shape[1],
+                    source_sha256=self.output_space_source_sha256,
+                    projection='center+((raw_output(output_norm(queries))-center)@basis)@basis.T',
+                    buffer_dtype='float32', trainable=False)
+
+    def forward(self, features, context=None, feature_lengths=None, query_count=None):
         if isinstance(features, Mapping):
             record = features
             metadata = record.get('metadata')
@@ -139,16 +193,22 @@ class MusicTextAdapter(nn.Module):
                     feature_lengths = torch.full((features.shape[0],), features.shape[2],
                                                  dtype=torch.long, device=features.device)
         _finite(features, 'features')
-        _finite(context, 'context')
         if features.ndim != 4 or features.shape[1] != 2 or features.shape[-1] != self.feature_dim:
             raise ValueError('Expected complete dense features [B,2,T,1024]')
         batch, _, frames, _ = features.shape
-        if batch < 1 or frames < 1 or context.shape != (batch, self.raw_dim):
-            raise ValueError('Expected nonempty dense features and prefix last-row context [B,5120]')
-        if not features.is_floating_point() or not context.is_floating_point():
-            raise ValueError('Features and raw context must be floating-point tensors')
-        if features.device != context.device or features.device != self.memory_projection.weight.device:
-            raise ValueError('Features, context, and adapter must use the same device')
+        if batch < 1 or frames < 1 or not features.is_floating_point():
+            raise ValueError('Expected nonempty floating-point dense features')
+        if features.device != self.memory_projection.weight.device:
+            raise ValueError('Features and adapter must use the same device')
+        if self.context_policy == 'music_only_global_bias':
+            if context is not None:
+                raise ValueError('music_only_global_bias forbids external context, including zero or cached TC context')
+        else:
+            _finite(context, 'context')
+            if context.shape != (batch, self.raw_dim) or not context.is_floating_point():
+                raise ValueError('Expected prefix last-row floating-point context [B,5120]')
+            if features.device != context.device:
+                raise ValueError('Features and context must use the same device')
         count = self.qmax if query_count is None else query_count
         if type(count) is not int or not 1 <= count <= self.qmax:
             raise ValueError('query_count must be an integer in [1,qmax]')
@@ -160,12 +220,18 @@ class MusicTextAdapter(nn.Module):
         memory = memory + _position_encoding(frames, self.width, memory.device, memory.dtype)[None, None]
         memory = memory.flatten(1, 2)
         flat_mask = valid_mask.flatten(1, 2)
-        projected_context = self.context_projection(context.to(dtype=dtype))
+        projected_context = (self.global_context_bias[None].expand(batch, -1)
+                             if self.context_policy == 'music_only_global_bias'
+                             else self.context_projection(context.to(dtype=dtype)))
         # No query self-attention or length-relative positions: short-query prefixes stay stable.
         queries = self.query_positions.weight[:count][None] + projected_context[:, None]
         for block in self.blocks:
             queries = block(queries, memory, flat_mask)
         raw_tokens = self.raw_output(self.output_norm(queries))
+        if self.output_basis is not None:
+            with torch.autocast(device_type=raw_tokens.device.type, enabled=False):
+                raw_tokens = self.output_center + ((raw_tokens.float() - self.output_center)
+                                                   @ self.output_basis) @ self.output_basis.T
         summary = memory.masked_fill(~flat_mask[..., None], 0).sum(1) / flat_mask.sum(1)[:, None]
         log_length = self.length_head(torch.cat((summary, projected_context), dim=-1)).squeeze(-1)
         _finite(raw_tokens, 'raw_tokens')
@@ -173,7 +239,7 @@ class MusicTextAdapter(nn.Module):
         return raw_tokens, log_length
 
     @torch.no_grad()
-    def generate(self, features, context, feature_lengths=None):
+    def generate(self, features, context=None, feature_lengths=None):
         if self.training:
             raise RuntimeError('Call eval() before generation')
         raw_tokens, log_length = self(features, context, feature_lengths=feature_lengths)
@@ -274,12 +340,14 @@ class MusicToH3Text(nn.Module):
             features = features.half().float()
         return features, feature_lengths
 
-    def forward(self, waveform, context, waveform_lengths=None, query_count=None):
+    def forward(self, waveform, context=None, waveform_lengths=None, query_count=None):
+        if self.adapter.context_policy == 'music_only_global_bias' and context is not None:
+            raise ValueError('music_only_global_bias forbids external context before backbone encoding')
         features, feature_lengths = self.dense_features(waveform, waveform_lengths)
         with self._online_precision_context(features.device):
             return self.adapter(features, context, feature_lengths, query_count)
 
-    def student_condition(self, waveform, context, waveform_lengths=None):
+    def student_condition(self, waveform, context=None, waveform_lengths=None):
         """Differentiable full-qmax student condition; no caption or teacher length input."""
         raw_tokens, log_length = self(waveform, context, waveform_lengths)
         tails, lengths = truncate_predicted_tokens(raw_tokens, log_length, self.adapter.qmax)
@@ -288,11 +356,54 @@ class MusicToH3Text(nn.Module):
                     valid_mask=valid_mask, tails=tails)
 
     @torch.no_grad()
-    def generate(self, waveform, context, waveform_lengths=None):
+    def generate(self, waveform, context=None, waveform_lengths=None):
         if self.training:
             raise RuntimeError('Call eval() before generation')
         condition = self.student_condition(waveform, context, waveform_lengths)
         return condition['tails'], condition['lengths']
+
+
+def convert_music_text_to_no_text_encoder(model, features, feature_lengths):
+    """Convert legacy weights without reading text/cache; verify old zero-context equivalence."""
+    if not isinstance(model, MusicToH3Text) or model.adapter.context_policy != 'tc_prefix_context':
+        raise ValueError('noTC conversion requires a complete legacy tc_prefix_context wrapper')
+    old = model.adapter
+    before = model.state_dict()
+    adapter = MusicTextAdapter(old.qmax, width=old.width, heads=old.heads,
+                               context_policy='music_only_global_bias')
+    adapter = adapter.to(device=old.memory_projection.weight.device, dtype=old.memory_projection.weight.dtype)
+    state = dict(old.state_dict())
+    del state['context_projection.weight']
+    state['global_context_bias'] = state.pop('context_projection.bias').detach().clone()
+    if old.output_basis is not None:
+        adapter.set_output_space(old.output_center, old.output_basis, old.output_space_source_sha256)
+    adapter.load_state_dict(state, strict=True)
+    adapter.requires_grad_(True)
+    adapter.train(old.training)
+    with torch.no_grad():
+        zero_context = torch.zeros(features.shape[0], old.raw_dim, device=features.device,
+                                   dtype=old.memory_projection.weight.dtype)
+        expected = old(features, zero_context, feature_lengths)
+        actual = adapter(features, None, feature_lengths)
+    if not all(torch.equal(a, b) for a, b in zip(expected, actual)):
+        raise ValueError('noTC conversion changed the legacy zero-context raw tokens or log length')
+    model.adapter = adapter
+    after = model.state_dict()
+    removed = sorted(set(before) - set(after))
+    added = sorted(set(after) - set(before))
+    common = sorted(set(before) & set(after))
+    if (removed != ['adapter.context_projection.bias', 'adapter.context_projection.weight']
+            or added != ['adapter.global_context_bias']
+            or not all(torch.equal(before[name], after[name]) for name in common)
+            or not torch.equal(before['adapter.context_projection.bias'], after['adapter.global_context_bias'])):
+        raise ValueError('noTC conversion must preserve every common adapter/backbone state and rename only the context bias')
+    return dict(context_policy='music_only_global_bias', removed_state=removed, added_state=added,
+                removed_context_weight='adapter.context_projection.weight',
+                bias_rename={'adapter.context_projection.bias': 'adapter.global_context_bias'},
+                preserved_common_state=common, common_state_exact=True, backbone_state_exact=True,
+                old_zero_context_raw_tokens_exact=True, old_zero_context_log_length_exact=True,
+                cached_context_read=False, text_encoder_called=False, all_remaining_adapter_parameters_trainable=True,
+                initialization_is_not_no_tc_training_acceptance=True)
 
 
 def masked_token_loss(student, teacher, valid_mask, mse_weight=1.0, cosine_weight=1.0):
@@ -431,8 +542,8 @@ def _checkpoint_metadata(model, backend):
         'feature_dim': 1024,
         'raw_dim': 5120,
         'query_max': adapter.qmax,
-        'width': 256,
-        'heads': 8,
+        'width': adapter.width,
+        'heads': adapter.heads,
         'layers': 2,
         'query_self_attention': False,
         'output_normalization': 'none_raw_hidden',
@@ -447,6 +558,12 @@ def _checkpoint_metadata(model, backend):
             metadata['format_version'] = 2
             metadata['preprocessing'] = dict(ONLINE_PREPROCESSING)
             metadata['online_training'] = _online_training_metadata(model)
+    if ((adapter.width, adapter.heads) != (256, 8) or adapter.output_basis is not None
+            or adapter.context_policy == 'music_only_global_bias'):
+        metadata['format_version'] = 3
+        metadata['output_space'] = adapter.output_space_metadata()
+    if adapter.context_policy == 'music_only_global_bias':
+        metadata['context_policy'] = adapter.context_policy
     return metadata
 
 
@@ -471,13 +588,15 @@ def load_music_text_checkpoint(path, backbone=None, expected_backend=None, expec
     if not isinstance(metadata, dict) or not isinstance(state, dict):
         raise ValueError('Checkpoint metadata and model must be dictionaries')
     version = metadata.get('format_version')
-    if type(version) is not int or version not in (1, 2):
+    if type(version) is not int or version not in (1, 2, 3):
         raise ValueError('Unsupported raw-text checkpoint format_version')
+    is_online = version == 2 or (version == 3 and 'online_training' in metadata)
+    width, heads = (metadata.get('width'), metadata.get('heads')) if version == 3 else (256, 8)
     required = {
         'format_version': version, 'interface_type': INTERFACE_TYPE, 'feature_dim': 1024,
-        'raw_dim': 5120, 'width': 256, 'heads': 8, 'layers': 2,
+        'raw_dim': 5120, 'width': width, 'heads': heads, 'layers': 2,
         'query_self_attention': False, 'output_normalization': 'none_raw_hidden',
-        'preprocessing': PREPROCESSING if version == 1 else ONLINE_PREPROCESSING,
+        'preprocessing': ONLINE_PREPROCESSING if is_online else PREPROCESSING,
     }
     for key, value in required.items():
         _validate_metadata(metadata.get(key), value, 'metadata.' + key)
@@ -491,7 +610,7 @@ def load_music_text_checkpoint(path, backbone=None, expected_backend=None, expec
     if type(metadata.get('freeze_backbone')) is not bool:
         raise ValueError('Checkpoint freeze_backbone must be explicit')
     online = metadata.get('online_training')
-    if version == 2:
+    if is_online:
         if (backend != 'musicfm' or metadata.get('state_scope') != 'music_to_h3_text'
                 or not isinstance(online, dict) or type(online.get('train_backbone')) is not bool
                 or online['train_backbone'] == metadata['freeze_backbone']):
@@ -502,8 +621,24 @@ def load_music_text_checkpoint(path, backbone=None, expected_backend=None, expec
         if not isinstance(name, str):
             raise ValueError('Checkpoint state names must be strings')
         _finite(value, 'checkpoint weight ' + name)
-    adapter = MusicTextAdapter(qmax)
+    context_policy = metadata.get('context_policy', 'tc_prefix_context') if version == 3 else 'tc_prefix_context'
+    if type(context_policy) is not str or context_policy not in ('tc_prefix_context', 'music_only_global_bias'):
+        raise ValueError('Invalid checkpoint context_policy')
+    adapter = MusicTextAdapter(qmax, width=width, heads=heads, context_policy=context_policy)
     scope = metadata.get('state_scope')
+    if version == 3:
+        output_space = metadata.get('output_space')
+        if not isinstance(output_space, dict):
+            raise ValueError('V3 requires explicit output_space metadata')
+        if output_space.get('mode') == 'fixed_affine_projection':
+            prefix = 'adapter.' if scope == 'music_to_h3_text' else ''
+            center, basis = (state.get(prefix + name) for name in ('output_center', 'output_basis'))
+            if (not isinstance(center, torch.Tensor) or not isinstance(basis, torch.Tensor)
+                    or center.dtype != torch.float32 or basis.dtype != torch.float32):
+                raise ValueError('V3 fixed-space buffers must be present as FP32 tensors')
+            adapter.set_output_space(center, basis, output_space.get('source_sha256'))
+        elif output_space != {'mode': 'none'}:
+            raise ValueError('Invalid V3 output_space mode or metadata')
     if scope == 'music_to_h3_text':
         backbone_metadata = metadata.get('backbone_metadata')
         if (not isinstance(backbone_metadata, dict) or backbone_metadata.get('backend') != backend
@@ -517,7 +652,7 @@ def load_music_text_checkpoint(path, backbone=None, expected_backend=None, expec
                 from music_encoder_adapter import DenseMusicEncoder
             backbone = DenseMusicEncoder(backend, backbone_metadata['model_path'])
         model = MusicToH3Text(backbone, adapter, metadata['freeze_backbone'])
-        if version == 2:
+        if is_online:
             # Apply the saved scope before comparing metadata's requires_grad-derived counts.
             model.configure_online_training(online['train_backbone'])
             _musicfm_normalization(backbone.model.stat)
@@ -530,13 +665,13 @@ def load_music_text_checkpoint(path, backbone=None, expected_backend=None, expec
     else:
         raise ValueError('Invalid checkpoint state_scope')
     _validate_metadata(metadata, _checkpoint_metadata(model, backend))
-    if version == 2:
+    if version in (2, 3):
         expected_state = model.state_dict()
         if set(state) != set(expected_state):
-            raise ValueError('V2 checkpoint must contain the complete model state, including buffers')
+            raise ValueError('V2/V3 checkpoint must contain the complete model state, including buffers')
         for name, value in state.items():
             if value.dtype != expected_state[name].dtype or value.shape != expected_state[name].shape:
-                raise ValueError('V2 checkpoint state shape/dtype disagrees with the FP32 protocol: ' + name)
+                raise ValueError('V2/V3 checkpoint state shape/dtype disagrees with the FP32 protocol: ' + name)
     model.load_state_dict(state, strict=True)
     model = model.float().eval()
     for name, value in model.state_dict().items():

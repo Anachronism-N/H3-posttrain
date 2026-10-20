@@ -132,6 +132,587 @@ def export_music(args):
     print(json.dumps(dict(event='behavior_student_export', tokens=len(tail), checkpoint_sha256=result['checkpoint_sha256'])), flush=True)
 
 
+def entry_export(args):
+    from music_generation_validate import fixed_cases
+    from music_clip_bridge import load_audio
+    from music_text_adapter import MusicToH3Text, load_music_text_checkpoint
+    cases = fixed_cases(args.exp_root)
+    joint = [case for case in cases if case['condition'] == 'joint']
+    swapped = {case['sample_id']: case for case in cases if case['condition'] == 'aswap'}
+    if len(joint) != 3 or set(swapped) != {case['sample_id'] for case in joint}:
+        raise ValueError('Require exactly the same three fixed review references')
+    checkpoint_sha = digest(args.checkpoint)
+    model = load_music_text_checkpoint(args.checkpoint, expected_backend='musicfm').cuda().eval()
+    if (not isinstance(model, MusicToH3Text) or not model.online_training
+            or model.freeze_backbone or model.checkpoint_metadata['format_version'] != 2):
+        raise ValueError('Require the complete dense-trained online MusicFM plus full adapter checkpoint')
+    model.requires_grad_(False)
+    before = model_hashes(model)
+    records = []
+    with torch.no_grad():
+        for case in joint:
+            source = args.oracle_cache / (Path(case['filename']).stem + '.pt')
+            oracle = torch.load(source, map_location='cpu', weights_only=True)
+            meta = oracle['metadata']
+            sid = case['sample_id']
+            context = oracle['prefix_context']
+            lp = len(oracle['prefix_tags'])
+            if (meta['kind'] != 'oracle_teacher_hidden_not_music_prediction'
+                    or meta['case']['sample_id'] != sid or meta['case']['condition'] != 'joint'
+                    or meta['case']['audio_path'] != case['audio_path']
+                    or meta['prefix_length'] != lp or meta['tail_length'] != len(oracle['tail'])
+                    or context.shape != (5120,) or oracle['tail'].shape[1] != 5120
+                    or tensor_digest(oracle['tail']) != meta['teacher_tail_sha256']
+                    or not torch.equal(oracle['token_ids'], torch.tensor(meta['teacher_ids'], dtype=torch.long))):
+                raise ValueError('Fixed-case oracle identity or structural context mismatch')
+            variants = {}
+            for name, audio_case in (('original', case), ('aswap', swapped[sid]), ('zero', case)):
+                audio_path = Path(audio_case['audio_path'])
+                waveform, effective_frames = load_audio(audio_path.stem, audio_root=audio_path.parent)
+                if name == 'zero':
+                    waveform = torch.zeros_like(waveform)
+                # Only this current-image structural context and shared-loader audio reach the student.
+                condition = model.student_condition(waveform.cuda()[None], context.cuda().float()[None])
+                raw = condition['raw_tokens'][0].cpu()
+                tail = condition['tails'][0].cpu()
+                length = int(condition['lengths'][0])
+                if (raw.shape != (model.adapter.qmax, 5120) or length != len(tail)
+                        or not torch.equal(raw[:length], tail)):
+                    raise ValueError('Full-qmax output and own predicted-length truncation mismatch')
+                variants[name] = dict(raw_tokens=raw, tail=tail, waveform=waveform,
+                    log_length=condition['log_length'][0].cpu(), predicted_length=length,
+                    audio_id=audio_path.stem, audio_path=str(audio_path), audio_file_sha256=digest(audio_path),
+                    effective_frames=effective_frames, waveform_sha256=tensor_digest(waveform),
+                    raw_tokens_sha256=tensor_digest(raw), tail_sha256=tensor_digest(tail),
+                    zero_input=name == 'zero', teacher_length_input=False, tc_reencoding=False)
+            records.append(dict(sample_id=sid, case=case, context=context, context_sha256=tensor_digest(context),
+                prefix_ids=oracle['token_ids'][:lp], prefix_tags=oracle['prefix_tags'],
+                teacher_tail=oracle['tail'], teacher_length=len(oracle['tail']),
+                teacher_tail_sha256=tensor_digest(oracle['tail']), oracle_metadata=meta,
+                oracle_source=str(source), oracle_sha256=digest(source),
+                image_path=meta['case']['image_path'], image_sha256=digest(meta['case']['image_path']),
+                variants=variants))
+            print(json.dumps(dict(event='entry_music_case_exported', sample_id=sid,
+                lengths={name: value['predicted_length'] for name, value in variants.items()})), flush=True)
+    after = model_hashes(model)
+    if (before != after or any(p.grad is not None or p.requires_grad for p in model.parameters())
+            or digest(args.checkpoint) != checkpoint_sha):
+        raise ValueError('Read-only entry export changed music state/checkpoint or received gradients')
+    sources = [Path(__file__), Path(sys.modules['music_text_adapter'].__file__),
+               Path(sys.modules['music_clip_bridge'].__file__), Path(sys.modules['music_encoder_adapter'].__file__)]
+    result = dict(format_version=1, kind='real_music_full_tail_entry_export', complete=True,
+        checkpoint=str(args.checkpoint), checkpoint_sha256=checkpoint_sha, query_max=model.adapter.qmax,
+        records=records, optimizer_updates=0, teacher_caption_or_length_student_input=False,
+        tc_loaded=False, waveform_loader='music_clip_bridge.load_audio',
+        historical_cached_tc_context_interface=True, new_noTC_student_interface=False,
+        context_source='same-reference oracle cached TC prefix last row; historical student only',
+        fixed_case_csv_sha256={condition: digest(args.exp_root / 'E2' / ('full_' + condition + '.csv'))
+            for condition in ('joint', 'aswap')},
+        source_sha256={str(path): digest(path) for path in sources},
+        music_state_before_sha256=before, music_state_after_sha256=after,
+        music_state_unchanged=True, quality_claim=False)
+    save_new(args.out, result, binary=True)
+    save_new(args.out.with_suffix('.json'), {key: value for key, value in result.items() if key != 'records'})
+    print(json.dumps(dict(event='entry_export_finished', out=str(args.out), cases=3, optimizer_updates=0)), flush=True)
+
+
+def entry_export_no_tc(args):
+    from music_generation_validate import fixed_cases
+    from music_clip_bridge import load_audio
+    from music_text_adapter import MusicToH3Text, load_music_text_checkpoint
+    cases = fixed_cases(args.exp_root)
+    joint = [case for case in cases if case['condition'] == 'joint']
+    swapped = {case['sample_id']: case for case in cases if case['condition'] == 'aswap'}
+    if len(joint) != 3 or set(swapped) != {case['sample_id'] for case in joint}:
+        raise ValueError('Require exactly three fixed review cases and their swapped audio')
+    checkpoint_sha = digest(args.checkpoint)
+    model = load_music_text_checkpoint(args.checkpoint, expected_backend='musicfm').cuda().eval()
+    if (not isinstance(model, MusicToH3Text) or not model.online_training
+            or model.freeze_backbone or model.checkpoint_metadata['format_version'] != 2):
+        raise ValueError('Require complete online dense-trained MusicFM plus full adapter')
+    model.requires_grad_(False)
+    before = model_hashes(model)
+    # Existing C300 needs a context argument, but no TC data supplies it in this new diagnostic.
+    context = torch.zeros(5120, dtype=torch.float32)
+    records = []
+    with torch.no_grad():
+        for case in joint:
+            sid = case['sample_id']
+            variants = {}
+            for name, audio_case in (('original', case), ('aswap', swapped[sid]), ('zero', case)):
+                audio_path = Path(audio_case['audio_path'])
+                waveform, effective_frames = load_audio(audio_path.stem, audio_root=audio_path.parent)
+                if name == 'zero':
+                    waveform = torch.zeros_like(waveform)
+                condition = model.student_condition(waveform.cuda()[None], context.cuda()[None])
+                raw, tail = condition['raw_tokens'][0].cpu(), condition['tails'][0].cpu()
+                length = int(condition['lengths'][0])
+                if (raw.shape != (model.adapter.qmax, 5120) or length != len(tail)
+                        or not torch.equal(raw[:length], tail)):
+                    raise ValueError('NoTC full-qmax and self-length boundary mismatch')
+                variants[name] = dict(raw_tokens=raw, tail=tail, waveform=waveform,
+                    log_length=condition['log_length'][0].cpu(), predicted_length=length,
+                    audio_id=audio_path.stem, audio_path=str(audio_path), audio_file_sha256=digest(audio_path),
+                    effective_frames=effective_frames, waveform_sha256=tensor_digest(waveform),
+                    raw_tokens_sha256=tensor_digest(raw), tail_sha256=tensor_digest(tail),
+                    zero_input=name == 'zero', teacher_length_input=False,
+                    context_source='explicit FP32 zeros5120, no TC or cached context')
+            # Teacher cache is read only AFTER the three student forwards, for comparison evidence only.
+            source = args.oracle_cache / (Path(case['filename']).stem + '.pt')
+            oracle = torch.load(source, map_location='cpu', weights_only=True)
+            meta, teacher = oracle['metadata'], oracle['tail']
+            if (meta['kind'] != 'oracle_teacher_hidden_not_music_prediction'
+                    or meta['case']['sample_id'] != sid or meta['case']['condition'] != 'joint'
+                    or meta['case']['audio_path'] != case['audio_path']
+                    or teacher.ndim != 2 or teacher.shape[-1] != 5120 or teacher.dtype != torch.bfloat16
+                    or meta['tail_length'] != len(teacher)
+                    or tensor_digest(teacher) != meta['teacher_tail_sha256']):
+                raise ValueError('NoTC diagnostic teacher tail/source identity mismatch')
+            records.append(dict(sample_id=sid, case=case, teacher_tail=teacher,
+                teacher_length=len(teacher), teacher_tail_sha256=tensor_digest(teacher),
+                oracle_source=str(source), oracle_sha256=digest(source),
+                teacher_compare_only=True, variants=variants))
+            print(json.dumps(dict(event='entry_no_tc_music_case_exported', sample_id=sid,
+                lengths={name: value['predicted_length'] for name, value in variants.items()})), flush=True)
+    after = model_hashes(model)
+    if (before != after or digest(args.checkpoint) != checkpoint_sha
+            or any(p.requires_grad or p.grad is not None for p in model.parameters())):
+        raise ValueError('NoTC export changed music state/checkpoint or received gradients')
+    sources = [Path(__file__), Path(sys.modules['music_text_adapter'].__file__),
+        Path(sys.modules['music_clip_bridge'].__file__), Path(sys.modules['music_encoder_adapter'].__file__)]
+    result = dict(format_version=1, kind='real_music_no_tc_entry_export', complete=True,
+        checkpoint=str(args.checkpoint), checkpoint_sha256=checkpoint_sha, query_max=model.adapter.qmax,
+        records=records, zero_context=context, zero_context_sha256=tensor_digest(context),
+        context_source='explicit FP32 zeros5120', prefix_present=False,
+        old_model_not_trained_for_no_tc=True, textencoder_loaded=False, textencoder_calls=0,
+        teacher_caption_or_length_student_input=False, cached_tc_context_student_input=False,
+        optimizer_updates=0, gradients_absent=True, quality_claim=False,
+        waveform_loader='music_clip_bridge.load_audio',
+        fixed_case_csv_sha256={condition: digest(args.exp_root / 'E2' / ('full_' + condition + '.csv'))
+            for condition in ('joint', 'aswap')},
+        source_sha256={str(path): digest(path) for path in sources},
+        music_state_before_sha256=before, music_state_after_sha256=after, music_state_unchanged=True,
+        scope='Unchanged complete C300 with zero context and full own-length music tails; distribution-shift diagnostic, not a noTC-trained model or visual-conditioned student.')
+    save_new(args.out, result, binary=True)
+    save_new(args.out.with_suffix('.json'), {key: value for key, value in result.items()
+        if key not in ('records', 'zero_context')})
+    print(json.dumps(dict(event='entry_export_no_tc_finished', out=str(args.out), cases=3, textencoder_calls=0)), flush=True)
+
+
+def entry_compare_no_tc(args):
+    # No pipeline, processor, prompt embedder, prefix or music proxy is constructed in this stage.
+    sys.path.insert(0, str(ROOT / 'DiffSynth-Studio-upstream-20260930'))
+    export_sha = digest(args.input)
+    export = torch.load(args.input, map_location='cpu', weights_only=True)
+    if (export.get('kind') != 'real_music_no_tc_entry_export' or export.get('complete') is not True
+            or len(export.get('records', [])) != 3 or export.get('prefix_present') is not False
+            or export.get('textencoder_loaded') is not False or export.get('textencoder_calls') != 0
+            or export.get('cached_tc_context_student_input') is not False
+            or export.get('teacher_caption_or_length_student_input') is not False
+            or export.get('old_model_not_trained_for_no_tc') is not True
+            or export.get('optimizer_updates') != 0
+            or digest(export['checkpoint']) != export['checkpoint_sha256']
+            or export['zero_context'].shape != (5120,) or torch.count_nonzero(export['zero_context'])
+            or tensor_digest(export['zero_context']) != export['zero_context_sha256']
+            or export['music_state_before_sha256'] != export['music_state_after_sha256']):
+        raise ValueError('Require an unchanged complete real noTC zero-context export, not historical cached-context data')
+    modules, native = entry_load_native(args)
+    before = model_hashes(modules)
+    rows = []
+    with torch.no_grad():
+        for record in export['records']:
+            if (digest(record['oracle_source']) != record['oracle_sha256']
+                    or tensor_digest(record['teacher_tail']) != record['teacher_tail_sha256']
+                    or record['teacher_tail'].dtype != torch.bfloat16
+                    or record['teacher_length'] != len(record['teacher_tail'])):
+                raise ValueError('NoTC teacher comparison source/tail changed')
+            tails = {'teacher_H': record['teacher_tail']}
+            for name, variant in record['variants'].items():
+                if (name not in ('original', 'aswap', 'zero')
+                        or tensor_digest(variant['raw_tokens']) != variant['raw_tokens_sha256']
+                        or tensor_digest(variant['tail']) != variant['tail_sha256']
+                        or tensor_digest(variant['waveform']) != variant['waveform_sha256']
+                        or variant['raw_tokens'].shape != (export['query_max'], 5120)
+                        or variant['predicted_length'] != len(variant['tail'])
+                        or not torch.equal(variant['raw_tokens'][:variant['predicted_length']], variant['tail'])):
+                    raise ValueError('NoTC real student export boundary changed')
+                tails[name] = variant['tail']
+            if set(tails) != {'teacher_H', 'original', 'aswap', 'zero'}:
+                raise ValueError('NoTC compare requires all three real music input variants')
+            lengths = {name: len(value) for name, value in tails.items()}
+            visible = min(lengths.values())
+            outputs, statistics, layouts, quantization = {}, {}, {}, {}
+            for name, tail in tails.items():
+                if tail.ndim != 2 or tail.shape[-1] != 5120 or not len(tail) or not torch.isfinite(tail).all():
+                    raise ValueError('NoTC entry requires finite nonempty full tail tokens')
+                length = len(tail)
+                native_raw = tail.cuda().to(torch.bfloat16)
+                cu = torch.tensor([0, length, length], dtype=torch.int32, device='cuda')
+                projected = modules['condition_proj'](native_raw)
+                refined = modules['token_refiner'](projected, cu_seqlens=cu, max_seqlen=length)
+                outputs[name] = dict(raw5120=tail.cpu(), raw5120_h3_bf16=native_raw.cpu(),
+                    condition_proj5376=projected.cpu(), token_refiner5376=refined.cpu())
+                layouts[name] = dict(natural_tail_length=length, refiner_cu_seqlens=cu.cpu().tolist(),
+                    refiner_max_seqlen=length, prefix_rows=0, full_H3_packed_layout_evaluated=False)
+                statistics[name] = {stage: dict(natural_tail=entry_tensor_stats(value),
+                    common_visible_tail=entry_tensor_stats(value[:visible]), tensor_sha256=tensor_digest(value))
+                    for stage, value in outputs[name].items()}
+                quantization[name] = entry_row_difference(tail, native_raw.cpu())
+                del native_raw, projected, refined
+            pairs = []
+            names = list(tails)
+            for i, first in enumerate(names):
+                for second in names[i + 1:]:
+                    overlap = min(lengths[first], lengths[second])
+                    pairs.append(dict(first=first, second=second,
+                        natural_lengths=[lengths[first], lengths[second]], common_visible_tail_rows=visible,
+                        natural_pair_overlap_rows=overlap, same_length=lengths[first] == lengths[second],
+                        full_packed_exact_claim=False, common_interval_is_not_equal_layout_intervention=True,
+                        stages={stage: dict(common_teacher_student_visible_tail=entry_row_difference(
+                            outputs[first][stage][:visible], outputs[second][stage][:visible]),
+                            natural_pair_overlap_tail=entry_row_difference(outputs[first][stage][:overlap], outputs[second][stage][:overlap]))
+                            for stage in outputs[first]}))
+            rows.append(dict(sample_id=record['sample_id'], natural_tail_lengths=lengths,
+                common_visible_teacher_tail_rows=visible, prefix_rows=0, layouts=layouts,
+                statistics=statistics, pairs=pairs, raw_to_h3_bf16_quantization=quantization,
+                full_qmax_raw_student_statistics={name: entry_tensor_stats(value['raw_tokens'])
+                    for name, value in record['variants'].items()},
+                teacher_compare_only=True, old_model_not_trained_for_no_tc=True))
+            print(json.dumps(dict(event='entry_no_tc_case_compared', sample_id=record['sample_id'],
+                natural_lengths=lengths, common_rows=visible)), flush=True)
+    after = model_hashes(modules)
+    if (before != after or digest(args.input) != export_sha
+            or digest(export['checkpoint']) != export['checkpoint_sha256']
+            or any(p.requires_grad or p.grad is not None for p in modules.parameters())):
+        raise ValueError('Frozen noTC entry modules/export/checkpoint changed or received gradients')
+    report = dict(complete=True, kind='native_H3_no_tc_real_music_vs_teacher',
+        export_source=str(args.input), export_sha256=export_sha, checkpoint_sha256=export['checkpoint_sha256'],
+        textencoder_loaded=False, textencoder_calls=0, prefix_rows=0, processor_loaded=False,
+        music_proxy_reencoding=False, video_vae_loaded=False, audio_vae_loaded=False,
+        old_model_not_trained_for_no_tc=True, full_H3_packed_layout_evaluated=False,
+        teacher_tail_and_length_compare_only=True, optimizer_updates=0, gradients_absent=True,
+        independent_native_entry=native, native_entry_before_sha256=before, native_entry_after_sha256=after,
+        all_module_states_unchanged=True, cases=rows, quality_claim=False,
+        behavior_source_sha256=digest(Path(__file__)),
+        native_module_source_sha256=digest(sys.modules[modules['token_refiner'].__class__.__module__].__file__),
+        attention_implementation=os.environ.get('DIFFSYNTH_ATTENTION_IMPLEMENTATION'),
+        torch_version=str(torch.__version__), native_entry_dtype='torch.bfloat16',
+        scope='Tail-only real C300 zero-context raw5120, native condition_proj5376 and full two-layer token_refiner, own [0,L,L]/max L. No TC/prefix/full packed/VAE/video/updates; common-position metrics are not equal-layout interventions or quality acceptance.')
+    save_new(args.out, report, binary=True)
+    save_new(args.out.with_suffix('.json'), report)
+    print(json.dumps(dict(event='entry_compare_no_tc_finished', out=str(args.out), cases=3,
+        textencoder_calls=0, decoder_blocks_loaded=0)), flush=True)
+
+
+def entry_tensor_stats(value):
+    value = value.detach().float().cpu()
+    if value.ndim != 2 or not len(value) or not torch.isfinite(value).all():
+        raise ValueError('Entry statistics require finite nonempty token rows')
+    norms = value.norm(dim=-1)
+    result = dict(shape=list(value.shape), mean=float(value.mean()), std=float(value.std(unbiased=False)),
+        rms=float(value.square().mean().sqrt()), min=float(value.min()), max=float(value.max()),
+        row_norm_min=float(norms.min()), row_norm_max=float(norms.max()), row_norm_mean=float(norms.mean()),
+        row_mean_min=float(value.mean(-1).min()), row_mean_max=float(value.mean(-1).max()),
+        row_rms_min=float(value.square().mean(-1).sqrt().min()), row_rms_max=float(value.square().mean(-1).sqrt().max()))
+    if len(value) > 1:
+        row_delta = value[1:] - value[:-1]
+        cosine = torch.nn.functional.cosine_similarity(value[1:], value[:-1], dim=-1)
+        result.update(adjacent_row_difference_rms=float(row_delta.square().mean().sqrt()),
+            adjacent_row_difference_norm_mean=float(row_delta.norm(dim=-1).mean()),
+            adjacent_row_cosine_mean=float(cosine.mean()), adjacent_row_cosine_min=float(cosine.min()),
+            centered_row_rms=float((value - value.mean(0)).square().mean().sqrt()))
+    return result
+
+
+def entry_row_difference(first, second):
+    if first.shape != second.shape or first.ndim != 2 or not len(first):
+        raise ValueError('Common-position comparison requires identical nonempty intervals')
+    a, b = first.float().cpu(), second.float().cpu()
+    delta = a - b
+    cosine = torch.nn.functional.cosine_similarity(a, b, dim=-1)
+    return dict(compared_rows=len(a), same_interval_exact=torch.equal(first, second),
+        mse=float(delta.square().mean()), rms=float(delta.square().mean().sqrt()),
+        max_abs=float(delta.abs().max()), relative_rms=float(delta.norm() / a.norm().clamp_min(1e-12)),
+        cosine_mean=float(cosine.mean()), cosine_min=float(cosine.min()), cosine_max=float(cosine.max()),
+        row_difference_norm_mean=float(delta.norm(dim=-1).mean()),
+        row_difference_norm_max=float(delta.norm(dim=-1).max()))
+
+
+def entry_load_native(args):
+    from safetensors import safe_open
+    from diffsynth.models.minimax_h3_dit import MiniMaxH3TokenRefiner
+    from diffsynth.utils.state_dict_converters.minimax_h3_dit import MiniMaxH3DiTSingularityStateDictConverter
+    directory = args.weights / 'transformer'
+    config_path = directory / 'config.json'
+    config = json.loads(config_path.read_text())
+    expected = dict(hidden_size=5376, text_dim=5120, token_refiner_num_layers=2,
+        num_attention_heads=56, attention_head_dim=128, ffn_hidden_size=14336,
+        norm_eps=1e-5, qk_norm_eps=1e-5, final_norm_eps=1e-5)
+    if any(config.get(key) != value for key, value in expected.items()):
+        raise ValueError('Unsupported native entry configuration; use the real full H3 pipeline, never guessed weights')
+    # These are the exact module constructors used by MiniMaxH3DiT, with no decoder blocks allocated.
+    with torch.device('meta'):
+        modules = torch.nn.ModuleDict(dict(
+            condition_proj=torch.nn.Linear(config['text_dim'], config['hidden_size'], bias=True),
+            token_refiner=MiniMaxH3TokenRefiner(config['token_refiner_num_layers'], config['hidden_size'],
+                config['num_attention_heads'], config['attention_head_dim'], config['ffn_hidden_size'],
+                config['norm_eps'], config['qk_norm_eps'], config['final_norm_eps'])))
+    wanted = modules.state_dict()
+    state, provenance = {}, {}
+    shards = sorted(directory.glob('model*.safetensors'))
+    if len(shards) != 13:
+        raise ValueError('Require the original 13-shard Ref2VA native source')
+    for path in shards:
+        with safe_open(str(path), framework='pt', device='cpu') as stream:
+            for key in stream.keys():
+                mapped = key
+                if key.startswith('model.diffusion_model.'):
+                    converted = MiniMaxH3DiTSingularityStateDictConverter({key: None})
+                    mapped, = converted
+                if mapped not in wanted:
+                    if mapped.startswith(('condition_proj.', 'token_refiner.')):
+                        raise ValueError('Unrecognized native entry weight: ' + key)
+                    continue
+                if mapped in state:
+                    raise ValueError('Duplicate mapped native entry weight: ' + mapped)
+                tensor = stream.get_tensor(key)
+                if tensor.shape != wanted[mapped].shape or tensor.dtype != torch.bfloat16:
+                    raise ValueError('Native entry source shape/dtype mismatch: ' + key)
+                state[mapped] = tensor
+                provenance[mapped] = dict(source_key=key, safetensors=str(path), shape=list(tensor.shape),
+                    dtype=str(tensor.dtype), tensor_sha256=tensor_digest(tensor), source_file_bytes=path.stat().st_size)
+    if set(state) != set(wanted):
+        raise ValueError('Missing real native entry weights: ' + ', '.join(sorted(set(wanted) - set(state))))
+    modules.load_state_dict(state, strict=True, assign=True)
+    modules.to(device='cuda', dtype=torch.bfloat16).requires_grad_(False).eval()
+    if model_hashes(modules) != {name: row['tensor_sha256'] for name, row in provenance.items()}:
+        raise ValueError('Loaded native entry modules differ from their exact source tensors')
+    return modules, dict(config=config, config_source=str(config_path), config_sha256=digest(config_path),
+        mapped_weights=provenance, decoder_blocks_loaded=0, independently_loaded_real_native_modules=True,
+        converter_source_sha256=digest(Path(sys.modules[MiniMaxH3DiTSingularityStateDictConverter.__module__].__file__)))
+
+
+def entry_compare(args):
+    if not args.legacy_tc_prefix_diagnostic:
+        raise ValueError('Legacy TC-prefix diagnostic disabled under noTC student protocol; explicit legacy-only flag required')
+    from PIL import Image
+    sys.path.insert(0, str(ROOT / 'DiffSynth-Studio-upstream-20260930'))
+    from diffsynth.pipelines.minimax_h3_audio_video import (
+        MiniMaxH3Pipeline, ModelConfig, MiniMaxH3Unit_PromptEmbedder,
+        MiniMaxH3Unit_ReferenceEncoder, MiniMaxH3Unit_PackedSequenceBuilder)
+    from music_text_condition import prefix_length, replace_tail
+    from music_text_infer import MusicTextEncodingProxy
+    export_sha = digest(args.input)
+    export = torch.load(args.input, map_location='cpu', weights_only=True)
+    if (export.get('complete') is not True or export.get('kind') != 'real_music_full_tail_entry_export'
+            or len(export.get('records', [])) != 3 or export.get('optimizer_updates') != 0
+            or export.get('teacher_caption_or_length_student_input') is not False
+            or digest(export['checkpoint']) != export['checkpoint_sha256']):
+        raise ValueError('Require a complete unchanged real three-case music export')
+    text_shards = sorted((args.weights / 'text_encoder').glob('model*.safetensors'))
+    if not text_shards:
+        raise FileNotFoundError(args.weights / 'text_encoder')
+    vram = dict(offload_dtype=torch.bfloat16, offload_device='cpu', onload_dtype=torch.bfloat16,
+        onload_device='cuda', preparing_dtype=torch.bfloat16, preparing_device='cuda',
+        computation_dtype=torch.bfloat16, computation_device='cuda')
+    pipe = MiniMaxH3Pipeline.from_pretrained(torch_dtype=torch.bfloat16, device='cuda',
+        model_configs=[ModelConfig(path=[str(path) for path in text_shards], **vram)],
+        processor_config=ModelConfig(path=str(args.weights / 'processor')))
+    pipe.text_encoder.requires_grad_(False).eval()
+    tc_before = model_hashes(pipe.text_encoder)
+    prompt_unit, ref_unit, builder = (MiniMaxH3Unit_PromptEmbedder(),
+        MiniMaxH3Unit_ReferenceEncoder(), MiniMaxH3Unit_PackedSequenceBuilder())
+    prefixes, recipes = {}, {}
+    # Recover the original sampler recipe, not a caller-selected/default prepared size.
+    sampler = ROOT / 'H3-posttrain/scripts_omnidance/exp/h3ar/sample_h3_ar.py'
+    import ast
+    tree = ast.parse(sampler.read_text())
+    generate, = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'generate']
+    sh, = [node.value for node in generate.body if isinstance(node, ast.Assign)
+            and any(isinstance(target, ast.Name) and target.id == 'sh' for target in node.targets)]
+    recipe = {ast.literal_eval(key): value for key, value in zip(sh.keys, sh.values)}
+    short_edge = ast.literal_eval(recipe['ref_image_short_edge'])
+    num_frames = ast.literal_eval(recipe['num_frames'])
+    if short_edge != 2048 or num_frames != 124:
+        raise ValueError('Original oracle reference recipe changed; require its actual prepared reference source')
+    with torch.no_grad():
+        for record in export['records']:
+            sid = record['sample_id']
+            if (digest(record['oracle_source']) != record['oracle_sha256']
+                    or digest(record['image_path']) != record['image_sha256']
+                    or tensor_digest(record['context']) != record['context_sha256']
+                    or tensor_digest(record['teacher_tail']) != record['teacher_tail_sha256']):
+                raise ValueError('Exported oracle/reference tensors or sources changed')
+            final_oracle_path = Path(record['oracle_source']).with_suffix('.json')
+            final_oracle = json.loads(final_oracle_path.read_text())
+            if (final_oracle.get('status') != 'passed' or final_oracle.get('packed_checked') is not True
+                    or final_oracle.get('teacher_hidden_sha256') != record['oracle_metadata']['teacher_hidden_sha256']):
+                raise ValueError('Source oracle final same-H review audit did not pass')
+            source_directory = Path(record['oracle_source']).parent.parent
+            integrity_path = source_directory / 'joint_integrity.json'
+            integrity = json.loads(integrity_path.read_text())
+            source_row, = [row for row in integrity['rows'] if row['case']['sample_id'] == sid]
+            video_stream, = [stream for stream in source_row['integrity']['streams'] if stream['codec_type'] == 'video']
+            if (integrity.get('complete') is not True or source_row['case'] != record['case']
+                    or video_stream['decoded_frames'] != num_frames or video_stream['fps'] != 24.):
+                raise ValueError('Original review target dimensions/protocol are not verified')
+            target_shape = [1, 24, ((num_frames - 5) // 17) * 5 + 2,
+                video_stream['height'] // 16, video_stream['width'] // 16]
+            target_audio_shape = [2, 32, round(num_frames / 24. * 40.)]
+            log_path = source_directory / 'logs' / ('shard_' + str(record['case']['shard']) + '.log')
+            import re
+            log_text = log_path.read_text()
+            inputs, = [json.loads(line.split('[h3ar] input_conditions ', 1)[1]) for line in log_text.splitlines()
+                       if line.startswith('[h3ar] input_conditions ')]
+            padded, = re.findall(r'\[h3ar\] repeat_clean audio tail: (\d+) rows fixed at effective time=1', log_text)
+            ref_audio_t = target_audio_shape[-1] - int(padded)
+            if (inputs['image_path'] != record['image_path'] or inputs['audio_path'] != record['case']['audio_path']
+                    or inputs['native_audio_condition'] != 'fixed_silence' or inputs['text_hidden_oracle'] is not True
+                    or inputs['semantic_text'] != ' ' or ref_audio_t < 1):
+                raise ValueError('Source oracle actual reference route changed')
+            with Image.open(record['image_path']) as image:
+                width, height = ref_unit._resolve_reference_image_shape(pipe, *image.size, short_edge)
+                prepared = image.convert('RGB').resize((width, height), Image.LANCZOS)
+            ref_blocks = [dict(kind='image', prepared_image=prepared, latent_t=1,
+                latent_h=height // 16, latent_w=width // 16, ref_audio_t=0),
+                dict(kind='audio', ref_audio_t=ref_audio_t)]
+            ids, tags = prompt_unit.preprocess_ref_blocks(pipe, ' ', ref_blocks)[:2]
+            lp = prefix_length(pipe.tokenizer, ' ', ids)
+            if (lp != len(record['prefix_tags']) or not torch.equal(ids[:lp].cpu(), record['prefix_ids'])
+                    or not torch.equal(tags[:lp].cpu(), record['prefix_tags'])):
+                raise ValueError('Actual source prepared reference IDs/tags do not match the same-case oracle')
+            encoded = prompt_unit.process(pipe, ' ', ref_blocks=ref_blocks)
+            prefix = encoded['prompt_embeds'][:lp].cpu().clone()
+            if not torch.equal(prefix[-1], record['context']):
+                raise ValueError('Actual empty-prefix TC context is not exact against the same-case oracle')
+            if not torch.equal(encoded['text_token_tags'][:lp].cpu(), record['prefix_tags']):
+                raise ValueError('Actual TC prefix tags changed')
+            teacher_condition = replace_tail(prefix, record['prefix_tags'], record['teacher_tail'])
+            same_h = tensor_digest(teacher_condition['prompt_embeds']) == record['oracle_metadata']['teacher_hidden_sha256']
+            if not same_h:
+                raise ValueError('Source oracle same-H replacement full raw hidden hash is not exact')
+            prefixes[sid] = prefix
+            recipes[sid] = dict(prepared_image_size=[width, height], prepared_image_sha256=
+                hashlib.sha256(prepared.tobytes()).hexdigest(), ref_image_short_edge=short_edge,
+                reference_recipe_source=str(sampler), reference_recipe_source_sha256=digest(sampler),
+                recipe_reconstructed_not_cached=True, recipe_verified_by_same_oracle_ids_tags_context=True,
+                ref_blocks=[{key: value for key, value in block.items() if key != 'prepared_image'} for block in ref_blocks],
+                target_video_shape=target_shape, target_audio_shape=target_audio_shape,
+                target_source_integrity_sha256=digest(integrity_path), source_log_sha256=digest(log_path),
+                source_final_oracle_report_sha256=digest(final_oracle_path),
+                source_ref_audio_length_from_target_minus_logged_padding=True,
+                source_oracle_same_H_replacement_exact=True, prefix_rows=lp, prefix_sha256=tensor_digest(prefix))
+            del encoded, teacher_condition
+    pipe.load_models_to_device([])
+    tc_after = model_hashes(pipe.text_encoder)
+    if tc_before != tc_after or any(p.requires_grad or p.grad is not None for p in pipe.text_encoder.parameters()):
+        raise ValueError('Frozen TC changed state or received gradients')
+    # The actual existing deployment proxy replays the exact complete student with the reconstructed context.
+    proxy = MusicTextEncodingProxy(export['checkpoint'], python=args.music_python)
+    with torch.no_grad():
+        for record in export['records']:
+            for name, variant in record['variants'].items():
+                if (tensor_digest(variant['waveform']) != variant['waveform_sha256']
+                        or tensor_digest(variant['raw_tokens']) != variant['raw_tokens_sha256']
+                        or tensor_digest(variant['tail']) != variant['tail_sha256']
+                        or len(variant['tail']) != variant['predicted_length']
+                        or not torch.equal(variant['raw_tokens'][:variant['predicted_length']], variant['tail'])):
+                    raise ValueError('Exported complete student boundary changed')
+                replay = proxy(variant['waveform'], prefixes[record['sample_id']][-1])
+                if not torch.equal(replay, variant['tail']):
+                    raise ValueError('Real music student and existing deployment proxy same-tail replay is not exact: ' + name)
+    modules, native = entry_load_native(args)
+    before = model_hashes(modules)
+    rows = []
+    layout_pipe = pipe
+    # Empty placeholders carry only source target dimensions; no noise, prediction or trajectory is evaluated.
+    with torch.no_grad():
+        for record in export['records']:
+            sid, prefix, tags = record['sample_id'], prefixes[record['sample_id']], record['prefix_tags']
+            lp = len(prefix)
+            tails = dict(teacher_H=record['teacher_tail'], **{name: value['tail'] for name, value in record['variants'].items()})
+            lengths = {name: len(tail) for name, tail in tails.items()}
+            visible = min(lengths.values())
+            ref_blocks = recipes[sid]['ref_blocks']
+            video = torch.empty(recipes[sid]['target_video_shape'], device='meta')
+            audio = torch.empty(recipes[sid]['target_audio_shape'], device='meta')
+            outputs, layouts, statistics = {}, {}, {}
+            for name, tail in tails.items():
+                condition = replace_tail(prefix, tags, tail)
+                packed = builder.process(layout_pipe, video_latents=video, audio_latents=audio,
+                    ref_blocks=ref_blocks, **condition)['packed']
+                text_len = len(packed['text_pos'])
+                # Identical to native model_fn_minimax_h3, using each condition's own packed text_len.
+                cu = torch.tensor([0, text_len, text_len], dtype=torch.int32, device='cuda')
+                raw = condition['prompt_embeds'].cuda().to(torch.bfloat16)
+                projected = modules['condition_proj'](raw)
+                refined = modules['token_refiner'](projected, cu_seqlens=cu, max_seqlen=text_len)
+                outputs[name] = dict(raw5120=torch.cat((prefix.float(), tail.float())),
+                    raw5120_h3_bf16=raw.cpu(), condition_proj5376=projected.cpu(), token_refiner5376=refined.cpu())
+                layouts[name] = dict(natural_tail_length=len(tail), natural_text_length=text_len,
+                    packed_seq_len=packed['seq_len'], packed_cu_seqlens=packed['cu_seqlens'].tolist(),
+                    refiner_cu_seqlens=cu.cpu().tolist(), refiner_max_seqlen=text_len,
+                    packed_tensor_sha256={key: tensor_digest(value) for key, value in packed.items() if torch.is_tensor(value)})
+                statistics[name] = {stage: dict(prefix=entry_tensor_stats(value[:lp]),
+                    natural_tail=entry_tensor_stats(value[lp:]), common_visible_tail=entry_tensor_stats(value[lp:lp + visible]),
+                    tensor_sha256=tensor_digest(value)) for stage, value in outputs[name].items()}
+                if name == 'teacher_H':
+                    same = replace_tail(condition['prompt_embeds'][:lp], tags, condition['prompt_embeds'][lp:])
+                    same_packed = builder.process(layout_pipe, video_latents=video, audio_latents=audio,
+                        ref_blocks=ref_blocks, **same)['packed']
+                    exact_packed = all(torch.equal(value, same_packed[key]) if torch.is_tensor(value)
+                        else value == same_packed[key] for key, value in packed.items())
+                    same_projection = modules['condition_proj'](same['prompt_embeds'].cuda())
+                    same_refined = modules['token_refiner'](same_projection, cu_seqlens=cu, max_seqlen=text_len)
+                    if (not exact_packed or not torch.equal(raw.cpu(), same['prompt_embeds'])
+                            or not torch.equal(projected, same_projection) or not torch.equal(refined, same_refined)):
+                        raise ValueError('Native source oracle same-H replacement entry parity failed')
+                del raw, projected, refined
+            pairs = []
+            names = list(tails)
+            for i, first in enumerate(names):
+                for second in names[i + 1:]:
+                    overlap = min(lengths[first], lengths[second])
+                    pairs.append(dict(first=first, second=second,
+                        natural_lengths=[lengths[first], lengths[second]], common_visible_tail_rows=visible,
+                        natural_pair_overlap_rows=overlap,
+                        same_natural_layout=layouts[first] == layouts[second],
+                        common_interval_is_not_exact_layout_claim=True,
+                        stages={stage: dict(common_prefix=entry_row_difference(outputs[first][stage][:lp], outputs[second][stage][:lp]),
+                            common_teacher_student_visible_tail=entry_row_difference(outputs[first][stage][lp:lp + visible], outputs[second][stage][lp:lp + visible]),
+                            natural_pair_overlap_tail=entry_row_difference(outputs[first][stage][lp:lp + overlap], outputs[second][stage][lp:lp + overlap]))
+                            for stage in outputs[first]}))
+            rows.append(dict(sample_id=sid, reference=recipes[sid], layouts=layouts, statistics=statistics,
+                natural_tail_lengths=lengths, common_visible_teacher_tail_rows=visible, pairs=pairs,
+                full_qmax_raw_student_statistics={name: entry_tensor_stats(value['raw_tokens']) for name, value in record['variants'].items()},
+                same_H_source_raw_projection_refiner_and_packed_exact=True,
+                real_student_vs_existing_music_proxy_tail_exact=True,
+                raw_to_h3_bf16_quantization={name: entry_row_difference(values['raw5120'][lp:], values['raw5120_h3_bf16'][lp:])
+                    for name, values in outputs.items()}))
+            print(json.dumps(dict(event='entry_case_compared', sample_id=sid, natural_lengths=lengths, common_rows=visible)), flush=True)
+    after = model_hashes(modules)
+    if before != after or any(p.requires_grad or p.grad is not None for p in modules.parameters()):
+        raise ValueError('Frozen native entry modules changed state or received gradients')
+    source_modules = [sys.modules[MiniMaxH3Pipeline.__module__], sys.modules[modules['token_refiner'].__class__.__module__],
+                      sys.modules['music_text_condition'], sys.modules['music_text_infer']]
+    report = dict(complete=True, kind='native_H3_entry_real_music_vs_teacher', export_source=str(args.input),
+        export_sha256=export_sha, checkpoint_sha256=export['checkpoint_sha256'], optimizer_updates=0,
+        actual_TC_empty_image_prefix_only=True, music_tail_reencoded_by_TC=False,
+        legacy_tc_prefix_diagnostic=True, new_noTC_student_interface=False,
+        teacher_tail_and_length_compare_only=True, independent_native_entry=native,
+        tc_state_before_sha256=tc_before, tc_state_after_sha256=tc_after,
+        native_entry_before_sha256=before, native_entry_after_sha256=after,
+        all_module_states_unchanged=True, cases=rows, quality_claim=False,
+        source_sha256={str(Path(module.__file__)): digest(module.__file__) for module in source_modules},
+        behavior_source_sha256=digest(Path(__file__)),
+        attention_implementation=os.environ.get('DIFFSYNTH_ATTENTION_IMPLEMENTATION'),
+        torch_version=str(torch.__version__), native_entry_dtype='torch.bfloat16',
+        scope='Raw5120, real native condition_proj5376 and complete two-layer token_refiner only. Natural own-length layouts retained; common-position statistics are not equal-layout interventions or video quality evidence.')
+    save_new(args.out, report, binary=True)
+    save_new(args.out.with_suffix('.json'), report)
+    print(json.dumps(dict(event='entry_compare_finished', out=str(args.out), cases=3, decoder_blocks_loaded=0)), flush=True)
+
+
 def model_hashes(model):
     return {name: tensor_digest(value) for name, value in model.state_dict().items()}
 
@@ -521,11 +1102,15 @@ def gradient_components(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--stage', required=True, choices=['prepare', 'export', 'h3_vjp', 'music_vjp', 'update', 'gradients'])
+    parser.add_argument('--stage', required=True, choices=['prepare', 'export', 'entry_export', 'entry_compare', 'entry_export_no_tc', 'entry_compare_no_tc', 'h3_vjp', 'music_vjp', 'update', 'gradients'])
     parser.add_argument('--exp_root', type=Path, default=ROOT / 'diff/logs_omnidance/exp')
     parser.add_argument('--weights', type=Path, default=Path('/dev/shm/h3/Ref2VA'))
     parser.add_argument('--cache_list', type=Path, default=Path('/opt/h3cache/posi_list_hr.tsv'))
     parser.add_argument('--cache', type=Path)
+    parser.add_argument('--oracle_cache', type=Path, help='Existing same-reference three-joint teacher oracle directory')
+    parser.add_argument('--music_python', default='/opt/venv_music/bin/python', help='Existing music proxy interpreter for exact replay')
+    parser.add_argument('--legacy_tc_prefix_diagnostic', action='store_true',
+        help='Explicitly allow historical entry_compare TC prefix reencoding; not the noTC student protocol')
     parser.add_argument('--bundle', type=Path)
     parser.add_argument('--checkpoint', type=Path)
     parser.add_argument('--input', type=Path)
@@ -541,9 +1126,13 @@ def main():
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--out', type=Path, required=True)
     args = parser.parse_args()
+    if args.stage == 'entry_compare' and not args.legacy_tc_prefix_diagnostic:
+        parser.error('Historical TC-prefix entry_compare is disabled by default; it is not the noTC student protocol. Explicit --legacy_tc_prefix_diagnostic required.')
     if args.out.exists() or not args.out.parent.is_dir() or not 0 <= args.index < 4 or not 1 <= args.latent_frames <= 37 or not 0 < args.sigma <= 1 or args.mlp_chunk < 0:
         parser.error('Require new output, valid selected index, latent length and noise level')
     required = dict(prepare=[], export=['checkpoint', 'bundle', 'cache'],
+                    entry_export=['checkpoint', 'oracle_cache'], entry_compare=['input'],
+                    entry_export_no_tc=['checkpoint', 'oracle_cache'], entry_compare_no_tc=['input'],
                     h3_vjp=['input', 'cache'], music_vjp=['checkpoint', 'input', 'vjp'],
                     update=['checkpoint', 'input', 'cache', 'bundle'],
                     gradients=['checkpoint', 'input', 'bundle', 'vjp'])
@@ -554,7 +1143,8 @@ def main():
     torch.cuda.manual_seed_all(args.seed)
     if args.stage == 'update' and args.behavior_weight and args.vjp is None:
         parser.error('Behavior-supervised update requires a checked H3 VJP')
-    {'prepare': prepare, 'export': export_music, 'h3_vjp': h3_vjp,
+    {'prepare': prepare, 'export': export_music, 'entry_export': entry_export, 'entry_compare': entry_compare,
+     'entry_export_no_tc': entry_export_no_tc, 'entry_compare_no_tc': entry_compare_no_tc, 'h3_vjp': h3_vjp,
      'music_vjp': music_vjp, 'update': update_music, 'gradients': gradient_components}[args.stage](args)
 
 

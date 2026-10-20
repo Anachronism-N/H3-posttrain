@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-20",
+  "experiment_complete": false,
+  "failures": [
+    {"stage": "W/PCA initial training admission", "task_handles": ["AuGFI9", "e5ibIZ"], "exit_code": 1, "reason": "Existing output-space finished report lacked the newly required canonical parent finished SHA", "optimizer_updates": 0, "recovery": "Recomputed the same train-only numerical-space protocol with complete source provenance; did not waive checks or edit historical reports", "recovery_task": "3cPcTa", "recovery_exit_code": 0},
+    {"stage": "Generation coordinator shared checkpoint read", "task_handles": ["oD4UQB", "Wws0fZ", "wM7D5G", "gtGY28"], "reason": "Coordinator processes blocked in generic_file_buffered_read at ZIP footer of new CephFS checkpoints", "writer_fsync_complete": true, "writer_source_sha_unchanged": true, "fsync_proved_permanent_fix": false, "recovery": "Stopped exact managed coordinators, verified no remote samplers, preserved empty partial output trees and transferred byte-identical complete checkpoints into local caches on all eight nodes"},
+    {"stage": "First cached generation restart", "task_handles": ["0LI1ad", "OOn3eG", "qfnITy", "z4NtbF"], "exit_code": 2, "reason": "Exclusive output creation rejected partial empty logs/cache directories left by the aborted coordinators", "sampler_started": false, "recovery": "Verified directories contained no files, renamed them with shared_read_aborted suffix; no user media or model weights deleted or overwritten"}
+  ],
+  "successful_training": {"task_handles": ["utguvt", "0s5qBX"], "exit_codes": [0, 0], "updates_per_model": 100, "positive_exposures_per_model": 800, "train_samples": 8, "validation_samples": 8, "actual_dense_tensors_changed": 400, "actual_adapter_tensors_changed": 41, "independent_waveform_only_deployment_exact": true},
+  "checkpoint_caches_verified_on_all_eight_nodes": true,
+  "new_generation_task_handles": ["L6Ukl4", "viuxk8", "gDywn6", "Yq3CH5"],
+  "new_actual_remote_samplers_verified": 18,
+  "expected_videos": 18,
+  "new_video_full_decode_complete": false,
+  "new_continuous_human_review": "pending",
+  "musical_gain_accepted": false,
+  "scope": "Actual failure/recovery and live-start evidence; not completed generation or dance acceptance"
+}

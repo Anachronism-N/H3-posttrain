@@ -8,6 +8,133 @@ import time
 from music_generation_validate import fixed_cases, atomic_write_new
 
 
+def no_tc_review_manifest(base, report, cases, directories, markers, report_path, report_sha):
+    from music_text_diagnostic import (
+        NO_TC_TEACHER_TAG, NO_TC_STUDENT_TAG, NO_TC_TEACHER_KIND, NO_TC_STUDENT_KIND,
+        no_tc_count, no_tc_hash, no_tc_validate_report,
+    )
+    no_tc_validate_report(report, cases, directories)
+    if not no_tc_hash(report_sha) or set(markers) != {NO_TC_TEACHER_TAG, NO_TC_STUDENT_TAG}:
+        raise ValueError('No-TC review requires both final-report-bound completion markers')
+    manifest = copy.deepcopy(base)
+    current = {model['id'] for model in manifest['models']}
+    new_models = []
+    for tag in (NO_TC_TEACHER_TAG, NO_TC_STUDENT_TAG):
+        teacher = tag == NO_TC_TEACHER_TAG
+        directory = directories[tag]
+        expected_directory = Path(base['exp']) / 'H3AR' / ('val_musicreplace_' + tag)
+        if directory != expected_directory:
+            raise ValueError('No-TC review tag/source generation directory mismatch')
+        marker, rows = markers[tag], [row for row in report['rows'] if row['tag'] == tag]
+        kind = NO_TC_TEACHER_KIND if teacher else NO_TC_STUDENT_KIND
+        if (marker.get('complete') is not True or marker.get('no_tc_complete') is not True
+                or marker.get('tag') != tag or marker.get('kind') != kind
+                or any(not no_tc_count(marker.get(key), 3) for key in ('expected', 'passed'))
+                or marker.get('rows') != rows or marker.get('final_no_tc_report') != str(report_path)
+                or marker.get('final_no_tc_report_sha256') != report_sha
+                or marker.get('diagnostic_only') is not True or marker.get('new_interface_trained') is not False
+                or marker.get('musical_quality_accepted') is not False):
+            raise ValueError('No-TC group marker differs from the final six-video report or displayed diagnostic')
+        entries = {}
+        for case in cases:
+            item = [case['filename']]
+            audio_id = Path(case['audio_path']).stem
+            if audio_id != case['sample_id']:
+                item.append(audio_id)
+            entries[case['sample_id']] = item
+        group = 'H3AR/val_musicreplace_' + tag
+        description = ('缓存教师tail-only诊断：旧neutral教师离线raw tokens，teacher长度仅本诊断使用；不是音乐预测'
+                       if teacher else '旧C300完整MusicFM+adapter：仅音乐tokens，自身预测长度；legacy context严格zero5120，旧模型未按noTC训练')
+        description += '；TC完全不加载不调用，无空白文本/无TC图prefix；独立视觉VAE参考保留；GT原曲仅mux、不进native；完整媒体解码仅完整性，不证明画质/音乐收益/新接口训练成功'
+        new_models.append(dict(id=group, label='noTC·' + ('教师tail-only·未训练新接口' if teacher else '旧C300·zero-context·未训练新接口'),
+            group='H3AR', desc=description, conds={'joint': entries}, metrics={}, diagnostic_only=True,
+            no_text_encoder=True, text_encoder_loaded=False, text_encoder_calls=0, prefix_length=0,
+            independent_visual_vae_reference=True, teacher_only_diagnostic=teacher,
+            music_prediction=not teacher, old_model_not_trained_for_no_tc=not teacher,
+            new_interface_trained=False, musical_quality_accepted=False,
+            no_tc_report=str(report_path), no_tc_report_sha256=report_sha))
+    if current & {model['id'] for model in new_models}:
+        raise ValueError('Focused manifest already contains No-TC configurations')
+    neutral = 'H3AR/val_musicreplace_text_oracle_neutral_v1'
+    old_student = 'H3AR/val_musicreplace_text_online_C_len001_s300_v1'
+    if not {neutral, old_student} <= current:
+        raise ValueError('No-TC review must preserve existing neutral teacher and old C300 baselines')
+    ids = [model['id'] for model in new_models]
+    presets = [dict(name='【完全无TC·新接口未训练】缓存教师tail-only / 旧C300 zero-context；无空白/无prefix，独立VAE参考，仅joint三人物，不声明音乐收益',
+                    cond='joint', view='models', models=ids),
+               dict(name='【TC移除边界·旧人评不改】旧neutral教师 / 无TC教师tail-only / 旧C300 / 无TC旧C300；仅joint，旧neutral评分不迁移',
+                    cond='joint', view='models', models=[neutral, ids[0], old_student, ids[1]])]
+    manifest['models'] += new_models
+    manifest['presets'] = presets + manifest['presets']
+    manifest['built'] = time.strftime('%Y-%m-%d %H:%M:%S')
+    manifest['scope'] += ' Six NEW no-TC teacher-tail-only/old-C300-zero-context joint diagnostics appended after strict full6 audit; old baselines/scores unchanged. TC absent and independent visual VAE references retained; new interface NOT trained, GT music only muxed, no music-gain claim.'
+    if manifest['samples'] != base['samples'] or len(manifest['samples']) != 3:
+        raise ValueError('Original three source people or audio mapping changed')
+    return manifest
+
+
+def no_tc_review(args, base):
+    from music_generation_validate import sha256
+    from music_text_diagnostic import NO_TC_TEACHER_TAG, NO_TC_STUDENT_TAG, no_tc_cases, no_tc_teacher_source
+    if args.no_tc_report is None or not args.no_tc_report.is_file():
+        raise ValueError('--no_tc_only requires an existing --no_tc_report')
+    report_sha = sha256(args.no_tc_report)
+    report = json.loads(args.no_tc_report.read_text())
+    exp = Path(base['exp'])
+    directories = {tag: exp / 'H3AR' / ('val_musicreplace_' + tag)
+                   for tag in (NO_TC_TEACHER_TAG, NO_TC_STUDENT_TAG)}
+    markers = {tag: json.loads((directory / 'no_tc_integrity.json').read_text())
+               for tag, directory in directories.items()}
+    manifest = no_tc_review_manifest(base, report, no_tc_cases(exp), directories, markers,
+                                     args.no_tc_report, report_sha)
+    artifacts = report.get('source_artifacts', [])
+    artifact_hashes = {}
+    for artifact in artifacts:
+        if (sha256(Path(artifact['path'])) != artifact['sha256']
+                or artifact_hashes.get(artifact['path'], artifact['sha256']) != artifact['sha256']):
+            raise ValueError('No-TC source artifact changed before review')
+        artifact_hashes[artifact['path']] = artifact['sha256']
+    required_artifacts = {str(directory / name) for directory in directories.values() for name in ('plan.json', 'jobs.json')}
+    if not required_artifacts <= set(artifact_hashes):
+        raise ValueError('No-TC review lacks generation plan/jobs source artifact bindings')
+    for row in report['rows']:
+        source = row['source']
+        if row['tag'] == NO_TC_TEACHER_TAG:
+            case = next(case for case in no_tc_cases(exp) if case['sample_id'] == row['sample_id'])
+            if (no_tc_teacher_source(row['no_tc_condition'], case) != source
+                    or artifact_hashes.get(source['source_path']) != source['source_sha256']):
+                raise ValueError('No-TC review teacher cache source or raw tail binding changed')
+        elif (artifact_hashes.get(source['checkpoint']) != source['checkpoint_sha256']
+                or artifact_hashes.get(source['checkpoint_summary']) != source['checkpoint_summary_sha256']):
+            raise ValueError('No-TC review lacks unchanged complete student checkpoint source bindings')
+        if (artifact_hashes.get(row['inputs']['image_path']) != row['image_sha256']
+                or artifact_hashes.get(row['audio_path']) != row['audio_sha256']):
+            raise ValueError('No-TC review lacks independent source image/audio bindings')
+    release_path = Path(report['release_report'])
+    if sha256(release_path) != report['release_report_sha256']:
+        raise ValueError('No-TC frozen source release changed before review')
+    release = json.loads(release_path.read_text())
+    if release.get('source_files') != report.get('generation_source_files'):
+        raise ValueError('No-TC generation source bindings differ from the frozen release')
+    for name, value in release['source_files'].items():
+        if sha256(Path(value['path'])) != value['sha256'] or artifact_hashes.get(value['path']) != value['sha256']:
+            raise ValueError('No-TC frozen generation source changed before review: ' + name)
+    if sha256(Path(__file__).with_name('music_text_diagnostic.py')) != report['code_sha256']['diagnostic_sha256']:
+        raise ValueError('No-TC media audit code changed before review')
+    for row in report['rows']:
+        for path, digest in [(row['video_path'], row['video_sha256']), (row['log_path'], row['log_sha256']),
+                             (row['inputs']['image_path'], row['image_sha256']), (row['audio_path'], row['audio_sha256'])]:
+            if sha256(Path(path)) != digest:
+                raise ValueError('No-TC audited media/log/image/audio changed before review')
+    if sha256(args.no_tc_report) != report_sha:
+        raise ValueError('No-TC final report changed during review')
+    atomic_write_new(args.out, manifest)
+    print(json.dumps(dict(complete=True, models=len(manifest['models']), source_people=3,
+        presets=len(manifest['presets']), no_tc_complete=True, new_videos=6,
+        original_models_preserved=True, original_scores_preserved=True,
+        new_interface_trained=False, manifest=str(args.out))), flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--base_manifest', type=Path, required=True)
@@ -20,11 +147,18 @@ def main():
     mode.add_argument('--length_ablation', action='store_true', help='Append C length-weight0.01 and its zero-input control')
     mode.add_argument('--behavior_only', action='store_true', help='Append audited six-update control/prediction-supervised music models')
     mode.add_argument('--projection_only', action='store_true', help='Append audited same-length projected teacher diagnostics, not music models')
+    mode.add_argument('--no_tc_only', action='store_true', help='Append strict six-joint no-TC teacher-tail-only/old-student-zero-context diagnostics')
+    mode.add_argument('--no_tc_students', action='store_true', help='Append audited no-TC W/PCA small-fit students and zero-music controls')
+    parser.add_argument('--no_tc_report', type=Path, help='Completed strict no-TC six-video report, required only with --no_tc_only')
     parser.add_argument('--online_steps', type=int, default=100)
     args = parser.parse_args()
     if args.out.exists() or not args.out.parent.is_dir():
         parser.error('Require an existing parent and new focused manifest')
+    if args.no_tc_report is not None and not args.no_tc_only:
+        parser.error('--no_tc_report is only valid with --no_tc_only')
     base = json.loads(args.base_manifest.read_text())
+    if args.no_tc_only:
+        return no_tc_review(args, base)
     manifest = copy.deepcopy(base)
     exp = Path(manifest['exp'])
     configurations = [
@@ -91,6 +225,13 @@ def main():
             + '；同neutral教师token长度/图prefix/tags/原packed/native静音，零训练，不声明舞蹈质量通过')
             for name, label in [('w256', '当前W256宽松仿射包络'), ('ln255', '包含LayerNorm零均值约束的255维仿射包络'),
                                 ('pca256', '仅1800train有效tail拟合的近似PCA256，全train中心')]]
+    if args.no_tc_students:
+        configurations = [
+            (f'text_no_tc_{space}_fit8_s100' + ('_zero' if zero else '') + '_v2',
+             ['joint'] if zero else ['joint', 'aswap'],
+             f'完全无TC {space}空间：8train/8val、100更新，MusicFM dense与完整music-only adapter联合；无空白/无prefix/context输入，图只经视觉VAE；'
+             + ('学生音乐置零，原曲仅mux，三joint' if zero else '三人物原/换音乐；小集拟合非泛化或舞蹈成功'))
+            for zero in (False, True) for space in ('W', 'PCA')]
     new_models = []
     for tag, conditions, description in configurations:
         group = 'H3AR/val_musicreplace_' + tag
@@ -124,7 +265,7 @@ def main():
                     or final.get('quality_gate_passed') is not False):
                 raise ValueError('Candidate diagnostics must preserve the failed quality gate and complete nine-video audit')
             record.update(diagnostic_only=True, quality_gate_passed=False)
-        if args.online_only or args.length_ablation or args.online_abc or args.behavior_only:
+        if args.online_only or args.length_ablation or args.online_abc or args.behavior_only or args.no_tc_students:
             final_report = Path(integrity.get('final_online_report', ''))
             if not final_report.is_file():
                 raise ValueError('Online review requires completed all18 input/audio/video audit')
@@ -153,6 +294,25 @@ def main():
                 raise ValueError('Online displayed training scope or zero-input variant differs from the audited videos')
             record['label'] = f'在线{name}·' + ('长度权重0.01' if name == 'C' else '骨干联合训练' if name == 'B' else '骨干冻结对照') + f'·{args.online_steps}步' + ('·零音乐' if '_zero_' in tag else '')
             record.update(musical_quality_accepted=False, online_backbone_train=name != 'A')
+            if args.no_tc_students:
+                run = 'music_' + tag.replace('_zero_', '_')
+                summary = json.loads((exp / 'MS' / run / 'finished.json').read_text())
+                if (final.get('no_text_encoder') is not True or summary.get('complete') is not True
+                        or summary.get('steps') != 100 or summary.get('actual_items_seen') != 800
+                        or summary['protocol'].get('context_policy') != 'music_only_global_bias'
+                        or summary['protocol'].get('no_text_encoder') is not True
+                        or summary['protocol'].get('small_fit') != 8
+                        or summary['deployment'].get('cached_context_read') is not False
+                        or any(row.get('no_text_encoder') is not True
+                               or row['no_tc_condition'].get('old_model_not_trained_for_no_tc') is not False
+                               or row['no_tc_condition'].get('prefix_length') != 0
+                               or row['inputs'].get('semantic_text', 'missing') is not None
+                               or row['inputs'].get('music_text_ckpt') != next(model['checkpoint_inference_path'] for model in final['models'] if model['run'] == run)
+                               or row['deployment'].get('checkpoint_sha256') != summary['checkpoint_sha256'] for row in group_rows)):
+                    raise ValueError('No-TC student review does not match the trained waveform-only checkpoint or small-fit scope')
+                record.update(label=('无TC·PCA空间' if '_PCA_' in tag else '无TC·W空间') + '·8样本100步' + ('·零音乐' if '_zero_' in tag else ''),
+                              no_text_encoder=True, context_policy='music_only_global_bias', small_fit=8,
+                              new_interface_trained=True, musical_quality_accepted=False)
             if args.behavior_only:
                 variant = 'prediction' if '_prediction_' in tag else 'control'
                 checkpoint_dir = exp / 'MS' / f'music_text_behavior_{variant}_s6_v1_step6'
@@ -191,7 +351,15 @@ def main():
         raise ValueError('Focused manifest already contains new configurations')
     manifest['models'] += new_models
     new_ids = [model['id'] for model in new_models]
-    if args.projection_only:
+    if args.no_tc_students:
+        teacher = 'H3AR/val_musicreplace_text_no_tc_teacher_v1'
+        if teacher not in current:
+            raise ValueError('No-TC students must retain the already-audited no-TC teacher-tail baseline')
+        presets = [dict(name='【无TC联合训练·空间单变量】无TC教师tail / W空间100步 / PCA空间100步；8样本拟合，先joint再aswap',
+                        cond='joint', view='models', models=[teacher, new_ids[0], new_ids[1]]),
+                   dict(name='【无TC联合训练·音乐反事实】W / W零音乐 / PCA / PCA零音乐；无空白/无context，仅joint',
+                        cond='joint', view='models', models=[new_ids[0], new_ids[2], new_ids[1], new_ids[3]])]
+    elif args.projection_only:
         teacher = 'H3AR/val_musicreplace_text_oracle_neutral_v1'
         if teacher not in current:
             raise ValueError('Projection review must retain the existing neutral teacher baseline')
@@ -241,7 +409,9 @@ def main():
         ]
     manifest['presets'] = presets + manifest['presets']
     manifest['built'] = time.strftime('%Y-%m-%d %H:%M:%S')
-    if args.projection_only:
+    if args.no_tc_students:
+        manifest['scope'] += ' Trained waveform-only no-TC W/PCA-space fit8 students and zero controls appended after all18 technical audit; no semantic text, external context or TC prefix. Small fitting is not music/dance success or unseen-song generalization.'
+    elif args.projection_only:
         manifest['scope'] += ' Same-length teacher projection diagnostics and reused neutral teacher added after full12 audit; no music-model update or continuous human acceptance claim.'
     elif args.behavior_only:
         manifest['scope'] += ' Six-update representation-only control and frozen-H3 prediction-supervised full music models appended after all18 video audit; small fitting or condition gradients do not establish choreography gain.'

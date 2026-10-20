@@ -1,0 +1,29 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "gpu_started": false,
+  "optimizer_updates": 0,
+  "exp_root": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp",
+  "teacher_cache": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_musicreplace_text_oracle_neutral_v1/cache",
+  "teacher_sources": [
+    {"sample_id": "wJPptuhclZmKAEWs", "tail_length": 228, "source_sha256": "6d113155141f009ea39fe1818761334f18d1a15ba18d41c4e7d3fb24adec8365", "teacher_tail_sha256": "c9506d70e8bb0e76158090affde1d832aef771022fd05d81338c81b32029c31a", "bf16_raw_sha256": "52ebc1e15db9c2c99b0b54b9a282f9cda2b6139ec68930768a55404e0dbe9dae"},
+    {"sample_id": "wJPrpFsThWAcBQIw", "tail_length": 199, "source_sha256": "f128c2eb5c5fa05ac267960eb5b98d7928022257e0b13d572fb7db49818a1a8d", "teacher_tail_sha256": "be823c653ce392600762e15ea9257f6d7706aea069cf23625d15c0a0cf848a52", "bf16_raw_sha256": "bd867be8ed7f2a81709a5b89e2e4a8e1ca85b7afdb3f2eef761cbd2dab1cfd13"},
+    {"sample_id": "wJQTclrlOLEYYfTB", "tail_length": 323, "source_sha256": "f1d864a1bb38cfde9b31536321d5a3594abc8ff56d75e9a496912445cd0cca92", "teacher_tail_sha256": "519bdb0dc0581cea21ca6c44b5dc67f1a9025853da785758318c146559c54903", "bf16_raw_sha256": "da3a020b0ed4cf73332dd5f306f332910c2c91c7f7c69697dd49b59d9843eae0"}
+  ],
+  "C300": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_online_C_len001_s300_v1/last.pt",
+    "sha256": "189a0a74ea1789b9a4bc1b8d1f202264c354f418b0881339eca10baf0673f605",
+    "query_max": 1423,
+    "state_scope": "music_to_h3_text",
+    "format_version": 2,
+    "backend": "musicfm",
+    "raw_dim": 5120,
+    "full_backbone_raw_adapter_length_head": true,
+    "finished_summary_sha_matches": true,
+    "finished_summary_steps": 300
+  },
+  "three_fixed_joint_source_case_identities_verified": true,
+  "real_video_audio_decode_executed": false,
+  "real_visual_vae_encoding_executed": false,
+  "scope": "CPU reads/hash checks of existing three teacher cache files and complete old C300 checkpoint only; not no-TC generation, VAE, media, dance quality or music-gain validation."
+}

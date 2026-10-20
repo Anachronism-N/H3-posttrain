@@ -1,6 +1,14 @@
 # 专用音乐 encoder 替换 H3：候选比较＋两条训练路线
 
-## 当前主线与纠正（2026-10-18）
+## 最新学生接口（2026-10-20）：完全禁用text encoder
+
+用户明确要求连空白文本也不编码：学生不加载／运行textencoder、tokenizer、processor，不保留其参考prefix或context；音乐raw token直接占H3原文本条件行，参考图只经独立视觉VAE条件进入冻结DiT。离线文字教师仍可作监督，但不作为学生输入。下方按日期保留旧接口，不应将旧“空语义TC图context”当最新部署要求。
+
+原neutral教师被用户确认为舞蹈，旧C300/control/prediction为摆pose；教师投影PCA256像舞蹈但有肢体反转，W/LN仍摆pose。当前已完成无TC教师tail-only3joint＋旧C300 zero-context3joint的六视频技术审核和采样帧观察，以及三case raw／condition_proj／token_refiner真实0更新数值诊断；它们不是已按新接口训练的音乐模型效果。
+
+新学生采用`music_only_global_bias`，移除旧context_projection.weight及外部context输入、仅将其bias作为可训练全局先验；旧C300转换共享权重和zero-context预测逐值保持。真实三更新已核验400个dense音乐tensor／41个adapter tensor更新、冻结buffers不变、训练／eval／完整checkpoint／独立waveform-only worker逐值一致。后续固定W与train-PCA输出空间小集100更新对照及原／换／零三case生成仍须完成；首次启动被旧空间报告缺父finished哈希的来源门禁拒绝，正在重建完整来源输入，不放宽检查。首帧、身份文字、独立length校准、交叉数据及多sigma行为loss不同时加入。全流程与当前状态详见`notes/26_music_h_diagnosis_and_solution_plan_20261020.md`最新noTC章节。
+
+## 当前主线与纠正（2026-10-18，历史接口）
 
 **以本节及下文“音乐骨干必须参与训练、学生条件统一”为当前范围；其余按日期记录历史方案与结果，不应将旧音频接口或冻结音乐骨干的阶段配置当作当前要求。**
 

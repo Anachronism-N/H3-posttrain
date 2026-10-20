@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-20",
+  "method": "Main assistant Read of six actual reference-plus-six-time mosaics for W/PCA NCE0 models",
+  "sampled_review_complete": true,
+  "continuous_human_review": false,
+  "source_report": "music_text_no_tc_nce0_fit8_all18_audit_v1.json",
+  "new_videos": 18,
+  "sample_times_seconds": [0, 1, 2, 3, 4, 5.125],
+  "observations": [
+    {"sample_id": "wJPptuhclZmKAEWs", "W_and_PCA": "Original, swapped and zero music sampled sequences show a dark suit, raised hand and backward leg bend followed by standing. Reference pale-yellow clothing/light-grey trousers changed; no clear sampled recovery of continuous choreography."},
+    {"sample_id": "wJPrpFsThWAcBQIw", "W_and_PCA": "Original tracks show hand-to-face then forward/finger gestures; swapped tracks show more crossed or rotating arm gestures; zero tracks retain small face/hand gestures. Red clothing broadly retained; sampled changes are not a certified continuous dance or music synchronization gain."},
+    {"sample_id": "wJQTclrlOLEYYfTB", "W_and_PCA": "Standing in the central shop position with limited arm/cross-arm motions across original, swapped and zero conditions; no clear sampled choreography recovery."}
+  ],
+  "latest_explicit_user_feedback_scope": "User called all displayed NCE1 music-counterfactual preset configurations posing; these previously undisplayed NCE0 videos are not automatically covered by that user verdict.",
+  "new_interface_trained": true,
+  "student_text_encoder_loaded": false,
+  "external_context_or_tc_prefix_used": false,
+  "musical_gain_accepted": false,
+  "scope": "Sampled frame observations only, not user continuous review, limb correctness scoring or statistical model equivalence"
+}

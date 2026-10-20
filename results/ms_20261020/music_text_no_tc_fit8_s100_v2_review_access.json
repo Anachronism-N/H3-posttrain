@@ -1,0 +1,27 @@
+{
+  "complete": true,
+  "manifest": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/manifest_music_text_no_tc_fit8_s100_v2.json",
+  "manifest_status": 200,
+  "models": 43,
+  "source_people": 3,
+  "presets": 21,
+  "new_videos_range_verified": 18,
+  "new_video_range_status": 206,
+  "new_video_range_bytes": 1024,
+  "cross_node": {"host": "28.216.17.70", "exit": 0, "status": 200, "presets": 21},
+  "old_models_samples_presets_scores_preserved": true,
+  "previous_verified_subset": 90,
+  "all_108_video_links_rechecked_this_run": false,
+  "continuous_human_review": "received_preset_level_negative",
+  "continuous_human_review_at_access_check": "pending",
+  "latest_user_feedback": {
+    "source": "explicit_user_conversation_feedback",
+    "scope": "Displayed noTC NCE1 music-counterfactual preset, not undisplayed NCE0 models",
+    "feedback": "无tc联合训练音乐反事实中的所有配置都只是在摆pose",
+    "usable_continuous_dance_accepted": false,
+    "per_case_numerical_scores_provided": false
+  },
+  "server_task_handle": "dPzR19",
+  "musical_gain_accepted": false,
+  "scope": "Actual 43-model manifest, new18 Range and cross-node service checks. Previous90 accesses retain prior verification; technical checks are not dance-quality acceptance."
+}

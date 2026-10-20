@@ -431,4 +431,63 @@ teacher三条J2gEJo与旧学生三条Q8N3Pt均实际exit0。主线程发现审�
 
 缓存方式四队列L6Ukl4／viuxk8／gDywn6／Yq3CH5已实际启动：八节点查到18个sampler，N1 GPU5/6/7、N2 GPU4/6/7，N3至N6 GPU6/7，N7/N8 GPU4/5。它们处于装载／采样阶段，不把CPU活进程等同所有GPU已100%计算；余46张卡仍仅holder待用，不计实验利用率。固定三个case未扩大，为两模型原／换／零音乐的18必要对照。
 
-18视频后续完整decode／noTC无污染／原图VAE参考／来源及采样视觉／review与GitHub发布仍待完成；当前可审阅的是之前六条免训练noTC诊断，不把100更新权重存在当视频效果成功。
+截至上一阶段发布，18视频后续完整decode／noTC无污染／原图VAE参考／来源及采样视觉／review与GitHub发布仍待完成；当时可审阅的是之前六条免训练noTC诊断，不把100更新权重存在当视频效果成功。
+
+## 18条新noTC学生视频完整技术验收与入口复核完成
+
+四组采样L6Ukl4／viuxk8／gDywn6／Yq3CH5均exit0，实际18条。N8完整审核XzOOPJ exit0，`music_text_no_tc_fit8_all18_audit_v1.json` expected=passed18：全124帧decord＋ffmpeg选定视频／音轨解码、704×1280/24fps、实际model SHA／自身长度／全部raw映射、无TC／空白／prefix或外部context、全部native静音四hash和同case视觉VAE参考rows/hash一致。临时模型cache与canonical训练来源严格绑定，没有把复制权重当重新训练。原／换／零音乐长度仍同时变化，不以像素差单独证明音乐语义影响。
+
+主线程实际Read六套reference＋六时刻mosaic，`music_text_no_tc_fit8_s100_v2_visual.json`记录：W/PCA原／换／零三case仍主要后勾腿、手到脸／嘴、交叉臂与有限原地手势；楼梯深色套装／包明显不同于参考浅黄衣／灰裤。采样帧没有建立连续编舞或新音乐控制收益，PCA略低表示MSE没有直接转为可认证舞蹈。这不是新增用户逐视频评分，也不据采样宣称两个模型统计等价。
+
+补充对**新训练模型本身**的三case实际raw／condition_proj／token_refiner比较（W pzrzUL、PCA 3B9Jw7两流水均exit0）：新checkpoint严格context=None而非旧zeros5120兼容，19个原生BF16入口权重不变／0更新，teacher仅比较。两模型report分别`music_text_entry_no_tc_W_fit8_v2_compare.json`与`music_text_entry_no_tc_PCA_fit8_v2_compare.json`。
+
+| 原音乐生成case | teacher raw序列去均值RMS | W学生同统计 | PCA学生同统计 | W／PCA refiner后teacher-student relative-RMS |
+|---|---:|---:|---:|---|
+| 楼梯 | 2.31742 | 0.00689603 | 0.00160624 | 0.65443／0.63944 |
+| 红衣 | 2.27246 | 0.03735854 | 0.00828067 | 0.64696／0.64089 |
+| 商店 | 2.25266 | 0.00385155 | 0.00161285 | 0.60662／0.59184 |
+
+原／换音乐共同区间raw RMS差，W为0.38355／0.37766／0.09966，PCA为0.03723／0.07257／0.01589。歌曲改变已能产生数值变化，但学生内部token变化仍远低于teacher，且共同refiner没有使学生条件接近teacher；不能把文字token位置当真实音乐时间，natural前向后common-visible比较不是同packed布局干预。
+
+截至该次记录，评审清单已追加四个NCE1训练配置，43模型／3人物／21预设，旧39模型／旧评分全部保留。第一预设为【无TC联合训练·空间单变量】，第二为【无TC联合训练·音乐反事实】；不是旧PCA教师投影。当时连续人评尚待反馈；**用户随后明确该音乐反事实预设所有配置都只在摆pose，现记为NCE1预设级负评，不再称无人评。** 未展示NCE0不属于该反馈的自动外推范围。
+
+### 有限下一对照：不加数据／宽度，只隔离NCE目标
+
+8train上NCE1已能辨别配对（W87.5%、PCA100% top1），但raw H MSE仍约5、生成case token近重复且视频未建立可用舞蹈，因此不先凭“数据不足”直接扩量。追加同起点／同空间／同数据顺序／同100更新800曝光／同lr与length0.01的NCE0两组，**唯一改clip_weight1→0**，补齐输出空间W/PCA×NCE0/1的有限2×2。代码不加motion loss、不训H3、不改变学生接口；只检验当前token回归信号是否被配对目标影响，0/1 loss标量／梯度也不能直接当Adam真实贡献。两新训练GUyKxx／aqathS在N5 GPU4/5启动后于C300共享文件801MB读取位置D态等待，未开始更新；已停止等待并从已读节点拷贝同SHA C300及其byte-identical finished到N5本地/tmp缓存，改用新目录v2接续，不放宽来源检查。最终模型、固定3case原／换／零及入口比较尚未完成／不得提前判优。完成这组后不自动继续无限预算扫描；宽度或teacher改动须基于结果另外隔离。
+
+用户进一步要求实验前告知资源需求：若不需要全部节点，用户会自行启动其他任务。后续这组只保留N5（28.216.19.137），先用GPU4/5训练，随后同节点排队生成；不再自动占用N1/N2/N3/N4/N6/N7/N8的GPU。N1只保留评审网页CPU服务。占卡holder不算实验工作，也不因此默认把空闲节点保留；如后续确需额外节点，启动前先告知协调。
+
+用户随后澄清独立推理可以多节点并行，资源说明应区分“最低可运行”与“加速建议”。主线程明确告知新NCE0两组18条推理适合八节点18卡，并询问刚让出的节点是否已有其他任务；用户明确选择“还没安排，可用全部”。因此**本轮推理恢复八节点并行**，仍先同SHA完整cache及主机/cgroup准入，不等于未来阶段默认长期占用全群。单节点多GPU安全冷加载代码保留为资源紧张时可选，不据此人为串行本轮可并行任务。
+
+## 最新人评纠正、NCE0真正新一轮结果与当前展示
+
+用户再次明确：原`val_musicreplace_text_oracle_neutral_v1`有舞蹈动作；旧`教师空间·pca256`虽有一些舞蹈动作，但很多肢体液化／模糊／反转问题；W256／LN255／PCA256教师空间在上一轮就完成，不能当新实验。用户对当前【无TC联合训练·音乐反事实】所有已显示NCE1配置给出“都只是在摆pose”的预设级负评。没有逐case数值，也没有对当时尚未显示的NCE0配置给出验收；不扩大反馈范围。
+
+主线程承认前述汇报混用了旧教师诊断与新学生结果，最新NCE0已经采样技术完成但网页未上线，导致用户无法找到新实验。现在已修复展示与轮次标签：原47模型清单的两个新增首预设明确“新一轮·NCE0”，保留旧43模型／21预设与samples/评分映射；旧PCA教师投影仍是历史对照，既不重生成也不称最新模型。
+
+| 阶段 | 明确模型目录/区别 | 当前验收 |
+|---|---|---|
+| 上一轮教师投影 | `text_projection_C300_w256_v2/ln255_v2/pca256_v2` | 已完成；PCA虽有动作但液化／模糊／反转，不是质量通过；非音乐学生 |
+| 已显示无TCNCE1学生 | `text_no_tc_W_fit8_s100_v2`与`text_no_tc_PCA_fit8_s100_v2`及各zero组 | 各8train/8val、100更新；18视频解码通过，但用户明确反事实预设全部摆pose |
+| 真正最新NCE0学生 | `text_no_tc_W_nce0_fit8_s100_v2`与`text_no_tc_PCA_nce0_fit8_s100_v2`及各zero组 | 同初始化/数据/宽度/空间/100步，仅移除NCE；另18视频已完整解码、现上线，人评尚未提供 |
+
+所有视频目录位于`diff/logs_omnidance/exp/H3AR/val_musicreplace_<上述tag>`；新NCE0不是只把同一权重换名字。C300完整起点／globalbias转换／MusicFM dense＋完整剩余adapter／自身长度／无TC无prefix／独立视觉VAE／native静音相同。NCE0 W/PCA完整模型SHA分别为`8e392256ef8cd17b198aa31bec3d3c441f1f5681b3672213640530b9ae8905da`和`e12e1d704be263ba1fbf43727cd8ecc2bd344fb2eb8744208d1098567c7e3f01`，不同于NCE1。
+
+NCE0两组bFRWCk／gor86B均exit0、各100更新／800曝光、400dense／41adapter实际改变及完整waveform-only独立worker一致。采样jYyAcq／X1biPT／zNgUIr／Lu1FOB四队列均exit0，在用户本轮明确允许八节点后并行；后续CPU完整审核BU7u5x expected=passed18，全124帧视频和音轨decode/noTC条件及同图VAE参考与静音hash通过。报告`music_text_no_tc_nce0_fit8_all18_audit_v1.json`。没有新的训练预算或再生成旧W/LN/PCA教师视频。
+
+| 同8train/8val | W NCE1 | W NCE0 | PCA NCE1 | PCA NCE0 |
+|---|---:|---:|---:|---:|
+| train raw MSE | 5.45656 | 5.33725 | 5.27885 | 5.16737 |
+| val raw MSE | 5.24840 | 5.18988 | 5.14308 | 5.13436 |
+| val长度MAE | 110.625 | 177.625 | 107.625 | 125.375 |
+| train三候选top1 | 87.5% | 75% | 100% | 100% |
+
+移除NCE略改善回归，但raw H仍未接近teacher，长度val误差更大；仅8val，不能用PCA NCE0某项较高top1宣称泛化或舞蹈改善。主线程实际Read六套NCE0原/换/零mosaic，仍可见勾腿、手到脸／前伸手／交叉臂与原地小动作，楼梯仍深色服装漂移；`music_text_no_tc_nce0_fit8_s100_v2_visual.json`只记录采样观察，不替代最新连续人评，也不宣称全配置统计等价。
+
+### 输出头尺度／可达范围的新数值证据（不是新视频）
+
+`music_text_no_tc_head_range_v1.json`为四个实际新noTC checkpoint的0更新诊断，P2Hkbr exit0。计算当前完整输出投影的有效affine中心/255秩映射，并把LayerNorm归一化、零均值内部向量放宽到半径sqrt(256)=16闭球，FP64 SVD与trust-region根求最近输出。CPU各向同性解析解／各向异性KKT和半径边界通过；实际KKT残差约1e-13。closed ball是放松下界，忽略FP32roundoff及所有上游音乐/query可达性，不当精确音乐学生最优值。
+
+PCA固定空间教师MSE楼梯／红衣／商店约0.86075／0.71350／0.71105；当前PCA NCE1输出头的LN闭球下界却为5.18790／4.94552／4.79114，NCE0为5.10820／4.85327／4.71674。无范围约束有效affine包络仍约0.72–0.89。**更好的PCA方向并不代表这个具体输出头的幅度/参数化已经能覆盖teacher；只做投影后维持旧头小幅训练没有解决可达范围。** 这并非LayerNorm独立根因，也不说明任意256维模型不可能；输出weight/gamma可训练，当前固定参数快照的尺度、中心及优化需一起核实。后续应先设计有明确幅度覆盖的输出初始化/参数化对照，而不是在同坏范围上无限加数据或反复汇报旧教师投影。
+
+最新服务同8766：`manifest_music_text_no_tc_nce0_fit8_s100_v2.json`，47模型／3人物／23预设，首预设【新一轮·NCE0对照·非旧教师投影】按同空间NCE1/NCE0排列，次预设【新一轮·NCE0音乐反事实】。HTTP清单200、最新18视频Range206及旧43模型/samples/21presets逐值保留已核验，报告`music_text_no_tc_nce0_fit8_s100_v2_review_access.json`；不称全部126历史链接本轮重新检查。用户无需再次review旧教师投影，最新NCE0是否也摆pose仍只待对这个明确新预设的反馈。

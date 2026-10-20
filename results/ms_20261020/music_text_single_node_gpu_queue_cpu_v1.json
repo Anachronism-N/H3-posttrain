@@ -1,0 +1,10 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "remote_or_gpu_executed": false,
+  "explicit_same_host_distinct_gpu_slots_passed": true,
+  "maximum_simultaneous_host_cold_loads": 1,
+  "host_lock_released_on_native_isolation": true,
+  "strict_three_case_evidence_passed": true,
+  "source_sha256": "e32c872d9a6bdafa72e2b51e09838d6b1250c3bab36ee2cfad5c629c2c147d8f"
+}

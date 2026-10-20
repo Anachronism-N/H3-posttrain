@@ -227,13 +227,15 @@ def entry_export_no_tc(args):
         raise ValueError('Require exactly three fixed review cases and their swapped audio')
     checkpoint_sha = digest(args.checkpoint)
     model = load_music_text_checkpoint(args.checkpoint, expected_backend='musicfm').cuda().eval()
-    if (not isinstance(model, MusicToH3Text) or not model.online_training
-            or model.freeze_backbone or model.checkpoint_metadata['format_version'] != 2):
-        raise ValueError('Require complete online dense-trained MusicFM plus full adapter')
+    if not isinstance(model, MusicToH3Text):
+        raise ValueError('NoTC entry export requires a complete music backbone and adapter')
+    trained_no_tc = model.adapter.context_policy == 'music_only_global_bias'
+    if (not model.online_training
+            or model.freeze_backbone or model.checkpoint_metadata['format_version'] != (3 if trained_no_tc else 2)):
+        raise ValueError('Require complete online dense-trained MusicFM plus full adapter with explicit context policy')
     model.requires_grad_(False)
     before = model_hashes(model)
-    # Existing C300 needs a context argument, but no TC data supplies it in this new diagnostic.
-    context = torch.zeros(5120, dtype=torch.float32)
+    context = None if trained_no_tc else torch.zeros(5120, dtype=torch.float32)
     records = []
     with torch.no_grad():
         for case in joint:
@@ -244,7 +246,7 @@ def entry_export_no_tc(args):
                 waveform, effective_frames = load_audio(audio_path.stem, audio_root=audio_path.parent)
                 if name == 'zero':
                     waveform = torch.zeros_like(waveform)
-                condition = model.student_condition(waveform.cuda()[None], context.cuda()[None])
+                condition = model.student_condition(waveform.cuda()[None], None if context is None else context.cuda()[None])
                 raw, tail = condition['raw_tokens'][0].cpu(), condition['tails'][0].cpu()
                 length = int(condition['lengths'][0])
                 if (raw.shape != (model.adapter.qmax, 5120) or length != len(tail)
@@ -256,7 +258,7 @@ def entry_export_no_tc(args):
                     effective_frames=effective_frames, waveform_sha256=tensor_digest(waveform),
                     raw_tokens_sha256=tensor_digest(raw), tail_sha256=tensor_digest(tail),
                     zero_input=name == 'zero', teacher_length_input=False,
-                    context_source='explicit FP32 zeros5120, no TC or cached context')
+                    context_source='none_music_only_global_bias' if trained_no_tc else 'explicit FP32 zeros5120, no TC or cached context')
             # Teacher cache is read only AFTER the three student forwards, for comparison evidence only.
             source = args.oracle_cache / (Path(case['filename']).stem + '.pt')
             oracle = torch.load(source, map_location='cpu', weights_only=True)
@@ -282,9 +284,10 @@ def entry_export_no_tc(args):
         Path(sys.modules['music_clip_bridge'].__file__), Path(sys.modules['music_encoder_adapter'].__file__)]
     result = dict(format_version=1, kind='real_music_no_tc_entry_export', complete=True,
         checkpoint=str(args.checkpoint), checkpoint_sha256=checkpoint_sha, query_max=model.adapter.qmax,
-        records=records, zero_context=context, zero_context_sha256=tensor_digest(context),
-        context_source='explicit FP32 zeros5120', prefix_present=False,
-        old_model_not_trained_for_no_tc=True, textencoder_loaded=False, textencoder_calls=0,
+        records=records, zero_context=context, zero_context_sha256=None if context is None else tensor_digest(context),
+        context_policy=model.adapter.context_policy,
+        context_source='none_music_only_global_bias' if trained_no_tc else 'explicit FP32 zeros5120', prefix_present=False,
+        old_model_not_trained_for_no_tc=not trained_no_tc, textencoder_loaded=False, textencoder_calls=0,
         teacher_caption_or_length_student_input=False, cached_tc_context_student_input=False,
         optimizer_updates=0, gradients_absent=True, quality_claim=False,
         waveform_loader='music_clip_bridge.load_audio',
@@ -292,7 +295,7 @@ def entry_export_no_tc(args):
             for condition in ('joint', 'aswap')},
         source_sha256={str(path): digest(path) for path in sources},
         music_state_before_sha256=before, music_state_after_sha256=after, music_state_unchanged=True,
-        scope='Unchanged complete C300 with zero context and full own-length music tails; distribution-shift diagnostic, not a noTC-trained model or visual-conditioned student.')
+        scope='Complete trained waveform-only noTC model with own-length music tails; representation comparison, not video acceptance.' if trained_no_tc else 'Unchanged complete C300 with zero context and full own-length music tails; distribution-shift diagnostic, not a noTC-trained model or visual-conditioned student.')
     save_new(args.out, result, binary=True)
     save_new(args.out.with_suffix('.json'), {key: value for key, value in result.items()
         if key not in ('records', 'zero_context')})
@@ -304,16 +307,21 @@ def entry_compare_no_tc(args):
     sys.path.insert(0, str(ROOT / 'DiffSynth-Studio-upstream-20260930'))
     export_sha = digest(args.input)
     export = torch.load(args.input, map_location='cpu', weights_only=True)
+    trained_no_tc = export.get('context_policy', 'tc_prefix_context') == 'music_only_global_bias'
+    context_valid = (export.get('zero_context') is None and export.get('zero_context_sha256') is None) if trained_no_tc else (
+        torch.is_tensor(export.get('zero_context')) and export['zero_context'].shape == (5120,)
+        and not torch.count_nonzero(export['zero_context'])
+        and tensor_digest(export['zero_context']) == export['zero_context_sha256'])
     if (export.get('kind') != 'real_music_no_tc_entry_export' or export.get('complete') is not True
+            or export.get('context_policy', 'tc_prefix_context') not in ('tc_prefix_context', 'music_only_global_bias')
             or len(export.get('records', [])) != 3 or export.get('prefix_present') is not False
             or export.get('textencoder_loaded') is not False or export.get('textencoder_calls') != 0
             or export.get('cached_tc_context_student_input') is not False
             or export.get('teacher_caption_or_length_student_input') is not False
-            or export.get('old_model_not_trained_for_no_tc') is not True
+            or export.get('old_model_not_trained_for_no_tc') is not (not trained_no_tc)
             or export.get('optimizer_updates') != 0
             or digest(export['checkpoint']) != export['checkpoint_sha256']
-            or export['zero_context'].shape != (5120,) or torch.count_nonzero(export['zero_context'])
-            or tensor_digest(export['zero_context']) != export['zero_context_sha256']
+            or not context_valid
             or export['music_state_before_sha256'] != export['music_state_after_sha256']):
         raise ValueError('Require an unchanged complete real noTC zero-context export, not historical cached-context data')
     modules, native = entry_load_native(args)
@@ -377,7 +385,7 @@ def entry_compare_no_tc(args):
                 statistics=statistics, pairs=pairs, raw_to_h3_bf16_quantization=quantization,
                 full_qmax_raw_student_statistics={name: entry_tensor_stats(value['raw_tokens'])
                     for name, value in record['variants'].items()},
-                teacher_compare_only=True, old_model_not_trained_for_no_tc=True))
+                teacher_compare_only=True, old_model_not_trained_for_no_tc=not trained_no_tc))
             print(json.dumps(dict(event='entry_no_tc_case_compared', sample_id=record['sample_id'],
                 natural_lengths=lengths, common_rows=visible)), flush=True)
     after = model_hashes(modules)
@@ -389,7 +397,8 @@ def entry_compare_no_tc(args):
         export_source=str(args.input), export_sha256=export_sha, checkpoint_sha256=export['checkpoint_sha256'],
         textencoder_loaded=False, textencoder_calls=0, prefix_rows=0, processor_loaded=False,
         music_proxy_reencoding=False, video_vae_loaded=False, audio_vae_loaded=False,
-        old_model_not_trained_for_no_tc=True, full_H3_packed_layout_evaluated=False,
+        old_model_not_trained_for_no_tc=not trained_no_tc, context_policy=export.get('context_policy', 'tc_prefix_context'),
+        full_H3_packed_layout_evaluated=False,
         teacher_tail_and_length_compare_only=True, optimizer_updates=0, gradients_absent=True,
         independent_native_entry=native, native_entry_before_sha256=before, native_entry_after_sha256=after,
         all_module_states_unchanged=True, cases=rows, quality_claim=False,
@@ -397,7 +406,7 @@ def entry_compare_no_tc(args):
         native_module_source_sha256=digest(sys.modules[modules['token_refiner'].__class__.__module__].__file__),
         attention_implementation=os.environ.get('DIFFSYNTH_ATTENTION_IMPLEMENTATION'),
         torch_version=str(torch.__version__), native_entry_dtype='torch.bfloat16',
-        scope='Tail-only real C300 zero-context raw5120, native condition_proj5376 and full two-layer token_refiner, own [0,L,L]/max L. No TC/prefix/full packed/VAE/video/updates; common-position metrics are not equal-layout interventions or quality acceptance.')
+        scope='Real noTC music model raw5120, native condition_proj5376 and full two-layer token_refiner, own [0,L,L]/max L. Explicit checkpoint context policy distinguishes trained waveform-only models from legacy C300 zero-context diagnostics. No TC/prefix/full packed/VAE/video/updates; common-position metrics are not equal-layout interventions or quality acceptance.')
     save_new(args.out, report, binary=True)
     save_new(args.out.with_suffix('.json'), report)
     print(json.dumps(dict(event='entry_compare_no_tc_finished', out=str(args.out), cases=3,

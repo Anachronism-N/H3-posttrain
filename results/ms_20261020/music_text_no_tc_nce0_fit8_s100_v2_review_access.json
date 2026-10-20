@@ -1,0 +1,22 @@
+{
+  "complete": true,
+  "manifest": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/manifest_music_text_no_tc_nce0_fit8_s100_v2.json",
+  "manifest_http_status": 200,
+  "models": 47,
+  "source_people": 3,
+  "presets": 23,
+  "latest_round": "noTC W/PCA, NCE weight 0, train8/val8, 100 updates; not previous-round teacher projection",
+  "new_videos_range_verified": 18,
+  "new_video_range_status": 206,
+  "new_video_range_bytes": 1024,
+  "old_models_samples_presets_preserved": true,
+  "previous_manifest_models": 43,
+  "previous_verified_subset_videos": 108,
+  "all_126_video_links_rechecked_this_run": false,
+  "latest_NCE0_continuous_human_review": "pending",
+  "displayed_NCE1_human_feedback": "All configurations in noTC joint-training music-counterfactual preset are posing, per explicit user feedback",
+  "teacher_projection_human_feedback": "Previous-round PCA256 has some dance motion but many liquefaction, blur and reversal problems; neutral teacher has dance motion",
+  "server_task_handle": "iaOE8D",
+  "musical_gain_accepted": false,
+  "scope": "Actual latest-round manifest and 18 new Range checks; no user verdict inferred for the previously undisplayed NCE0 videos"
+}

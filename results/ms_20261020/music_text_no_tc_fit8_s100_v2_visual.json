@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-20",
+  "complete_sampled_review": true,
+  "method": "Main assistant Read of all six original/swapped/zero reference-plus-six-time mosaics for W/PCA models",
+  "full_video_continuous_human_review": false,
+  "source_audit": "music_text_no_tc_fit8_all18_audit_v1.json",
+  "source_people": 3,
+  "new_videos": 18,
+  "sample_times_seconds": [0, 1, 2, 3, 4, 5.125],
+  "observations": [
+    {"case": "staircase", "sample_id": "wJPptuhclZmKAEWs", "W": "Original/swapped/zero sampled frames retain dark suit, small crossbody bag, hand gesture and backward leg-bend motif; reference pale yellow top/light grey trousers not retained.", "PCA": "Same broad hand/leg motifs remain across original/swapped/zero sampled frames with local differences; dark suit/bag differs from reference.", "continuous_dance_accepted": false},
+    {"case": "red_clothing", "sample_id": "wJPrpFsThWAcBQIw", "W": "Sampled original and zero contain crossed arms/elbows and hand near face; swap changes local hand progression but not evidence of a complete dance sequence.", "PCA": "Sampled original/swap/zero contain hand-to-mouth and bent-elbow/raised-arm gestures; red clothing broadly retained; no certified continuous dance gain.", "continuous_dance_accepted": false},
+    {"case": "shop", "sample_id": "wJQTclrlOLEYYfTB", "W": "Central standing position and modest arm gestures remain in all input variants.", "PCA": "Similar small central arm gestures and stance across variants; not evidence of continuous choreography.", "continuous_dance_accepted": false}
+  ],
+  "conclusion": "The inspected samples do not establish usable music choreography after removing TC and fitting W/PCA spaces. Local changes and unaligned RGB differences are not beat alignment or dance-quality scores.",
+  "new_interface_trained": true,
+  "student_text_encoder_loaded": false,
+  "external_context_or_tc_prefix_used": false,
+  "musical_gain_accepted": false,
+  "scope": "Sampled visual inspection, not new user feedback, limb correctness measurement or statistical model equivalence"
+}

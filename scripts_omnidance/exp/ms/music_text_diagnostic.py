@@ -1564,7 +1564,103 @@ def no_tc_fixture_main():
     print(json.dumps(dict(event='no_tc_cpu_fixture_finished', passed=6, rejected=len(rejected), out=str(args.out))), flush=True)
 
 
+def closest_head_ball(coordinates, singular, radius):
+    import torch
+    unconstrained = coordinates / singular
+    outside = unconstrained.norm(dim=1) > radius
+    low = torch.zeros(len(coordinates), dtype=coordinates.dtype, device=coordinates.device)
+    high = (coordinates * singular).norm(dim=1) / radius
+    for _ in range(80):
+        middle = (low + high) / 2
+        candidate = coordinates * singular / (singular.square() + middle[:, None])
+        too_large = candidate.norm(dim=1) > radius
+        low = torch.where(too_large, middle, low)
+        high = torch.where(too_large, high, middle)
+    multiplier = torch.where(outside, high, torch.zeros_like(high))
+    solution = coordinates * singular / (singular.square() + multiplier[:, None])
+    radial = unconstrained * (radius / unconstrained.norm(dim=1).clamp_min(1e-30)).clamp_max(1)[:, None]
+    if (not torch.isfinite(solution).all() or (solution.norm(dim=1) > radius * (1 + 1e-9)).any()
+            or (((coordinates - solution * singular).square().sum(1)
+                 - (coordinates - radial * singular).square().sum(1)) > 1e-7).any()):
+        raise ValueError('Head-ball solution is invalid or worse than the radial feasible candidate')
+    return solution, outside, multiplier
+
+
+def head_range_main():
+    import torch
+    from music_text_behavior import tensor_digest
+    parser = argparse.ArgumentParser(description='No-update output-head affine and LayerNorm-ball relaxed lower bounds')
+    parser.add_argument('--head_range', action='store_true', required=True)
+    parser.add_argument('--exp_root', type=Path, required=True)
+    parser.add_argument('--checkpoint_cache_root', type=Path, required=True)
+    parser.add_argument('--runs', nargs='+', required=True)
+    parser.add_argument('--oracle_cache', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if args.out.exists() or not args.out.parent.is_dir() or any(Path(n).name != n for n in args.runs):
+        parser.error('Require path-free runs and a new output with existing parent')
+    torch.set_num_threads(2)
+    cases = [c for c in fixed_cases(args.exp_root) if c['condition'] == 'joint']
+    reports = []
+    for run in args.runs:
+        checkpoint = args.checkpoint_cache_root / run / 'last.pt'
+        summary = json.loads((args.exp_root / 'MS' / run / 'finished.json').read_text())
+        checkpoint_sha = sha256(checkpoint)
+        if summary.get('complete') is not True or summary['checkpoint_sha256'] != checkpoint_sha:
+            raise ValueError('Head-range checkpoint differs from its completed canonical model')
+        payload = torch.load(checkpoint, map_location='cpu', weights_only=True, mmap=True)
+        metadata, state = payload['metadata'], payload['model']
+        if metadata.get('context_policy') != 'music_only_global_bias' or metadata.get('format_version') != 3:
+            raise ValueError('Head-range diagnostic requires a complete trained noTC model')
+        width = metadata['width']
+        w, b, gamma, beta, basis, center = [state['adapter.' + n].cuda().double() for n in
+            ('raw_output.weight', 'raw_output.bias', 'output_norm.weight', 'output_norm.bias', 'output_basis', 'output_center')]
+        zero_mean = torch.zeros(width, width - 1, device='cuda', dtype=torch.float64)
+        zero_mean[:-1] = torch.eye(width - 1, device='cuda', dtype=torch.float64)
+        zero_mean[-1] = -1
+        zero_mean, _ = torch.linalg.qr(zero_mean, mode='reduced')
+        effective = basis @ (basis.T @ ((w * gamma[None]) @ zero_mean))
+        offset = center + basis @ (basis.T @ (b + w @ beta - center))
+        u, singular, _ = torch.linalg.svd(effective, full_matrices=False)
+        tolerance = max(effective.shape) * torch.finfo(torch.float64).eps * float(singular[0])
+        rank = int((singular > tolerance).sum())
+        if not rank:
+            raise ValueError('Current output head has no nonzero numerical direction')
+        u, singular = u[:, :rank], singular[:rank]
+        radius = width ** .5
+        rows = []
+        for case in cases:
+            source = args.oracle_cache / (Path(case['filename']).stem + '.pt')
+            record = torch.load(source, map_location='cpu', weights_only=True)
+            if record['metadata']['case']['sample_id'] != case['sample_id'] or tensor_digest(record['tail']) != record['metadata']['teacher_tail_sha256']:
+                raise ValueError('Head-range teacher identity changed')
+            teacher = record['tail'].cuda().double()
+            coordinates = (teacher - offset) @ u
+            solution, outside, multiplier = closest_head_ball(coordinates, singular, radius)
+            envelope = offset + coordinates @ u.T
+            bounded = offset + (solution * singular) @ u.T
+            fixed_space = center + ((teacher - center) @ basis) @ basis.T
+            rows.append(dict(sample_id=case['sample_id'], source_sha256=sha256(source), teacher_tokens=len(teacher),
+                fixed_space_mse=float((teacher - fixed_space).square().mean()),
+                learned_head_affine_envelope_mse=float((teacher - envelope).square().mean()),
+                layernorm_closed_ball_lower_bound_mse=float((teacher - bounded).square().mean()),
+                teacher_unconstrained_coordinates_outside_ball_fraction=float(outside.double().mean()),
+                unconstrained_latent_norm_max=float((coordinates / singular).norm(dim=1).max()),
+                constrained_latent_norm_max=float(solution.norm(dim=1).max()),
+                kkt_max_abs_error=float(((singular.square() + multiplier[:, None]) * solution - coordinates * singular).abs().max())))
+        if sha256(checkpoint) != checkpoint_sha:
+            raise ValueError('Head-range source checkpoint changed during computation')
+        reports.append(dict(run=run, checkpoint_sha256=checkpoint_sha, width=width,
+            numerical_head_rank=rank, normalized_latent_radius=radius, singular_values=singular.tolist(), rows=rows))
+        print(json.dumps(dict(event='head_range_finished', run=run, cases=3, optimizer_updates=0)), flush=True)
+    atomic_write_new(args.out, dict(complete=True, models=reports, optimizer_updates=0, text_encoder_loaded=False,
+        video_generated=False, source_sha256=sha256(Path(__file__)),
+        scope='Fixed learned output head only. LayerNorm zero-mean normalized vectors have norm<sqrt(width) with positive epsilon; the closed ball is a relaxed infimum bound, ignoring FP32 roundoff and all upstream music/query reachability. No width sufficiency or video-quality claim.'))
+
+
 def main():
+    if '--head_range' in __import__('sys').argv:
+        return head_range_main()
     if '--no_tc_fixture' in __import__('sys').argv:
         return no_tc_fixture_main()
     if '--no_tc_audit' in __import__('sys').argv:

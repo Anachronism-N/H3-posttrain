@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--hosts', nargs='+', required=True)
     parser.add_argument('--gpu', type=int, default=7)
+    parser.add_argument('--gpus', nargs='+', type=int, help='Explicit GPU per host slot; permits one noTC case per unique host/GPU pair')
     parser.add_argument('--holder_path', type=Path, help='Explicit existing holder script when source tree and experiment tree differ')
     parser.add_argument('--joint_only', action='store_true', help='Three same-person teacher-label diagnostic clips only')
     parser.add_argument('--zero_input', action='store_true', help='Deploy model on zero music, original track only muxed')
@@ -32,8 +33,12 @@ def main():
     conditions = ['joint'] if args.joint_only else ['joint', 'aswap']
     if args.out.exists() or not args.out.parent.is_dir():
         parser.error('Require a new output tree and existing parent')
-    if len(set(args.hosts)) != len(args.hosts) or not 0 <= args.gpu < 8 or len(args.hosts) > expected:
-        parser.error('Require unique hosts and a valid GPU index')
+    gpus = args.gpus if args.gpus is not None else [args.gpu] * len(args.hosts)
+    if (len(gpus) != len(args.hosts) or any(not 0 <= gpu < 8 for gpu in gpus)
+            or len(args.hosts) > expected or len(set(zip(args.hosts, gpus))) != len(args.hosts)
+            or (args.gpus is None and len(set(args.hosts)) != len(args.hosts))
+            or (args.gpus is not None and (not args.no_text_encoder or len(args.hosts) != expected))):
+        parser.error('Require unique host/GPU slots; explicit GPU slots are noTC-only with exactly one case per slot')
     if (args.zero_input or args.legacy_clip) and not args.checkpoint:
         parser.error('Zero/legacy music input requires a deployed model checkpoint')
     if args.no_text_encoder and (args.caps or args.projection or args.legacy_clip):
@@ -83,7 +88,8 @@ def main():
     from music_generation_validate import atomic_write_new as write_new
     code_sha = hashlib.sha256(sampler.read_bytes()).hexdigest()
     write_new(args.out / 'plan.json', dict(kind=no_tc_kind if args.no_text_encoder else 'projected_teacher_not_music_prediction' if args.projection else 'teacher_oracle_not_trained_music_model' if args.caps else 'trained_music_text_deployment',
-              source_people=3, conditions=conditions, videos=expected, hosts=args.hosts,
+              source_people=3, conditions=conditions, videos=expected, hosts=args.hosts, gpus=gpus,
+              serialized_host_cold_loading=args.gpus is not None,
               sampler_sha256=code_sha, supervision_caps_sha256=hashlib.sha256(args.caps.read_bytes()).hexdigest() if args.caps else None,
               checkpoint_sha256=hashlib.sha256(args.checkpoint.read_bytes()).hexdigest() if args.checkpoint else None,
               native_audio='same_fixed_silence_reference_and_retake', semantic_student_prompt=None if args.no_text_encoder else ' ',
@@ -101,20 +107,23 @@ def main():
               projection_manifest_sha256=hashlib.sha256(args.projection.read_bytes()).hexdigest() if args.projection else None,
               projection_teacher_length_only=bool(args.projection)))
     queues = [list(range(expected))[i::len(args.hosts)] for i in range(len(args.hosts))]
-    guard = guard_code(str(sampler), str(holder), args.gpu)
+    import threading
+    host_locks = {host: threading.Lock() for host in args.hosts} if args.gpus is not None else {}
 
-    def run_queue(item):
-        host, shards = item
+    def run_admitted_queue(item, release_cold_load):
+        host, shards, gpu = item
+        guard = guard_code(str(sampler), str(holder), gpu)
         admission = subprocess.run(SSH + [host, 'python3 -c ' + shlex.quote(guard)],
                                    text=True, capture_output=True)
-        write_new(args.out / 'logs' / ('admission_' + host + '.json'),
-                  dict(host=host, exit_code=admission.returncode,
+        admission_name = 'admission_' + host + ('_gpu' + str(gpu) if args.gpus is not None else '') + '.json'
+        write_new(args.out / 'logs' / admission_name,
+                  dict(host=host, gpu=gpu, exit_code=admission.returncode,
                        stdout=admission.stdout, stderr=admission.stderr))
         if admission.returncode:
             return [dict(host=host, shards=shards, admission_failed=True, exit_code=admission.returncode)]
         result = []
         for shard in shards:
-            command = ['env', f'CUDA_VISIBLE_DEVICES={args.gpu}', 'OMP_NUM_THREADS=2',
+            command = ['env', f'CUDA_VISIBLE_DEVICES={gpu}', 'OMP_NUM_THREADS=2',
                        'HF_HUB_OFFLINE=1', 'TRANSFORMERS_OFFLINE=1',
                        f'PYTHONPATH={args.root.parent / "DiffSynth-Studio-upstream-20260930"}',
                        '/opt/venv_h3/bin/python', str(sampler), '--out', str(args.out),
@@ -142,15 +151,48 @@ def main():
                 stream.write(json.dumps(dict(host=host, command=command, sampler_sha256=code_sha)) + '\n')
                 stream.flush()
                 print(json.dumps(dict(event='launch', host=host, shard=shard)), flush=True)
-                completed = subprocess.run(SSH + [host, shlex.join(command)], stdout=stream, stderr=subprocess.STDOUT)
-            result.append(dict(host=host, shard=shard, exit_code=completed.returncode, log=str(path)))
+                if args.gpus is None:
+                    completed = subprocess.run(SSH + [host, shlex.join(command)], stdout=stream, stderr=subprocess.STDOUT)
+                    returncode = completed.returncode
+                else:
+                    with subprocess.Popen(SSH + [host, shlex.join(command)], stdout=subprocess.PIPE,
+                                          stderr=subprocess.STDOUT, text=True, bufsize=1) as process:
+                        try:
+                            for line in process.stdout:
+                                stream.write(line)
+                                stream.flush()
+                                if line.startswith('[no tc native isolation] '):
+                                    release_cold_load()
+                            returncode = process.wait()
+                        finally:
+                            if process.poll() is None:
+                                process.terminate()
+                                process.wait()
+            result.append(dict(host=host, gpu=gpu, shard=shard, exit_code=returncode, log=str(path)))
             print(json.dumps(dict(event='exit', **result[-1])), flush=True)
-            if completed.returncode:
+            if returncode:
                 break
         return result
 
+    def run_queue(item):
+        lock = host_locks.get(item[0])
+        released = False
+        if lock is not None:
+            lock.acquire()
+
+        def release_cold_load():
+            nonlocal released
+            if lock is not None and not released:
+                released = True
+                lock.release()
+
+        try:
+            return run_admitted_queue(item, release_cold_load)
+        finally:
+            release_cold_load()
+
     with ThreadPoolExecutor(max_workers=len(args.hosts)) as executor:
-        jobs = [job for queue in executor.map(run_queue, zip(args.hosts, queues)) for job in queue]
+        jobs = [job for queue in executor.map(run_queue, zip(args.hosts, queues, gpus)) for job in queue]
     reports = [json.loads(path.read_text()) for path in (args.out / 'cache').glob('*.json')]
     if args.projection:
         import re

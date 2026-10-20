@@ -1,0 +1,67 @@
+{
+  "complete": true,
+  "source_hashes": {
+    "music_text_no_tc_W_nce0_fit8_s100_v2": "8e392256ef8cd17b198aa31bec3d3c441f1f5681b3672213640530b9ae8905da",
+    "music_text_no_tc_PCA_nce0_fit8_s100_v2": "e12e1d704be263ba1fbf43727cd8ecc2bd344fb2eb8744208d1098567c7e3f01"
+  },
+  "nodes": [
+    {
+      "host": "28.216.17.70",
+      "verified": true,
+      "hashes": {
+        "music_text_no_tc_W_nce0_fit8_s100_v2": "8e392256ef8cd17b198aa31bec3d3c441f1f5681b3672213640530b9ae8905da",
+        "music_text_no_tc_PCA_nce0_fit8_s100_v2": "e12e1d704be263ba1fbf43727cd8ecc2bd344fb2eb8744208d1098567c7e3f01"
+      }
+    },
+    {
+      "host": "28.216.19.213",
+      "verified": true,
+      "hashes": {
+        "music_text_no_tc_W_nce0_fit8_s100_v2": "8e392256ef8cd17b198aa31bec3d3c441f1f5681b3672213640530b9ae8905da",
+        "music_text_no_tc_PCA_nce0_fit8_s100_v2": "e12e1d704be263ba1fbf43727cd8ecc2bd344fb2eb8744208d1098567c7e3f01"
+      }
+    },
+    {
+      "host": "28.216.19.143",
+      "verified": true,
+      "hashes": {
+        "music_text_no_tc_W_nce0_fit8_s100_v2": "8e392256ef8cd17b198aa31bec3d3c441f1f5681b3672213640530b9ae8905da",
+        "music_text_no_tc_PCA_nce0_fit8_s100_v2": "e12e1d704be263ba1fbf43727cd8ecc2bd344fb2eb8744208d1098567c7e3f01"
+      }
+    },
+    {
+      "host": "28.216.19.137",
+      "verified": true,
+      "hashes": {
+        "music_text_no_tc_W_nce0_fit8_s100_v2": "8e392256ef8cd17b198aa31bec3d3c441f1f5681b3672213640530b9ae8905da",
+        "music_text_no_tc_PCA_nce0_fit8_s100_v2": "e12e1d704be263ba1fbf43727cd8ecc2bd344fb2eb8744208d1098567c7e3f01"
+      }
+    },
+    {
+      "host": "28.216.19.225",
+      "verified": true,
+      "hashes": {
+        "music_text_no_tc_W_nce0_fit8_s100_v2": "8e392256ef8cd17b198aa31bec3d3c441f1f5681b3672213640530b9ae8905da",
+        "music_text_no_tc_PCA_nce0_fit8_s100_v2": "e12e1d704be263ba1fbf43727cd8ecc2bd344fb2eb8744208d1098567c7e3f01"
+      }
+    },
+    {
+      "host": "28.216.18.144",
+      "verified": true,
+      "hashes": {
+        "music_text_no_tc_W_nce0_fit8_s100_v2": "8e392256ef8cd17b198aa31bec3d3c441f1f5681b3672213640530b9ae8905da",
+        "music_text_no_tc_PCA_nce0_fit8_s100_v2": "e12e1d704be263ba1fbf43727cd8ecc2bd344fb2eb8744208d1098567c7e3f01"
+      }
+    },
+    {
+      "host": "28.216.18.136",
+      "verified": true,
+      "hashes": {
+        "music_text_no_tc_W_nce0_fit8_s100_v2": "8e392256ef8cd17b198aa31bec3d3c441f1f5681b3672213640530b9ae8905da",
+        "music_text_no_tc_PCA_nce0_fit8_s100_v2": "e12e1d704be263ba1fbf43727cd8ecc2bd344fb2eb8744208d1098567c7e3f01"
+      }
+    }
+  ],
+  "user_authorization": "Explicit selection: all nodes still available for this inference phase",
+  "weights_changed": false
+}

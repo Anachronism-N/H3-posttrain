@@ -151,11 +151,14 @@ def main():
     mode.add_argument('--no_tc_students', action='store_true', help='Append audited no-TC W/PCA small-fit students and zero-music controls')
     parser.add_argument('--no_tc_report', type=Path, help='Completed strict no-TC six-video report, required only with --no_tc_only')
     parser.add_argument('--online_steps', type=int, default=100)
+    parser.add_argument('--no_tc_nce_weight', type=int, choices=(0, 1), default=1, help='Select the audited noTC NCE0 or NCE1 small-fit student round')
     args = parser.parse_args()
     if args.out.exists() or not args.out.parent.is_dir():
         parser.error('Require an existing parent and new focused manifest')
     if args.no_tc_report is not None and not args.no_tc_only:
         parser.error('--no_tc_report is only valid with --no_tc_only')
+    if args.no_tc_nce_weight == 0 and not args.no_tc_students:
+        parser.error('--no_tc_nce_weight 0 requires the explicit no_tc_students mode')
     base = json.loads(args.base_manifest.read_text())
     if args.no_tc_only:
         return no_tc_review(args, base)
@@ -227,9 +230,9 @@ def main():
                                 ('pca256', '仅1800train有效tail拟合的近似PCA256，全train中心')]]
     if args.no_tc_students:
         configurations = [
-            (f'text_no_tc_{space}_fit8_s100' + ('_zero' if zero else '') + '_v2',
+            (f'text_no_tc_{space}' + ('_nce0' if args.no_tc_nce_weight == 0 else '') + '_fit8_s100' + ('_zero' if zero else '') + '_v2',
              ['joint'] if zero else ['joint', 'aswap'],
-             f'完全无TC {space}空间：8train/8val、100更新，MusicFM dense与完整music-only adapter联合；无空白/无prefix/context输入，图只经视觉VAE；'
+             f'完全无TC {space}空间、NCE权重{args.no_tc_nce_weight}：8train/8val、100更新，MusicFM dense与完整music-only adapter联合；无空白/无prefix/context输入，图只经视觉VAE；'
              + ('学生音乐置零，原曲仅mux，三joint' if zero else '三人物原/换音乐；小集拟合非泛化或舞蹈成功'))
             for zero in (False, True) for space in ('W', 'PCA')]
     new_models = []
@@ -302,6 +305,7 @@ def main():
                         or summary['protocol'].get('context_policy') != 'music_only_global_bias'
                         or summary['protocol'].get('no_text_encoder') is not True
                         or summary['protocol'].get('small_fit') != 8
+                        or summary['protocol'].get('clip_weight') != args.no_tc_nce_weight
                         or summary['deployment'].get('cached_context_read') is not False
                         or any(row.get('no_text_encoder') is not True
                                or row['no_tc_condition'].get('old_model_not_trained_for_no_tc') is not False
@@ -310,7 +314,7 @@ def main():
                                or row['inputs'].get('music_text_ckpt') != next(model['checkpoint_inference_path'] for model in final['models'] if model['run'] == run)
                                or row['deployment'].get('checkpoint_sha256') != summary['checkpoint_sha256'] for row in group_rows)):
                     raise ValueError('No-TC student review does not match the trained waveform-only checkpoint or small-fit scope')
-                record.update(label=('无TC·PCA空间' if '_PCA_' in tag else '无TC·W空间') + '·8样本100步' + ('·零音乐' if '_zero_' in tag else ''),
+                record.update(label=('新一轮·NCE0·' if args.no_tc_nce_weight == 0 else '无TC·NCE1·') + ('PCA空间' if '_PCA_' in tag else 'W空间') + '·8样本100步' + ('·零音乐' if '_zero_' in tag else ''),
                               no_text_encoder=True, context_policy='music_only_global_bias', small_fit=8,
                               new_interface_trained=True, musical_quality_accepted=False)
             if args.behavior_only:
@@ -355,10 +359,19 @@ def main():
         teacher = 'H3AR/val_musicreplace_text_no_tc_teacher_v1'
         if teacher not in current:
             raise ValueError('No-TC students must retain the already-audited no-TC teacher-tail baseline')
-        presets = [dict(name='【无TC联合训练·空间单变量】无TC教师tail / W空间100步 / PCA空间100步；8样本拟合，先joint再aswap',
-                        cond='joint', view='models', models=[teacher, new_ids[0], new_ids[1]]),
-                   dict(name='【无TC联合训练·音乐反事实】W / W零音乐 / PCA / PCA零音乐；无空白/无context，仅joint',
-                        cond='joint', view='models', models=[new_ids[0], new_ids[2], new_ids[1], new_ids[3]])]
+        if args.no_tc_nce_weight == 0:
+            previous = ['H3AR/val_musicreplace_text_no_tc_' + space + '_fit8_s100_v2' for space in ('W', 'PCA')]
+            if not set(previous) <= current:
+                raise ValueError('NCE0 review must retain the previous NCE1 student models for same-space comparison')
+            presets = [dict(name='【新一轮·NCE0对照·非旧教师投影】W：NCE1 / NCE0；PCA：NCE1 / NCE0；只移除NCE，同8样本100步，先joint再aswap',
+                            cond='joint', view='models', models=[previous[0], new_ids[0], previous[1], new_ids[1]]),
+                       dict(name='【新一轮·NCE0音乐反事实】W / W零音乐 / PCA / PCA零音乐；完全无TC，仅joint',
+                            cond='joint', view='models', models=[new_ids[0], new_ids[2], new_ids[1], new_ids[3]])]
+        else:
+            presets = [dict(name='【无TC联合训练·空间单变量】无TC教师tail / W空间100步 / PCA空间100步；8样本拟合，先joint再aswap',
+                            cond='joint', view='models', models=[teacher, new_ids[0], new_ids[1]]),
+                       dict(name='【无TC联合训练·音乐反事实】W / W零音乐 / PCA / PCA零音乐；无空白/无context，仅joint',
+                            cond='joint', view='models', models=[new_ids[0], new_ids[2], new_ids[1], new_ids[3]])]
     elif args.projection_only:
         teacher = 'H3AR/val_musicreplace_text_oracle_neutral_v1'
         if teacher not in current:

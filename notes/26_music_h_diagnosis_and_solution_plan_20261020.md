@@ -490,4 +490,54 @@ NCE0两组bFRWCk／gor86B均exit0、各100更新／800曝光、400dense／41adap
 
 PCA固定空间教师MSE楼梯／红衣／商店约0.86075／0.71350／0.71105；当前PCA NCE1输出头的LN闭球下界却为5.18790／4.94552／4.79114，NCE0为5.10820／4.85327／4.71674。无范围约束有效affine包络仍约0.72–0.89。**更好的PCA方向并不代表这个具体输出头的幅度/参数化已经能覆盖teacher；只做投影后维持旧头小幅训练没有解决可达范围。** 这并非LayerNorm独立根因，也不说明任意256维模型不可能；输出weight/gamma可训练，当前固定参数快照的尺度、中心及优化需一起核实。后续应先设计有明确幅度覆盖的输出初始化/参数化对照，而不是在同坏范围上无限加数据或反复汇报旧教师投影。
 
-最新服务同8766：`manifest_music_text_no_tc_nce0_fit8_s100_v2.json`，47模型／3人物／23预设，首预设【新一轮·NCE0对照·非旧教师投影】按同空间NCE1/NCE0排列，次预设【新一轮·NCE0音乐反事实】。HTTP清单200、最新18视频Range206及旧43模型/samples/21presets逐值保留已核验，报告`music_text_no_tc_nce0_fit8_s100_v2_review_access.json`；不称全部126历史链接本轮重新检查。用户无需再次review旧教师投影，最新NCE0是否也摆pose仍只待对这个明确新预设的反馈。
+最新服务同8766：`manifest_music_text_no_tc_nce0_fit8_s100_v2.json`，47模型／3人物／23预设，首预设【新一轮·NCE0对照·非旧教师投影】按同空间NCE1/NCE0排列，次预设【新一轮·NCE0音乐反事实】。HTTP清单200、最新18视频Range206及旧43模型/samples/21presets逐值保留已核验，报告`music_text_no_tc_nce0_fit8_s100_v2_review_access.json`；不称全部126历史链接本轮重新检查。用户无需再次review旧教师投影。截至该次上线，最新NCE0反馈尚待提供；后续用户已明确该新预设全配置也摆pose，见下节，不再等待此预设评审。
+
+## NCE0最终人工负评与本轮详细执行协议
+
+用户对已经上线的【新一轮·NCE0音乐反事实】明确反馈：“所有配置都像是在摆pose而非舞蹈”。这是该预设的连续定性负评，不是逐case数字；现NCE0与NCE1两个预设均未建立可用舞蹈，不再等待此评审。模型更新、原条件接口与音画技术审核完成，不等于音乐编舞目标完成。
+
+### 实际实验矩阵及起点
+
+本轮四配置为固定W256/PCA256空间×NCE权重1/0，各从同一完整C300 checkpoint SHA189a0a74…开始，并非NCE0恢复NCE1最后权重或optimizer。所有共享音乐骨干和adapter权重相同，context_projection.weight移除、其bias重命名为可训练global_context_bias，转换前后新None输入预测与旧zero-context逐值相等。四组均新建AdamW，不恢复C300 moments；W/PCA中心与方向处理不同会改变训练前的输出，初始表示指标分别报告，不能称四组初始条件token逐值相同。NCE0/1同空间的初始化、数据顺序、更新预算一致。
+
+当前MusicFM实际dense可训练参数316343296（400tensor）；新完整剩余adapter3655937参数（41tensor），比旧adapter少context_projection.weight的1310720参数。每组width256、8attention heads、两cross-attention+FFN4width，qmax1423（来自原1800train最大teacher长度，不是固定有效长度）。512/1024宽度只是实现/CPU验证过，本轮没有这些宽度的训练或视频结果。
+
+### 数据、教师与音频
+
+训练使用原1800train前8条、验证原200val前8条，完整ID在各plan.json；生成楼梯/红衣/商店3case均不在该1800/200 split。C300起点已按原1800数据训练过，本轮8条不是从零训练的新数据实验；验证8条也不是全新测试集。teacher raw H由当前参考图及舞种＋中性原版MotionScript经过离线冻结TC得到，正文labels包含词序/措辞和当前图上下文；学生不读文字、图TCcontext或GT长度，仅音乐波形。图只走下游视觉VAE；这使学生拟合的teacher仍包含其输入不能唯一推断的部分，需明确是一项潜在目标失配而非已确定的唯一根因。
+
+共享loader读取前5.0625秒音乐、mono复制为双声道、重采样32kHz、截取/补齐[2,162000] FP32，不做波形音量归一化；音乐模型再按相同方法重采样24kHz，mel固定mean/std→conv→Conformer，约25Hz×1024通道特征，双声道保留。训练始终直接走真实可微dense音乐骨干，不用冻结特征缓存。完整teacher/statistics bundle仍来自1800/200原数据，PCA/mean/std/energy/qmax只用1800train拟合，不把本轮8train说成全部信息源。
+
+PCA中心为原1800train的776078个有效tail token的FP64均值；每item最多16个等距token，共28800，按长度/抽样数加权，FP32随机低秩q288/niter4/seed42取256方向、FP64正交化。无val、图prefix、padding或3生成case参与空间拟合。W组来自固定C300 raw_output列空间，中心其bias，不随此阶段训练重新求基。
+
+### 训练前向、mask、loss与优化
+
+音乐features→256宽memory/stereo/位置编码→1423query＋globalbias→两cross-attention/FFN→LayerNorm→可训练Linear256到5120，产生u；之后固定空间变换H=mu+((u-mu)B)B^T。basis B及中心mu持久buffer不训练，完整raw_output及LN等剩余adapter与MusicFM dense仍共同训练。**此实现是对可训练raw输出施加固定投影，不是直接预测自由PCA系数，也没有重新初始化输出头的方向/幅度到PCA教师统计。** 没有删LN、无新旁路、无query self-attention。
+
+每步包含全部8个训练ID（随机排列），4次microbatch2累积梯度后clip/optimizer一次；每ID正分支100次，共800曝光，不是100×2条。三个音乐分支为正确/第一wrong/第二wrong，各完整音乐前向；teacher正文与长度只回归正确分支。wrong选择不同ID及caption hash，不保证完整源歌曲隔离或语义不同。NCE是每样本三个候选，不是batch8×8对比矩阵；NCE0依然前向并计算NCE以保留原代码，只把其loss系数设0。
+
+原loss=raw MSE/Etrain + .01*log-length MSE + lambda_NCE*min(step/100,1)*NCE(scores/.07)。lambda0的新模型正是去除最后项，不改变其他权重。raw MSE按教师有效token mask对全1423query输出比较，跨microbatch按有效token数加权；length/NCE按样本数加权。teacher长度是监督label，绝不决定student有效tail。NCE只对loss做train mean/std及L2归一化，学生部署H保留raw尺度；双方分别最多均匀64个有效token，双向soft-Chamfer相似度聚合不显式要求逐位置一一对应。正文token索引不是音乐时刻。
+
+学生length_head预测logL，round(exp(clamp(logL)))裁到1..1423，然后取H[:L]及mask；train/validation/deployment共享。离散截取不对length可导，长度头仍依赖其loss；raw MSE覆盖全部teacher有效位置，即使student实际tail短，仍是监督规则而不是把teacher长度喂生成。不能把teacher MSE监督mask完全等同自然部署有效mask。
+
+优化器：MusicFM dense lr1e-5、完整adapter lr1e-4、AdamW weight_decay.01、默认betas(.9,.999)/eps1e-8、global gradient norm clip1，无lr scheduler。NCE1有100步ramp，NCE0为0；FP32参数/前向，禁止cachedfeature FP16roundtrip；音乐骨干eval固定BN统计/随机层但dense参数仍求梯度，adapter train且attention dropout0。每组最后核验400dense/41adapter真实改变、固定空间及冻结buffer不变。完整V3 checkpoint保存音乐骨干＋所有adapter＋basis/center/globalbias；独立Python worker仅输入waveform，train/eval/fullreload/worker自身tail与length逐值一致。
+
+**本轮训练不加载H3 DiT/VAE/TC，未用GT视频latent，不加FM、预测一致性、motion、pose或偏好DPO loss。** 之前的冻结H3预测监督是另一个6更新历史实验，本轮只做raw H/length/NCE表示监督，不能把旧行为监督当此次每步生成端loss。
+
+### 实际生成配置、参考图与静音旁路
+
+生成是音乐→同完整checkpoint→自己预测H和长度→BF16cast→全1文本模态tags，与原视觉VAE图reference及两路固定静音条件交原PackedSequenceBuilder→冻结DiT condition_proj5120到5376→原两层token_refiner→50个DiT主blocks→视频VAE解码。音乐H不经过TC，TC/processor/tokenizer权重与对象都不加载；prompt/negative均None，prefix0，不是空白字符串。两层refiner是文本教师与音乐hidden共同的DiT入口，不是textencoder第二遍。
+
+参考图标准输出704×1280，图reference短边2048、实际prepared2048×3712、视觉VAE7424行；图不是学生adapter输入，只是生成器视觉条件。CFG1、bi双向、50步、video shift12/audio shift3、seed42、124帧24fps、输出704×1280。原生reference/retake音频均5.0625秒静音经冻结audioVAE，effective203、目标207、尾repeat_clean、mask全0；不是直接填0latent。真实音乐只经学生H分支影响生成，最终再mux原/换曲。音轨能播放不证明音乐控制成功。
+
+每模型原3/换3/零3共9；NCE0新18另NCE1前18。原与换保持同图同seed，零仅学生音乐置0，最终音轨仍原曲；输出长度原换零分别：W楼梯420/297/130、红衣248/470/130、商店528/386/130；PCA楼梯430/333/218、红衣314/429/218、商店461/407/218。换歌同时改H内容、长度和packed/RoPE位置，所以视频变化不是纯音乐语义贡献的隔离实验。实际都是小动作的人工负评优先于像素差。
+
+### 实测与为什么不把失败简单归为数据少
+
+四组train raw MSE约5.17–5.46，val5.13–5.25，均值位置baseline val4.81861；NCE0只是略降MSE，没有建立连续舞蹈。只有8train/8val使结论受限，但训练集本身仍拟合差，不能仅靠加数据推定修复，更不能称100步已收敛。meanMSE/正歌辨别好不代表teacher语义或有效舞蹈H已复现。
+
+已完成的新NCE1原生入口0更新比较是三review case，raw5120/proj5376/refiner均保存指标；三个case student去token均值变化远低teacher，相对差异约.59-.65，经refiner后没有接近。**NCE0尚未完成同样的新模型分阶段入口forward，不将NCE1数值冒作NCE0实测。** 对四组已有head范围诊断才包含NCE0，且其对象仅输出层放松下界而不是实际音乐预测。
+
+在固定当前PCA模型参数下，裸PCA space投影teacher MSE约.71-.86，无限制head affine envelope约.72-.89；但包含LN零均值norm<=16闭球放松范围，下界约4.72-5.19。因为实际形态H=mu+P[b+W beta-mu+W diag(gamma)z]，z零均值且norm<sqrt(256)，PCA投影改变空间却没有让已学W/gamma/中心覆盖所需幅度。这里不是gamma总norm固定（它可训练），也不是说LN永久无法输出teacher；它只证明当前checkpoint具体头的范围存在障碍。输出weight/gamma可移动，后续该先核验更合适头初始化/尺度/参数化，再独立检验音乐预测及行为，而不是继续把旧PCA教师有动作当新学生已学到舞蹈。
+
+最新结论：原teacher有舞蹈；PCA teacher有一些动作但液化/模糊/反转，不可作为完整质量成功；无TC的NCE1与NCE0新学生反事实均被用户判摆pose。本轮受控实验流程完成且得到负结果，整个仅音乐＋图可用舞蹈目标尚未完成；后续新修复预算与资源先明确告知，不无限重跑已失败的相同配方。

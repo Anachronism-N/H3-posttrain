@@ -13,7 +13,15 @@
   "previous_manifest_models": 43,
   "previous_verified_subset_videos": 108,
   "all_126_video_links_rechecked_this_run": false,
-  "latest_NCE0_continuous_human_review": "pending",
+  "latest_NCE0_continuous_human_review": "received_preset_level_negative",
+  "latest_NCE0_continuous_human_review_at_access_check": "pending",
+  "NCE0_explicit_user_feedback": {
+    "source": "user_conversation_after_review",
+    "feedback": "新一轮·NCE0音乐反事实中，所有配置都像是在摆pose而非舞蹈",
+    "scope": "Displayed NCE0 music-counterfactual preset; qualitative continuous human verdict, no per-case numeric scores",
+    "usable_continuous_dance_accepted": false,
+    "per_case_numerical_scores_provided": false
+  },
   "displayed_NCE1_human_feedback": "All configurations in noTC joint-training music-counterfactual preset are posing, per explicit user feedback",
   "teacher_projection_human_feedback": "Previous-round PCA256 has some dance motion but many liquefaction, blur and reversal problems; neutral teacher has dance motion",
   "server_task_handle": "iaOE8D",

@@ -671,3 +671,13 @@ MusicFM输出约25Hz×1024声学特征，H3入口要求可变长×5120原文本L
 5. 当前不是物理删除H3音频分支：固定静音波形仍通过原audio VAE，两路reference/retake audio tokens、位置与mask保留；只有真实音乐内容不从这个入口进入H3。静音latent并非零，保持原结构不等于保持真实音频信息。删光音频rows则是另一种布局干预，本轮没有做。原生40Hz声学时序信息现在必须由music→text hidden路径承载；文字逐token回归无显式beat／动作强调时间loss，可能不足以迁移该职责，不能直接声称这是唯一不跟拍根因。
 
 **后续决策，不自动追加预算：** 这轮已排除“原曲输入下永远没有舞蹈”和“必须teacher包含参考图才能舞蹈”的绝对判断，但没有建立音乐节拍控制或换曲泛化。下一方案应把音乐时序／拍点到动作强调的对齐与图语义／人物保真分别诊断，先明确要验证的单一假设和所需资源；保留无外部动作文字／无TC要求，不偷偷加原生真音乐旁路或恢复TC，不无限延长同配对MSE配方。
+
+#### 为什么模块M输出与教师CLIP相似仍不保证生成一致
+
+用户新增问题的强前提成立：若M输出逐token完整数值等于原TC输出，长度／tags／packed位置及其他图／音频／seed／采样条件都相同，固定H3实际接收同一条件，确定性推理应相同（浮点非确定性另计）。此前identity oracle确有原hidden拆拼、packed及首步教师/学生DiT预测对照，见`sample_h3_ar.py:295-318`；不能将训练失败说成原生hidden不能替换。
+
+实际CLIP弱得多：(a)旧原生音频/专用32D路线对齐的是normalized temporal latent→mean/std pooling128→训练head5120→L2与caption pooled5120目标，而生成只消费32D序列，训练head不部署；相似的两个全局向量不是同一个5120D逐token接口。(b)本轮formal1800已clip_weight0，只rawMSE+.01length；没有实际“训练CLIP所以高相似”前提。旧rawH序列对比的soft-Chamfer／均匀token抽样不保证完整逐位置顺序数值一致。(c)即使每token cosine很高，cos(H,αH)=1不约束幅度；全局共同均值／方向也可能掩盖决定动作差别的中心化变化，H3带bias投影/refiner/jointattention不保证对该改变不敏感。decoder真正关心的条件差异不能用一个相似度标量完全代替。
+
+(d)只匹配动作tail但去掉TC的图vision prefix，或者学生长度不同导致reference/target RoPE起点变化，都改变完整输入；不能声称仍是“只把相同hidden回填”。(e)本轮实测macro rawMSE public128.1719/control167.7893，position_mean baseline5.83669；音乐候选top1 .325/.36接近三候选随机1/3，并没有证据证明实际送H3的完整rawhidden已接近教师。初始化mean/RMS匹配不等于训练后的完整语义匹配。(f)文本caption不唯一由音乐决定，词位置不是音乐时间，配对MSE可平均掉不同合理动作表述。即使精确复现不跟拍教师，也只能期待复现该教师行为，不能从相似度推出超出教师的拍点控制。
+
+最有诊断意义的比较是在完全同图/native条件/长度布局/采样轨迹下，分层核rawhidden、condition_proj、refiner和冻结DiT预测的误差，再与视频行为对应；形状相同、CLIP检索接近或训练loss降低都不能省略这些前提。此处只澄清已有失败机制，不增加未授权实验。

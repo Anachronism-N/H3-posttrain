@@ -604,6 +604,10 @@ MusicFM输出约25Hz×1024声学特征，H3入口要求可变长×5120原文本L
 
 实际review CLI正常输入与直接函数联调通过；`eNS4Sa`额外在内存改写已完成报告的10个顶层字段（complete/expected/passed/noTC/native哈希声明/GT输入/完整decode/quality声明/重复models/缺rows），全部拒绝且不产出新manifest。不是重解码或全量故障注入，不用未返回的代理fixture报告替代。新服务8766实际HTTP200、52/26与全部18视频Range206已核验。所有本轮新GPU计算已结束；当前只剩CPU报告/评审服务与发布，不默认继续占用六节点做新训练。
 
+后续补充独立音轨审核`results/ms_20261020/music_text_pure_students_audio_mux_audit_v1.json`（SHA `a00665603ad8711403c6541da69c107e1f6249493e103f3746096e34b5a3130f`）。CPU任务`sOQKSv`真实exit0：使用各视频声明的原曲／换曲音频，经相同共享波形loader及实际PyAV `_prepare_audio_stream/_write_audio`在内存重编码预期AAC；与现有MP4逐个非空AAC packet payload及codec元数据比较，18/18完全相同，每条160个非空packet。由此独立确认6条原曲、6条换曲、6条零音乐学生输入控制的实际配乐来源正确（零输入控制仍mux原曲），不是仅检查日志或文件名。没有重新生成视频、没有用GPU、没有修改旧技术报告。
+
+该检查只证明音轨内容与来源，不检查音视频动作跟拍或AAC packet时间戳／容器编辑列表。送编码器的波形长度162000samples／32kHz=5.0625秒，视频124帧／24fps=5.16667秒，内容长度相差约0.10417秒；不把AAC padding视为真实音乐，不据此判定动作时间对齐。学生连续人评仍未取得，任务179保持未完成；重复stop hook不是人评，也不授权为达到停止条件扩训练或伪造质量结论。
+
 ### 原生H3文本、音频分支及历史音乐encoder接口的详细对照
 
 以下以当前保留的DiffSynth实现为依据，不冒称复现H3预训练配方。`sample_h3_ar.py`是我们的采样器，与上游完整视频＋音频联合采样分别说明。

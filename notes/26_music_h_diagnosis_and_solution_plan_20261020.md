@@ -736,6 +736,12 @@ MusicFM输出约25Hz×1024声学特征，H3入口要求可变长×5120原文本L
 10. 修正窗口语义后的唯一选择v2任务`M0QUFr`已实际exit0，`music_direct6k_v2`发布完整6000train/500val：11908pool→10979联合独立代表；6500组唯一、train/val隔离、caps/refs/split IDs一致，6500实际图/音频/meta/MS资产核验完成。主线程独立核四输出SHA：caps `7b1c9d88b8f01c921ab3c03226ccec67eb3373bf414b7dd1a5634d15dddf2b42`；split `a3a9cd8211b8dcdac8e688ea845bcf0f5e07262c48c663a918f97b880ef5c2c6`；references `42055258822f7ab0554b0d57fe1c94ca2851ca4653d5a312467638c9633291e2`；selection_report `03c96415c3d3692d2c09d1032ac0ed420767f2b705a22c33c232719a2b95caca`。无重复凑数或降低质量/pose门槛，保留v1失败报告。代理general-purpose-1完成产物交付后也发生上游empty-stream；已独立核验产物保留，后续由主线程接管。
 11. 完整六分片缓存现已安排，分片数量1084/1084/1083/1083/1083/1083、每片train1000；前三节点GPU5避开仍运行的GPU6教师恒等验收，第四节点GPU0、其余两节点GPU6。首轮`AGYrjW`六节点准入通过，但错误使用`/opt/venv_music`，全部在导入缺少imageio时exit1、未创建cache输出；失败管理日志`MS/music_direct6k_v2_cache_launch_v1`完整保留。已CPU实测`/opt/venv_h3`可加载实际缓存入口，改为该现有环境恢复，handle `sF0F73`、新管理日志`MS/music_direct6k_v2_cache_launch_v2`；缓存输出仍为未创建过的`MS/music_direct6k_v2_cache_s{0..5}`，不覆盖任何产物、不安装依赖、不改cache冻结源码。准入只允许明确授权节点/精确自身holder，实际退出和完整finished文件才算缓存完成。按三case实际P文件尺寸及全caption分词，预计P约461.41GiB、y约25.72GiB，总约487.13GiB加开销，几何/token长度差异会改变实际大小；共享文件系统约216TiB空闲不等于已确认用户quota。6500教师缓存、两配置正式CLIP、实际收敛及新学生视频/人评仍未完成；实现/选择/既有CPU与GPU证据已由新commit `21e1bd662b458e4c8488684bcf5b00cbc5b875ee`推送GitHub main，并实核远端同SHA。该commit不是最终训练/质量结论，后续真实GPU三视频审核另行发布。
 
+#### 缓存完成后的事件接续
+
+已将完整缓存→正式manifest→两组正式训练接为单一管理队列，日志`MS/music_direct6k_v2_training_queue_v1`、任务`XATcau`。等待绑定的实际缓存管理进程完成事件（pidfd），不sleep、不重复启动缓存或轮询凑完成；缓存六片complete/exit0/6500、冻结源码SHA通过后，实际调用正式builder构建`MS/music_direct6k_v2_training_manifest_v1.json`，仍核完整target/P字节SHA和真实source IDs，不反序列化P。builder失败或源变更立即停止，不启动训练。
+
+manifest成功后自动在19.69/17.70各0–3四GPU启动相同初始化的A/B，local16/global64、lr1e-5/1e-4、seed42、最少20/cap50/平台8次/相对0.005；A moment_weight0、B1。每卡严格自身holder准入、未知进程拒绝，训练前再次核本地init SHA和实际manifest SHA。输出`MS/music_direct6k_v2_clip_a`、`MS/music_direct6k_v2_clip_moments_b`；其他四节点在缓存结束后不再使用。该队列处于等待只表示自动接续已部署，不表示正式训练已开始；训练完成也不自动代表达到收敛或学生视频/人评通过。10分钟会话定时跟进只用于发现报错、推进验收与后续视频，不另开同名任务。
+
 #### 资源与最终验收
 
 仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。

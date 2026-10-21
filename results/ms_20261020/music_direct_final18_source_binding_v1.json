@@ -1,0 +1,40 @@
+{
+  "complete": true,
+  "kind": "prepared_final18_source_binding_not_generated_students",
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "fixed_case_count": 3,
+  "joint_manifest": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct_eval3_generation_joint_v1.json",
+    "sha256": "6d08214d9b5e0b5912374880e9b3d464c10941d74d766f99bb5317cd35c48409"
+  },
+  "aswap_manifest": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct_eval3_generation_aswap_v1.json",
+    "sha256": "1aa66e5dcb7676640ccf52d3e7d9f09d72da667c27d90ef108ff9d270be37f98"
+  },
+  "independent_binding_verification_task": "VTsD0g",
+  "exact_holdout_id_verification_task": "nve8ho",
+  "source_cases": ["wJPptuhclZmKAEWs", "wJPrpFsThWAcBQIw", "wJQTclrlOLEYYfTB"],
+  "reference_images_and_cached_P_and_Ptags_unchanged": true,
+  "teacher_target_provenance_unchanged": true,
+  "original_audio_source_identity_retained_in_aswap": true,
+  "fixed_people_and_swapped_audio_ids_excluded_from_train_and_val": true,
+  "expected_student_configurations": [
+    {"model": "pure_batch_clip", "condition": "joint", "videos": 3},
+    {"model": "pure_batch_clip", "condition": "aswap", "videos": 3},
+    {"model": "pure_batch_clip", "condition": "zero_M_input_with_original_native_audio", "videos": 3},
+    {"model": "batch_clip_plus_per_example_mean_rms", "condition": "joint", "videos": 3},
+    {"model": "batch_clip_plus_per_example_mean_rms", "condition": "aswap", "videos": 3},
+    {"model": "batch_clip_plus_per_example_mean_rms", "condition": "zero_M_input_with_original_native_audio", "videos": 3}
+  ],
+  "expected_total_student_videos": 18,
+  "native_music_mode": "ref",
+  "output_audio": "generated",
+  "native_joint_audio_and_video_steps": 50,
+  "native_generation": {"height": 1280, "width": 704, "num_frames": 124, "fps": 24},
+  "live_TC_tokenizer_processor_loaded": false,
+  "aswap_intervention": "Both M waveform input and native reference audio are swapped; not an M-only causal comparison",
+  "zero_M_intervention": "M waveform is zeroed while original real native reference audio is preserved; joint manifest is reused",
+  "student_generation_started": false,
+  "formal_training_complete": false,
+  "musical_quality_accepted": false
+}

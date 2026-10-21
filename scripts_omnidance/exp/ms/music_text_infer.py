@@ -9,7 +9,8 @@ import tempfile
 
 import torch
 
-from music_text_adapter import MusicToH3Text, load_music_text_checkpoint
+from music_text_adapter import (MusicToH3Text, load_music_text_checkpoint, DirectMusicToH3Text,
+                                DIRECT_PROTOCOL, load_direct_music_text_checkpoint)
 
 
 def sha256(path):
@@ -116,6 +117,81 @@ class MusicTextEncodingProxy:
         return self.cache['tail']
 
 
+def _validate_direct_inference_input(data):
+    if not isinstance(data, dict) or set(data) != {'waveform'}:
+        raise ValueError('Direct deployment accepts exact waveform-only input; no context/caption/cache/length')
+    waveform = data['waveform']
+    if (not torch.is_tensor(waveform) or waveform.shape != (2, 162000)
+            or not waveform.is_floating_point() or not torch.isfinite(waveform).all()):
+        raise ValueError('Direct deployment requires finite shared-loader stereo [2,162000] waveform')
+    return waveform
+
+
+def _validate_direct_checkpoint_header(checkpoint):
+    record = torch.load(checkpoint, map_location='cpu', weights_only=True, mmap=True)
+    if (not isinstance(record, dict) or set(record) != {'metadata', 'model'}
+            or not isinstance(record['metadata'], dict) or not isinstance(record['model'], dict)):
+        raise ValueError('Direct deployment requires a complete checkpoint')
+    metadata, state = record['metadata'], record['model']
+    if (type(metadata.get('format_version')) is not int or metadata['format_version'] != 4
+            or metadata.get('state_scope') != 'direct_music_to_h3_text'
+            or metadata.get('protocol') != DIRECT_PROTOCOL or metadata.get('backend') != 'musicfm'
+            or metadata.get('context_policy') != 'forbidden'
+            or {name for name in state if isinstance(name, str) and name.startswith('adapter.')} != {
+                'adapter.projection.weight', 'adapter.projection.bias'}):
+        raise ValueError('Direct deployment requires explicit format4 direct linear tokens, without legacy adapter state')
+
+
+class DirectMusicTextEncodingProxy:
+    def __init__(self, checkpoint, python='/opt/venv_music/bin/python'):
+        self.checkpoint = str(Path(checkpoint).resolve(strict=True))
+        _validate_direct_checkpoint_header(self.checkpoint)
+        self.checkpoint_sha256 = sha256(self.checkpoint)
+        self.python = python
+        self.cache_key = self.cache = None
+        self.calls = 0
+
+    def __call__(self, waveform, context=None):
+        if context is not None:
+            raise ValueError('Direct music deployment forbids external context')
+        _validate_direct_inference_input(dict(waveform=waveform))
+        waveform = waveform.detach().cpu().float().contiguous()
+        key = hashlib.sha256(self.checkpoint_sha256.encode() + waveform.numpy().tobytes()).hexdigest()
+        if key != self.cache_key:
+            with tempfile.TemporaryDirectory(prefix='h3_direct_music_') as directory:
+                input_path, output_path = Path(directory) / 'input.pt', Path(directory) / 'output.pt'
+                torch.save(dict(waveform=waveform), input_path)
+                environment = os.environ.copy()
+                environment.update(HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1', OMP_NUM_THREADS='2')
+                command = [self.python, str(Path(__file__).resolve()), '--direct_tokens',
+                           '--checkpoint', self.checkpoint, '--checkpoint_sha256', self.checkpoint_sha256,
+                           '--input', str(input_path), '--out', str(output_path)]
+                completed = subprocess.run(command, env=environment, capture_output=True, text=True)
+                if completed.returncode:
+                    raise RuntimeError('Direct music inference failed: ' + completed.stderr[-8000:] + completed.stdout[-4000:])
+                data = torch.load(output_path, map_location='cpu', weights_only=True)
+                if not isinstance(data, dict) or set(data) != {
+                        'tail', 'length', 'checkpoint_sha256', 'metadata', 'protocol', 'uses_ground_truth_caption'}:
+                    raise ValueError('Direct worker returned unexpected fields')
+                tail = data['tail']
+                if (data['checkpoint_sha256'] != self.checkpoint_sha256 or data['protocol'] != DIRECT_PROTOCOL
+                        or data['uses_ground_truth_caption'] is not False
+                        or not torch.is_tensor(tail) or tail.ndim != 2 or tail.shape[1] != 5120
+                        or tail.dtype != torch.float32 or type(data['length']) is not int
+                        or data['length'] != len(tail) or data['length'] < 1 or not torch.isfinite(tail).all()
+                        or not isinstance(data['metadata'], dict)
+                        or data['metadata'].get('protocol') != DIRECT_PROTOCOL):
+                    raise ValueError('Invalid deployed direct raw music tokens')
+                self.cache, self.cache_key = data, key
+        self.calls += 1
+        print('[direct music deployment] ' + json.dumps(dict(call=self.calls,
+              checkpoint_sha256=self.checkpoint_sha256, input_sha256=key,
+              tail_shape=list(self.cache['tail'].shape), length=self.cache['length'], protocol=DIRECT_PROTOCOL,
+              uses_ground_truth_caption=False, context_source='none',
+              final_adapter_projection_executed=True)), flush=True)
+        return self.cache['tail']
+
+
 def _no_tc_tail_output(pipe, prompt, keyframes, text_embedding, tail, report):
     if prompt is not None or text_embedding is not None or keyframes:
         raise ValueError('No-TC accepts no text at all, including blank strings, cached text or keyframes')
@@ -136,6 +212,75 @@ def _no_tc_tail_output(pipe, prompt, keyframes, text_embedding, tail, report):
     print('[no tc condition] ' + json.dumps(report, allow_nan=False), flush=True)
     return dict(prompt_embeds=hidden,
                 text_token_tags=torch.ones(len(hidden), dtype=torch.long, device=pipe.device))
+
+
+def direct_student_text_embedder(checkpoint, prefix_record_path):
+    # Keep H3 image/pipeline imports out of the waveform-only music worker.
+    from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
+    from music_text_condition import validate_cached_reference_prefix, tensor_sha256
+
+    class DirectStudentTextEmbedder(MiniMaxH3Unit_PromptEmbedder):
+        def __init__(self):
+            super().__init__()
+            self.onload_model_names = ()
+            self.prefix_path = Path(prefix_record_path).resolve(strict=True)
+            self.prefix_record = torch.load(self.prefix_path, map_location='cpu', weights_only=True)
+            validate_cached_reference_prefix(self.prefix_record)
+            validate_cached_reference_prefix(self.prefix_record,
+                                             image_path=self.prefix_record['metadata']['image_path'])
+            self.prefix_file_sha256 = sha256(self.prefix_path)
+            self.proxy = DirectMusicTextEncodingProxy(checkpoint)
+            self.waveform = None
+
+        def set_waveform(self, waveform):
+            _validate_direct_inference_input(dict(waveform=waveform))
+            self.waveform = waveform
+
+        def process(self, pipe, prompt=None, keyframes=None, ref_blocks=None,
+                    height=None, width=None, text_embedding=None):
+            if prompt is not None or text_embedding is not None or keyframes or self.waveform is None:
+                raise ValueError('Direct condition requires bound music and cached reference P, never caption/text/keyframes')
+            state = vars(pipe)
+            modules = state.get('_modules', {})
+            for name in ('text_encoder', 'processor', 'tokenizer'):
+                if state.get(name) is not None or modules.get(name) is not None:
+                    raise ValueError('Direct deployment requires TC, tokenizer and processor to be None')
+            if not isinstance(ref_blocks, (list, tuple)) or not ref_blocks:
+                raise ValueError('Direct cached P must be bound to actual reference blocks')
+            specs = [dict(kind=block['kind']) for block in ref_blocks]
+            validate_cached_reference_prefix(self.prefix_record, reference_specs=specs)
+            metadata = self.prefix_record['metadata']
+            for block in ref_blocks:
+                if block['kind'] == 'image' and block.get('prepared_image') is not None:
+                    image = block['prepared_image']
+                    if (list(image.size) != metadata['prepared_image_size']
+                            or hashlib.sha256(image.tobytes()).hexdigest() != metadata['prepared_image_sha256']):
+                        raise ValueError('Cached P differs from the current prepared reference image')
+                if block['kind'] == 'image' and block.get('image_path') is not None:
+                    validate_cached_reference_prefix(self.prefix_record, image_path=block['image_path'],
+                                                     reference_specs=specs)
+            tail = self.proxy(self.waveform)
+            if (not torch.is_tensor(tail) or tail.ndim != 2 or tail.shape[1] != 5120
+                    or tail.dtype != torch.float32 or len(tail) < 1 or not torch.isfinite(tail).all()):
+                raise ValueError('Direct condition requires finite FP32 music [actual_tokens,5120] tail')
+            prefix = self.prefix_record['prefix'].to(device=pipe.device)
+            tags = self.prefix_record['prefix_tags'].to(device=pipe.device)
+            hidden = torch.cat((prefix, tail.to(device=pipe.device, dtype=torch.bfloat16)))
+            output_tags = torch.cat((tags, torch.ones(len(tail), dtype=torch.long, device=pipe.device)))
+            print('[direct music condition] ' + json.dumps(dict(
+                kind='direct_music_cached_reference_prefix', protocol=DIRECT_PROTOCOL,
+                checkpoint_sha256=self.proxy.checkpoint_sha256, prefix_path=str(self.prefix_path),
+                prefix_file_sha256=self.prefix_file_sha256, prefix_length=len(prefix),
+                prefix_sha256=metadata['prefix_sha256'], prefix_tags_sha256=metadata['prefix_tags_sha256'],
+                tail_actual_count=len(tail), tail_shape=list(tail.shape),
+                prompt_embeds_shape=list(hidden.shape), prompt_embeds_sha256=tensor_sha256(hidden),
+                text_token_tags_sha256=tensor_sha256(output_tags), text_encoder_loaded=False,
+                processor_loaded=False, tokenizer_loaded=False, text_encoder_calls=0,
+                semantic_text=None, TC=None, uses_ground_truth_caption=False,
+                context_source='none', cached_prefix_is_adapter_input=False)), flush=True)
+            return dict(prompt_embeds=hidden, text_token_tags=output_tags)
+
+    return DirectStudentTextEmbedder()
 
 
 def student_text_embedder(checkpoint, legacy_clip=False, no_text_encoder=False):
@@ -903,7 +1048,187 @@ def no_tc_cpu_audit_main():
     print(json.dumps(dict(event='no_tc_cpu_audit', **report), allow_nan=False), flush=True)
 
 
+def direct_cpu_audit_main():
+    import contextlib
+    import copy
+    import io
+    import sys
+    from types import SimpleNamespace
+    from unittest.mock import patch
+    from PIL import Image
+    from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder, MiniMaxH3Unit_PackedSequenceBuilder
+    from music_text_adapter import _direct_cpu_backbone, save_direct_music_text_checkpoint
+    from music_text_condition import tensor_sha256, validate_cached_reference_prefix, write_new
+
+    parser = argparse.ArgumentParser(description='CPU direct worker and cached-P/no-TC exact-layout fixture')
+    parser.add_argument('--direct_cpu_audit', action='store_true', required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if args.out.exists() or not args.out.parent.is_dir():
+        parser.error('Require a new report and existing parent')
+    torch.manual_seed(31)
+    waveform = torch.linspace(-1, 1, 2 * 162000).reshape(2, 162000)
+    worker_keys, rejected, commands = [], [], []
+    real_loader = load_direct_music_text_checkpoint
+
+    class ForbiddenPipe:
+        def __init__(self):
+            self.device = 'cpu'
+            self.text_encoder = self.processor = self.tokenizer = None
+            self.accesses = 0
+
+        def __getattribute__(self, name):
+            if name in ('text_encoder', 'processor', 'tokenizer', 'load_models_to_device'):
+                state = object.__getattribute__(self, '__dict__')
+                state['accesses'] += 1
+                raise AssertionError('Direct deployment accessed TC: ' + name)
+            return object.__getattribute__(self, name)
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Direct deployment invoked text processing or GPU')
+
+    def fake_subprocess(command, **kwargs):
+        assert '--direct_tokens' in command and '--legacy_clip' not in command
+        commands.append(command)
+        inputs = torch.load(command[command.index('--input') + 1], map_location='cpu', weights_only=True)
+        worker_keys.append(sorted(inputs))
+        with patch.object(sys, 'argv', ['infer'] + command[2:]), contextlib.redirect_stdout(io.StringIO()):
+            main()
+        return subprocess.CompletedProcess(command, 0, '', '')
+
+    logs = io.StringIO()
+    with tempfile.TemporaryDirectory(prefix='h3_direct_infer_cpu_') as directory:
+        parent = Path(directory)
+        checkpoint = parent / 'full_direct.pt'
+        model = DirectMusicToH3Text(_direct_cpu_backbone(), freeze_backbone=False).eval()
+        save_direct_music_text_checkpoint(checkpoint, model)
+        image = Image.new('RGB', (96, 64), color=(40, 90, 150))
+        image_path = parent / 'image.png'
+        image.save(image_path)
+        protocol_path = parent / 'plan.json'
+        protocol_path.write_text(json.dumps(dict(protocol=DIRECT_PROTOCOL, model_weight_content_sha256='a' * 64)))
+        prefix = (torch.arange(3 * 5120, dtype=torch.float32).reshape(3, 5120) / 2048).bfloat16()
+        tags = torch.tensor([0, 1, 0], dtype=torch.long)
+        metadata = dict(protocol=DIRECT_PROTOCOL, kind='cached_reference_prefix', sample_id='cpu_direct',
+            image_path=str(image_path), image_sha256=sha256(image_path), prepared_image_size=list(image.size),
+            prepared_image_sha256=hashlib.sha256(image.tobytes()).hexdigest(),
+            reference_specs=[dict(kind='image'), dict(kind='audio')], prefix_length=len(prefix),
+            prefix_sha256=tensor_sha256(prefix), prefix_tags_sha256=tensor_sha256(tags),
+            source_protocol_path=str(protocol_path), source_protocol_sha256=sha256(protocol_path),
+            model_weight_content_sha256='a' * 64, source_files=[], caption_independent_prefix=True)
+        record = dict(metadata=metadata, prefix=prefix, prefix_tags=tags)
+        validate_cached_reference_prefix(record, image_path=image_path, reference_specs=metadata['reference_specs'])
+        prefix_path = parent / 'prefix.pt'
+        torch.save(record, prefix_path)
+        ref_blocks = [dict(kind='image', prepared_image=image, image_path=str(image_path),
+                           latent_t=1, latent_h=4, latent_w=6, ref_audio_t=0,
+                           visual_clean=torch.zeros(1, 24, 1, 4, 6)),
+                      dict(kind='audio', ref_audio_t=3, audio_clean=torch.zeros(2, 32, 3))]
+        refs_sha = [tensor_sha256(ref_blocks[0]['visual_clean']), tensor_sha256(ref_blocks[1]['audio_clean'])]
+        pipe = ForbiddenPipe()
+        with patch(__name__ + '.load_direct_music_text_checkpoint',
+                   lambda path, expected_backend='musicfm': real_loader(path, backbone=_direct_cpu_backbone(),
+                                                                        expected_backend=expected_backend)), patch(
+                'music_text_adapter.resample_audio32k_to24k', lambda value: value[..., ::2]), patch.object(
+                torch.nn.Module, 'cuda', lambda value, *args, **kwargs: value), patch.object(
+                torch.Tensor, 'cuda', lambda value, *args, **kwargs: value), patch.object(
+                torch.cuda, '_lazy_init', forbidden), patch.object(subprocess, 'run', fake_subprocess), patch.object(
+                MiniMaxH3Unit_PromptEmbedder, 'process', forbidden), patch.object(
+                MiniMaxH3Unit_PromptEmbedder, 'preprocess_ref_blocks', forbidden), contextlib.redirect_stdout(logs):
+            expected_tails, lengths = model.generate(waveform[None])
+            proxy = DirectMusicTextEncodingProxy(checkpoint)
+            first, second = proxy(waveform), proxy(waveform)
+            assert torch.equal(first, expected_tails[0]) and torch.equal(first, second)
+            assert first.dtype == torch.float32 and len(first) == int(lengths[0])
+            assert worker_keys == [['waveform']] and proxy.calls == 2
+            assert set(proxy.cache) == {'tail', 'length', 'checkpoint_sha256', 'metadata', 'protocol', 'uses_ground_truth_caption'}
+            for inputs in (dict(waveform=waveform, context=None), dict(waveform=waveform, caption=''),
+                           dict(waveform=waveform, prefix=prefix), dict(waveform=waveform, length=2),
+                           dict(waveform=torch.ones(1, 162000)), dict(waveform=torch.full((2, 162000), float('nan')))):
+                input_path, output_path = parent / 'bad_input.pt', parent / 'bad_output.pt'
+                torch.save(inputs, input_path)
+                argv = ['infer', '--direct_tokens', '--checkpoint', str(checkpoint),
+                        '--checkpoint_sha256', sha256(checkpoint), '--input', str(input_path), '--out', str(output_path)]
+                with patch.object(sys, 'argv', argv):
+                    try:
+                        main()
+                    except ValueError:
+                        rejected.append('worker:' + ','.join(sorted(inputs)))
+                    else:
+                        raise AssertionError('Direct worker accepted forbidden input')
+                assert not output_path.exists()
+            try:
+                proxy(waveform, context=torch.zeros(5120))
+            except ValueError:
+                rejected.append('proxy:context')
+            else:
+                raise AssertionError('Direct proxy accepted context')
+            embedder = direct_student_text_embedder(checkpoint, prefix_path)
+            assert embedder.onload_model_names == () and embedder.prefix_path == prefix_path
+            embedder.set_waveform(waveform)
+            condition = embedder.process(pipe, ref_blocks=ref_blocks, height=1280, width=704)
+            expected = dict(prompt_embeds=torch.cat((prefix, first.bfloat16())),
+                            text_token_tags=torch.cat((tags, torch.ones(len(first), dtype=torch.long))))
+            assert all(torch.equal(condition[key], expected[key]) for key in condition)
+            for field, value in [('prompt', ''), ('prompt', ' '), ('prompt', 'caption'),
+                                 ('text_embedding', torch.zeros(1, 5120)), ('keyframes', [object()])]:
+                kwargs = dict(ref_blocks=ref_blocks)
+                kwargs[field] = value
+                try:
+                    embedder.process(pipe, **kwargs)
+                except ValueError:
+                    rejected.append('condition:' + field)
+                else:
+                    raise AssertionError('Direct condition accepted text/keyframes')
+            for name, bad_refs in [('reference_order', ref_blocks[::-1]),
+                                   ('prepared_image', [dict(ref_blocks[0], prepared_image=Image.new('RGB', image.size)), ref_blocks[1]]),
+                                   ('image_path', [dict(ref_blocks[0], image_path=str(parent / 'wrong.png')), ref_blocks[1]])]:
+                try:
+                    embedder.process(pipe, ref_blocks=bad_refs)
+                except ValueError:
+                    rejected.append('condition:' + name)
+                else:
+                    raise AssertionError('Direct condition accepted different reference binding')
+            for name in ('text_encoder', 'processor', 'tokenizer'):
+                bad_pipe = SimpleNamespace(device='cpu', **{name: object()})
+                try:
+                    embedder.process(bad_pipe, ref_blocks=ref_blocks)
+                except ValueError:
+                    rejected.append('condition:loaded_' + name)
+                else:
+                    raise AssertionError('Direct condition accepted loaded TC component')
+            video, audio = torch.empty(1, 24, 2, 4, 6), torch.empty(2, 32, 5)
+            builder = MiniMaxH3Unit_PackedSequenceBuilder()
+            actual_packed = builder.process(pipe, video_latents=video, audio_latents=audio,
+                                           ref_blocks=ref_blocks, **condition)['packed']
+            expected_packed = builder.process(pipe, video_latents=video, audio_latents=audio,
+                                             ref_blocks=ref_blocks, **expected)['packed']
+            assert set(actual_packed) == set(expected_packed)
+            assert all(torch.equal(value, expected_packed[key]) if torch.is_tensor(value)
+                       else value == expected_packed[key] for key, value in actual_packed.items())
+            assert pipe.accesses == 0 and worker_keys == [['waveform'], ['waveform']]
+            assert refs_sha == [tensor_sha256(ref_blocks[0]['visual_clean']), tensor_sha256(ref_blocks[1]['audio_clean'])]
+        condition_records = [json.loads(line[len('[direct music condition] '):]) for line in logs.getvalue().splitlines()
+                             if line.startswith('[direct music condition] ')]
+        assert len(condition_records) == 1 and condition_records[0]['TC'] is None
+        report = dict(complete=True, cpu_only=True, protocol=DIRECT_PROTOCOL, gpu_started=False,
+            actual_full_fixture_checkpoint_worker_dispatch=True, exact_waveform_only_worker_inputs=worker_keys,
+            exact_six_field_output_fp32_tail=True, worker_tail_matches_actual_adapter=True,
+            proxy_repeated_waveform_single_worker_cache=True, direct_worker_commands=len(commands),
+            factory_cached_prefix_bf16_and_original_tags_preserved=True,
+            cached_prefix_is_adapter_input=False, tail_count_from_actual_music_frames=True,
+            original_packed_builder_exact=True, independent_native_reference_tensors_unchanged=True,
+            text_encoder_tokenizer_processor_accesses=pipe.accesses, original_prompt_process_calls=0,
+            prepared_reference_image_size_sha_and_order_checked=True, rejected_inputs=rejected,
+            direct_conditions=condition_records, legacy_none_cpu_regression=_music_only_none_cpu_audit(),
+            scope='CPU small-backbone fixture and actual adapter/packed builder only; no real MusicFM/H3 LM/VAE/DiT/GPU/video or quality claim')
+    write_new(args.out, report)
+    print(json.dumps(report, allow_nan=False), flush=True)
+
+
 def main():
+    if '--direct_cpu_audit' in __import__('sys').argv:
+        return direct_cpu_audit_main()
     if '--no_tc_cpu_audit' in __import__('sys').argv:
         return no_tc_cpu_audit_main()
     if '--layout_audit' in __import__('sys').argv:
@@ -914,13 +1239,30 @@ def main():
     parser.add_argument('--input', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--legacy_clip', action='store_true', help='Complete old encoder/32Dadapter/CLIPhead -> one globally scaled token; diagnostic only')
+    parser.add_argument('--direct_tokens', action='store_true', help='Complete format4 MusicFM and FP32 linear tokens; waveform-only input, no TC/context/query/length head')
     args = parser.parse_args()
+    if args.direct_tokens and args.legacy_clip:
+        parser.error('Direct tokens and legacy CLIP are mutually exclusive')
     if args.out.exists() or not args.out.parent.is_dir() or sha256(args.checkpoint) != args.checkpoint_sha256:
         parser.error('Require a new output and the declared unchanged checkpoint SHA')
     data = torch.load(args.input, map_location='cpu', weights_only=True)
     if not isinstance(data, dict) or set(data) not in ({'waveform'}, {'waveform', 'context'}):
         raise ValueError('Inference only accepts exact music-only or legacy context inputs; never caption/length/cache')
-    if args.legacy_clip:
+    if args.direct_tokens:
+        waveform = _validate_direct_inference_input(data)
+        model = load_direct_music_text_checkpoint(args.checkpoint, expected_backend='musicfm')
+        if not isinstance(model, DirectMusicToH3Text):
+            raise ValueError('Direct worker requires the complete format4 MusicFM+linear checkpoint')
+        model = model.cuda().eval()
+        with torch.no_grad():
+            tails, lengths = model.generate(waveform.cuda()[None])
+        tail = tails[0].detach().cpu()
+        if (tail.dtype != torch.float32 or tail.ndim != 2 or tail.shape[1] != 5120
+                or len(tail) < 1 or int(lengths[0]) != len(tail) or not torch.isfinite(tail).all()):
+            raise ValueError('Direct worker produced invalid actual-frame raw tokens')
+        result = dict(tail=tail, length=len(tail), checkpoint_sha256=args.checkpoint_sha256,
+                      metadata=model.checkpoint_metadata, protocol=DIRECT_PROTOCOL, uses_ground_truth_caption=False)
+    elif args.legacy_clip:
         waveform, context = _validate_inference_input(data, 'tc_prefix_context')
         from music_encoder_adapter import load_music_checkpoint
         checkpoint = torch.load(args.checkpoint, map_location='cpu', weights_only=False)
@@ -956,10 +1298,15 @@ def main():
                       context_policy=context_policy)
     with args.out.open('xb') as stream:
         torch.save(result, stream)
-    print(json.dumps(dict(event='deployed_raw_text', tokens=result['predicted_length'],
-                          query_max=result['query_max'], checkpoint_sha256=args.checkpoint_sha256,
-                          legacy_clip_complete_chain=args.legacy_clip,
-                          context_policy=result.get('context_policy', 'tc_prefix_context'))), flush=True)
+    if args.direct_tokens:
+        print(json.dumps(dict(event='deployed_direct_music_tokens', tokens=result['length'],
+                              protocol=DIRECT_PROTOCOL, checkpoint_sha256=args.checkpoint_sha256,
+                              uses_ground_truth_caption=False, context_source='none')), flush=True)
+    else:
+        print(json.dumps(dict(event='deployed_raw_text', tokens=result['predicted_length'],
+                              query_max=result['query_max'], checkpoint_sha256=args.checkpoint_sha256,
+                              legacy_clip_complete_chain=args.legacy_clip,
+                              context_policy=result.get('context_policy', 'tc_prefix_context'))), flush=True)
 
 
 if __name__ == '__main__':

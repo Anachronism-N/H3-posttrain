@@ -697,3 +697,47 @@ MusicFM输出约25Hz×1024声学特征，H3入口要求可变长×5120原文本L
 **训练不足可能成立，不能以1200更新声称收敛。** 本轮每配置batch8／1200更新／9600曝光，1800train约5.33遍；这是完成既定预算，不是充分训练证明。重新读取实际记录：public验证tokenweighted rawMSE227.25325→90.70603；control119.20485→117.64113。最后8条train-probe为90.12681／117.24107，val为90.70603／117.64113；全200教师位置均值baseline的macro5.83669远低于学生macro128.17189／167.78935。这说明当前拟合/音乐区分仍不足，但8条probe不能证明全train不拟合或排除过拟合。训练仅保存初末val与随机batch每10步日志，没有中间多个同集合验证checkpoint来判收敛；不能拿不同batch loss末几步下降证明长训必有收益。
 
 更多干净配乐/动作数据、保留原复杂prompt教师、较充分更新均值得受控验证，但要先固定正确替换范围，不能在已改动多项原条件的路线无限追加step来回答单变量问题。后续更长训练应报告实际独立样本数/总曝光/完整train与val拟合、音乐反事实及固定三case视频，区分只改善平均token回归与真正音乐控舞。当前trainer的last.pt只保存模型，没有optimizer state；从last权重加步数需注明optimizer重置，不能冒称Adam状态无缝续训。具体新预算/节点需在启动前另行明确。
+
+### 2026-10-21 新批准阶段：6000条、按图缓存P、直接音乐tokens与batch CLIP
+
+下述是用户随后批准的新阶段，不重写上面的旧1800实验。用户确定教师prompt仍采用 `Dance style: {genre}. ` 加完整中性化原版MotionScript；genre是**舞蹈风格**，不是音乐风格。用户曾询问rich来源与MS融合，实际只能追溯到OmniDance原始文本及E2/E3包装链，不能确定rich生成模型/指令；本次不混入rich。旧阶段结束不意味着新阶段完成。
+
+#### 固定替换边界与部署协议
+
+- 原生TC针对每张参考图和引用配置离线得到 `[P;y]`。P保留完整Qwen视觉/引用hidden及原tags，不只是固定system文字，不跨图复用。y是**整个用户prompt x**的hidden后缀，不再拆A/D/Z。
+- 离线缓存P和教师y；正式生成不加载/执行TC、tokenizer、processor，不输入空白动作文字。新图仍需在素材准备阶段先处理一次。
+- 学生M只接音乐波形，不接P、图context、教师词数或caption。实际在线MusicFM dense `[B,2,T,1024]` 按声道优先展平为 `[B,2T,1024]`，单个可训练 `Linear(1024,5120,bias=True)` 直接输出raw5120。无query、qmax、length head、PCA、32D瓶颈或可丢弃CLIP head。
+- 有效音乐feature mask决定长度；左右声道padding可能形成holes，部署按mask gather有效行，不能简单截前L行。实际固定5.0625秒探针输出254行，不要求与教师词数相同。
+- 下游只拼 `cached_P + M(music)`，P保原tags，音乐后缀text-tag为1。L改变带来的packed后续起点改变属于此次文本条件替换的明确变化，不能声称未知教师caption的全部RoPE逐值不变。
+- 保留原生真实reference音乐、独立图/音频VAE和联合音视频采样。默认 `music_mode=ref`、输出实际生成音轨；retake和原曲mux必须显式另标，不能偷偷继续旧静音/只step视频的sampler。零M/换曲只作诊断，不删除原生音乐入口。
+
+#### 数据、loss与收敛计划
+
+- 从合格MS全集重新选6000条多样train、500条来源组独立val。排除旧val200及固定三case原/换曲相关组，合并原视频、exact/疑似音频重复、相同中性caption来源组；按genre、speed、travel、turn、arm/leg focus等现有轻量指标分层。近重复组不等于已证明独立歌曲，缺失来源必须单列。不足6500不重复凑数、不静默降门槛。
+- 同公开MusicFM/Linear初始化，两组均真实训练316,343,296个dense参数及5,248,000个Linear参数；FP32，骨干eval固定BN/dropout但保梯度。冻结H3，不加DiT/FM/pose/节拍loss。
+- 每个音乐配对每步只做一次M前向。actual raw有效tokens masked mean与教师完整y mean使用固定train-only mean/std、L2作为loss读出；部署raw不归一化。全实际global batch双向InfoNCE、temperature0.07，同来源组假负例mask。梯度累积不扩大CLIP负例池。
+- A：纯batch CLIP。B：同CLIP加每样本5120均值误差/固定train std，以及每样本中心化全token/channel标量RMS的log比例平方，两项初始权重各1。不是全batch RMS、逐channel log-std或固定池RMS目标。这些约束仍不保证协方差、token顺序和节拍对齐。
+- 预期4rank×16真实global64，每epoch完整6000尾批48条，各rank12，不drop/重复。GPU不足时两组共同降低真实batch并明确实际负例数；不伪称global64。
+- 每epoch固定500候选验证CLIP、双向R@1/5/10、raw moments和非塌缩；固定64条train probe只能诊断子集，不能冒充全train评估。
+- 最少20完整epoch，固定验证CLIP连续8次相对改善不足0.5%后LR×0.1；第二平台还须R@1不低于第一平台锚值减0.01且finite/noncollapsed。初始cap50，未满足就标`convergence_unconfirmed`。操作性表示收敛不等于视频成功。当前scheduler各配置独立判断平台，实际LR/停止epoch必须记录；不能预先宣称两组一定同epoch收敛或同步降LR。
+- 保存完整模型、Adam、scheduler、各rank Python/Torch/CUDA RNG、epoch/cursor、sampler、history与源指纹，可恢复。与旧1800只存模型checkpoint的协议不同。
+
+#### 本阶段已验证事实（截至本节写入）
+
+1. 正式CPU证据仅使用 `results/ms_20261020/direct_music_tokens_adapter_cpu_v1.json`、`direct_music_tokens_infer_cpu_v1.json`、`direct_music_clip_training_cpu_v1.json`。根results中的同名副本不删除、不作为正式证据。adapter/infer报告为CPU fixture，不包含真实MusicFM权重/H3视频验收。
+2. trainer CPU gloo global64/7/1的可微gather+DDP梯度最大误差不超过1.9e-9；真实行/通信padding隔离、source组mask、每sample矩不抵消、完整Adam/RNG恢复及6k尾批覆盖通过。第一平台R@1=.20、第二平台.18拒收敛、.19边界接受、塌缩拒绝。训练源码SHA为 `4e11b5daa6102994b7bbd43ac597873600f66ec36af4f22fedf4e40ea6dd4143`。
+3. 真实GPU公开MusicFM+Linear检查已完成：batch16，400个dense张量/316,343,296参数、2个Linear张量/5,248,000参数都有finite梯度；peak allocated 16,469,304,832 bytes（约15.34GiB）。完整format4零更新初始化重载输出逐值一致。报告 `results/ms_20261020/music_direct_public_gpu_probe_v1.json`；该检查只做squared-output scope/memory probe的一次Adam更新，**不是CLIP能力训练**，保存初始化在更新前。
+4. 三固定case真实原生TC缓存已完成并独立校验：`wJPptuhclZmKAEWs`、`wJPrpFsThWAcBQIw`、`wJQTclrlOLEYYfTB`。三条P长度均7437，教师y长度分别228/199/323；同实际TC权重内容SHA `3f187f9508c62907301064c8ddc3c9abe74a962e723c25e95d5e5c662549e9b9`。每条实际LM前向、同shape替换整prompt标点的P独立性、P/y拆拼raw/tags一致、文件/张量SHA及prepared图验证通过。路径为 `diff/logs_omnidance/exp/MS/music_direct_eval3_cache_v1_s{0,1,2}`。不重复GPU前向，不把缓存成功当原生DiT预测/视频质量通过。
+5. 真实独立GPU音乐worker验收已通过：完整format4重载、exact波形单输入与六字段输出、FP32 `[254,5120]` 与主进程逐值一致，无context/caption。报告 `results/ms_20261020/music_direct_worker_gpu_probe_v1.json`，不是CLIP训练或H3视频验收。两正式训练节点19.69/17.70已得到同SHA的本地 `/tmp/music_direct_public_init_v1.pt`，严格hostkey校验及内容SHA验证通过；共享目录的已有同名文件仍在独立校验，不覆盖不凭大小信任。
+6. 6000+500唯一v1选择实际结束为失败：11908pool、263350已知source IDs，仅4715联合独立代表，小于6500；7015条被`invalid_paired_window`拒绝，18条pose有效率低于.8（拒绝原因可重叠），与历史holdout相关218条排除。v1仅发布 `music_direct6k_v1/selection_report.json`，无caps/split/references，不能启动教师缓存。窄查三条被拒实际样本发现源`duration_seconds=5.187988`，但自然窗口仍81帧/16fps/无padding；用源媒体时长上界检查5.0625秒片段是字段语义错误。修复只移除该错误source duration比较，继续锁source_fps16、natural窗口81、sourceframe足够、零padding、704×1280及原质量/pose/组隔离；保v1失败记录，新v2必须独立通过实际选择才可上缓存，不能预称已有6000。
+7. 四rank×16真实CLIP/NCCL准入v3已完成，用已有三条真实配对重复组成64计算行，只检验通信/显存/梯度/Adam，两loss配置各同零更新init。报告 `results/ms_20261020/music_direct_ddp_gpu_probe_v3.json`：全部400dense与2Linear参数张量非零finite梯度、BN/buffer固定、adapter前64权重跨rank逐值一致、peak allocated 17,663,881,728 bytes（约16.45GiB）；两loss四rank各自一致。仅3独立配对、同来源负例mask、统计只来自三教师，**不是64独立负例、正式6000训练或能力证明**。v1检查命令把字符串传给只收Path的SHA API失败，v2重组shell引号只执行guard，exit0没有GPU报告，不作为完成证据；保两日志，v3修正实际命令并独立读取报告通过。该报告不证明6500教师缓存、两配置正式CLIP、收敛或原生视频能力。代理general-purpose-2/3曾因上游empty-stream中断，已落盘代码/报告分别核验；不以中断代理消息替代实际完成证据。
+8. 真实三case缓存的producer/consumer联调已完成，不再只依赖自拟fixture：`diff/logs_omnidance/exp/MS/music_direct_eval3_cache_audit_v1.json` SHA `6141f6b02230852b04e58ea56baca7e1d083eef2bfb38a50af88fca073721360`。消费者核实际全target/prefix文件SHA、BF16 y、含dtype/shape/bytes的tensor SHA、真实本地tokenizer生成的source IDs及nested plan/finished绑定；不反序列化P，train=[]/val3、statistics=null、trainable=false。正式入口仍要求6000/500/六完整shard，并显式传`--tokenizer_root`；不要求旧producer拥有selection_report/tokenizer_root。pipeline SHA `ffa66b2c12e3a0cc404a2b95cadc71048f7926cd46f68b26e98f7ef59177b662`。主线程之前确实在producer增加了optional selection_report和tokenizer_root metadata，当前cache源码SHA `c097078ef17fe86d79eaf1fc9f61ea8e05e2bcaeefa13426f097c0c0865b2a38`；旧三case产物保留其原source SHA `3ba733...`，没有改写或重新缓存。旧SHA断言失败是快照变更，不回退代码或篡改历史证据。
+9. 原生direct生成已修复真实音乐加载为`librosa.load(sr=pipe.audio_vae.sample_rate, mono=False, duration=num_frames/24)`，与E3原生32k路径一致；学生独立调用`load_audio(stem,audio_root=parent)`取waveform。只加载DiT和两个VAE、不加载TC/tokenizer/processor，原native joint pipe保留。限定及整体`git diff --check`、源码SHA/AST与已有joint generation manifest SHA均已由主线程独立通过。最新manager SHA `96abfa40cb20055f481f97651cf78bd149ec41aac07430997266eefe6ddae0c0`；`direct_cached_prefix_native_cpu_v3.json` SHA `871605977d5c655ac4e29da38a4b38e42cbe21c7e3efad132e1f59d61c94e1e4`只是fake-pipe/真实loader CPU回归，不代表实际H3 GPU通过。三case GPU原生恒等验收已安排19.69/17.70/19.213各GPU6，输出`H3AR/val_music_direct_cached_teacher_identity_v1`；仅计划/启动不计完成。
+10. 修正窗口语义后的唯一选择v2任务`M0QUFr`已实际exit0，`music_direct6k_v2`发布完整6000train/500val：11908pool→10979联合独立代表；6500组唯一、train/val隔离、caps/refs/split IDs一致，6500实际图/音频/meta/MS资产核验完成。主线程独立核四输出SHA：caps `7b1c9d88b8f01c921ab3c03226ccec67eb3373bf414b7dd1a5634d15dddf2b42`；split `a3a9cd8211b8dcdac8e688ea845bcf0f5e07262c48c663a918f97b880ef5c2c6`；references `42055258822f7ab0554b0d57fe1c94ca2851ca4653d5a312467638c9633291e2`；selection_report `03c96415c3d3692d2c09d1032ac0ed420767f2b705a22c33c232719a2b95caca`。无重复凑数或降低质量/pose门槛，保留v1失败报告。代理general-purpose-1完成产物交付后也发生上游empty-stream；已独立核验产物保留，后续由主线程接管。
+11. 完整六分片缓存现已安排，分片数量1084/1084/1083/1083/1083/1083、每片train1000；前三节点GPU5避开仍运行的GPU6教师恒等验收，第四节点GPU0、其余两节点GPU6。首轮`AGYrjW`六节点准入通过，但错误使用`/opt/venv_music`，全部在导入缺少imageio时exit1、未创建cache输出；失败管理日志`MS/music_direct6k_v2_cache_launch_v1`完整保留。已CPU实测`/opt/venv_h3`可加载实际缓存入口，改为该现有环境恢复，handle `sF0F73`、新管理日志`MS/music_direct6k_v2_cache_launch_v2`；缓存输出仍为未创建过的`MS/music_direct6k_v2_cache_s{0..5}`，不覆盖任何产物、不安装依赖、不改cache冻结源码。准入只允许明确授权节点/精确自身holder，实际退出和完整finished文件才算缓存完成。按三case实际P文件尺寸及全caption分词，预计P约461.41GiB、y约25.72GiB，总约487.13GiB加开销，几何/token长度差异会改变实际大小；共享文件系统约216TiB空闲不等于已确认用户quota。6500教师缓存、两配置正式CLIP、实际收敛、新学生视频/人评与本阶段GitHub发布仍未完成。
+
+#### 资源与最终验收
+
+仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。
+
+下一验收依次为：真实cache producer/consumer字段一致，完整4卡forward/backward/Adam与实际global64，原生教师同y回填raw/tags/packed/首步音视频预测，保native音乐的两学生原/换/零M固定三case共18条，完整音画及来源审核与连续舞蹈人评分开。最后发布代码、方案、真实结果和正负结论并核远端commit；不上传权重、Adam大checkpoint、视频或秘密。

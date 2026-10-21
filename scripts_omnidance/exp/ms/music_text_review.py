@@ -404,11 +404,72 @@ def pure_students_review(args, base):
                           new_videos=18, musical_quality_accepted=False, manifest=str(args.out))), flush=True)
 
 
+def direct_native_review(args, base):
+    from music_generation_validate import sha256
+    from music_text_diagnostic import direct_native_collect
+    if args.direct_native_report is None or not args.direct_native_report.is_file():
+        raise ValueError('Direct native review requires an existing independent three-video report')
+    report_path, report_sha = args.direct_native_report, sha256(args.direct_native_report)
+    report = json.loads(report_path.read_text())
+    actual = direct_native_collect(report['directory'], decode=False)
+    if (report.get('complete') is not True or report.get('expected') != 3 or report.get('passed') != 3
+            or report.get('complete_selected_audio_video_decode') is not True
+            or report.get('musical_quality_accepted') is not False
+            or report.get('cached_teacher_live_TC_equivalence_tested') is not False
+            or report.get('diagnostic_sha256') != sha256(Path(__file__).with_name('music_text_diagnostic.py'))
+            or any(report.get(key) != actual[key] for key in ('protocol', 'directory', 'plan', 'cases', 'source_artifacts'))
+            or len(report.get('rows', [])) != 3):
+        raise ValueError('Direct native review source/protocol/media audit is incomplete or stale')
+    for observed, row in zip(actual['rows'], report['rows']):
+        if any(row.get(key) != value for key, value in observed.items()) or row.get('integrity', {}).get('full_video_audio_decode') is not True:
+            raise ValueError('Direct native reviewed input/video/log differs from final full media decode')
+    directory = Path(report['directory'])
+    exp = Path(base['exp']).resolve()
+    try:
+        group = directory.relative_to(exp).as_posix()
+    except ValueError:
+        raise ValueError('Direct native review video directory must be inside the existing experiment root')
+    if directory.parent != exp / 'H3AR' or group in {model['id'] for model in base['models']}:
+        raise ValueError('Direct native review requires a new H3AR model group')
+    if set(base['samples']) != {case['sample_id'] for case in report['cases']} or len(base['samples']) != 3:
+        raise ValueError('Direct native review must preserve the original fixed three people')
+    plan = report['plan']
+    teacher, zero = plan['teacher_identity'], plan['student_zero_input']
+    label = '原生P+y教师identity' if teacher else 'MusicFM直接hidden' + ('·zero音乐' if zero else '')
+    audio_label = '原生joint生成音轨保留' if plan['output_audio'] == 'generated' else '显式原曲mux对照；非原生生成音轨'
+    description = ('完整缓存P与原Ptags+原教师raw y；仅offline paired同输入identity诊断，非音乐预测/非live TC实测' if teacher else
+                   '完整缓存P与原Ptags+MusicFM原时间序列linear→raw5120；无query/池化，音乐encoder不读P/teacher/caption')
+    description += '；TC/tokenizer/processor完全不加载不调用；真实参考音乐和独立视觉/音频VAE保留；original joint音视频各50step；' + audio_label
+    description += '；704×1280/124帧/24fps，完整音画解码仅完整性，人评画质与音乐收益未验收，旧模型与评分不迁移'
+    entries = {}
+    for case in report['cases']:
+        entries[case['sample_id']] = [Path(next(row['video_path'] for row in report['rows'] if row['sample_id'] == case['sample_id'])).name]
+        if Path(case['audio_path']).stem != case['sample_id']:
+            entries[case['sample_id']].append(Path(case['audio_path']).stem)
+    manifest = copy.deepcopy(base)
+    manifest['models'].append(dict(id=group, label=label, group='H3AR', desc=description,
+        conds={report['cases'][0]['condition']: entries}, metrics={}, teacher_only_diagnostic=teacher,
+        music_prediction=not teacher, no_text_encoder=True, full_cached_prefix_preserved=True,
+        original_cached_prefix_tags_preserved=True, native_audio='real_reference_unmodified',
+        output_audio=plan['output_audio'], musical_quality_accepted=False,
+        direct_native_report=str(report_path), direct_native_report_sha256=report_sha))
+    manifest['presets'] = [dict(name='【原生真实音乐·人评待定】' + label + '；' + audio_label,
+        cond=report['cases'][0]['condition'], view='models', models=[group])] + manifest['presets']
+    manifest['built'] = time.strftime('%Y-%m-%d %H:%M:%S')
+    manifest['scope'] += ' NEW direct cached-prefix native joint video/audio group appended after independent three-case source/media audit; no musical/visual acceptance, old models and scores untouched.'
+    if sha256(report_path) != report_sha or manifest['samples'] != base['samples'] or manifest['models'][:-1] != base['models']:
+        raise ValueError('Direct native review changed source report or previous samples/models')
+    atomic_write_new(args.out, manifest)
+    print(json.dumps(dict(complete=True, new_videos=3, musical_quality_accepted=False, manifest=str(args.out))), flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--base_manifest', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--direct_native_only', action='store_true', help='Append one independently audited native real-audio/full-P three-case group')
+    parser.add_argument('--direct_native_report', type=Path)
     mode.add_argument('--trained_only', action='store_true', help='Append completed raw-token and zero-music model to the existing text review')
     mode.add_argument('--diagnostic_only', action='store_true', help='Append unchanged native-H CLIP candidate and zero-input diagnostic; keep quality gate false')
     mode.add_argument('--online_only', action='store_true', help='Append completed online A/B and their zero-input controls')
@@ -436,7 +497,11 @@ def main():
         parser.error('--pure_teacher_report is only valid with --pure_teacher_only')
     if args.no_tc_nce_weight == 0 and not args.no_tc_students:
         parser.error('--no_tc_nce_weight 0 requires the explicit no_tc_students mode')
+    if args.direct_native_report is not None and not args.direct_native_only:
+        parser.error('--direct_native_report requires --direct_native_only')
     base = json.loads(args.base_manifest.read_text())
+    if args.direct_native_only:
+        return direct_native_review(args, base)
     if args.pure_students:
         return pure_students_review(args, base)
     if args.pure_teacher_only:

@@ -1,0 +1,28 @@
+{
+  "complete": true,
+  "actual_public_musicfm": true,
+  "actual_independent_gpu_worker": true,
+  "checkpoint_sha256": "fa7e5ee1ea2d080aa38530ea91ccc29e81f173773618e6c944a3e442618f304e",
+  "waveform_only": true,
+  "worker_output_keys": [
+    "checkpoint_sha256",
+    "length",
+    "metadata",
+    "protocol",
+    "tail",
+    "uses_ground_truth_caption"
+  ],
+  "raw_shape": [
+    254,
+    5120
+  ],
+  "raw_dtype": "torch.float32",
+  "worker_full_model_reload_output_exact": true,
+  "context_used": false,
+  "teacher_caption_used": false,
+  "source_sha256": {
+    "music_text_adapter.py": "7340997eb615753c6df252c9ef0e18b8e2ddfe4c925cbcc86feaef4d45b03c10",
+    "music_text_infer.py": "f0e53620cd6976ccd2794ce3a970985cdda059f0d9c5ce3bc9149d54e0f47553"
+  },
+  "scope": "One actual waveform deployment parity, not CLIP training or H3 video acceptance"
+}

@@ -412,6 +412,52 @@ def bind_pure_text_cases(cache_dir, exp_root, out):
     return report
 
 
+DIRECT_PREFIX_PROTOCOL = 'musicfm_direct_tokens_cached_prefix_v1'
+
+
+def validate_cached_reference_prefix(record, image_path=None, reference_specs=None):
+    if not isinstance(record, dict) or set(record) != {'metadata', 'prefix', 'prefix_tags'}:
+        raise ValueError('Cached reference prefix requires exactly metadata/prefix/prefix_tags')
+    metadata, prefix, tags = record['metadata'], record['prefix'], record['prefix_tags']
+    if (not isinstance(metadata, dict) or metadata.get('protocol') != DIRECT_PREFIX_PROTOCOL
+            or metadata.get('kind') != 'cached_reference_prefix'
+            or metadata.get('caption_independent_prefix') is not True
+            or not torch.is_tensor(prefix) or prefix.dtype != torch.bfloat16
+            or prefix.ndim != 2 or prefix.shape[1] != 5120 or prefix.shape[0] < 1
+            or not torch.isfinite(prefix).all() or not torch.is_tensor(tags)
+            or tags.dtype != torch.long or tags.shape != (len(prefix),)
+            or not torch.all((tags == 0) | (tags == 1))
+            or type(metadata.get('prefix_length')) is not int or metadata['prefix_length'] != len(prefix)
+            or metadata.get('prefix_sha256') != tensor_sha256(prefix)
+            or metadata.get('prefix_tags_sha256') != tensor_sha256(tags)
+            or any(key in metadata for key in ('prompt', 'teacher_prompt', 'caption', 'prefix_context'))):
+        raise ValueError('Invalid native cached reference prefix or tensor identities')
+    for key in ('image_sha256', 'prepared_image_sha256', 'source_protocol_sha256', 'model_weight_content_sha256'):
+        value = metadata.get(key)
+        if not isinstance(value, str) or len(value) != 64 or any(char not in '0123456789abcdef' for char in value):
+            raise ValueError('Invalid cached prefix source SHA: ' + key)
+    size = metadata.get('prepared_image_size')
+    if not isinstance(size, list) or len(size) != 2 or any(type(value) is not int or value < 1 for value in size):
+        raise ValueError('Invalid cached prefix prepared reference size')
+    specs = metadata.get('reference_specs')
+    if specs != [{'kind': 'image'}, {'kind': 'audio'}]:
+        raise ValueError('This direct protocol requires the original image/audio reference order')
+    if reference_specs is not None and specs != reference_specs:
+        raise ValueError('Cached prefix reference order differs from generation')
+    if image_path is not None:
+        path = Path(image_path)
+        if path.resolve() != Path(metadata.get('image_path', '')).resolve() or file_sha256(path) != metadata['image_sha256']:
+            raise ValueError('Cached prefix belongs to another reference image')
+    protocol_path = Path(metadata['source_protocol_path'])
+    if file_sha256(protocol_path) != metadata['source_protocol_sha256']:
+        raise ValueError('Cached prefix source protocol changed')
+    protocol = json.loads(protocol_path.read_text())
+    if (protocol.get('protocol') != DIRECT_PREFIX_PROTOCOL
+            or protocol.get('model_weight_content_sha256') != metadata['model_weight_content_sha256']):
+        raise ValueError('Cached prefix model/protocol binding differs')
+    return metadata
+
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)

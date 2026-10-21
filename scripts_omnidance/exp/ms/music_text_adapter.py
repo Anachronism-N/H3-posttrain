@@ -24,6 +24,9 @@ PREPROCESSING = {
 BACKENDS = {'muq', 'musicfm', 'mert'}
 ONLINE_PREPROCESSING = dict(PREPROCESSING, dense_quantization='none_fp32_online_no_feature_cache')
 DENSE_PARAMETER_SCOPE = ('model.conv', 'model.conformer.layer_norm', 'model.conformer.layers')
+DIRECT_PROTOCOL = 'musicfm_direct_tokens_cached_prefix_v1'
+DIRECT_PREPROCESSING = dict(ONLINE_PREPROCESSING, position_encoding='none',
+                            token_order='channel_major_flatten_1_2')
 
 
 def _musicfm_dense_modules(backbone):
@@ -254,6 +257,32 @@ class MusicTextAdapter(nn.Module):
         return truncate_predicted_tokens(raw_tokens, log_length, self.qmax)
 
 
+class DirectMusicTokenAdapter(nn.Module):
+    """One raw FP32 token per MusicFM stereo frame, in channel-major order."""
+    feature_dim = 1024
+    raw_dim = 5120
+
+    def __init__(self):
+        super().__init__()
+        self.projection = nn.Linear(self.feature_dim, self.raw_dim, bias=True, dtype=torch.float32)
+
+    def forward(self, features, feature_lengths=None):
+        _finite(features, 'features')
+        if (features.ndim != 4 or features.shape[0] < 1 or features.shape[1] != 2
+                or features.shape[2] < 1 or features.shape[3] != self.feature_dim
+                or not features.is_floating_point()):
+            raise ValueError('Direct adapter requires nonempty floating-point [B,2,T,1024] features')
+        if features.device != self.projection.weight.device:
+            raise ValueError('Direct features and adapter must share a device')
+        if any(parameter.dtype != torch.float32 for parameter in self.parameters()):
+            raise ValueError('Direct adapter parameters must remain FP32')
+        valid_mask = _feature_mask(features, feature_lengths).flatten(1, 2)
+        with torch.autocast(device_type=features.device.type, enabled=False):
+            raw_tokens = self.projection(features.float().flatten(1, 2))
+        _finite(raw_tokens, 'direct raw_tokens')
+        return raw_tokens, valid_mask
+
+
 def resample_audio32k_to24k(waveform):
     """Shared post-load_audio32k path for training and deployment, without normalization."""
     _finite(waveform, 'waveform')
@@ -362,6 +391,45 @@ class MusicToH3Text(nn.Module):
         valid_mask = torch.arange(self.adapter.qmax, device=raw_tokens.device)[None] < lengths[:, None]
         return dict(raw_tokens=raw_tokens, log_length=log_length, lengths=lengths,
                     valid_mask=valid_mask, tails=tails)
+
+    @torch.no_grad()
+    def generate(self, waveform, context=None, waveform_lengths=None):
+        if self.training:
+            raise RuntimeError('Call eval() before generation')
+        condition = self.student_condition(waveform, context, waveform_lengths)
+        return condition['tails'], condition['lengths']
+
+
+class DirectMusicToH3Text(MusicToH3Text):
+    """Reuse only online dense extraction/scope control, not the legacy query adapter."""
+
+    def __init__(self, backbone, adapter=None, freeze_backbone=True):
+        # The parent constructor intentionally enforces the legacy adapter type.
+        nn.Module.__init__(self)
+        adapter = DirectMusicTokenAdapter() if adapter is None else adapter
+        if not isinstance(adapter, DirectMusicTokenAdapter):
+            raise ValueError('Direct wrapper requires DirectMusicTokenAdapter')
+        if (backbone.hidden_size != 1024 or backbone.sample_rate != 24000
+                or backbone.backend != 'musicfm' or type(freeze_backbone) is not bool):
+            raise ValueError('Direct wrapper requires a 24kHz, 1024-dimensional MusicFM backbone and boolean freeze scope')
+        self.backbone, self.adapter = backbone, adapter
+        self.freeze_backbone = freeze_backbone
+        self.online_training = True
+        self.configure_online_training(not freeze_backbone)
+
+    def forward(self, waveform, waveform_lengths=None):
+        features, feature_lengths = self.dense_features(waveform, waveform_lengths)
+        with self._online_precision_context(features.device):
+            return self.adapter(features, feature_lengths=feature_lengths)
+
+    def student_condition(self, waveform, context=None, waveform_lengths=None):
+        if context is not None:
+            raise ValueError('Direct music tokens forbid context, captions and cached TC context')
+        raw_tokens, valid_mask = self(waveform, waveform_lengths=waveform_lengths)
+        # Stereo channel-major padding has holes: truncating a prefix is incorrect.
+        tails = [tokens[mask] for tokens, mask in zip(raw_tokens, valid_mask)]
+        lengths = valid_mask.sum(1)
+        return dict(raw_tokens=raw_tokens, valid_mask=valid_mask, tails=tails, lengths=lengths)
 
     @torch.no_grad()
     def generate(self, waveform, context=None, waveform_lengths=None):
@@ -589,8 +657,113 @@ def save_music_text_checkpoint(path, model, backend=None):
         torch.save({'metadata': metadata, 'model': state}, stream)
 
 
+def _direct_checkpoint_metadata(model):
+    if not isinstance(model, DirectMusicToH3Text) or not model.online_training:
+        raise ValueError('Direct checkpoint requires the complete online DirectMusicToH3Text wrapper')
+    dense_ids = {id(parameter) for module in _musicfm_dense_modules(model.backbone)
+                 for parameter in module.parameters()}
+    expected_names = sorted(name for name, parameter in model.backbone.named_parameters()
+                            if id(parameter) in dense_ids and not model.freeze_backbone)
+    actual_names = sorted(name for name, parameter in model.backbone.named_parameters() if parameter.requires_grad)
+    if actual_names != expected_names or not all(parameter.requires_grad for parameter in model.adapter.parameters()):
+        raise ValueError('Direct checkpoint requires the exact dense MusicFM/linear adapter trainable scope')
+    if any(module.training for module in model.backbone.modules()):
+        raise ValueError('Direct checkpoint backbone BN/stochastic modules must be in eval mode')
+    model._online_precision_context(model.adapter.projection.weight.device)
+    state_names = set(model.state_dict())
+    return dict(format_version=4, interface_type=INTERFACE_TYPE,
+        state_scope='direct_music_to_h3_text', protocol=DIRECT_PROTOCOL, backend='musicfm',
+        feature_dim=1024, raw_dim=5120, input_layout='B_2_T_1024',
+        token_order='channel_major_flatten_1_2', adapter='linear_1024_5120_bias',
+        output_normalization='none_raw_hidden', context_policy='forbidden',
+        token_count='sum_actual_feature_valid_mask', tail_selection='gather_valid_mask_not_prefix',
+        preprocessing=dict(DIRECT_PREPROCESSING), freeze_backbone=model.freeze_backbone,
+        backbone_metadata=model.backbone.metadata(), online_training=dict(
+            train_backbone=not model.freeze_backbone,
+            dense_parameter_scope=list(DENSE_PARAMETER_SCOPE),
+            trainable_backbone_parameters=actual_names, adapter_scope='all_linear_weight_and_bias',
+            backbone_mode='eval_with_gradients_when_trainable', bn_running_statistics='fixed',
+            stochastic_layers='disabled_by_backbone_eval_including_dropout_and_layerdrop',
+            parameter_dtype='float32', floating_buffer_dtype='float32', dense_feature_dtype='float32',
+            autocast='disabled', feature_cache='forbidden',
+            buffer_policy='all_persistent_state_dict_buffers',
+            persistent_buffers=sorted(name for name, _ in model.named_buffers() if name in state_names),
+            backbone_normalization=_musicfm_normalization(model.backbone.model.stat)))
+
+
+def save_direct_music_text_checkpoint(path, model):
+    path = Path(path)
+    if not path.parent.is_dir():
+        raise FileNotFoundError(path.parent)
+    metadata = _direct_checkpoint_metadata(model)
+    state = {name: value.detach().cpu().clone() for name, value in model.state_dict().items()}
+    for name, value in state.items():
+        _finite(value, 'direct checkpoint weight ' + name)
+    with path.open('xb') as stream:
+        torch.save(dict(metadata=metadata, model=state), stream)
+
+
+def load_direct_music_text_checkpoint(path, backbone=None, expected_backend='musicfm'):
+    checkpoint = torch.load(path, map_location='cpu', weights_only=True)
+    if not isinstance(checkpoint, dict) or set(checkpoint) != {'metadata', 'model'}:
+        raise ValueError('Direct checkpoint requires exact metadata/model fields')
+    metadata, state = checkpoint['metadata'], checkpoint['model']
+    if not isinstance(metadata, dict) or not isinstance(state, dict):
+        raise ValueError('Direct metadata/model must be dictionaries')
+    for name, expected in dict(format_version=4, state_scope='direct_music_to_h3_text',
+                               protocol=DIRECT_PROTOCOL, backend='musicfm').items():
+        _validate_metadata(metadata.get(name), expected, 'metadata.' + name)
+    if expected_backend is not None and expected_backend != 'musicfm':
+        raise ValueError('Direct checkpoint backend does not match deployment')
+    online, bone_meta = metadata.get('online_training'), metadata.get('backbone_metadata')
+    if (type(metadata.get('freeze_backbone')) is not bool or not isinstance(online, dict)
+            or type(online.get('train_backbone')) is not bool
+            or online['train_backbone'] == metadata['freeze_backbone']):
+        raise ValueError('Direct checkpoint requires explicit consistent online trainable scope')
+    if (not isinstance(bone_meta, dict) or bone_meta.get('backend') != 'musicfm'
+            or type(bone_meta.get('sample_rate')) is not int or bone_meta['sample_rate'] != 24000
+            or type(bone_meta.get('hidden_size')) is not int or bone_meta['hidden_size'] != 1024
+            or type(bone_meta.get('model_path')) is not str or not bone_meta['model_path']):
+        raise ValueError('Direct checkpoint requires complete MusicFM backbone metadata')
+    normalization = _musicfm_normalization(online.get('backbone_normalization'))
+    _validate_metadata(online['backbone_normalization'], normalization,
+                       'metadata.online_training.backbone_normalization')
+    for name, value in state.items():
+        if type(name) is not str:
+            raise ValueError('Direct checkpoint state names must be strings')
+        _finite(value, 'direct checkpoint weight ' + name)
+    if backbone is None:
+        if __package__:
+            from .music_encoder_adapter import DenseMusicEncoder
+        else:
+            from music_encoder_adapter import DenseMusicEncoder
+        backbone = DenseMusicEncoder('musicfm', bone_meta['model_path'])
+    model = DirectMusicToH3Text(backbone, freeze_backbone=metadata['freeze_backbone'])
+    _musicfm_normalization(backbone.model.stat)
+    backbone.model.stat.update(normalization)
+    _validate_metadata(metadata, _direct_checkpoint_metadata(model))
+    expected_state = model.state_dict()
+    if set(state) != set(expected_state):
+        raise ValueError('Direct checkpoint must contain every backbone/adapter parameter and persistent buffer')
+    for name, value in state.items():
+        if value.shape != expected_state[name].shape or value.dtype != expected_state[name].dtype:
+            raise ValueError('Direct checkpoint state shape/dtype violates the FP32 protocol: ' + name)
+    model.load_state_dict(state, strict=True)
+    model.float().eval()
+    for name, value in model.state_dict().items():
+        _finite(value, 'loaded direct weight ' + name)
+    model.checkpoint_metadata = metadata
+    return model
+
+
 def load_music_text_checkpoint(path, backbone=None, expected_backend=None, expected_query_max=None):
     checkpoint = torch.load(path, map_location='cpu', weights_only=True)
+    if (isinstance(checkpoint, dict) and isinstance(checkpoint.get('metadata'), dict)
+            and type(checkpoint['metadata'].get('format_version')) is int
+            and checkpoint['metadata']['format_version'] == 4):
+        if expected_query_max is not None:
+            raise ValueError('Direct checkpoints have no query_max')
+        return load_direct_music_text_checkpoint(path, backbone=backbone, expected_backend=expected_backend)
     if not isinstance(checkpoint, dict) or set(checkpoint) != {'metadata', 'model'}:
         raise ValueError('Unsupported raw-text checkpoint structure')
     metadata, state = checkpoint['metadata'], checkpoint['model']
@@ -693,3 +866,153 @@ def load_music_text_checkpoint(path, backbone=None, expected_backend=None, expec
         _finite(value, 'loaded weight ' + name)
     model.checkpoint_metadata = metadata
     return model
+
+
+def _direct_cpu_backbone():
+    """Small dense-scope fixture; no MusicFM weights, CUDA or feature cache."""
+    class CPUBackbone(nn.Module):
+        backend, hidden_size, sample_rate = 'musicfm', 1024, 24000
+
+        def __init__(self):
+            super().__init__()
+            self.model = nn.Module()
+            self.model.conv = nn.Linear(1, 1024)
+            self.model.conformer = nn.Module()
+            self.model.conformer.layer_norm = nn.LayerNorm(1024)
+            self.model.conformer.layers = nn.Sequential(nn.Linear(1024, 8), nn.GELU(),
+                                                       nn.Linear(8, 1024), nn.Dropout(0.5))
+            self.model.head = nn.Linear(1, 1)
+            self.model.register_buffer('running_scale', torch.tensor(1.25))
+            self.model.stat = dict(melspec_2048_mean=-1.5, melspec_2048_std=2.5)
+
+        def metadata(self):
+            return dict(backend=self.backend, sample_rate=self.sample_rate,
+                        hidden_size=self.hidden_size, model_path='CPU_FIXTURE_NO_REAL_MUSICFM')
+
+        def forward(self, waveform):
+            hidden = self.model.conv(waveform[:, ::4096, None])
+            hidden = self.model.conformer.layer_norm(hidden)
+            return self.model.conformer.layers(hidden) * self.model.running_scale
+
+    return CPUBackbone()
+
+
+def direct_music_tokens_adapter_cpu_audit():
+    import copy
+    import tempfile
+    from unittest.mock import patch
+
+    torch.manual_seed(19)
+    rejected, scopes = [], []
+    features = torch.arange(2 * 2 * 4 * 1024, dtype=torch.float32).reshape(2, 2, 4, 1024) / 1024
+    mask = torch.tensor([[[True, True, False, False], [True, True, False, False]],
+                         [[True, False, True, True], [False, True, True, False]]])
+    adapter = DirectMusicTokenAdapter()
+    raw, valid = adapter(features, feature_lengths=mask)
+    expected = F.linear(features.flatten(1, 2), adapter.projection.weight, adapter.projection.bias)
+    assert torch.equal(raw, expected) and torch.equal(valid, mask.flatten(1, 2))
+    assert set(adapter.state_dict()) == {'projection.weight', 'projection.bias'}
+    with torch.autocast(device_type='cpu', dtype=torch.bfloat16):
+        autocast_raw, _ = adapter(features, feature_lengths=mask)
+    assert autocast_raw.dtype == torch.float32 and torch.equal(autocast_raw, raw)
+    (raw[valid].square().mean()).backward()
+    assert all(parameter.grad is not None and parameter.grad.abs().sum() > 0 for parameter in adapter.parameters())
+    for kwargs in (dict(context=torch.zeros(2, 5120)), dict(query_count=2), dict(qmax=2)):
+        try:
+            adapter(features, feature_lengths=mask, **kwargs)
+        except TypeError:
+            rejected.append('adapter:' + ','.join(kwargs))
+        else:
+            raise AssertionError('Direct linear adapter accepted query/context options')
+    waveform = torch.linspace(-1, 1, 2 * 2 * 16384).reshape(2, 2, 16384)
+    wave_lengths = torch.tensor([8192, 16384])
+    with patch(__name__ + '.resample_audio32k_to24k', lambda value: value[..., ::2]):
+        with tempfile.TemporaryDirectory(prefix='h3_direct_adapter_cpu_') as directory:
+            parent = Path(directory)
+            for train_backbone in (False, True):
+                model = DirectMusicToH3Text(_direct_cpu_backbone(), freeze_backbone=not train_backbone).train()
+                condition = model.student_condition(waveform, waveform_lengths=wave_lengths)
+                assert condition['lengths'].tolist() == [2, 4]
+                assert condition['valid_mask'][0].tolist() == [True, False, True, False]
+                assert torch.equal(condition['tails'][0], condition['raw_tokens'][0, [0, 2]])
+                assert not torch.equal(condition['tails'][0], condition['raw_tokens'][0, :2])
+                loss = torch.cat(condition['tails']).square().mean()
+                loss.backward()
+                dense_ids = {id(parameter) for module in _musicfm_dense_modules(model.backbone)
+                             for parameter in module.parameters()}
+                for parameter in model.backbone.parameters():
+                    expected_grad = train_backbone and id(parameter) in dense_ids
+                    assert parameter.requires_grad == expected_grad
+                    assert (parameter.grad is not None) == expected_grad
+                    if expected_grad:
+                        assert torch.isfinite(parameter.grad).all() and parameter.grad.abs().sum() > 0
+                assert all(parameter.grad is not None and parameter.grad.abs().sum() > 0
+                           for parameter in model.adapter.parameters())
+                assert not any(module.training for module in model.backbone.modules())
+                path = parent / ('train_' + str(train_backbone) + '.pt')
+                save_direct_music_text_checkpoint(path, model)
+                record = torch.load(path, map_location='cpu', weights_only=True)
+                loaded = load_direct_music_text_checkpoint(path, backbone=_direct_cpu_backbone())
+                assert all(torch.equal(value, loaded.state_dict()[name]) for name, value in model.state_dict().items())
+                assert loaded.checkpoint_metadata == record['metadata']
+                assert 'backbone.model.running_scale' in record['model']
+                with torch.no_grad():
+                    expected_tails, expected_lengths = model.eval().generate(waveform, waveform_lengths=wave_lengths)
+                    actual_tails, actual_lengths = loaded.generate(waveform, waveform_lengths=wave_lengths)
+                assert torch.equal(expected_lengths, actual_lengths)
+                assert all(torch.equal(a, b) for a, b in zip(expected_tails, actual_tails))
+                dispatched = load_music_text_checkpoint(path, backbone=_direct_cpu_backbone(), expected_backend='musicfm')
+                assert isinstance(dispatched, DirectMusicToH3Text)
+                try:
+                    load_music_text_checkpoint(path, backbone=_direct_cpu_backbone(), expected_query_max=4)
+                except ValueError:
+                    rejected.append('checkpoint:expected_query_max')
+                else:
+                    raise AssertionError('Direct checkpoint accepted legacy query max')
+                if train_backbone:
+                    for field, mutation in [('query_max', 4), ('format_version', 3), ('context_policy', 'tc_prefix_context')]:
+                        bad = copy.deepcopy(record)
+                        bad['metadata'][field] = mutation
+                        bad_path = parent / ('bad_' + field + '.pt')
+                        torch.save(bad, bad_path)
+                        try:
+                            load_direct_music_text_checkpoint(bad_path, backbone=_direct_cpu_backbone())
+                        except ValueError:
+                            rejected.append('checkpoint:' + field)
+                        else:
+                            raise AssertionError('Direct checkpoint accepted incompatible metadata')
+                    bad = copy.deepcopy(record)
+                    del bad['model']['backbone.model.running_scale']
+                    bad_path = parent / 'missing_buffer.pt'
+                    torch.save(bad, bad_path)
+                    try:
+                        load_direct_music_text_checkpoint(bad_path, backbone=_direct_cpu_backbone())
+                    except ValueError:
+                        rejected.append('checkpoint:missing_persistent_buffer')
+                    else:
+                        raise AssertionError('Direct checkpoint accepted missing backbone state')
+                scopes.append(dict(train_backbone=train_backbone, adapter_weight_bias_gradients=True,
+                                   dense_backbone_gradients=train_backbone, unused_head_frozen=True,
+                                   backbone_eval_and_fp32=True, complete_state_metadata_roundtrip=True))
+    return dict(complete=True, cpu_only=True, protocol=DIRECT_PROTOCOL,
+                actual_adapter_linear_executed=True, no_queries_normalization_length_head_or_qmax=True,
+                linear_fp32_autocast_disabled_exact=True, channel_major_flatten_exact=True,
+                short_sample_mask_holes_gathered_not_truncated=True,
+                persistent_backbone_buffers_roundtrip=True, scopes=scopes, rejected_inputs=rejected,
+                real_musicfm_weights_loaded=False, gpu_started=False,
+                resample_scope='CPU fixture strides only; not an audio-resample equivalence claim')
+
+
+if __name__ == '__main__':
+    import argparse
+    import json
+    parser = argparse.ArgumentParser(description='CPU direct-token adapter regression fixture')
+    parser.add_argument('--direct_cpu_audit', action='store_true', required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if args.out.exists() or not args.out.parent.is_dir():
+        parser.error('Require a new CPU report and existing parent')
+    report = direct_music_tokens_adapter_cpu_audit()
+    with args.out.open('x') as stream:
+        json.dump(report, stream, indent=2, allow_nan=False)
+    print(json.dumps(report, allow_nan=False), flush=True)

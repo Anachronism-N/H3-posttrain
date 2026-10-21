@@ -535,6 +535,260 @@ def make_split(args):
     print(f'train={len(train)} nested_subset={len(subset)} fixed_val={len(val)} known_withinval_clusters={len(within_val)}')
 
 
+DIRECT_PROTOCOL = 'musicfm_direct_tokens_cached_prefix_v1'
+
+
+def prepare_direct_text_data(args):
+    """Select new group-isolated diverse train/validation IDs from the audited pool."""
+    import re
+    from music_text_cache import pure_neutralize_gender_pronouns
+    out = Path(args.out).absolute()
+    if os.path.lexists(out) or not out.parent.is_dir():
+        raise FileExistsError('Require a new protocol directory with an existing parent')
+    selection_code = source_record(__file__)
+    exp = Path(args.exp_root)
+    base = ROOT / 'OmniDance_processed/pose_preprocess_outputs/mainline'
+    paths = dict(pool=exp / 'music_scale_pool_v4.json', pool_report=exp / 'music_scale_pool_report_v4.json',
+                 audit=exp / 'music_scale_duplicate_audit_v4.json', old_report=exp / 'music_scale_v4_report.json',
+                 legacy_split=exp / 'music_encoders/muq_linear_probe/split.json',
+                 train_csv=base / 'vlm_filter_235b/splits/train.csv',
+                 manifest=base / 'normalized_704x1280/main/manifest.csv',
+                 joint=exp.parent / 'E2/full_joint.csv', swapped=exp.parent / 'E2/full_aswap.csv')
+    sources = {name: source_record(path) for name, path in paths.items()}
+    pool, report, audit = [read_json(paths[key]) for key in ('pool', 'pool_report', 'audit')]
+    old_report, legacy = read_json(paths['old_report']), read_json(paths['legacy_split'])
+    if (report.get('status') != 'complete' or report.get('pool_sha256') != sources['pool']['sha256']
+            or audit.get('input_sha256', {}).get('caps') != sources['pool']['sha256']
+            or {row['id'] for row in audit['audio_metadata']} != set(pool)
+            or old_report.get('source_audit_sha256') != sources['audit']['sha256']):
+        raise ValueError('Existing pool/report/full audio audit identities do not match')
+    train_rows, passed = curated_train(paths['train_csv'])
+    fixed_ids, cases = fixed_holdouts([paths['joint'], paths['swapped']], AUDIO_ROOT)
+    blocked = set(legacy['val']) | fixed_ids | {case['sample_id'] for case in cases}
+    known_sources, row_by_id = {}, {}
+    with paths['manifest'].open(newline='') as stream:
+        for row in csv.DictReader(stream):
+            sid = valid_id(row['video_stem'])
+            source = row.get('source_video')
+            if not source:
+                raise ValueError('Full normalized source manifest has no source_video: ' + sid)
+            if sid in known_sources and known_sources[sid] != source:
+                raise ValueError('Conflicting full source manifest ID: ' + sid)
+            known_sources[sid] = source
+            if sid in pool or sid in blocked:
+                row_by_id[sid] = row
+    if not (set(pool) | blocked) <= set(known_sources):
+        raise ValueError('Full known source manifest must cover pool and fixed holdouts')
+    parent = {sid: sid for sid in known_sources}
+    def root(sid):
+        while parent[sid] != sid:
+            parent[sid] = parent[parent[sid]]
+            sid = parent[sid]
+        return sid
+    edge_counts = Counter()
+    def join(members, kind):
+        members = list(members)
+        if len(members) < 2:
+            return
+        for sid in members[1:]:
+            a, b = root(members[0]), root(sid)
+            if a != b:
+                parent[max(a, b)] = min(a, b)
+            edge_counts[kind] += 1
+    by_source = defaultdict(list)
+    for sid, source in known_sources.items():
+        by_source[source].append(sid)
+    for members in by_source.values():
+        join(members, 'source_video')
+    for field in ('exact_groups', 'suspected_pairs'):
+        for row in audit[field]:
+            members = row['ids']
+            if not set(members) <= set(pool) or (field == 'suspected_pairs' and row.get('suspected') is not True):
+                raise ValueError('Invalid declared exact/suspected audio group')
+            join(members, field)
+    motions, neutral, rejects = {}, {}, defaultdict(list)
+    captions_by_body = defaultdict(list)
+    for index, (sid, item) in enumerate(pool.items()):
+        if index % 500 == 0:
+            print(json.dumps(dict(event='direct_selection_ms_read_progress', completed=index,
+                                 expected=len(pool))), flush=True)
+        if item.get('audit_only'):
+            continue
+        prov = report['provenance'][sid]['ms']
+        raw = Path(prov['path']).read_bytes()
+        if hashlib.sha256(raw).hexdigest() != prov['sha256']:
+            raise ValueError('Original MotionScript source SHA changed: ' + sid)
+        motion = json.loads(raw, object_pairs_hook=unique_object)
+        ms = motion.get('ms')
+        if (motion.get('sid') != sid or not isinstance(ms, list) or not ms
+                or any(not isinstance(text, str) for text in ms)):
+            rejects[sid].append('invalid_original_ms')
+            continue
+        body = ' '.join(text.strip() for text in ms if text.strip())
+        normalized, changes = pure_neutralize_gender_pronouns(body)
+        captions_by_body[re.sub(r'\s+', ' ', normalized).strip().lower()].append(sid)
+        motions[sid], neutral[sid] = motion, (normalized, changes, body)
+        if not body or item.get('motion_original') != body:
+            rejects[sid].append('pool_original_ms_not_exact')
+        if sid not in passed:
+            rejects[sid].append('quality_overall_pass_false')
+        if item.get('dims', {}).get('motion_source') != 'original' or not item['dims'].get('genre'):
+            rejects[sid].append('invalid_genre_or_motion_source')
+        ratio, kin = motion.get('valid_ratio'), motion.get('kin', {})
+        if not isinstance(ratio, (int, float)) or not math.isfinite(ratio) or ratio < args.min_pose_valid:
+            rejects[sid].append('pose_valid_ratio')
+        if kin.get('frames') != 101 or any(not isinstance(kin.get(k), (int, float)) or not math.isfinite(kin[k])
+                                          for k in ('speed', 'travel', 'turn', 'arm_speed', 'leg_speed')):
+            rejects[sid].append('invalid_existing_kinematics')
+        row = row_by_id[sid]
+        try:
+            if (row['status'] != 'ok' or float(row['target_fps']) != 16 or int(row['target_frames']) != 81
+                    or int(row['tail_padding_frames']) != 0 or row['has_audio'] != '1'
+                    or float(row['source_fps']) != 16 or int(row['selected_start_frame']) < 0
+                    or int(row['frame_count']) < int(row['natural_end_frame_exclusive'])
+                    or int(row['natural_end_frame_exclusive']) - int(row['selected_start_frame']) != 81
+                    or int(row['target_width']) != 704 or int(row['target_height']) != 1280
+                    or Path(row['input_audio']).stem != sid or Path(row['first_frame']).stem != sid):
+                rejects[sid].append('invalid_paired_window')
+        except (ValueError, KeyError):
+            rejects[sid].append('missing_paired_window_metadata')
+    # Add original evaluation bodies to caption isolation, without making them training inputs.
+    eval_sources = []
+    for sid in fixed_ids:
+        path = exp / 'ms_orig_eval3' / (sid + '.json')
+        if path.is_file():
+            source = source_record(path)
+            item = read_json(path)
+            body = ' '.join(text.strip() for text in item['ms'] if text.strip())
+            normalized = pure_neutralize_gender_pronouns(body)[0]
+            captions_by_body[re.sub(r'\s+', ' ', normalized).strip().lower()].append(sid)
+            eval_sources.append(source)
+    for members in captions_by_body.values():
+        join(members, 'neutral_original_caption_duplicate')
+    groups = defaultdict(list)
+    for sid in known_sources:
+        groups[root(sid)].append(sid)
+    blocked_roots = {root(sid) for sid in blocked}
+    excluded = {sid for sid in pool if root(sid) in blocked_roots}
+    eligible = set(motions) - set(rejects) - excluded
+    representatives = []
+    for group, members in groups.items():
+        choices = sorted(set(members) & eligible)
+        if choices:
+            # Never prefer legacy1800 IDs; deterministic content hash tiebreak only.
+            representatives.append(min(choices, key=lambda sid: object_sha256([args.seed, sid])))
+    def quantiles(key):
+        vals = sorted(motions[sid]['kin'][key] for sid in representatives)
+        return [vals[int((len(vals) - 1) * p)] for p in (.25, .5, .75)] if vals else []
+    cuts = {key: quantiles(key) for key in ('speed', 'travel', 'turn')}
+    def bucket(sid):
+        kin = motions[sid]['kin']
+        bins = [sum(kin[key] > cut for cut in cuts[key]) for key in cuts]
+        focus = 'arms' if kin['arm_speed'] > kin['leg_speed'] * 1.2 else ('legs' if kin['leg_speed'] > kin['arm_speed'] * 1.2 else 'balanced')
+        return (pool[sid]['dims']['genre'], *bins, focus)
+    buckets = defaultdict(list)
+    for sid in representatives:
+        buckets[bucket(sid)].append(sid)
+    rng = random.Random(args.seed)
+    for key in sorted(buckets):
+        rng.shuffle(buckets[key])
+    order = []
+    while any(buckets.values()):
+        for key in sorted(buckets):
+            if buckets[key]:
+                order.append(buckets[key].pop())
+    if len(order) < args.train_size + args.val_size:
+        assert_sources_unchanged(list(sources.values()) + eval_sources + [selection_code])
+        failure = dict(kind='CPU_direct_text_selection', complete=False, protocol=DIRECT_PROTOCOL,
+            status='insufficient_jointly_isolated_representatives', candidate_pool_count=len(pool),
+            joint_representative_count=len(order), requested_train_count=args.train_size,
+            requested_val_count=args.val_size, source_paths_hashes=sources, eval_ms_sources=eval_sources,
+            known_source_ids=len(known_sources), edge_counts=dict(edge_counts), joint_groups=len(groups),
+            blocked_ids=sorted(blocked), excluded_pool_ids=sorted(excluded), rejected_ids=dict(rejects),
+            reject_reason_counts=dict(Counter(reason for reasons in rejects.values() for reason in reasons)),
+            min_pose_valid=args.min_pose_valid, source_code=selection_code, teacher_cache_complete=False,
+            scope='No gates relaxed and no captions/split/cache published; known-source and audited groups only, not complete-song isolation')
+        out.mkdir()
+        atomic_json(out / 'selection_report.json', failure)
+        print(json.dumps(dict(event='direct_selection_insufficient', out=str(out),
+                             representatives=len(order), required=args.train_size + args.val_size)), flush=True)
+        raise ValueError(f'Only {len(order)} jointly isolated valid representatives, need {args.train_size + args.val_size}; see selection_report.json')
+    # Fixed seed group-heldout validation; selected before train, no old validation reuse.
+    val_order = sorted(order, key=lambda sid: object_sha256(['heldout', args.seed, sid]))
+    val = val_order[:args.val_size]
+    val_set = set(val)
+    train = [sid for sid in order if sid not in val_set][:args.train_size]
+    chosen = train + val
+    assert len({root(sid) for sid in chosen}) == len(chosen)
+    assert not {root(sid) for sid in chosen} & blocked_roots
+    selected_caps, references, artifacts = {}, {}, {}
+    def inspect(sid):
+        row = row_by_id[sid]
+        meta = Path(row['meta'])
+        image, audio = Path(row['first_frame']), Path(row['input_audio'])
+        normalized, changes, original = neutral[sid]
+        caps = dict(dims=dict(genre=pool[sid]['dims']['genre'], motion_source='original'),
+                    motion_original=normalized, teacher_original_motion=original,
+                    teacher_replacements=changes)
+        record = dict(image=source_record(image), audio=source_record(audio), meta=source_record(meta),
+                      ms=report['provenance'][sid]['ms'])
+        return sid, caps, record, dict(image_path=str(image), image_sha256=record['image']['sha256'],
+            audio_path=str(audio), audio_sha256=record['audio']['sha256'], source_group=root(sid),
+            source_video=known_sources[sid], references=[dict(kind='image', ref_audio_t=0), dict(kind='audio', ref_audio_t=203)])
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        for index, (sid, caps, record, reference) in enumerate(executor.map(inspect, chosen), 1):
+            selected_caps[sid], artifacts[sid], references[sid] = caps, record, reference
+            if index % 500 == 0:
+                print(json.dumps(dict(event='direct_selection_artifact_sha', count=index, expected=len(chosen))), flush=True)
+    assert_sources_unchanged(list(sources.values()) + eval_sources + [selection_code])
+    out.mkdir()
+    split = dict(train=train, val=val, seed=args.seed, protocol=DIRECT_PROTOCOL,
+                 validation_policy='new_fixed500_joint_group_heldout', source_group_ids={sid: root(sid) for sid in chosen})
+    atomic_json(out / 'split.json', split)
+    atomic_json(out / 'caps.json', selected_caps)
+    atomic_json(out / 'references.json', dict(protocol=DIRECT_PROTOCOL, reference_image_short_edge=2048,
+        native_generation=dict(height=args.height, width=args.width, num_frames=124, fps=24),
+        preparation='MiniMaxH3Unit_ReferenceEncoder._resolve_reference_image_shape; RGB LANCZOS; identical native VAE prepared image',
+        records=references))
+    result = dict(kind='CPU_direct_text_selection', complete=True, teacher_cache_complete=False,
+        protocol=DIRECT_PROTOCOL, train_count=len(train), val_count=len(val), candidate_pool_count=len(pool),
+        previous_representative_count=old_report['n_train_representatives'], joint_representative_count=len(representatives),
+        candidate_scope='existing curated music_scale_pool_v4 only, not all36k',
+        source_paths_hashes=sources, eval_ms_sources=eval_sources, artifacts=artifacts,
+        known_source_ids=len(known_sources), edge_counts=dict(edge_counts), joint_groups=len(groups),
+        blocked_ids=sorted(blocked), blocked_known_ids=sorted(sid for sid in known_sources if root(sid) in blocked_roots),
+        excluded_pool_ids=sorted(excluded), rejected_ids=dict(rejects),
+        reject_reason_counts=dict(Counter(reason for reasons in rejects.values() for reason in reasons)),
+        selection=dict(seed=args.seed, no_legacy1800_forcing=True, min_pose_valid=args.min_pose_valid,
+            bucket_fields=['dims.genre', 'kin.speed', 'kin.travel', 'kin.turn', 'kin.arm_leg_focus'], quantile_cuts=cuts),
+        genre_distributions={part: dict(Counter(pool[sid]['dims']['genre'] for sid in ids)) for part, ids in [('train', train), ('val', val)]},
+        fixed_cases=cases, song_isolation_scope='all known IDs linked by exact/suspected audited audio, exact original source_video, and neutral caption duplicate; unknown different song excerpts not asserted isolated',
+        student_inputs='waveform_only; captions reserved for teacher target auditing',
+        outputs={name: source_record(out / (name + '.json')) for name in ('split', 'caps', 'references')},
+        source_code=selection_code, GPU_teacher_cache_pending=True)
+    atomic_json(out / 'selection_report.json', result)
+    print(json.dumps(dict(event='direct_selection_ready', out=str(out), train=len(train), val=len(val),
+                         representatives=len(representatives), teacher_cache_complete=False)), flush=True)
+    return result
+
+
+def direct_selection_main(argv=None):
+    parser = argparse.ArgumentParser(description='CPU-only audited diverse original MotionScript selection')
+    parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--exp_root', type=Path, default=EXP / 'MS')
+    parser.add_argument('--train_size', type=int, default=6000)
+    parser.add_argument('--val_size', type=int, default=500)
+    parser.add_argument('--min_pose_valid', type=float, default=.8)
+    parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--workers', type=int, default=8)
+    parser.add_argument('--height', type=int, default=1280)
+    parser.add_argument('--width', type=int, default=704)
+    args = parser.parse_args(argv)
+    if args.train_size < 1 or args.val_size < 1 or not 1 <= args.workers <= 32 or not 0 < args.min_pose_valid <= 1:
+        parser.error('Invalid sizes, workers or valid-ratio threshold')
+    return prepare_direct_text_data(args)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)

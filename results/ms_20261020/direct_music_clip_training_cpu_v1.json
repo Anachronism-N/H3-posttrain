@@ -1,0 +1,190 @@
+{
+  "complete": true,
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "cpu_fixture_not_actual_musicfm": true,
+  "actual_gpu_training_run": false,
+  "direct_condition_four_key_graph": true,
+  "positive_paired_loss": 1.3857777118682861,
+  "wrong_paired_loss": 1.3864200115203857,
+  "known_masked_mean_rms_exact": true,
+  "invalid_token_gradients_zero": true,
+  "paired_moments_do_not_cancel_in_batch": true,
+  "known_log_rms_formula_exact": true,
+  "complete_format4_roundtrip_and_adam_rng_resume_exact": true,
+  "backbone_eval_bn_dropout_buffers_fixed": true,
+  "gradient_scope": {
+    "backbone": {
+      "parameter_tensors": 8,
+      "parameter_elements": 1058816,
+      "gradient_norm": 0.0011581413533518275,
+      "zero_gradient_tensors": []
+    },
+    "adapter": {
+      "parameter_tensors": 2,
+      "parameter_elements": 5248000,
+      "gradient_norm": 0.0004702767388273113,
+      "zero_gradient_tensors": []
+    }
+  },
+  "cpu_gloo_autograd_ddp_global_loss_gradient_parity": [
+    {
+      "global_count": 64,
+      "local_counts": [
+        32,
+        32
+      ],
+      "moment_weight": 0.0,
+      "gradient_max_abs_error": 1.6298145055770874e-09,
+      "loss": 4.197774410247803,
+      "duplicate_groups_masked": true,
+      "dummy_rank_rows_excluded": false
+    },
+    {
+      "global_count": 64,
+      "local_counts": [
+        32,
+        32
+      ],
+      "moment_weight": 1.0,
+      "gradient_max_abs_error": 1.862645149230957e-09,
+      "loss": 6.780459403991699,
+      "duplicate_groups_masked": true,
+      "dummy_rank_rows_excluded": false
+    },
+    {
+      "global_count": 7,
+      "local_counts": [
+        4,
+        3
+      ],
+      "moment_weight": 1.0,
+      "gradient_max_abs_error": 1.862645149230957e-09,
+      "loss": 4.262890815734863,
+      "duplicate_groups_masked": true,
+      "dummy_rank_rows_excluded": false
+    },
+    {
+      "global_count": 1,
+      "local_counts": [
+        1,
+        0
+      ],
+      "moment_weight": 1.0,
+      "gradient_max_abs_error": 0.0,
+      "loss": 1.8773854970932007,
+      "duplicate_groups_masked": true,
+      "dummy_rank_rows_excluded": true
+    }
+  ],
+  "manifest_validation": {
+    "locked_6000_500_finite_table_accepted": true,
+    "raw_teacher_prefix_torch_load_forbidden": true,
+    "actual_source_sha_verified": true,
+    "rejected": [
+      "nonfinite_teacher",
+      "source_sha",
+      "split_overlap",
+      "group_overlap",
+      "token_count"
+    ]
+  },
+  "epoch_coverage": {
+    "6000": {
+      "actual_unique_count": 6000,
+      "last_rank_counts": [
+        12,
+        12,
+        12,
+        12
+      ]
+    },
+    "65": {
+      "actual_unique_count": 65,
+      "last_rank_counts": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    "63": {
+      "actual_unique_count": 63,
+      "last_rank_counts": [
+        16,
+        16,
+        16,
+        15
+      ]
+    },
+    "7": {
+      "actual_unique_count": 7,
+      "last_rank_counts": [
+        2,
+        2,
+        2,
+        1
+      ]
+    },
+    "3": {
+      "actual_unique_count": 3,
+      "last_rank_counts": [
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    "1": {
+      "actual_unique_count": 1,
+      "last_rank_counts": [
+        1,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "dynamic_formal_batch_coverage": {
+    "1": {
+      "global_batch": 4,
+      "actual_unique_count": 6000
+    },
+    "2": {
+      "global_batch": 8,
+      "actual_unique_count": 6000
+    },
+    "4": {
+      "global_batch": 16,
+      "actual_unique_count": 6000
+    },
+    "8": {
+      "global_batch": 32,
+      "actual_unique_count": 6000
+    },
+    "16": {
+      "global_batch": 64,
+      "actual_unique_count": 6000
+    }
+  },
+  "plateau_events": [
+    {
+      "epoch": 20,
+      "event": "learning_rate_reduced_x0.1"
+    },
+    {
+      "epoch": 28,
+      "event": "converged_representation_not_video_quality"
+    }
+  ],
+  "plateau_retrieval_guard": {
+    "first_plateau_anchor_r1": 0.2,
+    "absolute_allowed_drop": 0.01,
+    "degraded_r1": 0.18,
+    "degraded_convergence_rejected": true,
+    "boundary_r1": 0.19,
+    "boundary_convergence_accepted": true,
+    "collapsed_convergence_rejected": true
+  },
+  "source_sha256": "4e11b5daa6102994b7bbd43ac597873600f66ec36af4f22fedf4e40ea6dd4143",
+  "adapter_source_sha256": "7340997eb615753c6df252c9ef0e18b8e2ddfe4c925cbcc86feaef4d45b03c10"
+}

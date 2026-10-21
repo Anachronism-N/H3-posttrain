@@ -1,0 +1,41 @@
+{
+  "complete": true,
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "actual_native_lm_forward": true,
+  "gpu_cache_job_task": "g7iDm4",
+  "independent_cache_audit_task": "JGlyC0",
+  "actual_cache_jobs_exit_zero": true,
+  "source_plan_file_sha256_verified": true,
+  "prefix_and_target_file_sha256_verified": true,
+  "prefix_and_target_tensor_sha256_verified": true,
+  "source_token_ids_tensor_sha256_verified": true,
+  "prefix_prepared_image_and_reference_validator_passed": true,
+  "same_shape_prompt_replacement_prefix_independence_exact": true,
+  "original_raw_sequence_and_tags_split_reconstruction_exact": true,
+  "actual_model_weight_content_sha256": "3f187f9508c62907301064c8ddc3c9abe74a962e723c25e95d5e5c662549e9b9",
+  "rows": [
+    {
+      "sample_id": "wJPptuhclZmKAEWs",
+      "prefix_length": 7437,
+      "teacher_length": 228,
+      "cache_root": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct_eval3_cache_v1_s0"
+    },
+    {
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "prefix_length": 7437,
+      "teacher_length": 199,
+      "cache_root": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct_eval3_cache_v1_s1"
+    },
+    {
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "prefix_length": 7437,
+      "teacher_length": 323,
+      "cache_root": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct_eval3_cache_v1_s2"
+    }
+  ],
+  "gpu_forward_repeated_for_independent_audit": false,
+  "actual_6500_teacher_cache_complete": false,
+  "native_dit_identity_prediction_verified": false,
+  "video_quality_accepted": false,
+  "scope": "Actual three-reference native TC cache and independent CPU source/tensor audit only; not full training cache, DiT identity or dance acceptance."
+}

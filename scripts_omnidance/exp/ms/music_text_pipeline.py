@@ -724,7 +724,281 @@ def bind_pure_init_manifest_main():
     print(json.dumps(dict(event='pure_text_init_bound', **manifest)), flush=True)
 
 
+def prepare_direct_training_manifest(args, *, expected_train=6000, expected_val=500, audit_case_cache=False):
+    """Stream complete cached teacher tails; prefix tensors are never deserialized."""
+    import math
+    import torch
+    from transformers import AutoTokenizer
+    from music_scale_data import (DIRECT_PROTOCOL, read_json, source_record,
+        assert_sources_unchanged, atomic_json, check_outputs, id_list)
+
+    def cached_tensor_sha(value):
+        value = value.detach().cpu().contiguous()
+        h = hashlib.sha256()
+        h.update(str(value.dtype).encode())
+        h.update(str(tuple(value.shape)).encode())
+        h.update(value.view(torch.uint8).numpy().tobytes())
+        return h.hexdigest()
+
+    out = check_outputs([args.out])[0]
+    selection = Path(args.selection).resolve(strict=True)
+    report_name = 'source' if audit_case_cache else 'selection_report'
+    source_paths = {name: selection / (name + '.json')
+                    for name in (report_name, 'split', 'caps', 'references')}
+    sources = {name: source_record(path) for name, path in source_paths.items()}
+    sources['pipeline_code'] = source_record(__file__)
+    report, split, caps, references = [read_json(source_paths[name])
+        for name in (report_name, 'split', 'caps', 'references')]
+    train, val = split.get('train'), split.get('val')
+    train_set = set() if audit_case_cache and train == [] else id_list(train, 'direct train')
+    val_set = id_list(val, 'direct val')
+    expected = train_set | val_set
+    if audit_case_cache:
+        if train or len(val) != 3 or split.get('purpose') != 'fixed_generation_holdout_only':
+            raise ValueError('Case-cache audit is exclusively zero-train/three fixed generation holdouts')
+        nshards = 3
+    else:
+        if (len(train) != expected_train or len(val) != expected_val
+                or report.get('complete') is not True
+                or report.get('train_count') != len(train) or report.get('val_count') != len(val)):
+            raise ValueError('Require completed exact direct6k/val500 selection')
+        for name in ('split', 'caps', 'references'):
+            identity = report.get('outputs', {}).get(name, {})
+            if (identity.get('sha256') != sources[name]['sha256']
+                    or Path(identity.get('path', '')).resolve() != source_paths[name]):
+                raise ValueError('Selection output SHA/path mismatch: ' + name)
+        nshards = 6
+    if (train_set & val_set or report.get('protocol') != DIRECT_PROTOCOL
+            or split.get('protocol') != DIRECT_PROTOCOL or references.get('protocol') != DIRECT_PROTOCOL
+            or set(caps) != expected or set(references.get('records', {})) != expected
+            or references.get('native_generation', {}).get('num_frames') != 124):
+        raise ValueError('Selection protocol/native-124/disjoint ID coverage mismatch')
+    groups = ({sid: references['records'][sid]['source_group'] for sid in expected}
+              if audit_case_cache else split.get('source_group_ids', {}))
+    if (set(groups) != expected or len(set(groups.values())) != len(expected)
+            or any(references['records'][sid].get('source_group') != groups[sid] for sid in expected)):
+        raise ValueError('Selected teacher groups must be complete, unique and split-isolated')
+    directories = [Path(path).resolve(strict=True) for path in args.cache_roots]
+    if len(directories) != nshards or len(set(directories)) != nshards:
+        raise ValueError('Require each distinct completed canonical cache shard')
+    tokenizer_root = Path(args.tokenizer_root).resolve(strict=True)
+    torch.set_num_threads(2)
+    rows, cache_sources, shard_numbers = {}, [], set()
+    sums = torch.zeros(5120, dtype=torch.float64)
+    squares = torch.zeros_like(sums)
+    token_count = 0
+    shared_source, tokenizer = None, None
+    teacher_sources = {}
+    for directory in directories:
+        plan_path, finished_path = directory / 'plan.json', directory / 'finished.json'
+        identities = {'plan': source_record(plan_path), 'finished': source_record(finished_path)}
+        plan, finished = read_json(plan_path), read_json(finished_path)
+        shard, nshard = plan.get('shard'), plan.get('nshard')
+        if (type(shard) is not int or nshard != nshards or not 0 <= shard < nshards or shard in shard_numbers):
+            raise ValueError('Missing/duplicate/out-of-range direct cache shard')
+        shard_numbers.add(shard)
+        ids = (train + val)[shard::nshards]
+        if (plan.get('protocol') != DIRECT_PROTOCOL or plan.get('kind') != 'cached_reference_prompt_teacher'
+                or plan.get('train_ids') != train or plan.get('val_ids') != val or plan.get('ids') != ids
+                or plan.get('max_items') != 0 or plan.get('raw_output_width') != 5120
+                or plan.get('raw_output_dtype') != 'torch.bfloat16'
+                or plan.get('teacher_fields') != ['dims.genre', 'motion_original']
+                or plan.get('teacher_transform') != 'original_motion_already_neutralized_in_selected_caps'
+                or plan.get('native_generation') != references['native_generation']
+                or finished.get('protocol') != DIRECT_PROTOCOL or finished.get('complete') is not True
+                or finished.get('actual_lm_forward') is not True
+                or finished.get('prefix_caption_independence_checked') is not True
+                or finished.get('original_split_reconstruction_exact') is not True
+                or finished.get('expected') != len(ids)
+                or finished.get('source_protocol_sha256') != identities['plan']['sha256']
+                or finished.get('source_files') != plan.get('source_files')):
+            raise ValueError('Direct cache plan/completion must bind actual full native teacher forwarding')
+        for name in ('split', 'caps', 'references'):
+            identity = plan.get(name, {})
+            if (identity.get('sha256') != sources[name]['sha256']
+                    or Path(identity.get('path', '')).resolve() != source_paths[name]):
+                raise ValueError('Cache plan selection path/SHA mismatch: ' + name)
+        source_meta = {key: value for key, value in plan.items() if key not in ('shard', 'ids', 'tokenizer_root')}
+        if shared_source is not None and source_meta != shared_source:
+            raise ValueError('Direct cache shards disagree on teacher/source preparation provenance')
+        shared_source = source_meta
+        model_hashes = plan.get('actual_loaded_tensor_sha256', {})
+        if (not isinstance(model_hashes, dict) or not model_hashes
+                or len(model_hashes) != plan.get('loaded_tensor_count')
+                or any(not isinstance(value, str) or len(value) != 64 for value in model_hashes.values())
+                or hashlib.sha256(json.dumps(model_hashes, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+                   != plan.get('model_weight_content_sha256')):
+            raise ValueError('Teacher actual-loaded tensor/model content identity is missing or inconsistent')
+        declared_sources = plan.get('source_files', {})
+        if not isinstance(declared_sources, dict) or not {'music_text_cache.py', 'music_text_condition.py'} <= set(declared_sources):
+            raise ValueError('Teacher cache/condition source content hashes are required')
+        for name, identity in declared_sources.items():
+            if (not isinstance(identity, dict) or not isinstance(identity.get('path'), str)
+                    or not isinstance(identity.get('sha256'), str) or len(identity['sha256']) != 64):
+                raise ValueError('Teacher source path/content hash binding missing: ' + name)
+            if name not in teacher_sources:
+                if not audit_case_cache and source_record(identity['path']) != identity:
+                    raise ValueError('Frozen teacher source file content changed: ' + name)
+                teacher_sources[name] = identity
+            elif teacher_sources[name] != identity:
+                raise ValueError('Cache shards use different teacher source files: ' + name)
+        tokenizer_hashes = plan.get('tokenizer_files_sha256', {})
+        if (not tokenizer_root.is_dir() or not isinstance(tokenizer_hashes, dict)
+                or not {'tokenizer.json', 'tokenizer_config.json'} <= set(tokenizer_hashes)):
+            raise ValueError('Require actual native tokenizer directory and audited JSON content hashes')
+        for name, value in tokenizer_hashes.items():
+            if Path(name).name != name:
+                raise ValueError('Invalid tokenizer file name')
+            identity = source_record(tokenizer_root / name)
+            if identity['sha256'] != value:
+                raise ValueError('Native tokenizer source content changed: ' + name)
+            teacher_sources[str(tokenizer_root / name)] = identity
+        if tokenizer is None:
+            tokenizer = AutoTokenizer.from_pretrained(str(tokenizer_root), local_files_only=True)
+        cache_rows = finished.get('rows')
+        if not isinstance(cache_rows, list) or [row.get('sample_id') for row in cache_rows] != ids:
+            raise ValueError('Finished rows must cover each exact shard ID in plan order')
+        if ({path.stem for path in (directory / 'targets').glob('*.pt')} != set(ids)
+                or {path.stem for path in (directory / 'prefixes').glob('*.pt')} != set(ids)):
+            raise ValueError('Teacher/prefix files do not match exact completed shard IDs')
+        for record in cache_rows:
+            sid = record['sample_id']
+            partition = 'train' if sid in train_set else 'val'
+            target_path, prefix_path = directory / 'targets' / (sid + '.pt'), directory / 'prefixes' / (sid + '.pt')
+            if (sid in rows or Path(record.get('target_path', '')).resolve() != target_path
+                    or Path(record.get('prefix_path', '')).resolve() != prefix_path
+                    or record.get('partition') != partition):
+                raise ValueError('Duplicate/direct target path/partition mismatch: ' + sid)
+            target_stat, prefix_stat = target_path.stat(), prefix_path.stat()
+            target_identity, prefix_identity = source_record(target_path), source_record(prefix_path)
+            if (target_identity['sha256'] != record.get('target_sha256')
+                    or prefix_identity['sha256'] != record.get('prefix_sha256')):
+                raise ValueError('Actual full target/prefix file SHA mismatch: ' + sid)
+            data = torch.load(target_path, map_location='cpu', weights_only=True)
+            if not isinstance(data, dict) or set(data) != {'metadata', 'tail', 'source_token_ids', 'teacher_length'}:
+                raise ValueError('Exact direct target record schema mismatch: ' + sid)
+            metadata, tail, token_ids = data['metadata'], data['tail'], data['source_token_ids']
+            length, prefix_length = record.get('teacher_length'), record.get('prefix_length')
+            prompt = f"Dance style: {caps[sid]['dims']['genre']}. " + caps[sid]['motion_original']
+            if (type(length) is not int or length < 1 or type(prefix_length) is not int or prefix_length < 1
+                    or type(data['teacher_length']) is not int or data['teacher_length'] != length
+                    or not isinstance(tail, torch.Tensor) or tail.dtype != torch.bfloat16
+                    or tail.shape != (length, 5120) or not torch.isfinite(tail).all()
+                    or not isinstance(token_ids, torch.Tensor) or token_ids.dtype != torch.int64
+                    or token_ids.shape != (length,) or torch.any(token_ids < 0)
+                    or not isinstance(metadata, dict) or metadata.get('kind') != 'cached_reference_prompt_tail'
+                    or metadata.get('sample_id') != sid or metadata.get('partition') != partition
+                    or metadata.get('teacher_length') != length or metadata.get('prefix_length') != prefix_length
+                    or metadata.get('source_protocol_sha256') != identities['plan']['sha256']
+                    or metadata.get('prompt') != prompt
+                    or metadata.get('protocol') != DIRECT_PROTOCOL or metadata.get('image_conditioned') is not True
+                    or metadata.get('model_weight_content_sha256') != plan['model_weight_content_sha256']
+                    or metadata.get('source_token_ids_sha256') != cached_tensor_sha(token_ids)
+                    or metadata.get('tail_sha256') != cached_tensor_sha(tail)
+                    or metadata.get('caption_sha256') != hashlib.sha256(prompt.encode()).hexdigest()
+                    or Path(metadata.get('source_protocol_path', '')).resolve() != plan_path):
+                raise ValueError('Direct BF16/native token IDs/length/prompt/provenance gate failed: ' + sid)
+            parsed_ids = torch.tensor(tokenizer(prompt, add_special_tokens=False)['input_ids'], dtype=torch.int64)
+            if not torch.equal(token_ids, parsed_ids):
+                raise ValueError('Actual native tokenizer original prompt source IDs mismatch: ' + sid)
+            if (metadata.get('image_path') != references['records'][sid]['image_path']
+                    or metadata.get('image_sha256') != references['records'][sid]['image_sha256']):
+                raise ValueError('Teacher prefix/image selection binding mismatch: ' + sid)
+            reference = references['records'][sid]
+            audio_path = Path(reference['audio_path']).resolve(strict=True)
+            audio_identity = source_record(audio_path)
+            if (audio_identity['sha256'] != reference.get('audio_sha256')
+                    or (not audit_case_cache and audio_identity != report.get('artifacts', {}).get(sid, {}).get('audio'))):
+                raise ValueError('Original selected audio path/content changed: ' + sid)
+            value = tail.double()
+            example_mean = value.mean(0)
+            example_rms = float((value - example_mean).square().mean().sqrt())
+            if not math.isfinite(example_rms):
+                raise ValueError('Nonfinite raw teacher readout: ' + sid)
+            if partition == 'train':
+                sums += value.sum(0)
+                squares += value.square().sum(0)
+                token_count += length
+            rows[sid] = dict(audio_path=str(audio_path), audio_sha256=audio_identity['sha256'],
+                group_id=groups[sid], target_path=str(target_path), target_sha256=target_identity['sha256'],
+                prefix_path=str(prefix_path), prefix_sha256=prefix_identity['sha256'], partition=partition,
+                teacher_mean=example_mean.tolist(), teacher_centered_rms=example_rms, teacher_length=length)
+            after_target, after_prefix = target_path.stat(), prefix_path.stat()
+            if ((target_stat.st_size, target_stat.st_mtime_ns) != (after_target.st_size, after_target.st_mtime_ns)
+                    or (prefix_stat.st_size, prefix_stat.st_mtime_ns) != (after_prefix.st_size, after_prefix.st_mtime_ns)):
+                raise RuntimeError('Target/prefix changed during streaming validation: ' + sid)
+            del data, metadata, tail, token_ids, value
+            if len(rows) % 250 == 0:
+                print(json.dumps(dict(event='direct_training_manifest_targets_verified', count=len(rows),
+                                     expected=len(expected))), flush=True)
+        cache_sources.append(dict(directory=str(directory), shard=shard, nshard=nshards, count=len(ids),
+                                  **identities))
+    if set(rows) != expected or shard_numbers != set(range(nshards)) or (not audit_case_cache and token_count < 2):
+        raise ValueError('Completed direct cache must cover each train/validation ID exactly once')
+    verified_sources = [identity for key, identity in teacher_sources.items()
+                        if not audit_case_cache or key not in ('music_text_cache.py', 'music_text_condition.py')]
+    assert_sources_unchanged(list(sources.values()) + verified_sources
+                             + [item[key] for item in cache_sources for key in ('plan', 'finished')])
+    if audit_case_cache:
+        result = dict(metadata=dict(protocol=DIRECT_PROTOCOL, complete=True,
+            purpose='actual_three_case_cache_compatibility_audit_only_not_training_manifest',
+            train_ids=[], val_ids=val, trainable=False, prefix_tensors_loaded_by_builder=False,
+            actual_native_tokenizer_source_ids_verified=True, tokenizer_root=str(tokenizer_root),
+            source_paths_hashes=sources, cache_sources=cache_sources,
+            historical_teacher_source_files_validated_against_current_code=False,
+            teacher_source_files=list(teacher_sources.values()), native_generation=references['native_generation']),
+            rows=rows, statistics=None)
+        atomic_json(out, result)
+        print(json.dumps(dict(event='actual_direct_case_cache_audit_ready', path=str(out),
+                             sha256=digest(out), val=len(val), prefix_tensors_loaded=False,
+                             training_manifest=False)), flush=True)
+        return result
+    mean = sums / token_count
+    std = (squares / token_count - mean.square()).clamp_min(0).sqrt().clamp_min(.1)
+    energy = float(squares.sum() / (token_count * 5120))
+    if not torch.isfinite(mean).all() or not torch.isfinite(std).all() or not math.isfinite(energy):
+        raise ValueError('Nonfinite train-only FP64 normalization statistics')
+    result = dict(metadata=dict(format_version=1, protocol=DIRECT_PROTOCOL, complete=True,
+        train_ids=train, val_ids=val, teacher_kind='cached_reference_prompt_tail',
+        student_inputs='waveform_only', student_feature_cache_used=False, prefix_trainable=False,
+        teacher_width=5120, teacher_dtype='torch.bfloat16', target_files_validated_by_actual_full_sha256=True,
+        prefix_files_validated_by_actual_full_sha256=True, prefix_tensors_loaded_by_builder=False,
+        statistics_source='all_valid_raw_teacher_tokens_of_train_only_no_prefix_no_padding_no_qmax',
+        statistics_accumulation_dtype='torch.float64', fixed_std_floor=.1,
+        per_example_readout='mean over all raw valid teacher tokens; RMS centered by each dimension mean',
+        source_paths_hashes=sources, cache_sources=cache_sources, source_meta=shared_source,
+        teacher_source_files=list(teacher_sources.values()), actual_native_tokenizer_source_ids_verified=True,
+        tokenizer_root=str(tokenizer_root), native_generation=references['native_generation']), rows=rows,
+        statistics=dict(mean=mean.tolist(), std=std.tolist(), teacher_energy=energy,
+                        training_token_count=token_count))
+    atomic_json(out, result)
+    print(json.dumps(dict(event='direct_training_manifest_ready', path=str(out), sha256=digest(out),
+                         train=len(train), val=len(val), training_token_count=token_count,
+                         prefix_tensors_loaded=False)), flush=True)
+    return result
+
+
+def prepare_direct_training_manifest_main():
+    parser = argparse.ArgumentParser(description='CPU streaming validated direct teacher cache manifest, no prefix tensor load')
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--prepare_direct_training_manifest', action='store_true')
+    mode.add_argument('--audit_direct_case_cache', action='store_true')
+    parser.add_argument('--selection', type=Path, required=True)
+    parser.add_argument('--cache_roots', type=Path, nargs='+', required=True)
+    parser.add_argument('--tokenizer_root', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    return prepare_direct_training_manifest(args, audit_case_cache=args.audit_direct_case_cache)
+
+
 def main():
+    if any(flag in __import__('sys').argv for flag in ('--prepare_direct_training_manifest', '--audit_direct_case_cache')):
+        return prepare_direct_training_manifest_main()
+    if '--prepare_direct_text_data' in __import__('sys').argv:
+        from music_scale_data import direct_selection_main
+        argv = __import__('sys').argv[1:]
+        argv.remove('--prepare_direct_text_data')
+        return direct_selection_main(argv)
     if '--prepare_pure_text_bundle' in __import__('sys').argv:
         return prepare_pure_text_bundle_main()
     if '--prepare_pure_text_init' in __import__('sys').argv:

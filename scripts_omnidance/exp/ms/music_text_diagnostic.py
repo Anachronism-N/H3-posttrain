@@ -1959,7 +1959,345 @@ def pure_teacher_audit_main():
     print(json.dumps(dict(complete=True, pure_teacher_complete=True, expected=3, passed=3, out=str(args.out), mosaic=str(mosaic))), flush=True)
 
 
+def direct_native_cpu_fixture_main():
+    import contextlib
+    import hashlib
+    import io
+    import tempfile
+    from types import SimpleNamespace
+    from unittest.mock import patch
+    import torch
+    from PIL import Image
+    from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder, MiniMaxH3Unit_PackedSequenceBuilder
+    from music_text_condition import tensor_sha256
+    from music_text_oracle_generate import DIRECT_PROTOCOL, direct_native_call, direct_sampling_settings
+    parser = argparse.ArgumentParser(description='CPU fake-pipe native-call regression; not GPU/runtime generation evidence')
+    parser.add_argument('--direct_native_cpu_fixture', action='store_true', required=True)
+    parser.add_argument('--selection', type=Path, help='Optional existing real three-case cache source for CPU source/loader tests')
+    parser.add_argument('--cache_roots', type=Path, nargs='+')
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if args.out.exists() or not args.out.parent.is_dir():
+        parser.error('Require a new fixture report and existing parent')
+    torch.set_num_threads(2)
+    image = Image.new('RGB', (16, 16), (20, 40, 60))
+    prefix = torch.arange(2 * 5120, dtype=torch.float32).reshape(2, 5120).to(torch.bfloat16) / 5120
+    prefix_tags = torch.tensor([0, 1], dtype=torch.long)
+    tail = torch.ones(3, 5120, dtype=torch.bfloat16)
+    waveform = torch.arange(2 * 162000, dtype=torch.float32).reshape(2, 162000) / 162000
+    metadata = dict(prepared_image_size=list(image.size), prepared_image_sha256=hashlib.sha256(image.tobytes()).hexdigest())
+    record = dict(prefix=prefix, prefix_tags=prefix_tags, metadata=metadata)
+    full = dict(prompt_embeds=torch.cat((prefix, tail)), text_token_tags=torch.cat((prefix_tags, torch.ones(3, dtype=torch.long))))
+    options = SimpleNamespace(num_frames=124, steps=50, seed=42, cfg=1, shift=12, audio_shift=3)
+    sampling = direct_sampling_settings(options, 1280, 704)
+
+    class FixtureEmbedder(MiniMaxH3Unit_PromptEmbedder):
+        def __init__(self):
+            super().__init__()
+            self.onload_model_names = ()
+            self.prefix_record = record
+
+        def process(self, pipe, **kwargs):
+            assert kwargs.get('prompt') is None
+            return {key: value.clone() for key, value in full.items()}
+
+    class FakePipe:
+        def __init__(self, fault=None):
+            self.device = 'cpu'
+            self.text_encoder = self.tokenizer = self.processor = None
+            self.units = [MiniMaxH3Unit_PromptEmbedder(), MiniMaxH3Unit_PackedSequenceBuilder(), object()]
+            self.scheduler, self.scheduler_audio = object(), object()
+            self.fault = fault
+            self.model_calls = 0
+            self.realwave_hash = None
+
+        def unit_runner(self, unit, pipe, shared, positive, negative):
+            if isinstance(unit, MiniMaxH3Unit_PromptEmbedder):
+                positive.update(unit.process(pipe, prompt=None))
+                if self.fault == 'tags':
+                    positive['text_token_tags'][0] = 1
+            elif isinstance(unit, MiniMaxH3Unit_PackedSequenceBuilder):
+                positive.update(unit.process(pipe, prompt_embeds=positive['prompt_embeds'],
+                    text_token_tags=positive['text_token_tags'], video_latents=shared['video_latents'],
+                    audio_latents=shared['audio_latents'], ref_blocks=shared['ref_blocks']))
+            return shared, positive, negative
+
+        def model_fn(self, **kwargs):
+            self.model_calls += 1
+            value = kwargs['prompt_embeds'].float().sum() / 5120
+            return torch.ones_like(kwargs['video_latents']) * value, torch.ones_like(kwargs['audio_latents']) * value
+
+        def step(self, scheduler, noise_pred, timestep, latents):
+            return latents - noise_pred * 0.001
+
+        def __call__(self, **kwargs):
+            assert kwargs['prompt'] is None and kwargs['negative_prompt'] is None
+            refs = kwargs['references']
+            assert [ref['type'] for ref in refs] == ['image', 'audio']
+            assert refs[1]['sample_rate'] == 32000
+            self.realwave_hash = tensor_sha256(refs[1]['audio'])
+            assert self.realwave_hash == tensor_sha256(waveform)
+            retake = kwargs.get('retake_audio')
+            shared = dict(video_latents=torch.zeros(1, 24, 2, 2, 2), audio_latents=torch.zeros(2, 32, 4),
+                ref_visual_anchor=torch.ones(1, 24, 1, 2, 2), ref_audio_anchor=torch.ones(2, 32, 2),
+                audio_cond_noise_aug=0.1, imgvid_cond_noise_aug=0.1,
+                ref_blocks=[dict(kind='image', prepared_image=image if self.fault != 'image' else image.resize((32, 16)),
+                                 latent_t=1, latent_h=2, latent_w=2, ref_audio_t=0),
+                            dict(kind='audio', ref_audio_t=2)],
+                input_latents_audio=torch.ones(2, 32, 4) if retake is not None else None,
+                denoise_mask_audio=torch.tensor([0, 0, 0, 1], dtype=torch.bfloat16) if retake is not None else None)
+            positive, negative = {}, {}
+            for unit in self.units:
+                shared, positive, negative = self.unit_runner(unit, self, shared, positive, negative)
+            if self.fault == 'stop':
+                raise RuntimeError('fixture injected interruption')
+            steps = kwargs['num_inference_steps'] - (self.fault == 'short')
+            for index in range(steps):
+                video, audio = self.model_fn(**shared, **positive,
+                    timestep_video=torch.tensor([1000 - index]), timestep_audio=torch.tensor([999 - index]))
+                shared['video_latents'] = self.step(self.scheduler, video, index, shared['video_latents'])
+                shared['audio_latents'] = self.step(self.scheduler_audio, audio, index, shared['audio_latents'])
+            return [image] * 124, shared['audio_latents']
+
+    results, rejected = [], []
+    stream = io.StringIO()
+    with contextlib.redirect_stdout(stream), patch.object(torch.cuda, '_lazy_init', side_effect=AssertionError('CPU fixture cannot initialize CUDA')):
+        for mode in ('ref', 'retake'):
+            pipe, embedder = FakePipe(), FixtureEmbedder()
+            originals = (pipe.unit_runner, pipe.step, pipe.model_fn, pipe.units[0])
+            _, _, audit = direct_native_call(pipe, embedder, image, waveform, 32000, sampling, mode,
+                                             (prefix, prefix_tags), full)
+            assert (pipe.unit_runner, pipe.step, pipe.model_fn, pipe.units[0]) == originals
+            assert audit['scheduler_updates'] == dict(video=50, audio=50)
+            assert audit['identity']['raw_exact'] and audit['identity']['packed_exact'] and audit['identity']['tags_exact']
+            assert audit['identity']['velocity']['video']['max_abs'] == 0
+            results.append(dict(mode=mode, audit=audit, fake_model_calls=pipe.model_calls, native_waveform_preserved=True))
+        for fault in ('tags', 'image', 'short', 'stop', 'tc'):
+            pipe, embedder = FakePipe(fault), FixtureEmbedder()
+            if fault == 'tc':
+                pipe.text_encoder = object()
+            originals = (pipe.unit_runner, pipe.step, pipe.model_fn, pipe.units[0])
+            try:
+                direct_native_call(pipe, embedder, image, waveform, 32000, sampling, 'ref', (prefix, prefix_tags), full)
+            except (ValueError, RuntimeError) as error:
+                assert (pipe.unit_runner, pipe.step, pipe.model_fn, pipe.units[0]) == originals
+                rejected.append(dict(fault=fault, error=str(error), original_hooks_restored=True))
+            else:
+                raise AssertionError('Fixture fault was not rejected: ' + fault)
+    real_cases, manifest_rejections = [], []
+    if args.selection is not None or args.cache_roots is not None:
+        if args.selection is None or args.cache_roots is None:
+            parser.error('Real-source fixture requires both selection and cache_roots')
+        import librosa
+        from music_clip_bridge import load_audio
+        from music_text_oracle_generate import direct_generation_manifest, validate_direct_generation_manifest, direct_teacher_identity_embedder
+        original_load = torch.load
+
+        def prefix_only_load(path, *load_args, **load_kwargs):
+            if Path(path).parent.name == 'targets':
+                raise AssertionError('Metadata-only manifest builder must not read teacher target/prompt')
+            return original_load(path, *load_args, **load_kwargs)
+
+        with patch.object(torch, 'load', side_effect=prefix_only_load):
+            actual_manifest = direct_generation_manifest(args.selection, args.cache_roots)
+        with tempfile.TemporaryDirectory(prefix='direct_native_manifest_fixture_') as temporary:
+            temporary = Path(temporary)
+            for fault in ('complete', 'prefix_sha', 'audio_sha', 'count'):
+                modified = json.loads(json.dumps(actual_manifest))
+                if fault == 'complete':
+                    modified['complete'] = False
+                elif fault == 'prefix_sha':
+                    modified['cases'][0]['prefix_file_sha256'] = '0' * 64
+                elif fault == 'audio_sha':
+                    modified['cases'][0]['audio_sha256'] = '0' * 64
+                else:
+                    modified['cases'] = modified['cases'][:2]
+                path = temporary / (fault + '.json')
+                atomic_write_new(path, modified)
+                try:
+                    validate_direct_generation_manifest(path)
+                except ValueError as error:
+                    manifest_rejections.append(dict(fault=fault, error=str(error)))
+                else:
+                    raise AssertionError('Invalid real-source manifest accepted: ' + fault)
+        for case in actual_manifest['cases']:
+            prefix_record = torch.load(case['prefix_path'], map_location='cpu', weights_only=True)
+            embedder, identity = direct_teacher_identity_embedder(prefix_record, case['target_path'])
+            embedded = embedder.process(SimpleNamespace(device='cpu'), ref_blocks=[dict(kind='image'), dict(kind='audio')])
+            assert all(torch.equal(embedded[key], identity[key]) for key in identity)
+            import ast
+            audio_path = Path(case['audio_path'])
+            runtime_source = Path(__file__).with_name('music_text_oracle_generate.py')
+            runtime_main = next(node for node in ast.parse(runtime_source.read_text()).body
+                                if isinstance(node, ast.FunctionDef) and node.name == 'direct_native_main')
+            assignments = [node for node in ast.walk(runtime_main) if isinstance(node, ast.Assign)
+                           and isinstance(node.targets[0], ast.Tuple)]
+            student_statement = next(node for node in assignments if any(
+                isinstance(item, ast.Name) and item.id == 'student_waveform' for item in node.targets[0].elts))
+            native_statement = next(node for node in assignments if any(
+                isinstance(item, ast.Name) and item.id == 'native_values' for item in node.targets[0].elts))
+            with patch('music_clip_bridge.load_audio', wraps=load_audio) as student_loader, patch.object(librosa, 'load', wraps=librosa.load) as native_loader:
+                scope = dict(load_audio=student_loader, librosa=librosa, audio_path=audio_path, case=case,
+                             pipe=SimpleNamespace(audio_vae=SimpleNamespace(sample_rate=32000)),
+                             args=SimpleNamespace(num_frames=124))
+                for statement in (student_statement, native_statement):
+                    exec(compile(ast.Module(body=[statement], type_ignores=[]), str(runtime_source), 'exec'), scope)
+                student_loader.assert_called_once_with(audio_path.stem, audio_root=audio_path.parent)
+                native_loader.assert_called_once_with(case['audio_path'], sr=32000, mono=False, duration=124 / 24)
+                student_waveform, native_values, rate = scope['student_waveform'], scope['native_values'], scope['rate']
+            try:
+                load_audio(str(audio_path), audio_root=audio_path.parent)
+            except (OSError, RuntimeError):
+                counterfeit_path_rejected = True
+            else:
+                raise AssertionError('Student loader must reject a full path masquerading as sample ID')
+            assert student_waveform.shape == (2, 162000) and rate == 32000
+            real_cases.append(dict(sample_id=case['sample_id'], prefix_file_sha256=case['prefix_file_sha256'],
+                prefix_length=case['prefix_length'], prefix_sha256=case['prefix_sha256'],
+                teacher_identity_raw_tags_exact=True, raw_teacher_total_rows=len(identity['prompt_embeds']),
+                student_waveform_shape=list(student_waveform.shape), student_waveform_sha256=tensor_sha256(student_waveform),
+                native_sample_rate=rate, native_shape=list(native_values.shape),
+                production_loader_statements_tested=True, student_loader_stem_parent_tuple_exact=True,
+                student_counterfeit_full_path_rejected=counterfeit_path_rejected,
+                native_librosa_E3_32k_preprocessing_exact=True,
+                native_E3_32k_pcm_sha256=tensor_sha256(torch.from_numpy(native_values)),
+                audio_source_sha256=case['audio_sha256']))
+    source_files = {path.name: dict(path=str(path), sha256=sha256(path)) for path in
+                    (Path(__file__), Path(__file__).with_name('music_text_oracle_generate.py'),
+                     Path(__file__).parent.parent / 'h3ar/sample_h3_ar.py')}
+    result = dict(complete=True, protocol=DIRECT_PROTOCOL, cpu_fixture_only=True, actual_gpu_generation=False,
+        fake_pipe=True, fake_model=True, original_packed_builder=True, no_cuda_initialized=True,
+        text_encoder_calls=0, original_hooks_restored_after_success_and_failure=True,
+        results=results, rejected=rejected, source_files=source_files, real_cached_source_cases=real_cases,
+        metadata_builder_target_load_forbidden_checked=bool(real_cases), manifest_rejections=manifest_rejections,
+        scope='Actual direct_native_call plus original packed builder on CPU fake pipe/model, optional unchanged real offline cache/audio source checks; not native GPU/model or quality evidence')
+    atomic_write_new(args.out, result)
+    print(json.dumps(dict(complete=True, cases=len(results), rejected=len(rejected), cpu_fixture_only=True, out=str(args.out))), flush=True)
+
+
+def direct_native_collect(directory, decode=False):
+    from music_text_oracle_generate import DIRECT_PROTOCOL, validate_direct_generation_manifest, direct_native_parser, direct_sampling_settings
+    directory = Path(directory).resolve(strict=True)
+    plan_path, jobs_path = directory / 'plan.json', directory / 'jobs.json'
+    plan, jobs = json.loads(plan_path.read_text()), json.loads(jobs_path.read_text())
+    if (plan.get('protocol') != DIRECT_PROTOCOL or plan.get('source_people') != 3 or plan.get('expected') != 3
+            or jobs.get('protocol') != DIRECT_PROTOCOL or jobs.get('complete') is not True
+            or jobs.get('all_sampler_jobs_exit_zero') is not True or jobs.get('expected') != 3
+            or jobs.get('plan_sha256') != sha256(plan_path) or len(jobs.get('jobs', [])) != 3
+            or any(job.get('exit_code') != 0 or job.get('sampler_complete') is not True for job in jobs['jobs'])
+            or {job['shard'] for job in jobs['jobs']} != {0, 1, 2}):
+        raise ValueError('Direct native generation lacks all three completed strict source-bound jobs')
+    manifest, manifest_sha = validate_direct_generation_manifest(plan['cached_prefix_manifest'])
+    if manifest_sha != plan.get('cached_prefix_manifest_sha256'):
+        raise ValueError('Direct generation selection/cache manifest changed')
+    source_artifacts = {str(plan_path): sha256(plan_path), str(jobs_path): sha256(jobs_path),
+                        plan['cached_prefix_manifest']: manifest_sha}
+    for path, digest in plan['source_files'].items():
+        if sha256(Path(path)) != digest:
+            raise ValueError('Direct generation source code changed: ' + path)
+        source_artifacts[path] = digest
+    if plan.get('checkpoint'):
+        if sha256(Path(plan['checkpoint'])) != plan.get('checkpoint_sha256'):
+            raise ValueError('Direct generation full checkpoint changed')
+        source_artifacts[plan['checkpoint']] = plan['checkpoint_sha256']
+    default_args = direct_native_parser().parse_args(['--out', str(directory), '--cached_prefix_manifest',
+        plan['cached_prefix_manifest'], '--direct_teacher_identity'])
+    expected_sampling = direct_sampling_settings(default_args, 1280, 704)
+    rows = []
+    for index, case in enumerate(manifest['cases']):
+        job = next(job for job in jobs['jobs'] if job['shard'] == index)
+        log = directory / 'logs' / ('shard_' + str(index) + '.log')
+        if Path(job['log']).resolve() != log or sha256(log) != job.get('log_sha256'):
+            raise ValueError('Direct completed shard log changed')
+        text = log.read_text()
+        if not re.search(r'^\[h3ar\] done\s*$', text, re.MULTILINE):
+            raise ValueError('Missing exact direct native completion')
+        inputs, native, saved = [one_record(text, prefix) for prefix in
+                                ('[direct native input] ', '[direct cached prefix complete] ', '[direct native saved] ')]
+        video = directory / manifest['condition'] / (case['sample_id'] + '_' + Path(case['audio_path']).stem + '.mp4')
+        audit_path = video.with_suffix('.audit.json')
+        if (json.loads(audit_path.read_text()) != saved or saved.get('complete') is not True
+                or saved.get('input') != inputs or saved.get('audit') != native
+                or inputs.get('case') != case or inputs.get('manifest_sha256') != manifest_sha
+                or inputs.get('sampling') != expected_sampling or native.get('sampling') != expected_sampling
+                or {entry['path']: entry['sha256'] for entry in inputs.get('source_files', {}).values()} != plan['source_files']
+                or inputs.get('student_reads_target_or_caption') is not False or inputs.get('semantic_text', 'missing') is not None
+                or inputs.get('checkpoint_sha256') != plan.get('checkpoint_sha256')
+                or inputs.get('teacher_identity') != plan['teacher_identity']
+                or inputs.get('student_zero_input') != plan['student_zero_input']
+                or inputs.get('output_audio') != plan['output_audio'] or inputs.get('music_mode') != plan['music_mode']
+                or Path(saved['output_path']).resolve() != video or saved.get('video_sha256') != sha256(video)
+                or native.get('scheduler_updates') != dict(video=50, audio=50)
+                or native.get('waveform_sha256') != inputs.get('native_waveform_sha256')
+                or native.get('native_audio_condition') != 'real_reference_audio'
+                or native.get('prefix_tokens') != case['prefix_length']
+                or native.get('full_cached_prefix_preserved') is not True
+                or native.get('original_cached_prefix_tags_preserved') is not True
+                or native.get('packed_text_tags_exact') is not True
+                or native.get('original_joint_pipeline') is not True
+                or native.get('native_audio_vae_unchanged') is not True
+                or native.get('audio_tail_policy') != 'original_native_unmodified'
+                or any(native.get(key) is not False for key in ('text_encoder_loaded', 'tokenizer_loaded', 'processor_loaded'))
+                or native.get('text_encoder_calls') != 0 or native.get('semantic_text', 'missing') is not None):
+            raise ValueError('Direct native input/cache/real-audio/scheduler evidence differs')
+        if any(not native.get(key, {}).get('exists') for key in ('reference', 'visual_reference')):
+            raise ValueError('Missing independent native visual/audio VAE references')
+        if plan['music_mode'] == 'ref' and any(native.get(key, {}).get('exists') for key in ('retake', 'denoise_mask_audio')):
+            raise ValueError('Native reference-only mode unexpectedly contains a retake')
+        if plan['teacher_identity']:
+            identity = native.get('identity', {})
+            if (any(identity.get(key) is not True for key in ('raw_exact', 'tags_exact', 'packed_exact'))
+                    or any(identity.get('velocity', {}).get(kind, {}).get('exact') is not True for kind in ('video', 'audio'))):
+                raise ValueError('Cached full teacher identity evidence is incomplete')
+        else:
+            condition = one_record(text, '[direct music condition] ')
+            if (condition.get('checkpoint_sha256') != plan['checkpoint_sha256']
+                    or condition.get('prefix_file_sha256') != case['prefix_file_sha256']
+                    or condition.get('uses_ground_truth_caption') is not False
+                    or condition.get('cached_prefix_is_adapter_input') is not False
+                    or condition.get('context_source') != 'none'
+                    or condition.get('prompt_embeds_sha256') != native['prompt_embeds_sha256']):
+                raise ValueError('Student direct raw-tail route differs from checkpoint/cache or reads teacher/context')
+        if plan['output_audio'] == 'generated' and (saved.get('generated_audio_preserved') is not True
+                or saved.get('mux_audio_sha256') != native.get('generated_audio_sha256')):
+            raise ValueError('Original joint generated audio was replaced in output mux')
+        for path in (log, video, audit_path):
+            source_artifacts[str(path)] = sha256(path)
+        row = dict(sample_id=case['sample_id'], condition=manifest['condition'], case=case,
+                   video_path=str(video), video_sha256=sha256(video), log_path=str(log), log_sha256=sha256(log),
+                   input=inputs, audit=native, output_audio=plan['output_audio'])
+        if decode:
+            row['integrity'] = probe_video(video)
+        rows.append(row)
+    for path, digest in source_artifacts.items():
+        if sha256(Path(path)) != digest:
+            raise ValueError('Direct artifact changed during collection')
+    return dict(protocol=DIRECT_PROTOCOL, directory=str(directory), plan=plan, cases=manifest['cases'],
+                rows=rows, source_artifacts=[dict(path=path, sha256=digest) for path, digest in source_artifacts.items()])
+
+
+def direct_native_audit_main():
+    parser = argparse.ArgumentParser(description='Independent complete three-case direct native media/source audit')
+    parser.add_argument('--direct_native_audit', action='store_true', required=True)
+    parser.add_argument('--directory', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if args.out.exists() or not args.out.parent.is_dir():
+        parser.error('Require a new audit report and existing parent')
+    result = direct_native_collect(args.directory, decode=True)
+    result.update(complete=True, expected=3, passed=3, complete_selected_audio_video_decode=True,
+                  musical_quality_accepted=False, cached_teacher_live_TC_equivalence_tested=False,
+                  diagnostic_sha256=sha256(Path(__file__)),
+                  scope='Full media decode and original native real-audio/cache/scheduler evidence; not human musical/visual acceptance or live-TC equivalence')
+    atomic_write_new(args.out, result)
+    print(json.dumps(dict(complete=True, passed=3, out=str(args.out))), flush=True)
+
+
 def main():
+    if '--direct_native_cpu_fixture' in __import__('sys').argv:
+        return direct_native_cpu_fixture_main()
+    if '--direct_native_audit' in __import__('sys').argv:
+        return direct_native_audit_main()
     if '--pure_teacher_audit' in __import__('sys').argv:
         return pure_teacher_audit_main()
     if '--head_range' in __import__('sys').argv:

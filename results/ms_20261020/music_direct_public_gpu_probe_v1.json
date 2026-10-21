@@ -1,0 +1,36 @@
+{
+  "complete": true,
+  "checkpoint_path": "/tmp/music_direct_public_init_v1.pt",
+  "checkpoint_sha256": "fa7e5ee1ea2d080aa38530ea91ccc29e81f173773618e6c944a3e442618f304e",
+  "checkpoint_is_zero_update_public_initialization": true,
+  "actual_public_musicfm_loaded": true,
+  "raw_tail_shape": [
+    254,
+    5120
+  ],
+  "actual_batch_size": 16,
+  "adapter_reload_exact": true,
+  "actual_gradient_scope": {
+    "backbone": {
+      "tensors": 400,
+      "parameters": 316343296,
+      "gradient_norm": 0.3969847641572608
+    },
+    "adapter": {
+      "tensors": 2,
+      "parameters": 5248000,
+      "gradient_norm": 0.12711105785895305
+    }
+  },
+  "cuda_peak_bytes": 16469304832,
+  "GPU_used": true,
+  "teacher_data_used": false,
+  "smoke_optimizer_updates": 1,
+  "loss_kind": "squared-output scope/memory probe only, not CLIP capability training",
+  "source_sha256": {
+    "music_text_adapter.py": "7340997eb615753c6df252c9ef0e18b8e2ddfe4c925cbcc86feaef4d45b03c10",
+    "music_text_infer.py": "f0e53620cd6976ccd2794ce3a970985cdda059f0d9c5ce3bc9149d54e0f47553",
+    "music_encoder_adapter.py": "da4432ec0da389b90e701609c8f9c955983f99b2a4d6778d6cffe84673b5af37"
+  },
+  "scope": "Actual GPU full MusicFM/linear gradient, batch16 memory and initializer reload; no formal training or video acceptance"
+}

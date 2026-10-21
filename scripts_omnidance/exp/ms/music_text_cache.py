@@ -317,7 +317,146 @@ def audit_student_context_main():
     print(json.dumps(dict(event='student_context_audit_finished', **report)), flush=True)
 
 
+def cached_reference_teacher_main():
+    contextual_dependencies()
+    from music_text_condition import (DIRECT_PREFIX_PROTOCOL, validate_cached_reference_prefix)
+    parser = argparse.ArgumentParser(description='Native image/reference P plus complete user-prompt teacher suffix')
+    parser.add_argument('--cached_reference_teacher', action='store_true', required=True)
+    parser.add_argument('--selection', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--w', type=Path, default=Path('/dev/shm/h3/Ref2VA'))
+    parser.add_argument('--shard', type=int, default=0)
+    parser.add_argument('--nshard', type=int, default=6)
+    parser.add_argument('--max_items', type=int, default=0)
+    args = parser.parse_args()
+    if (args.out.exists() or not args.out.parent.is_dir() or args.nshard < 1
+            or not 0 <= args.shard < args.nshard or args.max_items < 0):
+        parser.error('Require a new cache root, existing parent and valid partition')
+    torch.set_num_threads(2)
+    caps_path, split_path, refs_path = [args.selection / name for name in ('caps.json', 'split.json', 'references.json')]
+    caps, split, refs = [json.loads(path.read_text()) for path in (caps_path, split_path, refs_path)]
+    if split.get('protocol') != DIRECT_PREFIX_PROTOCOL or refs.get('protocol') != DIRECT_PREFIX_PROTOCOL:
+        raise ValueError('Require the actual direct-token selection protocol')
+    all_ids = split['train'] + split['val']
+    if len(all_ids) != len(set(all_ids)) or set(all_ids) != set(caps) or set(all_ids) != set(refs['records']):
+        raise ValueError('Selection captions, references and disjoint split differ')
+    ids = all_ids[args.shard::args.nshard]
+    if args.max_items:
+        ids = ids[:args.max_items]
+    weights = sorted(glob.glob(str(args.w / 'text_encoder/model*.safetensors')))
+    if not weights:
+        raise FileNotFoundError(args.w / 'text_encoder')
+    vram = dict(offload_dtype=torch.bfloat16, offload_device='cpu', onload_dtype=torch.bfloat16,
+                onload_device='cpu', preparing_dtype=torch.bfloat16, preparing_device='cuda',
+                computation_dtype=torch.bfloat16, computation_device='cuda')
+    pipe = MiniMaxH3Pipeline.from_pretrained(torch_dtype=torch.bfloat16, device='cuda',
+        model_configs=[ModelConfig(path=weights, **vram)],
+        processor_config=ModelConfig(path=str(args.w / 'processor')),
+        vram_limit=torch.cuda.mem_get_info()[1] / 2 ** 30 - 5)
+    if pipe.video_vae is not None or pipe.audio_vae is not None or pipe.dit is not None:
+        raise ValueError('Teacher caching must not load independent VAEs or DiT')
+    pipe.text_encoder.requires_grad_(False).eval()
+    actual_weights = {}
+    for name, value in pipe.text_encoder.state_dict().items():
+        if value.is_meta:
+            raise ValueError('Unmaterialized native teacher weight: ' + name)
+        actual_weights[name] = tensor_sha256(value)
+    model_sha = hashlib.sha256(json.dumps(actual_weights, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    source = dict(protocol=DIRECT_PREFIX_PROTOCOL, kind='cached_reference_prompt_teacher',
+        caps=dict(path=str(caps_path), sha256=sha256(caps_path)),
+        split=dict(path=str(split_path), sha256=sha256(split_path)),
+        references=dict(path=str(refs_path), sha256=sha256(refs_path)),
+        model_weight_content_sha256=model_sha, loaded_tensor_count=len(actual_weights),
+        actual_loaded_tensor_sha256=actual_weights,
+        source_files={name: dict(path=str(Path(__file__).with_name(name)), sha256=sha256(Path(__file__).with_name(name)))
+                      for name in ('music_text_cache.py', 'music_text_condition.py')},
+        tokenizer_root=str(args.w / 'processor'),
+        tokenizer_files_sha256={path.name: sha256(path) for path in (args.w / 'processor').glob('*.json')},
+        ids=ids, train_ids=split['train'], val_ids=split['val'], shard=args.shard, nshard=args.nshard,
+        max_items=args.max_items, reference_image_short_edge=2048,
+        reference_specs=[dict(kind='image'), dict(kind='audio')],
+        teacher_fields=['dims.genre', 'motion_original'],
+        teacher_transform='original_motion_already_neutralized_in_selected_caps',
+        prefix_test='same-shape causal forward with every user-prompt token replaced by a constant punctuation ID',
+        raw_output_width=5120, raw_output_dtype='torch.bfloat16', native_generation=refs['native_generation'])
+    selection_report = args.selection / 'selection_report.json'
+    if selection_report.is_file():
+        source['selection_report'] = dict(path=str(selection_report), sha256=sha256(selection_report))
+    args.out.mkdir()
+    (args.out / 'targets').mkdir()
+    (args.out / 'prefixes').mkdir()
+    write_new(args.out / 'plan.json', source)
+    source_sha = sha256(args.out / 'plan.json')
+    unit, ref_unit = MiniMaxH3Unit_PromptEmbedder(), MiniMaxH3Unit_ReferenceEncoder()
+    punctuation = pipe.tokenizer('.', add_special_tokens=False)['input_ids'][0]
+    rows = []
+    for index, sid in enumerate(ids):
+        binding = refs['records'][sid]
+        image_path = Path(binding['image_path'])
+        if sha256(image_path) != binding['image_sha256']:
+            raise ValueError('Selected reference image changed: ' + sid)
+        with Image.open(image_path) as image:
+            width, height = ref_unit._resolve_reference_image_shape(pipe, *image.size, 2048)
+            prepared = image.convert('RGB').resize((width, height), Image.LANCZOS)
+        ref_blocks = [dict(kind='image', prepared_image=prepared, ref_audio_t=0), dict(kind='audio', ref_audio_t=203)]
+        prompt = target_prompt(caps[sid])
+        token_ids, tags, pixels, grid, video_pixels, video_grid = unit.preprocess_ref_blocks(pipe, prompt, ref_blocks)
+        length = prefix_length(pipe.tokenizer, prompt, token_ids)
+        with torch.inference_mode():
+            hidden = unit.process(pipe, prompt, ref_blocks=ref_blocks)['prompt_embeds']
+            test_ids = token_ids.clone()
+            test_ids[length:] = punctuation
+            alternative = pipe.text_encoder(input_ids=test_ids[None].to(pipe.device),
+                attention_mask=torch.ones_like(test_ids[None], device=pipe.device),
+                pixel_values=pixels.to(device=pipe.device, dtype=pipe.torch_dtype),
+                image_grid_thw=grid.to(device=pipe.device, dtype=torch.long))
+        if (hidden.dtype != torch.bfloat16 or hidden.shape != (len(token_ids), 5120)
+                or not torch.isfinite(hidden).all() or not torch.equal(hidden[:length], alternative[:length])):
+            raise ValueError('Native prefix depends on user-prompt content or forward differs: ' + sid)
+        prefix, tail = hidden[:length].cpu().clone(), hidden[length:].cpu().clone()
+        prefix_tags, tail_ids = tags[:length].cpu().long(), token_ids[length:].cpu().long()
+        if not torch.equal(torch.cat((prefix, tail)), hidden.cpu()) or not torch.all(tags[length:] == 1):
+            raise ValueError('Native teacher raw sequence/tags split identity failed')
+        common = dict(protocol=DIRECT_PREFIX_PROTOCOL, sample_id=sid,
+            partition='train' if sid in split['train'] else 'val',
+            source_protocol_path=str(args.out / 'plan.json'), source_protocol_sha256=source_sha,
+            model_weight_content_sha256=model_sha, image_path=str(image_path),
+            image_sha256=binding['image_sha256'], prepared_image_size=[width, height],
+            prepared_image_sha256=hashlib.sha256(prepared.tobytes()).hexdigest(),
+            reference_specs=source['reference_specs'], prefix_length=length)
+        prefix_meta = dict(common, kind='cached_reference_prefix', caption_independent_prefix=True,
+            prefix_noncaption_same_length_exact=True, prefix_sha256=tensor_sha256(prefix),
+            prefix_tags_sha256=tensor_sha256(prefix_tags), prefix_token_ids_sha256=tensor_sha256(token_ids[:length]),
+            processor_pixels_sha256=tensor_sha256(pixels), processor_grid_sha256=tensor_sha256(grid))
+        prefix_record = dict(metadata=prefix_meta, prefix=prefix, prefix_tags=prefix_tags)
+        validate_cached_reference_prefix(prefix_record, image_path=image_path)
+        target_meta = dict(common, kind='cached_reference_prompt_tail', image_conditioned=True,
+            prompt=prompt, caption_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
+            tail_sha256=tensor_sha256(tail), source_token_ids_sha256=tensor_sha256(tail_ids),
+            teacher_length=len(tail), prefix_sha256=prefix_meta['prefix_sha256'])
+        target_record = dict(metadata=target_meta, tail=tail, source_token_ids=tail_ids, teacher_length=len(tail))
+        prefix_path, target_path = args.out / 'prefixes' / (sid + '.pt'), args.out / 'targets' / (sid + '.pt')
+        write_new(prefix_path, prefix_record, binary=True)
+        write_new(target_path, target_record, binary=True)
+        rows.append(dict(sample_id=sid, partition=common['partition'],
+            target_path=str(target_path), target_sha256=sha256(target_path),
+            prefix_path=str(prefix_path), prefix_sha256=sha256(prefix_path),
+            teacher_length=len(tail), prefix_length=length))
+        print(json.dumps(dict(event='cached_reference_teacher', sample_id=sid, completed=index + 1,
+                             expected=len(ids), prefix_length=length, teacher_length=len(tail))), flush=True)
+        del hidden, alternative
+    if any(sha256(path) != source[name]['sha256'] for name, path in (('caps', caps_path), ('split', split_path), ('references', refs_path))):
+        raise ValueError('Selection changed during native teacher caching')
+    write_new(args.out / 'finished.json', dict(protocol=DIRECT_PREFIX_PROTOCOL, complete=True,
+        expected=len(ids), rows=rows, source_protocol_sha256=source_sha,
+        actual_lm_forward=True, prefix_caption_independence_checked=True, original_split_reconstruction_exact=True,
+        source_files=source['source_files'], scope='Native P plus original teacher suffix cache; no training or video quality acceptance'))
+    print(json.dumps(dict(event='cached_reference_teacher_finished', complete=True, count=len(rows), out=str(args.out))), flush=True)
+
+
 def main():
+    if '--cached_reference_teacher' in sys.argv:
+        return cached_reference_teacher_main()
     if '--pure_text' in sys.argv:
         return pure_text_main()
     contextual_dependencies()

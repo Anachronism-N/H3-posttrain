@@ -851,7 +851,807 @@ def online_main():
     print(json.dumps(dict(event='online_finished', out=str(args.out), **summary)), flush=True)
 
 
+# Direct-token training is isolated from the legacy sequence/counterfactual paths.
+DIRECT_CLIP_PROTOCOL = 'musicfm_direct_tokens_cached_prefix_v1'
+
+
+def _direct_sample_statistics(raw, mask):
+    if (raw.ndim != 3 or mask.shape != raw.shape[:2] or mask.dtype != torch.bool
+            or not torch.isfinite(raw).all() or not mask.any(1).all()):
+        raise ValueError('Direct loss requires finite tokens and a nonempty actual mask per sample')
+    count = mask.sum(1).float()
+    mean = raw.float().masked_fill(~mask[..., None], 0).sum(1) / count[:, None]
+    centered = (raw.float() - mean[:, None]).masked_fill(~mask[..., None], 0)
+    rms = (centered.square().sum((1, 2)) / (count * raw.shape[-1])).sqrt()
+    return mean, rms
+
+
+def _direct_moment_terms(student_mean, student_rms, teacher_mean, teacher_rms, std, eps=1e-6):
+    location = ((student_mean - teacher_mean.detach()) / std).square().mean(-1)
+    scale = ((student_rms + eps) / (teacher_rms.detach() + eps)).log().square()
+    return location, scale
+
+
+def _direct_clip_scores(student_mean, teacher_mean, mean, std, groups):
+    student = F.normalize((student_mean.float() - mean) / std, dim=-1)
+    teacher = F.normalize((teacher_mean.detach().float() - mean) / std, dim=-1)
+    logits = student @ teacher.T / 0.07
+    # Other rows of the same song are not negatives; the paired diagonal remains.
+    group = torch.tensor(groups, device=logits.device, dtype=torch.long)
+    excluded = group[:, None].eq(group[None, :])
+    excluded.fill_diagonal_(False)
+    return logits.masked_fill(excluded, float('-inf')), student, teacher
+
+
+def _direct_losses(student_mean, student_rms, teacher_mean, teacher_rms, mean, std, groups, moment_weight):
+    logits, student, teacher = _direct_clip_scores(student_mean, teacher_mean, mean, std, groups)
+    labels = torch.arange(len(logits), device=logits.device)
+    clip = 0.5 * (F.cross_entropy(logits, labels) + F.cross_entropy(logits.T, labels))
+    location, scale = _direct_moment_terms(student_mean, student_rms, teacher_mean, teacher_rms, std)
+    moment = (location + scale).mean()
+    loss = clip + moment_weight * moment
+    if not torch.isfinite(loss):
+        raise ValueError('Nonfinite direct CLIP/moments loss')
+    return loss, dict(clip=clip, moment=moment, location=location.mean(), scale=scale.mean()), student, teacher
+
+
+def _direct_gather(value, differentiable=False):
+    import torch.distributed as dist
+    if not dist.is_initialized() or dist.get_world_size() == 1:
+        return value
+    size = torch.tensor([len(value)], device=value.device, dtype=torch.long)
+    sizes = [torch.zeros_like(size) for _ in range(dist.get_world_size())]
+    dist.all_gather(sizes, size)
+    sizes = [int(item.item()) for item in sizes]
+    maximum = max(sizes)
+    padding = value.new_zeros((maximum - len(value), *value.shape[1:]))
+    padded = torch.cat((value, padding), dim=0)
+    if differentiable:
+        from torch.distributed.nn.functional import all_gather
+        gathered = all_gather(padded)
+    else:
+        gathered = [torch.empty_like(padded) for _ in sizes]
+        dist.all_gather(gathered, padded)
+    return torch.cat([item[:size] for item, size in zip(gathered, sizes)], dim=0)
+
+
+def _direct_global_loss(raw, mask, teacher_mean, teacher_rms, groups, mean, std, moment_weight,
+                        actual_rows=None):
+    student_mean, student_rms = _direct_sample_statistics(raw, mask)
+    if actual_rows is not None:
+        student_mean, student_rms = student_mean[actual_rows], student_rms[actual_rows]
+    student_mean = _direct_gather(student_mean, differentiable=True)
+    student_rms = _direct_gather(student_rms, differentiable=True)
+    teacher_mean = _direct_gather(teacher_mean)
+    teacher_rms = _direct_gather(teacher_rms)
+    group_tensor = torch.tensor(groups, device=raw.device, dtype=torch.long)
+    all_groups = _direct_gather(group_tensor).tolist()
+    # Every rank computes the same global loss. Autograd all_gather SUMs its
+    # gradients across ranks, exactly cancelling DDP's parameter-gradient mean.
+    return _direct_losses(student_mean, student_rms, teacher_mean, teacher_rms,
+                          mean, std, all_groups, moment_weight)
+
+
+def _direct_epoch_batches(ids, local_batch, world, seed, epoch):
+    order = list(ids)
+    random.Random(seed + epoch).shuffle(order)
+    return [order[start:start + local_batch * world]
+            for start in range(0, len(order), local_batch * world)]
+
+
+def _direct_rank_ids(global_ids, rank, world):
+    base, remainder = divmod(len(global_ids), world)
+    start = rank * base + min(rank, remainder)
+    return global_ids[start:start + base + (rank < remainder)]
+
+
+def _direct_load_manifest(path, verify_sources=True):
+    manifest = path if isinstance(path, dict) else json.loads(Path(path).read_text())
+    if not isinstance(manifest, dict) or set(manifest) != {'metadata', 'rows', 'statistics'}:
+        raise ValueError('Direct manifest requires metadata/rows/statistics only')
+    metadata, rows, statistics = (manifest[key] for key in ('metadata', 'rows', 'statistics'))
+    if (not isinstance(metadata, dict) or metadata.get('protocol') != DIRECT_CLIP_PROTOCOL
+            or metadata.get('complete') is not True or not isinstance(rows, dict)
+            or not isinstance(statistics, dict)):
+        raise ValueError('Direct manifest is not a completed direct-token release')
+    train, val = metadata.get('train_ids'), metadata.get('val_ids')
+    if (not isinstance(train, list) or not isinstance(val, list) or len(train) != 6000 or len(val) != 500
+            or any(type(sid) is not str or not sid for sid in train + val)
+            or len(set(train + val)) != 6500 or set(rows) != set(train + val)):
+        raise ValueError('Require the locked 6000/500 disjoint unique sample split')
+    mean, std = (torch.tensor(statistics.get(key, []), dtype=torch.float32) for key in ('mean', 'std'))
+    energy, token_count = statistics.get('teacher_energy'), statistics.get('training_token_count')
+    if (mean.shape != (5120,) or std.shape != (5120,) or not torch.isfinite(mean).all()
+            or not torch.isfinite(std).all() or (std <= 0).any()
+            or type(energy) not in (float, int) or not math.isfinite(energy) or energy <= 0
+            or type(token_count) is not int or token_count < 6000):
+        raise ValueError('Invalid fixed full-train raw-token statistics')
+    teacher_means, teacher_rms, group_indices = {}, {}, {}
+    groups = {}
+    train_groups, val_groups = set(), set()
+    required = {'audio_path', 'audio_sha256', 'group_id', 'target_path', 'target_sha256',
+                'prefix_path', 'prefix_sha256', 'partition', 'teacher_mean',
+                'teacher_centered_rms', 'teacher_length'}
+    train_tokens = 0
+    verified = {}
+    for partition, ids, partition_groups in (('train', train, train_groups), ('val', val, val_groups)):
+        for sid in ids:
+            row = rows[sid]
+            if (not isinstance(row, dict) or set(row) != required or row['partition'] != partition
+                    or type(row['group_id']) is not str or not row['group_id']
+                    or type(row['teacher_length']) is not int or row['teacher_length'] < 1
+                    or type(row['teacher_centered_rms']) not in (int, float)
+                    or not math.isfinite(row['teacher_centered_rms']) or row['teacher_centered_rms'] < 0):
+                raise ValueError('Invalid direct teacher table row: ' + sid)
+            vector = torch.tensor(row['teacher_mean'], dtype=torch.float32)
+            if vector.shape != (5120,) or not torch.isfinite(vector).all():
+                raise ValueError('Require the full finite raw-y teacher mean: ' + sid)
+            teacher_means[sid], teacher_rms[sid] = vector, float(row['teacher_centered_rms'])
+            group = row['group_id']
+            groups.setdefault(group, len(groups))
+            group_indices[sid] = groups[group]
+            partition_groups.add(group)
+            if partition == 'train':
+                train_tokens += row['teacher_length']
+            for kind in ('audio', 'target', 'prefix'):
+                source, checksum = Path(row[kind + '_path']), row[kind + '_sha256']
+                if (type(checksum) is not str or len(checksum) != 64
+                        or any(c not in '0123456789abcdef' for c in checksum)):
+                    raise ValueError('Invalid manifest source SHA: ' + sid + ':' + kind)
+                if kind == 'audio' and source.suffix != '.wav':
+                    raise ValueError('Deployment load_audio requires its actual .wav source')
+                key = str(source.resolve())
+                if key in verified and verified[key] != checksum:
+                    raise ValueError('Conflicting source SHA in manifest: ' + key)
+                if verify_sources and key not in verified and sha256(source) != checksum:
+                    raise ValueError('Changed verified direct source: ' + key)
+                verified[key] = checksum
+    if train_groups & val_groups or train_tokens != token_count:
+        raise ValueError('Train/validation song groups overlap or training token count differs')
+    # Only SHA-byte reads above: neither target raw-y nor cached P is torch-loaded.
+    return dict(metadata=metadata, rows=rows, train=train, val=val, mean=mean, std=std,
+                teacher_means=teacher_means, teacher_rms=teacher_rms, groups=group_indices,
+                teacher_energy=float(energy), source_files=verified)
+
+
+def _direct_wave_batch(ids, bundle, device):
+    from music_clip_bridge import load_audio
+    waves = []
+    for sid in ids:
+        path = Path(bundle['rows'][sid]['audio_path'])
+        value = load_audio(path.stem, path.parent)[0]
+        if value.shape != (2, 162000) or value.dtype != torch.float32 or not torch.isfinite(value).all():
+            raise ValueError('Actual deployment waveform loader returned invalid audio: ' + sid)
+        waves.append(value)
+    return torch.stack(waves).to(device=device)
+
+
+def _direct_targets(ids, bundle, device):
+    if not ids:
+        return torch.empty(0, 5120, device=device), torch.empty(0, device=device), []
+    return (torch.stack([bundle['teacher_means'][sid] for sid in ids]).to(device),
+            torch.tensor([bundle['teacher_rms'][sid] for sid in ids], device=device),
+            [bundle['groups'][sid] for sid in ids])
+
+
+def _direct_rng_state(device):
+    state = dict(python=random.getstate(), torch=torch.get_rng_state())
+    if device.type == 'cuda':
+        state['cuda'] = torch.cuda.get_rng_state(device)
+    return state
+
+
+def _direct_restore_rng(state, device):
+    random.setstate(state['python'])
+    torch.set_rng_state(state['torch'])
+    if device.type == 'cuda':
+        torch.cuda.set_rng_state(state['cuda'], device)
+
+
+def _direct_atomic(path, content, owned, checkpoint_model=None):
+    import os
+    import uuid
+    path = Path(path)
+    if not path.parent.is_dir():
+        raise FileNotFoundError(path.parent)
+    if path.exists() and path.name not in owned:
+        raise FileExistsError('Refuse to replace an output not owned by this run: ' + str(path))
+    temporary = path.with_name('.' + path.name + '.' + uuid.uuid4().hex + '.tmp')
+    if checkpoint_model is not None:
+        from music_text_adapter import save_direct_music_text_checkpoint
+        save_direct_music_text_checkpoint(temporary, checkpoint_model)
+    elif path.suffix == '.pt':
+        with temporary.open('xb') as stream:
+            torch.save(content, stream)
+    else:
+        with temporary.open('x') as stream:
+            json.dump(content, stream, ensure_ascii=False, indent=2, allow_nan=False)
+    os.replace(temporary, path)
+    owned.add(path.name)
+
+
+@torch.no_grad()
+def _direct_evaluate(model, ids, bundle, device, local_batch, rank, world, moment_weight):
+    model.eval()
+    names = _direct_rank_ids(ids, rank, world)
+    means, rms_values = [], []
+    for start in range(0, len(names), local_batch):
+        _refresh_online_reservation()
+        wave = _direct_wave_batch(names[start:start + local_batch], bundle, device)
+        raw, mask = model(wave)
+        vector, rms = _direct_sample_statistics(raw, mask)
+        means.append(vector)
+        rms_values.append(rms)
+    student_mean = torch.cat(means) if means else torch.empty(0, 5120, device=device)
+    student_rms = torch.cat(rms_values) if rms_values else torch.empty(0, device=device)
+    teacher_mean, teacher_rms, groups = _direct_targets(names, bundle, device)
+    student_mean, student_rms = _direct_gather(student_mean), _direct_gather(student_rms)
+    teacher_mean, teacher_rms = _direct_gather(teacher_mean), _direct_gather(teacher_rms)
+    groups = _direct_gather(torch.tensor(groups, device=device, dtype=torch.long)).tolist()
+    loss, terms, student, teacher = _direct_losses(
+        student_mean, student_rms, teacher_mean, teacher_rms,
+        bundle['mean'].to(device), bundle['std'].to(device), groups, moment_weight)
+    logits, _, _ = _direct_clip_scores(student_mean, teacher_mean, bundle['mean'].to(device),
+                                      bundle['std'].to(device), groups)
+    labels = torch.arange(len(ids), device=device)
+    metrics = dict(candidates=len(ids), loss=float(loss), **{k: float(v) for k, v in terms.items()})
+    for k in (1, 5, 10):
+        recalls = [(matrix.topk(min(k, len(ids)), dim=1).indices == labels[:, None]).any(1).float().mean()
+                   for matrix in (logits, logits.T)]
+        metrics['R@' + str(k)] = float(sum(recalls) / 2)
+    metrics.update(student_embedding_variance=float(student.var(0, unbiased=False).mean()),
+                   student_mean_variance=float(student_mean.var(0, unbiased=False).mean()),
+                   student_centered_rms_mean=float(student_rms.mean()),
+                   teacher_centered_rms_mean=float(teacher_rms.mean()),
+                   raw_scale_ratio=float((student_rms + 1e-6).mean() / (teacher_rms + 1e-6).mean()),
+                   paired_cosine=float((student * teacher).sum(-1).mean()))
+    metrics['finite_noncollapsed'] = bool(
+        all(math.isfinite(v) for v in metrics.values())
+        and metrics['student_embedding_variance'] > 1e-10
+        and metrics['student_mean_variance'] > 1e-10
+        and metrics['student_centered_rms_mean'] > 1e-6)
+    return metrics
+
+
+def _direct_plateau_update(scheduler, validation, epoch, optimizer, minimum, patience, delta, formal=True):
+    score = validation['clip']
+    improved = scheduler['best_clip'] is None or score < scheduler['best_clip'] * (1 - delta)
+    if improved:
+        scheduler.update(best_clip=score, best_epoch=epoch, best_r1=validation['R@1'], bad_epochs=0)
+    else:
+        scheduler['bad_epochs'] += 1
+    converged = False
+    event = None
+    if (formal and epoch >= minimum and scheduler['bad_epochs'] >= patience
+            and validation['finite_noncollapsed']):
+        if scheduler['lr_reductions'] == 0:
+            for group in optimizer.param_groups:
+                group['lr'] *= 0.1
+            scheduler.update(lr_reductions=1, bad_epochs=0,
+                             phase_anchor_r1=validation['R@1'], phase_anchor_epoch=epoch)
+            event = 'learning_rate_reduced_x0.1'
+        elif validation['R@1'] >= scheduler['phase_anchor_r1'] - 0.01:
+            converged = True
+            event = 'converged_representation_not_video_quality'
+        else:
+            event = 'convergence_unconfirmed_retrieval_degraded'
+    return improved, converged, event
+
+
+def _direct_training(args):
+    import os
+    import torch.distributed as dist
+    from torch.nn.parallel import DistributedDataParallel as DDP
+    from music_text_adapter import load_direct_music_text_checkpoint
+    if not torch.cuda.is_available():
+        raise RuntimeError('Direct training requires actual GPU; use --direct_clip_cpu_test for fixtures')
+    world, rank, local_rank = (int(os.environ.get(key, default))
+                               for key, default in (('WORLD_SIZE', '1'), ('RANK', '0'), ('LOCAL_RANK', '0')))
+    torch.cuda.set_device(local_rank)
+    device = torch.device('cuda', local_rank)
+    if world > 1:
+        dist.init_process_group('nccl')
+    torch.set_num_threads(2)
+    torch.manual_seed(args.seed)
+    random.seed(args.seed)
+    bundle = _direct_load_manifest(args.data_manifest, verify_sources=rank == 0)
+    if world > 1:
+        dist.barrier()
+    train = bundle['train'][:args.limit_train] if args.limit_train else bundle['train']
+    probe = train[:min(args.train_probe_count, len(train))]
+    formal = not args.limit_train and not args.smoke_steps
+    if formal and (world != 4 or args.local_batch_size * world < 2):
+        raise ValueError('Formal protocol requires torchrun 4 ranks and at least two actual global paired examples')
+    if rank == 0 and not args.out.exists():
+        if not args.out.parent.is_dir():
+            raise FileNotFoundError(args.out.parent)
+        args.out.mkdir()
+    if world > 1:
+        dist.barrier()
+    configuration = dict(moment_weight=args.moment_weight, local_batch_size=args.local_batch_size,
+                         backbone_lr=args.backbone_lr, adapter_lr=args.adapter_lr, seed=args.seed,
+                         min_epochs=args.min_epochs, patience=args.patience, rel_delta=args.rel_delta,
+                         limit_train=args.limit_train, train_probe_ids=probe, world_size=world)
+    source_paths = [Path(__file__), Path(__file__).with_name('music_text_adapter.py'),
+                    Path(__file__).with_name('music_encoder_adapter.py'),
+                    Path(__file__).with_name('music_clip_bridge.py')]
+    fingerprints = dict(sources={str(path.resolve()): sha256(path) for path in source_paths},
+                        manifest_sha256=sha256(args.data_manifest))
+    resume = None
+    if args.resume:
+        resume = torch.load(args.resume, map_location='cpu', weights_only=True)
+        if (resume.get('protocol') != DIRECT_CLIP_PROTOCOL or resume.get('configuration') != configuration
+                or resume.get('source_fingerprints', {}).get('sources') != fingerprints['sources']
+                or resume.get('source_fingerprints', {}).get('manifest_sha256') != fingerprints['manifest_sha256']
+                or Path(resume.get('out', '')).resolve() != args.out.resolve()
+                or resume.get('world_size') != world or len(resume.get('rank_rng_states', [])) != world):
+            raise ValueError('Resume run/configuration/source/sampler fingerprints mismatch')
+        checkpoint = args.out / 'last.pt'
+        if sha256(checkpoint) != resume['checkpoint_sha256']:
+            raise ValueError('Resume last model checkpoint/state SHA mismatch')
+        # Load the actual saved updated complete model, never the original init.
+        model = load_direct_music_text_checkpoint(checkpoint).to(device)
+        fingerprints = resume['source_fingerprints']
+        owned = set(resume['owned_files'])
+        history, scheduler = resume['history'], resume['scheduler']
+        epoch, cursor, steps = resume['epoch'], resume['epoch_cursor'], resume['optimizer_steps']
+    else:
+        if args.init is None:
+            raise ValueError('Fresh direct training requires --init complete format4 checkpoint')
+        if any(args.out.iterdir()):
+            raise FileExistsError('Fresh output must be empty and dedicated to this run')
+        model = load_direct_music_text_checkpoint(args.init).to(device)
+        fingerprints['init_sha256'] = sha256(args.init)
+        owned, history = set(), []
+        scheduler = dict(best_clip=None, best_epoch=None, best_r1=None, bad_epochs=0,
+                         lr_reductions=0, phase_anchor_r1=None, phase_anchor_epoch=None)
+        epoch, cursor, steps = 1, 0, 0
+    if model.freeze_backbone:
+        raise ValueError('Both moment-weight configurations must train the dense backbone')
+    model.configure_online_training(True)
+    optimizer = torch.optim.AdamW([
+        dict(params=[p for p in model.backbone.parameters() if p.requires_grad],
+             lr=args.backbone_lr, name='backbone'),
+        dict(params=list(model.adapter.parameters()), lr=args.adapter_lr, name='adapter')], weight_decay=0.01)
+    if resume:
+        optimizer.load_state_dict(resume['optimizer'])
+        _direct_restore_rng(resume['rank_rng_states'][rank], device)
+        expected_batches = _direct_epoch_batches(train, args.local_batch_size, world, args.seed, epoch)
+        sampler = resume['sampler_states'][rank]
+        if sampler != dict(epoch=epoch, cursor=cursor, seed=args.seed,
+                           batches=expected_batches, rank=rank, world_size=world):
+            raise ValueError('Resume actual epoch order/cursor differs')
+    forward = DDP(model, device_ids=[local_rank], broadcast_buffers=False) if world > 1 else model
+    plan = dict(protocol=DIRECT_CLIP_PROTOCOL, configuration=configuration, source_fingerprints=fingerprints,
+                epochs_cap=args.epochs, formal=formal, train_ids=train, val_ids=bundle['val'],
+                train_probe_scope='fixed_subset_not_full_training_evaluation',
+                objective='bidirectional_global_BxB_CLIP_temp0.07 + weight*(paired_mean_MSE/train_std + paired_log_scalar_centered_RMS_ratio_squared)',
+                forward_branches=1, teacher_table_only=True, cached_prefix_loaded=False,
+                feature_cache_used=False, output='unmodified_raw_2T_5120', dtype='float32',
+                global_loss_ddp_scaling='allgather_backward_SUM_cancels_DDP_gradient_MEAN',
+                tail_batch_policy='balanced_actual_ID_rows_no_drop_no_repetition_communication_padding_excluded',
+                global_batch_size=args.local_batch_size * world,
+                convergence_retrieval_guard='R@1 >= first_plateau_R@1 - 0.01_absolute',
+                full_epoch_last_batch_sizes=[len(_direct_rank_ids(
+                    _direct_epoch_batches(train, args.local_batch_size, world, args.seed, 1)[-1], r, world))
+                    for r in range(world)])
+    if rank == 0 and not resume:
+        _direct_atomic(args.out / 'plan.json', plan, owned)
+    converged = bool(resume and resume.get('converged'))
+    reason = 'converged_representation_not_video_quality' if converged else 'convergence_unconfirmed'
+    call_steps = 0
+    initial_buffers = {name: value.detach().cpu().clone() for name, value in model.named_buffers()}
+    while epoch <= args.epochs and not converged:
+        batches = _direct_epoch_batches(train, args.local_batch_size, world, args.seed, epoch)
+        epoch_terms, epoch_items = [], 0
+        while cursor < len(batches):
+            global_ids = batches[cursor]
+            names = _direct_rank_ids(global_ids, rank, world)
+            # Empty rank: participate in the same DDP forward/backward, but its
+            # dummy source is explicitly excluded before global loss collection.
+            forward_names = names if names else global_ids[:1]
+            actual = torch.tensor([True] * len(names) if names else [False], device=device)
+            wave = _direct_wave_batch(forward_names, bundle, device)
+            teacher_mean, teacher_rms, groups = _direct_targets(names, bundle, device)
+            forward.train()
+            optimizer.zero_grad(set_to_none=True)
+            raw, mask = forward(wave)
+            loss, terms, _, _ = _direct_global_loss(
+                raw, mask, teacher_mean, teacher_rms, groups,
+                bundle['mean'].to(device), bundle['std'].to(device), args.moment_weight, actual)
+            loss.backward()
+            if steps == 0:
+                gradient = _gradient_scope(model)
+                if rank == 0:
+                    _direct_atomic(args.out / 'gradient_step1.json', gradient, owned)
+            torch.nn.utils.clip_grad_norm_([p for p in model.parameters() if p.requires_grad],
+                                           1., error_if_nonfinite=True)
+            optimizer.step()
+            cursor += 1
+            steps += 1
+            call_steps += 1
+            epoch_items += len(global_ids)
+            record = dict(loss=float(loss.detach()), **{k: float(v.detach()) for k, v in terms.items()})
+            epoch_terms.append((len(global_ids), record))
+            if rank == 0 and (cursor == 1 or cursor % 10 == 0):
+                print(json.dumps(dict(event='direct_clip_train', epoch=epoch, epoch_cursor=cursor,
+                                      optimizer_steps=steps, global_actual_batch=len(global_ids), **record)), flush=True)
+            del raw, mask, loss, terms, wave
+            if args.smoke_steps and call_steps >= args.smoke_steps:
+                break
+        completed_epoch = cursor == len(batches)
+        validation = _direct_evaluate(model, bundle['val'], bundle, device,
+                                      args.local_batch_size, rank, world, args.moment_weight)
+        training_probe = _direct_evaluate(model, probe, bundle, device,
+                                          args.local_batch_size, rank, world, args.moment_weight)
+        improved, converged, event = (False, False, None)
+        if completed_epoch:
+            improved, converged, event = _direct_plateau_update(
+                scheduler, validation, epoch, optimizer, args.min_epochs,
+                args.patience, args.rel_delta, formal)
+        if not history:
+            improved = True
+        report = dict(epoch=epoch, completed_epoch=completed_epoch, epoch_cursor=cursor,
+                      optimizer_steps=steps, actual_items_this_invocation_epoch=epoch_items,
+                      training={key: sum(n * row[key] for n, row in epoch_terms) / max(epoch_items, 1)
+                                for key in ('loss', 'clip', 'moment', 'location', 'scale')},
+                      validation=validation, fixed_train_probe=training_probe,
+                      scheduler=dict(scheduler), event=event,
+                      learning_rates={g['name']: g['lr'] for g in optimizer.param_groups})
+        history.append(report)
+        if rank == 0:
+            print(json.dumps(dict(event='direct_clip_evaluation', **report)), flush=True)
+        for name, value in model.named_buffers():
+            if not torch.equal(value.detach().cpu(), initial_buffers[name]):
+                raise ValueError('Frozen backbone buffer changed: ' + name)
+        control = [None]
+        if rank == 0 and args.control and args.control.exists():
+            control[0] = json.loads(args.control.read_text())
+            if (set(control[0]) != {'protocol', 'stop_after_epoch'}
+                    or control[0]['protocol'] != DIRECT_CLIP_PROTOCOL
+                    or type(control[0]['stop_after_epoch']) is not int or control[0]['stop_after_epoch'] < 1):
+                raise ValueError('Invalid direct rank0 controller stop command')
+        if world > 1:
+            dist.broadcast_object_list(control, src=0)
+        stopped = bool(completed_epoch and control[0] and epoch >= control[0]['stop_after_epoch'])
+        if completed_epoch:
+            epoch, cursor = epoch + 1, 0
+        rng = _direct_rng_state(device)
+        sampler = dict(epoch=epoch, cursor=cursor, seed=args.seed,
+                       batches=_direct_epoch_batches(train, args.local_batch_size, world, args.seed, epoch),
+                       rank=rank, world_size=world)
+        rngs, samplers = [rng], [sampler]
+        if world > 1:
+            rngs, samplers = [None] * world, [None] * world
+            dist.all_gather_object(rngs, rng)
+            dist.all_gather_object(samplers, sampler)
+        if rank == 0:
+            model.eval()
+            _direct_atomic(args.out / 'last.pt', None, owned, checkpoint_model=model)
+            if improved:
+                _direct_atomic(args.out / 'best.pt', None, owned, checkpoint_model=model)
+            owned.update({'train_state.pt', 'finished.json'})
+            state = dict(protocol=DIRECT_CLIP_PROTOCOL, out=str(args.out.resolve()),
+                         configuration=configuration, source_fingerprints=fingerprints,
+                         optimizer=optimizer.state_dict(), scheduler=scheduler, epoch=epoch, epoch_cursor=cursor,
+                         optimizer_steps=steps, history=history, rank_rng_states=rngs,
+                         sampler_states=samplers, world_size=world, owned_files=sorted(owned),
+                         checkpoint_sha256=sha256(args.out / 'last.pt'), converged=converged)
+            _direct_atomic(args.out / 'train_state.pt', state, owned)
+        if world > 1:
+            dist.barrier()
+        if converged:
+            reason = 'converged_representation_not_video_quality'
+            break
+        if args.smoke_steps and call_steps >= args.smoke_steps:
+            reason = 'smoke_convergence_unconfirmed'
+            break
+        if stopped:
+            reason = 'controller_stop_convergence_unconfirmed'
+            break
+    if rank == 0:
+        summary = dict(protocol=DIRECT_CLIP_PROTOCOL, complete=True, converged=converged,
+                       reason=reason, optimizer_steps=steps, completed_epochs=epoch - 1,
+                       checkpoint_sha256=sha256(args.out / 'last.pt'), formal=formal,
+                       source_fingerprints=fingerprints, final=history[-1] if history else None,
+                       scope='representation_training_not_video_quality_or_human_acceptance')
+        _direct_atomic(args.out / 'finished.json', summary, owned)
+        print(json.dumps(dict(event='direct_clip_finished', **summary)), flush=True)
+    if world > 1:
+        dist.destroy_process_group()
+
+
+class _DirectCPUBackbone(torch.nn.Module):
+    backend, hidden_size, sample_rate = 'musicfm', 1024, 24000
+
+    def __init__(self):
+        super().__init__()
+        self.model = torch.nn.Module()
+        self.model.conv = torch.nn.Sequential(torch.nn.Linear(4, 1024), torch.nn.BatchNorm1d(1024))
+        self.model.conformer = torch.nn.Module()
+        self.model.conformer.layer_norm = torch.nn.LayerNorm(1024)
+        self.model.conformer.layers = torch.nn.Sequential(torch.nn.Linear(1024, 1024), torch.nn.Dropout(0.5))
+        self.model.stat = {'melspec_2048_mean': 0., 'melspec_2048_std': 1.}
+
+    def forward(self, wave):
+        value = F.adaptive_avg_pool1d(wave[:, None], 16).reshape(len(wave), 4, 4)
+        hidden = self.model.conv(value.flatten(0, 1)).reshape(len(wave), 4, 1024)
+        return self.model.conformer.layers(self.model.conformer.layer_norm(hidden))
+
+    def metadata(self):
+        return dict(backend='musicfm', model_path='cpu_explicit_fake_backbone_fixture', sample_rate=24000,
+                    hidden_size=1024, parameters=sum(p.numel() for p in self.parameters()),
+                    dense_parameters=sum(p.numel() for p in self.parameters() if p.requires_grad))
+
+
+def _direct_cpu_ddp_worker(rank, rendezvous, directory):
+    import torch.distributed as dist
+    from torch.nn.parallel import DistributedDataParallel as DDP
+    torch.set_num_threads(1)
+    dist.init_process_group('gloo', init_method=rendezvous, rank=rank, world_size=2)
+    results = []
+    for count, moment_weight in ((64, 0.), (64, 1.), (7, 1.), (1, 1.)):
+        torch.manual_seed(910 + count)
+        reference = torch.nn.Linear(5, 5120)
+        initial = {k: v.clone() for k, v in reference.state_dict().items()}
+        inputs = torch.randn(count, 3, 5)
+        mask = torch.ones(count, 3, dtype=torch.bool)
+        mask[::2, 1] = False
+        target = torch.randn(count, 5120)
+        rms = torch.linspace(0.7, 1.3, count)
+        groups = [i // 2 for i in range(count)]
+        mean, std = torch.randn(5120) * 0.1, torch.rand(5120) + 0.5
+        raw = reference(inputs)
+        sm, sr = _direct_sample_statistics(raw, mask)
+        reference_loss, _, _, _ = _direct_losses(sm, sr, target, rms, mean, std, groups, moment_weight)
+        reference_loss.backward()
+        distributed = torch.nn.Linear(5, 5120)
+        distributed.load_state_dict(initial)
+        wrapper = DDP(distributed)
+        local = _direct_rank_ids(list(range(count)), rank, 2)
+        used = local if local else [0]
+        raw = wrapper(inputs[used])
+        actual = torch.tensor([True] * len(local) if local else [False])
+        loss, _, _, _ = _direct_global_loss(raw, mask[used], target[local], rms[local],
+                                           [groups[i] for i in local], mean, std, moment_weight, actual)
+        loss.backward()
+        gradient_error = max(float((p.grad - q.grad).abs().max())
+                             for p, q in zip(reference.parameters(), distributed.parameters()))
+        torch.testing.assert_close(loss, reference_loss, rtol=1e-6, atol=1e-6)
+        for p, q in zip(reference.parameters(), distributed.parameters()):
+            torch.testing.assert_close(p.grad, q.grad, rtol=2e-5, atol=2e-6)
+        results.append(dict(global_count=count, local_counts=[len(_direct_rank_ids(list(range(count)), r, 2))
+                                                            for r in range(2)],
+                            moment_weight=moment_weight, gradient_max_abs_error=gradient_error,
+                            loss=float(loss.detach()), duplicate_groups_masked=True,
+                            dummy_rank_rows_excluded=count < 2))
+    if rank == 0:
+        write_new(Path(directory) / 'ddp.json', results)
+    dist.destroy_process_group()
+
+
+def _direct_cpu_manifest_fixture(directory):
+    from unittest.mock import patch
+    source = Path(directory) / 'fixture.wav'
+    with source.open('xb') as stream:
+        stream.write(b'explicit CPU manifest SHA-only fixture; no waveform decoding')
+    checksum = sha256(source)
+    vector = [0.] * 5120
+    train, val = ['train_' + str(i) for i in range(6000)], ['val_' + str(i) for i in range(500)]
+    rows = {sid: dict(audio_path=str(source), audio_sha256=checksum,
+                      target_path=str(source), target_sha256=checksum,
+                      prefix_path=str(source), prefix_sha256=checksum,
+                      group_id=sid, partition='train' if sid.startswith('train_') else 'val',
+                      teacher_mean=vector, teacher_centered_rms=1., teacher_length=1)
+            for sid in train + val}
+    manifest = dict(metadata=dict(protocol=DIRECT_CLIP_PROTOCOL, complete=True, train_ids=train, val_ids=val),
+                    rows=rows, statistics=dict(mean=vector, std=[1.] * 5120,
+                                              teacher_energy=1., training_token_count=6000))
+    with patch.object(torch, 'load', side_effect=AssertionError('raw-y/P loads are forbidden')):
+        bundle = _direct_load_manifest(manifest)
+    assert len(bundle['train']) == 6000 and len(bundle['val']) == 500
+    del bundle
+    rejection_cases = []
+    for kind in ('nonfinite_teacher', 'source_sha', 'split_overlap', 'group_overlap', 'token_count'):
+        saved_mean, saved_sha = rows[train[0]]['teacher_mean'], rows[train[0]]['audio_sha256']
+        saved_group, saved_val = rows[val[0]]['group_id'], list(val)
+        if kind == 'nonfinite_teacher':
+            rows[train[0]]['teacher_mean'] = [float('nan')] + vector[1:]
+        elif kind == 'source_sha':
+            rows[train[0]]['audio_sha256'] = '0' * 64
+        elif kind == 'split_overlap':
+            val[0] = train[0]
+        elif kind == 'group_overlap':
+            rows[val[0]]['group_id'] = train[0]
+        else:
+            manifest['statistics']['training_token_count'] += 1
+        try:
+            _direct_load_manifest(manifest)
+        except ValueError:
+            rejection_cases.append(kind)
+        else:
+            raise AssertionError('Manifest did not reject ' + kind)
+        rows[train[0]]['teacher_mean'], rows[train[0]]['audio_sha256'] = saved_mean, saved_sha
+        val[:] = saved_val
+        rows[val[0]]['group_id'] = saved_group
+        manifest['statistics']['training_token_count'] = 6000
+    return dict(locked_6000_500_finite_table_accepted=True, raw_teacher_prefix_torch_load_forbidden=True,
+                actual_source_sha_verified=True, rejected=rejection_cases)
+
+
+def _direct_cpu_test(report_path):
+    import tempfile
+    import torch.multiprocessing as mp
+    from music_text_adapter import DirectMusicToH3Text, save_direct_music_text_checkpoint, load_direct_music_text_checkpoint
+    torch.set_num_threads(1)
+    torch.manual_seed(42)
+    random.seed(42)
+    model = DirectMusicToH3Text(_DirectCPUBackbone(), freeze_backbone=False)
+    wave = torch.randn(4, 2, 162000)
+    buffers = {k: v.clone() for k, v in model.named_buffers()}
+    model.train()
+    condition = model.student_condition(wave)
+    assert set(condition) == {'raw_tokens', 'valid_mask', 'tails', 'lengths'}
+    assert condition['raw_tokens'].shape == (4, 8, 5120)
+    assert condition['raw_tokens'].requires_grad and not any(m.training for m in model.backbone.modules())
+    teacher_mean, teacher_rms = _direct_sample_statistics(condition['raw_tokens'].detach(), condition['valid_mask'])
+    mean, std = torch.zeros(5120), torch.ones(5120)
+    student_mean, student_rms = _direct_sample_statistics(condition['raw_tokens'], condition['valid_mask'])
+    positive, _, _, _ = _direct_losses(student_mean, student_rms, teacher_mean, teacher_rms,
+                                       mean, std, list(range(4)), 0.)
+    wrong, _, _, _ = _direct_losses(student_mean, student_rms, teacher_mean.roll(1, 0), teacher_rms,
+                                    mean, std, list(range(4)), 0.)
+    assert positive < wrong
+    positive.backward()
+    scope = _gradient_scope(model)
+    raw = torch.tensor([[[1., 3.], [100., -100.], [3., 5.]],
+                        [[-2., 0.], [0., 2.], [50., 50.]]], requires_grad=True)
+    mask = torch.tensor([[True, False, True], [True, True, False]])
+    sm, sr = _direct_sample_statistics(raw, mask)
+    torch.testing.assert_close(sm, torch.tensor([[2., 4.], [-1., 1.]]))
+    torch.testing.assert_close(sr, torch.ones(2))
+    location, scale = _direct_moment_terms(sm, sr, sm.detach() + 2,
+                                           torch.full((2,), 2.), torch.full((2,), 2.))
+    torch.testing.assert_close(location, torch.ones(2))
+    expected_scale = math.log((1 + 1e-6) / (2 + 1e-6)) ** 2
+    torch.testing.assert_close(scale, torch.full((2,), expected_scale))
+    (location + scale).mean().backward()
+    assert torch.equal(raw.grad[~mask], torch.zeros_like(raw.grad[~mask]))
+    # Opposite per-sample offsets cancel in a batch mean but must incur moments.
+    swapped = sm.detach().flip(0)
+    l, _ = _direct_moment_terms(sm.detach(), sr.detach(), swapped, sr.detach(), torch.ones(2))
+    assert l.mean() > 0 and torch.equal(sm.detach().mean(0), swapped.mean(0))
+    optimizer = torch.optim.AdamW([
+        dict(params=[p for p in model.backbone.parameters() if p.requires_grad], lr=1e-5),
+        dict(params=list(model.adapter.parameters()), lr=1e-4)], weight_decay=0.01)
+
+    def step(current, opt):
+        opt.zero_grad(set_to_none=True)
+        augmentation = torch.randn_like(wave) * (random.random() * 0.01)
+        raw_tokens, valid = current(wave + augmentation)
+        a, b = _direct_sample_statistics(raw_tokens, valid)
+        loss, _, _, _ = _direct_losses(a, b, teacher_mean, teacher_rms, mean, std, list(range(4)), 1.)
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(current.parameters(), 1., error_if_nonfinite=True)
+        opt.step()
+        return float(loss.detach())
+
+    step(model, optimizer)
+    with tempfile.TemporaryDirectory(prefix='direct_clip_cpu_') as directory:
+        directory = Path(directory)
+        checkpoint, state_path = directory / 'model.pt', directory / 'state.pt'
+        model.eval()
+        save_direct_music_text_checkpoint(checkpoint, model)
+        torch.save(dict(optimizer=optimizer.state_dict(), rng=_direct_rng_state(torch.device('cpu'))), state_path)
+        expected_loss = step(model, optimizer)
+        expected = {key: value.clone() for key, value in model.state_dict().items()}
+        fresh = load_direct_music_text_checkpoint(checkpoint, backbone=_DirectCPUBackbone())
+        restored = torch.optim.AdamW([
+            dict(params=[p for p in fresh.backbone.parameters() if p.requires_grad], lr=1e-5),
+            dict(params=list(fresh.adapter.parameters()), lr=1e-4)], weight_decay=0.01)
+        state = torch.load(state_path, map_location='cpu', weights_only=True)
+        restored.load_state_dict(state['optimizer'])
+        _direct_restore_rng(state['rng'], torch.device('cpu'))
+        actual_loss = step(fresh, restored)
+        assert expected_loss == actual_loss
+        assert all(torch.equal(expected[key], fresh.state_dict()[key]) for key in expected)
+        assert all(torch.equal(value, buffers[key]) for key, value in fresh.named_buffers())
+        mp.spawn(_direct_cpu_ddp_worker,
+                 args=('file://' + str(directory / 'gloo_store'), str(directory)), nprocs=2, join=True)
+        ddp = json.loads((directory / 'ddp.json').read_text())
+        manifest_fixture = _direct_cpu_manifest_fixture(directory)
+    coverage = {}
+    for count in (6000, 65, 63, 7, 3, 1):
+        batches = _direct_epoch_batches(list(range(count)), 16, 4, 42, 1)
+        flattened = [sid for batch in batches for rank in range(4) for sid in _direct_rank_ids(batch, rank, 4)]
+        assert sorted(flattened) == list(range(count)) and len(flattened) == len(set(flattened))
+        coverage[str(count)] = dict(actual_unique_count=len(flattened),
+                                    last_rank_counts=[len(_direct_rank_ids(batches[-1], r, 4)) for r in range(4)])
+    dynamic_batches = {}
+    for local_batch in (1, 2, 4, 8, 16):
+        batches = _direct_epoch_batches(list(range(6000)), local_batch, 4, 42, 1)
+        flattened = [sid for batch in batches for r in range(4) for sid in _direct_rank_ids(batch, r, 4)]
+        assert sorted(flattened) == list(range(6000)) and all(2 <= len(batch) <= local_batch * 4 for batch in batches)
+        dynamic_batches[str(local_batch)] = dict(global_batch=local_batch * 4, actual_unique_count=len(flattened))
+    plateau_optimizer = torch.optim.AdamW([torch.nn.Parameter(torch.ones(1))], lr=1e-4)
+    scheduler = dict(best_clip=None, best_epoch=None, best_r1=None, bad_epochs=0,
+                     lr_reductions=0, phase_anchor_r1=None, phase_anchor_epoch=None)
+    events = []
+    for epoch in range(1, 29):
+        _, converged, event = _direct_plateau_update(scheduler,
+            {'clip': 1., 'finite_noncollapsed': True, 'R@1': .20}, epoch, plateau_optimizer, 20, 8, .005)
+        if event:
+            events.append(dict(epoch=epoch, event=event))
+    assert events[0]['epoch'] == 20 and events[1]['epoch'] == 28 and converged
+    assert scheduler['phase_anchor_r1'] == .20 and scheduler['best_r1'] == .20
+    _, degraded_converged, degraded_event = _direct_plateau_update(scheduler,
+        {'clip': 1., 'finite_noncollapsed': True, 'R@1': .18}, 29, plateau_optimizer, 20, 8, .005)
+    assert not degraded_converged and degraded_event == 'convergence_unconfirmed_retrieval_degraded'
+    _, boundary_converged, _ = _direct_plateau_update(scheduler,
+        {'clip': 1., 'finite_noncollapsed': True, 'R@1': .19}, 30, plateau_optimizer, 20, 8, .005)
+    assert boundary_converged
+    _, collapsed_converged, _ = _direct_plateau_update(scheduler,
+        {'clip': 1., 'finite_noncollapsed': False, 'R@1': .20}, 31, plateau_optimizer, 20, 8, .005)
+    assert not collapsed_converged
+    summary = dict(complete=True, protocol=DIRECT_CLIP_PROTOCOL, cpu_fixture_not_actual_musicfm=True,
+                   actual_gpu_training_run=False, direct_condition_four_key_graph=True,
+                   positive_paired_loss=float(positive.detach()), wrong_paired_loss=float(wrong.detach()),
+                   known_masked_mean_rms_exact=True, invalid_token_gradients_zero=True,
+                   paired_moments_do_not_cancel_in_batch=True, known_log_rms_formula_exact=True,
+                   complete_format4_roundtrip_and_adam_rng_resume_exact=True,
+                   backbone_eval_bn_dropout_buffers_fixed=True, gradient_scope=scope,
+                   cpu_gloo_autograd_ddp_global_loss_gradient_parity=ddp,
+                   manifest_validation=manifest_fixture,
+                   epoch_coverage=coverage, dynamic_formal_batch_coverage=dynamic_batches, plateau_events=events,
+                   plateau_retrieval_guard=dict(first_plateau_anchor_r1=.20, absolute_allowed_drop=.01,
+                                               degraded_r1=.18, degraded_convergence_rejected=True,
+                                               boundary_r1=.19, boundary_convergence_accepted=True,
+                                               collapsed_convergence_rejected=True),
+                   source_sha256=sha256(Path(__file__)),
+                   adapter_source_sha256=sha256(Path(__file__).with_name('music_text_adapter.py')))
+    _direct_atomic(report_path, summary, {Path(report_path).name})
+    print(json.dumps(summary), flush=True)
+
+
+def direct_clip_main():
+    parser = argparse.ArgumentParser(description='FP32 direct MusicFM tokens, one paired global CLIP forward')
+    parser.add_argument('--direct_clip', action='store_true')
+    parser.add_argument('--direct_clip_cpu_test', action='store_true')
+    parser.add_argument('--data_manifest', type=Path)
+    parser.add_argument('--init', type=Path)
+    parser.add_argument('--resume', type=Path)
+    parser.add_argument('--out', type=Path)
+    parser.add_argument('--moment_weight', '--mom_weight', type=float, choices=(0., 1.), default=0.)
+    parser.add_argument('--local_batch_size', type=int, default=16)
+    parser.add_argument('--backbone_lr', type=float, default=1e-5)
+    parser.add_argument('--adapter_lr', type=float, default=1e-4)
+    parser.add_argument('--epochs', type=int, default=50)
+    parser.add_argument('--min_epochs', type=int, default=20)
+    parser.add_argument('--patience', type=int, default=8)
+    parser.add_argument('--rel_delta', type=float, default=.005)
+    parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--train_probe_count', type=int, default=64)
+    parser.add_argument('--control', type=Path)
+    parser.add_argument('--smoke_steps', type=int, default=0)
+    parser.add_argument('--limit_train', type=int, default=0)
+    parser.add_argument('--cpu_report', type=Path, default=Path(__file__).resolve().parents[3]
+                        / 'results/ms_20261020/direct_music_clip_training_cpu_v1.json')
+    args = parser.parse_args()
+    if args.direct_clip_cpu_test:
+        return _direct_cpu_test(args.cpu_report)
+    if not args.direct_clip or not args.data_manifest or not args.out:
+        parser.error('Require --direct_clip --data_manifest --out and either --init or --resume')
+    if (args.epochs < 1 or args.min_epochs < 20 or args.patience != 8 or args.rel_delta != .005
+            or args.local_batch_size < 1 or args.train_probe_count < 2
+            or args.smoke_steps < 0 or args.limit_train < 0 or args.limit_train > 6000
+            or args.backbone_lr != 1e-5 or args.adapter_lr != 1e-4):
+        parser.error('Require locked optimizer/plateau settings, finite epoch cap, and valid counts')
+    return _direct_training(args)
+
+
 def main():
+    if '--direct_clip' in __import__('sys').argv or '--direct_clip_cpu_test' in __import__('sys').argv:
+        return direct_clip_main()
     if '--online' in __import__('sys').argv:
         return online_main()
     parser = argparse.ArgumentParser(description=__doc__)

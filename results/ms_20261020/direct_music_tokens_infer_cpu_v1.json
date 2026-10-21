@@ -1,0 +1,152 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "gpu_started": false,
+  "actual_full_fixture_checkpoint_worker_dispatch": true,
+  "exact_waveform_only_worker_inputs": [
+    [
+      "waveform"
+    ],
+    [
+      "waveform"
+    ]
+  ],
+  "exact_six_field_output_fp32_tail": true,
+  "worker_tail_matches_actual_adapter": true,
+  "proxy_repeated_waveform_single_worker_cache": true,
+  "direct_worker_commands": 2,
+  "factory_cached_prefix_bf16_and_original_tags_preserved": true,
+  "cached_prefix_is_adapter_input": false,
+  "tail_count_from_actual_music_frames": true,
+  "original_packed_builder_exact": true,
+  "independent_native_reference_tensors_unchanged": true,
+  "text_encoder_tokenizer_processor_accesses": 0,
+  "original_prompt_process_calls": 0,
+  "prepared_reference_image_size_sha_and_order_checked": true,
+  "rejected_inputs": [
+    "worker:context,waveform",
+    "worker:caption,waveform",
+    "worker:prefix,waveform",
+    "worker:length,waveform",
+    "worker:waveform",
+    "worker:waveform",
+    "proxy:context",
+    "condition:prompt",
+    "condition:prompt",
+    "condition:prompt",
+    "condition:text_embedding",
+    "condition:keyframes",
+    "condition:reference_order",
+    "condition:prepared_image",
+    "condition:image_path",
+    "condition:loaded_text_encoder",
+    "condition:loaded_processor",
+    "condition:loaded_tokenizer"
+  ],
+  "direct_conditions": [
+    {
+      "kind": "direct_music_cached_reference_prefix",
+      "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+      "checkpoint_sha256": "a71b7ac1ce1d700ac43cee541f8c576617882499e4d0d86329797b0a1b598b59",
+      "prefix_path": "/tmp/h3_direct_infer_cpu_r3igpzq9/prefix.pt",
+      "prefix_file_sha256": "7440936d7960238b96252dce58c65ebf352570b1ff9d79c03c1145f2e67ddd5b",
+      "prefix_length": 3,
+      "prefix_sha256": "f0195b8eb97012913e8d75f7b2576f59ffb762c0863f20f92b00e93c6599df8a",
+      "prefix_tags_sha256": "06ee107b9ef9de168556f0444a4602e6a604fde911803bd18d41d0b7d70effa6",
+      "tail_actual_count": 40,
+      "tail_shape": [
+        40,
+        5120
+      ],
+      "prompt_embeds_shape": [
+        43,
+        5120
+      ],
+      "prompt_embeds_sha256": "98147687d939ae978516b3e53c8d878cf9fd2e7873fdaad50015c8b976d3d765",
+      "text_token_tags_sha256": "df174eb6df116e598f291d0a2ed4b61b5a7c070b37aa7d17a76027f043a78963",
+      "text_encoder_loaded": false,
+      "processor_loaded": false,
+      "tokenizer_loaded": false,
+      "text_encoder_calls": 0,
+      "semantic_text": null,
+      "TC": null,
+      "uses_ground_truth_caption": false,
+      "context_source": "none",
+      "cached_prefix_is_adapter_input": false
+    }
+  ],
+  "legacy_none_cpu_regression": {
+    "complete": true,
+    "cpu_only": true,
+    "real_checkpoint_or_gpu_executed": false,
+    "fake_checkpoint_worker_executed_in_process": true,
+    "new_input_keys_exact_waveform_only": true,
+    "new_generate_context_none": true,
+    "new_key_has_no_context_bytes": true,
+    "legacy_key_input_and_raw_tail_unchanged": true,
+    "legacy_input_keys_exact_waveform_context": true,
+    "checkpoint_policy_read_once_mmap_and_no_state_retained": true,
+    "new_no_tc_factory_none_bf16_tail_and_no_prefix_exact": true,
+    "new_metadata_context_projection_rejected": true,
+    "no_tc_condition": {
+      "kind": "music_only_global_bias_no_tc_deployment",
+      "context_policy": "music_only_global_bias",
+      "context_source": "none_music_only_global_bias",
+      "old_model_not_trained_for_no_tc": false,
+      "uses_ground_truth_caption": false,
+      "checkpoint_sha256": "42019ae22aa58c824ded8dd553c334bfa1b54ac28b7f938565107fa1b3eaf14c",
+      "loaded": false,
+      "calls": 0,
+      "semantic_text": null,
+      "processor_loaded": false,
+      "tokenizer_loaded": false,
+      "prefix_length": 0,
+      "tail_shape": [
+        2,
+        5120
+      ],
+      "predicted_length": 2,
+      "raw_sha256": "787572014fadc319dc8b2d4b03232f6eeb861175d93dbeb842a8a710b9e8b74b"
+    },
+    "rejected_inputs": [
+      "new_external_context:Tensor",
+      "new_external_context:Tensor",
+      "new_external_context:str",
+      "legacy_proxy_none",
+      "worker_keys:music_only_global_bias:context,waveform",
+      "worker_keys:music_only_global_bias:context,waveform",
+      "worker_keys:tc_prefix_context:waveform",
+      "worker_keys:music_only_global_bias:caption,waveform",
+      "new_checkpoint_TC_factory",
+      "new_metadata_context_projection"
+    ],
+    "worker_input_keys": [
+      [
+        "waveform"
+      ],
+      [
+        "context",
+        "waveform"
+      ],
+      [
+        "waveform"
+      ]
+    ],
+    "mock_generated": [
+      {
+        "context_policy": "music_only_global_bias",
+        "context_is_none": true
+      },
+      {
+        "context_policy": "tc_prefix_context",
+        "context_is_none": false
+      },
+      {
+        "context_policy": "music_only_global_bias",
+        "context_is_none": true
+      }
+    ]
+  },
+  "scope": "CPU small-backbone fixture and actual adapter/packed builder only; no real MusicFM/H3 LM/VAE/DiT/GPU/video or quality claim"
+}

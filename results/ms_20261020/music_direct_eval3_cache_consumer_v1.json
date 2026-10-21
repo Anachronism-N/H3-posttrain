@@ -1,0 +1,23 @@
+{
+  "complete": true,
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "kind": "actual_three_case_producer_consumer_compatibility_audit",
+  "actual_report_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct_eval3_cache_audit_v1.json",
+  "actual_report_sha256": "6141f6b02230852b04e58ea56baca7e1d083eef2bfb38a50af88fca073721360",
+  "independent_verification_task": "VoTjc3",
+  "pipeline_source_sha256": "ffa66b2c12e3a0cc404a2b95cadc71048f7926cd46f68b26e98f7ef59177b662",
+  "train_ids": [],
+  "val_ids": ["wJPptuhclZmKAEWs", "wJPrpFsThWAcBQIw", "wJQTclrlOLEYYfTB"],
+  "actual_native_tokenizer_source_ids_verified": true,
+  "prefix_tensors_loaded_by_builder": false,
+  "actual_target_and_prefix_file_sha256_verified": true,
+  "teacher_dtype_shape_bytes_tensor_sha256_verified": true,
+  "nested_source_and_plan_completion_binding_verified": true,
+  "tokenizer_root_explicit_cli": "/dev/shm/h3/Ref2VA/processor",
+  "historical_teacher_source_files_validated_against_current_code": false,
+  "historical_source_scope": "Completed old caches preserve their original producer hash; current optional metadata additions do not rewrite old artifacts",
+  "trainable": false,
+  "statistics": null,
+  "formal_training_manifest_completed": false,
+  "actual_gpu_generation_or_human_acceptance": false
+}

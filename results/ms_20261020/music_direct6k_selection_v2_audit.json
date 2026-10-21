@@ -1,0 +1,29 @@
+{
+  "complete": true,
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "kind": "independent_completed_selection_audit_not_teacher_cache_or_training",
+  "selection_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct6k_v2",
+  "selection_task": "M0QUFr",
+  "independent_verification_task": "8AGMJX",
+  "selection_exit_zero": true,
+  "candidate_pool_count": 11908,
+  "joint_representative_count": 10979,
+  "train_count": 6000,
+  "val_count": 500,
+  "unique_selected_source_groups": 6500,
+  "train_validation_source_groups_disjoint": true,
+  "caption_reference_split_id_sets_exact": true,
+  "shard_counts": [1084, 1084, 1083, 1083, 1083, 1083],
+  "native_generation": {"height": 1280, "width": 704, "num_frames": 124, "fps": 24},
+  "source_output_sha256": {
+    "caps": "7b1c9d88b8f01c921ab3c03226ccec67eb3373bf414b7dd1a5634d15dddf2b42",
+    "split": "a3a9cd8211b8dcdac8e688ea845bcf0f5e07262c48c663a918f97b880ef5c2c6",
+    "references": "42055258822f7ab0554b0d57fe1c94ca2851ca4653d5a312467638c9633291e2",
+    "selection_report": "03c96415c3d3692d2c09d1032ac0ed420767f2b705a22c33c232719a2b95caca"
+  },
+  "fix_scope": "Remove erroneous comparison of source duration with normalized-window duration; retain natural81/source16/no-padding/source-frame and original quality/pose/group gates",
+  "failed_v1_preserved": true,
+  "teacher_cache_completed": false,
+  "formal_training_completed": false,
+  "video_or_human_quality_accepted": false
+}

@@ -1,0 +1,296 @@
+{
+  "complete": true,
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "cpu_fixture_only": true,
+  "actual_gpu_generation": false,
+  "fake_pipe": true,
+  "fake_model": true,
+  "original_packed_builder": true,
+  "no_cuda_initialized": true,
+  "text_encoder_calls": 0,
+  "original_hooks_restored_after_success_and_failure": true,
+  "results": [
+    {
+      "mode": "ref",
+      "audit": {
+        "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+        "text_encoder_loaded": false,
+        "tokenizer_loaded": false,
+        "processor_loaded": false,
+        "text_encoder_calls": 0,
+        "semantic_text": null,
+        "full_cached_prefix_preserved": true,
+        "original_cached_prefix_tags_preserved": true,
+        "prefix_tokens": 2,
+        "prompt_embeds_shape": [
+          5,
+          5120
+        ],
+        "prompt_embeds_sha256": "ce40c5bd48ae0de77c5df4db1cfeb180b81927dacd28035163b40585a175514c",
+        "text_token_tags_sha256": "a0306470db5c4a0d02231be5681a2791b08e02f5942d014ae1706a6aa82b038b",
+        "packed_text_tags_exact": true,
+        "waveform_sha256": "95d047a8cf9a1383dc5a29d4587f96927aaa80f8e3493eed12479c8fa9c93c37",
+        "waveform_samples": 162000,
+        "native_audio_condition": "real_reference_audio",
+        "music_mode": "ref",
+        "reference": {
+          "exists": true,
+          "shape": [
+            2,
+            32,
+            2
+          ],
+          "sha256": "0f4eec4813416c06f3a81b3d26587a784db146c2039d897e1253d623cc8ad000"
+        },
+        "retake": {
+          "exists": false,
+          "shape": null,
+          "sha256": null
+        },
+        "denoise_mask_audio": {
+          "exists": false,
+          "shape": null,
+          "sha256": null
+        },
+        "visual_reference": {
+          "exists": true,
+          "shape": [
+            1,
+            24,
+            1,
+            2,
+            2
+          ],
+          "sha256": "982e14b5f5ea307940adb39bbe0e1252f051d064cc477acee2e90e139f196fda"
+        },
+        "audio_cond_noise_aug": 0.1,
+        "imgvid_cond_noise_aug": 0.1,
+        "native_audio_vae_unchanged": true,
+        "original_joint_pipeline": true,
+        "audio_tail_policy": "original_native_unmodified",
+        "sampling": {
+          "height": 1280,
+          "width": 704,
+          "num_frames": 124,
+          "num_inference_steps": 50,
+          "seed": 42,
+          "rand_device": "cpu",
+          "cfg_scale": 1,
+          "flow_shift": 12,
+          "audio_flow_shift": 3,
+          "tiled": true,
+          "tile_size": 256,
+          "tile_overlap": 64,
+          "use_gradient_checkpointing": false,
+          "use_gradient_checkpointing_offload": false,
+          "ref_image_short_edge": 2048,
+          "ref_video_short_edge": 768,
+          "ref_video_max_pixels": 1032192
+        },
+        "identity": {
+          "raw_exact": true,
+          "tags_exact": true,
+          "packed_exact": true,
+          "velocity": {
+            "video": {
+              "exact": true,
+              "max_abs": 0.0,
+              "rms": 0.0,
+              "relative_rms": 0.0
+            },
+            "audio": {
+              "exact": true,
+              "max_abs": 0.0,
+              "rms": 0.0,
+              "relative_rms": 0.0
+            }
+          },
+          "comparison": "paired_same_input_cached_full_teacher_vs_P_plus_y"
+        },
+        "scheduler_updates": {
+          "video": 50,
+          "audio": 50
+        },
+        "first_noise_timesteps": {
+          "video": 1000.0,
+          "audio": 999.0,
+          "retake_effective_time_one_rows": 0,
+          "retake_regenerated_rows": null
+        },
+        "generated_audio_sha256": "ce0172921fcdd7cb53ad0664dfb496abc5ad9d79404409a2c38da5ef01bf050e",
+        "generated_audio_shape": [
+          2,
+          32,
+          4
+        ]
+      },
+      "fake_model_calls": 51,
+      "native_waveform_preserved": true
+    },
+    {
+      "mode": "retake",
+      "audit": {
+        "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+        "text_encoder_loaded": false,
+        "tokenizer_loaded": false,
+        "processor_loaded": false,
+        "text_encoder_calls": 0,
+        "semantic_text": null,
+        "full_cached_prefix_preserved": true,
+        "original_cached_prefix_tags_preserved": true,
+        "prefix_tokens": 2,
+        "prompt_embeds_shape": [
+          5,
+          5120
+        ],
+        "prompt_embeds_sha256": "ce40c5bd48ae0de77c5df4db1cfeb180b81927dacd28035163b40585a175514c",
+        "text_token_tags_sha256": "a0306470db5c4a0d02231be5681a2791b08e02f5942d014ae1706a6aa82b038b",
+        "packed_text_tags_exact": true,
+        "waveform_sha256": "95d047a8cf9a1383dc5a29d4587f96927aaa80f8e3493eed12479c8fa9c93c37",
+        "waveform_samples": 162000,
+        "native_audio_condition": "real_reference_audio",
+        "music_mode": "retake",
+        "reference": {
+          "exists": true,
+          "shape": [
+            2,
+            32,
+            2
+          ],
+          "sha256": "0f4eec4813416c06f3a81b3d26587a784db146c2039d897e1253d623cc8ad000"
+        },
+        "retake": {
+          "exists": true,
+          "shape": [
+            2,
+            32,
+            4
+          ],
+          "sha256": "0f12a75b547906371d50428f941dde75345403954de309bf2b40d1ba2f45639b"
+        },
+        "denoise_mask_audio": {
+          "exists": true,
+          "shape": [
+            4
+          ],
+          "sha256": "79c963b80026329b8cdcc5e4a50597aae3c68f66ea6392b0978fec2e8ad0b013"
+        },
+        "visual_reference": {
+          "exists": true,
+          "shape": [
+            1,
+            24,
+            1,
+            2,
+            2
+          ],
+          "sha256": "982e14b5f5ea307940adb39bbe0e1252f051d064cc477acee2e90e139f196fda"
+        },
+        "audio_cond_noise_aug": 0.1,
+        "imgvid_cond_noise_aug": 0.1,
+        "native_audio_vae_unchanged": true,
+        "original_joint_pipeline": true,
+        "audio_tail_policy": "original_native_unmodified",
+        "sampling": {
+          "height": 1280,
+          "width": 704,
+          "num_frames": 124,
+          "num_inference_steps": 50,
+          "seed": 42,
+          "rand_device": "cpu",
+          "cfg_scale": 1,
+          "flow_shift": 12,
+          "audio_flow_shift": 3,
+          "tiled": true,
+          "tile_size": 256,
+          "tile_overlap": 64,
+          "use_gradient_checkpointing": false,
+          "use_gradient_checkpointing_offload": false,
+          "ref_image_short_edge": 2048,
+          "ref_video_short_edge": 768,
+          "ref_video_max_pixels": 1032192
+        },
+        "identity": {
+          "raw_exact": true,
+          "tags_exact": true,
+          "packed_exact": true,
+          "velocity": {
+            "video": {
+              "exact": true,
+              "max_abs": 0.0,
+              "rms": 0.0,
+              "relative_rms": 0.0
+            },
+            "audio": {
+              "exact": true,
+              "max_abs": 0.0,
+              "rms": 0.0,
+              "relative_rms": 0.0
+            }
+          },
+          "comparison": "paired_same_input_cached_full_teacher_vs_P_plus_y"
+        },
+        "scheduler_updates": {
+          "video": 50,
+          "audio": 50
+        },
+        "first_noise_timesteps": {
+          "video": 1000.0,
+          "audio": 999.0,
+          "retake_effective_time_one_rows": 3,
+          "retake_regenerated_rows": 1
+        },
+        "generated_audio_sha256": "ce0172921fcdd7cb53ad0664dfb496abc5ad9d79404409a2c38da5ef01bf050e",
+        "generated_audio_shape": [
+          2,
+          32,
+          4
+        ]
+      },
+      "fake_model_calls": 51,
+      "native_waveform_preserved": true
+    }
+  ],
+  "rejected": [
+    {
+      "fault": "tags",
+      "error": "Direct generation changed cached full P/Ptags or non-text suffix tags",
+      "original_hooks_restored": true
+    },
+    {
+      "fault": "image",
+      "error": "Native VAE prepared image differs from cached full P",
+      "original_hooks_restored": true
+    },
+    {
+      "fault": "short",
+      "error": "Original joint video AND audio scheduler updates were not preserved",
+      "original_hooks_restored": true
+    },
+    {
+      "fault": "stop",
+      "error": "fixture injected interruption",
+      "original_hooks_restored": true
+    },
+    {
+      "fault": "tc",
+      "error": "Direct native generation must not load text encoder/tokenizer/processor",
+      "original_hooks_restored": true
+    }
+  ],
+  "source_files": {
+    "music_text_diagnostic.py": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/music_text_diagnostic.py",
+      "sha256": "7991f61b1a7a73bc6d51e6ee1fb819416ae45eb61e9460a20b714ba9d4e939a0"
+    },
+    "music_text_oracle_generate.py": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/music_text_oracle_generate.py",
+      "sha256": "f64c95e82e10857c38b931049fd547dee39759f8f965f1053a4bf266c371fce5"
+    },
+    "sample_h3_ar.py": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/h3ar/sample_h3_ar.py",
+      "sha256": "b722b51e6da05be9843de76544d9591767165444c22b40f54e103fc971e4b957"
+    }
+  },
+  "scope": "Actual direct_native_call plus original packed builder on CPU fake pipe/model; not native GPU/model or quality evidence"
+}

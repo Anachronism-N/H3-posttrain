@@ -5,10 +5,19 @@ Output layout <out>/<cond>/<sid>_<audiostem>.mp4 (video + original music), like 
 python sample_h3_ar.py --out <dir> [--lora <dit lora safetensors>] --mode ar --conds joint,aswap --shard i --nshard n
 """
 import argparse, csv, glob, os, sys, time
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+if any(arg.split('=', 1)[0] in ('--cached_prefix_manifest', '--direct_music_ckpt', '--direct_teacher_identity')
+       for arg in sys.argv[1:]):
+    sys.path.insert(0, os.path.join(HERE, '..', 'ms'))
+    from music_text_oracle_generate import direct_native_main
+    # Dispatch before librosa/H3 imports; direct --help remains CPU-only.
+    direct_native_main(sys.argv[1:])
+    sys.exit(0)
+
 import librosa, torch
 from PIL import Image
 
-HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, "..", "h3"))
 p = argparse.ArgumentParser()

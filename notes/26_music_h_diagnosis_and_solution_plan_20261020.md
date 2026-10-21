@@ -742,6 +742,14 @@ MusicFM输出约25Hz×1024声学特征，H3入口要求可变长×5120原文本L
 
 manifest成功后自动在19.69/17.70各0–3四GPU启动相同初始化的A/B，local16/global64、lr1e-5/1e-4、seed42、最少20/cap50/平台8次/相对0.005；A moment_weight0、B1。每卡严格自身holder准入、未知进程拒绝，训练前再次核本地init SHA和实际manifest SHA。输出`MS/music_direct6k_v2_clip_a`、`MS/music_direct6k_v2_clip_moments_b`；其他四节点在缓存结束后不再使用。该队列处于等待只表示自动接续已部署，不表示正式训练已开始；训练完成也不自动代表达到收敛或学生视频/人评通过。10分钟会话定时跟进只用于发现报错、推进验收与后续视频，不另开同名任务。
 
+#### 两组训练完成后的学生视频接续
+
+用户再次要求“并启动训练和后续实验进程”后，已部署第二条唯一完成事件队列`ra7oDl`，管理目录`MS/music_direct6k_v2_final18_queue_v1`。它绑定实际训练队列进程pidfd，当前等待两组正式训练完成，不生成未训练学生；只有两组formal/complete/exit0、至少20完整epoch、94更新/epoch合计至少1880、完整val500、last文件SHA与best/train_state存在及冻结推理源码全部通过后，部署各自`best.pt`。训练cap结束但收敛未确认时保留`converged=false/reason`，视频用于诊断，不篡改为收敛成功。
+
+六配置分别为A/B×joint/aswap/zeroM，每配置只3case、共18条，按六允许节点各GPU6并行执行；使用实际原native生成管理器，未知GPU进程或host/cgroup内存不足拒绝准入，不抢占用户其他任务。每条保缓存P/tags、独立两个VAE、native reference真实音乐、原joint音视频各50步及生成音轨。aswap清单`MS/music_direct_eval3_generation_aswap_v1.json` SHA `1aa66e5dcb7676640ccf52d3e7d9f09d72da667c27d90ef108ff9d270be37f98`已CPU实际构建/独立核验，同图和P/tags，换M波形同时换native reference音频；不是仅M单变量归因。zeroM复用joint清单，只将M波形置零，保原native真实音乐。joint清单SHA `6d08214d9b5e0b5912374880e9b3d464c10941d74d766f99bb5317cd35c48409`不改。来源准备已发布`results/ms_20261020/music_direct_final18_source_binding_v1.json`（commit `6f90936a6795c0856aac968f6cfa1fec5b7f80eb`远端核验），不是学生视频完成证据。
+
+六配置生成全部exit0后，队列实际执行每配置独立`--direct_native_audit`，decord逐帧和ffmpeg -xerror全音视频解码、checkpoint/source/P/native/scheduler/音轨SHA一致性审核。失败保留partial与日志，不覆盖/跳过；全部技术审核通过仍写`musical_quality_accepted=false/human_review_required=true`。真实人评、模型归因与正负分析由后续独立验收完成；队列不能代替用户判断连续舞蹈、幅度、跟拍、换曲和身份保真。
+
 #### 资源与最终验收
 
 仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。

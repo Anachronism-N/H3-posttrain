@@ -1,0 +1,28 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "fixture_only": true,
+  "actual_lm_forward_executed": false,
+  "real_tokenizer_executed": false,
+  "gpu_or_remote_execution": false,
+  "source_files_modified": false,
+  "source_sha256": "282c9e56093272bf3916290591a5b3cc5b015d3a50b980336ea9947fa9f5b2b2",
+  "local_same_sha_mirror_success": true,
+  "fixture_full_shape_count": 2000,
+  "canonical_row_paths_preserved": true,
+  "canonical_record_metadata_paths_preserved": true,
+  "read_directory_provenance_exact": true,
+  "default_read_root_none_legacy_exact_results": true,
+  "default_none_ignores_unused_mirror_corruption": true,
+  "rejected_fixture_mutations": [
+    "local_plan.json_changed",
+    "local_finished.json_changed",
+    "local_t0000.pt_changed",
+    "missing_local_pt",
+    "extra_local_pt",
+    "canonical_row_path_rebound_to_local_rejected"
+  ],
+  "actual_cli_target_read_root_forwards_to_load_read_root": true,
+  "source_unchanged_during_audit": true,
+  "ready_for_main_local_mirror_read": true
+}

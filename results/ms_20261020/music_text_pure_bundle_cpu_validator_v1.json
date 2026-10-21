@@ -1,0 +1,132 @@
+{
+  "complete": true,
+  "kind": "CPU_real_completed_pure_teacher_cache_validator",
+  "scope": "Single-source-file loader repair and read-only validation of all actual completed full-2000 teacher cache records and full-train statistics. Executed source SHA is explicit; later added local-mirror branch was not exercised. No waveform bundle loading, bundle assembly, initialization, new LM forward, GPU, formal training or generation acceptance.",
+  "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/music_text_pipeline.py",
+  "source_sha256": "2ae2cd98ffd397594d834764869ff58cbff4b1d3398d05d8f28107002f04d00e",
+  "executed_source_sha256": "2ae2cd98ffd397594d834764869ff58cbff4b1d3398d05d8f28107002f04d00e",
+  "on_disk_source_sha256_at_report": "282c9e56093272bf3916290591a5b3cc5b015d3a50b980336ea9947fa9f5b2b2",
+  "later_shared_source_changes_tested": false,
+  "teacher_release_report": {"path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_teacher_release_v1.json", "sha256": "58817e2e4fa70bd11f00aa0559d649128a5899a0a7f50cfc871a5327389e2241"},
+  "loader_signature": "(directories, train, val, split_sha, caps_path, teacher_release_report)",
+  "new_required_flags": ["--caps", "--teacher_release_report"],
+  "checks": {
+    "import_safe": true,
+    "no_duplicate_function_names": true,
+    "CLI_required_caps_teacher_release_report": true,
+    "wrong_actual_caps_rejected": true,
+    "wrong_split_sha_rejected": true,
+    "missing_shard_rejected": true,
+    "duplicate_shard_directory_rejected": true,
+    "incomplete_release_rejected": true,
+    "wrong_teacher_kind_rejected": true,
+    "wrong_declared_caps_sha_rejected": true,
+    "changed_release_source_sha_rejected": true,
+    "record_image_conditioned_rejected": true,
+    "record_prefix_length_rejected": true,
+    "record_wrong_kind_rejected": true,
+    "record_wrong_partition_rejected": true,
+    "record_wrong_teacher_length_rejected": true,
+    "record_wrong_tail_dtype_rejected": true,
+    "record_nonfinite_tail_rejected": true,
+    "record_changed_actual_token_ids_rejected": true,
+    "record_changed_prompt_rejected": true,
+    "record_changed_tokenizer_sha_rejected": true,
+    "record_changed_protocol_sha_rejected": true,
+    "record_extra_prefix_tensor_rejected": true,
+    "real_release_caps_artifacts_weights_only_roundtrip": true,
+    "synthetic_validation_does_not_set_qmax": true,
+    "synthetic_validation_does_not_affect_statistics": true
+  },
+  "negative_tests_scope": "Release and record schema were copied from real files. Invalid mutations existed in memory only. Synthetic train-statistic boundary checks are not actual teacher/model acceptance.",
+  "source_record": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_targets_v1_s0/AAcaGYtiTozEttaF.pt",
+    "sha256": "02950b9b2a556223ef2c6c8930ef224c6259a43156a8f320b3f3bf5bc8953183"
+  },
+  "caps": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_caps2000_v1.json",
+    "sha256": "8d9cbaa84327b677f7838483456d08c7cf0821a12018c91f3d822fd2e9c05b82"
+  },
+  "split": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_scale_v4_train1800_split.json",
+    "sha256": "44b07b8b9219b5cbced271ac36ce7e1d26204fe6f47983a113a9dd8585720060"
+  },
+  "source_files": {
+    "cache": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/music_text_cache.py",
+      "sha256": "865455cdd81a1b642b74997fe5145a3ce6d279ffa29fa90aae6f460cde2d1278"
+    },
+    "text_embed": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/text_embed.py",
+      "sha256": "a19365e58b403e858b4392c611a5131e1211d25061069278e407260edbc97672"
+    }
+  },
+  "full_real_cache_validation": {
+    "complete": true,
+    "background_task_id": "PPAjhJ",
+    "executed_source_sha256": "2ae2cd98ffd397594d834764869ff58cbff4b1d3398d05d8f28107002f04d00e",
+    "on_disk_source_sha256_at_completion": "282c9e56093272bf3916290591a5b3cc5b015d3a50b980336ea9947fa9f5b2b2",
+    "checks": {
+      "import_safe": true,
+      "no_duplicate_function_names": true,
+      "six_unique_complete_shards": true,
+      "full_unique_train1800_val200_union": true,
+      "actual_release_source_file_content_sha": true,
+      "actual_specified_caps_content_sha": true,
+      "actual_split_content_sha": true,
+      "full_plan_same_except_partition_and_tokenizer_root": true,
+      "actual_loaded_551_tensor_hashes_canonical_aggregate_same": true,
+      "native_tokenizer_metadata_files_sha": true,
+      "actual_full_caption_tokenization_exact_source_token_ids": true,
+      "all_record_file_protocol_tensor_token_caption_sha": true,
+      "all_record_exact_native_schema": true,
+      "native_BF16_tail_5120_finite": true,
+      "int64_nonnegative_source_token_ids": true,
+      "teacher_length_no_prefix_no_padding": true,
+      "prompt_neutral_transform_original_prompt_replacements_exact": true,
+      "all_shards_actual_lm_forward_declared": true,
+      "text_only_no_image_conditioning": true,
+      "full_train_only_query_max_statistics": true,
+      "statistics_finite_native_shapes": true,
+      "release_caps_sources_unchanged_after_validation": true
+    },
+    "count": 2000,
+    "train": 1800,
+    "val": 200,
+    "query_max": 1423,
+    "validation_max_length": 1113,
+    "validation_overflow": [],
+    "total_tokens": 860146,
+    "train_statistic_tokens": 776078,
+    "teacher_energy": 127.65884048888763,
+    "statistics": {
+      "mean_sha256": "de11b5697dbd515a1dcc8bc3566c068df79ace7c2b2bb0fbdc4b68a4d03e168f",
+      "std_sha256": "217e3797c7e36c8e802d81ba1d215373d270b75b7c4d2dcaf57b5115417ccd39",
+      "position_mean_sha256": "55bb24eef32419486d1f10e0b27961675ece62f1b7c88063822f03ea4efd84c5"
+    },
+    "model_weight_content_sha256": "c2ed2ea979f58106b393d2514b15d1f237dadb49a1a44d03f0c20d0a2be541cb",
+    "loaded_tensor_count": 551,
+    "shards": [
+      {"directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_targets_v1_s0", "plan_sha256": "4b09b57ef61b130728ca3cae4a48e53c266f52e660f4d62e8eda51014f44a343", "finished_sha256": "9a3f63ca01cefbd39aab35d4f56e19164b53de295332ceb14aaf8ca8a2d1fe6c", "count": 334, "shard": 0, "nshard": 6},
+      {"directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_targets_v1_s1", "plan_sha256": "e8de84706dc87fcb0ba2aa0a03e49e7b745572a47ec9482c527fcb3552a46c2f", "finished_sha256": "04361cd82c899bd9c0e3d11d6ca5833a5c48f6fd4db2f2f0eb41a2e6583f1adc", "count": 334, "shard": 1, "nshard": 6},
+      {"directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_targets_v1_s2", "plan_sha256": "617d6d4e5fef4e747c5e1931edf71bcf1ed6bb1aa76bd1c59f0d853cb4ab857b", "finished_sha256": "20640c03bfe42b4a8fd4964a75cb570572a5463c3e80a697d35cc8c517bbd41c", "count": 333, "shard": 2, "nshard": 6},
+      {"directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_targets_v1_s3", "plan_sha256": "59011d62178741ebb3cb1f4393a91bfd92524f38be1fd8e4690cae840934a41a", "finished_sha256": "3e08cf9b8498f88fe7cdbce89869409bf1d81f546493d4d50d8c2c8353dc7da8", "count": 333, "shard": 3, "nshard": 6},
+      {"directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_targets_v1_s4", "plan_sha256": "9f5fcfcd869da2ae1a8db7adf0e7d83e321c016e478c3086c031c159a0ce9862", "finished_sha256": "6234cc8389e2dd6ff6659fb94dc166437f28e7693643a1dfd81da610b9433176", "count": 333, "shard": 4, "nshard": 6},
+      {"directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_targets_v1_s5", "plan_sha256": "eb64ff55a5e5e2b1d016612a669a90fbcc3441afe60fd419935e10965cd3d8ee", "finished_sha256": "9cb28cdd9857d6c96a262175ac4e0f42e703644456945ac7ae2d9d7b86df1d72", "count": 333, "shard": 5, "nshard": 6}
+    ],
+    "actual_teacher_cache": true,
+    "cache_files_modified": false,
+    "local_mirror_branch_used": false,
+    "GPU_used": false,
+    "formal_training_launched": false,
+    "seconds": 2643.9346716450527
+  },
+  "cache_files_modified": false,
+  "GPU_used": false,
+  "optimizer_updates": 0,
+  "backward_calls": 0,
+  "formal_training_launched": false,
+  "bundle_assembly": false,
+  "initializer_acceptance": false,
+  "generation_acceptance": false
+}

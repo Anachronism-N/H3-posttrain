@@ -135,6 +135,275 @@ def no_tc_review(args, base):
         new_interface_trained=False, manifest=str(args.out))), flush=True)
 
 
+def pure_teacher_review(args, base):
+    from music_generation_validate import sha256
+    from music_text_diagnostic import (
+        PURE_TEACHER_TAG, PURE_TEACHER_KIND, pure_teacher_collect, pure_teacher_validate_report,
+    )
+    if args.pure_teacher_report is None or not args.pure_teacher_report.is_file():
+        raise ValueError('--pure_teacher_only requires an existing --pure_teacher_report')
+    report_path = args.pure_teacher_report
+    report_sha = sha256(report_path)
+    report = json.loads(report_path.read_text())
+    exp = Path(base['exp'])
+    directory = exp / 'H3AR' / ('val_musicreplace_' + PURE_TEACHER_TAG)
+    cases, actual_rows, actual_artifacts = pure_teacher_collect(exp, directory)
+    pure_teacher_validate_report(report, cases, directory)
+    marker = json.loads((directory / 'pure_teacher_integrity.json').read_text())
+    if (marker.get('complete') is not True or marker.get('pure_teacher_complete') is not True
+            or marker.get('kind') != PURE_TEACHER_KIND or marker.get('expected') != 3 or marker.get('passed') != 3
+            or marker.get('rows') != report['rows'] or marker.get('final_pure_teacher_report') != str(report_path)
+            or marker.get('final_pure_teacher_report_sha256') != report_sha
+            or marker.get('music_prediction') is not False or marker.get('musical_quality_accepted') is not False
+            or marker.get('mosaic') != report.get('mosaic')
+            or sha256(Path(marker['mosaic'])) != marker.get('mosaic_sha256')):
+        raise ValueError('Pure teacher completion marker is not bound to the exact final report and mosaic')
+    report_artifacts = {row['path']: row['sha256'] for row in report['source_artifacts']}
+    for artifact in actual_artifacts:
+        if report_artifacts.get(artifact['path']) != artifact['sha256']:
+            raise ValueError('Pure teacher source artifacts changed between audit and review')
+    for artifact in report['source_artifacts']:
+        if sha256(Path(artifact['path'])) != artifact['sha256']:
+            raise ValueError('Pure teacher audited source changed before review')
+    for actual, row in zip(actual_rows, report['rows']):
+        if any(row.get(key) != value for key, value in actual.items()):
+            raise ValueError('Pure teacher actual source/cache/tail/image/log differs from the final audit')
+        if sha256(Path(row['video_path'])) != row['video_sha256']:
+            raise ValueError('Pure teacher reviewed video changed after full media decode')
+    if sha256(Path(__file__).with_name('music_text_diagnostic.py')) != report['diagnostic_sha256']:
+        raise ValueError('Pure teacher audit code changed after completion')
+    manifest = copy.deepcopy(base)
+    current = {model['id'] for model in base['models']}
+    group = 'H3AR/val_musicreplace_' + PURE_TEACHER_TAG
+    neutral = 'H3AR/val_musicreplace_text_oracle_neutral_v1'
+    old_teacher = 'H3AR/val_musicreplace_text_no_tc_teacher_v1'
+    if group in current or not {neutral, old_teacher} <= current:
+        raise ValueError('Pure teacher review requires unchanged neutral/old no-TC teachers and a new model ID')
+    entries = {case['sample_id']: [case['filename']] for case in cases}
+    manifest['models'].append(dict(id=group, label='新纯文本教师·无图上下文', group='H3AR', conds={'joint': entries}, metrics={},
+        desc='纯caption-only离线H3教师：原raw BF16 tail+原token IDs，无图/展示/prefix/context进入教师；推理完全不加载调用TC，独立视觉VAE参考保留；'
+            '教师诊断、非音乐预测、未训练学生接口；仅joint三人物，原曲仅mux；完整音画解码仅完整性，人评与连续舞蹈质量待定',
+        diagnostic_only=True, teacher_only_diagnostic=True, music_prediction=False,
+        source_scope='caption_only_no_reference_context', no_text_encoder=True, text_encoder_loaded=False,
+        text_encoder_calls=0, prefix_length=0, independent_visual_vae_reference=True,
+        new_interface_trained=False, musical_quality_accepted=False, continuous_human_review='pending',
+        pure_teacher_report=str(report_path), pure_teacher_report_sha256=report_sha))
+    manifest['presets'] = [dict(name='【新纯文本教师·无图上下文】纯caption-only / 原neutral教师 / 旧无TC教师；joint三人物，非音乐预测、人评待定',
+        cond='joint', view='models', models=[group, neutral, old_teacher])] + manifest['presets']
+    manifest['built'] = time.strftime('%Y-%m-%d %H:%M:%S')
+    manifest['scope'] += ' NEW pure caption-only/no-context teacher joint3 appended after strict source/token-ID/BF16/no-TC/full-media audit; neutral and old no-TC baselines reused. Not music prediction, trained interface or continuous dance/quality acceptance; old scores untouched.'
+    if (manifest['samples'] != base['samples'] or len(manifest['samples']) != 3
+            or manifest['models'][:-1] != base['models'] or manifest['presets'][1:] != base['presets']
+            or sha256(report_path) != report_sha):
+        raise ValueError('Pure teacher review changed old models, samples, presets or report')
+    atomic_write_new(args.out, manifest)
+    print(json.dumps(dict(complete=True, models=len(manifest['models']), presets=len(manifest['presets']), source_people=3,
+        new_videos=3, pure_teacher_complete=True, original_models_preserved=True, original_scores_preserved=True,
+        continuous_human_review='pending', manifest=str(args.out))), flush=True)
+
+
+def pure_students_review(args, base):
+    from music_generation_validate import sha256
+    from music_text_diagnostic import no_tc_count, no_tc_hash, one_record
+    path = args.pure_students_report
+    if path is None or not path.is_file():
+        raise ValueError('Pure students require their completed actual 18-video report')
+    report_sha = sha256(path)
+    report = json.loads(path.read_text())
+    runs = {'music_text_pure_' + variant + '_d1800_s1200_v2' for variant in ('public512', 'C300control256')}
+    if (report.get('complete') is not True or not no_tc_count(report.get('expected'), 18)
+            or not no_tc_count(report.get('passed'), 18)
+            or not isinstance(report.get('rows'), list) or len(report['rows']) != 18
+            or not isinstance(report.get('models'), list) or len(report['models']) != 2
+            or any(not isinstance(item, dict) for item in report['rows'] + report['models'])
+            or {model.get('run') for model in report['models']} != runs
+            or report.get('no_text_encoder') is not True
+            or report.get('all_native_audio_hashes_identical') is not True
+            or report.get('student_ground_truth_caption_or_length_input') is not False
+            or report.get('complete_selected_audio_video_decode') is not True
+            or report.get('musical_quality_accepted') is not False):
+        raise ValueError('Pure student media/source audit is incomplete')
+    exp = Path(base['exp'])
+    cases = fixed_cases(exp)
+    if (len(cases) != 6 or len(base['samples']) != 3
+            or {case['sample_id'] for case in cases} != set(base['samples'])
+            or len({model['id'] for model in base['models']}) != len(base['models'])):
+        raise ValueError('Pure student review requires three unchanged people and unique historical model IDs')
+    for key in ('waveform_sha256', 'reference_sha256', 'retake_sha256', 'mask_sha256'):
+        values = [row.get('native_audio', {}).get(key) for row in report['rows']]
+        if any(not no_tc_hash(value) for value in values) or len(set(values)) != 1:
+            raise ValueError('Pure student native silence hashes differ')
+    for sid in base['samples']:
+        rows = [row for row in report['rows'] if row.get('sample_id') == sid]
+        if any(len({row['native_audio'].get(key) for row in rows}) != 1
+               for key in ('visual_reference_rows', 'visual_reference_sha256')):
+            raise ValueError('Pure student independent visual VAE reference differs across conditions/models')
+    manifest = copy.deepcopy(base)
+    ids, zero_ids = [], []
+    expected_tags = set()
+    for variant, width, normalization in (('public512', 512, 'identity'), ('C300control256', 256, 'layer_norm')):
+        run = 'music_text_pure_' + variant + '_d1800_s1200_v2'
+        summary_path = exp / 'MS' / run / 'finished.json'
+        summary_sha = sha256(summary_path)
+        summary = json.loads(summary_path.read_text())
+        protocol = summary['protocol']
+        provenance = protocol.get('init_provenance', {})
+        binding = provenance.get('manifest', {})
+        init_kind = ('public_musicfm_random_full_adapter_global_rms_calibrated' if width == 512
+                     else 'c300_derived_no_tc_layer_norm_control')
+        if (binding.get('complete') is not True or binding.get('kind') != 'pure_text_init_binding'
+                or binding.get('initialization_kind') != init_kind
+                or binding.get('head_normalization') != normalization
+                or binding.get('teacher_kind') != 'pure_text_h3_raw_tokens'
+                or binding.get('teacher_image_conditioned') is not False
+                or binding.get('student_inputs') != 'waveform_only'
+                or binding.get('context_policy') != 'music_only_global_bias'
+                or binding.get('no_fixed_output_projection') is not True
+                or not no_tc_count(binding.get('optimizer_updates'), 0)
+                or not no_tc_hash(binding.get('init_sha256'))
+                or binding['init_sha256'] != protocol.get('init_sha256')
+                or binding['init_sha256'] != protocol.get('run_init_sha256')
+                or binding['init_sha256'] != provenance.get('actual_init_sha256')
+                or not no_tc_hash(binding.get('bundle_sha256'))
+                or binding['bundle_sha256'] != provenance.get('actual_bundle_sha256')):
+            raise ValueError('Pure student initialization identity differs: ' + variant)
+        for key, filename in (('source_sha256', 'music_text_contrastive.py'),
+                              ('adapter_source_sha256', 'music_text_adapter.py')):
+            if protocol.get(key) != sha256(Path(__file__).with_name(filename)):
+                raise ValueError('Pure student training source changed: ' + filename)
+        if binding.get('source_sha256') != sha256(Path(__file__).with_name('music_text_pipeline.py')):
+            raise ValueError('Pure student initialization source changed')
+        if (summary.get('complete') is not True or summary.get('steps') != 1200
+                or summary.get('actual_items_seen') != 9600
+                or len(protocol.get('train_ids', [])) != 1800 or len(protocol.get('validation_ids', [])) != 200
+                or protocol.get('small_fit') != 0 or protocol.get('clip_weight') != 0
+                or protocol.get('backbone_train') is not True or protocol.get('no_text_encoder') is not True
+                or protocol.get('teacher_kind') != 'pure_text_h3_raw_tokens'
+                or protocol.get('teacher_scope') != 'pure_text_h3_raw_tokens'
+                or protocol.get('loss') != 'rawMSE/train_teacher_energy + length_weight*log_length_MSE'
+                or protocol.get('sampling') != 'paired_raw_tokens_only_no_sequence_score_or_negative_sampling'
+                or protocol.get('context_policy') != 'music_only_global_bias'
+                or protocol.get('adapter_width') != width or protocol.get('adapter_head_normalization') != normalization
+                or protocol.get('output_space') != {'mode': 'none'}
+                or summary['deployment'].get('cached_context_read') is not False
+                or summary['deployment'].get('independent_inference_tail_exact') is not True):
+            raise ValueError('Pure student does not match the completed formal protocol: ' + variant)
+        model = next(item for item in report['models'] if item['run'] == run)
+        canonical_checkpoint = exp / 'MS' / run / 'last.pt'
+        if (model['checkpoint_sha256'] != summary['checkpoint_sha256']
+                or not no_tc_hash(model['checkpoint_sha256']) or model['steps'] != 1200
+                or model.get('backbone_train') is not True
+                or model.get('checkpoint_source') != str(canonical_checkpoint)
+                or sha256(Path(model['checkpoint_inference_path'])) != model['checkpoint_sha256']):
+            raise ValueError('Pure student audit checkpoint differs from training')
+        for zero in (False, True):
+            tag = 'text_pure_' + variant + '_d1800_s1200' + ('_zero' if zero else '') + '_v3'
+            expected_tags.add(tag)
+            group = 'H3AR/val_musicreplace_' + tag
+            directory = exp / group
+            conditions = ['joint'] if zero else ['joint', 'aswap']
+            rows = [row for row in report['rows'] if row['tag'] == tag]
+            marker = json.loads((directory / ('joint_integrity.json' if zero else 'all6_integrity.json')).read_text())
+            selected = [case for case in cases if case['condition'] in conditions]
+            plan = json.loads((directory / 'plan.json').read_text())
+            if (plan.get('checkpoint_source') != str(canonical_checkpoint)
+                    or plan.get('checkpoint_source_summary_sha256') != summary_sha
+                    or plan.get('checkpoint_inference_path') != model['checkpoint_inference_path']
+                    or plan.get('checkpoint_sha256') != model['checkpoint_sha256']
+                    or sha256(summary_path) != summary_sha):
+                raise ValueError('Pure student generation plan checkpoint binding differs')
+            if (marker.get('complete') is not True or marker.get('rows') != rows
+                    or marker.get('final_online_report') != str(path)
+                    or not no_tc_count(marker.get('expected'), len(selected))
+                    or not no_tc_count(marker.get('passed'), len(selected))
+                    or marker.get('musical_quality_accepted') is not False or len(rows) != len(selected)
+                    or {(row['condition'], row['sample_id'], row['video_path'], row['audio_path']) for row in rows}
+                    != {(case['condition'], case['sample_id'], str(directory / case['condition'] / case['filename']), case['audio_path']) for case in selected}):
+                raise ValueError('Pure student marker/case mapping differs from final media audit')
+            for row in rows:
+                deployment, inputs = row['deployment'], row['inputs']
+                condition, native = row['no_tc_condition'], row['native_audio']
+                shape = deployment.get('tail_shape', [])
+                if (len(shape) != 2 or not no_tc_count(shape[1], 5120)
+                        or type(shape[0]) is not int or not 1 <= shape[0] <= binding.get('query_max', 0)
+                        or not no_tc_count(deployment.get('predicted_length'), shape[0])
+                        or condition.get('tail_shape') != shape or native.get('prompt_embeds_shape') != shape
+                        or not no_tc_count(condition.get('predicted_length'), shape[0])
+                        or condition.get('kind') != 'music_only_global_bias_no_tc_deployment'
+                        or condition.get('context_source') != 'none_music_only_global_bias'
+                        or condition.get('checkpoint_sha256') != summary['checkpoint_sha256']
+                        or any(condition.get(key) is not False for key in ('loaded', 'processor_loaded', 'tokenizer_loaded'))
+                        or not no_tc_count(condition.get('calls'), 0)
+                        or not no_tc_count(condition.get('prefix_length'), 0)
+                        or condition.get('semantic_text', 'missing') is not None
+                        or inputs.get('no_text_encoder') is not True or inputs.get('text_encoder_loaded') is not False
+                        or inputs.get('music_text_zero_input') is not zero
+                        or inputs.get('text_hidden_oracle') is not False or inputs.get('legacy_clip_complete_chain') is not False
+                        or inputs.get('native_audio_condition') != 'fixed_silence'
+                        or inputs.get('waveform_loader') != 'music_clip_bridge.load_audio'
+                        or inputs.get('image_path') != base['samples'][row['sample_id']]['image']
+                        or deployment.get('uses_ground_truth_caption') is not False
+                        or deployment.get('final_adapter_projection_executed') is not True
+                        or deployment.get('legacy_clip_complete_chain') is not False
+                        or any(native.get(key) is not False for key in ('tokenizer_loaded', 'processor_loaded', 'text_encoder_loaded'))
+                        or native.get('semantic_text', 'missing') is not None
+                        or not no_tc_count(native.get('text_encoder_calls'), 0) or not no_tc_count(native.get('prefix_tokens'), 0)
+                        or native.get('all_target_audio_clean') is not True
+                        or type(native.get('visual_reference_rows')) is not int or native['visual_reference_rows'] <= 0
+                        or not no_tc_hash(native.get('visual_reference_sha256'))
+                        or row.get('backbone_train') is not True):
+                    raise ValueError('Pure student raw-tail/GT/no-TC/native contract differs')
+                if (row.get('zero_input') is not zero or row.get('no_text_encoder') is not True
+                        or row['deployment'].get('checkpoint_sha256') != summary['checkpoint_sha256']
+                        or row['inputs'].get('music_text_ckpt') != model['checkpoint_inference_path']
+                        or row['inputs'].get('semantic_text', 'missing') is not None
+                        or row['no_tc_condition'].get('prefix_length') != 0
+                        or row['no_tc_condition'].get('old_model_not_trained_for_no_tc') is not False
+                        or row['native_audio'].get('text_encoder_loaded') is not False
+                        or row['native_audio'].get('native_music_bypass') is not False
+                        or sha256(Path(row['video_path'])) != row['video_sha256']
+                        or sha256(Path(row['log_path'])) != row['log_sha256']):
+                    raise ValueError('Pure student reviewed input/video/log changed')
+                log = Path(row['log_path']).read_text()
+                for prefix, record in (('[h3ar] input_conditions ', inputs), ('[music text deployment] ', deployment),
+                                       ('[no tc condition] ', condition), ('[no tc native isolation] ', native)):
+                    if one_record(log, prefix) != record:
+                        raise ValueError('Pure student report differs from actual generation log')
+            entries = {condition: {} for condition in conditions}
+            for case in selected:
+                item = [case['filename']]
+                audio_id = Path(case['audio_path']).stem
+                if audio_id != case['sample_id']:
+                    item.append(audio_id)
+                entries[case['condition']][case['sample_id']] = item
+            manifest['models'].append(dict(id=group, label='新纯监督·' + variant + '·1800样本1200步' + ('·零音乐' if zero else ''),
+                group='H3AR', conds=entries, metrics={}, music_prediction=True, teacher_only_diagnostic=False,
+                no_text_encoder=True, prefix_length=0, new_interface_trained=True,
+                musical_quality_accepted=False, continuous_human_review='pending',
+                desc='纯文字逐token监督；实际MusicFM骨干和完整adapter联合训练，单配对MSE/length；无固定投影、无TC/context输入，图独立视觉VAE；学生自身长度，native静音。技术审核不是连续舞蹈或音乐增益验收。',
+                final_online_report=str(path), final_online_report_sha256=report_sha))
+            (zero_ids if zero else ids).append(group)
+    if ({row['tag'] for row in report['rows']} != expected_tags
+            or {model['run'] for model in report['models']} != {'music_text_pure_' + variant + '_d1800_s1200_v2' for variant in ('public512', 'C300control256')}
+            or {model['id'] for model in base['models']} & set(ids + zero_ids)):
+        raise ValueError('Pure student report has extra groups or duplicate review IDs')
+    presets = [dict(name='【新纯监督·正式1800】新public512 / C300控制 / 各零音乐；先原曲joint，非旧8样本投影',
+                    cond='joint', view='models', models=ids + zero_ids),
+               dict(name='【新纯监督·换音乐】public512 / C300控制；三固定人物aswap，人评待定',
+                    cond='aswap', view='models', models=ids)]
+    manifest['presets'] = presets + manifest['presets']
+    manifest['scope'] += ' Four NEW pure-text-supervised formal music student/zero models, 18 audited videos; old entries/scores unchanged, human dance/music acceptance pending.'
+    manifest['built'] = time.strftime('%Y-%m-%d %H:%M:%S')
+    if (manifest['models'][:-4] != base['models'] or manifest['samples'] != base['samples']
+            or manifest['presets'][2:] != base['presets']
+            or len({model['id'] for model in manifest['models']}) != len(manifest['models'])
+            or sha256(path) != report_sha):
+        raise ValueError('Pure students changed historical review entries or source report')
+    atomic_write_new(args.out, manifest)
+    print(json.dumps(dict(complete=True, models=len(manifest['models']), presets=len(manifest['presets']),
+                          new_videos=18, musical_quality_accepted=False, manifest=str(args.out))), flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--base_manifest', type=Path, required=True)
@@ -149,17 +418,29 @@ def main():
     mode.add_argument('--projection_only', action='store_true', help='Append audited same-length projected teacher diagnostics, not music models')
     mode.add_argument('--no_tc_only', action='store_true', help='Append strict six-joint no-TC teacher-tail-only/old-student-zero-context diagnostics')
     mode.add_argument('--no_tc_students', action='store_true', help='Append audited no-TC W/PCA small-fit students and zero-music controls')
+    mode.add_argument('--pure_teacher_only', action='store_true', help='Append strict pure-caption-only/no-context teacher three-joint diagnostic')
+    mode.add_argument('--pure_students', action='store_true', help='Append audited formal1800 pure-text-supervised students and zero controls')
+    parser.add_argument('--pure_students_report', type=Path, help='Completed actual 18-video pure student report')
+    parser.add_argument('--pure_teacher_report', type=Path, help='Completed strict pure teacher three-video source/media report')
     parser.add_argument('--no_tc_report', type=Path, help='Completed strict no-TC six-video report, required only with --no_tc_only')
     parser.add_argument('--online_steps', type=int, default=100)
     parser.add_argument('--no_tc_nce_weight', type=int, choices=(0, 1), default=1, help='Select the audited noTC NCE0 or NCE1 small-fit student round')
     args = parser.parse_args()
     if args.out.exists() or not args.out.parent.is_dir():
         parser.error('Require an existing parent and new focused manifest')
+    if args.pure_students_report is not None and not args.pure_students:
+        parser.error('--pure_students_report is restricted to --pure_students')
     if args.no_tc_report is not None and not args.no_tc_only:
         parser.error('--no_tc_report is only valid with --no_tc_only')
+    if args.pure_teacher_report is not None and not args.pure_teacher_only:
+        parser.error('--pure_teacher_report is only valid with --pure_teacher_only')
     if args.no_tc_nce_weight == 0 and not args.no_tc_students:
         parser.error('--no_tc_nce_weight 0 requires the explicit no_tc_students mode')
     base = json.loads(args.base_manifest.read_text())
+    if args.pure_students:
+        return pure_students_review(args, base)
+    if args.pure_teacher_only:
+        return pure_teacher_review(args, base)
     if args.no_tc_only:
         return no_tc_review(args, base)
     manifest = copy.deepcopy(base)

@@ -10,6 +10,18 @@ from diffsynth.models.minimax_h3_text_encoder import _text_ids
 from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
 
 
+PURE_TEXT_TEACHER_KIND = 'pure_text_h3_raw_tokens'
+PURE_TEXT_BINDING_KIND = 'pure_text_teacher_case_binding'
+
+
+def file_sha256(path):
+    digest = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for chunk in iter(lambda: stream.read(4 * 1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def tensor_sha256(value):
     value = value.detach().cpu().contiguous()
     digest = hashlib.sha256()
@@ -296,14 +308,128 @@ def build_oracle_captions(exp_root, out, neutral_teacher=False):
                           output=str(out), supervision_only=True)), flush=True)
 
 
+def validate_pure_text_record(record, sample_id=None):
+    if (not isinstance(record, dict) or not isinstance(record.get('metadata'), dict)
+            or set(record) != {'metadata', 'tail', 'source_token_ids', 'teacher_length'}):
+        raise ValueError('Pure-text teacher requires exact raw-tail/token-ID/length fields and no prefix context')
+    metadata, tail, ids = record['metadata'], record['tail'], record['source_token_ids']
+    if (metadata.get('kind') != PURE_TEXT_TEACHER_KIND or metadata.get('text_only') is not True
+            or metadata.get('image_conditioned') is not False
+            or type(metadata.get('prefix_length')) is not int or metadata['prefix_length'] != 0
+            or (sample_id is not None and metadata.get('sample_id') != sample_id)
+            or any(name in metadata for name in ('prefix_context', 'prefix_tags', 'prepared_image_size', 'context_sha256'))):
+        raise ValueError('Pure-text teacher must declare caption-only encoding with zero reference prefix/context')
+    length = record['teacher_length']
+    if (type(length) is not int or length < 1 or type(metadata.get('teacher_length')) is not int
+            or metadata['teacher_length'] != length or type(metadata.get('tail_length')) is not int
+            or metadata['tail_length'] != length or not torch.is_tensor(tail)
+            or tail.dtype != torch.bfloat16 or tail.shape != (length, 5120)
+            or not torch.isfinite(tail).all() or not torch.is_tensor(ids)
+            or ids.dtype != torch.long or ids.shape != (length,) or torch.any(ids < 0)):
+        raise ValueError('Pure-text teacher raw BF16 tail and source token IDs must exactly match teacher length')
+    prompt = metadata.get('prompt')
+    if (not isinstance(prompt, str) or not prompt.strip()
+            or hashlib.sha256(prompt.encode()).hexdigest() != metadata.get('caption_sha256')
+            or tensor_sha256(tail) != metadata.get('tail_sha256')
+            or tensor_sha256(ids) != metadata.get('source_token_ids_sha256')
+            or tensor_sha256(ids) != metadata.get('token_ids_sha256')):
+        raise ValueError('Pure-text teacher caption, raw-tail or source-token-ID SHA mismatch')
+    if metadata.get('case') is not None and tensor_sha256(tail) != metadata.get('teacher_tail_sha256'):
+        raise ValueError('Bound pure-text teacher tail SHA mismatch')
+    return metadata
+
+
+def bind_pure_text_cases(cache_dir, exp_root, out):
+    import csv
+    cache, root, output = Path(cache_dir), Path(exp_root), Path(out)
+    if output.exists() or not output.parent.is_dir() or not cache.is_dir():
+        raise ValueError('Binding requires a completed source directory and a new output with an existing parent')
+    csv_path = root / 'E2/full_joint.csv'
+    with csv_path.open(newline='') as stream:
+        rows = list(csv.DictReader(stream))[:3]
+    if len(rows) != 3 or len({row['sample_id'] for row in rows}) != 3:
+        raise ValueError('Require the fixed three distinct source-person joint cases')
+    summary_path, protocol_path = cache / 'finished.json', cache / 'plan.json'
+    summary = json.loads(summary_path.read_text())
+    source = summary.get('source', {})
+    protocol_sha = file_sha256(protocol_path)
+    if (summary.get('complete') is not True or source.get('kind') != PURE_TEXT_TEACHER_KIND
+            or source.get('text_only') is not True or source.get('image_conditioned') is not False
+            or type(source.get('prefix_length')) is not int or source['prefix_length'] != 0
+            or summary.get('source_protocol_sha256') != protocol_sha
+            or json.loads(protocol_path.read_text()) != source):
+        raise ValueError('Require completed pure-text source cache with exact manifest/protocol provenance')
+    entries = summary.get('rows', [])
+    declared = {entry['sample_id']: entry for entry in entries}
+    if len(declared) != len(entries) or len(entries) != summary.get('expected'):
+        raise ValueError('Duplicate or inconsistent pure-text manifest records')
+    prepared = []
+    for row in rows:
+        sid, audio_id = row['sample_id'], Path(row['audio_path']).stem
+        stem = sid + '_' + audio_id
+        if Path(stem).name != stem or sid in ('.', '..') or sid not in declared:
+            raise ValueError('Invalid or undeclared pure-text teacher case IDs')
+        path = cache / (sid + '.pt')
+        entry = declared[sid]
+        file_sha = file_sha256(path)
+        if Path(entry['path']).resolve() != path.resolve() or entry['file_sha256'] != file_sha:
+            raise ValueError('Pure-text source case path or file SHA changed')
+        record = torch.load(path, map_location='cpu', weights_only=True)
+        metadata = validate_pure_text_record(record, sid).copy()
+        if (metadata.get('source_protocol_sha256') != protocol_sha
+                or Path(metadata['source_protocol_path']).resolve() != protocol_path.resolve()
+                or source.get('lengths', {}).get(sid) != record['teacher_length']
+                or source.get('token_ids_sha256', {}).get(sid) != metadata['source_token_ids_sha256']
+                or entry.get('teacher_length') != record['teacher_length']):
+            raise ValueError('Pure-text source token IDs/length/protocol differ from the completed manifest')
+        case = dict(sample_id=sid, audio_id=audio_id, image_path=row['image_path'],
+                    audio_path=row['audio_path'], condition='joint')
+        metadata.update(case=case, teacher_tail_sha256=tensor_sha256(record['tail']),
+                        source_cache_file=str(path), source_cache_file_sha256=file_sha,
+                        source_scope='caption_only_no_reference_context', teacher_only_diagnostic=True,
+                        teacher_length_for_diagnostic_only=True, reference_image_binding_only=True,
+                        source_manifest_path=str(summary_path), source_manifest_sha256=file_sha256(summary_path))
+        prepared.append((stem, dict(record, metadata=metadata), case))
+    output.mkdir()
+    bound_cache = output / 'cache'
+    bound_cache.mkdir()
+    bound_rows = []
+    for stem, record, case in prepared:
+        path = bound_cache / (stem + '.pt')
+        write_new(path, record, binary=True)
+        bound_rows.append(dict(case=case, path=str(path), file_sha256=file_sha256(path),
+                               teacher_length=record['teacher_length'],
+                               teacher_tail_sha256=record['metadata']['teacher_tail_sha256']))
+    report = dict(kind=PURE_TEXT_BINDING_KIND, complete=True, expected=3, rows=bound_rows,
+                  text_only=True, image_conditioned=False, prefix_length=0,
+                  source_scope='caption_only_no_reference_context', source=dict(kind=PURE_TEXT_TEACHER_KIND,
+                      cache_dir=str(cache), manifest_path=str(summary_path), manifest_sha256=file_sha256(summary_path),
+                      protocol_sha256=protocol_sha), fixed_joint_csv_path=str(csv_path),
+                  fixed_joint_csv_sha256=file_sha256(csv_path), image_io=False, actual_lm_forward=False,
+                  scope='Case binding only; no reference image enters the caption-only teacher LM, no video-quality claim')
+    write_new(output / 'finished.json', report)
+    print(json.dumps(dict(event='pure_text_cases_bound', **report), allow_nan=False), flush=True)
+    return report
+
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--build_oracle_captions', action='store_true')
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--build_oracle_captions', action='store_true')
+    mode.add_argument('--bind_pure_text_cases', action='store_true', help='Bind caption-only raw teacher tokens to the fixed three joint cases; no image encoding')
+    parser.add_argument('--cache', type=Path, help='Completed pure-text source cache directory')
     parser.add_argument('--exp_root', type=Path)
     parser.add_argument('--out', type=Path)
     parser.add_argument('--neutral_teacher', action='store_true', help='Only teacher pronouns change; actions and student input unchanged')
     args = parser.parse_args()
-    if not args.build_oracle_captions or args.exp_root is None or args.out is None:
-        parser.error('Require --build_oracle_captions --exp_root --out')
-    build_oracle_captions(args.exp_root, args.out, neutral_teacher=args.neutral_teacher)
+    if args.exp_root is None or args.out is None:
+        parser.error('Require --exp_root --out')
+    if args.bind_pure_text_cases:
+        if args.cache is None or args.neutral_teacher:
+            parser.error('Binding requires --cache and cannot transform teacher captions')
+        bind_pure_text_cases(args.cache, args.exp_root, args.out)
+    else:
+        if args.cache is not None:
+            parser.error('--cache is only valid with --bind_pure_text_cases')
+        build_oracle_captions(args.exp_root, args.out, neutral_teacher=args.neutral_teacher)

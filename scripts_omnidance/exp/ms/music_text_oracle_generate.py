@@ -10,6 +10,45 @@ import subprocess
 from music_scale_generate import SSH, guard_code
 
 
+def teacher_tail_cache_source(cache_dir):
+    from music_text_condition import PURE_TEXT_TEACHER_KIND, PURE_TEXT_BINDING_KIND, file_sha256
+    cache = Path(cache_dir)
+    candidates = [cache / 'finished.json', cache.parent / 'finished.json']
+    for path in candidates:
+        if not path.is_file():
+            continue
+        manifest = json.loads(path.read_text())
+        source = manifest.get('source', {})
+        kind = manifest.get('kind') or source.get('kind')
+        if kind not in (PURE_TEXT_TEACHER_KIND, PURE_TEXT_BINDING_KIND):
+            continue
+        if (manifest.get('complete') is not True or kind != PURE_TEXT_BINDING_KIND
+                or source.get('kind') != PURE_TEXT_TEACHER_KIND
+                or manifest.get('text_only') is not True or manifest.get('image_conditioned') is not False
+                or type(manifest.get('prefix_length')) is not int or manifest['prefix_length'] != 0
+                or manifest.get('expected') != 3 or len(manifest.get('rows', [])) != 3):
+            raise ValueError('Pure-text teacher requires a complete explicit three-case binding manifest')
+        rows = manifest['rows']
+        stems = []
+        for row in rows:
+            case = row['case']
+            stem = str(case['sample_id']) + '_' + str(case['audio_id'])
+            record_path = cache / (stem + '.pt')
+            if (Path(stem).name != stem or case.get('condition') != 'joint'
+                    or Path(row['path']).resolve() != record_path.resolve()
+                    or file_sha256(record_path) != row['file_sha256']):
+                raise ValueError('Pure-text teacher binding manifest has changed case paths or file SHA')
+            stems.append(stem)
+        if len(set(stems)) != 3:
+            raise ValueError('Pure-text teacher binding manifest must declare three distinct cases')
+        return dict(kind=PURE_TEXT_TEACHER_KIND, source_scope='caption_only_no_reference_context',
+                    manifest_path=str(path), manifest_sha256=file_sha256(path),
+                    text_only=True, image_conditioned=False, prefix_length=0)
+    return dict(kind='cached_image_conditioned_teacher',
+                source_scope='cached_teacher_tail_original_reference_context',
+                manifest_path=None, manifest_sha256=None)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, required=True)
@@ -74,8 +113,11 @@ def main():
     if args.no_text_encoder and args.checkpoint:
         from music_text_infer import _checkpoint_context_policy
         context_policy = _checkpoint_context_policy(args.checkpoint)
+    teacher_source = teacher_tail_cache_source(args.teacher_tail_cache) if args.teacher_tail_cache else None
+    pure_text_teacher = bool(teacher_source and teacher_source['kind'] == 'pure_text_h3_raw_tokens')
     old_no_tc_model = bool(args.no_text_encoder and args.checkpoint and context_policy == 'tc_prefix_context')
-    no_tc_kind = ('cached_teacher_tail_only_no_tc_diagnostic' if args.teacher_tail_cache else
+    no_tc_kind = ('pure_text_teacher_no_tc_diagnostic' if pure_text_teacher else
+                  'cached_teacher_tail_only_no_tc_diagnostic' if args.teacher_tail_cache else
                   'legacy_checkpoint_no_tc_music_only_diagnostic' if old_no_tc_model else
                   'music_only_global_bias_no_tc_deployment')
     sampler = args.root / 'scripts_omnidance/exp/h3ar/sample_h3_ar.py'
@@ -95,6 +137,8 @@ def main():
               native_audio='same_fixed_silence_reference_and_retake', semantic_student_prompt=None if args.no_text_encoder else ' ',
               no_text_encoder=args.no_text_encoder, text_encoder_loaded=False if args.no_text_encoder else None,
               teacher_tail_cache=str(args.teacher_tail_cache) if args.teacher_tail_cache else None,
+              teacher_source=teacher_source,
+              source_scope=teacher_source['source_scope'] if teacher_source else None,
               old_model_not_trained_for_no_tc=old_no_tc_model, context_policy=context_policy,
               holder_path=str(holder), checkpoint_inference_path=str(args.checkpoint) if args.checkpoint else None,
               checkpoint_source=str(args.checkpoint_source or args.checkpoint) if args.checkpoint else None,
@@ -253,6 +297,14 @@ def main():
                         or condition['original_teacher_tokens'] != condition['predicted_length']
                         or re.fullmatch(r'[0-9a-f]{64}', str(condition.get('source_sha256'))) is None):
                     raise ValueError('Cached teacher tail lacks explicit teacher-only source/length evidence')
+                if pure_text_teacher and (condition.get('kind') != no_tc_kind
+                        or condition.get('source_scope') != 'caption_only_no_reference_context'
+                        or condition.get('text_only') is not True
+                        or condition.get('image_conditioned') is not False
+                        or condition.get('teacher_length_for_diagnostic_only') is not True):
+                    raise ValueError('Pure-text teacher source provenance or caption-only diagnostic scope differs')
+                if not pure_text_teacher and condition.get('kind') == 'pure_text_teacher_no_tc_diagnostic':
+                    raise ValueError('Pure-text teacher log requires explicit pure-text binding manifest provenance')
             else:
                 deployed = re.findall(r'^\[music text deployment\] (.+)$', text, flags=re.MULTILINE)
                 expected_context = 'zeros_legacy_checkpoint_compatibility' if old_no_tc_model else 'none_music_only_global_bias'
@@ -293,7 +345,8 @@ def main():
                  complete_video_decode_checked=False,
                  no_text_encoder=args.no_text_encoder,
                  old_model_not_trained_for_no_tc=old_no_tc_model, context_policy=context_policy,
-                 scope='Cached offline teacher tail only without TC/prefix, not music prediction or a trained model result' if args.teacher_tail_cache else 'Old checkpoint music-only/no-TC zero-context diagnostic; old model not trained for no-TC, no new-interface success claim' if old_no_tc_model else 'Trained music-only global-bias model deployed without any TC/context/prefix; video integrity and quality acceptance are separate' if args.no_text_encoder else 'Same-length projected teacher, not music prediction or identity-velocity equivalence' if args.projection else 'Teacher hidden oracle, not music prediction or a trained model result' if args.caps else 'Trained shared raw-text adapter, original native music conditions disabled')
+                 teacher_source=teacher_source,
+                 scope='Pure caption-only offline H3 teacher tokens without any reference-context conditioning or TC/prefix; teacher diagnostic, not music prediction or quality acceptance' if pure_text_teacher else 'Cached offline teacher tail only without TC/prefix, not music prediction or a trained model result' if args.teacher_tail_cache else 'Old checkpoint music-only/no-TC zero-context diagnostic; old model not trained for no-TC, no new-interface success claim' if old_no_tc_model else 'Trained music-only global-bias model deployed without any TC/context/prefix; video integrity and quality acceptance are separate' if args.no_text_encoder else 'Same-length projected teacher, not music prediction or identity-velocity equivalence' if args.projection else 'Teacher hidden oracle, not music prediction or a trained model result' if args.caps else 'Trained shared raw-text adapter, original native music conditions disabled')
     write_new(args.out / 'jobs.json', final)
     print(json.dumps(dict(expected=expected, finished=len(jobs), oracle_conditions_passed=passed,
                           out=str(args.out))), flush=True)

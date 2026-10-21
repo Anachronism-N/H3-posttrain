@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-21",
+  "complete": true,
+  "scope": "Actual completed 18-video report integration, review manifest preservation, limited in-memory negative gates, and HTTP media access; not human music/dance acceptance",
+  "review_source_sha256": "dc8067e90c0e23054cf8955de7fa65868945de697f310fc7e742654d2343fb8c",
+  "actual_video_audit": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_students_all18_audit_v3.json",
+    "sha256": "3c61412f373ac0e9cd75e72baebf7402735c3e2d4eaaa4d8a03ec134ca909528",
+    "expected": 18,
+    "passed": 18,
+    "task_id": "uHJqvj",
+    "exit_code": 0
+  },
+  "manifest": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/manifest_music_text_pure_students_v3.json",
+    "sha256": "64699c1bf77ea2ba115eb33ec103bf06e27bcd0bdde229c35f11630032b6fa4a",
+    "models": 52,
+    "presets": 26,
+    "old_48_models_and_24_presets_preserved_exact": true,
+    "samples_preserved_exact": true,
+    "scores_modified": false
+  },
+  "limited_negative_integration": {
+    "task_id": "eNS4Sa",
+    "exit_code": 0,
+    "actual_function_positive_report_passed": true,
+    "malformed_top_level_fields_rejected": ["complete", "expected", "passed", "no_text_encoder", "all_native_audio_hashes_identical", "student_ground_truth_caption_or_length_input", "complete_selected_audio_video_decode", "musical_quality_accepted", "models", "rows"],
+    "invalid_changes_in_memory_only": true,
+    "output_absent_for_rejected_cases": true,
+    "not_exhaustive_failure_coverage": true,
+    "new_media_decode_performed_by_this_test": false
+  },
+  "http_access": {
+    "base": "http://28.216.19.69:8766/",
+    "manifest_http": 200,
+    "all_18_video_byte_range_http": 206,
+    "requested_range": "bytes=0-1023",
+    "received_bytes_each": 1024
+  },
+  "student_continuous_human_review": "pending",
+  "student_musical_quality_accepted": false,
+  "teacher_human_review_is_separate": true
+}

@@ -1,0 +1,52 @@
+{
+  "complete": true,
+  "kind": "same_byte_teacher_local_mirror_transport",
+  "destination_host": "28.216.19.137",
+  "local_root": "/tmp/music_text_pure_target_mirror_v1",
+  "source_cache_unchanged": true,
+  "model_training": false,
+  "rows": [
+    {
+      "host": "28.216.19.69",
+      "shard": 0,
+      "complete": true,
+      "count": 334,
+      "local_directory": "/tmp/music_text_pure_target_mirror_v1/music_text_pure_text_targets_v1_s0"
+    },
+    {
+      "host": "28.216.17.70",
+      "shard": 1,
+      "complete": true,
+      "count": 334,
+      "local_directory": "/tmp/music_text_pure_target_mirror_v1/music_text_pure_text_targets_v1_s1"
+    },
+    {
+      "host": "28.216.19.213",
+      "shard": 2,
+      "complete": true,
+      "count": 333,
+      "local_directory": "/tmp/music_text_pure_target_mirror_v1/music_text_pure_text_targets_v1_s2"
+    },
+    {
+      "host": "28.216.19.143",
+      "shard": 3,
+      "complete": true,
+      "count": 333,
+      "local_directory": "/tmp/music_text_pure_target_mirror_v1/music_text_pure_text_targets_v1_s3"
+    },
+    {
+      "host": "28.216.19.137",
+      "shard": 4,
+      "complete": true,
+      "count": 333,
+      "local_directory": "/tmp/music_text_pure_target_mirror_v1/music_text_pure_text_targets_v1_s4"
+    },
+    {
+      "host": "28.216.19.225",
+      "shard": 5,
+      "complete": true,
+      "count": 333,
+      "local_directory": "/tmp/music_text_pure_target_mirror_v1/music_text_pure_text_targets_v1_s5"
+    }
+  ]
+}

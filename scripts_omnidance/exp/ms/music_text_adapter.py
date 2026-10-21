@@ -102,7 +102,7 @@ class _CrossAttentionBlock(nn.Module):
 class MusicTextAdapter(nn.Module):
     """qmax comes from training token lengths, never a deployment ground-truth length."""
     def __init__(self, qmax, feature_dim=1024, raw_dim=5120, width=256, heads=8,
-                 context_policy='tc_prefix_context'):
+                 context_policy='tc_prefix_context', head_normalization='layer_norm'):
         super().__init__()
         if type(qmax) is not int or qmax < 1:
             raise ValueError('qmax must be a positive integer from training data')
@@ -115,7 +115,10 @@ class MusicTextAdapter(nn.Module):
             raise ValueError('Unsupported adapter context_policy')
         self.qmax = qmax
         self.feature_dim, self.raw_dim, self.width, self.heads = feature_dim, raw_dim, width, heads
+        if type(head_normalization) is not str or head_normalization not in ('layer_norm', 'identity'):
+            raise ValueError('Unsupported adapter head_normalization')
         self.context_policy = context_policy
+        self.head_normalization = head_normalization
         self.memory_projection = nn.Linear(feature_dim, width)
         self.stereo_positions = nn.Parameter(torch.empty(2, width))
         self.query_positions = nn.Embedding(qmax, width)
@@ -124,7 +127,7 @@ class MusicTextAdapter(nn.Module):
         else:
             self.global_context_bias = nn.Parameter(torch.zeros(width))
         self.blocks = nn.ModuleList([_CrossAttentionBlock(width, heads), _CrossAttentionBlock(width, heads)])
-        self.output_norm = nn.LayerNorm(width)
+        self.output_norm = nn.LayerNorm(width) if head_normalization == 'layer_norm' else nn.Identity()
         self.raw_output = nn.Linear(width, raw_dim)
         self.length_head = nn.Sequential(nn.Linear(2 * width, width), nn.GELU(), nn.Linear(width, 1))
         nn.init.normal_(self.stereo_positions, std=0.02)
@@ -174,7 +177,8 @@ class MusicTextAdapter(nn.Module):
                     projection='center+((raw_output(output_norm(queries))-center)@basis)@basis.T',
                     buffer_dtype='float32', trainable=False)
 
-    def forward(self, features, context=None, feature_lengths=None, query_count=None):
+    def encode_queries(self, features, context=None, feature_lengths=None, query_count=None):
+        """Differentiable internal queries before the trainable raw-output head."""
         if isinstance(features, Mapping):
             record = features
             metadata = record.get('metadata')
@@ -227,15 +231,19 @@ class MusicTextAdapter(nn.Module):
         queries = self.query_positions.weight[:count][None] + projected_context[:, None]
         for block in self.blocks:
             queries = block(queries, memory, flat_mask)
+        summary = memory.masked_fill(~flat_mask[..., None], 0).sum(1) / flat_mask.sum(1)[:, None]
+        log_length = self.length_head(torch.cat((summary, projected_context), dim=-1)).squeeze(-1)
+        _finite(log_length, 'log_length')
+        return queries, log_length
+
+    def forward(self, features, context=None, feature_lengths=None, query_count=None):
+        queries, log_length = self.encode_queries(features, context, feature_lengths, query_count)
         raw_tokens = self.raw_output(self.output_norm(queries))
         if self.output_basis is not None:
             with torch.autocast(device_type=raw_tokens.device.type, enabled=False):
                 raw_tokens = self.output_center + ((raw_tokens.float() - self.output_center)
                                                    @ self.output_basis) @ self.output_basis.T
-        summary = memory.masked_fill(~flat_mask[..., None], 0).sum(1) / flat_mask.sum(1)[:, None]
-        log_length = self.length_head(torch.cat((summary, projected_context), dim=-1)).squeeze(-1)
         _finite(raw_tokens, 'raw_tokens')
-        _finite(log_length, 'log_length')
         return raw_tokens, log_length
 
     @torch.no_grad()
@@ -370,7 +378,7 @@ def convert_music_text_to_no_text_encoder(model, features, feature_lengths):
     old = model.adapter
     before = model.state_dict()
     adapter = MusicTextAdapter(old.qmax, width=old.width, heads=old.heads,
-                               context_policy='music_only_global_bias')
+                               context_policy='music_only_global_bias', head_normalization=old.head_normalization)
     adapter = adapter.to(device=old.memory_projection.weight.device, dtype=old.memory_projection.weight.dtype)
     state = dict(old.state_dict())
     del state['context_projection.weight']
@@ -559,9 +567,10 @@ def _checkpoint_metadata(model, backend):
             metadata['preprocessing'] = dict(ONLINE_PREPROCESSING)
             metadata['online_training'] = _online_training_metadata(model)
     if ((adapter.width, adapter.heads) != (256, 8) or adapter.output_basis is not None
-            or adapter.context_policy == 'music_only_global_bias'):
+            or adapter.context_policy == 'music_only_global_bias' or adapter.head_normalization != 'layer_norm'):
         metadata['format_version'] = 3
         metadata['output_space'] = adapter.output_space_metadata()
+        metadata['head_normalization'] = adapter.head_normalization
     if adapter.context_policy == 'music_only_global_bias':
         metadata['context_policy'] = adapter.context_policy
     return metadata
@@ -624,7 +633,9 @@ def load_music_text_checkpoint(path, backbone=None, expected_backend=None, expec
     context_policy = metadata.get('context_policy', 'tc_prefix_context') if version == 3 else 'tc_prefix_context'
     if type(context_policy) is not str or context_policy not in ('tc_prefix_context', 'music_only_global_bias'):
         raise ValueError('Invalid checkpoint context_policy')
-    adapter = MusicTextAdapter(qmax, width=width, heads=heads, context_policy=context_policy)
+    head_normalization = metadata.get('head_normalization', 'layer_norm') if version == 3 else 'layer_norm'
+    adapter = MusicTextAdapter(qmax, width=width, heads=heads, context_policy=context_policy,
+                               head_normalization=head_normalization)
     scope = metadata.get('state_scope')
     if version == 3:
         output_space = metadata.get('output_space')
@@ -664,7 +675,11 @@ def load_music_text_checkpoint(path, backbone=None, expected_backend=None, expec
         model = adapter
     else:
         raise ValueError('Invalid checkpoint state_scope')
-    _validate_metadata(metadata, _checkpoint_metadata(model, backend))
+    expected_metadata = _checkpoint_metadata(model, backend)
+    if version == 3 and 'head_normalization' not in metadata:
+        # Existing V3 checkpoints predate the configurable head and always used LayerNorm.
+        expected_metadata.pop('head_normalization')
+    _validate_metadata(metadata, expected_metadata)
     if version in (2, 3):
         expected_state = model.state_dict()
         if set(state) != set(expected_state):

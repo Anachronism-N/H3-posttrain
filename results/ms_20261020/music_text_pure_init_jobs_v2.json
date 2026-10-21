@@ -1,0 +1,29 @@
+{
+  "complete": true,
+  "rows": [
+    {
+      "name": "music_text_pure_public512_init_v2",
+      "gpu": 4,
+      "extra": [
+        "--width",
+        "512",
+        "--head_normalization",
+        "identity"
+      ],
+      "exit": 0,
+      "log": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_public512_init_v2.log"
+    },
+    {
+      "name": "music_text_pure_C300control256_init_v2",
+      "gpu": 5,
+      "extra": [
+        "--source_checkpoint",
+        "/tmp/music_text_online_C_len001_s300_v1/last.pt",
+        "--width",
+        "256"
+      ],
+      "exit": 0,
+      "log": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_C300control256_init_v2.log"
+    }
+  ]
+}

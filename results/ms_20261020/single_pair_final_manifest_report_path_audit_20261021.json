@@ -1,0 +1,14 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "actual_init_sibling_report_accepted": true,
+  "identical_report_other_path_rejected": true,
+  "actual_init_sibling_report_bad_sha_rejected": true,
+  "full_final_manifest_cpu_audit": "single_pair_final_manifest_cpu_audit_20261021.json",
+  "full_previous_audit_preserved_except_added_report_path_gate": true,
+  "source_sha256": "db0730046adc9a5b6f5256a84f27677a14e9097ad24a6b2ab985e3aca52b0764",
+  "adapter_source_sha256": "ad91782e75ccd0b9fb82fefe2902d1ae8de9bdbff73cd50ddeb59c55eb1bbcc6",
+  "real_public_musicfm_runtime_tested": false,
+  "real_h3_runtime_tested": false,
+  "ready_for_final_manifest_main_integration": true
+}

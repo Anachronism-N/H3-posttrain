@@ -541,3 +541,115 @@ PCA中心为原1800train的776078个有效tail token的FP64均值；每item最�
 在固定当前PCA模型参数下，裸PCA space投影teacher MSE约.71-.86，无限制head affine envelope约.72-.89；但包含LN零均值norm<=16闭球放松范围，下界约4.72-5.19。因为实际形态H=mu+P[b+W beta-mu+W diag(gamma)z]，z零均值且norm<sqrt(256)，PCA投影改变空间却没有让已学W/gamma/中心覆盖所需幅度。这里不是gamma总norm固定（它可训练），也不是说LN永久无法输出teacher；它只证明当前checkpoint具体头的范围存在障碍。输出weight/gamma可移动，后续该先核验更合适头初始化/尺度/参数化，再独立检验音乐预测及行为，而不是继续把旧PCA教师有动作当新学生已学到舞蹈。
 
 最新结论：原teacher有舞蹈；PCA teacher有一些动作但液化/模糊/反转，不可作为完整质量成功；无TC的NCE1与NCE0新学生反事实均被用户判摆pose。本轮受控实验流程完成且得到负结果，整个仅音乐＋图可用舞蹈目标尚未完成；后续新修复预算与资源先明确告知，不无限重跑已失败的相同配方。
+
+## 新阶段：纯文本逐token教师、单配对分支和正式数据规模
+
+用户在六项质疑后明确允许推进，但排除28.216.18.136和28.216.18.144。本轮只调度28.216.19.69、28.216.17.70、28.216.19.213、28.216.19.143、28.216.19.137、28.216.19.225，旧被排除节点的缓存不用于新计算。
+
+本节为实现／准备计划，不将旧投影或8条训练模型当新结果。三条并行线：
+
+1. 纯文本教师：仅舞种＋中性原版MotionScript正文，经冻结H3文本LM（final norm Identity），add_special_tokens=False、不用presentation模板、不输入图或原生音频结构，保存有效逐token BF16 raw H，不mean-pool、不保存prefix_context。先三case新的真实教师H直入无TC原管线＋独立视觉VAE图参考检验，再六分片覆盖原1800train/200val。新的教师表示不同于旧图上下文tail，必须实际验证，不能仅shape相同就宣称可用。
+2. 单配对训练：clip_weight0仅正音乐一次前向，取消两个wrong分支及NCE计算；反事实只留验证／视频。纯teacher bundle仅targets＋原共享波形及train-only统计，学生contextNone／无TC，无固定W/PCA后投影，不新增生成loss。qmax来自纯文本train实际长度；val超长截取监督及无法预测长度明确报告，不让val扩大query上限。
+3. 起点对照：旧C300派生noTC、width256末端LN只作为控制；新模型从公开MusicFM预训练骨干＋新width512、末端Identity的完整adapter开始，raw_output5120自由可训。用全部train教师mean／centered energy及预定前32train音乐query probe做输出头均值与全局RMS初始化校准，不固定PCA方向、不宣称协方差／全部音乐目标已匹配。它是候选配方整体（起点／宽度／末端归一化及初始化不同），不能把效果差异只归于某一个因素。
+
+资源布局：六节点各GPU6编码一个纯teacher分片，N4GPU7先编码三case；随后N1–3GPU7各生成一个纯teachercase，避免重复原图上下文教师。N5GPU4/5准备／并行训练两起点，原1800train/200val正式预算各1200更新、batch8/micro2、9600正配对曝光约5.33遍，lr骨干1e-5/adapter1e-4、length0.01、AdamW/clip沿用。小量10更新smoke只检验真实梯度和部署，非8条数据效果主实验。训练正式样本不再限8条，原/换/零推理仍每配置固定三个case。
+
+启动前核验源SHA/严格checkpoint／GPU实际进程与180GiB主机/cgroup准入，不用holder100%伪装实验利用率；阶段有依赖时明确正在准备／GPU是否已启动。图参考只下游VAE，学生推理完全不加载TC/tokenizer/processor，也不读取teachercaption/长度。后续全200val、完整token/长度/源模型部署一致及3case视频和人评分别验收；纯textteacher无法给出目标舞蹈时先报告边界，不靠扩大音乐训练掩盖接口问题。
+
+### 2026-10-21 实际阶段证据与消费侧修复
+
+- 原1800/200 split SHA `44b07b8b9219b5cbced271ac36ce7e1d26204fe6f47983a113a9dd8585720060` 与旧目标使用的6200条caption源核对，不能改用不一致的另一个2k集合。从真实6200源提取exact2000，纯caption JSON SHA `8d9cbaa84327b677f7838483456d08c7cf0821a12018c91f3d822fd2e9c05b82`。真实tokenizer全量preflight得到train最大1423、val最大1113；qmax只由train决定。
+- 六个纯教师分片的采样任务均exit0，合计2000，位于实验MS目录的`music_text_pure_text_targets_v1_s0..s5`，队列报告为`music_text_pure_text_cache_jobs_v1.json`。原生H3只加载保留50层LM所需551个BF16 tensor，final norm Identity，实际加载tensor content SHA `c2ed2ea979f58106b393d2514b15d1f237dadb49a1a44d03f0c20d0a2be541cb`。这里没有图、presentation或mean-pool；队列exit0不能替代消费者对全部ID/token/tail与来源的最终审核。
+- 新三case纯教师H真实生成完毕，长度228/199/323，输出`H3AR/val_musicreplace_text_pure_text_teacher_v1/joint`。它不是上一轮图上下文教师或W/PCA投影。独立报告`MS/music_text_pure_teacher_three_video_decode_v1.json`已验证三条均704×1280、24fps、124帧完整解码及音频完整解码；ffprobe不可用，精确声明stream数量未独立验证。来源/noTC/视觉参考审计与连续舞蹈人评另行验收，**不能据此宣称纯教师舞蹈质量通过**。
+- 第一版纯数据包消费者曾重复定义loader，且假定cache含`caps_path/cache_source_sha256/text_embed_source_sha256`等实际不存在字段。修复消费者，使用外部冻结`music_text_pure_text_teacher_release_v1.json`绑定真实caps/split/cache/text_embed路径与SHA，不修改已运行cache添加字段。release中的`cache_complete:false`是编码前快照，保留原记录；后续完成情况用新的真实任务报告证明。
+- 纯bundle不绑定某一个init，因为初始化依赖其train-only统计；外置init manifest严格绑定bundle/checkpoint/同名JSON报告SHA、split/qmax/music-only/free-head协议，避免循环来源依赖。纯bundle包含明确`artifacts`来源记录，是9个顶层键；旧bundle保持8键严格协议。训练消费侧单独兼容pure9，拒绝额外student features或篡改来源。
+- 初次CPU assemble在`28.216.19.137`尝试构建`/tmp/music_text_pure_text_inputs_v1.pt`，只复用旧本地bundle的已审计原始波形，不沿用旧带图targets/statistics/init。该初次尝试因下述CephFS读取阻塞终止；后续本地镜像构建v2、初始化和正式训练均已完成，详见后面的终态记录。日志`MS/music_text_pure_text_inputs_v1.log`保留初次真实IP和冻结源SHA，不把这一旧准备日志称作当前训练进度。
+- 开发代理出现网关Empty stream与429限流，失败调用不作为新的代码、报告或审核完成证据；已存在的真实缓存/视频及独立解码报告不因代理失败被改称失败或重新生成。联调修复及验证继续进行，完整训练、200val、新学生视频、人评和GitHub发布仍为后续停止条件。
+- 首次CPU assemble实际进程在CephFS的`s0/hwikIbHdfqCnONEW.pt`读取处进入D态、`generic_file_buffered_read`，尚未写出纯bundle，不能称训练中。已停止工具管理任务并对核验cmdline的本任务remote PID发送SIGTERM，保留日志。改从六个分片原写入节点并行传输PT到`28.216.19.137:/tmp/music_text_pure_target_mirror_v1`，逐文件要求字节SHA等canonical finished记录；只更换读取介质，不修改teacher或降低来源门槛。首传输命令因Path拼接TypeError在复制前退出，修正括号后重启。实际新传输已全部exit0且2000个PT逐文件SHA等原finished，报告`MS/music_text_pure_target_mirror_transport_v1.json`；各分片plan/finished也逐字节保持。消费侧`--target_read_root`独立CPU fixture拒绝本地plan/finished/PT篡改、缺失/额外PT和canonical路径改绑；fixture不是实际LM或2000目标验收。后续实际本地assemble已完成`/tmp/music_text_pure_text_inputs_v2.pt`，冻结pipeline SHA `282c9e56093272bf3916290591a5b3cc5b015d3a50b980336ea9947fa9f5b2b2`，独立SHA与完整报告已验收，详见下述v2唯一消费选择；误重复v1也保留但不使用。
+- 新纯教师三视频实际完整来源审计`MS/music_text_pure_teacher_all3_audit_v1.json`已complete/3passed。noTC/prefix0、纯teacher来源及图独立视觉VAE分别核验，完整媒体解码复用同SHA报告。官方上游pipeline未有生成前冻结SHA，报告明确`official_pipeline_pre_generation_hash_bound:false`，当前SHA只事后核实，不冒历史来源证明。连续舞蹈人评pending，不把采样mosaic当人评。
+- 新评审清单`review_web/manifest_music_text_pure_teacher_v1.json`已实际上线8766并HTTP200验证48模型/24预设，旧47模型/23预设逐对象保留、三人物完全相同、未写评分。首预设【新纯文本教师·无图上下文】展示新pure／原neutral／旧无TC教师三人物joint，标明教师诊断非音乐学生、人评待定。新清单SHA `6055d172d0fb2c69f3f9670dd023f0290c6330ea02a24c05c426a39194b71368`。
+- 已独立核实当前训练源SHA `63ec0cbd334a2078d43208b5e58fc2de49122c933bd627c91d1567b6351b405c`与`results/ms_20261020/single_pair_main_pure9_cpu_audit_20261021.json`一致：真实AST的pure9/legacy8通过，28项额外键或来源篡改拒绝；完整Identity checkpoint/None输入worker仅CPU fixture通过，不是实际MusicFM/H3/GPU验收。
+- 读取恢复新增`load_pure_targets(..., read_root=None)`与`--target_read_root`。canonical计划、完成记录、cache元数据和源路径不变；镜像plan/finished必须同SHA，每个实际读取PT必须等canonical finished的file SHA，额外/缺失PT拒绝。只记录读取介质，不重新生成或修改冻结teacher缓存。源文件语法与diff检查通过，镜像专门CPU回归及actual2000 bundle另行验收。
+- 当前组装/来源审核不需要GPU。下一阶段两起点各用一张卡训练，其余资源可供其他任务；之后三个固定case的独立生成再跨允许节点并行。节点holder的100%利用率不是本轮训练进度，正式训练开始必须以实际梯度、step日志与checkpoint为证。
+- 纯教师三条的实际来源/无TC/token IDs/BF16/独立视觉VAE参考审核完成：`MS/music_text_pure_teacher_all3_audit_v1.json`为3/3，marker与六时点mosaic在新生成目录。官方pipeline源码只有posthoc内容SHA核验，缺生成前冻结记录，明确不称预冻结；原曲mux相符尚未独立核验，连续舞蹈人评待定。
+- 新评审manifest `review_web/manifest_music_text_pure_teacher_v1.json`实际构建并启用8766，48模型/24预设，原47/23与样本记录逐值保持。新预设为【新纯文本教师·无图上下文】，对照原neutral教师与旧无TC教师；网页manifest实际HTTP200已核验。本次只新生成3条纯教师诊断，不是已训练音乐学生视频。
+- 六分片2000个PT的同字节SHA镜像传输全部实际exit0，补齐原plan/finished同字节副本。`MS/music_text_pure_target_mirror_transport_v1.json`证明transport，非训练；镜像读取CPU fixture回归通过。主线程误启动v1/v2两次同源assemble，两者均exit0；保留产物不删除，后续唯一使用v2。实际v2 bundle SHA `f0a0b9e62ad2d882fde7405641cff08c4fd8cdbb9db12d018df7b48318a11672`，2000/1800/200、qmax1423、teacher energy127.65884048888763、val overflow0，独立全文件SHA核验完成。
+- 两实际GPU初始化已exit0：19.137 GPU4的public512Identity SHA `103cf3a894e086d5d8221d8b1ab16c710aa85e5708dda4af0db8426fdd95d28c`；GPU5的C300control256LN SHA `3bc609d0253699a7ebee8975bef5a4991fc0f8ed26676442f4e724b9fa9c7149`。public32train waveform实际MusicFM前向校准scale149.94115，centeredRMS从0.07183137到10.77047834，对teacher10.77047842，meanerror1.62087e-6、RMSrelativeerror6.59475e-9；仅头W/b改变，没有拟合协方差/方向或训练更新。完整权重buffer序列化检查与外置manifest绑定已通过，两者optimizer updates均0。
+- `BhhOeU`的两真实10步smoke已完成，各80配对曝光，400dense tensors真实更新，public39／control41 adapter tensors改变，冻结buffer不变、完整重载与独立waveform-only Noneworker逐值一致。随后从各原init重新启动正式1800train／200val、各1200更新，不继承smoke权重或optimizer；真实step日志、完整plan、首步gradient与两livePID194349/194355已核验。main误重复启动的`WM1uGf`在准入即被这些正在计算的正式进程正确拒绝，零新增更新；没有放宽准入或终止正常训练。两配置随后均正式1200更新结束，全200val终验和完整checkpoint/独立worker已完成；18新学生视频及连续人评仍待完成，不能用训练完成代替质量验收。
+- 独立旧源CPU只读全2000审核`MS/music_text_pure_bundle_cpu_validator_v1.json`已自然exit0并complete，SHA `a0a8bc5d07c7df8ca4252cf3ae3ae257b111bbcfd898aede598307dd900274e5`。全860146 tokens、train统计776078 tokens，实际full tokenization／source／BF16／split六shard门禁通过。报告明确执行源2ae2cd与后续磁盘282c镜像源不同，不冒称此报告测试mirror分支；mirror独立fixture和实际v2assemble分别验收。
+
+### 2026-10-21 纯教师连续人评与下一阶段边界
+
+用户明确反馈：【新纯文本教师·无图上下文】三个配置均在跳舞；旧noTC·教师tail-only·未训练新接口动作略小且重复，另外两个（新纯教师／原neutral）动作几乎一致；三者运动均偏小且未很好跟随音乐节拍。此为预设级连续定性人评，不是逐case量化。此前immutable技术报告中的人评pending是审核时快照，此处记录后续实际人评，不修改报告历史内容。
+
+该实验验证“无需图上下文的文本raw hidden仍可作为舞蹈教师，生成端完全关闭TC且参考图仅走视觉VAE”在三个case可用，不证明音乐学生已学会，不证明强运动幅度或节拍同步。教师生成实际native音频固定静音、原曲仅mux，因此本次上界没有提供真实音乐影响生成的证据。
+
+MusicFM输出约25Hz×1024声学特征，H3入口要求可变长×5120原文本LM语义hidden；需要可训练接口映射，但两cross-attention、qmax1423和内部width512是当前方案选择，不是H3规定。文字token位置不是音乐时间位置，逐tokenMSE也不是拍点／动作时间监督；同音乐配多种合理舞蹈可使配对回归平均化。这些是任务错配的可能机制，不能把本次教师跟拍弱简单归因adapter。
+
+下一步优先完成已有两配置1200更新／full200val，按固定三个case生成每配置原曲／换曲／零音乐共18条，分别验收连续舞蹈、运动幅度、音乐变化与跟拍，不把H MSE改善当目标完成。如学生恢复舞蹈但不跟拍，下一项问题才是音乐时间／节拍到动作强调的显式对齐；新增生成行为或节拍loss需另明确方案与预算，不在当前训练中偷偷加入。
+
+控制组C300control256已实际1200更新／9600曝光完成，全200验证与完整独立worker一致性通过，checkpoint SHA `39dc560334355812f2984f727c9b05f46122c60652a70ab8bcd166f1df47fe89`；tokenweighted rawMSE117.6411，position baseline macroMSE5.83669，音乐判别top1 .36，未建立音乐收益，必须继续视频诊断。public512随后也实际1200更新／9600曝光完成，全200验证和完整独立worker一致性通过，checkpoint SHA `8c3f1133d64d194b7aeb89850a3137afcff23558a9b13ab6756d1f1c68d85fa2`。public tokenweighted rawMSE90.7060、macro128.1719（control117.6411／167.7893），正确对wrong分数差约3.89e-5，top1 .325（control .36），长度绝对误差171.22（control157.44）。纯teacher position_mean baseline macro5.83669优于两学生，但不是生成质量证据。两组音乐条件区分增益未建立，不能将新输出头尺度校准成功说成语义拟合成功；两组最终视频质量均未验收。
+
+两完整checkpoint已归档至canonical MS目录，并在允许节点保持同SHA本地副本。首次MEN82P从19.137运行生成manager，其本地knownhosts缺其他节点可信RSA记录，strict检查拒绝全部采样（零视频）；保留v2失败目录与准入日志，不关闭hostkey检查、不抓未验证key替代。恢复为有原已验证knownhosts的19.69主机本地调度，生成目录使用v3，模型仍同v2。public三节点19.69/17.70/19.213，control三节点19.143/19.137/19.225，各GPU7，原曲／换曲／零输入共18，未使用18.136或18.144。
+
+### 2026-10-21 正式学生生成、技术验收与评审边界
+
+`EN81cc`的两配置9条队列均实际exit0，18视频完整生成，不再称仍训练或生成未结束。`uHJqvj`复用原`music_text_diagnostic.py --online --no_text_encoder --checkpoint_cache_root /tmp`完成独立18/18音视频全解码、sameSHA完整checkpoint、实际noTC日志、自身长度、全1text tags条件shape、四路native静音hash、同图独立视觉VAEhash核验；报告`MS/music_text_pure_students_all18_audit_v3.json` SHA `3c61412f373ac0e9cd75e72baebf7402735c3e2d4eaaa4d8a03ec134ca909528`。technical passed不代表连续舞蹈或跟拍通过。
+
+学生预测长度（原／换／零）：public楼梯304/307/309、红衣304/307/309、商店307/306/309；control楼梯391/411/108、红衣440/323/108、商店409/625/108。模型/换歌/零条件同时改变hidden与长度，packed/RoPE位移仍是混杂因素；像素差不能解释音乐语义收益。
+
+参考图＋六时点mosaic已实际查看：public/control楼梯生成均变深色外套/黑裤/肩包，相比浅黄上衣灰裤参考存在显著服装漂移；红衣有抬臂／手部姿态变化，商店躯干与脚部位移较小。此仅采样帧视觉观察，不冒作连续音画人评，也不能据此独立宣称所有学生均摆pose或通过舞蹈。学生连续舞蹈、运动幅度、跟拍与原/换/零效果目前待用户评审。
+
+`music_text_review.py --pure_students`实际使用18/18报告构建`review_web/manifest_music_text_pure_students_v3.json`，52模型/26预设，原48模型/24预设与3samples逐值保持、不改历史评分。新两个预设【新纯监督·正式1800】和【新纯监督·换音乐】分别显示原/零对照和换音乐，对模型清楚标明非旧8样本投影。已存在教师技术报告的人评pending仍是历史快照，最新教师人评见上节；学生人评不能由教师结论外推。
+
+实际review CLI正常输入与直接函数联调通过；`eNS4Sa`额外在内存改写已完成报告的10个顶层字段（complete/expected/passed/noTC/native哈希声明/GT输入/完整decode/quality声明/重复models/缺rows），全部拒绝且不产出新manifest。不是重解码或全量故障注入，不用未返回的代理fixture报告替代。新服务8766实际HTTP200、52/26与全部18视频Range206已核验。所有本轮新GPU计算已结束；当前只剩CPU报告/评审服务与发布，不默认继续占用六节点做新训练。
+
+### 原生H3文本、音频分支及历史音乐encoder接口的详细对照
+
+以下以当前保留的DiffSynth实现为依据，不冒称复现H3预训练配方。`sample_h3_ar.py`是我们的采样器，与上游完整视频＋音频联合采样分别说明。
+
+#### 原生文本分支：多模态presentation，不只是动作文字
+
+1. Ref2VA的输入先被组织为引用块。文本presentation典型形式是`<Picture 1>: <vision_start>...image_pad...<vision_end> <Audio 1>: 动作prompt`；带声reference视频还包括时间戳和video视觉tokens。音频在该presentation中只有引用名称，**没有波形或声学特征送进TC**。实际内容进入音频VAE分支。见上游`diffsynth/models/minimax_h3_text_encoder.py:172`及`diffsynth/pipelines/minimax_h3_audio_video.py:260`。
+2. TC为Qwen3-VL视觉模块＋H3保留的50层language model，hidden width5120，LM末端norm为Identity。参考图通过vision encoder成为LM视觉embedding，所以同一张图会在TC中提供语义信息；LM在整段presentation上运行，动作正文hidden已经条件于前面的图与结构。返回完整`last_hidden_state[0]`，shape `[L_TC,5120]`，不是文本词表ID、不是输入embedding，也不是池化向量。见`minimax_h3_text_encoder.py:16,73,106`。
+3. 整个TC输出（含vision block的hidden）占据`text_pos`，全部走`condition_proj:5120→5376`，再经两层token_refiner和其末端RMSNorm。vision block的tag0与普通文本tag1影响主DiT模态调制选择，不把TC视觉hidden转去video_patch_proj。refiner只对这一条件序列做attention／MLP，无RoPE、无timestep调制，不是再次经过TC。见`diffsynth/models/minimax_h3_dit.py:186,287,301`。
+4. 同一参考图另经video VAE输出24通道视觉latent、patchify为96维row，作为独立`ref_visual_anchor`输入DiT。这与TC图上下文是两条独立表示；去掉TC不等于删掉视觉VAE参考，也不等于把目标首帧硬固定。见`minimax_h3_audio_video.py:494`。
+
+#### 原生音频分支：40Hz／32维声学latent，reference与retake是两组token
+
+1. 管线将音频重采样32kHz，mono复制为stereo，保留前两声道；VAE本身不负责识别外部采样率。encoder总hop为800，因此每声道40 latent/s。波形 `[2,N]`经encoder→pre_block→mean_proj得到 `[2,32,ceil(N/800)]`，再按原32通道常量均值／std归一化；编码使用posterior mean，不采样。见`minimax_h3_audio_vae.py:414,447,458`。
+2. **Reference audio**：经`_encode_audio_ref`压缩并pack，成为固定`ref_audio_anchor`。stereo按声道分别展开，`[2,32,T]→[2T,32]`，不是64维row。见`minimax_h3_audio_video.py:509`。
+3. **Retake audio**：同一配乐另调用原音频encoder，提供目标输出音轨的`input_latents_audio`与`denoise_mask_audio`。mask0是保留输入clean位置，mask1是重新生成的位置；短音频重复最后latent补齐，并在上游默认将补齐尾标成regenerate。它与reference不是同一组tokens。见`minimax_h3_audio_video.py:401`。
+4. 124帧24fps对应目标音频207 latent位置。我们的固定5.0625秒32k音乐为162000samples，编码后203位置，因此会有4个补齐位置；`repeat_clean`把mask尾部也设0，使这些位置使用重复clean尾，不是人工填零latent。见`sample_h3_ar.py:258`。
+5. reference音频row与目标音频row都走`audio_patch_proj:32→5376`；visualrow走`video_patch_proj:96→5376`。三模态输入拼成同一DiT序列，Ref2VA排列为`[TC条件 | 引用图／音频／视频块 | target_audio | target_video | padding]`。音频有40Hz时间坐标及左右声道位置，视频有自身时空RoPE坐标，不是丢掉时间只用一个音乐向量。见`minimax_h3_audio_video.py:700`及`minimax_h3_dit.py:301`。
+6. 原生双向主DiT的50个block使用联合self-attention，视频Q可以读取音频K/V，音频也可以读取图和文本。主块AdaLN的shift/scale/gate由**timestep embedding**产生，按token模态video/text/audio及每位置noise时间选择；不是由mean-pool音乐向量直接产生。reference／retake clean位置的时间t=1，生成视频按当前noise时间更新。见`minimax_h3_dit.py:124,166,214,370`及`minimax_h3_audio_video.py:968`。
+
+#### 官方完整采样与我们的实际采样区别
+
+上游`MiniMaxH3Pipeline.__call__`每步同时step视频和音频latent，最后分别解码video/audio（`minimax_h3_audio_video.py:180`）。我们的`sample_h3_ar.py:343-403`取DiT视频预测，只step视频，最终mux输入原曲；audio预测被丢弃。因此音乐不被重新生成，但clean reference／retake音频tokens仍通过联合attention影响视频。`bi`描述注意力／视频采样模式，不等于完整上游joint audio-video采样；本轮没有AR块因果限制。
+
+#### 历史阶段A：训练H3原生音频VAE编码侧
+
+训练路径是`音乐→原生encoder/pre_block/mean_proj→normalized [2,32,T]→时间mean/std池化128维→训练head→5120维L2 embedding`。文字侧是冻结H3文本LM的动作caption均值hidden，经train-only mean/std和L2作为CLIP目标。优化音频编码侧及训练head，冻结文本、DiT、video VAE与音频decoder；不是对动作视频latent做FM。对称InfoNCE监督全局音乐／动作caption对应关系。推理只将训练过的native_audio_encoder权重装回原VAE，**不执行5120训练head**，仍输出32维时序音频latent供原管线reference与retake两处使用。见`ms/native_audio_full_clip.py:64,88,94`及`sample_h3_ar.py:176`。后续“冻结训练head继续encoder”是检验收益被训练head吸收的另一个控制，不改变生成接口。
+
+#### 历史阶段B：专用MusicFM／MuQ替换原音频latent
+
+音乐32k→24k→专用dense特征约25Hz／1024维；双声道分别编码。`TemporalLatentAdapter`用LN1024→Linear256→GELU、局部Conv1d、按绝对秒把25Hz特征对齐到40Hz、最后Linear256→32，输出 `[2,32,T]`。**这里32是H3音频latent通道，256是adapter内部宽度，不是32个文本tokens。** 见`ms/music_encoder_adapter.py:158,189`。
+
+训练同时保留32维时序latent与一个仅loss使用的CLIP读出：latent各声道时间mean/std→128维→audio_head5120→L2。bridge-only冻结公开音乐骨干和audio_head，只训练adapter拟合原音频VAE同音乐latent；pureCLIP训练实际dense骨干＋adapter＋head；bridge＋CLIP同时做InfoNCE和原音频latent MSE；bridgeinit-lambda0只保留桥接adapter起点，后续MSE系数0。见`music_clip_bridge.py:390,518`。冻结dense特征缓存只用于adapter桥接暖启动，不能称为骨干联训。
+
+推理实际替换的是`pipe.audio_vae.encode_audio=MusicEncodingProxy(...)`，**reference与retake两处都换成同训练音乐骨干＋TemporalLatentAdapter**，输出32维latent；训练侧audio_head不进入生成，原文本prompt／TC和独立图VAE仍在。这时音乐确实经音频rows进入联合attention，但没有替代动作文本控制。见`sample_h3_ar.py:170`、`music_encoder_adapter.py:215`。
+
+#### 历史阶段C：旧完整CLIP链的单文本token诊断
+
+另一次明确免训练诊断执行完整旧MusicFM→32维adapter→时间mean/std→训练CLIPhead→L2，然后用train-only全局尺度放大作为**一个5120维文本条件token**。保留旧TC图prefix，native reference／retake固定静音。这个实验特意不丢CLIPhead，但没有inverse-L2或还原逐文本token，也不是当前native hidden回归学生。其失败不能直接否定逐token文本hidden路线。
+
+#### 历史阶段D到本轮：音乐直接预测文本LM输出hidden
+
+旧目标是图＋动作正文经冻结TC后的正文tail；学生用MusicFM＋raw-text adapter，并读取空白文字＋图的TC prefix最后一行context，生成时保留TC prefix并替换正文tail。后按用户要求完全关闭TC，改为music-only global bias／contextNone、prefix0；这段内部bias是可训练模型参数，不是空白文字embedding。旧带图教师tail仍可能含学生无法从音乐推出的图信息。
+
+本轮教师因此改为纯文字→冻结50层LM→原逐tokenBF16 `[L,5120]`，不输入图，不pool。学生波形→在线实际MusicFM dense→memory1024到内部512（control256）→两cross-attention/FFN query→自由raw输出5120＋长度头；末端public Identity，control LN，均无固定W/PCA投影。训练真实dense骨干和**完整adapter／最后5120投影／长度头**，目标为rawMSE/train_energy＋.01log长度MSE，仅一个配对音乐分支；wrong／second／zero仅验证／视频，不是当前训练三分支。H3模型全冻结、不加载进此表示训练，不加FM或节拍loss。见`music_text_adapter.py:180,286,358`、`music_text_contrastive.py:229,548`。
+
+生成用同一完整checkpoint和自身预测长度，经BF16cast作为全部prompt_embeds直接入原condition_proj/refiner；TC/tokenizer/processor不加载、prompt/negative为None、图只经独立视觉VAE；原音频VAE仍执行，但reference／retake输入固定静音，真实音乐只经新hidden分支影响视频。最终配乐mux与音乐条件作用分别验收。**当前“音乐tokens”按内容来自音频，但在H3中走的是文本模态入口，不是原audio_patch_proj分支。**
+
+文字token索引不是音乐时刻：只回归文本hidden不能自动提供40Hz拍点／动作强调时序监督。adapter需要维度／序列／分布转换，但1024→512→5120结构是我们的方案选择，仍有有限宽度输出包络，5120维shape相同不等于已对齐语义或跟拍。学生舞蹈、幅度和音乐控制仍必须用本轮原／换／零完整视频独立判断。

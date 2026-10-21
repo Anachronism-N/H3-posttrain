@@ -1658,7 +1658,310 @@ def head_range_main():
         scope='Fixed learned output head only. LayerNorm zero-mean normalized vectors have norm<sqrt(width) with positive epsilon; the closed ball is a relaxed infimum bound, ignoring FP32 roundoff and all upstream music/query reachability. No width sufficiency or video-quality claim.'))
 
 
+PURE_TEACHER_TAG = 'text_pure_text_teacher_v1'
+PURE_TEACHER_KIND = 'pure_text_teacher_no_tc_diagnostic'
+PURE_TEACHER_SCOPE = 'caption_only_no_reference_context'
+
+
+def pure_teacher_validate_records(inputs, condition, native, case, source):
+    # Reuse the strict no-TC interface checks without treating a pure caption teacher as the old image-context teacher.
+    import copy
+    legacy = copy.deepcopy(condition)
+    legacy['kind'] = NO_TC_TEACHER_KIND
+    no_tc_validate_records(inputs, legacy, native, case, NO_TC_TEACHER_KIND, source)
+    if (condition.get('kind') != PURE_TEACHER_KIND
+            or condition.get('source_kind') != 'pure_text_h3_raw_tokens'
+            or condition.get('source_scope') != PURE_TEACHER_SCOPE
+            or condition.get('text_only') is not True or condition.get('image_conditioned') is not False
+            or condition.get('reference_image_binding_only') is not True
+            or condition.get('teacher_length_for_diagnostic_only') is not True
+            or any(condition.get(key) != source.get(key) for key in (
+                'caption_sha256', 'source_token_ids_sha256', 'source_cache_file', 'source_cache_file_sha256'))):
+        raise ValueError('Pure teacher must be caption-only, no reference context, with exact source token IDs and raw cache')
+
+
+def pure_teacher_validate_report(report, cases, directory):
+    rows = report.get('rows')
+    if (report.get('complete') is not True or report.get('pure_teacher_complete') is not True
+            or report.get('kind') != PURE_TEACHER_KIND or report.get('source_scope') != PURE_TEACHER_SCOPE
+            or any(not no_tc_count(report.get(key), 3) for key in ('expected', 'passed'))
+            or report.get('music_prediction') is not False or report.get('musical_quality_accepted') is not False
+            or report.get('continuous_human_review') != 'pending' or report.get('new_interface_trained') is not False
+            or report.get('all_native_silence_hashes_identical') is not True
+            or report.get('complete_selected_audio_video_decode') is not True
+            or not isinstance(rows, list) or len(rows) != 3 or len(cases) != 3
+            or len({case['sample_id'] for case in cases}) != 3
+            or {(row.get('sample_id'), row.get('condition'), row.get('video_path'), row.get('audio_path')) for row in rows}
+                != {(case['sample_id'], 'joint', str(directory / 'joint' / case['filename']), case['audio_path']) for case in cases}):
+        raise ValueError('Pure teacher final report must bind exactly the fixed three joint diagnostics, not quality acceptance')
+    for row in rows:
+        case = next(case for case in cases if case['sample_id'] == row['sample_id'])
+        pure_teacher_validate_records(row['inputs'], row['no_tc_condition'], row['native_audio'], case, row['source'])
+        integrity = row['integrity']
+        if (integrity.get('full_video_audio_decode') is not True
+                or not no_tc_count(integrity.get('ffmpeg_decoded_video_frames'), 124)
+                or not any(stream.get('codec_type') == 'video' and no_tc_count(stream.get('width'), 704)
+                    and no_tc_count(stream.get('height'), 1280) and no_tc_count(stream.get('decoded_frames'), 124)
+                    and type(stream.get('fps')) in (int, float) and stream['fps'] == 24 for stream in integrity.get('streams', []))
+                or not any(stream.get('codec_type') == 'audio' for stream in integrity.get('streams', []))
+                or any(not no_tc_hash(row.get(key)) for key in ('video_sha256', 'log_sha256', 'image_sha256', 'audio_sha256'))):
+            raise ValueError('Pure teacher lacks full124-frame704x1280/24fps video/audio decode and actual hashes')
+    if any(len({row['native_audio'][key] for row in rows}) != 1 for key in NO_TC_NATIVE_KEYS):
+        raise ValueError('Pure teacher native silence hashes differ across the three cases')
+
+
+def pure_teacher_source(condition, case):
+    import hashlib
+    import torch
+    import ast
+    # Execute only the actual tensor/schema validators; the full module imports GPU pipeline dependencies unnecessary for CPU auditing.
+    validator_path = Path(__file__).with_name('music_text_condition.py')
+    tree = ast.parse(validator_path.read_text(), filename=str(validator_path))
+    functions = [node for node in tree.body if isinstance(node, ast.FunctionDef)
+                 and node.name in ('validate_pure_text_record', 'tensor_sha256')]
+    namespace = dict(torch=torch, hashlib=hashlib, PURE_TEXT_TEACHER_KIND='pure_text_h3_raw_tokens')
+    exec(compile(ast.Module(body=functions, type_ignores=[]), str(validator_path), 'exec'), namespace)
+    validate_pure_text_record, tensor_sha256 = namespace['validate_pure_text_record'], namespace['tensor_sha256']
+    path = Path(condition['source_path'])
+    if path.name != Path(case['filename']).with_suffix('.pt').name:
+        raise ValueError('Pure teacher payload is not the fixed case filename')
+    record = torch.load(path, map_location='cpu', weights_only=True)
+    metadata = validate_pure_text_record(record, case['sample_id'])
+    original_path = Path(metadata['source_cache_file'])
+    original = torch.load(original_path, map_location='cpu', weights_only=True)
+    original_meta = validate_pure_text_record(original, case['sample_id'])
+    if (not torch.equal(record['tail'], original['tail']) or not torch.equal(record['source_token_ids'], original['source_token_ids'])
+            or any(metadata.get(key) != original_meta.get(key) for key in original_meta)
+            or sha256(original_path) != metadata['source_cache_file_sha256']
+            or metadata.get('source_scope') != PURE_TEACHER_SCOPE
+            or metadata.get('reference_image_binding_only') is not True
+            or metadata.get('teacher_only_diagnostic') is not True):
+        raise ValueError('Pure teacher bound payload differs from original caption-only raw tokens/metadata')
+    return dict(cache_dir=str(path.parent), source_path=str(path), source_sha256=sha256(path),
+        tail_length=record['teacher_length'], teacher_tail_sha256=tensor_sha256(record['tail']),
+        raw_sha256=hashlib.sha256(record['tail'].contiguous().view(torch.uint8).numpy().tobytes()).hexdigest(),
+        case=metadata['case'], caption_sha256=metadata['caption_sha256'],
+        source_token_ids_sha256=metadata['source_token_ids_sha256'], source_cache_file=str(original_path),
+        source_cache_file_sha256=sha256(original_path), source_manifest_path=metadata['source_manifest_path'],
+        source_manifest_sha256=metadata['source_manifest_sha256'], source_protocol_path=metadata['source_protocol_path'],
+        source_protocol_sha256=metadata['source_protocol_sha256'], caps_sha256=metadata['caps_sha256'],
+        split_sha256=metadata['split_sha256'], model_weight_content_sha256=metadata['model_weight_content_sha256'])
+
+
+def pure_teacher_collect(exp, directory):
+    import hashlib
+    cases = no_tc_cases(exp)
+    artifacts = {}
+
+    def bind(path, expected=None):
+        path = Path(path)
+        digest = sha256(path)
+        if expected is not None and digest != expected:
+            raise ValueError('Pure teacher source content changed: ' + str(path))
+        if str(path) in artifacts and artifacts[str(path)] != digest:
+            raise ValueError('Pure teacher source changed during collection')
+        artifacts[str(path)] = digest
+        return json.loads(path.read_text()) if path.suffix == '.json' else digest
+
+    plan = bind(directory / 'plan.json')
+    jobs = bind(directory / 'jobs.json')
+    proxy = dict(plan, kind=NO_TC_TEACHER_KIND)
+    no_tc_validate_group(proxy, jobs, NO_TC_TEACHER_KIND, {'sampler_sha256': plan['sampler_sha256']})
+    if (plan.get('kind') != PURE_TEACHER_KIND or plan.get('source_scope') != PURE_TEACHER_SCOPE
+            or plan.get('teacher_source') != jobs.get('teacher_source')):
+        raise ValueError('Pure teacher plan/jobs do not declare the same caption-only source')
+    declared_source = plan['teacher_source']
+    if (declared_source.get('kind') != 'pure_text_h3_raw_tokens' or declared_source.get('text_only') is not True
+            or declared_source.get('image_conditioned') is not False
+            or declared_source.get('source_scope') != PURE_TEACHER_SCOPE
+            or not no_tc_count(declared_source.get('prefix_length'), 0)):
+        raise ValueError('Pure teacher declaration includes image/reference context')
+    binding_path = Path(declared_source['manifest_path'])
+    binding = bind(binding_path, declared_source['manifest_sha256'])
+    if (binding.get('kind') != 'pure_text_teacher_case_binding' or binding.get('complete') is not True
+            or not no_tc_count(binding.get('expected'), 3) or len(binding.get('rows', [])) != 3
+            or binding.get('source_scope') != PURE_TEACHER_SCOPE or binding.get('text_only') is not True
+            or binding.get('image_conditioned') is not False or not no_tc_count(binding.get('prefix_length'), 0)
+            or binding.get('image_io') is not False or binding.get('actual_lm_forward') is not False):
+        raise ValueError('Pure teacher case binding manifest is incomplete or not caption-only')
+    bind(binding['fixed_joint_csv_path'], binding['fixed_joint_csv_sha256'])
+    original_manifest_path = Path(binding['source']['manifest_path'])
+    original = bind(original_manifest_path, binding['source']['manifest_sha256'])
+    protocol_path = original_manifest_path.parent / 'plan.json'
+    protocol = bind(protocol_path, binding['source']['protocol_sha256'])
+    if (original.get('complete') is not True or not no_tc_count(original.get('expected'), 3)
+            or original.get('source') != protocol or original.get('source_protocol_sha256') != binding['source']['protocol_sha256']
+            or len(original.get('rows', [])) != 3 or protocol.get('kind') != 'pure_text_h3_raw_tokens'
+            or protocol.get('text_only') is not True or protocol.get('image_conditioned') is not False
+            or not no_tc_count(protocol.get('prefix_length'), 0)):
+        raise ValueError('Pure teacher original source manifest/protocol is invalid')
+    tensor_hashes = protocol.get('model_weight_tensor_sha256', {})
+    weight_hash = hashlib.sha256(json.dumps(tensor_hashes, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    if (len(tensor_hashes) != 551 or any(not no_tc_hash(value) for value in tensor_hashes.values())
+            or weight_hash != protocol.get('model_weight_content_sha256')):
+        raise ValueError('Pure teacher original loaded-weight tensor digest manifest is invalid')
+    inputs_dir = exp / 'MS/music_text_pure_text_case_inputs_v1'
+    caps = bind(inputs_dir / 'caps.json', protocol['caps_sha256'])
+    bind(inputs_dir / 'split.json', protocol['split_sha256'])
+    data_source = bind(inputs_dir / 'source.json')
+    if data_source.get('complete') is not True or len(data_source.get('rows', [])) != 3:
+        raise ValueError('Pure teacher original source data must cover all three cases')
+    for entry in data_source['rows']:
+        bind(entry['motionscript'], entry['motionscript_sha256'])
+        bind(entry['genre_source'], data_source['genre_sha256'])
+    source_root = Path(__file__).resolve().parents[3]
+    preflight = bind(source_root / 'results/ms_20261020/music_text_pure_real_token_preflight_cpu_v1.json')
+    if (preflight.get('complete') is not True or preflight.get('case_source_sha256') != artifacts[str(inputs_dir / 'source.json')]
+            or preflight.get('case_original_motionscript_and_genre_sha_exact') is not True):
+        raise ValueError('Pure teacher source data lacks independently checked original caption/genre provenance')
+    for value in preflight['teacher_sources'].values():
+        bind(value['path'], value['sha256'])
+    bind(preflight['caps_path'], preflight['caps_sha256'])
+    bind(preflight['split_path'], preflight['split_sha256'])
+    for name in ('music_text_condition.py', 'music_text_infer.py', 'music_text_oracle_generate.py'):
+        bind(Path(__file__).with_name(name))
+    upstream = source_root.parent / 'DiffSynth-Studio-upstream-20260930'
+    bind(upstream / 'diffsynth/pipelines/minimax_h3_audio_video.py')
+    rows = []
+    for case in cases:
+        evidence = successful_log(directory / 'logs', case, require_replacement=False)
+        if evidence is None:
+            raise ValueError('Missing exact successful pure teacher log')
+        log_path, log_sha, _, _ = evidence
+        bind(log_path, log_sha)
+        text = log_path.read_text()
+        header = json.loads(text.splitlines()[0])
+        command = header.get('command', [])
+        job = next(row for row in jobs['jobs'] if row['shard'] == case['shard'])
+        job_report = next(row for row in jobs['condition_reports'] if row['shard'] == case['shard'])
+        expected_flags = {'--out': str(directory), '--shard': str(case['shard']), '--nshard': '3', '--rows': '3',
+            '--conds': 'joint', '--mode': 'bi', '--steps': '50', '--height': '1280', '--width': '704',
+            '--shift': '12', '--audio_shift': '3', '--seed': '42', '--prompt_mode': 'empty',
+            '--audio_tail_mode': 'repeat_clean', '--no_tc_teacher_cache': plan['teacher_tail_cache']}
+        if (job.get('log') != str(log_path) or job.get('host') != header.get('host')
+                or header.get('sampler_sha256') != plan['sampler_sha256']
+                or any(command.count(key) != 1 or command[command.index(key) + 1] != value for key, value in expected_flags.items())
+                or any(command.count(key) != 1 for key in ('--no_text_encoder', '--fixed_native_silence'))
+                or any(key in command for key in ('--audio_override', '--music_text_ckpt', '--music_encoder_ckpt', '--text_hidden_oracle', '--text_hidden_projection'))
+                or '[h3ar] no_text_encoder: text encoder, tokenizer and processor omitted; no blank text or TC prefix' not in text
+                or re.search(r'Loading models from:.*(?:text_encoder|processor)', text)):
+            raise ValueError('Pure teacher actual command/log has a TC load, incompatible route or wrong source/settings')
+        sampler = source_root / 'scripts_omnidance/exp/h3ar/sample_h3_ar.py'
+        if str(sampler) not in command:
+            raise ValueError('Pure teacher command uses an unexpected sampler')
+        bind(sampler, plan['sampler_sha256'])
+        inputs = one_record(text, '[h3ar] input_conditions ')
+        condition = one_record(text, '[no tc condition] ')
+        native = one_record(text, '[no tc native isolation] ')
+        source = pure_teacher_source(condition, case)
+        pure_teacher_validate_records(inputs, condition, native, case, source)
+        bound_rows = [row for row in binding['rows'] if row.get('case') == source['case']]
+        original_rows = [row for row in original['rows'] if row.get('sample_id') == case['sample_id']]
+        if (len(bound_rows) != 1 or len(original_rows) != 1 or bound_rows[0].get('path') != source['source_path']
+                or bound_rows[0].get('file_sha256') != source['source_sha256']
+                or bound_rows[0].get('teacher_tail_sha256') != source['teacher_tail_sha256']
+                or not no_tc_count(bound_rows[0].get('teacher_length'), source['tail_length'])
+                or original_rows[0].get('path') != source['source_cache_file']
+                or original_rows[0].get('file_sha256') != source['source_cache_file_sha256']
+                or source['source_manifest_path'] != str(original_manifest_path)
+                or source['source_manifest_sha256'] != binding['source']['manifest_sha256']
+                or source['source_protocol_path'] != str(protocol_path)
+                or source['source_protocol_sha256'] != binding['source']['protocol_sha256']
+                or protocol['lengths'].get(case['sample_id']) != source['tail_length']
+                or protocol['token_ids_sha256'].get(case['sample_id']) != source['source_token_ids_sha256']
+                or source['model_weight_content_sha256'] != weight_hash
+                or job_report.get('no_tc_condition') != condition or job_report.get('native_audio') != native):
+            raise ValueError('Pure teacher actual payload/log/manifest token IDs, lengths or source hashes disagree')
+        bind(source['source_path'], source['source_sha256'])
+        bind(source['source_cache_file'], source['source_cache_file_sha256'])
+        row = dict(tag=PURE_TEACHER_TAG, sample_id=case['sample_id'], condition='joint', audio_path=case['audio_path'],
+            video_path=str(directory / 'joint' / case['filename']), log_path=str(log_path), log_sha256=log_sha,
+            image_sha256=bind(case['image_path']), audio_sha256=bind(case['audio_path']),
+            inputs=inputs, no_tc_condition=condition, native_audio=native, source=source,
+            diagnostic_only=True, musical_quality_accepted=False)
+        rows.append(row)
+    return cases, rows, [dict(path=path, sha256=digest) for path, digest in artifacts.items()]
+
+
+def pure_teacher_audit_main():
+    import decord
+    from PIL import Image, ImageDraw
+    parser = argparse.ArgumentParser(description='Strict caption-only pure teacher three-joint audit; no quality acceptance')
+    parser.add_argument('--pure_teacher_audit', action='store_true', required=True)
+    parser.add_argument('--exp_root', type=Path, required=True)
+    parser.add_argument('--directory', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--decode_report', type=Path, help='Reuse existing complete CPU full3 decode only after exact video content SHA recheck')
+    args = parser.parse_args()
+    directory = args.directory
+    if (directory != args.exp_root / 'H3AR' / ('val_musicreplace_' + PURE_TEACHER_TAG)
+            or args.out.exists() or not args.out.parent.is_dir()):
+        parser.error('Require exact pure teacher directory, existing report parent and exclusive new output')
+    marker, mosaic = directory / 'pure_teacher_integrity.json', directory / 'pure_teacher_joint_mosaic.png'
+    if marker.exists() or mosaic.exists():
+        raise FileExistsError('Refuse existing pure teacher marker or mosaic')
+    cases, rows, artifacts = pure_teacher_collect(args.exp_root, directory)
+    decode_rows = None
+    if args.decode_report:
+        digest = sha256(args.decode_report)
+        decode = json.loads(args.decode_report.read_text())
+        if (decode.get('complete') is not True or any(not no_tc_count(decode.get(key), 3) for key in ('expected', 'passed'))
+                or len(decode.get('rows', [])) != 3
+                or {(row.get('sample_id'), row.get('video_path')) for row in decode['rows']}
+                    != {(row['sample_id'], row['video_path']) for row in rows}):
+            raise ValueError('Existing CPU decode report does not cover exactly the same pure teacher three videos')
+        decode_rows = {row['sample_id']: row for row in decode['rows']}
+        artifacts.append(dict(path=str(args.decode_report), sha256=digest))
+    grid = Image.new('RGB', (176 * 7, 348 * 3), 'white')
+    draw = ImageDraw.Draw(grid)
+    for index, (case, row) in enumerate(zip(cases, rows)):
+        video = Path(row['video_path'])
+        digest = sha256(video)
+        if decode_rows is not None:
+            decoded = decode_rows[row['sample_id']]
+            if decoded['video_sha256'] != digest:
+                raise ValueError('Pure teacher video changed after independent full CPU decode')
+            row['integrity'] = decoded['integrity']
+        else:
+            row['integrity'] = probe_video(video)
+        row['video_sha256'] = digest
+        reader = decord.VideoReader(str(video), num_threads=1)
+        with Image.open(case['image_path']) as reference:
+            images = [reference.convert('RGB')] + [Image.fromarray(reader[frame].asnumpy()) for frame in (0, 24, 48, 72, 96, 123)]
+        for column, image in enumerate(images):
+            grid.paste(image.resize((176, 320)), (column * 176, index * 348 + 28))
+            draw.text((column * 176 + 3, index * 348 + 6), case['sample_id'] if column == 0
+                else str((0, 24, 48, 72, 96, 123)[column - 1] / 24) + 's', fill='black')
+    result = dict(complete=True, pure_teacher_complete=True, kind=PURE_TEACHER_KIND, source_scope=PURE_TEACHER_SCOPE,
+        expected=3, passed=3, rows=rows, source_artifacts=artifacts, mosaic=str(mosaic),
+        diagnostic_sha256=sha256(Path(__file__)), independent_visual_vae_reference=True,
+        all_native_silence_hashes_identical=True, complete_selected_audio_video_decode=True,
+        teacher_only_diagnostic=True, music_prediction=False, new_interface_trained=False,
+        musical_quality_accepted=False, continuous_human_review='pending', audio_mux_match_checked=False,
+        weight_verification_scope='Original real loaded551tensor digest manifest rechecked; no LM reloading or full weight-file byte audit',
+        generation_source_scope='Sampler actual runtime SHA bound by plan/log; infer/manager/official upstream pipeline current SHA is posthoc only, no prerelease pipeline hash available',
+        official_pipeline_pre_generation_hash_bound=False,
+        scope='Pure caption-only offline teacher raw BF16 tokens, no TC load/call/prefix or reference-context teacher input; '
+            'image retained only as independent visual VAE reference. Full media decode is integrity, not continuous dance/quality/music gain.')
+    pure_teacher_validate_report(result, cases, directory)
+    for artifact in artifacts:
+        if sha256(Path(artifact['path'])) != artifact['sha256']:
+            raise ValueError('Pure teacher source changed before final report publication')
+    if any(sha256(Path(row['video_path'])) != row['video_sha256'] for row in rows):
+        raise ValueError('Pure teacher video changed during audit')
+    with mosaic.open('xb') as stream:
+        grid.save(stream, format='PNG')
+    atomic_write_new(args.out, result)
+    atomic_write_new(marker, dict(complete=True, pure_teacher_complete=True, kind=PURE_TEACHER_KIND,
+        expected=3, passed=3, rows=rows, mosaic=str(mosaic), mosaic_sha256=sha256(mosaic),
+        final_pure_teacher_report=str(args.out), final_pure_teacher_report_sha256=sha256(args.out),
+        diagnostic_only=True, music_prediction=False, musical_quality_accepted=False))
+    print(json.dumps(dict(complete=True, pure_teacher_complete=True, expected=3, passed=3, out=str(args.out), mosaic=str(mosaic))), flush=True)
+
+
 def main():
+    if '--pure_teacher_audit' in __import__('sys').argv:
+        return pure_teacher_audit_main()
     if '--head_range' in __import__('sys').argv:
         return head_range_main()
     if '--no_tc_fixture' in __import__('sys').argv:

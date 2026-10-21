@@ -1,0 +1,54 @@
+{
+  "complete": true,
+  "scope": "Independent CPU real native tokenizer full1800train200val and fixed3case provenance check; no real LM or quality claim",
+  "actual_lm_forward": false,
+  "actual_model_weights_loaded": false,
+  "cuda_initialized": false,
+  "teacher_sources_frozen": true,
+  "teacher_sources": {
+    "music_text_cache": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/music_text_cache.py",
+      "sha256": "865455cdd81a1b642b74997fe5145a3ce6d279ffa29fa90aae6f460cde2d1278"
+    },
+    "text_embed": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/text_embed.py",
+      "sha256": "a19365e58b403e858b4392c611a5131e1211d25061069278e407260edbc97672"
+    },
+    "native_h3_text_encoder": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/DiffSynth-Studio-upstream-20260930/diffsynth/models/minimax_h3_text_encoder.py",
+      "sha256": "f874a56ce992070976b534dc42e0639221fe8c88cb29d9b3e2cadf6de553a9cf"
+    }
+  },
+  "caps_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_caps2000_v1.json",
+  "caps_sha256": "8d9cbaa84327b677f7838483456d08c7cf0821a12018c91f3d822fd2e9c05b82",
+  "split_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_scale_v4_train1800_split.json",
+  "split_sha256": "44b07b8b9219b5cbced271ac36ce7e1d26204fe6f47983a113a9dd8585720060",
+  "original_caps6200_sha256": "4bc371f4f5311abf34ca8a0bc4194e1988c5a0c05ab160a7b606825ca5804b84",
+  "exact_caps2000_subset_of_original6200": true,
+  "preflight_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_text_preflight_v1.json",
+  "preflight_sha256": "c9b48fbcb819fb624fce0d16f1e2d973894c86d5873ce68ff5655abf558f5f26",
+  "real_full_token_lengths_match_all2000": true,
+  "real_source_token_hashes_match_all2000": true,
+  "train_count": 1800,
+  "val_count": 200,
+  "train_max": 1423,
+  "qmax": 1423,
+  "val_max": 1113,
+  "validation_does_not_set_query_max": true,
+  "neutral_teacher": true,
+  "add_special_tokens": false,
+  "truncation": false,
+  "tokenizer_padding_side": "right",
+  "image_io": false,
+  "case_caps_sha256": "d8a7b575ad0a4da802c76f62fe24726f2fddcabe49618d59e2df8ca644c6ae8e",
+  "case_split_sha256": "6e250e16a5620c994fda14ab915eadcab19d218101c93f4fc3b6ef77eb98f431",
+  "case_source_sha256": "9df5312e92338461e8c88d1eae8d08db281234c70c48c907d18ba4f0e793ef80",
+  "case_original_motionscript_and_genre_sha_exact": true,
+  "case_train_count": 3,
+  "case_val_count": 0,
+  "case_token_lengths": {
+    "wJPptuhclZmKAEWs": 228,
+    "wJPrpFsThWAcBQIw": 199,
+    "wJQTclrlOLEYYfTB": 323
+  }
+}

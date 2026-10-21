@@ -212,6 +212,13 @@ def cached_teacher_tail_embedder(cache_dir):
             source_sha256 = sha256(path)
             record = torch.load(path, map_location='cpu', weights_only=True)
             metadata = record['metadata']
+            pure_text = metadata.get('kind') == 'pure_text_h3_raw_tokens'
+            if pure_text:
+                from music_text_condition import validate_pure_text_record
+                validate_pure_text_record(record, sample_id)
+                original = Path(metadata['source_cache_file'])
+                if sha256(original) != metadata['source_cache_file_sha256']:
+                    raise ValueError('Bound pure-text teacher source cache file changed')
             case = metadata['case']
             if (case['sample_id'] != sample_id or case['audio_id'] != audio_id
                     or str(Path(case['image_path'])) != str(Path(image_path))
@@ -229,12 +236,20 @@ def cached_teacher_tail_embedder(cache_dir):
             if digest.hexdigest() != metadata['teacher_tail_sha256']:
                 raise ValueError('Cached original teacher tail hash changed')
             self.tail = tail
-            self.report = dict(kind='cached_teacher_tail_only_no_tc_diagnostic',
+            self.report = dict(kind='pure_text_teacher_no_tc_diagnostic' if pure_text else 'cached_teacher_tail_only_no_tc_diagnostic',
                 teacher_only_diagnostic=True, music_prediction=False,
                 context_source='none_teacher_tail_only_diagnostic', source_sha256=source_sha256,
                 source_path=str(path), original_teacher_tokens=len(tail),
                 teacher_tail_sha256=digest.hexdigest(), sample_id=sample_id,
                 image_path=str(image_path), audio_path=str(audio_path), student_reads_caption=False)
+            if pure_text:
+                self.report.update(source_kind=metadata['kind'], text_only=True, image_conditioned=False,
+                    source_scope='caption_only_no_reference_context', teacher_length_for_diagnostic_only=True,
+                    caption_sha256=metadata['caption_sha256'],
+                    source_token_ids_sha256=metadata['source_token_ids_sha256'],
+                    source_cache_file=metadata['source_cache_file'],
+                    source_cache_file_sha256=metadata['source_cache_file_sha256'],
+                    reference_image_binding_only=True)
 
         def process(self, pipe, prompt, keyframes=None, ref_blocks=None, height=None, width=None, text_embedding=None):
             if self.tail is None or self.report is None:
@@ -463,7 +478,8 @@ def _no_tc_manager_cpu_audit():
     from unittest.mock import patch
     import music_text_oracle_generate as manager
 
-    condition = dict(loaded=False, calls=0, semantic_text=None, processor_loaded=False,
+    condition = dict(kind='legacy_checkpoint_no_tc_music_only_diagnostic',
+        loaded=False, calls=0, semantic_text=None, processor_loaded=False,
         tokenizer_loaded=False, prefix_length=0, tail_shape=[3, 5120], predicted_length=3,
         raw_sha256='a' * 64, checkpoint_sha256='b' * 64,
         old_model_not_trained_for_no_tc=True, context_source='zeros_legacy_checkpoint_compatibility')
@@ -502,13 +518,14 @@ def _no_tc_manager_cpu_audit():
         for index in range(6):
             (cache / (str(index) + '.pt')).write_bytes(b'CPU_MOCK_ORACLE_FILE')
         checkpoint = parent / 'checkpoint.pt'
-        checkpoint.write_bytes(b'CPU_MOCK_COMPLETE_CHECKPOINT')
+        torch.save(dict(metadata=dict(format_version=2), model={}), checkpoint)
         root = Path(__file__).resolve().parents[3]
         scenarios = [(False, None, None, None), (True, None, None, None)] + mutations
         for index, (teacher, target, field, value) in enumerate(scenarios):
             records = copy.deepcopy(dict(condition=condition, native=native, deployment=deployment))
             if teacher:
-                records['condition'].update(teacher_only_diagnostic=True, music_prediction=False,
+                records['condition'].update(kind='cached_teacher_tail_only_no_tc_diagnostic',
+                    teacher_only_diagnostic=True, music_prediction=False,
                     original_teacher_tokens=3, source_sha256='2' * 64)
             if target is not None:
                 records[target][field] = value
@@ -557,6 +574,197 @@ def _no_tc_manager_cpu_audit():
         teacher_original_tokens_and_source_sha256_checked=True, passed_source_cases=passed_cases,
         malformed_evidence_rejected=len(rejected), rejected_mutations=rejected,
         cache_extra_aswap_files_allowed=True)
+
+
+def _pure_text_teacher_cpu_audit():
+    import contextlib
+    import copy
+    import csv
+    import io
+    import sys
+    from unittest.mock import patch
+    from diffsynth.pipelines.minimax_h3_audio_video import MiniMaxH3Unit_PromptEmbedder
+    from music_text_condition import (bind_pure_text_cases, validate_pure_text_record,
+                                      tensor_sha256, PURE_TEXT_TEACHER_KIND)
+    import music_text_oracle_generate as manager
+
+    class ForbiddenPipe:
+        def __init__(self):
+            self.device = 'cpu'
+            self.text_encoder = self.processor = self.tokenizer = None
+            self.accesses = 0
+
+        def __getattribute__(self, name):
+            if name in ('text_encoder', 'processor', 'tokenizer', 'load_models_to_device'):
+                state = object.__getattribute__(self, '__dict__')
+                state['accesses'] += 1
+                raise AssertionError('Pure teacher accessed TC processing: ' + name)
+            return object.__getattribute__(self, name)
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Pure teacher invoked image/text processing or CUDA')
+
+    rejected, records, commands = [], [], []
+    with tempfile.TemporaryDirectory(prefix='h3_pure_teacher_cpu_') as directory:
+        parent = Path(directory)
+        source_dir, exp_root = parent / 'source', parent / 'exp'
+        source_dir.mkdir()
+        exp_root.mkdir()
+        (exp_root / 'E2').mkdir()
+        csv_path = exp_root / 'E2/full_joint.csv'
+        cases = [dict(sample_id='cpu_' + str(index), audio_path='/nonexistent/cpu_' + str(index) + '.wav',
+                      image_path='/nonexistent/cpu_' + str(index) + '.png') for index in range(3)]
+        with csv_path.open('x', newline='') as stream:
+            writer = csv.DictWriter(stream, fieldnames=['sample_id', 'image_path', 'audio_path'])
+            writer.writeheader()
+            writer.writerows(cases)
+        source = dict(kind=PURE_TEXT_TEACHER_KIND, text_only=True, image_conditioned=False, prefix_length=0,
+                      lengths={}, token_ids_sha256={})
+        for index, case in enumerate(cases):
+            sid = case['sample_id']
+            ids = torch.arange(index + 2, dtype=torch.long)
+            source['lengths'][sid] = len(ids)
+            source['token_ids_sha256'][sid] = tensor_sha256(ids)
+        (source_dir / 'plan.json').write_text(json.dumps(source))
+        protocol_sha = sha256(source_dir / 'plan.json')
+        rows = []
+        for index, case in enumerate(cases):
+            sid, length = case['sample_id'], index + 2
+            tail = (torch.arange(length * 5120, dtype=torch.float32).reshape(length, 5120) / 1024).bfloat16()
+            ids = torch.arange(length, dtype=torch.long)
+            prompt = 'The dancer moves to music ' + str(index)
+            metadata = dict(sample_id=sid, kind=PURE_TEXT_TEACHER_KIND, text_only=True, image_conditioned=False,
+                            prefix_length=0, tail_length=length, teacher_length=length, prompt=prompt,
+                            caption_sha256=hashlib.sha256(prompt.encode()).hexdigest(), tail_sha256=tensor_sha256(tail),
+                            source_token_ids_sha256=tensor_sha256(ids), token_ids_sha256=tensor_sha256(ids),
+                            source_protocol_path=str(source_dir / 'plan.json'), source_protocol_sha256=protocol_sha)
+            record = dict(metadata=metadata, tail=tail, source_token_ids=ids, teacher_length=length)
+            path = source_dir / (sid + '.pt')
+            torch.save(record, path)
+            rows.append(dict(sample_id=sid, path=str(path), file_sha256=sha256(path), teacher_length=length))
+            records.append(record)
+        summary = dict(complete=True, expected=3, rows=rows, source=source, source_protocol_sha256=protocol_sha)
+        (source_dir / 'finished.json').write_text(json.dumps(summary))
+        mutations = [
+            ('metadata', 'text_only', 1), ('metadata', 'image_conditioned', 0),
+            ('metadata', 'prefix_length', False), ('metadata', 'prefix_length', 1),
+            ('metadata', 'kind', 'oracle_teacher_hidden_not_music_prediction'),
+            ('metadata', 'caption_sha256', '0' * 64), ('metadata', 'tail_sha256', '0' * 64),
+            ('metadata', 'source_token_ids_sha256', '0' * 64), ('metadata', 'token_ids_sha256', '0' * 64),
+            ('metadata', 'tail_length', 2.0), ('metadata', 'teacher_length', True),
+            ('metadata', 'prefix_context', torch.zeros(5120)),
+            ('record', 'prefix_context', torch.zeros(5120)), ('record', 'teacher_length', 2.0),
+            ('record', 'tail', records[0]['tail'].float()),
+            ('record', 'source_token_ids', torch.arange(3)),
+            ('record', 'source_token_ids', torch.arange(2).float())]
+        for target, key, value in mutations:
+            bad = copy.deepcopy(records[0])
+            (bad['metadata'] if target == 'metadata' else bad)[key] = value
+            try:
+                validate_pure_text_record(bad, cases[0]['sample_id'])
+            except ValueError:
+                rejected.append(target + '.' + key + ':' + type(value).__name__)
+            else:
+                raise AssertionError('Pure teacher accepted mutated schema: ' + key)
+        binding = parent / 'binding'
+        logs = io.StringIO()
+        pipe = ForbiddenPipe()
+        with patch.object(MiniMaxH3Unit_PromptEmbedder, 'process', forbidden), patch.object(
+                MiniMaxH3Unit_PromptEmbedder, 'preprocess_ref_blocks', forbidden), patch(
+                'PIL.Image.open', forbidden), patch.object(torch.cuda, '_lazy_init', forbidden), contextlib.redirect_stdout(logs):
+            report = bind_pure_text_cases(source_dir, exp_root, binding)
+            declared = manager.teacher_tail_cache_source(binding / 'cache')
+            assert declared['kind'] == PURE_TEXT_TEACHER_KIND
+            assert declared['source_scope'] == 'caption_only_no_reference_context'
+            teacher = cached_teacher_tail_embedder(binding / 'cache')
+            assert teacher.onload_model_names == ()
+            for index, case in enumerate(cases):
+                teacher.set_case(case['sample_id'], case['image_path'], case['audio_path'])
+                output = teacher.process(pipe, None, ref_blocks=[object()])
+                assert torch.equal(output['prompt_embeds'], records[index]['tail'])
+                assert torch.equal(output['text_token_tags'], torch.ones(index + 2, dtype=torch.long))
+            for kwargs in [dict(prompt=' '), dict(prompt=None, keyframes=[object()]),
+                           dict(prompt=None, text_embedding=torch.zeros(1, 5120))]:
+                try:
+                    teacher.process(pipe, **kwargs)
+                except ValueError:
+                    rejected.append('no_tc_input:' + ','.join(kwargs))
+                else:
+                    raise AssertionError('Pure teacher accepted semantic/keyframe/cached text')
+            try:
+                teacher.set_case(cases[0]['sample_id'], '/wrong.png', cases[0]['audio_path'])
+            except ValueError:
+                rejected.append('current_case_image_path')
+            else:
+                raise AssertionError('Pure teacher accepted a different current case image')
+            changed = copy.deepcopy(summary)
+            changed['source']['token_ids_sha256'][cases[0]['sample_id']] = '0' * 64
+            (source_dir / 'finished.json').write_text(json.dumps(changed))
+            try:
+                bind_pure_text_cases(source_dir, exp_root, parent / 'bad_binding')
+            except ValueError:
+                rejected.append('manifest_protocol_integrity')
+            else:
+                raise AssertionError('Binding accepted changed source protocol')
+            (source_dir / 'finished.json').write_text(json.dumps(summary))
+        no_tc_records = [json.loads(line[len('[no tc condition] '):]) for line in logs.getvalue().splitlines()
+                         if line.startswith('[no tc condition] ')]
+        assert len(no_tc_records) == 3 and pipe.accesses == 0
+        root = Path(__file__).resolve().parents[3]
+        native_base = dict(text_encoder_loaded=False, tokenizer_loaded=False, processor_loaded=False,
+            text_encoder_calls=0, semantic_text=None, prefix_tokens=0, visual_reference_rows=6,
+            visual_reference_sha256='a' * 64, native_music_bypass=False, all_target_audio_clean=True,
+            waveform_sha256='b' * 64, reference_sha256='c' * 64, retake_sha256='d' * 64, mask_sha256='e' * 64)
+        for mutate in (False, True):
+            out = parent / ('manager_bad' if mutate else 'manager_ok')
+            argv = ['manager', '--root', str(root), '--out', str(out), '--hosts', 'cpu_mock_host',
+                    '--joint_only', '--no_text_encoder', '--teacher_tail_cache', str(binding / 'cache')]
+            def fake_run(command, **kwargs):
+                if kwargs.get('capture_output'):
+                    return subprocess.CompletedProcess(command, 0, 'CPU_MOCK_ADMISSION', '')
+                commands.append(command)
+                shard = int(__import__('shlex').split(command[-1])[__import__('shlex').split(command[-1]).index('--shard') + 1])
+                condition = copy.deepcopy(no_tc_records[shard])
+                if mutate:
+                    condition['source_scope'] = 'reference_context'
+                native = dict(native_base, prompt_embeds_shape=condition['tail_shape'])
+                kwargs['stdout'].write('[no tc condition] ' + json.dumps(condition) + '\n')
+                kwargs['stdout'].write('[no tc native isolation] ' + json.dumps(native) + '\n[h3ar] done\n')
+                return subprocess.CompletedProcess(command, 0)
+            with patch.object(sys, 'argv', argv), patch.object(manager.subprocess, 'run', fake_run), contextlib.redirect_stdout(io.StringIO()):
+                try:
+                    manager.main()
+                except ValueError:
+                    if not mutate:
+                        raise
+                    rejected.append('manager_caption_only_scope')
+                else:
+                    if mutate:
+                        raise AssertionError('Manager accepted non-caption-only evidence')
+                    plan = json.loads((out / 'plan.json').read_text())
+                    assert plan['kind'] == 'pure_text_teacher_no_tc_diagnostic'
+                    assert plan['source_scope'] == 'caption_only_no_reference_context'
+                    assert plan['semantic_student_prompt'] is None and plan['prefix_length'] == 0
+                    assert json.loads((out / 'jobs.json').read_text())['all_sampler_jobs_exit_zero'] is True
+        legacy = parent / 'looks_like_pure_text'
+        legacy.mkdir()
+        assert manager.teacher_tail_cache_source(legacy)['kind'] == 'cached_image_conditioned_teacher'
+        original = source_dir / (cases[0]['sample_id'] + '.pt')
+        original.write_bytes(original.read_bytes() + b'changed')
+        try:
+            teacher.set_case(cases[0]['sample_id'], cases[0]['image_path'], cases[0]['audio_path'])
+        except ValueError:
+            rejected.append('source_cache_file_sha')
+        else:
+            raise AssertionError('Pure teacher accepted a changed source cache')
+    return dict(complete=True, cpu_only=True, gpu_started=False, actual_lm_forward=False, image_io=False,
+                pure_text_schema_hash_token_ids_length_checked=True, fixed_joint_three_case_binding_checked=True,
+                source_manifest_and_protocol_checked=True, current_case_path_and_source_sha_checked=True,
+                teacher_tail_only_bf16_and_one_tags_exact=True, prefix_length=0,
+                text_encoder_tokenizer_processor_accesses=pipe.accesses,
+                original_prompt_process_and_preprocess_calls=0, manager_uses_manifest_not_directory_name=True,
+                manager_three_joint_no_tc_commands_checked=True, no_tc_conditions=no_tc_records,
+                rejected_inputs=rejected, scope='CPU fixtures only; no teacher LM, image/VAE/DiT/GPU/video execution or quality claim')
 
 
 def no_tc_cpu_audit_main():
@@ -677,6 +885,7 @@ def no_tc_cpu_audit_main():
     assert len(records) == 2
     report = dict(complete=True, cpu_only=True, gpu_started=False,
         manager_mock_audit=_no_tc_manager_cpu_audit(),
+        pure_text_teacher_audit=_pure_text_teacher_cpu_audit(),
         music_only_none_deployment_audit=_music_only_none_cpu_audit(),
         text_encoder_tokenizer_processor_accesses=pipe.forbidden_calls,
         original_prompt_process_and_preprocess_calls=0, no_text_encoder_onload_names=[],

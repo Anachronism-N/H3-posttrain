@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-21",
+  "kind": "user_continuous_qualitative_preset_review",
+  "preset": "新纯文本教师·无图上下文",
+  "verbatim": "新纯文本教师·无图上下文】中的三个配置都在跳舞,noTC·教师tail-only·未训练新接口这个动作略小且重复,另外两个动作几乎一致,但是这三个的运动都比较小也都没有太跟随音乐节拍",
+  "models": [
+    "H3AR/val_musicreplace_text_pure_text_teacher_v1",
+    "H3AR/val_musicreplace_text_oracle_neutral_v1",
+    "H3AR/val_musicreplace_text_no_tc_teacher_v1"
+  ],
+  "all_three_teacher_configurations_have_dance": true,
+  "old_no_tc_teacher_relative_motion": "smaller and repetitive",
+  "pure_and_neutral_relative_motion": "nearly identical according to user; not pixel equality",
+  "all_motion_amplitude": "small",
+  "all_music_beat_following": "weak",
+  "scope": "Preset-level continuous qualitative user review, not per-case numerical scoring or full appearance-quality acceptance",
+  "teacher_only_diagnostic": true,
+  "student_model_review_performed": false,
+  "music_control_gain_established": false,
+  "raw_reports_with_pending_review_remain_immutable_historical_snapshots": true
+}

@@ -3,20 +3,29 @@ import argparse
 import glob
 import hashlib
 import json
+import os
 from pathlib import Path
+import re
 import sys
+import tempfile
 import time
 
 import torch
-from PIL import Image
 
 ROOT = Path('/apdcephfs_gy4/share_302533218/cedricnie')
-sys.path.insert(0, str(ROOT / 'DiffSynth-Studio-upstream-20260930'))
-from diffsynth.pipelines.minimax_h3_audio_video import (
-    MiniMaxH3Pipeline, ModelConfig, MiniMaxH3Unit_PromptEmbedder,
-    MiniMaxH3Unit_ReferenceEncoder,
-)
-from music_text_condition import prefix_length, tensor_sha256, write_new, neutralize_gender_pronouns
+
+
+def contextual_dependencies():
+    # The pure-text path must never import the image/presentation pipeline.
+    global Image, MiniMaxH3Pipeline, ModelConfig, MiniMaxH3Unit_PromptEmbedder
+    global MiniMaxH3Unit_ReferenceEncoder, prefix_length, tensor_sha256, write_new, neutralize_gender_pronouns
+    from PIL import Image
+    sys.path.insert(0, str(ROOT / 'DiffSynth-Studio-upstream-20260930'))
+    from diffsynth.pipelines.minimax_h3_audio_video import (
+        MiniMaxH3Pipeline, ModelConfig, MiniMaxH3Unit_PromptEmbedder,
+        MiniMaxH3Unit_ReferenceEncoder,
+    )
+    from music_text_condition import prefix_length, tensor_sha256, write_new, neutralize_gender_pronouns
 
 
 def sha256(path):
@@ -34,6 +43,203 @@ def target_prompt(entry, neutral_teacher=False):
         raise ValueError('Target requires original motion and a declared dance genre')
     prompt = f'Dance style: {genre}. ' + text
     return neutralize_gender_pronouns(prompt)[0] if neutral_teacher else prompt
+
+
+def pure_neutralize_gender_pronouns(text):
+    # Keep the existing transform exactly, without importing its multimodal module.
+    possessive_nouns = {'hand', 'hands', 'arm', 'arms', 'elbow', 'elbows', 'shoulder', 'shoulders',
+                        'foot', 'feet', 'leg', 'legs', 'knee', 'knees', 'ankle', 'ankles',
+                        'hip', 'hips', 'torso', 'body', 'head', 'neck', 'face', 'waist', 'chest',
+                        'left', 'right', 'both', 'back', 'pose', 'position', 'stance', 'weight'}
+    changes = []
+
+    def replace(match):
+        original = match.group()
+        word = original.lower()
+        following = re.match(r'\s+([A-Za-z]+)', text[match.end():])
+        possessive = word == 'his' or (word == 'her' and following is not None
+                                       and following[1].lower() in possessive_nouns)
+        replacement = "the dancer's" if possessive else 'the dancer'
+        if original[0].isupper():
+            replacement = replacement[0].upper() + replacement[1:]
+        changes.append(dict(start=match.start(), end=match.end(), original=original, replacement=replacement))
+        return replacement
+
+    normalized = re.sub(r'\b(?:he|she|his|her|him|himself|herself)\b', replace, text, flags=re.IGNORECASE)
+    return normalized, changes
+
+
+def atomic_write_new(path, value, binary=False):
+    """Publish only a fully fsynced record, atomically and without replacing any output."""
+    path = Path(path)
+    if not path.parent.is_dir():
+        raise FileNotFoundError(path.parent)
+    if path.exists():
+        raise FileExistsError(path)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='wb' if binary else 'w', dir=path.parent,
+                                         prefix='.' + path.name + '.', delete=False) as stream:
+            temporary = Path(stream.name)
+            if binary:
+                torch.save(value, stream)
+            else:
+                json.dump(value, stream, ensure_ascii=False, indent=2, allow_nan=False)
+                stream.write('\n')
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.link(temporary, path)
+        directory_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+def pure_text_inputs(caps, split, neutral_teacher=False):
+    if not isinstance(caps, dict) or not isinstance(split, dict):
+        raise ValueError('Caps and split must be JSON objects')
+    train, val = split.get('train'), split.get('val')
+    if not isinstance(train, list) or not isinstance(val, list) or not train:
+        raise ValueError('Require explicit nonempty train list and val list')
+    ids = train + val
+    if any(not isinstance(sid, str) or not sid or Path(sid).name != sid or sid in ('.', '..') for sid in ids):
+        raise ValueError('Invalid sample ID')
+    if len(ids) != len(set(ids)):
+        raise ValueError('Split duplicates or train/validation overlap')
+    prompts, replacements = {}, {}
+    for sid in ids:
+        entry = caps.get(sid)
+        if (not isinstance(entry, dict) or not isinstance(entry.get('motion_original'), str)
+                or not isinstance(entry.get('dims'), dict) or not isinstance(entry['dims'].get('genre'), str)):
+            raise ValueError('Require dims.genre and original MotionScript text: ' + sid)
+        original = target_prompt(entry)
+        prompt, changes = pure_neutralize_gender_pronouns(original) if neutral_teacher else (original, [])
+        prompts[sid], replacements[sid] = prompt, changes
+    return train, val, prompts, replacements
+
+
+def pure_token_length_report(tokenizer, prompts, train, val):
+    from text_embed import raw_tensor_sha256
+    ids = train + val
+    encoded = tokenizer([prompts[sid] for sid in ids], add_special_tokens=False,
+                        truncation=False, padding=False)['input_ids']
+    if len(encoded) != len(ids) or any(not row for row in encoded):
+        raise ValueError('Invalid full-split tokenization')
+    token_ids = {sid: torch.tensor(row, dtype=torch.long) for sid, row in zip(ids, encoded)}
+    lengths = {sid: len(row) for sid, row in token_ids.items()}
+    train_max = max(lengths[sid] for sid in train)
+    val_max = max((lengths[sid] for sid in val), default=None)
+    report = dict(lengths=lengths, token_ids_sha256={sid: raw_tensor_sha256(row) for sid, row in token_ids.items()},
+                  qmax=train_max, train_max=train_max, val_max=val_max,
+                  training_query_max=train_max, training_mean_length=sum(lengths[sid] for sid in train) / len(train),
+                  validation_max_length=val_max, validation_does_not_set_query_max=True,
+                  full_token_check=True, token_check_train_count=len(train), token_check_val_count=len(val),
+                  tokenizer_padding_side='right', add_special_tokens=False, truncation=False)
+    return report, token_ids
+
+
+def pure_text_main():
+    from text_embed import load_pure_text_tokenizer, load_pure_text_lm, pure_text_token_batch, raw_tensor_sha256
+    parser = argparse.ArgumentParser(description='Pure text-only H3 raw token teacher; no image or presentation prefix')
+    parser.add_argument('--pure_text', action='store_true', required=True)
+    parser.add_argument('--caps', type=Path, required=True)
+    parser.add_argument('--split', type=Path, required=True)
+    parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--w', type=Path, default=Path('/dev/shm/h3/Ref2VA'))
+    parser.add_argument('--shard', type=int, default=0)
+    parser.add_argument('--nshard', type=int, default=1)
+    parser.add_argument('--batch_size', type=int, default=2)
+    parser.add_argument('--neutral_teacher', action='store_true')
+    parser.add_argument('--preflight', action='store_true', help='CPU real-token full-split check; --out is a new JSON file')
+    args = parser.parse_args()
+    if args.nshard <= 0 or not 0 <= args.shard < args.nshard or args.batch_size <= 0:
+        parser.error('Invalid shard or batch size')
+    if args.out.exists() or not args.out.parent.is_dir():
+        parser.error('Require a new output path and existing parent; no resume/overwrite')
+    caps_sha, split_sha = sha256(args.caps), sha256(args.split)
+    caps, split = json.loads(args.caps.read_text()), json.loads(args.split.read_text())
+    train, val, prompts, replacements = pure_text_inputs(caps, split, args.neutral_teacher)
+    tokenizer = load_pure_text_tokenizer(args.w)
+    length_report, source_ids = pure_token_length_report(tokenizer, prompts, train, val)
+    processor = args.w / 'processor'
+    tokenizer_paths = [processor / name for name in ('tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json',
+                                                    'added_tokens.json', 'vocab.json', 'merges.txt', 'chat_template.json')]
+    tokenizer_shas = {path.name: sha256(path) for path in tokenizer_paths if path.is_file()}
+    if 'tokenizer.json' not in tokenizer_shas or 'tokenizer_config.json' not in tokenizer_shas:
+        raise ValueError('Missing native tokenizer metadata')
+    ids = (train + val)[args.shard::args.nshard]
+    source = dict(kind='pure_text_h3_raw_tokens', text_only=True, image_conditioned=False,
+                  prefix_length=0, interface='raw_h3_last_hidden_5120_pure_text', final_norm='Identity',
+                  caption_fields=['dims.genre', 'motion_original'], special_template=False,
+                  caps_sha256=caps_sha, split_sha256=split_sha,
+                  tokenizer_metadata_file_sha256=tokenizer_shas, tokenizer_root=str(processor),
+                  original_full_train=len(train), original_full_val=len(val),
+                  train_ids=train, val_ids=val, ids=ids, expected_ids=ids,
+                  shard=args.shard, nshard=args.nshard, batch_size=args.batch_size,
+                  teacher_transform='gender_pronouns_to_dancer_v1' if args.neutral_teacher else 'none',
+                  normalization='none', pooling='none', dtype='torch.bfloat16', hidden_width=5120,
+                  **length_report)
+    if sha256(args.caps) != caps_sha or sha256(args.split) != split_sha:
+        raise RuntimeError('Caps/split changed during token preflight')
+    if args.preflight:
+        report = dict(source, kind='CPU_pure_text_preflight_not_teacher_encoding', complete=True,
+                      actual_lm_forward=False, GPU_teacher_cache_pending=True, image_io=False)
+        atomic_write_new(args.out, report)
+        print(json.dumps({key: value for key, value in report.items() if key not in ('lengths', 'token_ids_sha256', 'ids', 'expected_ids', 'train_ids', 'val_ids')}), flush=True)
+        return
+    if not ids:
+        parser.error('Empty shard; choose fewer shards')
+    args.out.mkdir()
+    lm, model_provenance = load_pure_text_lm(args.w)
+    source.update(model_provenance)
+    if any(sha256(processor / name) != digest for name, digest in tokenizer_shas.items()):
+        raise RuntimeError('Tokenizer metadata changed during LM load')
+    atomic_write_new(args.out / 'plan.json', source)
+    protocol_sha = sha256(args.out / 'plan.json')
+    rows, started = [], time.monotonic()
+    for start in range(0, len(ids), args.batch_size):
+        batch = ids[start:start + args.batch_size]
+        encoded = pure_text_token_batch(lm, tokenizer, [prompts[sid] for sid in batch])
+        if len(encoded) != len(batch):
+            raise ValueError('LM batch result count mismatch')
+        for sid, record in zip(batch, encoded):
+            if not torch.equal(record['source_token_ids'], source_ids[sid]):
+                raise ValueError('Batched valid token IDs differ from full CPU token check: ' + sid)
+            metadata = dict(sample_id=sid, partition='train' if sid in train else 'val',
+                            kind='pure_text_h3_raw_tokens', text_only=True, image_conditioned=False,
+                            prefix_length=0, tail_length=record['teacher_length'], teacher_length=record['teacher_length'],
+                            prompt=prompts[sid], original_prompt=target_prompt(caps[sid]),
+                            teacher_replacements=replacements[sid], caption_sha256=hashlib.sha256(prompts[sid].encode()).hexdigest(),
+                            source_token_ids_sha256=raw_tensor_sha256(record['source_token_ids']),
+                            token_ids_sha256=raw_tensor_sha256(record['source_token_ids']), tail_sha256=raw_tensor_sha256(record['tail']),
+                            source_protocol_path=str(args.out / 'plan.json'), source_protocol_sha256=protocol_sha,
+                            caps_sha256=caps_sha, split_sha256=split_sha,
+                            model_weight_content_sha256=source['model_weight_content_sha256'],
+                            tokenizer_metadata_file_sha256=tokenizer_shas, final_norm='Identity', normalization='none', pooling='none')
+            path = args.out / (sid + '.pt')
+            atomic_write_new(path, dict(metadata=metadata, **record), binary=True)
+            rows.append(dict(sample_id=sid, path=str(path), file_sha256=sha256(path),
+                             tail_length=record['teacher_length'], teacher_length=record['teacher_length'], prefix_length=0))
+            print(json.dumps(dict(event='pure_text_target_cached', sample_id=sid, index=len(rows), expected=len(ids),
+                                  tokens=record['teacher_length'])), flush=True)
+    if ([row['sample_id'] for row in rows] != ids or set(path.stem for path in args.out.glob('*.pt')) != set(ids)
+            or sha256(args.caps) != caps_sha or sha256(args.split) != split_sha
+            or sha256(args.out / 'plan.json') != protocol_sha
+            or any(sha256(processor / name) != digest for name, digest in tokenizer_shas.items())
+            or any(sha256(row['path']) != row['file_sha256'] for row in rows)):
+        raise RuntimeError('Final exact shard-ID/source/file integrity check failed')
+    report = dict(complete=True, expected=len(ids), expected_ids=ids, rows=rows, source=source,
+                  training_query_max=length_report['training_query_max'], validation_max_length=length_report['val_max'],
+                  qmax=length_report['qmax'], train_max=length_report['train_max'], val_max=length_report['val_max'],
+                  train_count=sum(sid in train for sid in ids), val_count=sum(sid in val for sid in ids),
+                  source_protocol_sha256=protocol_sha, seconds=time.monotonic() - started,
+                  exact_expected_full_shard_ids=True, actual_lm_forward=True, image_io=False)
+    atomic_write_new(args.out / 'finished.json', report)
+    print(json.dumps(dict(event='pure_text_finished', complete=True, expected=len(ids))), flush=True)
 
 
 def audit_student_context_main():
@@ -112,6 +318,9 @@ def audit_student_context_main():
 
 
 def main():
+    if '--pure_text' in sys.argv:
+        return pure_text_main()
+    contextual_dependencies()
     if '--audit_student_context' in sys.argv:
         return audit_student_context_main()
     parser = argparse.ArgumentParser(description=__doc__)

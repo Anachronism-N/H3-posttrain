@@ -9,7 +9,7 @@ import time
 import torch
 from torch.nn import functional as F
 
-from music_text_adapter import (load_music_text_checkpoint, save_music_text_checkpoint, length_loss,
+from music_text_adapter import (MusicToH3Text, load_music_text_checkpoint, save_music_text_checkpoint, length_loss,
                                 masked_token_loss, convert_music_text_to_no_text_encoder)
 from music_text_align import read_split, load_targets, load_features, batch_tensors, evaluate, sha256, write_new
 
@@ -201,9 +201,8 @@ def _online_batch(ids, bundle, qmax, context_free=False):
     context = None if context_free else torch.stack(
         [bundle['targets'][sid]['prefix_context'] for sid in ids]).cuda().float()
     tails = [bundle['targets'][sid]['tail'] for sid in ids]
-    if any(len(value) > qmax for value in tails):
-        raise ValueError('Teacher exceeds the train-only query bound')
-    target = torch.stack([F.pad(value, (0, 0, 0, qmax - len(value))) for value in tails]).cuda().float()
+    target = torch.stack([F.pad(value[:qmax], (0, 0, 0, qmax - min(len(value), qmax)))
+                          for value in tails]).cuda().float()
     lengths = torch.tensor([len(value) for value in tails], device='cuda')
     teacher_mask = torch.arange(qmax, device='cuda')[None] < lengths[:, None]
     return wave, context, target, lengths, teacher_mask
@@ -225,6 +224,21 @@ def _online_conditions(model, ids, candidates, bundle, context, offset):
         wave = torch.stack([bundle['waveforms'][sid] for sid in names]).cuda()
         outputs.append(model.student_condition(wave, context))
     return outputs, first, second
+
+
+def _online_training_losses(model, wave, context, target, lengths, mask, ids, candidates,
+                            bundle, mean, std, clip_weight, offset):
+    if clip_weight == 0:
+        correct = model.student_condition(wave, context)
+        nce = None
+    else:
+        conditions, _, _ = _online_conditions(model, ids, candidates, bundle, context, offset)
+        correct = conditions[0]
+        scores = _online_scores(conditions, target, mask, mean, std)
+        nce = F.cross_entropy(scores / 0.07, torch.zeros(len(ids), dtype=torch.long, device=scores.device))
+    mse = masked_token_loss(correct['raw_tokens'], target, mask)['raw_mse']
+    ll = length_loss(correct['log_length'], lengths, model.adapter.qmax)
+    return mse, ll, nce
 
 
 @torch.no_grad()
@@ -262,17 +276,31 @@ def _evaluate_online(model, ids, candidates, bundle, mean, std, position_mean, b
                 zero_raw_mse=float((z - t).square().mean()),
                 position_mean_mse=float((position_mean[:len(t)] - t).square().mean()),
                 correct_wrong_output_rms=float((c - w).square().mean().sqrt()),
-                length_absolute_error=abs(int(conditions[0]['lengths'][i]) - int(lengths[i]))))
+                length_absolute_error=abs(int(conditions[0]['lengths'][i]) - int(lengths[i])),
+                length_log_mse=float((conditions[0]['log_length'][i].float() - lengths[i].float().log()).square()),
+                supervised_tokens=int(mask[i].sum()), total_target_tokens=int(lengths[i]),
+                truncated_supervision_tokens=max(0, int(lengths[i]) - model.adapter.qmax),
+                length_unable_to_predict=int(lengths[i]) > model.adapter.qmax))
     macro = {key: sum(row[key] for row in rows) / len(rows) for key in (
         'correct_minus_wrong_score', 'correct_minus_second_score', 'correct_minus_zero_score',
         'tie_aware_top1', 'raw_mse', 'wrong_raw_mse', 'zero_raw_mse', 'position_mean_mse',
-        'correct_wrong_output_rms', 'length_absolute_error')}
+        'correct_wrong_output_rms', 'length_absolute_error', 'length_log_mse')}
+    total_tokens = sum(row['total_target_tokens'] for row in rows)
+    truncated_tokens = sum(row['truncated_supervision_tokens'] for row in rows)
+    macro.update(total_target_tokens=total_tokens, supervised_tokens=total_tokens - truncated_tokens,
+                 truncated_supervision_tokens=truncated_tokens,
+                 truncated_supervision_fraction=truncated_tokens / total_tokens,
+                 length_unable_to_predict_cases=sum(row['length_unable_to_predict'] for row in rows),
+                 length_unable_to_predict_fraction=sum(row['length_unable_to_predict'] for row in rows) / len(rows))
     macro.update(correct_beats_wrong_fraction=sum(r['correct_minus_wrong_score'] > 1e-6 for r in rows) / len(rows),
                  correct_beats_second_fraction=sum(r['correct_minus_second_score'] > 1e-6 for r in rows) / len(rows),
                  raw_mse_tokenweighted=raw_sum / count, wrong_mse_tokenweighted=wrong_sum / count,
                  zero_mse_tokenweighted=zero_sum / count, student_teacher_energy_ratio=student_sum / max(teacher_sum, 1e-12))
     return dict(candidates=len(rows), macro=macro, cases=rows, student_uses_predicted_valid_interval=True,
                 teacher_only_controls_supervision=True, silence_is_eval_only=True,
+                raw_mse_scope='all_5120_raw_channels_of_min_true_target_length_qmax_tokens',
+                length_label_scope='true_full_teacher_length_including_out_of_query_bound',
+                query_max=model.adapter.qmax,
                 scope='Representation diagnostics, not dance or video accuracy')
 
 
@@ -341,8 +369,10 @@ def _online_deployment_audit(model, checkpoint, wave, context, out):
                 h3_prefix_tags_packed_checked=False)
 
 
-def _verify_online_initialization(init, bundle_init_sha256, bundle_sha256):
+def _verify_online_initialization(init, bundle_init_sha256, bundle_sha256, pure_text=False):
     actual_sha256 = sha256(init)
+    if pure_text and actual_sha256 != bundle_init_sha256:
+        raise ValueError('Pure-text bundle init_sha256 must equal the actual complete initialization checkpoint SHA')
     if actual_sha256 == bundle_init_sha256:
         return actual_sha256, None
     finished_path = init.parent / 'finished.json'
@@ -419,10 +449,108 @@ def _load_output_space_manifest(path, checkpoint_sha256, bundle_sha256, train_id
     return state, source
 
 
+PURE_TEXT_PROTOCOL = 'musicfm_pure_text_h3_raw_tokens_v1'
+
+
+def _validate_pure_text_bundle(bundle, train, val):
+    metadata = bundle['metadata']
+    pure_text = metadata.get('teacher_kind') == 'pure_text_h3_raw_tokens'
+    if not pure_text:
+        if metadata.get('teacher_kind') is not None:
+            raise ValueError('Unsupported online teacher_kind')
+        return False
+    if (type(metadata.get('format_version')) is not int or metadata['format_version'] != 2
+            or metadata.get('protocol') != PURE_TEXT_PROTOCOL
+            or metadata.get('teacher_image_conditioned') is not False
+            or type(metadata.get('teacher_prefix_length')) is not int or metadata['teacher_prefix_length'] != 0
+            or metadata.get('student_feature_cache_used') is not False
+            or metadata.get('initialization_binding') != 'external_pure_text_init_binding_manifest'
+            or 'init_sha256' in metadata):
+        raise ValueError('Pure-text online bundle requires its explicit external-init, no-image/no-prefix protocol')
+    for sid in train + val:
+        target = bundle['targets'].get(sid)
+        if not isinstance(target, dict) or set(target) != {'metadata', 'tail', 'source_token_ids', 'teacher_length'}:
+            raise ValueError('Pure-text target requires exactly metadata/tail/source_token_ids/teacher_length: ' + sid)
+        tail, token_ids, length, row = (target[key] for key in ('tail', 'source_token_ids', 'teacher_length', 'metadata'))
+        if (type(length) is not int or length < 1 or not isinstance(tail, torch.Tensor)
+                or tail.shape != (length, 5120) or tail.dtype != torch.bfloat16 or not torch.isfinite(tail).all()
+                or not isinstance(token_ids, torch.Tensor) or token_ids.dtype != torch.long
+                or token_ids.shape != (length,) or (token_ids < 0).any()
+                or not isinstance(row, dict) or row.get('kind') != 'pure_text_h3_raw_tokens'
+                or row.get('text_only') is not True or row.get('image_conditioned') is not False
+                or type(row.get('prefix_length')) is not int or row['prefix_length'] != 0
+                or 'prefix_context' in row):
+            raise ValueError('Pure-text target must be finite full raw text-only H3 tokens without context: ' + sid)
+    return True
+
+
+def _verify_pure_init_provenance(path, init, bundle_sha256, metadata):
+    if path is None:
+        raise ValueError('Pure-text online training requires --init_provenance; embedded init SHA is not accepted')
+    record = json.loads(Path(path).read_text())
+    init_sha256 = sha256(init)
+    if (not isinstance(record, dict) or type(record.get('format_version')) is not int
+            or record['format_version'] != 1 or record.get('kind') != 'pure_text_init_binding'
+            or record.get('complete') is not True or record.get('bundle_sha256') != bundle_sha256
+            or record.get('init_sha256') != init_sha256 or record.get('split_sha256') != metadata['split_sha256']
+            or type(record.get('query_max')) is not int or record['query_max'] != metadata['query_max']
+            or record.get('teacher_kind') != 'pure_text_h3_raw_tokens'
+            or record.get('teacher_image_conditioned') is not False
+            or record.get('context_policy') != 'music_only_global_bias'
+            or record.get('head_normalization') not in ('identity', 'layer_norm')
+            or record.get('student_inputs') != 'waveform_only'
+            or record.get('no_fixed_output_projection') is not True
+            or record.get('bundle_copied') is not False
+            or type(record.get('optimizer_updates')) is not int or record['optimizer_updates'] != 0
+            or type(record.get('init_report_path')) is not str):
+        raise ValueError('Pure-text initializer provenance does not bind the actual bundle/init and waveform-only free-head scope')
+    report_path = Path(init).with_suffix('.json')
+    if Path(record['init_report_path']).resolve() != report_path.resolve():
+        raise ValueError('Pure-text initializer report must be the actual init checkpoint sibling JSON')
+    if sha256(report_path) != record.get('init_report_sha256'):
+        raise ValueError('Pure-text initializer report SHA mismatch')
+    report = json.loads(report_path.read_text())
+    if (not isinstance(report, dict) or report.get('complete') is not True
+            or report.get('init_sha256') != init_sha256 or report.get('bundle_sha256') != bundle_sha256
+            or type(report.get('optimizer_updates')) is not int or report['optimizer_updates'] != 0
+            or type(report.get('backward_calls')) is not int or report['backward_calls'] != 0
+            or report.get('query_max') != metadata['query_max']
+            or report.get('context_policy') != record['context_policy']
+            or report.get('head_normalization') != record['head_normalization']
+            or report.get('output_space') != {'mode': 'none'}
+            or not isinstance(report.get('checkpoint_metadata'), dict)
+            or not isinstance(report.get('provenance'), dict)
+            or report['provenance'].get('kind') != record.get('initialization_kind')):
+        raise ValueError('Pure-text initializer report scope/checkpoint binding mismatch')
+    source = dict(path=str(path), sha256=sha256(path), manifest=record,
+                  actual_init_sha256=init_sha256, actual_bundle_sha256=bundle_sha256,
+                  init_report_path=str(report_path), init_report_sha256=sha256(report_path), init_report=report)
+    return init_sha256, source
+
+
+def _validate_pure_init_model(model, source, metadata):
+    report, manifest = source['init_report'], source['manifest']
+    checkpoint_metadata = getattr(model, 'checkpoint_metadata', None)
+    if (not isinstance(model, MusicToH3Text) or not isinstance(checkpoint_metadata, dict)
+            or checkpoint_metadata != report['checkpoint_metadata']
+            or checkpoint_metadata.get('state_scope') != 'music_to_h3_text'
+            or checkpoint_metadata.get('format_version') != 3
+            or model.adapter.qmax != metadata['query_max'] or model.adapter.width != report.get('width')
+            or model.adapter.head_normalization != manifest['head_normalization']
+            or model.adapter.context_policy != manifest['context_policy']
+            or model.adapter.output_space_metadata() != {'mode': 'none'}):
+        raise ValueError('Pure-text complete initializer actual metadata disagrees with its strict provenance')
+    return dict(actual_checkpoint_metadata=checkpoint_metadata,
+                actual_checkpoint_state_keys=sorted(model.state_dict()),
+                cached_context_read=False, text_encoder_called=False, student_inputs='waveform_only')
+
+
 def online_main():
     parser = argparse.ArgumentParser(description='Online MusicFM dense backbone + complete raw H adapter')
     parser.add_argument('--online', action='store_true', required=True)
     parser.add_argument('--online_bundle', type=Path, required=True)
+    parser.add_argument('--init_provenance', type=Path,
+                        help='Required strict external bundle/init/report SHA binding for pure-text V2 bundles')
     parser.add_argument('--output_space_manifest', type=Path,
                         help='Completed checkpoint-W or train-only PCA manifest bound to this init checkpoint and online bundle')
     parser.add_argument('--init', type=Path, required=True)
@@ -430,7 +558,7 @@ def online_main():
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--backbone_train', action='store_true')
     parser.add_argument('--no_text_encoder', action='store_true',
-                        help='Convert verified legacy C300 to pure music/global-bias conditioning; never read cached TC context')
+                        help='Use SHA-bound pure-text noTC initialization, or convert verified legacy C300; never read cached TC context')
     parser.add_argument('--steps', type=int, default=100)
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--microbatch', type=int, default=2)
@@ -456,18 +584,45 @@ def online_main():
     if not report['complete'] or report['sha256'] != bundle_hash:
         raise ValueError('Online waveform/teacher bundle SHA mismatch')
     bundle = torch.load(args.online_bundle, map_location='cpu', weights_only=True)
-    if set(bundle) != {'metadata', 'targets', 'waveforms', 'mean', 'std', 'position_mean', 'teacher_energy', 'protocols'}:
-        raise ValueError('Online bundle must contain teacher labels and waveforms, never cached student features')
+    expected_bundle_keys = {'metadata', 'targets', 'waveforms', 'mean', 'std', 'position_mean', 'teacher_energy', 'protocols'}
+    has_pure_artifacts = isinstance(bundle.get('metadata'), dict) and bundle['metadata'].get('teacher_kind') == 'pure_text_h3_raw_tokens'
+    if has_pure_artifacts:
+        expected_bundle_keys.add('artifacts')
+        artifacts = bundle.get('artifacts')
+        if not isinstance(artifacts, dict) or set(artifacts) != {'teacher_release', 'caps'}:
+            raise ValueError('Pure bundle must bind exactly its actual teacher release and captions')
+        for key, metadata_key in (('teacher_release', 'teacher_release_report'), ('caps', 'caps')):
+            artifact = artifacts[key]
+            if (not isinstance(artifact, dict) or set(artifact) != {'path', 'sha256', 'content'}
+                    or {k: artifact[k] for k in ('path', 'sha256')} != bundle['metadata'].get(metadata_key)
+                    or sha256(Path(artifact['path'])) != artifact['sha256']
+                    or json.loads(Path(artifact['path']).read_text()) != artifact['content']):
+                raise ValueError('Pure bundle source artifact changed: ' + key)
+    if set(bundle) != expected_bundle_keys:
+        raise ValueError('Online bundle keys must match its exact teacher protocol; student features are forbidden')
     train, val = read_split(args.split)
     metadata = bundle['metadata']
-    run_init_sha256, parent_c300 = _verify_online_initialization(args.init, metadata['init_sha256'], bundle_hash)
-    if (metadata['format_version'] != 1 or metadata['split_sha256'] != sha256(args.split)
+    pure_text = _validate_pure_text_bundle(bundle, train, val)
+    init_provenance, init_model_audit = None, None
+    if pure_text:
+        run_init_sha256, init_provenance = _verify_pure_init_provenance(
+            args.init_provenance, args.init, bundle_hash, metadata)
+        parent_c300 = None
+    else:
+        if args.init_provenance is not None:
+            raise ValueError('--init_provenance is restricted to the pure-text V2 protocol; legacy init gates remain unchanged')
+        run_init_sha256, parent_c300 = _verify_online_initialization(args.init, metadata['init_sha256'], bundle_hash)
+    if (metadata['format_version'] != (2 if pure_text else 1) or metadata['split_sha256'] != sha256(args.split)
             or metadata['train_ids'] != train or metadata['val_ids'] != val
             or metadata['student_feature_cache_used'] is not False
             or set(bundle['targets']) != set(train + val) or set(bundle['waveforms']) != set(train + val)):
         raise ValueError('Online bundle/initialization/split mismatch')
-    if args.no_text_encoder and parent_c300 is None:
-        raise ValueError('--no_text_encoder requires the verified completed legacy C300 common initialization')
+    if pure_text and not args.no_text_encoder:
+        raise ValueError('Pure-text teacher bundles require explicit --no_text_encoder')
+    if args.no_text_encoder and not pure_text and parent_c300 is None:
+        raise ValueError('--no_text_encoder legacy mode requires the verified completed C300 common initialization')
+    if pure_text and args.output_space_manifest:
+        raise ValueError('Pure-text direct initialization must train free raw-output weights, not a fixed output space')
     space_state, space_source = None, None
     if args.output_space_manifest:
         if parent_c300 is None:
@@ -487,18 +642,40 @@ def online_main():
             or not torch.isfinite(std).all() or (std <= 0).any() or not math.isfinite(teacher_energy) or teacher_energy <= 0):
         raise ValueError('Invalid fixed train statistics')
     model = load_music_text_checkpoint(args.init, expected_backend='musicfm').cuda()
+    if not isinstance(model, MusicToH3Text):
+        raise ValueError('Online initialization requires a complete backbone and adapter checkpoint')
+    if pure_text:
+        init_model_audit = _validate_pure_init_model(model, init_provenance, metadata)
     model.configure_online_training(args.backbone_train)
     qmax = model.adapter.qmax
     if position_mean.shape != (qmax, 5120) or max(len(bundle['targets'][sid]['tail']) for sid in train) != qmax:
         raise ValueError('Query bound must come from full train only')
     context_conversion = None
     if args.no_text_encoder:
-        model.eval()
-        with torch.no_grad():
-            features, feature_lengths = model.dense_features(bundle['waveforms'][val[0]][None].cuda())
-        context_conversion = convert_music_text_to_no_text_encoder(model, features, feature_lengths)
-        context_conversion.update(source_checkpoint_sha256=run_init_sha256, probe_sample_id=val[0])
-        del features, feature_lengths
+        if pure_text:
+            context_conversion = dict(context_policy='music_only_global_bias', conversion_performed=False,
+                already_music_only_global_bias=True, source_checkpoint_sha256=run_init_sha256,
+                source_state_sha256=_state_hashes(model), query_max=qmax, adapter_width=model.adapter.width,
+                head_normalization=model.adapter.head_normalization, output_space=model.adapter.output_space_metadata(),
+                train_target_max=max(len(bundle['targets'][sid]['tail']) for sid in train),
+                new_init_statistics=dict(
+                    raw_output_weight_rms=float(model.adapter.raw_output.weight.detach().square().mean().sqrt()),
+                    raw_output_bias_mean=float(model.adapter.raw_output.bias.detach().mean()),
+                    raw_output_bias_rms=float(model.adapter.raw_output.bias.detach().square().mean().sqrt()),
+                    query_position_rms=float(model.adapter.query_positions.weight.detach().square().mean().sqrt()),
+                    global_context_bias_rms=float(model.adapter.global_context_bias.detach().square().mean().sqrt()),
+                    train_teacher_energy=teacher_energy,
+                    source_calibration=init_provenance['init_report'].get('initialization_statistics',
+                                                                         init_provenance['init_report'].get('calibration'))),
+                cached_context_read=False, text_encoder_called=False,
+                all_remaining_adapter_parameters_trainable=all(p.requires_grad for p in model.adapter.parameters()))
+        else:
+            model.eval()
+            with torch.no_grad():
+                features, feature_lengths = model.dense_features(bundle['waveforms'][val[0]][None].cuda())
+            context_conversion = convert_music_text_to_no_text_encoder(model, features, feature_lengths)
+            context_conversion.update(source_checkpoint_sha256=run_init_sha256, probe_sample_id=val[0])
+            del features, feature_lengths
     elif model.adapter.context_policy != 'tc_prefix_context':
         raise ValueError('Music-only checkpoints require an explicit noTC training protocol; legacy path must not supply context')
     context_free = model.adapter.context_policy == 'music_only_global_bias'
@@ -541,7 +718,7 @@ def online_main():
         val = val[:args.validation_count]
     args.out.mkdir()
     protocol = dict(init=str(args.init), init_sha256=run_init_sha256, run_init_sha256=run_init_sha256,
-        bundle_init_sha256=metadata['init_sha256'], parent_c300=parent_c300,
+        bundle_init_sha256=metadata.get('init_sha256'), parent_c300=parent_c300,
         output_space_source=space_source, output_space=model.adapter.output_space_metadata(),
         projection_initial_state=projection_initial_state, optimizer_state='new_AdamW_not_resumed',
         adapter_width=model.adapter.width, adapter_heads=model.adapter.heads,
@@ -556,14 +733,26 @@ def online_main():
         backbone_train=args.backbone_train, backbone_lr=args.backbone_lr, adapter_lr=args.adapter_lr,
         clip_weight=args.clip_weight, length_weight=args.length_weight, seed=42,
         shared_student_condition=True, student_uses_ground_truth_length=False,
-        online_waveform_backbone_all_three_branches=True, student_feature_cache_used=False,
-        negatives='two_different_ids_and_caption_hashes_not_verified_distinct_source_songs',
+        online_waveform_backbone_all_three_branches=bool(args.clip_weight), student_feature_cache_used=False,
+        training_student_forward_branches=3 if args.clip_weight else 1,
+        infonce_computed=bool(args.clip_weight),
+        negatives='two_different_ids_and_caption_hashes_not_verified_distinct_source_songs' if args.clip_weight else 'not_computed_paired_only',
         backbone_eval_behavior_with_parameter_gradients=args.backbone_train,
         dtype='float32_no_cached_feature_roundtrip', no_dit_video_loss=True,
         source_sha256=sha256(Path(__file__)), adapter_source_sha256=sha256(Path(__file__).with_name('music_text_adapter.py')),
         loss='rawMSE/train_teacher_energy + length_weight*log_length_MSE + clip_weight*min(step/100,1)*same_context_sequence_NCE',
         sampling='independent_up_to64_student_predicted_valid_tokens_and_teacher_valid_tokens',
         full_train_statistics_reused=True, small_fit=args.small_fit)
+    if pure_text:
+        protocol.update(protocol=PURE_TEXT_PROTOCOL, teacher_kind='pure_text_h3_raw_tokens',
+                        teacher_scope='pure_text_h3_raw_tokens', adapter_head_normalization=model.adapter.head_normalization,
+                        init_provenance=init_provenance, init_model_audit=init_model_audit,
+                        query_max=qmax, query_bound_source='full_pure_text_train_target_max',
+                        validation_long_targets='truncate_raw_supervision_explicitly_report_full_length_log_mse',
+                        initialization_statistics=context_conversion['new_init_statistics'])
+    if not args.clip_weight:
+        protocol.update(loss='rawMSE/train_teacher_energy + length_weight*log_length_MSE',
+                        sampling='paired_raw_tokens_only_no_sequence_score_or_negative_sampling')
     write_new(args.out / 'plan.json', protocol)
     parameters = dict(model.named_parameters())
     before = _state_hashes(model)
@@ -590,28 +779,30 @@ def online_main():
             cursor += take
         model.train()
         optimizer.zero_grad(set_to_none=True)
-        totals = dict(loss=0., raw_mse=0., length=0., infonce=0.)
+        totals = dict(loss=0., raw_mse=0., length=0., infonce=0. if args.clip_weight else None,
+                      infonce_computed=bool(args.clip_weight))
         batch_tokens = sum(len(bundle['targets'][sid]['tail']) for sid in ids)
         for start in range(0, len(ids), args.microbatch):
             names = ids[start:start + args.microbatch]
             wave, context, target, lengths, mask = _online_batch(names, bundle, qmax, context_free=context_free)
-            conditions, _, _ = _online_conditions(model, names, train, bundle, context, step % (len(train) - 1) + 1)
-            mse = masked_token_loss(conditions[0]['raw_tokens'], target, mask)['raw_mse']
-            ll = length_loss(conditions[0]['log_length'], lengths, qmax)
-            scores = _online_scores(conditions, target, mask, mean, std)
-            nce = F.cross_entropy(scores / 0.07, torch.zeros(len(names), dtype=torch.long, device='cuda'))
+            mse, ll, nce = _online_training_losses(
+                model, wave, context, target, lengths, mask, names, train, bundle, mean, std,
+                args.clip_weight, step % max(1, len(train) - 1) + 1)
             weight = len(names) / len(ids)
             token_weight = int(mask.sum()) / batch_tokens
-            loss = mse / teacher_energy * token_weight + weight * (
-                args.length_weight * ll + args.clip_weight * min(1., step / 100) * nce)
+            loss = mse / teacher_energy * token_weight + weight * args.length_weight * ll
+            if nce is not None:
+                loss = mse / teacher_energy * token_weight + weight * (
+                    args.length_weight * ll + args.clip_weight * min(1., step / 100) * nce)
             if not torch.isfinite(loss):
                 raise ValueError('Nonfinite online training loss')
             loss.backward()
             totals['loss'] += float(loss.detach())
             totals['raw_mse'] += float(mse.detach()) * token_weight
             totals['length'] += float(ll.detach()) * weight
-            totals['infonce'] += float(nce.detach()) * weight
-            del conditions, loss, mse, ll, scores, nce
+            if nce is not None:
+                totals['infonce'] += float(nce.detach()) * weight
+            del loss, mse, ll, nce
         if first_gradient is None:
             first_gradient = _gradient_scope(model)
             write_new(args.out / 'gradient_step1.json', first_gradient)

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/opt/venv_h3/bin/python",
+    "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/music_text_infer.py",
+    "--checkpoint",
+    "/tmp/music_text_pure_C300control256_d1800_s1200_v2/last.pt",
+    "--checkpoint_sha256",
+    "39dc560334355812f2984f727c9b05f46122c60652a70ab8bcd166f1df47fe89",
+    "--input",
+    "/tmp/music_online_deploy_c2_nefpl/input.pt",
+    "--out",
+    "/tmp/music_online_deploy_c2_nefpl/result.pt"
+  ],
+  "returncode": 0,
+  "stdout": "{\"event\": \"deployed_raw_text\", \"tokens\": 336, \"query_max\": 1423, \"checkpoint_sha256\": \"39dc560334355812f2984f727c9b05f46122c60652a70ab8bcd166f1df47fe89\", \"legacy_clip_complete_chain\": false, \"context_policy\": \"music_only_global_bias\"}\n",
+  "stderr": "/usr/local/lib64/python3.11/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.\n  import pynvml  # type: ignore[import]\n[transformers] You tried to access the `AttentionInterface` with a `config._attn_implementation` set to `None`. This is expected if you use an Attention Module as a standalone Module. If this is not the case, something went wrong with the dispatch of `config._attn_implementation`\n",
+  "input_keys": [
+    "waveform"
+  ],
+  "context_policy": "music_only_global_bias",
+  "inference_source_sha256": "343346143ea1d033a539d83da0274a8f6a5289db23a4007a8699f1bfce73c027"
+}

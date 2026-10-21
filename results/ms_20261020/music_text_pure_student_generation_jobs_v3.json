@@ -1,0 +1,21 @@
+{
+  "complete": true,
+  "expected": 18,
+  "rows": [
+    {
+      "variant": "public512",
+      "exit": 0,
+      "tag": "text_pure_public512_d1800_s1200_v3",
+      "zero_tag": "text_pure_public512_d1800_s1200_zero_v3",
+      "log": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_public512_d1800_s1200_v2_generation_v3.log"
+    },
+    {
+      "variant": "C300control256",
+      "exit": 0,
+      "tag": "text_pure_C300control256_d1800_s1200_v3",
+      "zero_tag": "text_pure_C300control256_d1800_s1200_zero_v3",
+      "log": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_C300control256_d1800_s1200_v2_generation_v3.log"
+    }
+  ],
+  "scope": "Sampler jobs only; complete media/source/quality checks follow"
+}

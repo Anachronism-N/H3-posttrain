@@ -1,0 +1,382 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "gpu_started": false,
+  "manager_mock_audit": {
+    "complete": true,
+    "remote_or_gpu_executed": false,
+    "real_native_schema_fixture": true,
+    "music_and_teacher_three_case_commands_checked": true,
+    "no_tc_command_flags_exact": true,
+    "plan_semantic_text_null_and_prefix_zero": true,
+    "no_tc_condition_and_native_log_parsing_passed": true,
+    "strict_true_int_and_bool_identity_checked": true,
+    "native_condition_shape_cross_check": true,
+    "visual_reference_rows_and_sha256_checked": true,
+    "deployment_checkpoint_shape_length_cross_check": true,
+    "teacher_original_tokens_and_source_sha256_checked": true,
+    "passed_source_cases": [
+      "music",
+      "teacher"
+    ],
+    "malformed_evidence_rejected": 30,
+    "rejected_mutations": [
+      "music:condition.calls:bool",
+      "music:condition.calls:float",
+      "music:condition.prefix_length:bool",
+      "music:condition.prefix_length:float",
+      "music:condition.predicted_length:bool",
+      "music:condition.predicted_length:float",
+      "music:condition.predicted_length:int",
+      "music:condition.raw_sha256:str",
+      "music:native.text_encoder_loaded:int",
+      "music:native.tokenizer_loaded:int",
+      "music:native.processor_loaded:int",
+      "music:native.text_encoder_calls:bool",
+      "music:native.text_encoder_calls:float",
+      "music:native.semantic_text:str",
+      "music:native.prefix_tokens:bool",
+      "music:native.prefix_tokens:float",
+      "music:native.prompt_embeds_shape:list",
+      "music:native.visual_reference_rows:bool",
+      "music:native.visual_reference_rows:int",
+      "music:native.visual_reference_sha256:str",
+      "music:native.native_music_bypass:bool",
+      "music:native.all_target_audio_clean:bool",
+      "music:deployment.checkpoint_sha256:str",
+      "music:deployment.tail_shape:list",
+      "music:deployment.predicted_length:float",
+      "music:deployment.uses_ground_truth_caption:bool",
+      "music:deployment.final_adapter_projection_executed:bool",
+      "teacher:condition.original_teacher_tokens:float",
+      "teacher:condition.original_teacher_tokens:bool",
+      "teacher:condition.source_sha256:str"
+    ],
+    "cache_extra_aswap_files_allowed": true
+  },
+  "pure_text_teacher_audit": {
+    "complete": true,
+    "cpu_only": true,
+    "gpu_started": false,
+    "actual_lm_forward": false,
+    "image_io": false,
+    "pure_text_schema_hash_token_ids_length_checked": true,
+    "fixed_joint_three_case_binding_checked": true,
+    "source_manifest_and_protocol_checked": true,
+    "current_case_path_and_source_sha_checked": true,
+    "teacher_tail_only_bf16_and_one_tags_exact": true,
+    "prefix_length": 0,
+    "text_encoder_tokenizer_processor_accesses": 0,
+    "original_prompt_process_and_preprocess_calls": 0,
+    "manager_uses_manifest_not_directory_name": true,
+    "manager_three_joint_no_tc_commands_checked": true,
+    "no_tc_conditions": [
+      {
+        "kind": "pure_text_teacher_no_tc_diagnostic",
+        "teacher_only_diagnostic": true,
+        "music_prediction": false,
+        "context_source": "none_teacher_tail_only_diagnostic",
+        "source_sha256": "d5a5d637887bc1db5d9c73431dd96618d13c0eaf6cd76235ee26e96a51a86b59",
+        "source_path": "/tmp/h3_pure_teacher_cpu_8mln4y4z/binding/cache/cpu_0_cpu_0.pt",
+        "original_teacher_tokens": 2,
+        "teacher_tail_sha256": "e57168f67c567d2a8748374217e32ceafe5d7613cba455c9db0e5f7413cef446",
+        "sample_id": "cpu_0",
+        "image_path": "/nonexistent/cpu_0.png",
+        "audio_path": "/nonexistent/cpu_0.wav",
+        "student_reads_caption": false,
+        "source_kind": "pure_text_h3_raw_tokens",
+        "text_only": true,
+        "image_conditioned": false,
+        "source_scope": "caption_only_no_reference_context",
+        "teacher_length_for_diagnostic_only": true,
+        "caption_sha256": "69a268c416a90266ac103f4a5f4f12b1bd98d14ae33574c46e50f4c394f94fa4",
+        "source_token_ids_sha256": "21316f108eca8475cedba9d43e10aeee4b5f7fe8f2f18718744415e566fb1e97",
+        "source_cache_file": "/tmp/h3_pure_teacher_cpu_8mln4y4z/source/cpu_0.pt",
+        "source_cache_file_sha256": "002878c70c00251c1de1929d7507ca124c8b64b915b4831e0dbf42c6ffa1a3d7",
+        "reference_image_binding_only": true,
+        "loaded": false,
+        "calls": 0,
+        "semantic_text": null,
+        "processor_loaded": false,
+        "tokenizer_loaded": false,
+        "prefix_length": 0,
+        "tail_shape": [
+          2,
+          5120
+        ],
+        "predicted_length": 2,
+        "raw_sha256": "49ed988cd449f1b8983e6f9c5f8cafb50ebd17de03b05fe926ebf24d684f7e50"
+      },
+      {
+        "kind": "pure_text_teacher_no_tc_diagnostic",
+        "teacher_only_diagnostic": true,
+        "music_prediction": false,
+        "context_source": "none_teacher_tail_only_diagnostic",
+        "source_sha256": "18597c7fe36b3ce82756c0708073d4e57388d999303650ac966205833a24854f",
+        "source_path": "/tmp/h3_pure_teacher_cpu_8mln4y4z/binding/cache/cpu_1_cpu_1.pt",
+        "original_teacher_tokens": 3,
+        "teacher_tail_sha256": "69e5422b03de3295f47bcce7e860eb23a501c48eb1f95e37c53b0ea6d889f1d8",
+        "sample_id": "cpu_1",
+        "image_path": "/nonexistent/cpu_1.png",
+        "audio_path": "/nonexistent/cpu_1.wav",
+        "student_reads_caption": false,
+        "source_kind": "pure_text_h3_raw_tokens",
+        "text_only": true,
+        "image_conditioned": false,
+        "source_scope": "caption_only_no_reference_context",
+        "teacher_length_for_diagnostic_only": true,
+        "caption_sha256": "23b2fafd9fcd4e549f92fb5fabffa7cfd855a2aa1baa05d2ab8a25dc542bdb10",
+        "source_token_ids_sha256": "bbfdfa1ecf21e2088707583b86fd950b9125c6e9d975b2f5390c1c668688b3e9",
+        "source_cache_file": "/tmp/h3_pure_teacher_cpu_8mln4y4z/source/cpu_1.pt",
+        "source_cache_file_sha256": "9aacdd5dbd2ff34c357f9172149cd80a0cb63ff2604df6f406619313e42f7a34",
+        "reference_image_binding_only": true,
+        "loaded": false,
+        "calls": 0,
+        "semantic_text": null,
+        "processor_loaded": false,
+        "tokenizer_loaded": false,
+        "prefix_length": 0,
+        "tail_shape": [
+          3,
+          5120
+        ],
+        "predicted_length": 3,
+        "raw_sha256": "2ad34b2b9da143823e3a47db38766585f4a0e242cdb7a3d275a3fba870c6fcff"
+      },
+      {
+        "kind": "pure_text_teacher_no_tc_diagnostic",
+        "teacher_only_diagnostic": true,
+        "music_prediction": false,
+        "context_source": "none_teacher_tail_only_diagnostic",
+        "source_sha256": "bdf58b0326e83c69e507376a70746d032d16632a6be3f1db26e69d0901c239b0",
+        "source_path": "/tmp/h3_pure_teacher_cpu_8mln4y4z/binding/cache/cpu_2_cpu_2.pt",
+        "original_teacher_tokens": 4,
+        "teacher_tail_sha256": "e1cdbd3a9ce855495a1c60f278f5142302d7f08e0dc5c25421ba96287b9b7029",
+        "sample_id": "cpu_2",
+        "image_path": "/nonexistent/cpu_2.png",
+        "audio_path": "/nonexistent/cpu_2.wav",
+        "student_reads_caption": false,
+        "source_kind": "pure_text_h3_raw_tokens",
+        "text_only": true,
+        "image_conditioned": false,
+        "source_scope": "caption_only_no_reference_context",
+        "teacher_length_for_diagnostic_only": true,
+        "caption_sha256": "7c4c5a8cd6e96abb6f1a3c416dfbb36fe8e37fc6d4ba27f0a2a7f88c71a09f2b",
+        "source_token_ids_sha256": "9709093f167cd9a3be267ea2e9aa7cde981a662bef8670c90bbeaa23fcde9463",
+        "source_cache_file": "/tmp/h3_pure_teacher_cpu_8mln4y4z/source/cpu_2.pt",
+        "source_cache_file_sha256": "7befc3e21cab6daf887c54c4fb50b621ff56c8f6f7dedccac35a473d551674a2",
+        "reference_image_binding_only": true,
+        "loaded": false,
+        "calls": 0,
+        "semantic_text": null,
+        "processor_loaded": false,
+        "tokenizer_loaded": false,
+        "prefix_length": 0,
+        "tail_shape": [
+          4,
+          5120
+        ],
+        "predicted_length": 4,
+        "raw_sha256": "5f0b7a035531e562e7bbefdd5d5086d544ac85a267e542a9d6f9106c2f4362c2"
+      }
+    ],
+    "rejected_inputs": [
+      "metadata.text_only:int",
+      "metadata.image_conditioned:int",
+      "metadata.prefix_length:bool",
+      "metadata.prefix_length:int",
+      "metadata.kind:str",
+      "metadata.caption_sha256:str",
+      "metadata.tail_sha256:str",
+      "metadata.source_token_ids_sha256:str",
+      "metadata.token_ids_sha256:str",
+      "metadata.tail_length:float",
+      "metadata.teacher_length:bool",
+      "metadata.prefix_context:Tensor",
+      "record.prefix_context:Tensor",
+      "record.teacher_length:float",
+      "record.tail:Tensor",
+      "record.source_token_ids:Tensor",
+      "record.source_token_ids:Tensor",
+      "no_tc_input:prompt",
+      "no_tc_input:prompt,keyframes",
+      "no_tc_input:prompt,text_embedding",
+      "current_case_image_path",
+      "manifest_protocol_integrity",
+      "manager_caption_only_scope",
+      "source_cache_file_sha"
+    ],
+    "scope": "CPU fixtures only; no teacher LM, image/VAE/DiT/GPU/video execution or quality claim"
+  },
+  "music_only_none_deployment_audit": {
+    "complete": true,
+    "cpu_only": true,
+    "real_checkpoint_or_gpu_executed": false,
+    "fake_checkpoint_worker_executed_in_process": true,
+    "new_input_keys_exact_waveform_only": true,
+    "new_generate_context_none": true,
+    "new_key_has_no_context_bytes": true,
+    "legacy_key_input_and_raw_tail_unchanged": true,
+    "legacy_input_keys_exact_waveform_context": true,
+    "checkpoint_policy_read_once_mmap_and_no_state_retained": true,
+    "new_no_tc_factory_none_bf16_tail_and_no_prefix_exact": true,
+    "new_metadata_context_projection_rejected": true,
+    "no_tc_condition": {
+      "kind": "music_only_global_bias_no_tc_deployment",
+      "context_policy": "music_only_global_bias",
+      "context_source": "none_music_only_global_bias",
+      "old_model_not_trained_for_no_tc": false,
+      "uses_ground_truth_caption": false,
+      "checkpoint_sha256": "42019ae22aa58c824ded8dd553c334bfa1b54ac28b7f938565107fa1b3eaf14c",
+      "loaded": false,
+      "calls": 0,
+      "semantic_text": null,
+      "processor_loaded": false,
+      "tokenizer_loaded": false,
+      "prefix_length": 0,
+      "tail_shape": [
+        2,
+        5120
+      ],
+      "predicted_length": 2,
+      "raw_sha256": "787572014fadc319dc8b2d4b03232f6eeb861175d93dbeb842a8a710b9e8b74b"
+    },
+    "rejected_inputs": [
+      "new_external_context:Tensor",
+      "new_external_context:Tensor",
+      "new_external_context:str",
+      "legacy_proxy_none",
+      "worker_keys:music_only_global_bias:context,waveform",
+      "worker_keys:music_only_global_bias:context,waveform",
+      "worker_keys:tc_prefix_context:waveform",
+      "worker_keys:music_only_global_bias:caption,waveform",
+      "new_checkpoint_TC_factory",
+      "new_metadata_context_projection"
+    ],
+    "worker_input_keys": [
+      [
+        "waveform"
+      ],
+      [
+        "context",
+        "waveform"
+      ],
+      [
+        "waveform"
+      ]
+    ],
+    "mock_generated": [
+      {
+        "context_policy": "music_only_global_bias",
+        "context_is_none": true
+      },
+      {
+        "context_policy": "tc_prefix_context",
+        "context_is_none": false
+      },
+      {
+        "context_policy": "music_only_global_bias",
+        "context_is_none": true
+      }
+    ]
+  },
+  "text_encoder_tokenizer_processor_accesses": 0,
+  "original_prompt_process_and_preprocess_calls": 0,
+  "no_text_encoder_onload_names": [],
+  "zero5120_legacy_context_exact": true,
+  "proxy_calls": 1,
+  "proxy_inputs": [
+    {
+      "waveform_sha256": "bd7c127f9a36265ea51f1f1cf02896d5049fe1967c9c8d2bc314bef48c4e2118",
+      "context_sha256": "8f8308176072b4eb64002df9d1eed488306e8f7e74a6c708ad5f02462b709a42"
+    }
+  ],
+  "no_prefix_exact": true,
+  "bf16_tail_and_all_one_tags_exact": true,
+  "forbidden_inputs_rejected": [
+    "prompt:str",
+    "prompt:str",
+    "text_embedding:Tensor",
+    "keyframes:list",
+    "teacher_image_binding"
+  ],
+  "cached_teacher_case_binding_checked": true,
+  "cached_teacher_prefix_context_and_token_ids_unused": true,
+  "original_packed_builder_exact": true,
+  "packed_independent_reference_positions_exact": true,
+  "independent_vae_reference_tensors_unchanged": true,
+  "actual_vae_encoding_executed": false,
+  "text_shape": [
+    3,
+    5120
+  ],
+  "video_shape": [
+    1,
+    24,
+    2,
+    4,
+    6
+  ],
+  "audio_shape": [
+    2,
+    32,
+    5
+  ],
+  "packed_sha256": {
+    "img_pos": "dab7edfdaf56a47e017e5775cb68f7f54ea8f120b1e4205fb75c43ca41f81d31",
+    "audio_pos": "946a11d0c51b8172e048c53789175835a3ec42d4e19c4b6409b144f0c097f2d8",
+    "text_pos": "bbfdfa1ecf21e2088707583b86fd950b9125c6e9d975b2f5390c1c668688b3e9",
+    "img_position_ids": "176b11caa2bfdaf94dbeca959750682b861033e93450229d100c09caaedef243",
+    "token_tags": "4741a115158ec65ea3631e121fff68c8b6fdce2e00b2ad43f3fd1258c359fc77",
+    "cu_seqlens": "c901e4ad2f7295d08383aa7f434bad941cefe7125ab61db59d42567708c1a829"
+  },
+  "no_tc_conditions": [
+    {
+      "kind": "legacy_checkpoint_no_tc_music_only_diagnostic",
+      "context_policy": "tc_prefix_context",
+      "context_source": "zeros_legacy_checkpoint_compatibility",
+      "old_model_not_trained_for_no_tc": true,
+      "uses_ground_truth_caption": false,
+      "checkpoint_sha256": "cpu_mock_full_proxy",
+      "loaded": false,
+      "calls": 0,
+      "semantic_text": null,
+      "processor_loaded": false,
+      "tokenizer_loaded": false,
+      "prefix_length": 0,
+      "tail_shape": [
+        3,
+        5120
+      ],
+      "predicted_length": 3,
+      "raw_sha256": "2ad34b2b9da143823e3a47db38766585f4a0e242cdb7a3d275a3fba870c6fcff"
+    },
+    {
+      "kind": "cached_teacher_tail_only_no_tc_diagnostic",
+      "teacher_only_diagnostic": true,
+      "music_prediction": false,
+      "context_source": "none_teacher_tail_only_diagnostic",
+      "source_sha256": "47343601dd59c150d0cb9e968acc36c391f89464c250464be850683ceab17c52",
+      "source_path": "/tmp/h3_no_tc_cpu_xfi6zbo5/cpu_sid_cpu_audio.pt",
+      "original_teacher_tokens": 3,
+      "teacher_tail_sha256": "18b3e1bde4c38d721c76a513ab33ab5e6c2ae6604ae02af6fb834fd836b7fc4a",
+      "sample_id": "cpu_sid",
+      "image_path": "/cpu_image.png",
+      "audio_path": "/cpu_audio.wav",
+      "student_reads_caption": false,
+      "loaded": false,
+      "calls": 0,
+      "semantic_text": null,
+      "processor_loaded": false,
+      "tokenizer_loaded": false,
+      "prefix_length": 0,
+      "tail_shape": [
+        3,
+        5120
+      ],
+      "predicted_length": 3,
+      "raw_sha256": "2ad34b2b9da143823e3a47db38766585f4a0e242cdb7a3d275a3fba870c6fcff"
+    }
+  ],
+  "scope": "Strict CPU mock and original packed layout with independent VAE-reference tensors; no real music checkpoint/GPU VAE/DiT/video execution and no new-interface success claim"
+}

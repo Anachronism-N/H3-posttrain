@@ -1,0 +1,12 @@
+{
+  "complete": true,
+  "scope": "CPU fixture weights and tiny fake encoder exercise production loader, not actual H3 weights",
+  "actual_H3_weights_loaded": false,
+  "real_LM_GPU_validation_pending": true,
+  "selective_get_tensor_reads_only_assigned_LM": true,
+  "vision_lmhead_unused_layers_norm_not_read": true,
+  "strict_assign_missing_rejected": true,
+  "actual_assigned_tensor_content_hash_verified": true,
+  "meta_materialized_rotary_rebuilt": true,
+  "cuda_initialized": false
+}

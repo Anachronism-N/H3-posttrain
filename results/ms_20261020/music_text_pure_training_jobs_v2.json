@@ -1,0 +1,26 @@
+{
+  "complete": true,
+  "rows": [
+    {
+      "name": "public512",
+      "init": "music_text_pure_public512_init_v2",
+      "gpu": 4,
+      "exit": 0,
+      "log": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_public512_execution_v2.log",
+      "smoke": "/tmp/music_text_pure_public512_smoke_s10_v2",
+      "formal": "/tmp/music_text_pure_public512_d1800_s1200_v2",
+      "manifest": "/tmp/music_text_pure_public512_init_v2_binding.json"
+    },
+    {
+      "name": "C300control256",
+      "init": "music_text_pure_C300control256_init_v2",
+      "gpu": 5,
+      "exit": 0,
+      "log": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_text_pure_C300control256_execution_v2.log",
+      "smoke": "/tmp/music_text_pure_C300control256_smoke_s10_v2",
+      "formal": "/tmp/music_text_pure_C300control256_d1800_s1200_v2",
+      "manifest": "/tmp/music_text_pure_C300control256_init_v2_binding.json"
+    }
+  ],
+  "scope": "Execution completion; independent final source audit and student videos pending"
+}

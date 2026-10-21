@@ -1,0 +1,20 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "legacy_direct_init_exact_allowed": true,
+  "legacy_completed_c300_changed_init_allowed": true,
+  "legacy_invalid_c300_rejected": true,
+  "pure_mode_rejects_even_valid_legacy_c300_fallback": true,
+  "identity_width1024_roundtrip": true,
+  "clip1_old_three_branch_loss_tensors_exact": true,
+  "real_online_main_pure_init_plan_cpu_fixture_passed": true,
+  "new_init_actual_statistics_present": true,
+  "new_init_no_legacy_conversion": true,
+  "paired_protocol_records_infonce_not_computed": true,
+  "real_public_musicfm_runtime_tested": false,
+  "real_h3_runtime_tested": false,
+  "optimizer_updates": 0,
+  "source_sha256": "0243511212d6076e7a9d61811b42f81c2e5a6dc59c8697ce8a14ba207eda88c2",
+  "adapter_source_sha256": "ad91782e75ccd0b9fb82fefe2902d1ae8de9bdbff73cd50ddeb59c55eb1bbcc6",
+  "ready_for_main_integration_cpu": true
+}

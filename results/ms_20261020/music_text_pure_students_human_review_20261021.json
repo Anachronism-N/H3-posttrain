@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-21",
+  "kind": "user_continuous_qualitative_student_preset_review",
+  "complete": true,
+  "verbatim": "新纯监督·正式1800的几个视频都在跳舞,但是动作幅度分case,case2不是很大,case1和3还行,但是都不太跟拍;【新纯监督·换音乐】还是比较接近摆pose",
+  "reviewed_presets": ["新纯监督·正式1800", "新纯监督·换音乐"],
+  "student_runs": ["music_text_pure_public512_d1800_s1200_v2", "music_text_pure_C300control256_d1800_s1200_v2"],
+  "generation_version": "v3",
+  "joint_preset": {
+    "viewed_videos_have_dance": true,
+    "motion_amplitude_case1": "acceptable according to user",
+    "motion_amplitude_case2": "small",
+    "motion_amplitude_case3": "acceptable according to user",
+    "music_beat_following": "weak",
+    "preset_includes_zero_input_controls": true,
+    "zero_vs_original_increment_separately_reported": false
+  },
+  "swapped_music_preset": {
+    "continuous_dance_verdict": "closer to posing than dancing",
+    "music_conditioned_dance_acceptance": false
+  },
+  "scope": "Preset-level continuous qualitative user feedback, not exhaustive 18-video numeric scoring or a separately reported public512-vs-control ranking",
+  "per_configuration_ranking_reported": false,
+  "appearance_or_identity_quality_independently_accepted_by_user": false,
+  "teacher_review_is_not_used_as_student_evidence": true,
+  "partial_positive_result": "Viewed joint-preset videos have dance; motion amplitude is case-dependent",
+  "negative_result": "Weak beat following and posing-like swapped-music output; robust music-conditioned continuous dance is not established",
+  "student_musical_quality_accepted": false,
+  "overall_music_only_reference_image_objective_achieved": false,
+  "technical_report": {
+    "path": "results/ms_20261020/music_text_pure_students_all18_audit_v3.json",
+    "sha256": "3c61412f373ac0e9cd75e72baebf7402735c3e2d4eaaa4d8a03ec134ca909528"
+  },
+  "training_audit": {
+    "path": "results/ms_20261020/music_text_pure_training_independent_audit_v2.json",
+    "sha256": "6c2c126fef6ae623e39043f1d165fcc9d34f0403df8d2fbeae425347329309d1"
+  },
+  "historical_pending_reports_preserved": true,
+  "next_step": "Use the completed student feedback to distinguish dance-condition recovery from music-time/beat control; do not silently restore TC, add a music-native bypass, or expand training budget"
+}

@@ -2220,7 +2220,9 @@ def direct_native_collect(directory, decode=False):
                 or saved.get('input') != inputs or saved.get('audit') != native
                 or inputs.get('case') != case or inputs.get('manifest_sha256') != manifest_sha
                 or inputs.get('sampling') != expected_sampling or native.get('sampling') != expected_sampling
-                or {entry['path']: entry['sha256'] for entry in inputs.get('source_files', {}).values()} != plan['source_files']
+                or {str(Path(entry['path']).resolve(strict=True)): entry['sha256']
+                    for entry in inputs.get('source_files', {}).values()}
+                   != {str(Path(path).resolve(strict=True)): digest for path, digest in plan['source_files'].items()}
                 or inputs.get('student_reads_target_or_caption') is not False or inputs.get('semantic_text', 'missing') is not None
                 or inputs.get('checkpoint_sha256') != plan.get('checkpoint_sha256')
                 or inputs.get('teacher_identity') != plan['teacher_identity']

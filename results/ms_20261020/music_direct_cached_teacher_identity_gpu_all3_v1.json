@@ -1,0 +1,193 @@
+{
+  "complete": true,
+  "kind": "actual_native_cached_teacher_identity_gpu_and_selected_media_audit",
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "actual_gpu_generation": true,
+  "live_text_encoder_loaded": false,
+  "native_real_reference_audio_preserved": true,
+  "full_cached_prefix_and_tags_preserved": true,
+  "source_report_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct_cached_teacher_identity_all3_audit_v1.json",
+  "source_report_sha256": "af699c255b7c183fb2b75a4bba8f8b95c8de50d9dd795acabec6b204fc3dc74c",
+  "generation_task": "4GSClB",
+  "full_decode_audit_task": "iatbWG",
+  "path_normalization_regression_task": "J40gcW",
+  "diagnostic_sha256": "2bfd7cc1ed12c82320f1e251af1302846aabf8f4027041d279a414c3caa7b506",
+  "passed": 3,
+  "rows": [
+    {
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_music_direct_cached_teacher_identity_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4",
+      "video_sha256": "221b7c8cf71fd90001fd54945982c60619a183f020ea7ea9e016eac4b06ebf87",
+      "prefix_tokens": 7437,
+      "raw_shape": [
+        7665,
+        5120
+      ],
+      "identity": {
+        "raw_exact": true,
+        "tags_exact": true,
+        "packed_exact": true,
+        "velocity": {
+          "video": {
+            "exact": true,
+            "max_abs": 0.0,
+            "rms": 0.0,
+            "relative_rms": 0.0
+          },
+          "audio": {
+            "exact": true,
+            "max_abs": 0.0,
+            "rms": 0.0,
+            "relative_rms": 0.0
+          }
+        },
+        "comparison": "paired_same_input_cached_full_teacher_vs_P_plus_y"
+      },
+      "scheduler_updates": {
+        "video": 50,
+        "audio": 50
+      },
+      "output_audio": "generated",
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_music_direct_cached_teacher_identity_v1/joint/wJPptuhclZmKAEWs_wJPptuhclZmKAEWs.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.18, start: 0.000000, bitrate: 16778 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 16601 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 194 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      }
+    },
+    {
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_music_direct_cached_teacher_identity_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4",
+      "video_sha256": "6c61388e8f50643ff5825cf4b3dd5bad39bb77a34eac80cdc81effe4009fca7d",
+      "prefix_tokens": 7437,
+      "raw_shape": [
+        7636,
+        5120
+      ],
+      "identity": {
+        "raw_exact": true,
+        "tags_exact": true,
+        "packed_exact": true,
+        "velocity": {
+          "video": {
+            "exact": true,
+            "max_abs": 0.0,
+            "rms": 0.0,
+            "relative_rms": 0.0
+          },
+          "audio": {
+            "exact": true,
+            "max_abs": 0.0,
+            "rms": 0.0,
+            "relative_rms": 0.0
+          }
+        },
+        "comparison": "paired_same_input_cached_full_teacher_vs_P_plus_y"
+      },
+      "scheduler_updates": {
+        "video": 50,
+        "audio": 50
+      },
+      "output_audio": "generated",
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_music_direct_cached_teacher_identity_v1/joint/wJPrpFsThWAcBQIw_wJPrpFsThWAcBQIw.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.18, start: 0.000000, bitrate: 10494 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 10308 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 193 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      }
+    },
+    {
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_music_direct_cached_teacher_identity_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4",
+      "video_sha256": "f30289bb5b6524703e8f798dcea48c73d1a1930f86c967094de9c5b680ec2187",
+      "prefix_tokens": 7437,
+      "raw_shape": [
+        7760,
+        5120
+      ],
+      "identity": {
+        "raw_exact": true,
+        "tags_exact": true,
+        "packed_exact": true,
+        "velocity": {
+          "video": {
+            "exact": true,
+            "max_abs": 0.0,
+            "rms": 0.0,
+            "relative_rms": 0.0
+          },
+          "audio": {
+            "exact": true,
+            "max_abs": 0.0,
+            "rms": 0.0,
+            "relative_rms": 0.0
+          }
+        },
+        "comparison": "paired_same_input_cached_full_teacher_vs_P_plus_y"
+      },
+      "scheduler_updates": {
+        "video": 50,
+        "audio": 50
+      },
+      "output_audio": "generated",
+      "integrity": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 704,
+            "height": 1280,
+            "fps": 24.0,
+            "decoded_frames": 124,
+            "verified_by": "decord full-frame decode"
+          },
+          {
+            "codec_type": "audio",
+            "verified_by": "ffmpeg full selected-audio decode"
+          }
+        ],
+        "declared_stream_count_checked": false,
+        "stream_count_note": "ffprobe unavailable: selected video/audio presence and decoding verified; exact declared stream counts not independently checked.",
+        "ffmpeg_metadata_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/H3AR/val_music_direct_cached_teacher_identity_v1/joint/wJQTclrlOLEYYfTB_wJQTclrlOLEYYfTB.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf62.12.102\n  Duration: 00:00:05.18, start: 0.000000, bitrate: 17668 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 704x1280, 17490 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 32000 Hz, stereo, fltp, 196 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nAt least one output file must be specified\n",
+        "full_video_audio_decode": true,
+        "decode_method": "decord + ffmpeg -xerror",
+        "ffmpeg_decoded_video_frames": 124
+      }
+    }
+  ],
+  "musical_quality_accepted": false,
+  "music_prediction_tested": false,
+  "cached_teacher_live_TC_equivalence_tested": false,
+  "scope": "Offline cached P+y vs cached full teacher exact first-step audio/video predictions and full selected video/audio decode; not learned music module, live-TC comparison or human dance/beat quality"
+}

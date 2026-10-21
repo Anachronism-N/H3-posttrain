@@ -1,0 +1,30 @@
+{
+  "complete": true,
+  "kind": "completed_native_teacher_cache_partition_audit",
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "selection": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct6k_v2",
+  "cache_launch_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct6k_v2_cache_launch_v2",
+  "generation_task": "sF0F73",
+  "independent_partition_verification_task": "4l2VQy",
+  "train_count": 6000,
+  "val_count": 500,
+  "total_unique_cached_ids": 6500,
+  "all_six_jobs_exit_zero": true,
+  "actual_native_lm_forward": true,
+  "prefix_caption_independence_checked": true,
+  "original_raw_P_y_split_reconstruction_exact": true,
+  "exact_target_and_prefix_file_id_sets_verified": true,
+  "shards": [
+    {"shard": 0, "count": 1084, "finished_sha256": "cff8fb78ca4196b3038b3744e02d31156151bcc0047246bc2702cf8c79bc71ce"},
+    {"shard": 1, "count": 1084, "finished_sha256": "e36e6b74f4b3a13b4abf4466fa5a30214e74228a14dd429d7de223d4936a42fc"},
+    {"shard": 2, "count": 1083, "finished_sha256": "685d79f60604e62ab34c34bcf2c2b42af55a0169985ce4b716c8242328390f0f"},
+    {"shard": 3, "count": 1083, "finished_sha256": "18d01c26a773a0572a711aeab5f04cda797c6f36f591a43ccae3d70792565df8"},
+    {"shard": 4, "count": 1083, "finished_sha256": "9c0e27b1fd73cf3838237f9fee4b1298718f066897565f2a4b4cad377a8aea44"},
+    {"shard": 5, "count": 1083, "finished_sha256": "b7fb95da97fdf7d964a6438fea27fb54b0dc3326d857f125e929986b0457c9a5"}
+  ],
+  "all_source_file_bytes_independently_rehashed_by_training_manifest_builder": false,
+  "full_training_manifest_completed": false,
+  "formal_training_started": false,
+  "student_video_or_human_quality_accepted": false,
+  "scope": "Native GPU caching and exact partition/provenance completion. Full-byte independent source verification and train-only statistics remain the following manifest stage."
+}

@@ -25,6 +25,41 @@ def sha256(path):
     return digest.hexdigest()
 
 
+def _file_version(stat):
+    return (stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns)
+
+
+def parallel_file_sha256(paths, max_workers=16):
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    paths = list(dict.fromkeys(str(Path(path).resolve(strict=True)) for path in paths))
+
+    def read(path):
+        before = _file_version(Path(path).stat())
+        checksum = sha256(path)
+        if _file_version(Path(path).stat()) != before:
+            raise RuntimeError('Source changed during full SHA verification: ' + path)
+        return path, dict(sha256=checksum, version=before)
+
+    result = {}
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = [pool.submit(read, path) for path in paths]
+        for future in as_completed(futures):
+            path, record = future.result()
+            result[path] = record
+            if len(result) % 250 == 0:
+                print(json.dumps(dict(event='parallel_full_file_sha_verified',
+                                      count=len(result), expected=len(paths))), flush=True)
+    return result
+
+
+def checked_file_sha256(path, records):
+    path = Path(path).resolve(strict=True)
+    record = records[str(path)]
+    if _file_version(path.stat()) != record['version']:
+        raise RuntimeError('Source changed after full SHA verification: ' + str(path))
+    return record['sha256']
+
+
 def write_new(path, value, binary=False):
     path = Path(path)
     if not path.parent.is_dir():

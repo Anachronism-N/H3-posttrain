@@ -729,6 +729,7 @@ def prepare_direct_training_manifest(args, *, expected_train=6000, expected_val=
     import math
     import torch
     from transformers import AutoTokenizer
+    from music_text_align import parallel_file_sha256, checked_file_sha256
     from music_scale_data import (DIRECT_PROTOCOL, read_json, source_record,
         assert_sources_unchanged, atomic_json, check_outputs, id_list)
 
@@ -747,6 +748,7 @@ def prepare_direct_training_manifest(args, *, expected_train=6000, expected_val=
                     for name in (report_name, 'split', 'caps', 'references')}
     sources = {name: source_record(path) for name, path in source_paths.items()}
     sources['pipeline_code'] = source_record(__file__)
+    sources['file_hash_code'] = source_record(Path(__file__).with_name('music_text_align.py'))
     report, split, caps, references = [read_json(source_paths[name])
         for name in (report_name, 'split', 'caps', 'references')]
     train, val = split.get('train'), split.get('val')
@@ -861,6 +863,9 @@ def prepare_direct_training_manifest(args, *, expected_train=6000, expected_val=
         if ({path.stem for path in (directory / 'targets').glob('*.pt')} != set(ids)
                 or {path.stem for path in (directory / 'prefixes').glob('*.pt')} != set(ids)):
             raise ValueError('Teacher/prefix files do not match exact completed shard IDs')
+        file_hashes = parallel_file_sha256(
+            [directory / folder / (sid + '.pt') for sid in ids for folder in ('targets', 'prefixes')]
+            + [references['records'][sid]['audio_path'] for sid in ids])
         for record in cache_rows:
             sid = record['sample_id']
             partition = 'train' if sid in train_set else 'val'
@@ -870,7 +875,8 @@ def prepare_direct_training_manifest(args, *, expected_train=6000, expected_val=
                     or record.get('partition') != partition):
                 raise ValueError('Duplicate/direct target path/partition mismatch: ' + sid)
             target_stat, prefix_stat = target_path.stat(), prefix_path.stat()
-            target_identity, prefix_identity = source_record(target_path), source_record(prefix_path)
+            target_identity = dict(path=str(target_path), sha256=checked_file_sha256(target_path, file_hashes))
+            prefix_identity = dict(path=str(prefix_path), sha256=checked_file_sha256(prefix_path, file_hashes))
             if (target_identity['sha256'] != record.get('target_sha256')
                     or prefix_identity['sha256'] != record.get('prefix_sha256')):
                 raise ValueError('Actual full target/prefix file SHA mismatch: ' + sid)
@@ -906,7 +912,7 @@ def prepare_direct_training_manifest(args, *, expected_train=6000, expected_val=
                 raise ValueError('Teacher prefix/image selection binding mismatch: ' + sid)
             reference = references['records'][sid]
             audio_path = Path(reference['audio_path']).resolve(strict=True)
-            audio_identity = source_record(audio_path)
+            audio_identity = dict(path=str(audio_path), sha256=checked_file_sha256(audio_path, file_hashes))
             if (audio_identity['sha256'] != reference.get('audio_sha256')
                     or (not audit_case_cache and audio_identity != report.get('artifacts', {}).get(sid, {}).get('audio'))):
                 raise ValueError('Original selected audio path/content changed: ' + sid)
@@ -927,6 +933,8 @@ def prepare_direct_training_manifest(args, *, expected_train=6000, expected_val=
             if ((target_stat.st_size, target_stat.st_mtime_ns) != (after_target.st_size, after_target.st_mtime_ns)
                     or (prefix_stat.st_size, prefix_stat.st_mtime_ns) != (after_prefix.st_size, after_prefix.st_mtime_ns)):
                 raise RuntimeError('Target/prefix changed during streaming validation: ' + sid)
+            for path in (target_path, prefix_path, audio_path):
+                checked_file_sha256(path, file_hashes)
             del data, metadata, tail, token_ids, value
             if len(rows) % 250 == 0:
                 print(json.dumps(dict(event='direct_training_manifest_targets_verified', count=len(rows),

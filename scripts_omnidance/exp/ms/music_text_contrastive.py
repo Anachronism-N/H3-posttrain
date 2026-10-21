@@ -11,7 +11,8 @@ from torch.nn import functional as F
 
 from music_text_adapter import (MusicToH3Text, load_music_text_checkpoint, save_music_text_checkpoint, length_loss,
                                 masked_token_loss, convert_music_text_to_no_text_encoder)
-from music_text_align import read_split, load_targets, load_features, batch_tensors, evaluate, sha256, write_new
+from music_text_align import (read_split, load_targets, load_features, batch_tensors, evaluate,
+                              sha256, write_new, parallel_file_sha256, checked_file_sha256)
 
 
 @torch.no_grad()
@@ -1003,12 +1004,15 @@ def _direct_load_manifest(path, verify_sources=True):
                 key = str(source.resolve())
                 if key in verified and verified[key] != checksum:
                     raise ValueError('Conflicting source SHA in manifest: ' + key)
-                if verify_sources and key not in verified and sha256(source) != checksum:
-                    raise ValueError('Changed verified direct source: ' + key)
                 verified[key] = checksum
     if train_groups & val_groups or train_tokens != token_count:
         raise ValueError('Train/validation song groups overlap or training token count differs')
-    # Only SHA-byte reads above: neither target raw-y nor cached P is torch-loaded.
+    if verify_sources:
+        file_hashes = parallel_file_sha256(verified)
+        for path, checksum in verified.items():
+            if checked_file_sha256(path, file_hashes) != checksum:
+                raise ValueError('Changed verified direct source: ' + path)
+    # All source bytes are SHA-verified; neither target raw-y nor cached P is torch-loaded.
     return dict(metadata=metadata, rows=rows, train=train, val=val, mean=mean, std=std,
                 teacher_means=teacher_means, teacher_rms=teacher_rms, groups=group_indices,
                 teacher_energy=float(energy), source_files=verified)
@@ -1150,7 +1154,8 @@ def _direct_training(args):
     torch.cuda.set_device(local_rank)
     device = torch.device('cuda', local_rank)
     if world > 1:
-        dist.init_process_group('nccl')
+        from datetime import timedelta
+        dist.init_process_group('nccl', timeout=timedelta(hours=4))
     torch.set_num_threads(2)
     torch.manual_seed(args.seed)
     random.seed(args.seed)
@@ -1174,7 +1179,8 @@ def _direct_training(args):
                          limit_train=args.limit_train, train_probe_ids=probe, world_size=world)
     source_paths = [Path(__file__), Path(__file__).with_name('music_text_adapter.py'),
                     Path(__file__).with_name('music_encoder_adapter.py'),
-                    Path(__file__).with_name('music_clip_bridge.py')]
+                    Path(__file__).with_name('music_clip_bridge.py'),
+                    Path(__file__).with_name('music_text_align.py')]
     fingerprints = dict(sources={str(path.resolve()): sha256(path) for path in source_paths},
                         manifest_sha256=sha256(args.data_manifest))
     resume = None
@@ -1231,6 +1237,8 @@ def _direct_training(args):
                 global_loss_ddp_scaling='allgather_backward_SUM_cancels_DDP_gradient_MEAN',
                 tail_batch_policy='balanced_actual_ID_rows_no_drop_no_repetition_communication_padding_excluded',
                 global_batch_size=args.local_batch_size * world,
+                source_verification='full_bytes_SHA256_parallel_16_workers_with_file_version_checks',
+                distributed_timeout_seconds=14400,
                 convergence_retrieval_guard='R@1 >= first_plateau_R@1 - 0.01_absolute',
                 full_epoch_last_batch_sizes=[len(_direct_rank_ids(
                     _direct_epoch_batches(train, args.local_batch_size, world, args.seed, 1)[-1], r, world))

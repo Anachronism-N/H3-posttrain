@@ -750,6 +750,16 @@ manifest成功后自动在19.69/17.70各0–3四GPU启动相同初始化的A/B�
 
 六配置生成全部exit0后，队列实际执行每配置独立`--direct_native_audit`，decord逐帧和ffmpeg -xerror全音视频解码、checkpoint/source/P/native/scheduler/音轨SHA一致性审核。失败保留partial与日志，不覆盖/跳过；全部技术审核通过仍写`musical_quality_accepted=false/human_review_required=true`。真实人评、模型归因与正负分析由后续独立验收完成；队列不能代替用户判断连续舞蹈、幅度、跟拍、换曲和身份保真。
 
+#### 2026-10-22 完整缓存验收与串行I/O修复
+
+6500教师缓存已实际全部exit0，六分片1084/1084/1083/1083/1083/1083完整finished；主线程`4l2VQy`核全部plan/finished SHA、唯一6500 IDs、train6000/val500、全target/P文件ID集合、actual LM/P caption独立性/原raw拆拼。报告`results/ms_20261020/music_direct_full6500_native_cache_v1.json`明确这是缓存完成，不是正式训练或质量成功。
+
+实际19.69读验4个P文件304,881,620 bytes用了36.27秒（单个7.16–11.87秒，`E9u7ZV`）。为避免全量缓存验证和rank0启动串行I/O阻塞，`music_text_align.py`新增受限16线程**完整文件字节SHA**，并核dev/ino/size/mtime_ns/ctime_ns读验前后及消费前后不变；`music_text_pipeline.py`每shard并行核P/y/audio后仍逐项比较全部finished/reference SHA，P不torchload，FP64 per-example mean/RMS及train-only统计不变；trainer同样完整并行核全部源字节、源指纹加入hash helper。NCCL等待timeout显式4小时，以容纳rank0全源完整核验，不关闭内容验证或改变loss/batch/优化器/收敛规则。
+
+实际3cache消费者回归`KWYCiK`得到新报告`MS/music_direct_eval3_cache_parallel_audit_v2.json` SHA `0858840dd1bac625ab155f1b70be1869f1d1f88ce932f40dc7d5f2b8eddc9fd1`；主线程`TWMyJw`证明旧新rows（实际P/y/audio SHA、逐样本teacher均值/RMS）逐值相同。四真实P的完整SHA与finished一致，文件version负例拒绝、错误SHA仍不匹配（`JgmWWd`）；该测试是热cache且不同host，不将0.1秒和远端36秒冒作吞吐加速证明。独立只读审查未发现新阻塞，未另开测试或上卡。
+
+原`XATcau`/`ra7oDl`接续队列已在正式训练前安全暂停，保存其v1 plan和全部日志，未改变/重跑cache。唯一全量builder现为`Ryz64z`，新输出`MS/music_direct6k_v2_training_manifest_v2.json`，仍严格6000/500/六完整shard、全部源字节校验；唯一新训练接续`EjktZa`（`MS/music_direct6k_v2_training_queue_v2`）等待实际builder完成，之后同原A/B配置启动。唯一后续18视频接续`K0aRDS`（`MS/music_direct6k_v2_final18_queue_v2`）等待新训练队列；视频/质量状态不变。旧manifest和队列不删除、不覆盖。当前全量manifest尚未完成，正式GPU训练尚未开始。
+
 #### 资源与最终验收
 
 仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。

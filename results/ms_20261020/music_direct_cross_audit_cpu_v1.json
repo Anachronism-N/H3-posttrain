@@ -1,0 +1,17 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "synthetic_fixture": true,
+  "actual_media_or_quality_verified": false,
+  "valid18_fixture_passed": true,
+  "rejected": [
+    "zero_not_zero",
+    "native_changed",
+    "prefix_changed",
+    "video_changed",
+    "incomplete18",
+    "duplicate_config"
+  ],
+  "execution": "hhfl1Z",
+  "scope": "Actual cross-audit function with explicit synthetic source/waveform/media fixture; not real H3 video decode or human acceptance"
+}

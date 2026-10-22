@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-22",
+  "human_baseline_feedback": "两条都可用,你可以试着把这两条融合一下",
+  "baseline_people": 1,
+  "source_caption_file_sha256": "b367f18b1406092f6328f3b2c0e9d294b9e3d8eaa27f0f66e2373f394bebd143",
+  "caption_input": {
+    "id": "FqlHJVDlFGLKCUJS",
+    "image_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/FqlHJVDlFGLKCUJS.png",
+    "motion_caption": "The dancer blends the elegance of ballet with the fluidity of contemporary dance, sustaining a light, buoyant quality through clearly connected movement phrases. Graceful arm lines unfold from bent elbows into brisk extensions, with the left arm opening and the right elbow extending fully. Quick counterclockwise and clockwise turns create changes of direction while the upper body remains poised and coordinated; the turning phrase returns into a counterclockwise rotation rather than settling into a held pose. The hands draw toward the knees and then sweep away, linking the lower-reaching gesture to an expansive opening of the arms. The left hand travels away from the right shoulder, and the right hand opens away from the left shoulder, creating contrasting arm pathways across the body. Both elbows fold deeply before the arms spread outward again; the hands return toward the shoulders and move closer together, gathering the open shape into a compact transition. Strength, flexibility and balanced control give these bends, extensions and turns a smooth, playful continuity, with expressive energy carried through the transitions.",
+    "caption_version": "rich-ms-editorial-fusion-humanrequest-v7",
+    "review_music_sidecar": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/FqlHJVDlFGLKCUJS.wav",
+      "consumed_by_H3": false,
+      "waveform_opened_during_preparation": false
+    },
+    "sidecar": {
+      "purpose": "One same-case caption fusion requested after the user found both frozen video-only rich/MS baselines usable. Not video concatenation or model weight blending.",
+      "author": "Assistant editorial synthesis of the two existing captions; not a Qwen rewrite or a human-reviewed training target",
+      "human_feedback_verbatim": "两条都可用,你可以试着把这两条融合一下",
+      "human_feedback_date": "2026-10-22",
+      "source_rich_caption_json": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_baseline_rich_case1_v1.json",
+      "source_rich_caption_file_sha256": "4a6b3f3199f02568fa67c087663abb6d4f20c5bdea094a10d66bfd793d329992",
+      "source_MS_caption_json": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_baseline_ms_case1_v1.json",
+      "source_MS_caption_file_sha256": "282f9969778591192bd81177ccd1c431bb18dc0df3227cc5da583947b20f1430",
+      "source_manifest": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_preview32_v3.json",
+      "source_manifest_sha256": "bc7d36e820ef274089e6d29e3533de1b5aa8914381f3643d3dba79ab1a0eabbb",
+      "used_fact_ids": [
+        "RICH:1",
+        "RICH:2",
+        "RICH:3",
+        "MS:5",
+        "MS:6",
+        "MS:7",
+        "MS:8",
+        "MS:11"
+      ],
+      "fusion_policy": "Rich supplies style, fluidity and expressive quality; MS supplies concrete elbow, hand and turn actions. Remove duplicate phrases and synthetic seconds; retain local movement relationships. The overall linked phrase is a proposed choreography, not a verified source-video timeline.",
+      "action_coverage": {
+        "MS:5": "Bent left elbow into brisk extension",
+        "MS:6": "Counterclockwise and clockwise turns, returning counterclockwise; hands approach then leave knees",
+        "MS:7": "Left hand away from right shoulder and right elbow fully extended",
+        "MS:8": "Right hand away from left shoulder",
+        "MS:11": "Deep elbow bends, arms opening, hands toward shoulders and toward each other"
+      },
+      "time_scope": "unknown",
+      "conflicts": [
+        "Original MS synthetic second-based timing is not verified and has been removed.",
+        "Cross-fact ordering is an editorial choreography proposal; rich/MS coverage of the paired source window has not been verified."
+      ],
+      "caption_human_approved": false,
+      "formal_SFT_reuse_forbidden": true,
+      "inference_diagnostic_only": true,
+      "reference_policy": "Keep the same image; no target first-frame hard lock",
+      "sampling": {
+        "seed": 42,
+        "steps": 50,
+        "cfg": 1,
+        "flow_shift": 12,
+        "height": 1280,
+        "width": 704,
+        "frames": 124,
+        "fps": 24
+      },
+      "H3_audio_input": false,
+      "H3_audio_output": false
+    }
+  },
+  "expected_new_videos": 1,
+  "reused_usable_baselines": 2,
+  "generation_started": true,
+  "generation_task": "5SbRq3",
+  "generation_host": "28.216.19.143",
+  "gpu": 0,
+  "generation_complete": false,
+  "human_fusion_review_received": false,
+  "formal_caption_training_approved": false
+}

@@ -1050,3 +1050,9 @@ N7 bucketview freshv4 RueYFY真实exit0，Aw7Gjh独立完整验收exit0，verifi
 H3正式100/300数据来源门禁已实现并主线程C2GQhv独立CPU全部通过，最终源码16c81225b62d77627b739522040128b957fddd4cabfc7f88417a421cf4086b40（不是先交付71284883）。默认data_scope=interface，仅明确max_train_steps2可做接口；正式100/300必须显式--data_scope reviewed_train。模型加载前独立验证fusion export complete/六outputSHA、train-only分区/统一版本、manifest/review/rewriteSHA/ID/四项审批/evidence/window/target和全媒体/meta SHA；缓存producer/scope/provenance/temporalpolicy再核，逐sample绑定trainID/captionSHA及完整成员，禁止翻marker将fixture升级正式。21metadata/9cache/四个漏显式scope拒例、合法100/300到model边界正例与原tiny恢复下一步bitexact全部通过。仅CPU合成审批链，不真实导出/上卡；旧9f5缓存/训练/GPU恢复封存，不重标新source已GPU通过。full3–10epoch完整预算/val平台入口仍待后续必要实施，不在现CPU门禁任务谎称full已支持或运行。
 
 本次八节点资源只读快照2026-10-22 23:17:39：模型实验0/64、holder48（N1/N2/N4/N5/N6运行40，N8停止T态8）、N3/N7真空闲16、未知compute0。holder每卡975MiB，运行者100%仅矩阵乘，不算训练。每节点实际cgroup limit约997.83GiB、headroom348–691GiB；64reserve全部已过1200秒保护，N1原watchdog可补占卡，因此不保证未来空闲。未launch/kill/刷新reserve。详细节点表及当前真实任务/已完成验收/正式监督0审批阻断均写notes28与cluster_resource_utilization_summary_20261022.json；不再把已结束30B/H3/GPU推理称运行中。
+
+### 2026-10-22 最新正式推进决策：只30B、委托AI证据审核
+
+用户要求更详细记录音乐替换文本的逐轮实验/结论/分析，取消后续7B微调对照，尽快正式推进；在澄清目标审核后明确回复“我希望你来进行审核,此外,也可以直接进行推进”。这取代需用户逐条人工POST的当前前置：允许透明assistant_delegated AI证据审核真实配对片段和来源事实，不冒human分数，不把unknown原rich/MS窗口伪verified。
+
+已实际完成新30B-only pilot来源prepare ZyNQ3t，512train/128val，共640记录，`MS/dance_caption_pilot640_30b_only_manifest_v1.json` SHA624408c0bba8926ed21d0756e12c9161ca12dc917569a6e8be5317c0376ab729；所有目标仍未生成/未批准，不是formalSFT。当前实际推进32媒体AI观察、30B冻结teacher重写兼容与透明审核契约；文档notes28的音乐替换文本R0–R7逐轮章节同步补详。距离正式pilot剩真实审核目标→640监督→导出/数据签名→当次8卡准入，技术接口不再重复验、7B不再训练，不等待用户再逐条审批。完成这条关键路径后直接官方30B fresh三epoch/smoke0，未完成前不假称已经正式训练或给未经证据的日历时间。

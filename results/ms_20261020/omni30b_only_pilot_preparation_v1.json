@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-22",
+  "preparation_complete": true,
+  "formal_training_started": false,
+  "student_model": "Official Qwen3-Omni-30B-A3B-Instruct Thinker",
+  "official_revision": "26291f793822fb6be9555850f06dfe95f2d7e695",
+  "further_7B_student_training_cancelled_by_user": true,
+  "existing_30B_interface_verified": true,
+  "existing_H3_video_only_interface_verified": true,
+  "candidate_manifest": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_pilot640_30b_only_manifest_v1.json",
+    "sha256": "624408c0bba8926ed21d0756e12c9161ca12dc917569a6e8be5317c0376ab729",
+    "producer_source_sha256": "b53aece351adf3f94d84f29c0caf5494699132bd85abbeb0a9594377bf9d7f75",
+    "records": 640,
+    "train": 512,
+    "val": 128,
+    "source_groups_unique": 640,
+    "fixed_and_blocked_ID_leakage": false,
+    "caption_targets_generated": false,
+    "semantic_approval": false,
+    "existing_file_overwritten_or_producer_relabelled": false
+  },
+  "user_delegated_review": {
+    "verbatim": "我希望你来进行审核,此外,也可以直接进行推进",
+    "review_kind": "assistant_delegated",
+    "human_review_impersonated": false,
+    "requires_actual_media_observation_and_source_evidence": true,
+    "unknown_original_rich_MS_window_not_fabricated_verified": true
+  },
+  "remaining_critical_path": [
+    "Actual 32 paired-media evidence observations and corrected, supported movement facts",
+    "Official30B frozen text-only rewrite and transparent evidence review contract",
+    "512/128 rewritten targets with checked content/media provenance and split/version consistency",
+    "Export verified metadata and fresh8GPU host/cgroup/UID/argv/UUID admission",
+    "Fresh official30B formal pilot: smoke_steps0, min_epochs3, max_epochs3"
+  ],
+  "additional_model_download_or_7B_comparison_required": false,
+  "repeat_interface_smoke_required": false,
+  "calendar_start_time_not_promised": true,
+  "start_condition": "Launch the formal30B pilot as soon as the real targets and evidence review/export checks pass and current GPU admission is verified; no further routine user confirmation.",
+  "full_active_goal_completed": false
+}

@@ -497,7 +497,9 @@ def evaluate(model, processor, rows, args, device, dtype, rank, world, n_window)
             inputs = to_device(prepare_inputs(processor, row, training=False, max_length=args.max_length,
                                              audio_n_window=n_window), device, dtype)
             with torch.autocast(device_type=device.type, dtype=dtype, enabled=device.type == 'cuda'):
-                generated = model.generate(**inputs, max_new_tokens=args.max_new_tokens, do_sample=False, use_cache=True)
+                generated = model.generate(**inputs, max_new_tokens=args.max_new_tokens, do_sample=False, use_cache=True,
+                                       eos_token_id=processor.tokenizer.eos_token_id,
+                                       pad_token_id=processor.tokenizer.pad_token_id)
             if not isinstance(generated, torch.Tensor):
                 raise ValueError('Expected text-only Thinker generation')
             samples.append(dict(id=row['id'], caption=processor.batch_decode(
@@ -723,7 +725,9 @@ def train(args):
                             max_length=args.max_length, audio_n_window=n_window), device, torch.bfloat16)
                         if 'labels' in inputs:
                             raise ValueError('Deployment input unexpectedly contains training labels')
-                        generated = model.generate(**inputs, do_sample=False, max_new_tokens=args.max_new_tokens)
+                        generated = model.generate(**inputs, do_sample=False, max_new_tokens=args.max_new_tokens,
+                                                   eos_token_id=deployment.tokenizer.eos_token_id,
+                                                   pad_token_id=deployment.tokenizer.pad_token_id)
                         if not isinstance(generated, torch.Tensor):
                             raise ValueError('Thinker must produce text only')
                         posttrain_predictions.append(dict(id=row['id'], caption=deployment.batch_decode(
@@ -810,7 +814,9 @@ def inference(args):
             inputs = to_device(prepare_inputs(processor, row, training=False, max_length=args.max_length,
                                 audio_n_window=n_window), model.device, torch.bfloat16)
             with torch.autocast(device_type='cuda', dtype=torch.bfloat16):
-                generated = model.generate(**inputs, do_sample=False, max_new_tokens=args.max_new_tokens)
+                generated = model.generate(**inputs, do_sample=False, max_new_tokens=args.max_new_tokens,
+                                           eos_token_id=processor.tokenizer.eos_token_id,
+                                           pad_token_id=processor.tokenizer.pad_token_id)
             if not isinstance(generated, torch.Tensor):
                 raise ValueError('Thinker must output text only')
             predictions.append(dict(id=row['id'], audio_path=row['audios'][0],

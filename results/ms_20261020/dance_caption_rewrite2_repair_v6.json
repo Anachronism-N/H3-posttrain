@@ -1,0 +1,161 @@
+{
+  "complete": true,
+  "stage": "Two real format-valid fusion previews; not human window approval",
+  "source_sha256": "082e43dad5ad0175cc6a2cbc6aab2912e251210a37c10f91eadd5de214af625c",
+  "records": [
+    {
+      "id": "FqlHJVDlFGLKCUJS",
+      "target": {
+        "motion_caption": "The dancer demonstrates precise control and fluidity, executing graceful arm movements and turns with balanced coordination. The choreography blends elements of ballet and contemporary dance, featuring elegant arm extensions and turns. The dancer's transitions are smooth, showcasing strength and flexibility as the dancer shifts between poses, maintaining poise throughout the performance. The dancer's movements are light and bouncy, enhancing the playful energy of the routine. The dancer's body language radiates confidence and charm, creating a captivating presence that draws the viewer into the dancer's performance. The dancer's charisma enhances the emotional resonance of the choreography.",
+        "used_facts": [
+          "RICH:1",
+          "RICH:2",
+          "RICH:3",
+          "MS:5",
+          "MS:6",
+          "MS:7",
+          "MS:8",
+          "MS:11"
+        ],
+        "conflicts": [
+          "The rich/MS source window mapping is not encoded; MS clause order and seconds prose are not verified timestamps."
+        ],
+        "time_scope": {
+          "status": "unknown",
+          "reason": "Metadata locates normalized media, but rich/MS source window mapping is not encoded; MS clause order and seconds prose are not verified timestamps."
+        }
+      },
+      "validation": {
+        "format_valid": true,
+        "errors": [],
+        "flags": [
+          "human_window_review_required",
+          {
+            "lexical_action_omission_candidates": [
+              "spread",
+              "draw_together"
+            ]
+          }
+        ],
+        "lexical_source_target_action_counts": {
+          "turn": {
+            "source": 5,
+            "target": 2
+          },
+          "jump": {
+            "source": 0,
+            "target": 0
+          },
+          "bend": {
+            "source": 5,
+            "target": 1
+          },
+          "extend": {
+            "source": 4,
+            "target": 1
+          },
+          "travel": {
+            "source": 0,
+            "target": 0
+          },
+          "lower": {
+            "source": 0,
+            "target": 0
+          },
+          "spread": {
+            "source": 5,
+            "target": 0
+          },
+          "draw_together": {
+            "source": 2,
+            "target": 0
+          },
+          "raise": {
+            "source": 0,
+            "target": 0
+          }
+        },
+        "coverage_policy": "Lexical/source-ID counts are flags, NOT semantic coverage evidence",
+        "semantic_approval": false,
+        "human_review_required": true
+      },
+      "rewrite_sha256": "ac530d95679ba27a7a9a4640389762b81a01e9d33692e40751b185bb35156768"
+    },
+    {
+      "id": "mVXzLETQLafotXGy",
+      "target": {
+        "motion_caption": "The dancer performs a fluid and controlled belly dance routine, showcasing strong core engagement and graceful precision. The choreography blends contemporary and stylized elements, featuring intricate hand movements, expressive arm sweeps, and gentle torso undulations. The dancer's right hand moves slowly from the left elbow and shoulder, then spreads apart significantly, with both elbows bent. The dancer's movements are deliberate and expressive, complemented by subtle hip isolations and balanced, poised stances that emphasize flexibility and coordination.",
+        "used_facts": [
+          "RICH:1",
+          "RICH:2",
+          "MS:1",
+          "MS:5"
+        ],
+        "conflicts": [
+          "The rich/MS source window mapping is not encoded; MS clause order and seconds prose are not verified timestamps."
+        ],
+        "time_scope": {
+          "status": "unknown",
+          "reason": "Metadata locates normalized media, but rich/MS source window mapping is not encoded; MS clause order and seconds prose are not verified timestamps."
+        }
+      },
+      "validation": {
+        "format_valid": true,
+        "errors": [],
+        "flags": [
+          "human_window_review_required",
+          {
+            "lexical_action_omission_candidates": [
+              "extend",
+              "draw_together"
+            ]
+          }
+        ],
+        "lexical_source_target_action_counts": {
+          "turn": {
+            "source": 0,
+            "target": 0
+          },
+          "jump": {
+            "source": 0,
+            "target": 0
+          },
+          "bend": {
+            "source": 2,
+            "target": 2
+          },
+          "extend": {
+            "source": 1,
+            "target": 0
+          },
+          "travel": {
+            "source": 0,
+            "target": 0
+          },
+          "lower": {
+            "source": 0,
+            "target": 0
+          },
+          "spread": {
+            "source": 2,
+            "target": 2
+          },
+          "draw_together": {
+            "source": 1,
+            "target": 0
+          },
+          "raise": {
+            "source": 0,
+            "target": 0
+          }
+        },
+        "coverage_policy": "Lexical/source-ID counts are flags, NOT semantic coverage evidence",
+        "semantic_approval": false,
+        "human_review_required": true
+      },
+      "rewrite_sha256": "bd7b367273a4b55ca2a41f0820320dd414f467e31ae9b2e06062e666c7c494aa"
+    }
+  ],
+  "original_invalid_partial_preserved": true,
+  "approved_for_training": false
+}

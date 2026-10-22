@@ -1,0 +1,103 @@
+{
+  "complete": true,
+  "rows": [
+    {
+      "label": "rich",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "video": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_frozen_rich_case1_video_v1/FqlHJVDlFGLKCUJS.mp4",
+        "sha256": "d05bff7cd6381155653e312405c0333cfdf5b8b8170f484e360bb7a2576abfde",
+        "size_bytes": 2514565
+      },
+      "caption": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_baseline_rich_case1_v1.json",
+        "sha256": "4a6b3f3199f02568fa67c087663abb6d4f20c5bdea094a10d66bfd793d329992",
+        "size_bytes": 2848
+      },
+      "image": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/FqlHJVDlFGLKCUJS.png",
+        "sha256": "d9d8d4f0ccf59d47ab7feb20014fe4d17e68fffeaf99fdce9bd44d90a17b4ef1",
+        "size_bytes": 476643
+      },
+      "audio_guard": {
+        "calls": {
+          "audio_patch": 0,
+          "audio_head": 0,
+          "audio_reference_encode": 0
+        },
+        "installed_projection_head_hooks": 2,
+        "observed_video_calls": {
+          "text_encoder": 0,
+          "video_vae_encode": 0,
+          "video_vae_decode": 1,
+          "dit": 50
+        },
+        "audio_vae_is_none": true,
+        "scheduler_audio_is_none": true
+      }
+    },
+    {
+      "label": "ms",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "video": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_frozen_ms_case1_video_v1/FqlHJVDlFGLKCUJS.mp4",
+        "sha256": "e616a36c3761732c9c32e44af38d7d9cbbf66cb25aaa83aab608df4ada2f6a33",
+        "size_bytes": 1596491
+      },
+      "caption": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_baseline_ms_case1_v1.json",
+        "sha256": "282f9969778591192bd81177ccd1c431bb18dc0df3227cc5da583947b20f1430",
+        "size_bytes": 3174
+      },
+      "image": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/FqlHJVDlFGLKCUJS.png",
+        "sha256": "d9d8d4f0ccf59d47ab7feb20014fe4d17e68fffeaf99fdce9bd44d90a17b4ef1",
+        "size_bytes": 476643
+      },
+      "audio_guard": {
+        "calls": {
+          "audio_patch": 0,
+          "audio_head": 0,
+          "audio_reference_encode": 0
+        },
+        "installed_projection_head_hooks": 2,
+        "observed_video_calls": {
+          "text_encoder": 0,
+          "video_vae_encode": 0,
+          "video_vae_decode": 1,
+          "dit": 50
+        },
+        "audio_vae_is_none": true,
+        "scheduler_audio_is_none": true
+      }
+    }
+  ],
+  "case_id": "FqlHJVDlFGLKCUJS",
+  "people": 1,
+  "quality_accepted": false,
+  "human_review_received": false,
+  "fused_condition_pending": true,
+  "source_audit_sha256": "fb0f2ebac5d62b3816e035452a28e93f60047861e7c08be87e6e2931269dda72",
+  "scope": "Actual original Ref2VA frozen video-only two-caption single-case baseline; no human verdict. Fused caption not yet valid",
+  "review_port": 8774
+}

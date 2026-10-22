@@ -44,12 +44,25 @@ may describe movement quality, but do not infer musical rhythm, beats or synchro
 Exclude all appearance, gender, identity, ethnicity, clothing, hair, face, gaze, scene,
 props, camera, audio references, audio reuse and soundtrack descriptions. Use 'the dancer'.
 Never turn removed visual/identity facts into a music-only claim.
-Return exactly a JSON object with these four keys:
-{"motion_caption":"continuous English prose", "used_facts":["MS:0","RICH:1"],
- "conflicts":["uncertain or incompatible facts, including unknown window coverage"],
- "time_scope":{"status":"unknown","reason":"what the supplied time evidence cannot establish"}}.
-used_facts contains ONLY supplied fact IDs, not invented facts or explanations. If time
-coverage is unknown, status MUST be unknown. No markdown or text outside the JSON.'''
+Return exactly one JSON object, then END the assistant reply. The four keys are:
+- motion_caption: one continuous English paragraph, 80 to 180 words, merging the
+  supported actions without duplicate descriptions or invented actions.
+- used_facts: a JSON ARRAY OF STRINGS with the EXACT IDs of supplied facts actually
+  used. Copy each ID from input facts, never substitute a made-up MS index. Integrate
+  the concrete MS actions into the prose, not just the rich style description; cite
+  both RICH and MS sources. Include each nonconflicting MS action and its body part.
+  A rich-only summary is NOT a fusion. If you cannot retain an action, state the
+  specific reason in conflicts instead of silently omitting it.
+- conflicts: a JSON ARRAY OF STRINGS, never a single string. Describe specific
+  unresolved limitations from this input, including that the
+  rich/MS event coverage of the paired short window has not been verified.
+- time_scope: an object with status and reason. Status MUST be unknown when the input
+  coverage is unknown. Explain the actual missing mapping in reason, not a placeholder.
+Use 'the dancer' or 'the dancer\'s' throughout; never she, he, her or his. The narrative
+is about one dancer. Do not append Human/Assistant dialogue, questions or answers,
+markdown, extra JSON objects or text outside the JSON. Do NOT write ``` or a code
+fence. The assistant reply has already started with {; continue that JSON object.
+Every mention of the performer must be 'the dancer' or 'the dancer\'s', not pronouns.'''
 SECTION = re.compile(r'\[(\d+)\.\s*([^\]]+)\]', re.I)
 FORBIDDEN = {
     'audio_or_music_reference': re.compile(r'<\s*(?:audio|sound|music)\b|\b(?:audio|sound|sounds|soundtrack|soundscape|non_diegetic|fully_copy|audio reuse|music|musical|bpm|song|acoustic|sound effects|listening|heard|audible|beat[- ]?sync|synchroni[sz]\w*)\b', re.I),
@@ -372,10 +385,11 @@ def prepare(args):
                           source_code_sha256=manifest['source_code']['sha256'], targets_generated=False)))
 
 
-def text_generation_inputs(processor, conversation):
+def text_generation_inputs(processor, conversation, continue_final_message=False):
     if any(part.get('type') != 'text' for message in conversation for part in message['content']):
         raise ValueError('Rewrite conversation must contain only text')
-    text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
+    text = processor.apply_chat_template(conversation, add_generation_prompt=not continue_final_message,
+                                         continue_final_message=continue_final_message, tokenize=False)
     inputs = processor(text=text, audio=None, images=None, videos=None, return_tensors='pt', padding=True)
     if 'input_ids' not in inputs or set(inputs) - {'input_ids', 'attention_mask', 'token_type_ids'}:
         raise ValueError(f'Unexpected multimodal processor outputs in text-only rewrite: {set(inputs)}')
@@ -542,7 +556,8 @@ def rewrite(args):
     manifest_source = source_record(args.manifest)
     manifest = load_manifest(args.manifest)
     approval = expansion_approval(args.review) if len(manifest['records']) > 32 else None
-    jobs = manifest['records'][args.shard::args.nshard]
+    selected_records = manifest['records'][:args.rewrite_limit] if args.rewrite_limit else manifest['records']
+    jobs = selected_records[args.shard::args.nshard]
     if not jobs:
         raise ValueError('No jobs for requested shard')
     out = check_new(args.out)
@@ -564,17 +579,29 @@ def rewrite(args):
                rewrite_model_version=provenance, torch_version=torch.__version__,
                transformers_version=transformers.__version__, shard=args.shard, nshard=args.nshard,
                max_new_tokens=args.max_new_tokens, do_sample=False, expansion_review=approval,
+               rewrite_limit=args.rewrite_limit, selected_records=len(selected_records),
+               generation_eos_token_id=processor.tokenizer.eos_token_id,
+               generation_pad_token_id=processor.tokenizer.pad_token_id,
+               assistant_json_prefill='{',
                instruction=REWRITE_SYSTEM, instruction_sha256=object_sha(REWRITE_SYSTEM),
                h3_wrapper_source=source_record(Path(__file__).parent / 'h3_video_only.py'),
                complete=False, completed_ids=[])
     atomic_json(out / 'run_started.json', run)
     for record in jobs:
+        rewrite_material = json.loads(json.dumps(record['rewrite_input']))
+        for fact in rewrite_material['facts']:
+            text = re.sub(r'\b(?:her|his)\b', "the dancer's", fact['text'], flags=re.I)
+            text = re.sub(r'\b(?:she|he)\b', 'the dancer', text, flags=re.I)
+            fact['text'] = re.sub(r'\b(?:hers|him)\b', 'the dancer', text, flags=re.I)
         conversation = [dict(role='system', content=[dict(type='text', text=REWRITE_SYSTEM)]),
-                        dict(role='user', content=[dict(type='text', text=json.dumps(record['rewrite_input'], ensure_ascii=False))])]
-        inputs = text_generation_inputs(processor, conversation).to(model.device)
+                        dict(role='user', content=[dict(type='text', text=json.dumps(rewrite_material, ensure_ascii=False))]),
+                        dict(role='assistant', content=[dict(type='text', text='{')])]
+        inputs = text_generation_inputs(processor, conversation, continue_final_message=True).to(model.device)
         with torch.inference_mode():
-            generated = model.generate(**inputs, max_new_tokens=args.max_new_tokens, do_sample=False)
-        raw = processor.tokenizer.decode(generated[0, inputs['input_ids'].shape[1]:], skip_special_tokens=True)
+            generated = model.generate(**inputs, max_new_tokens=args.max_new_tokens, do_sample=False,
+                                       eos_token_id=processor.tokenizer.eos_token_id,
+                                       pad_token_id=processor.tokenizer.pad_token_id)
+        raw = '{' + processor.tokenizer.decode(generated[0, inputs['input_ids'].shape[1]:], skip_special_tokens=True)
         try:
             target = json.loads(raw, object_pairs_hook=unique_object)
             validation = validate_target(target, record)
@@ -583,6 +610,9 @@ def rewrite(args):
                                            human_review_required=True)
         result = dict(protocol=PROTOCOL, id=record['id'], split=record['split'],
                       manifest_sha256=manifest_source['sha256'], rewrite_input_sha256=record['rewrite_input_sha256'],
+                      actual_rewrite_material=rewrite_material,
+                      actual_rewrite_material_sha256=object_sha(rewrite_material),
+                      input_normalization='Only gender pronouns normalized; original facts preserved in source manifest',
                       source_code_sha256=run['source_code']['sha256'], h3_wrapper_source=run['h3_wrapper_source'],
                       rewrite_model_version_sha256=object_sha(provenance), raw_generation=raw,
                       caption_version=PROTOCOL + ':' + object_sha(dict(manifest_sha256=manifest_source['sha256'],
@@ -799,6 +829,7 @@ def main():
     parser.add_argument('--shard', type=int, default=0)
     parser.add_argument('--nshard', type=int, default=1)
     parser.add_argument('--max-new-tokens', type=int, default=1536)
+    parser.add_argument('--rewrite-limit', type=int, default=0, help='Zero selects the manifest; 1..32 selects a diagnostic prefix, never a new training split')
     args = parser.parse_args()
     args.source_code = source_record(__file__)
     if args.self_test:
@@ -814,6 +845,8 @@ def main():
     for name in required:
         if getattr(args, name) is None:
             parser.error('--' + name + ' is required for this mode')
+    if not 0 <= args.rewrite_limit <= 32:
+        parser.error('--rewrite-limit must be 0..32')
     if not 1 <= args.max_new_tokens <= 4096:
         parser.error('--max-new-tokens must be in [1,4096]')
     if args.rewrite:

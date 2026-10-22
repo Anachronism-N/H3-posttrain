@@ -1,0 +1,71 @@
+{
+  "complete": true,
+  "scope": "Actual pretrained TC+videoVAE new condition cache; NOT trained DiT/GPU backward or quality acceptance",
+  "fixture_only": true,
+  "formal_reuse_forbidden": true,
+  "cache": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_interface_cache8_v1",
+  "completion_marker_sha256": "1671ccfe99b6826a05aae471160bb76eb85f122563ffc43a238fb93f5fe26aad",
+  "files": {
+    "0/0.pth": {
+      "bytes": 85422597,
+      "sha256": "2c5b36b28b2abab12584886d7d72d73afe8d441a3b1f4a4570a073613598ea92"
+    },
+    "0/1.pth": {
+      "bytes": 85422597,
+      "sha256": "7bdfb9135244dab2d395aa11502f8d63766f6e244854e4a7ca182c6c0c5aa313"
+    },
+    "0/2.pth": {
+      "bytes": 85422597,
+      "sha256": "dcb36259e47dc2d74e5b5daf2ee1d1673a6e81ecd3f4dd527bf035211679b3e3"
+    },
+    "0/3.pth": {
+      "bytes": 85422597,
+      "sha256": "72c29becdcbc1039e134b151c957198d586d1ce86270ea32a7ad8c4545718f46"
+    },
+    "0/4.pth": {
+      "bytes": 85422597,
+      "sha256": "908076da3ac60ffdcbec6b3ea180eb923668f287e42f4675e760b5d65437aaf4"
+    },
+    "0/5.pth": {
+      "bytes": 85422597,
+      "sha256": "e9d8febcdd81c662b7f022491b27d04c533337b3e0e1c686c5abb08a52d2cd1b"
+    },
+    "0/6.pth": {
+      "bytes": 85422597,
+      "sha256": "13f8dfcb5d116fb1525b10094b2b3d55c85ab69dd97f86bbe869dc60cfb3fce1"
+    },
+    "0/7.pth": {
+      "bytes": 85422597,
+      "sha256": "69dc88f0d305540c596edf0aeaba9e8977ab63b8407d59a6c5c8db00a2592858"
+    }
+  },
+  "source_code": {
+    "h3_video_only.py": "89439d733d62f522bb3dd993bc456541b3ca15ead34ff2e19f86657a471c5055",
+    "h3_video_sft.py": "417d5640fcd63b9c745a4fa81ecf0505477e7739069150600e53c3545f735867"
+  },
+  "items": 8,
+  "target_latent_shape": [
+    1,
+    24,
+    32,
+    80,
+    44
+  ],
+  "actual_input_video_frames": 107,
+  "requested_input_video_frames": 124,
+  "actual_video_fps": 24,
+  "audio_window_seconds": [
+    0,
+    5.0625
+  ],
+  "actual_video_duration_seconds": 4.458333333333333,
+  "window_alignment_approved": false,
+  "packed_audio_rows": 0,
+  "tag2": 0,
+  "target_first_frame_locked": false,
+  "independent_actual_cache_consumer_task": "EQWfB6",
+  "producer_task": "beaVgA",
+  "successful_dit_updates": 0,
+  "completed_training": false,
+  "human_quality_accepted": false
+}

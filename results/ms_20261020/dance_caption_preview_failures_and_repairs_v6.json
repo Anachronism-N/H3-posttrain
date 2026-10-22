@@ -1,0 +1,127 @@
+{
+  "complete": true,
+  "scope": "Actual two-preview repair diagnostics, not32-approved or SFT completed",
+  "original_stopped_exact_pid": 234177,
+  "stop_reason": "Missing EOS causes appended fake Human dialogue; original nine invalid outputs preserved",
+  "original_exit": {
+    "exit_code": 255,
+    "launch_complete": false,
+    "caption_quality_verified": false,
+    "output": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_rewrite32_v3"
+  },
+  "variants": [
+    {
+      "directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_rewrite32_v3",
+      "produced": 9,
+      "format_valid": 0,
+      "human_approved": false,
+      "failures": [
+        {
+          "id": "FqlHJVDlFGLKCUJS",
+          "errors": [
+            "Extra data: line 7 column 1 (char 1646)"
+          ]
+        },
+        {
+          "id": "sdcIgXiThFIIwGMZ",
+          "errors": [
+            "Extra data: line 7 column 1 (char 1091)"
+          ]
+        },
+        {
+          "id": "JQRLpMYklpnASsmc",
+          "errors": [
+            "Extra data: line 7 column 1 (char 799)"
+          ]
+        },
+        {
+          "id": "uYLVDCieBbwXnUaY",
+          "errors": [
+            "Extra data: line 7 column 1 (char 1138)"
+          ]
+        },
+        {
+          "id": "McbzXopxxCMwHbDI",
+          "errors": [
+            "Extra data: line 7 column 1 (char 981)"
+          ]
+        },
+        {
+          "id": "mVXzLETQLafotXGy",
+          "errors": [
+            "Extra data: line 7 column 1 (char 1095)"
+          ]
+        },
+        {
+          "id": "dBhcpfCLRaYKLbjt",
+          "errors": [
+            "Extra data: line 7 column 1 (char 1381)"
+          ]
+        },
+        {
+          "id": "tZkbTHWCroUEzMiN",
+          "errors": [
+            "Extra data: line 7 column 1 (char 1832)"
+          ]
+        },
+        {
+          "id": "KBnEONNYnazaPaNy",
+          "errors": [
+            "Extra data: line 7 column 1 (char 959)"
+          ]
+        }
+      ]
+    },
+    {
+      "directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_rewrite2_eos_v4",
+      "produced": 2,
+      "format_valid": 0,
+      "human_approved": false,
+      "failures": [
+        {
+          "id": "FqlHJVDlFGLKCUJS",
+          "errors": [
+            "Expecting value: line 1 column 1 (char 0)"
+          ]
+        },
+        {
+          "id": "mVXzLETQLafotXGy",
+          "errors": [
+            "Expecting value: line 1 column 1 (char 0)"
+          ]
+        }
+      ]
+    },
+    {
+      "directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_rewrite2_prefill_v5",
+      "produced": 2,
+      "format_valid": 1,
+      "human_approved": false,
+      "failures": [
+        {
+          "id": "mVXzLETQLafotXGy",
+          "errors": [
+            "identity_or_scene:Her,her,she"
+          ]
+        }
+      ]
+    },
+    {
+      "directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_rewrite2_normalized_v6",
+      "produced": 2,
+      "format_valid": 2,
+      "human_approved": false,
+      "failures": []
+    }
+  ],
+  "Eos": 151645,
+  "json_prefill": "{",
+  "input_pronoun_normalization": "Only gender pronouns; raw source retained; actual rewrite material andSHA saved",
+  "formal_export_blocked": true,
+  "full32_repaired_generation_task": "XJO7T3",
+  "full32_repaired_output": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_rewrite32_normalized_v6",
+  "review_page_source_sha256": "a8259f446a1606ade02c569f80bbc095d453dab1f256ab7dd901be0ab4d7f02c",
+  "review_HTTP_tests": 12,
+  "proxy_external_network_verification": "Timed out; localhost reviewGET/Range and localhost codeserver video review proxy checked",
+  "actual_review_POST_performed": false
+}

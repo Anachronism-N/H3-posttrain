@@ -1,0 +1,38 @@
+{
+  "complete": true,
+  "actual_gpu_updates": 2,
+  "world_size": 8,
+  "effective_batch": 8,
+  "fixture_only": true,
+  "completed_formal_sft": false,
+  "actual_input_video_frames": 107,
+  "actual_target_latent_shape": [
+    1,
+    24,
+    32,
+    80,
+    44
+  ],
+  "final_marker_sha256": "c80a06e9a7874fc424fdc49c43f8b814871aef93aecaad69b71ff4740a0ae217",
+  "optimizer_rank_shards": 8,
+  "RNG_rank_files": 8,
+  "source_code": {
+    "h3_video_only.py": "89439d733d62f522bb3dd993bc456541b3ca15ead34ff2e19f86657a471c5055",
+    "h3_video_sft.py": "417d5640fcd63b9c745a4fa81ecf0505477e7739069150600e53c3545f735867"
+  },
+  "progress": {
+    "batches_consumed": 1,
+    "epoch": 1,
+    "microbatches": 2,
+    "optimizer_updates": 2
+  },
+  "export_lora_keys": 416,
+  "nonzero_lora_B": 208,
+  "token_refiner_included": true,
+  "native_export_alpha_r_in_B": true,
+  "sigma_soft_anchor_active_update2": true,
+  "model_checkpoint_full_content_marker": true,
+  "actual_gpu_reload_not_yet_tested": true,
+  "malformed_cursor_validation_pending": true,
+  "human_quality_accepted": false
+}

@@ -1,0 +1,40 @@
+{
+  "complete": true,
+  "pretrained_7b": true,
+  "successful_updates": 2,
+  "world_size": 8,
+  "examples": 16,
+  "assistant_tokens": 336,
+  "fixture_only": true,
+  "completed_sft": false,
+  "full_training_convergence_claim": false,
+  "checkpoint": "checkpoint-u0000002-e01-p0000008",
+  "trained_adapter_sha256": "9ea9dc1fae00bf3b0967958c8369f8587b10abd6c75bf6028c301151e2f780b8",
+  "initial_and_final_Adam_RNG_sampler_reload_verified": true,
+  "real_training_source_sha256": "abfb7a0b472e984568b7b97729281750751d7450f7c8fc0b1fed0a75bbd91180",
+  "eos_fixed_inference_source_sha256": "cdb7aa3adecd1f3b66cec0fa0c6702714617d1f1d03f799ea3d69dba1701a7a9",
+  "inference_reuses_same_trained_checkpoint": true,
+  "new_training_for_EOS_fix": false,
+  "original_generated_dialogue_preserved": true,
+  "missing_on_disk_generation_eos": null,
+  "explicit_tokenizer_eos": 151645,
+  "EOS_fix_real_prediction": {
+    "model_id": "Qwen/Qwen2.5-Omni-7B@local-content-SHA",
+    "checkpoint": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni7b_interface_smoke2_v1/checkpoint-u0000002-e01-p0000008",
+    "predictions": [
+      {
+        "id": "GuhBZbkKOrGqCDcH",
+        "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/GuhBZbkKOrGqCDcH.wav",
+        "audio_sha256": "6e52eb6466908daa19be737239f95febfdaff2de79fc9886d98381e8f3ffcaf3",
+        "audio_window_seconds": [
+          0.0,
+          5.0625
+        ],
+        "caption": "The music's gentle melody invites a slow, flowing dance. The choreography begins with a graceful, sweeping arm movement, leading into a series of soft, gliding steps. The dancer's body moves in a fluid, undulating pattern, with turns and spins that are executed with precision and elegance. The movements are connected, with each transition flowing seamlessly into the next, creating a continuous, harmonious flow. The dance style is characterized by its fluidity and grace, with a focus on the dancer's connection to the music and the overall sense of movement."
+      }
+    ],
+    "human_review": false
+  },
+  "not_semantic_quality_acceptance": true,
+  "human_review_received": false
+}

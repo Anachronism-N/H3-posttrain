@@ -439,17 +439,31 @@ class TrainingProgress:
         return vars(self).copy()
 
     def load_state_dict(self, state):
+        required = {"signature", "optimizer_updates", "epoch", "batches_consumed", "microbatches"}
+        if not isinstance(state, dict) or set(state) != required:
+            raise ValueError("Incomplete training progress state")
         if state["signature"] != self.signature:
             raise ValueError("Resume requires matching caption/data/recipe/world size/accumulation")
+        if any(type(state[key]) is not int or state[key] < 0 for key in required - {"signature"}):
+            raise ValueError("Training progress counters must be nonnegative integers")
+        if state["optimizer_updates"] > state["microbatches"] or state["batches_consumed"] > state["microbatches"]:
+            raise ValueError("Training progress counters are inconsistent")
         self.__dict__.update(state)
+
+    def validate_budget(self, batches_per_epoch, num_epochs, max_updates):
+        if (self.epoch > num_epochs or self.batches_consumed > batches_per_epoch or
+                self.optimizer_updates > max_updates or
+                self.epoch == num_epochs and self.batches_consumed != 0):
+            raise ValueError("Resume cursor exceeds the local loader or requested training budget")
 
 
 def launch_video_training(accelerator, dataset, model, model_logger, args):
     if args.enable_model_cpu_offload or args.enable_optimizer_cpu_offload or args.customized_optimizer:
         raise ValueError("Use Accelerator/ZeRO offload configuration; legacy per-layer/custom optimizer is unsupported")
     signature = training_signature(accelerator, dataset, args)
+    resume_marker = None
     if args.resume_training_state:
-        main_process_result(accelerator, lambda: verify_complete_marker(args.resume_training_state, signature))
+        resume_marker = main_process_result(accelerator, lambda: verify_complete_marker(args.resume_training_state, signature))
     optimizer = torch.optim.AdamW(model.trainable_modules(), lr=args.learning_rate, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer, factor=1.0)
     generator = torch.Generator()
@@ -462,7 +476,12 @@ def launch_video_training(accelerator, dataset, model, model_logger, args):
     progress = TrainingProgress(signature)
     accelerator.register_for_checkpointing(progress)
     if args.resume_training_state:
+        progress.load_state_dict(resume_marker.get("progress"))
+        progress.validate_budget(len(dataloader), args.num_epochs, args.max_train_steps)
         accelerator.load_state(args.resume_training_state)
+        if progress.state_dict() != resume_marker["progress"]:
+            raise ValueError("Restored custom progress differs from the verified completion marker")
+        progress.validate_budget(len(dataloader), args.num_epochs, args.max_train_steps)
     model_logger.num_steps = progress.optimizer_updates
     if accelerator.is_main_process:
         save_training_args(args)
@@ -782,6 +801,18 @@ def cpu_self_test():
                 return
             raise AssertionError("Changed source or partial checkpoint was accepted")
 
+        progress_state = marker["progress"]
+        for changes in ({"batches_consumed": -1}, {"batches_consumed": True},
+                        {"optimizer_updates": progress_state["microbatches"] + 1}):
+            invalid = dict(progress_state, **changes)
+            must_reject(lambda invalid=invalid: TrainingProgress(marker["signature"]).load_state_dict(invalid))
+        must_reject(lambda: TrainingProgress(marker["signature"]).load_state_dict({"signature": marker["signature"]}))
+        loaded_progress = TrainingProgress(marker["signature"])
+        loaded_progress.load_state_dict(progress_state)
+        loaded_progress.validate_budget(4, 2, 100)
+        must_reject(lambda: loaded_progress.validate_budget(0, 2, 100))
+        must_reject(lambda: loaded_progress.validate_budget(4, 0, 100))
+        must_reject(lambda: loaded_progress.validate_budget(4, 2, 1))
         changed = json.loads(json.dumps(marker["signature"]))
         changed["sources"]["code"][Path(__file__).name] = "changed-source"
         must_reject(lambda: verify_complete_marker(checkpoint, changed))
@@ -804,6 +835,8 @@ def cpu_self_test():
                       "real_tiny_H3_lora_anchor_checkpoint_backward": True,
                       "deployment_lora_alpha_rank_parity": True,
                       "reject_changed_source_cache_model_checkpoint_and_partial": True,
+                      "strict_progress_fields_types_local_loader_and_budget": True,
+                      "restored_progress_matches_completion_marker": True,
                       "actual_cpu_offload_wrapper_state_switch": True, "cache_runner_whole_model_to_calls": 0,
                       "scope": "CPU fake-pipe resume plus real tiny H3 blocks; no full-weight/GPU/ZeRO claim"}), flush=True)
 

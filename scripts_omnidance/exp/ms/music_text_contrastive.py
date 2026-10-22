@@ -1308,7 +1308,7 @@ def _direct_training(args):
                       learning_rates={g['name']: g['lr'] for g in optimizer.param_groups})
         history.append(report)
         if rank == 0:
-            print(json.dumps(dict(event='direct_clip_evaluation', **report)), flush=True)
+            print(json.dumps(dict(report, event='direct_clip_evaluation', scheduler_event=event)), flush=True)
         for name, value in model.named_buffers():
             if not torch.equal(value.detach().cpu(), initial_buffers[name]):
                 raise ValueError('Frozen backbone buffer changed: ' + name)

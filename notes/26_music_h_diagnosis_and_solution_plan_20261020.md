@@ -760,6 +760,18 @@ manifest成功后自动在19.69/17.70各0–3四GPU启动相同初始化的A/B�
 
 原`XATcau`/`ra7oDl`接续队列已在正式训练前安全暂停，保存其v1 plan和全部日志，未改变/重跑cache。唯一全量builder现为`Ryz64z`，新输出`MS/music_direct6k_v2_training_manifest_v2.json`，仍严格6000/500/六完整shard、全部源字节校验；唯一新训练接续`EjktZa`（`MS/music_direct6k_v2_training_queue_v2`）等待实际builder完成，之后同原A/B配置启动。唯一后续18视频接续`K0aRDS`（`MS/music_direct6k_v2_final18_queue_v2`）等待新训练队列；视频/质量状态不变。旧manifest和队列不删除、不覆盖。当前全量manifest尚未完成，正式GPU训练尚未开始。
 
+缓存结束后已执行资源释放`uDYIoQ`：在19.213/19.143/19.137/19.225仅按本项目精确`diff/scripts_omnidance/exp/hold_gpu.py`路径和所属用户终止32个占卡holder，pidfd确认退出，四节点剩余本项目holder为0；没有停止任何其他计算任务。报告`MS/music_direct6k_unused_four_nodes_holder_release_v1.json`。训练仍仅使用19.69/17.70；后续六节点推理需重新按实际空闲和未知进程拒绝规则准入，不以已释放为未来资源占用保证。
+
+#### 2026-10-22 正式manifest完成、首epoch日志错误与同起点恢复
+
+`Ryz64z`已实际exit0，正式`MS/music_direct6k_v2_training_manifest_v2.json`完整SHA `40df4ff51bb020a9296ad2c54e9c9c069ef9b1e9710ad2c234d3d7782ea2c6e6`，6000train/500val、6500统计行、全部train有效teacher tokens共2,498,122。主线程`wJVH2C`独立核文件SHA、counts和train-onlytoken sum；全P/y/audio字节SHA、真实tokenizer source IDs、FP64统计已由实际builder完成，P不反序列化。构建实际耗时6h28m，不能将16线程理论并行写为已解决所有CephFS I/O耗时。
+
+`EjktZa`随后实际自动启动A/B四rank/global64训练，全部19500源文件字节SHA验证通过；两配置完成首轮94更新并计算完整val500和64train probe后，rank0在`music_text_contrastive.py:1311`日志`dict(event='direct_clip_evaluation', **report)`因report也有event而TypeError。错误发生在模型/Adam保存前，两失败目录只有plan/gradient_step1，无last/best/train_state，不存在可恢复训练状态。日志可见A第1/90更新CLIP4.44149/3.81567；B同处CLIP4.44149/3.92384、矩2.48691/0.15047。这是不同batch训练值，不作同集合验证、模型排名、收敛或能力结论。
+
+仅修日志为`dict(report, event='direct_clip_evaluation', scheduler_event=event)`，保历史report的event不变；生产AST实际语句测试`cITVfL`覆盖None/降LR/收敛3场景，错误SHA和原训练损失/数据/超参未改。新trainer SHA `575cac1ad9c40ed19b53b6cc9c70b5d51b92721e49487d15b3f1429caef37103`。两旧训练目录及`MS/music_direct6k_v2_training_queue_v2`全部失败日志保留；不存在Adamstate因此从同零更新init在两个**新**目录完整重训，不冒充resume。
+
+唯一重启管理任务`hOHxrY`、目录`MS/music_direct6k_v2_training_queue_v3`已实际launch且八卡准入通过。A/B分别输出`MS/music_direct6k_v2_clip_a_restart_v3`、`MS/music_direct6k_v2_clip_moments_b_restart_v3`，使用原6000/500manifest、同init/global64/lr/seed/20min50cap。唯一后续学生任务`xLC6yO`、目录`MS/music_direct6k_v2_final18_queue_v3`重新绑定实际重训managerPID2999182，新模型best.pt用于原18配置，旧K0aRDS失败不算学生视频完成。当前重启仅launch，不表示完成首epoch、收敛或人评。
+
 #### 资源与最终验收
 
 仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。

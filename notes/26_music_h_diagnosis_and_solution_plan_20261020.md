@@ -903,3 +903,38 @@ A最终last SHA=`fda86016041ad0c9eb3f9922ae3f27f05e5770dec49ccfe13ab5f2e2f6d7e7c
 仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。
 
 下一验收依次为：真实cache producer/consumer字段一致，完整4卡forward/backward/Adam与实际global64，原生教师同y回填raw/tags/packed/首步音视频预测，保native音乐的两学生原/换/零M固定三case共18条，完整音画及来源审核与连续舞蹈人评分开。最后发布代码、方案、真实结果和正负结论并核远端commit；不上传权重、Adam大checkpoint、视频或秘密。
+
+### 2026-10-22 新主线正式获批：音乐到离散caption，再caption＋参考图到真纯视频H3
+
+本节取代以上旧6000／单case阶段的资源和后续任务限制，不改其历史协议：用户本轮明确授权全部8节点64张A800-80GB，要求先同步计划；完整计划已通过计划审批，随后要求自动执行、修错、持续跟进直到两个新实验正确结束，并将方案／代码／分析／正负结论推送GitHub。已确认首版music-only，**动作编排与外观分开**；参考图保留，但**不新增目标首帧硬锁**。旧直接MusicFM hidden实验和ABC教师诊断已经结束，不默认重训或追加case。
+
+#### 两项任务与严格数据定义
+
+1. 音乐→可读英文舞蹈编排caption：本地Qwen2.5-Omni-7B Thinker快速对照，官方Qwen3-Omni-30B-A3B-Instruct Thinker主候选。仅文字输出，不创建Talker／Code2Wav；保留未来图像能力但首版不输入图像。官方30B固定revision `26291f793822fb6be9555850f06dfe95f2d7e695`，25文件约70.53GB；下载仍在进行，不把本地既有audio任务全参数captioner当官方未训练起点。官方Captioner仅单音频、无指令／图片，不作主线；Music Flamingo非图像且许可受限，只作备选说明，不默认上卡。
+2. 期望caption＋参考图→视频：沿现DiffSynth原BF16 Ref2VA独立video-only入口，保原Qwen-VL图文TC与视觉VAE，两者及baseDiT冻结，只训DiT LoRA。绝无audio VAE加载／编码／解码、target audio noise、非空audio latent／reference、tag2／audio_pos、audio patch／head／scheduler；仅允许(2,32,0)长度零tensor作类型占位。生成文件仅视频轨；评审外部同步音乐不等于H3输入音乐。
+
+rich全文11992可恢复且覆盖6000/500；原txt与旧AV包装内五章正文吻合，最初生成模型／指令未知。新目标用前三章叙事／动作与原MotionScript事实融合重写，后两章外观／场景及旧音景包装排除，所有raw／排除／冲突侧车保留。原MS `kin.frames=101`但无独立fps／绝对时间映射；归一化媒体约5秒不自动证明rich/MS同窗。首32实际来源24train/8val、16genre，音频5.0625秒、源start0/fps16、显式window=[0,5.0625]，**32条rich/MS scope仍unknown**。允许冻结7B text-only生成32预览，禁止伪造人工窗口／事实／冲突确认后导出训练，禁止均分词句制造秒级标签。
+
+输出是“适合音乐的可能编排”，不是宣称音乐能唯一恢复原视频动作。`motion_caption`为原正文，`caption_version`逐条必需；唯一`video_prompt`包装<Subject 1>/<Picture 1>及固定参考外观／环境／单镜头。Omni metadata明确id/source_group/split/messages/audios/audio_window_seconds：user只有固定instruction＋音频，GT仅assistant，不泄漏rich/MS全文至输入。新caption必须新编码，旧y／旧AV packed不可复用；视频latent仅同窗口且内容验证后复用。
+
+#### 预算与门禁（批准配置，不等于已运行）
+
+- Omni：LLM attention/MLP LoRA rank32/alpha64，最后4audio block LoRA、audio projector全训；7B投影proj，30B投影proj1/proj2。30B专家MLP gate_up_proj/down_proj为3D Parameter，PEFT target_parameters必需，不以attention-only冒称MLP已训。视觉冻结并禁止调用，assistant caption＋EOS自回归CE，user/audio/padding labels=-100。起始LoRA lr5e-5／投影lr1e-5、BF16＋FP32可训参数。先8样本2实际更新／完整恢复接口smoke；fixture标签只接口，不作正式质量证据。获审目标后512/128三完整epoch，再6000/500 min3/max10、每轮固定val assistant-token NLL＋自回归输出、patience3／delta0.005，cap结束未证平台如实标未确认。
+- H3：原BF16、CFG1、1280高×704宽、124帧／24fps、50视频步；先真无音频pretrained forward/backward与冻结rich/MS/fused各1case上界。DiT attention qkv/out＋MLP fc1/fc2 LoRA32/64、lr1e-5、BF16／activation checkpoint／节点内8卡ZeRO3。pureFM和sigma≥0.5 soft base-prediction anchor λ0.1／1同初始化先100成功更新；anchor仅额外正则，不硬替FM目标。固定3case真实人评合格后300，再获验收winner完整6000预算。像底座不等于动作学习成功，自动指标不代替人评。训练／推理LoRA alpha/r缩放必须显式保持一致。
+- 端到端：固定3case，GT／音乐预测caption × frozen／finetuned H3最多12视频，可复用严格同设置基线。H3始终不读音乐；同caption换外部音乐不得改变H3。GT也差定位H3，GT好预测差定位caption阶段，不盲目同时加预算。
+
+#### 八节点Wave安排与资源安全
+
+权威顺序N1=28.216.19.69、N2=28.216.17.70、N3=28.216.19.213、N4=28.216.19.143、N5=28.216.19.137、N6=28.216.19.225、N7=28.216.18.144、N8=28.216.18.136。本轮已批准最后两节点，不拿旧阶段六host限制挡新主线；上卡仍逐次核同uid／精确argv／CUDA映射／GPUUUID及宿主cgroup内存，只释放确认项目holder，不kill未知任务。
+
+Wave0：N1首32冻结重写（目前单卡即可），N2两Omni真实processor／梯度／恢复，N3纯视频H3接口，N4三caption冻结单case，N5–6新caption／视频VAE资产绑定，N7–8本地资产校验与必要的两节点NCCL实测。Wave1：N1 7B SFT、N2 30B SFT、N3扩量重写、N4 cache／caption验证、N5 pureFM100、N6 anchor0.1、N7 anchor1、N8固定case评测。依赖与显存/NCCL真实通过后才扩16卡，不先64rank整体启动；未用卡让用户其它任务，不把占卡matmul当实验利用率。
+
+#### 当前实际实现与验证边界
+
+新增独立 `dance_caption_fusion.py`、`omni_dance_sft.py`、`h3_video_only.py`、`h3_video_sft.py`，不原地破历史AV源码／缓存／权重／视频SHA。主线程已独立跑融合8项CPU边界／导出测试、两个真实随机小Omni各两更新及LoRA/projector/Adam/RNG/sampler重载下一更新一致、真实小H3音频禁hook／前后向、PEFT软anchor／完整CPU恢复／native LoRA导出预测一致。纯视频还新增完整unit-chain两步采样＋假videoVAE解码测试、仅一视频scheduler初始化；测试mock初次递归错误已修，真实复测exit0。**以上均不是完整预训练GPU链路、SFT收敛或画质验收**。
+
+最终首32source清单 `MS/dance_caption_preview32_v3.json` SHA=`bc7d36e820ef274089e6d29e3533de1b5aa8914381f3643d3dba79ab1a0eabbb`，fusion源码SHA=`111b1baa7f180d25044018a586edb0af7b11e75dd6353b7027880652e4ed06f4`。真实本地7B text-only processor返回仅input_ids/attention_mask [1,1134]，明确audio/images/videos=None；未据此声明模型forward通过。已启动唯一N1 GPU0冻结32重写manager，产物未审核前不声明caption生成或人评通过。Omni pretrained梯度smoke、H3 pretrained纯视频／GPU恢复、首32窗口与事实审核、两阶段pilot/full／视频／最终人评尚待完成。
+
+保存恢复必须绑定源码／model revision和完整权重内容／caption及media window／cache SHA、实际worldsize与sampler。只有完整Adam/RNG/progress且完成marker/文件SHA通过的state才resume，partial保留，不覆写、不冒同init重跑为resume。H3 cache TC＋VAE需实际驻留预算／offload验证，不能用initialize-on-CPU假称GPU阶段显存已解决。
+
+所有阶段方案、代码、实际测试与正负分析安全新commit/push直接核远端；不上传权重／Adam／视频／秘密，不amend／改git config／绕hooks。新两项训练、完整视频审核、真实人评与最终GitHub远端核验全部正确结束后才取消仅本轮跟进，保旧8770/8771/8772和未知任务。

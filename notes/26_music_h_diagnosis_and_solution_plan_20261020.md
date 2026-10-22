@@ -982,3 +982,5 @@ N3单GPU0实际 `beaVgA`/`MS/h3_video_interface_wave0_queue_v1` 正在新8条cap
 按用户要求融合的是**caption内容**，不是视频拼接或权重混合。保rich的芭蕾／现代舞质感、轻盈连贯与表达，加入MS的左／右肘弯伸、逆／顺时针转向、手靠近再远离膝盖、左右手离对侧肩、双肘收拢与手靠肩／彼此靠近等五项具体事实。助手直接编辑融合173词，保原事实侧车和未核全局顺序／窗口冲突，去性别代词与伪秒数，不冒称Qwen产物或人工训练目标；跨动作连接只是合理编排提案。
 
 新输入 `MS/h3_video_baseline_fused_case1_humanrequest_v7.json` SHA=`b367f18b1406092f6328f3b2c0e9d294b9e3d8eaa27f0f66e2373f394bebd143`。原始两条可用基线不重跑；新增仅一个同case `FqlHJVDlFGLKCUJS`、同图／seed42／CFG1／50video／704×1280／124@24，没有H3音频输入与输出，不加硬首帧。前一自动v6名为fused的正文近rich-only，即使列出MS IDs也不代表融合覆盖；保为历史诊断，不用其结果替这次具体融合。计划N4 GPU0单slot，逐UUID／uid／argv／主机内存准入后实际生成，完整媒体核验后加入独立8774与两条原视频对比；未生成完不预判效果。
+
+该融合v7已实际完成，唯一生成5SbRq3 exit0，独立dkkewI完整媒体／同图／源SHA核验通过：视频SHA=`98c68983c04196593a96aa05cd3a2d43b3d5818a9029a43f89adf2b959e8153c`，124帧／704×1280／24fps，真实50video更新、VAEdecode1、audio patch/head/referenceencode全部0，无音轨、无audioVAE/scheduler，参考图与两个已获可用反馈的基线同SHA。结果`results/ms_20261020/h3_video_editorial_fusion_case1_audit_v7.json`，**融合本身尚未有人评，不宣称优于两单独caption**。自动评审接续manager误匹配自身导致pidfd自等待，主线程只结束这一个已知CPUmanager，不重复生成；实际构建独立三配置manifest并替换仅8774旧双配置server，保8770/8771/8772/8773/未知任务。现在仍同1个case：rich、MotionScript、融合v7，外置wav只供评审同步，不进入H3。

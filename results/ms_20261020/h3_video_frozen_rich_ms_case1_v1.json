@@ -106,6 +106,6 @@
   },
   "fused_condition_pending": true,
   "source_audit_sha256": "fb0f2ebac5d62b3816e035452a28e93f60047861e7c08be87e6e2931269dda72",
-  "scope": "Actual original Ref2VA frozen video-only two-caption single-case baseline; no human verdict. Fused caption not yet valid",
+  "scope": "Actual original Ref2VA frozen video-only rich/MS single-case baselines both usable by human feedback. Newly requested editorial fusion remains independently unreviewed; all32 caption facts/windows are not approved",
   "review_port": 8774
 }

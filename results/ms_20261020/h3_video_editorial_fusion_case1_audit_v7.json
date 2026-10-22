@@ -1,0 +1,74 @@
+{
+  "complete": true,
+  "caption_version": "rich-ms-editorial-fusion-humanrequest-v7",
+  "video": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_frozen_editorial_fusion_case1_video_v7/FqlHJVDlFGLKCUJS.mp4",
+    "sha256": "98c68983c04196593a96aa05cd3a2d43b3d5818a9029a43f89adf2b959e8153c",
+    "size_bytes": 1944892
+  },
+  "media": {
+    "verified": true,
+    "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+    "frames": 124,
+    "height": 1280,
+    "width": 704,
+    "fps": 24,
+    "video_streams": 1,
+    "audio_streams": 0,
+    "complete_decode": true
+  },
+  "audio_guard": {
+    "calls": {
+      "audio_patch": 0,
+      "audio_head": 0,
+      "audio_reference_encode": 0
+    },
+    "installed_projection_head_hooks": 2,
+    "observed_video_calls": {
+      "text_encoder": 0,
+      "video_vae_encode": 0,
+      "video_vae_decode": 1,
+      "dit": 50
+    },
+    "audio_vae_is_none": true,
+    "scheduler_audio_is_none": true
+  },
+  "sampling": {
+    "video_scheduler_updates": 50,
+    "packed": {
+      "audio_pos_numel": 0,
+      "tag2_count": 0,
+      "video_position_rows": 39984,
+      "text_position_rows": 7689,
+      "token_tag_counts": {
+        "-1": 7,
+        "0": 47410,
+        "1": 263
+      }
+    },
+    "target_audio_generated": false
+  },
+  "sources": {
+    "caption_json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_baseline_fused_case1_humanrequest_v7.json",
+      "sha256": "b367f18b1406092f6328f3b2c0e9d294b9e3d8eaa27f0f66e2373f394bebd143",
+      "size_bytes": 4348
+    },
+    "image": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames/FqlHJVDlFGLKCUJS.png",
+      "sha256": "d9d8d4f0ccf59d47ab7feb20014fe4d17e68fffeaf99fdce9bd44d90a17b4ef1",
+      "size_bytes": 476643
+    }
+  },
+  "generation_source": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/h3_video_infer.py",
+    "sha256": "77bafd9f6165f80328d4e272c901b21fbf45da3898161bcc039a572e1c86a2f8",
+    "size_bytes": 45996
+  },
+  "same_image_as_usable_rich_and_MS": true,
+  "baseline_human_feedback": "两条都可用,你可以试着把这两条融合一下",
+  "fusion_human_review_received": false,
+  "fusion_quality_accepted": false,
+  "one_new_video": true,
+  "existing_two_baselines_reused": true
+}

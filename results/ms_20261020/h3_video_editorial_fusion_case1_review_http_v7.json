@@ -1,0 +1,30 @@
+{
+  "complete": true,
+  "homepage200": true,
+  "API200": true,
+  "model_count": 3,
+  "fixed_people": 1,
+  "checks": [
+    {
+      "model": "MS/h3_video_frozen_rich_case1_video_v1",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_frozen_rich_case1_video_v1/FqlHJVDlFGLKCUJS.mp4",
+      "HTTP206": true,
+      "ContentRange": "bytes 0-1023/2514565"
+    },
+    {
+      "model": "MS/h3_video_frozen_ms_case1_video_v1",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_frozen_ms_case1_video_v1/FqlHJVDlFGLKCUJS.mp4",
+      "HTTP206": true,
+      "ContentRange": "bytes 0-1023/1596491"
+    },
+    {
+      "model": "MS/h3_video_frozen_editorial_fusion_case1_video_v7",
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_frozen_editorial_fusion_case1_video_v7/FqlHJVDlFGLKCUJS.mp4",
+      "HTTP206": true,
+      "ContentRange": "bytes 0-1023/1944892"
+    }
+  ],
+  "review_URL": "https://launcher-ql3qjy14j2-codeserver.ide.taiji.woa.com/proxy/8774/",
+  "human_fusion_review_received": false,
+  "actual_POST_performed": false
+}

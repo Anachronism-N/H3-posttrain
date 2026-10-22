@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-23",
+  "scope": "Repair target-generation material using observed normalized-window facts; not student training or completed approval.",
+  "reason": "Actual new30B targets repeated actions declared unsupported in their own conflicts; merely appending observations beside unverified original clauses did not reliably constrain the narrative.",
+  "old_generation_preserved": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_observed32_30b_rewrite_v1",
+  "replacement_material": {
+    "manifest": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_window_facts32_30b_manifest_v2.json",
+    "sha256": "1209833dae4f39219a4e06bf2fbccc6fe570b8399a2909657ea4f1fa394ec5e9",
+    "records": 32,
+    "observed_facts": 89,
+    "original_RICH_MS_raw_and_conflict_decisions_retained_as_sidecar": true,
+    "unverified_original_action_clauses_not_supplied_as_admissible_facts": true,
+    "normalized_media_window": [0, 5.0625],
+    "original_RICH_MS_time_mapping_verified": false
+  },
+  "teacher": "Official frozen Qwen3-Omni-30B-A3B-Instruct Thinker text-only",
+  "source_sha256": "c74f5e1694f827a180e40e425730e13cdd660775e6756acc7fbbb0c8a29b6f3d",
+  "queue_task": "sXNtIg",
+  "queue_wait_protocol": "pidfd wait for the identified existing v1 manager, then fresh GPU admission; no sleep or duplicate concurrent generation on its GPU",
+  "output": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_window_facts32_30b_rewrite_v2",
+  "generation_completed": false,
+  "AI_target_approval_completed": false,
+  "formal_pilot512_128_started": false,
+  "next_stage": "Actual generated target-vs-observed-fact semantic review, then512/128 target generation/evidence checking/export and official30B3-epoch pilot.",
+  "human_review_impersonated": false,
+  "further_7B_finetuning": false,
+  "full_active_goal_completed": false
+}

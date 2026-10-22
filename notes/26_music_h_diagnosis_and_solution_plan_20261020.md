@@ -938,3 +938,19 @@ Wave0：N1首32冻结重写（目前单卡即可），N2两Omni真实processor�
 保存恢复必须绑定源码／model revision和完整权重内容／caption及media window／cache SHA、实际worldsize与sampler。只有完整Adam/RNG/progress且完成marker/文件SHA通过的state才resume，partial保留，不覆写、不冒同init重跑为resume。H3 cache TC＋VAE需实际驻留预算／offload验证，不能用initialize-on-CPU假称GPU阶段显存已解决。
 
 所有阶段方案、代码、实际测试与正负分析安全新commit/push直接核远端；不上传权重／Adam／视频／秘密，不amend／改git config／绕hooks。新两项训练、完整视频审核、真实人评与最终GitHub远端核验全部正确结束后才取消仅本轮跟进，保旧8770/8771/8772和未知任务。
+
+#### 2026-10-22 Wave0真实启动、训练部署互通与新发现（仍非新实验完成）
+
+核心方案和三入口实际新commit `7b997ffd325429979a722ff3907d8fbcb86332ad` 已push，`VIHZVi`直接核remote main同SHA。新H3训练入口 `h3_video_sft.py` SHA=`417d5640fcd63b9c745a4fa81ecf0505477e7739069150600e53c3545f735867` 已补：cache阶段TC/VAE真实CPUoffload、专用runner不调用whole-model.to／Accelerator.prepare；主rank实际hash并广播source/model/media/cache；accelerator完整state全部rank成功后写文件SHA completion marker、缺marker/改文件/改source/model/cache拒恢复。主线程`SuU6aD`独立CPU复测通过。这仍没有完成GPU/ZeRO3恢复验收。
+
+独立新 `h3_video_infer.py` 最终SHA=`77bafd9f6165f80328d4e272c901b21fbf45da3898161bcc039a572e1c86a2f8`，主线程`CuVqyY`独立7CPU测试通过：真tinyH3＋PIL参考完整unit-chain→新TC条件缓存→weights_only回读→视频采样；CFG1原unitrunner把正输出同对象镜像至negative，不能把字典镜像误称额外negative编码，已clear并核真实TC一次。native scaled LoRA safetensors按alpha1加载，白名单同时允许blocks和token_refiner.blocks，A/B双向完整检查；两位置融合weight和完整预测与独立base＋B@A相同，避免重复乘alpha/r。真实静态fixture124帧704×1280/24fps已ffmpeg全部input streaminfo核仅1video/0audio，-xerror全RGB解码335216640字节及每帧showinfo PTS/size正确；含audio、错帧数/fps/shape反例拒绝。此静态fixture不是生成画质通过，不上传fixture视频。
+
+当前实际队列：N1单GPU0 `PGLuNL`/`MS/dance_caption_wave0_queue_v1` 冻结32重写，准入仅release同uid精确项目holder3136724，pre-model-content-SHA冷读中；不能无输出当停机重启。N2 `miDbLg`/`MS/omni7b_interface_smoke_wave0_queue_v1`已pidfd绑定同uid现有7B本地staging `11Dfs6` 的ssh退出，之后核全部local分片内容SHA／完整staging marker才重新8GPU准入；不重复stage或训练。Omni接口metadata8train/2val SHA=`9240e0ec3be227ff82652d7be3e2af86c1fdc12980fd7c188f6829e2401df953`，sidecarSHA=`3c1140c320f160f8d06da215c7580072b3723481f59c4885d7838389f91f1a2b`；真音频＋固定明确fixturecaption，只两更新检查梯度/完整重载，不正式SFT／语义人评。实际env没有torchrun脚本，使用python -m torch.distributed.run；Gloo2rank／ZeRO1／tail零loss同步／完整checkpoint已CPU实测，但NCCL不据此宣称通过。
+
+N3单GPU0实际 `beaVgA`/`MS/h3_video_interface_wave0_queue_v1` 正在新8条caption＋参考图cache；实准入release精确项目holder4110957，原TC/VAE已加载，无DiT/audioVAE加载。H3接口metadataSHA=`5290c08e019ebe43662f7dda8e552bc367bd0b18e3e6b45ef3d4f8dc73ec9d0d`；sidecar最初SHA3d5147...，补真实loader观测后实际SHA=`16d96437145766eba72d58b9544632c7b17e2cfa1caa6f344ae87e20ea872817`，不混称原sidecar未变；metadata/source未漂移，运行不读sidecar。唯一fresh训练manager `56fe2B` 已pidfd绑cachemanager271905，cache真实完成且8条completion marker核验后再8GPU/主机内存准入，2成功更新，明确不使用resume。N4 `g96Dms`/`MS/h3_video_frozen_baseline_case1_queue_v1` 两GPU0/1，rich-motion-only和MS-motion-only各一个同case `FqlHJVDlFGLKCUJS`，先stage cache再DiT＋VAE生成；融合第三caption等待32重写，不擅自增加人物。
+
+**重要时间窗口新发现：** 原视频81@16fps=5.0625秒；imageio duration约5.06，24fps可用floor121，原loader短源按17n＋5向下取**107帧**而非124、不补末帧。八条真实CPU完整decode均107帧、704×1280，只覆盖原index0..71（72唯一源帧），107/24=4.458333秒，和music window5.0625秒差0.604167秒。当前N3仅接口fixture，不能称124帧训练／音视频窗一致；生成仍124@24=5.166667秒。正式caption-video监督必须明确合法同窗或显式尾部padding协议再核，不静默用旧loader全片rich。独立观测`MS/h3_video_interface_loader_observation_v1.json`与diagnostic保存，旧文件不重标时间。
+
+**已发现但未修改的恢复语义缺口：** 当前TrainingProgress.load_state_dict只验signature，对缺progress字段／负batches_consumed实际接受；marker/hash验证只证明序列化文件完整，不证明cursor语义。独立拟议strict requiredfields/int非bool非负／local-loadercursor及epoch预算上界／marker.progress与加载state逐值一致的7反例已CPU测试，但生产417d5640尚未修。运行中source需冻结以免cache指纹失效；本次fresh两更新不使用resume，不据此宣布正式恢复已严格通过。训练恢复前必须新source修正并正确说明历史cacheproducerSHA，不隐瞒更改或冒称resume可用。
+
+首32所有scope仍unknown；正式512/128与6000/500目标导出仍须真实facts/narrative/window/conflicts四项审核与rewrite内容SHA。现旧data_review页面是旧2k/MS评分schema，不满足新人工门禁，正在新增独立8773 opt-in reviewer（不覆盖旧服务/评分，不代理POST实际人评）。新GPU更新、完整生成、人评与最终质量均尚未验收，跟进Cron `e06d1c4f`仍运行。

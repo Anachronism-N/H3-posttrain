@@ -983,4 +983,16 @@ N3单GPU0实际 `beaVgA`/`MS/h3_video_interface_wave0_queue_v1` 正在新8条cap
 
 新输入 `MS/h3_video_baseline_fused_case1_humanrequest_v7.json` SHA=`b367f18b1406092f6328f3b2c0e9d294b9e3d8eaa27f0f66e2373f394bebd143`。原始两条可用基线不重跑；新增仅一个同case `FqlHJVDlFGLKCUJS`、同图／seed42／CFG1／50video／704×1280／124@24，没有H3音频输入与输出，不加硬首帧。前一自动v6名为fused的正文近rich-only，即使列出MS IDs也不代表融合覆盖；保为历史诊断，不用其结果替这次具体融合。计划N4 GPU0单slot，逐UUID／uid／argv／主机内存准入后实际生成，完整媒体核验后加入独立8774与两条原视频对比；未生成完不预判效果。
 
-该融合v7已实际完成，唯一生成5SbRq3 exit0，独立dkkewI完整媒体／同图／源SHA核验通过：视频SHA=`98c68983c04196593a96aa05cd3a2d43b3d5818a9029a43f89adf2b959e8153c`，124帧／704×1280／24fps，真实50video更新、VAEdecode1、audio patch/head/referenceencode全部0，无音轨、无audioVAE/scheduler，参考图与两个已获可用反馈的基线同SHA。结果`results/ms_20261020/h3_video_editorial_fusion_case1_audit_v7.json`，**融合本身尚未有人评，不宣称优于两单独caption**。自动评审接续manager误匹配自身导致pidfd自等待，主线程只结束这一个已知CPUmanager，不重复生成；实际构建独立三配置manifest并替换仅8774旧双配置server，保8770/8771/8772/8773/未知任务。现在仍同1个case：rich、MotionScript、融合v7，外置wav只供评审同步，不进入H3。
+该融合v7已实际完成，唯一生成5SbRq3 exit0，独立dkkewI完整媒体／同图／源SHA核验通过：视频SHA=`98c68983c04196593a96aa05cd3a2d43b3d5818a9029a43f89adf2b959e8153c`，124帧／704×1280／24fps，真实50video更新、VAEdecode1、audio patch/head/referenceencode全部0，无音轨、无audioVAE/scheduler，参考图与两个已获可用反馈的基线同SHA。结果`results/ms_20261020/h3_video_editorial_fusion_case1_audit_v7.json`，**此时融合本身尚未有人评；随后用户实际反馈见下一段，不把该历史pending状态当当前结论**。自动评审接续manager误匹配自身导致pidfd自等待，主线程只结束这一个已知CPUmanager，不重复生成；实际构建独立三配置manifest并替换仅8774旧双配置server，保8770/8771/8772/8773/未知任务。现在仍同1个case：rich、MotionScript、融合v7，外置wav只供评审同步，不进入H3。
+
+#### 2026-10-22 融合v7获真实正评，追加动作维度快速迭代
+
+用户最新原话：**“融合更好且可用,此外,之前你还预设了很多其他的维度,也可以考虑加入prompt中进行尝试.我们需要快速进行迭代,时间来不及了”**。该同case融合视频已获可用且相对改善的真实定性人评，报告已更新；不是逐项分数、32caption事实/窗口批准或正式训练验收。
+
+复用已接受的v7视频与caption正文，优先从现有多维标注核实真实动作属性，冻结两组最小增量、每组仅一个同case视频，保持同参考图、原始H3真纯视频、seed42/CFG1/50步/704×1280/124@24。不猜BPM/秒级动作，不新增外观或镜头标签、不拼接视频。实际准入、生成、完整媒体/来源审核后再请求快速人评，不能在运行前宣称增量更好。30B的PEFT专家baddbmm失败另行准确诊断修复，整体正式pilot/full与端到端目标仍未完成。
+
+两个新增配置已按真实来源冻结：A仅追加“手臂主导＋优雅梦幻表达”，B仅追加“直立＋主要原地＋无跳跃”。同case旧VLM `MS/vlm/labels_s1.jsonl:261`直接支持上述值，preview32_v3的kin显示arm_speed0.4533高于leg0.1834/torso0.0888，pelvis_h_min0.9271、jumps0。保v7逐字主体；energy low/medium和turns around/none冲突不加入，quality smooth/flowing已在正文不重复。都是推理编排诊断，原事实窗仍unknown，不能当人审GT。
+
+新124帧显式协议源码SHA `9f5de5e200098e482313ac01938b22ef7333037b726fec22ccbf4eea6f2e9505`：opt-in `nearest24_repeat_last124`，metadata必须显式video_window_seconds=[0,5.0625]。实际CPU同casevideo/reference加载与逐帧映射已核，全81源帧、122自然位置＋2尾部repeat-last，124@24输出5.166667秒；padding不增加动作事实。报告 `h3_video_repeatlast124_dataset_cpu_v1.json`。本次独立CPU回归RB4b7X实际exit0，真实tinyH3 LoRA/anchor、完整Adam/RNG下一更新bitwise恢复、strictcursor/marker坏输入拒绝均通过；第一次PY7rs8仅因未传CLI必需dataset_base_path exit2，补足后通过，不是算法失败。新GPU缓存/训练/恢复另按同版本执行，原107帧producer417d5640的旧缓存/state保留不重标。
+
+官方30B真实失败已独立读rank0完整Traceback（recovery_queue_v2/training.log:1089–1113）：`torch.baddbmm`申请384MiB时GPU0仅107.81MiB可用，PyTorch allocated77.42GiB，实为CUDA OOM，不是dtype/shape。官方下载与25文件内容暂存已经完成不重下。失败updates0，initial checkpoint存在但没有成功Adam更新；恢复与fresh以完整状态和源码版本严格判定，不能称30B梯度通过。同版本CPU已确认预训练eval模式使checkpoint开关未实际进入：新PEFT wrapper.training=True但base与decoder.training=False，decoder.gradient_checkpointing=True，原生产入口未调用train()；实际Traceback走普通forward分支。最小修复为DDP构造后`wrapped.train()`，保原nonreentrant checkpoint、全部专家/audio范围与FP32可训参数。独立3层真实tinyOmni CPU对照保存tensor唯一bytes246171→31375、checkpoint调用0→1、专家大tensor保存17→0；两更新LM/audioLoRA/projector均非零，adapter变化而base不变。新增自测从eval base开始并spy真实checkpoint调用，正式GPU能否足够仍需实际验收，不因CPU降峰直接宣布30B修好。

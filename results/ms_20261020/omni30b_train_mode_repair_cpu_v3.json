@@ -1,0 +1,52 @@
+{
+  "complete": true,
+  "date": "2026-10-22",
+  "scope": "Actual failure diagnosis and production CPU regression only; full pretrained 30B GPU validation is pending.",
+  "failed_run": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni30b_official_smoke2_v2",
+    "traceback_log": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni30b_official_smoke2_recovery_queue_v2/training.log",
+    "traceback_lines": [1089, 1113],
+    "exception": "torch.OutOfMemoryError",
+    "failed_operation": "PEFT _LoraFactorsProxy torch.baddbmm",
+    "allocation_requested_MiB": 384,
+    "free_MiB": 107.81,
+    "pytorch_allocated_GiB": 77.42,
+    "updates": 0,
+    "dtype_or_shape_error": false,
+    "initial_update0_checkpoint_present": true,
+    "successful_Adam_updates": 0
+  },
+  "diagnosis": {
+    "pretrained_base_mode": "eval",
+    "peft_wrapper_training": true,
+    "base_training": false,
+    "decoder_training": false,
+    "decoder_gradient_checkpointing_flag": true,
+    "checkpoint_requires_training": true,
+    "minimal_fix": "wrapped.train() immediately after DDP construction and before the first training forward",
+    "scope_reduced": false,
+    "expert_parameter_lora_kept": true,
+    "last_four_audio_blocks_kept": true,
+    "projectors_proj1_proj2_kept": true,
+    "nonreentrant_checkpointing_kept": true,
+    "FP32_trainable_parameters_kept": true,
+    "old_checkpoint_relabelled_or_cross_source_resume": false
+  },
+  "production_cpu_regression": {
+    "task_id": "BSgldW",
+    "exit_code": 0,
+    "source_sha256": "f52c120bf154c8377657004875f7c16e4148b81e76a30090bdb4a74ad903db51",
+    "models": [
+      {"family": "qwen2.5", "updates": 2, "lm_nonzero_gradient_tensors": 14, "audio_lora_nonzero_gradient_tensors": 48, "projector_nonzero_gradient_tensors": 2, "expert_lora_parameters": 0, "actual_checkpoint_calls_including_continuation": 3},
+      {"family": "qwen3", "updates": 2, "lm_nonzero_gradient_tensors": 12, "audio_lora_nonzero_gradient_tensors": 48, "projector_nonzero_gradient_tensors": 4, "expert_lora_parameters": 2, "actual_checkpoint_calls_including_continuation": 3}
+    ],
+    "eval_base_reproduced": true,
+    "labels_padding_eos_shift_passed": true,
+    "complete_optimizer_rng_sampler_next_update_exact": true,
+    "random_tiny_real_architectures_only": true
+  },
+  "full_pretrained_gpu_repair_verified": false,
+  "completed_formal_sft": false,
+  "human_quality_accepted": false,
+  "full_active_goal_completed": false
+}

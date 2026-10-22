@@ -67,8 +67,11 @@
   },
   "same_image_as_usable_rich_and_MS": true,
   "baseline_human_feedback": "两条都可用,你可以试着把这两条融合一下",
-  "fusion_human_review_received": false,
-  "fusion_quality_accepted": false,
+  "fusion_human_review_received": true,
+  "fusion_quality_accepted": true,
+  "fusion_human_feedback": "融合更好且可用,此外,之前你还预设了很多其他的维度,也可以考虑加入prompt中进行尝试.我们需要快速进行迭代,时间来不及了",
+  "fusion_feedback_date": "2026-10-22",
+  "fusion_feedback_scope": "User qualitative acceptance of this single same-case video, with improvement over the two prior baselines; not individual metric scores, caption fact/window approval, or formal SFT acceptance.",
   "one_new_video": true,
   "existing_two_baselines_reused": true
 }

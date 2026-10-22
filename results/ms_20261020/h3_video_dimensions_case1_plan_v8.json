@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-22",
+  "case_id": "FqlHJVDlFGLKCUJS",
+  "purpose": "Two independent same-case prompt increments after actual user acceptance of editorial fusion v7; no video concatenation or weight blending.",
+  "base_caption_json": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_baseline_fused_case1_humanrequest_v7.json",
+  "base_caption_sha256": "b367f18b1406092f6328f3b2c0e9d294b9e3d8eaa27f0f66e2373f394bebd143",
+  "base_video_sha256": "98c68983c04196593a96aa05cd3a2d43b3d5818a9029a43f89adf2b959e8153c",
+  "base_human_feedback": "融合更好且可用",
+  "base_video_reused_not_regenerated": true,
+  "base_motion_caption_preserved_verbatim": true,
+  "configurations": [
+    {
+      "name": "focus_mood",
+      "caption_version": "rich-ms-dimensions-focus-mood-v8",
+      "caption_json": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_dimensions_focus_mood_case1_v8.json",
+      "append": "The movement is led by the arms, with graceful, dreamy expression.",
+      "existing_source_fields": {"body_focus": "arms", "mood": "graceful, dreamy"},
+      "planned_gpu": 0
+    },
+    {
+      "name": "level_travel",
+      "caption_version": "rich-ms-dimensions-level-travel-v8",
+      "caption_json": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_dimensions_level_travel_case1_v8.json",
+      "append": "The dancer stays upright and mostly in place, without jumps.",
+      "existing_source_fields": {"level": "upright", "travel": "stays in place", "jumps": "none"},
+      "planned_gpu": 1
+    }
+  ],
+  "dimension_source": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s1.jsonl",
+    "line": 261,
+    "sha256": "92ef01d3d06edfcf6ad3fdd0119ab3b0068b89da14e1a47646eb40e9f0bfd39d"
+  },
+  "kinematics_source": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_preview32_v3.json",
+    "lines": [117, 137],
+    "sha256": "bc7d36e820ef274089e6d29e3533de1b5aa8914381f3643d3dba79ab1a0eabbb",
+    "arm_speed": 0.4533354279540471,
+    "leg_speed": 0.1834121886958552,
+    "torso_speed": 0.0888441952959359,
+    "pelvis_h_min": 0.9270567770641549,
+    "jumps": 0,
+    "airborne_frac": 0
+  },
+  "excluded_conflicting_dimensions": ["Energy low versus VLM medium", "MS turns around versus VLM turns none"],
+  "quality_already_in_base_not_repeated": "smooth and flowing",
+  "source_window_verified": false,
+  "formal_SFT_reuse_forbidden": true,
+  "new_caption_requires_new_condition_cache": true,
+  "sampling": {"seed": 42, "steps": 50, "cfg": 1, "flow_shift": 12, "height": 1280, "width": 704, "frames": 124, "fps": 24},
+  "planned_host": "28.216.19.143",
+  "new_videos_expected": 2,
+  "generation_completed_at_plan_publication": false,
+  "new_configuration_human_review_received": false,
+  "H3_audio_input": false,
+  "H3_audio_output": false,
+  "first_frame_hard_lock_added": false,
+  "full_active_goal_completed": false
+}

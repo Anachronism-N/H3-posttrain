@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import sys
@@ -13,6 +14,7 @@ import torch
 from peft import LoraConfig, get_peft_model
 
 from diffsynth.core import UnifiedDataset
+from diffsynth.core.data.operators import LoadVideo, ImageCropAndResize
 from diffsynth.diffusion import DiffusionTrainingModule, ModelLogger, add_general_config, add_video_size_config
 from diffsynth.diffusion.runner import initialize_deepspeed_gradient_checkpointing, save_training_args
 from diffsynth.utils.data.minimax_h3 import MiniMaxH3ReferenceLoader
@@ -93,10 +95,33 @@ class VisualReferenceLoader(MiniMaxH3ReferenceLoader):
         raise AssertionError("Audio reference loading is forbidden")
 
 
+class WindowAlignedVideoLoader(LoadVideo):
+    def get_num_frames(self, reader):
+        frames, fps = int(reader.count_frames()), float(reader.get_meta_data()['fps'])
+        if (self.num_frames != 124 or self.frame_rate != 24 or not self.fix_frame_rate or
+                frames < 1 or not math.isfinite(fps) or fps <= 0 or
+                abs(frames / fps - 5.0625) > 1 / fps):
+            raise ValueError('Explicit repeat-last protocol requires the verified 5.0625-second paired source')
+        return self.num_frames
+
+    def mapping(self, reader):
+        frames, fps = int(reader.count_frames()), float(reader.get_meta_data()['fps'])
+        output_frames = self.get_num_frames(reader)
+        indices = [self.map_single_frame_id(index, fps, frames) for index in range(output_frames)]
+        natural = sum(index / self.frame_rate < frames / fps for index in range(output_frames))
+        return dict(protocol='nearest24_repeat_last124_v1', source_frames=frames, source_fps=fps,
+                    source_duration_seconds=frames / fps, target_frames=output_frames,
+                    target_fps=self.frame_rate, target_duration_seconds=output_frames / self.frame_rate,
+                    source_frame_indices=indices, unique_source_frames=len(set(indices)),
+                    natural_target_frames=natural, terminal_padding_frames=output_frames - natural,
+                    padding_does_not_create_motion_evidence=True)
+
+
 class VideoCaptionDataset(UnifiedDataset):
-    def __init__(self, *args, caption_version, **kwargs):
+    def __init__(self, *args, caption_version, temporal_policy='native_down', **kwargs):
         super().__init__(*args, **kwargs)
         self.caption_version = caption_version
+        self.temporal_policy = temporal_policy
         if not len(self):
             raise ValueError("The selected dataset is empty")
         if not self.load_from_cache:
@@ -113,6 +138,22 @@ class VideoCaptionDataset(UnifiedDataset):
             # Do not enter legacy UnifiedDataset's OD_H3_POSI/NEGA/audio mutation paths.
             value = self.cached_data_operator(self.cached_data[index % len(self.cached_data)])
             return validate_caption_cache(value, self.caption_version)
+        if self.temporal_policy == 'nearest24_repeat_last124':
+            source = self.data[index % len(self.data)]
+            if source.get('video_window_seconds') != [0, 5.0625]:
+                raise ValueError('Require explicit source video window [0,5.0625] for repeat-last124')
+            path = Path(source['video'])
+            path = path if path.is_absolute() else Path(self.base_path) / path
+            reader = self.main_data_operator.get_reader(str(path))
+            try:
+                mapping = self.main_data_operator.mapping(reader)
+            finally:
+                reader.close()
+            data = super().__getitem__(index)
+            if len(data['video']) != 124:
+                raise ValueError('Repeat-last source did not produce the declared 124 frames')
+            data['temporal_source_mapping'] = mapping
+            return data
         return super().__getitem__(index)
 
 
@@ -245,7 +286,8 @@ class H3VideoOnlyTrainingModule(DiffusionTrainingModule):
             "use_gradient_checkpointing_offload": self.use_gradient_checkpointing_offload,
             "h3_video_cache": {"format": CACHE_FORMAT, "caption_version": self.caption_version,
                                "caption_sha256": hashlib.sha256(prompt.encode()).hexdigest(),
-                               "sample_id": str(data.get("id", data.get("sample_id", "")))},
+                               "sample_id": str(data.get("id", data.get("sample_id", ""))),
+                               "temporal_source_mapping": data.get("temporal_source_mapping")},
         }
         return shared, {"prompt": prompt}, {}
 
@@ -357,6 +399,8 @@ def source_fingerprint(dataset, args):
         result["cache"] = {str(path.relative_to(base)): marker["files"][str(path.relative_to(base))] for path in paths}
         result["cache_complete_marker"] = file_sha256(base / COMPLETE_MARKER)
         result["cache_source"] = marker["signature"]
+        if marker["signature"].get("temporal_policy", "native_down") != getattr(args, "temporal_policy", "native_down"):
+            raise ValueError('Training temporal policy differs from the actual cache producer')
     else:
         result["metadata_sha256"] = file_sha256(args.dataset_metadata_path)
         media_paths = set()
@@ -383,6 +427,7 @@ def training_signature(accelerator, dataset, args):
             "seed": args.seed, "lora_target_modules": getattr(args, "lora_target_modules", LORA_TARGETS),
             "gradient_checkpointing": getattr(args, "use_gradient_checkpointing", True),
             "gradient_checkpointing_offload": getattr(args, "use_gradient_checkpointing_offload", False),
+            "temporal_policy": getattr(args, "temporal_policy", "native_down"),
             "sources": main_process_result(accelerator, lambda: source_fingerprint(dataset, args))}
 
 
@@ -559,6 +604,8 @@ def video_sft_parser():
                         help="2 is an interface/gradient smoke only; 100/300 are human-gated pilot diagnostics, not full-data training")
     parser.add_argument("--resume_training_state", type=str)
     parser.add_argument("--cpu_self_test", action="store_true")
+    parser.add_argument("--temporal_policy", choices=("native_down", "nearest24_repeat_last124"), default="native_down",
+                        help="Explicit verified short-window resampling and last-frame padding; never implicit new motion evidence")
     parser.set_defaults(data_file_keys="video,references", extra_inputs="references", task="sft:train",
                         lora_base_model="dit", lora_target_modules=LORA_TARGETS, lora_rank=32,
                         learning_rate=1e-5, num_frames=124, height=1280, width=704,
@@ -878,10 +925,18 @@ def main():
         height_division_factor=32, width_division_factor=32, num_frames=args.num_frames,
         time_division_factor=17, time_division_remainder=5, frame_rate=24, fix_frame_rate=True,
     )
+    if args.temporal_policy == 'nearest24_repeat_last124':
+        if args.num_frames != 124:
+            parser.error('Repeat-last124 fixes --num_frames at124')
+        video_operator = WindowAlignedVideoLoader(
+            num_frames=124, time_division_factor=17, time_division_remainder=5,
+            frame_processor=ImageCropAndResize(args.height, args.width, args.max_pixels, 32, 32),
+            frame_rate=24, fix_frame_rate=True,
+        )
     dataset = VideoCaptionDataset(
         base_path=args.dataset_base_path, metadata_path=args.dataset_metadata_path, repeat=1,
         data_file_keys=args.data_file_keys.split(","), main_data_operator=video_operator,
-        caption_version=args.caption_version,
+        caption_version=args.caption_version, temporal_policy=args.temporal_policy,
         special_operator_map={"references": VisualReferenceLoader(
             base_path=args.dataset_base_path, height=args.height, width=args.width,
             max_pixels=args.max_pixels, num_frames=args.num_frames, frame_rate=24,

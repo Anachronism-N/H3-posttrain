@@ -602,6 +602,7 @@ def train(args):
     validate_cursor(state, len(training_rows), args.max_epochs)
     wrapped = torch.nn.parallel.DistributedDataParallel(model, device_ids=[local_rank],
                 find_unused_parameters=True, broadcast_buffers=False) if world > 1 else model
+    wrapped.train()
     chunk_size = world * args.accumulation
     stop_reason = None
     checkpoint = args.resume
@@ -957,8 +958,18 @@ def selftest():
         config.vision_start_token_id = 10
         config._attn_implementation = 'eager'
         base = model_cls(config)
+        base.eval()  # from_pretrained returns an eval-mode base inside the new PEFT wrapper.
         pristine_base = copy.deepcopy(base.state_dict())
         model, scope = attach_lora(base, family, rank=2, alpha=4)
+        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
+        decoder = model.get_base_model().model.layers[0]
+        assert decoder.gradient_checkpointing and not decoder.training
+        checkpoint_calls = []
+        checkpoint_function = decoder._gradient_checkpointing_func
+        def observed_checkpoint(function, *args, **kwargs):
+            checkpoint_calls.append(True)
+            return checkpoint_function(function, *args, **kwargs)
+        decoder._gradient_checkpointing_func = observed_checkpoint
         assert scope['audio_last_four'] == [1, 2, 3, 4]
         assert not any('audio_tower.layers.0.' in p['name'] for p in scope['trainable'])
         frozen_initial = tensor_state_hash({n: p for n, p in model.named_parameters() if not p.requires_grad})
@@ -981,6 +992,7 @@ def selftest():
             torch.nn.utils.clip_grad_norm_([p for p in model.parameters() if p.requires_grad], 1., error_if_nonfinite=True)
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
+        assert decoder.training and len(checkpoint_calls) == 2
         trained = tensor_state_hash(get_peft_model_state_dict(model))
         assert initial != trained
         assert frozen_initial == tensor_state_hash({n: p for n, p in model.named_parameters() if not p.requires_grad})
@@ -1033,6 +1045,8 @@ def selftest():
         hook.remove()
         reports.append(dict(family=family, updates=2, nonzero_by_scope=gradients['nonzero_by_scope'],
                             fused_mlp_parameters=len(scope['target_parameters']),
+                            pretrained_eval_mode_reproduced=True,
+                            actual_gradient_checkpoint_calls=len(checkpoint_calls),
                             checkpoint_rng_optimizer_continuation_exact=True))
     state = dict(epoch=3, best_nll=1., stale_epochs=2)
     assert early_stop(state, .997, 3, 3, .005)

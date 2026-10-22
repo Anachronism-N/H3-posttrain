@@ -1,0 +1,76 @@
+{
+  "complete": true,
+  "kind": "verified_fixed_epoch_interim_snapshot_not_training_completion",
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "actual_gpu_training": true,
+  "snapshot_evidence_task": "TNW4yI",
+  "same_budget_comparison": {
+    "epoch": 8,
+    "optimizer_updates_each": 752,
+    "paired_training_examples_each_epoch": 6000,
+    "fixed_validation_candidates": 500,
+    "actual_global_batch": 64,
+    "same_initialization_and_sample_order": true,
+    "A_pure_clip": {
+      "train_clip": 1.66097172164917,
+      "validation_clip": 6.587815761566162,
+      "validation_R1": 0.009999999776482582,
+      "validation_R5": 0.03700000047683716,
+      "validation_R10": 0.06599999964237213,
+      "validation_raw_rms_ratio": 0.1921202540397644,
+      "fixed_train_probe64_R1": 0.53125
+    },
+    "B_clip_plus_mean_rms": {
+      "train_clip": 2.5041220569610596,
+      "validation_clip": 6.354565143585205,
+      "validation_R1": 0.004999999888241291,
+      "validation_R5": 0.02800000086426735,
+      "validation_R10": 0.05400000140070915,
+      "validation_raw_rms_ratio": 0.9600287675857544,
+      "fixed_train_probe64_R1": 0.1953125
+    },
+    "interpretation": "Moment constraints preserve raw output scale; this snapshot does not establish superior semantic generalization, learned music control or video quality"
+  },
+  "different_epoch_progress_not_a_fair_model_ranking": {
+    "A": {
+      "completed_epoch": 20,
+      "optimizer_updates": 1880,
+      "train_clip": 0.1939954739411672,
+      "validation_clip": 7.175942420959473,
+      "validation_R1": 0.007000000216066837,
+      "validation_raw_rms_ratio": 0.22596043348312378,
+      "fixed_train_probe64_R1": 1.0,
+      "best_checkpoint_epoch": 3,
+      "best_validation_clip": 5.761932373046875,
+      "first_plateau_lr_reduction_verified": true,
+      "post_reduction_backbone_lr": 0.000001,
+      "post_reduction_adapter_lr": 0.00001
+    },
+    "B": {
+      "completed_epoch": 12,
+      "optimizer_updates": 1128,
+      "train_clip": 1.4399930934906007,
+      "validation_clip": 6.885049819946289,
+      "validation_R1": 0.0010000000474974513,
+      "validation_raw_rms_ratio": 0.9887687563896179,
+      "fixed_train_probe64_R1": 0.5703125,
+      "best_checkpoint_epoch_under_relative_improvement_rule": 2,
+      "best_checkpoint_validation_clip": 5.893287658691406,
+      "minimum_observed_validation_clip_epoch": 3,
+      "minimum_observed_validation_clip": 5.880317687988281,
+      "lr_reduced": false
+    }
+  },
+  "negative_evidence": [
+    "Training loss decreases and fixed train-probe retrieval increases while held-out validation CLIP worsens after early best epochs",
+    "Validation retrieval remains weak despite finite noncollapsed output",
+    "Pure CLIP raw centered RMS remains far below teacher scale; moments improve scale without proving semantic alignment"
+  ],
+  "training_probe_scope": "64 fixed examples only, not full training-set retrieval",
+  "scheduler_scope": "Existing configuration-local plateau rule preserved; no running loss, learning-rate rule or budget changed",
+  "retrieval_guard_limitation": "Absolute R1 tolerance 0.01 is weak at observed R1 below 0.01; even a later converged flag cannot demonstrate generalization",
+  "formal_training_completed": false,
+  "convergence_confirmed": false,
+  "student_videos_generated": false,
+  "musical_quality_accepted": false
+}

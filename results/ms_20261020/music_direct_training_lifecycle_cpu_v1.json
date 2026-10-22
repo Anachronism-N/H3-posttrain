@@ -1,0 +1,22 @@
+{
+  "complete": true,
+  "kind": "actual_training_orchestration_cpu_fixture_not_gpu_training",
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "test_task": "HjjBTt",
+  "trainer_sha256": "575cac1ad9c40ed19b53b6cc9c70b5d51b92721e49487d15b3f1429caef37103",
+  "actual_production_direct_training_function_executed": true,
+  "backbone": "explicit_fake_CPU_backbone",
+  "waveform_loader_and_manifest_boundary_mocked": true,
+  "cuda_device_and_graph_capture_boundary_mocked": true,
+  "actual_epoch_logging_checkpoint_optimizer_rng_sampler_save_and_resume_executed": true,
+  "steps_before_and_after_resume": [1, 2],
+  "completed_fixture_epochs": [1, 2],
+  "all_last_best_train_state_finished_files_created": true,
+  "saved_history_retains_scheduler_event": true,
+  "temporary_fixture_outputs_removed_on_exit": true,
+  "actual_gpu_formal_training": false,
+  "convergence_or_video_quality_proven": false,
+  "initial_test_task": "X2JqC7",
+  "initial_test_failure": "CPU mock reported CUDA available without also mocking CUDA graph capture health check",
+  "fix_scope": "Test harness only; production training math and code unchanged"
+}

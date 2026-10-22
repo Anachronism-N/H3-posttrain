@@ -772,6 +772,10 @@ manifest成功后自动在19.69/17.70各0–3四GPU启动相同初始化的A/B�
 
 唯一重启管理任务`hOHxrY`、目录`MS/music_direct6k_v2_training_queue_v3`已实际launch且八卡准入通过。A/B分别输出`MS/music_direct6k_v2_clip_a_restart_v3`、`MS/music_direct6k_v2_clip_moments_b_restart_v3`，使用原6000/500manifest、同init/global64/lr/seed/20min50cap。唯一后续学生任务`xLC6yO`、目录`MS/music_direct6k_v2_final18_queue_v3`重新绑定实际重训managerPID2999182，新模型best.pt用于原18配置，旧K0aRDS失败不算学生视频完成。当前重启仅launch，不表示完成首epoch、收敛或人评。
 
+进一步直接执行生产`_direct_training`的CPU生命周期fixture（`HjjBTt`）：实际epoch日志→模型last/best→Adam/RNG/sampler train_state→finished→从state恢复第二epoch全部通过，step1→2、epoch2→3、history两条保留scheduler event。仅GPU/device/数据边界和实际MusicFM骨干使用明确fake CPU替代，不算实际四rankGPU或正式val证据；测试结果`results/ms_20261020/music_direct_training_lifecycle_cpu_v1.json`。首次fixture`X2JqC7`因仅mock CUDA availability未mock optimizer CUDA graph检查失败，是测试环境问题，不改生产源码；补test boundary后通过。
+
+实际人评接续已部署`zjrb2Z`（`MS/music_direct6k_v2_review_queue_v1`），等待实际`xLC6yO`的18视频/六独立媒体审核完成；仅追加新模型和三固定case，不改变历史评分。之后生成独立focused manifest并启动8771人评页面，8770是用户其他实验服务不触碰，8766旧学生/8769教师服务保留。准备页面不代表已经有18视频或人评，ready.json和真实HTTP/media Range还需在视频完成后验证。
+
 #### 资源与最终验收
 
 仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。

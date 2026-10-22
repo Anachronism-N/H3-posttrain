@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-22",
+  "complete": true,
+  "source_sha256": "b53aece351adf3f94d84f29c0caf5494699132bd85abbeb0a9594377bf9d7f75",
+  "independent_test": {"task_id": "HcvvxA", "exit_code": 0, "tests": 10, "negative_subcases": 31},
+  "scope": "Only TemporaryDirectory synthetic media/review simulation to exercise export contracts; no actual MS captions exported or human approvals submitted.",
+  "omni_outputs": ["train.jsonl", "val.jsonl", "omni.jsonl"],
+  "caption_version_top_level": true,
+  "GT_only_in_assistant": true,
+  "h3_outputs": {"train_only": "h3_video_train.json", "val_only": "h3_video_val.json", "exchange_and_audit_only": "h3_video.json", "combined_direct_cache_or_training_forbidden": true},
+  "h3_rows": ["id", "source_group", "split", "motion_caption", "caption_version", "video", "references", "video_window_seconds", "trained_caption_approved", "provenance"],
+  "h3_audio_fields": false,
+  "actual_CPU_readers_tested": ["omni_dance_sft.read_metadata", "h3_video_sft.VideoCaptionDataset", "h3_video_sft.teacher_video_prompt"],
+  "checks": {"exact_review_IDs_and_SHA": true, "four_approvals_require_actual_boolean_true": true, "reject_fixture_and_formal_reuse_forbidden": true, "reject_boolean_timestamp": true, "source_media_paths_and_all_provenance_SHA_verified_before_output": true, "explicit_paired_media_window": [0, 5.0625], "mixed_caption_version_rejected": true, "nonempty_train_val": true, "source_group_audio_video_split_isolation": true, "all_rejections_leave_no_output": true, "historical_fact_window_unknown_preserved": true},
+  "review_HTTP": {"service_task": "R1zGa0", "verification_task": "snk71D", "home": 200, "api": 200, "ready": 27, "approved": 0, "GET_only": true},
+  "real_training_export_performed": false,
+  "formal_pilot_full_training_started": false,
+  "full_active_goal_completed": false
+}

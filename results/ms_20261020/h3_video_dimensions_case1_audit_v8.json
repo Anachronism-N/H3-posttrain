@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-22",
+  "complete": true,
+  "case_id": "FqlHJVDlFGLKCUJS",
+  "queue": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_dimensions_case1_queue_v8",
+  "managed_task": "KpvJSZ",
+  "exit_code": 0,
+  "manager_pid": 3773121,
+  "new_videos": 2,
+  "old_v7_video_reused": true,
+  "base_body_preserved_verbatim": true,
+  "same_image_model_weights_code_and_sampling_as_v7": true,
+  "configurations": [
+    {"name": "focus_mood", "append": "The movement is led by the arms, with graceful, dreamy expression.", "caption_sha256": "4f77e186300d5a8ad71513a3f8131f071ef7fe28dbfdaf0d35ffe01cadeb0831", "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_dimensions_focus_mood_case1_video_v8/FqlHJVDlFGLKCUJS.mp4", "video_sha256": "5c9ca3d95cc088917d70ae17f54e9f9571c0c880a5c0225376c47e530132ea28", "bytes": 1614604},
+    {"name": "level_travel", "append": "The dancer stays upright and mostly in place, without jumps.", "caption_sha256": "7979fbf5e1574930fed8541b6dd60b36b43d0ee00ea8f4ec0c8cc9cb62b71691", "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_dimensions_level_travel_case1_video_v8/FqlHJVDlFGLKCUJS.mp4", "video_sha256": "24709d3847210fc8bd74b6e1a7d3681c9314054ca992e4f9681fba5102fba6a6", "bytes": 1581953}
+  ],
+  "independent_full_media_validation": {"task_id": "4iwolz", "exit_code": 0, "frames_each": 124, "height": 1280, "width": 704, "fps": 24, "video_streams_each": 1, "audio_streams_each": 0, "complete_RGB_decode_and_PTS_size": true},
+  "actual_calls_each": {"dit": 50, "scheduler_updates": 50, "video_vae_decode": 1, "text_encoder_during_generation": 0, "audio_patch": 0, "audio_head": 0, "audio_reference_encode": 0},
+  "audio_vae_and_scheduler_are_none": true,
+  "review": {"service_task": "MMK8sK", "port": 8774, "manifest": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/manifest_h3_video_dimensions_case1_v8.json", "proxy_validation_task": "vdQkNM", "exit_code": 0, "home": 200, "api": 200, "range_each": 206, "range_bytes_each": 1024, "bytes_match_each": true, "models": 5, "cases": 1, "default_preset": "v7 / focus_mood / level_travel", "external_music_not_H3_input": true},
+  "resource_admission": {"host": "28.216.19.143", "gpus": [0, 1], "fresh_UID_argv_CUDA_UUID_GPU_memory_checks_recorded": true, "host_cgroup_RAM_gate_recorded_by_manager": false, "unverified_RAM_gate_not_claimed": true, "known_ownholders_only_released": true, "unknown_processes_killed": false},
+  "caption_window_and_dimension_window": "unknown",
+  "inference_diagnostic_only": true,
+  "formal_SFT_reuse_forbidden": true,
+  "new_configuration_human_review_received": false,
+  "new_configuration_quality_accepted": false,
+  "full_active_goal_completed": false
+}

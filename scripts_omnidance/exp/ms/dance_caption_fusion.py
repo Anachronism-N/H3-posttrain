@@ -503,7 +503,9 @@ def approved_review(row, target_path):
     required = ('facts_approved', 'narrative_approved', 'window_verified', 'conflicts_resolved')
     if any(row.get(key) is not True for key in required):
         raise ValueError(f'Human facts/narrative/window/conflict approval missing: {row["id"]}')
-    if row.get('reviewed_audio_window_seconds') != AUDIO_WINDOW_SECONDS:
+    window = row.get('reviewed_audio_window_seconds')
+    if (not isinstance(window, list) or any(type(value) not in (int, float) for value in window)
+            or window != AUDIO_WINDOW_SECONDS):
         raise ValueError(f'Human review window must be exactly {AUDIO_WINDOW_SECONDS}: {row["id"]}')
     if any(not isinstance(row.get(key), str) or not row[key].strip() for key in ('reviewer', 'window_evidence', 'notes')):
         raise ValueError(f'Missing actual reviewer/window evidence/notes: {row["id"]}')
@@ -637,52 +639,119 @@ def export_sft(args):
     manifest = load_manifest(args.manifest)
     review_source = source_record(args.review)
     review = read_json(args.review)
+    if any(value.get('fixture_only') is True or value.get('formal_reuse_forbidden') is True
+           for value in (manifest, review, *manifest['records'], *review.get('records', []))):
+        raise ValueError('Fixture-only or formal-reuse-forbidden inputs cannot be exported for training')
     if review.get('manifest_sha256') != manifest_source['sha256']:
         raise ValueError('Human review must name the exact export manifest SHA')
     reviews = review_record_map(review)
+    if set(reviews) != {record['id'] for record in manifest['records']}:
+        raise ValueError('Human review IDs must exactly match the export manifest')
     out = check_new(args.out)
-    rows, sidecar = {'train': [], 'val': []}, []
+    rows, sidecar, h3_rows, combined = {'train': [], 'val': []}, [], [], []
+    verified_sources = [manifest_source, review_source, source_record(__file__)]
+    caption_versions = set()
+    audio_splits = {'train': set(), 'val': set()}
+    video_splits = {'train': set(), 'val': set()}
     for record in manifest['records']:
         path = Path(args.rewrites) / (record['id'] + '.json')
         rewrite_source = source_record(path)
         result = read_json(path)
+        if result.get('fixture_only') is True or result.get('formal_reuse_forbidden') is True:
+            raise ValueError(f'Fixture rewrite cannot be exported for training: {record["id"]}')
         if result.get('id') != record['id'] or result.get('split') != record['split'] or result.get('manifest_sha256') != manifest_source['sha256'] or result.get('rewrite_input_sha256') != record['rewrite_input_sha256']:
             raise ValueError(f'Rewrite provenance mismatch: {record["id"]}')
         approved_review(reviews[record['id']], path)
         target = result['target']
         if not validate_target(target, record)['format_valid']:
             raise ValueError(f'Invalid reviewed caption: {record["id"]}')
-        audio = source_record(record['audio_path'], record['provenance']['audio']['sha256'])
+        sources = record.get('provenance', {})
+        if not {'audio', 'image', 'paired_video', 'meta'} <= set(sources):
+            raise ValueError(f'Missing paired media/window provenance: {record["id"]}')
+        media = {key: source_record(value['path'], value['sha256']) for key, value in sources.items()}
+        for key, field in [('audio', 'audio_path'), ('image', 'image_path'), ('paired_video', 'paired_video_path')]:
+            if str(Path(record[field]).absolute()) != media[key]['path']:
+                raise ValueError(f'Media path differs from manifest provenance: {record["id"]}/{key}')
+        audio, image, video = [media[key] for key in ('audio', 'image', 'paired_video')]
         window = record.get('audio_window_seconds')
-        if window != AUDIO_WINDOW_SECONDS:
+        scope = record['time_scope']
+        scope_window = scope.get('training_audio_window_seconds')
+        if any(not isinstance(value, list) or any(type(second) not in (int, float) for second in value)
+               or value != AUDIO_WINDOW_SECONDS for value in (window, scope_window)):
             raise ValueError(f'Explicit paired audio window missing or wrong: {record["id"]}')
+        meta = read_json(media['meta']['path'])
+        frames, fps = scope.get('paired_normalized_natural_frames'), scope.get('paired_normalized_fps')
+        if (type(frames) is not int or frames < 1 or type(fps) not in (int, float)
+                or not math.isfinite(fps) or fps <= 0 or frames / fps != window[1]
+                or meta.get('natural_output_frames') != frames or meta.get('target_fps') != fps
+                or meta.get('video') != video['path']):
+            raise ValueError(f'Missing or inconsistent 5.0625-second paired video evidence: {record["id"]}')
         with wave.open(audio['path'], 'rb') as stream:
             if stream.getnframes() / stream.getframerate() < window[1]:
                 raise ValueError(f'Audio file does not contain the full requested training window: {record["id"]}')
-        if not isinstance(result.get('caption_version'), str) or not result['caption_version'].startswith(PROTOCOL + ':'):
+        caption_version = result.get('caption_version')
+        if not isinstance(caption_version, str) or not caption_version.startswith(PROTOCOL + ':') or not caption_version[len(PROTOCOL) + 1:].strip():
             raise ValueError(f'Missing target caption version: {record["id"]}')
+        caption_versions.add(caption_version)
+        if len(caption_versions) != 1:
+            raise ValueError('Mixed target caption versions; export requires one frozen rewrite protocol')
+        audio_splits[record['split']].add(str(Path(audio['path']).resolve()))
+        video_splits[record['split']].add(str(Path(video['path']).resolve()))
         rows[record['split']].append(dict(id=record['id'], source_group=record['source_group'], split=record['split'],
+                                          caption_version=caption_version,
                                           messages=[dict(role='user', content=SFT_INSTRUCTION + '\n<audio>'),
                                                     dict(role='assistant', content=target['motion_caption'])],
                                           audios=[audio['path']], audio_window_seconds=window))
+        combined.append(rows[record['split']][-1])
+        approval_provenance = dict(manifest=manifest_source, review=review_source, rewrite=rewrite_source)
+        h3_rows.append(dict(id=record['id'], source_group=record['source_group'], split=record['split'],
+                            motion_caption=target['motion_caption'], caption_version=caption_version,
+                            video=video['path'], references=[dict(type='image', image=image['path'])],
+                            video_window_seconds=list(window), trained_caption_approved=True,
+                            provenance=dict(**approval_provenance, image=image, paired_video=video)))
         sidecar.append(dict(id=record['id'], split=record['split'], split_row=len(rows[record['split']]) - 1,
+                            combined_row=len(h3_rows) - 1, h3_row=len(h3_rows) - 1,
                             source_group=record['source_group'], rewrite_source=rewrite_source,
-                            audio_source=audio, source_record_manifest=manifest_source,
+                            audio_source=audio, image_source=image, paired_video_source=video,
+                            source_record_manifest=manifest_source, review_source=review_source,
                             used_facts=target['used_facts'], conflicts=target['conflicts'],
-                            time_scope=target['time_scope'], human_review=reviews[record['id']],
-                            motion_caption=target['motion_caption'], caption_version=result['caption_version'],
-                            audio_window_seconds=window, h3_prompt=h3_prompt(target['motion_caption'])))
+                            source_time_scope=scope, time_scope=target['time_scope'],
+                            human_review=reviews[record['id']], trained_caption_approved=True,
+                            approval_provenance=approval_provenance,
+                            motion_caption=target['motion_caption'], caption_version=caption_version,
+                            audio_window_seconds=window, video_window_seconds=list(window),
+                            h3_prompt=h3_prompt(target['motion_caption'])))
+        verified_sources.extend([rewrite_source, *media.values()])
+    if not caption_versions or any(not entries for entries in rows.values()):
+        raise ValueError('Export requires nonempty train and val partitions')
+    if audio_splits['train'] & audio_splits['val'] or video_splits['train'] & video_splits['val']:
+        raise ValueError('Train/val audio or paired video file leakage')
+    for source in verified_sources:
+        source_record(source['path'], source['sha256'])
     out.mkdir(exist_ok=False)
     for partition, entries in rows.items():
         atomic_new(out / (partition + '.jsonl'), ''.join(json.dumps(row, ensure_ascii=False, allow_nan=False) + '\n' for row in entries))
-    source_record(args.manifest, manifest_source['sha256'])
-    source_record(args.review, review_source['sha256'])
+    atomic_new(out / 'omni.jsonl', ''.join(json.dumps(row, ensure_ascii=False, allow_nan=False) + '\n' for row in combined))
+    atomic_json(out / 'h3_video.json', h3_rows)
+    for partition in rows:
+        atomic_json(out / ('h3_video_' + partition + '.json'), [row for row in h3_rows if row['split'] == partition])
+    counts = {key: len(value) for key, value in rows.items()}
     atomic_json(out / 'source_sidecar.json', dict(protocol=PROTOCOL, complete=True, records=sidecar,
                                                  manifest=manifest_source, review=review_source,
-                                                 source_code=source_record(__file__), counts={key: len(value) for key, value in rows.items()},
+                                                 caption_version=next(iter(caption_versions)),
+                                                 source_code=verified_sources[2], counts=counts,
+                                                 outputs={name: source_record(out / name) for name in
+                                                          ('train.jsonl', 'val.jsonl', 'omni.jsonl', 'h3_video.json',
+                                                           'h3_video_train.json', 'h3_video_val.json')},
+                                                 h3_metadata_policy=dict(train_only='h3_video_train.json',
+                                                                         val_only='h3_video_val.json',
+                                                                         combined='h3_video.json',
+                                                                         combined_use='exchange_and_audit_only',
+                                                                         combined_direct_cache_or_training_forbidden=True,
+                                                                         reason='H3 reader does not filter split; cache/train only the train-only metadata'),
                                                  user_gt_leakage=False,
                                                  caption_loss_policy='Student trainer must mask user/audio/padding; only assistant caption tokens supervised'))
-    print(json.dumps(dict(out=str(out), counts={key: len(value) for key, value in rows.items()}, human_approved=True)))
+    print(json.dumps(dict(out=str(out), counts=counts, human_approved=True)))
 
 
 class CpuChecks(unittest.TestCase):
@@ -751,64 +820,212 @@ class CpuChecks(unittest.TestCase):
         self.assertIn('arms extend', text)
         self.assertEqual(len(removed), 2)
 
-    def test_sft_export_keeps_gt_out_of_user_and_holdouts(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            rewrites = root / 'rewrites'
-            rewrites.mkdir()
-            audio = root / 'fixture.wav'
+    def synthetic_export_inputs(self, root):
+        """Temporary synthetic media and approval simulation, never real MS targets or review."""
+        import imageio.v2 as imageio
+        import numpy as np
+        from PIL import Image
+        rewrites = root / 'synthetic_rewrites'
+        rewrites.mkdir()
+        records = []
+        for sid, partition in [('clipA', 'train'), ('clipB', 'val')]:
+            audio, image, video, meta = [root / (sid + '.synthetic.' + suffix)
+                                         for suffix in ('wav', 'png', 'mp4', 'json')]
             with wave.open(str(audio), 'wb') as stream:
                 stream.setnchannels(1)
                 stream.setsampwidth(2)
                 stream.setframerate(16000)
                 stream.writeframes(b'\x00\x00' * 81000)
-            records = []
-            for sid, partition in [('clipA', 'train'), ('clipB', 'val')]:
-                record = self.record()
-                record.update(id=sid, split=partition, source_group=sid,
-                              audio_path=str(audio), audio_window_seconds=list(AUDIO_WINDOW_SECONDS),
-                              rewrite_input={'fixture': sid},
-                              rewrite_input_sha256=object_sha({'fixture': sid}),
-                              provenance={'audio': source_record(audio)})
-                records.append(record)
-            manifest_path = root / 'manifest.json'
-            atomic_json(manifest_path, dict(protocol=PROTOCOL, records=records, blocked_ids=['fixedCase']))
-            manifest_sha = source_record(manifest_path)['sha256']
-            reviews = []
-            for record in records:
-                path = rewrites / (record['id'] + '.json')
-                atomic_json(path, dict(id=record['id'], split=record['split'], manifest_sha256=manifest_sha,
-                                       rewrite_input_sha256=record['rewrite_input_sha256'],
-                                       caption_version=PROTOCOL + ':CPU-fixture-only', target=self.target()))
-                reviews.append(dict(id=record['id'], facts_approved=True, narrative_approved=True,
-                                    window_verified=True, conflicts_resolved=True,
-                                    reviewed_audio_window_seconds=list(AUDIO_WINDOW_SECONDS),
-                                    reviewer='CPU-fixture-only', window_evidence='Unit-test fixture, not real source review',
-                                    notes='Synthetic test only; no actual caption/human approval claim',
-                                    rewrite_sha256=source_record(path)['sha256']))
-            review_path = root / 'review.json'
-            atomic_json(review_path, dict(protocol=PROTOCOL, records=reviews, manifest_sha256=manifest_sha))
-            args = argparse.Namespace(manifest=manifest_path, review=review_path, rewrites=rewrites,
-                                      out=root / 'sft')
+            pixels = np.zeros((16, 16, 3), dtype=np.uint8)
+            Image.fromarray(pixels).save(image)
+            with imageio.get_writer(str(video), fps=16, codec='libx264', macro_block_size=16) as writer:
+                for _ in range(81):
+                    writer.append_data(pixels)
+            atomic_json(meta, dict(video=str(video), natural_output_frames=81, target_fps=16,
+                                   synthetic_cpu_contract_fixture=True))
+            record = self.record()
+            record['time_scope'].update(paired_normalized_natural_frames=81, paired_normalized_fps=16,
+                                        training_audio_window_seconds=list(AUDIO_WINDOW_SECONDS),
+                                        reason='Synthetic CPU media only; original fact coverage remains unknown.')
+            record.update(id=sid, split=partition, source_group=sid,
+                          audio_path=str(audio), image_path=str(image), paired_video_path=str(video),
+                          audio_window_seconds=list(AUDIO_WINDOW_SECONDS), rewrite_input={'fixture': sid},
+                          rewrite_input_sha256=object_sha({'fixture': sid}),
+                          provenance={key: source_record(path) for key, path in
+                                      [('audio', audio), ('image', image), ('paired_video', video), ('meta', meta)]})
+            records.append(record)
+        manifest_path, review_path = root / 'synthetic_manifest.json', root / 'synthetic_review.json'
+        atomic_json(manifest_path, dict(protocol=PROTOCOL, records=records, blocked_ids=['fixedCase'],
+                                        synthetic_cpu_contract_fixture=True))
+        manifest_sha = source_record(manifest_path)['sha256']
+        reviews = []
+        for record in records:
+            path = rewrites / (record['id'] + '.json')
+            atomic_json(path, dict(id=record['id'], split=record['split'], manifest_sha256=manifest_sha,
+                                   rewrite_input_sha256=record['rewrite_input_sha256'],
+                                   caption_version=PROTOCOL + ':CPU-contract-simulation', target=self.target()))
+            reviews.append(dict(id=record['id'], facts_approved=True, narrative_approved=True,
+                                window_verified=True, conflicts_resolved=True,
+                                reviewed_audio_window_seconds=list(AUDIO_WINDOW_SECONDS),
+                                reviewer='CPU-contract-simulation-NOT-human-review',
+                                window_evidence='Synthetic 81 frames at 16 fps; test simulation only',
+                                notes='Temporary synthetic test only; no actual caption/human approval claim',
+                                rewrite_sha256=source_record(path)['sha256']))
+        atomic_json(review_path, dict(protocol=PROTOCOL, records=reviews, manifest_sha256=manifest_sha,
+                                      synthetic_cpu_contract_fixture=True))
+        return argparse.Namespace(manifest=manifest_path, review=review_path, rewrites=rewrites,
+                                  out=root / 'temporary_synthetic_export')
+
+    def test_sft_export_keeps_gt_out_of_user_and_holdouts(self):
+        from omni_dance_sft import read_metadata
+        from h3_video_sft import VideoCaptionDataset, teacher_video_prompt
+        with tempfile.TemporaryDirectory(prefix='fusion-synthetic-CPU-only-') as directory:
+            root = Path(directory)
+            args = self.synthetic_export_inputs(root)
             with contextlib.redirect_stdout(io.StringIO()):
                 export_sft(args)
-            for partition in ('train', 'val'):
+            combined, train, val = read_metadata(args.out / 'omni.jsonl')
+            self.assertEqual((len(combined), len(train), len(val)), (2, 1, 1))
+            h3 = VideoCaptionDataset(base_path=str(root), metadata_path=str(args.out / 'h3_video.json'),
+                                     caption_version=PROTOCOL + ':CPU-contract-simulation')
+            self.assertEqual(len(h3), 2)
+            sidecar = read_json(args.out / 'source_sidecar.json')
+            policy = sidecar['h3_metadata_policy']
+            self.assertEqual(policy['combined_use'], 'exchange_and_audit_only')
+            self.assertTrue(policy['combined_direct_cache_or_training_forbidden'])
+            split_groups, split_videos = {}, {}
+            for index, partition in enumerate(('train', 'val')):
+                split_path = args.out / policy[partition + '_only']
+                split_dataset = VideoCaptionDataset(base_path=str(root), metadata_path=str(split_path),
+                                                    caption_version=sidecar['caption_version'])
+                self.assertEqual(len(split_dataset), 1)
+                self.assertEqual(split_dataset[0], h3[index])
+                self.assertEqual({item['split'] for item in split_dataset.data}, {partition})
+                split_groups[partition] = {item['source_group'] for item in split_dataset.data}
+                split_videos[partition] = {item['video'] for item in split_dataset.data}
+                self.assertEqual(source_record(split_path), sidecar['outputs'][split_path.name])
                 row = read_json(args.out / (partition + '.jsonl'))
+                self.assertEqual(row, combined[index])
                 self.assertEqual(row['messages'][0]['content'], SFT_INSTRUCTION + '\n<audio>')
                 self.assertNotIn(self.target()['motion_caption'], row['messages'][0]['content'])
                 self.assertEqual(row['messages'][1]['content'], self.target()['motion_caption'])
-                self.assertEqual(row['audios'], [str(audio)])
                 self.assertEqual(row['split'], partition)
                 self.assertEqual(row['audio_window_seconds'], AUDIO_WINDOW_SECONDS)
                 self.assertEqual(row['source_group'], row['id'])
+                self.assertEqual(row['caption_version'], sidecar['caption_version'])
+                video_row = h3[index]
+                self.assertEqual(video_row['motion_caption'], row['messages'][1]['content'])
+                self.assertEqual(video_row['video_window_seconds'], AUDIO_WINDOW_SECONDS)
+                self.assertTrue(Path(video_row['video']).is_absolute())
+                self.assertEqual(video_row['references'][0]['type'], 'image')
+                self.assertTrue(Path(video_row['references'][0]['image']).is_absolute())
+                self.assertTrue(video_row['trained_caption_approved'])
+                self.assertNotRegex(json.dumps(video_row), r'(?i)audio')
+                self.assertEqual(teacher_video_prompt(video_row), sidecar['records'][index]['h3_prompt'])
+                self.assertEqual(sidecar['records'][index]['source_time_scope']['status'], 'unknown')
+                self.assertEqual(sidecar['records'][index]['time_scope']['status'], 'unknown')
+                self.assertEqual(video_row['provenance']['review'], sidecar['review'])
+                self.assertEqual(video_row['provenance']['rewrite'], sidecar['records'][index]['rewrite_source'])
+            self.assertFalse(split_groups['train'] & split_groups['val'])
+            self.assertFalse(split_videos['train'] & split_videos['val'])
             with self.assertRaises(FileExistsError):
                 export_sft(args)
-            leaked = read_json(manifest_path)
+            leaked = read_json(args.manifest)
             leaked['blocked_ids'] = ['clipA']
-            leak_path = root / 'leak.json'
+            leak_path = root / 'synthetic_leak.json'
             atomic_json(leak_path, leaked)
             with self.assertRaises(ValueError):
                 load_manifest(leak_path)
+
+    def test_export_rejects_unapproved_changed_or_fixture_inputs_without_output(self):
+        cases = ['missing_review', 'missing_review_record', 'review_fixture', 'review_record_fixture',
+                 'manifest_fixture', 'manifest_forbidden', 'rewrite_fixture', 'wrong_manifest_sha',
+                 'wrong_rewrite_sha', 'mixed_version', 'missing_version', 'empty_version',
+                 'missing_audio_window', 'missing_video_evidence', 'wrong_video_duration',
+                 'missing_review_window', 'boolean_review_window', 'boolean_audio_window',
+                 'image_changed', 'video_changed', 'audio_changed', 'image_path_changed',
+                 'meta_changed', 'audio_split_leak', 'video_split_leak', 'source_group_split_leak',
+                 'empty_val_split']
+        cases += ['bad_' + key for key in ('facts_approved', 'narrative_approved', 'window_verified', 'conflicts_resolved')]
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory(prefix='fusion-synthetic-negative-') as directory:
+                args = self.synthetic_export_inputs(Path(directory))
+                manifest, review = read_json(args.manifest), read_json(args.review)
+                record, approval = manifest['records'][0], review['records'][0]
+                rewrite_path = args.rewrites / 'clipB.json'
+                rewrite = read_json(rewrite_path)
+                if case == 'missing_review':
+                    args.review = Path(directory) / 'missing_review.json'
+                elif case == 'missing_review_record':
+                    review['records'].pop()
+                elif case == 'review_fixture':
+                    review['fixture_only'] = True
+                elif case == 'review_record_fixture':
+                    approval['fixture_only'] = True
+                elif case in ('manifest_fixture', 'manifest_forbidden'):
+                    manifest['fixture_only' if case == 'manifest_fixture' else 'formal_reuse_forbidden'] = True
+                elif case == 'rewrite_fixture':
+                    rewrite['fixture_only'] = True
+                elif case == 'wrong_manifest_sha':
+                    review['manifest_sha256'] = 'invalid'
+                elif case == 'wrong_rewrite_sha':
+                    approval['rewrite_sha256'] = 'invalid'
+                elif case == 'mixed_version':
+                    rewrite['caption_version'] += '-different-protocol'
+                elif case == 'missing_version':
+                    rewrite.pop('caption_version')
+                elif case == 'empty_version':
+                    rewrite['caption_version'] = PROTOCOL + ':'
+                elif case == 'missing_audio_window':
+                    record.pop('audio_window_seconds')
+                elif case == 'missing_video_evidence':
+                    record['time_scope'].pop('paired_normalized_natural_frames')
+                elif case == 'wrong_video_duration':
+                    record['time_scope']['paired_normalized_natural_frames'] = 80
+                elif case == 'missing_review_window':
+                    approval.pop('reviewed_audio_window_seconds')
+                elif case == 'boolean_review_window':
+                    approval['reviewed_audio_window_seconds'] = [False, 5.0625]
+                elif case == 'boolean_audio_window':
+                    record['audio_window_seconds'] = [False, 5.0625]
+                elif case in ('image_changed', 'video_changed', 'audio_changed', 'meta_changed'):
+                    key = {'video_changed': 'paired_video'}.get(case, case.removesuffix('_changed'))
+                    with Path(record['provenance'][key]['path']).open('ab') as stream:
+                        stream.write(b'changed synthetic source')
+                elif case == 'image_path_changed':
+                    record['image_path'] = manifest['records'][1]['image_path']
+                elif case == 'audio_split_leak':
+                    other = manifest['records'][1]
+                    other['audio_path'], other['provenance']['audio'] = record['audio_path'], record['provenance']['audio']
+                elif case == 'video_split_leak':
+                    other = manifest['records'][1]
+                    other['paired_video_path'] = record['paired_video_path']
+                    other['provenance']['paired_video'] = record['provenance']['paired_video']
+                    other['provenance']['meta'] = record['provenance']['meta']
+                elif case == 'source_group_split_leak':
+                    manifest['records'][1]['source_group'] = record['source_group']
+                elif case == 'empty_val_split':
+                    manifest['records'][1]['split'] = 'train'
+                    rewrite['split'] = 'train'
+                else:
+                    approval[case.removeprefix('bad_')] = 1
+                # Rebind valid test SHA chains so each negative reaches its intended boundary.
+                args.manifest.write_text(json.dumps(manifest), encoding='utf-8')
+                manifest_sha = source_record(args.manifest)['sha256']
+                for index, item in enumerate(manifest['records']):
+                    path = args.rewrites / (item['id'] + '.json')
+                    result = rewrite if path == rewrite_path else read_json(path)
+                    result['manifest_sha256'] = manifest_sha
+                    path.write_text(json.dumps(result), encoding='utf-8')
+                    if case != 'wrong_rewrite_sha' and index < len(review['records']):
+                        review['records'][index]['rewrite_sha256'] = source_record(path)['sha256']
+                if case != 'wrong_manifest_sha':
+                    review['manifest_sha256'] = manifest_sha
+                if case != 'missing_review':
+                    args.review.write_text(json.dumps(review), encoding='utf-8')
+                with self.assertRaises((ValueError, FileNotFoundError)), contextlib.redirect_stdout(io.StringIO()):
+                    export_sft(args)
+                self.assertFalse(args.out.exists(), case)
 
     def test_deterministic_genre_round_robin(self):
         ids = ['a', 'b', 'c', 'd']

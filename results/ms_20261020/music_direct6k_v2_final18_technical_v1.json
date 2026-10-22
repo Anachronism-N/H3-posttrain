@@ -2,10 +2,20 @@
   "protocol": "musicfm_direct_tokens_cached_prefix_v1",
   "date": "2026-10-22",
   "technical_complete": true,
-  "experiment_including_human_review_complete": false,
-  "human_review_required": true,
-  "human_review_received": false,
+  "experiment_including_human_review_complete": true,
+  "human_review_required": false,
+  "human_review_received": true,
   "musical_quality_accepted": false,
+  "human_review": {
+    "date": "2026-10-22",
+    "source": "User response to AskUserQuestion in this conversation",
+    "verbatim": "还是和之前一样,接近摆pose",
+    "verdict": "Near posing rather than usable continuous dance; goal not achieved",
+    "scope": "Qualitative feedback on the current new6000 student review; not an individual ranking of A/B or joint/aswap/zeroM",
+    "per_video_numeric_scores_received": false,
+    "beat_amplitude_identity_separately_evaluated": false,
+    "all18_individually_scored": false
+  },
   "training": {
     "manifest_sha256": "40df4ff51bb020a9296ad2c54e9c9c069ef9b1e9710ad2c234d3d7782ea2c6e6",
     "train_examples": 6000,
@@ -116,6 +126,9 @@
     "mean_rms_calibration_effect_observed": true,
     "dance_quality_success_or_failure_proven_by_retrieval_alone": false,
     "unbounded_same_recipe_retraining_started": false,
-    "scope": "Completed training lifecycle, fixed18 generation and source/media/HTTP integrity only. Continuous dance, amplitude, beat, swap behavior and identity require actual human feedback."
+    "usable_continuous_dance_established": false,
+    "human_dance_verdict": "near_posing_goal_not_achieved",
+    "specific_failure_cause_established": false,
+    "scope": "Training lifecycle, fixed18 source/media/HTTP integrity and qualitative human review are complete. User reports near posing. No configuration ranking or separate beat/amplitude/identity verdict was supplied; more training or a specific root cause is not proven by this result."
   }
 }

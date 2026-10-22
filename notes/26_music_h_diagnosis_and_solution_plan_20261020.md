@@ -807,6 +807,23 @@ A最低实际验证CLIP为第3epoch的5.761932，后续训练loss大降且训练
 
 截至本快照两正式训练、18学生生成及人评均未完成。唯一`final18_queue_v3`等待真实训练manager结束后使用两组`best.pt`；`review_queue_v1`再等18条完整媒体审核，实际HTTP/Range和连续人评仍需完成。最终推理要重新使用六个获准节点各GPU6，总6卡，启动时再次准入，未知占用拒绝，其他节点和服务不动。原曲/换曲/zeroM各固定3case，aswap同时换M与native音乐，zeroM保native真音乐；不追加case、不把教师恒等结果当学生人评。
 
+#### 2026-10-22 两组正式训练正确退出与最终状态验收（视频/人评尚待）
+
+`hOHxrY`实际exit0，`music_direct6k_v2_training_queue_v3/jobs.json`中两配置均complete、exit_code0。`XRErMI`/`75f4l4`分别绑定真实A/B torchrun PID，等待实际退出后加载最终`train_state.pt`独立验收：steps/converged与finished一致，402个Adam参数状态、四rank RNG和sampler齐全，每条history都是完整epoch、6000训练覆盖和val500，last/best存在。两配置均在epoch20按原规则降LR×0.1，epoch28满足原数值停止条件；不是cap50到期、controller停止、异常退出或仅launch。
+
+| 配置 | 正式完整epoch / 更新 | 最终epoch训练CLIP | 最终val500 CLIP | 最终val R@1 | probe64 R@1 | 最终raw RMS / teacher | 保存best epoch / val CLIP |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| A：纯batch CLIP | 28 / 2632 | 0.118141 | 7.201042 | 0.007 | 1.0 | 0.223623 | 3 / 5.761932 |
+| B：CLIP＋均值/RMS | 28 / 2632 | 0.290612 | 7.327626 | 0.008 | 1.0 | 0.990551 | 2 / 5.893288 |
+
+两组`converged=true`/reason=`converged_representation_not_video_quality`严格只指原定数值平台停止条件满足。完整验证检索弱、早期best后退化、train/val分化仍存在；不能宣布音乐语义泛化、舞蹈或跟拍成功，也不能将每曲唯一caption检索指标直接等同生成失败。B均值/RMS约束校准幅值的数值效果成立，但未建立语义或视频优胜。B实际最低val CLIP在epoch3=5.880318，小改善未达0.5%门槛，保存best仍epoch2；最终18视频按既定best.pt，不偷偷改为last或重训。
+
+A最终last SHA=`fda86016041ad0c9eb3f9922ae3f27f05e5770dec49ccfe13ab5f2e2f6d7e7ca`，B最终last SHA=`2bf65b75e1b345914d7c627be7ca4909d8f9b30460eb2ceb0e3472c012028006`；两组source/init/manifest SHA保持原协议。完整日志、权重、Adam与所有历史失败目录仍在实验存储，不上传GitHub。
+
+阶段补证实际新commit `8a388492853c2b65629bdbbbf76f5c07a38039ff` 已推送，`i2hkaV`直接核remote main与本地一致。旧VSCode Git IPC失效导致一次push认证失败，实际使用当前会话已授权、connectable IPC后成功；未读取/暴露凭据、修改git config、amend或绕过hooks。此处是训练完成报告，尚不是全部实验最终发布。
+
+最终六GPU6只读准入快照已核：六host均只有同uid指定项目holder（CUDA_VISIBLE_DEVICES=6），无未知compute/既有H3 sampler，各GPU6空闲约80178MiB，宿主与cgroup可用均≥180GiB；未提前释放任何holder或启动额外生成。已告知总六卡资源，唯一`xLC6yO`在真实训练manager完成后做checkpoint/source验证、逐shard重新准入再生成18；所有partial保留。其完整媒体审核、跨配置原/换/zeroM来源核对、人评页面HTTP/Range、用户实际连续反馈和最终分析GitHub仍待完成，原跟进调度不得提前取消。
+
 #### 资源与最终验收
 
 仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。

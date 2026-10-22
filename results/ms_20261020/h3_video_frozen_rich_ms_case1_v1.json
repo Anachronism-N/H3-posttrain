@@ -94,8 +94,16 @@
   ],
   "case_id": "FqlHJVDlFGLKCUJS",
   "people": 1,
-  "quality_accepted": false,
-  "human_review_received": false,
+  "quality_accepted": true,
+  "human_review_received": true,
+  "human_review": {
+    "date": "2026-10-22",
+    "verbatim": "两条都可用,你可以试着把这两条融合一下",
+    "scope": "The two shown rich/MS frozen video-only single-case baselines are usable; no separate beat, identity or numerical rating was supplied.",
+    "requested_followup": "Fuse the two caption styles and generate the same reference case.",
+    "caption_source_window_verified": false,
+    "all32_caption_targets_approved": false
+  },
   "fused_condition_pending": true,
   "source_audit_sha256": "fb0f2ebac5d62b3816e035452a28e93f60047861e7c08be87e6e2931269dda72",
   "scope": "Actual original Ref2VA frozen video-only two-caption single-case baseline; no human verdict. Fused caption not yet valid",

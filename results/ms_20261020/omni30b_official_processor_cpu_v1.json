@@ -1,0 +1,40 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "pretrained_model_loaded": false,
+  "fixture_caption": true,
+  "family": "qwen3",
+  "model_path": "/apdcephfs_gy4/share_302533218/cedricnie/models/Qwen3-Omni-30B-A3B-Instruct-official",
+  "model_config_sha256": "eab5093d47807aaf894119506b238b2b1cee70d08456e894fee9a012d88f2e0d",
+  "source_sha256": "cdb7aa3adecd1f3b66cec0fa0c6702714617d1f1d03f799ea3d69dba1701a7a9",
+  "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/FqlHJVDlFGLKCUJS.wav",
+  "audio_sha256": "0a7acd3ead56de06de71e140e55de15e7124e4b679d5a075a08f74647250ac15",
+  "audio_window_seconds": [
+    0.0,
+    5.0625
+  ],
+  "waveform_sr": 16000,
+  "waveform_samples": 81000,
+  "waveform_sha256": "f8f88ade3e9b435c1a1875def7a825ac1021110932074b0d1c97401466b0f5d1",
+  "input_features_shape": [
+    1,
+    128,
+    506
+  ],
+  "feature_attention_mask_shape": [
+    1,
+    506
+  ],
+  "valid_audio_feature_frames": 506,
+  "total_tokens": 127,
+  "processed_prefix_tokens": 101,
+  "audio_placeholder_tokens": 66,
+  "supervised_caption_eos_tokens": 25,
+  "shifted_loss_tokens": 25,
+  "user_audio_padding_supervised_tokens": 0,
+  "supervised_eos_tokens": 1,
+  "saved_processor_inference_parity": true,
+  "inference_contains_labels": false,
+  "source_report_sha256": "3b147d02974874c55425d84a1baa0adf350994a043c0b8d57cea63cb87d05601",
+  "official_weight_content_verification_complete": false
+}

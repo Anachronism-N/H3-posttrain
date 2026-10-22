@@ -974,3 +974,11 @@ N3单GPU0实际 `beaVgA`/`MS/h3_video_interface_wave0_queue_v1` 正在新8条cap
 **独立caption审核页：** 新 `dance_caption_review.py`标准库HTTP，12CPU synthetic HTTP测试通过（正例POST只TemporaryDirectory fixture，非真实评分）。显示raw rich/MS全文、事实ID、配对图／短片／5.0625秒音频、候选／usedfacts/conflicts/unknownwindow；原sourcevideo无manifest明确SHA则只显示未核，不扩大白名单。四checkbox默认false、实际reviewer/window_evidence/notes/窗口显式提交，server绑定真实manifest/rewrite SHA＋sessionnonce/CSRF/origin；32全四true且目标formatvalid才preview32_approved。GET不建评分文件，不迁移旧reviewjsonl、不代用户POST。修相对API/media routes及显式固定public-origin支持code-server proxy，未信任任意Forwarded头。首旧v3页GET/Range核通过，但外部代理URL连接timeout；新版8773已改绑v6候选与独立reviewout，本地codeserver GET可用性继续核。停止旧8773仅为切换同任务候选版本，保旧8770/8771/8772/8774。正式窗口/事实/冲突人工审核仍未完成，不能因裁剪音频或H3完整cache宣布审核通过。
 
 官方30B下载nppvRl已actualexit0，15分片总70,523,299,202bytes、25官方文件齐；HfApi固定revision/LFS内容SHA/Gitblob取得，N7唯一 `SrdYyD`开始完整内容核验＋local immutable staging，已核的头两分片匹配官方SHA，其余进行中。不得拿文件名／下载退出当全部内容核验或30B梯度成功。本轮整体仍在Wave0/真实人审前，未启动formal512/128或6000/500，不取消`e06d1c4f`跟进。
+
+#### 2026-10-22 真实人评：两个纯视频基线均可用，进一步融合正文
+
+用户观看8774里原始H3真纯视频rich-motion-only与MS-motion-only同case两个已完成视频后明确反馈：**“两条都可用,你可以试着把这两条融合一下”**。本次两条基线的人评已收到，记录quality_accepted=true，不能继续称pending或将旧音乐hidden近pose负评迁移过来；可用结论仅当前两条，不自动推出节拍／身份各维度已单独通过或所有32caption窗口／事实已核。
+
+按用户要求融合的是**caption内容**，不是视频拼接或权重混合。保rich的芭蕾／现代舞质感、轻盈连贯与表达，加入MS的左／右肘弯伸、逆／顺时针转向、手靠近再远离膝盖、左右手离对侧肩、双肘收拢与手靠肩／彼此靠近等五项具体事实。助手直接编辑融合173词，保原事实侧车和未核全局顺序／窗口冲突，去性别代词与伪秒数，不冒称Qwen产物或人工训练目标；跨动作连接只是合理编排提案。
+
+新输入 `MS/h3_video_baseline_fused_case1_humanrequest_v7.json` SHA=`b367f18b1406092f6328f3b2c0e9d294b9e3d8eaa27f0f66e2373f394bebd143`。原始两条可用基线不重跑；新增仅一个同case `FqlHJVDlFGLKCUJS`、同图／seed42／CFG1／50video／704×1280／124@24，没有H3音频输入与输出，不加硬首帧。前一自动v6名为fused的正文近rich-only，即使列出MS IDs也不代表融合覆盖；保为历史诊断，不用其结果替这次具体融合。计划N4 GPU0单slot，逐UUID／uid／argv／主机内存准入后实际生成，完整媒体核验后加入独立8774与两条原视频对比；未生成完不预判效果。

@@ -601,7 +601,8 @@ def train(args):
         state = load_checkpoint(args.resume, model, optimizer, fingerprint, device, rank, world)
     validate_cursor(state, len(training_rows), args.max_epochs)
     wrapped = torch.nn.parallel.DistributedDataParallel(model, device_ids=[local_rank],
-                find_unused_parameters=True, broadcast_buffers=False) if world > 1 else model
+                find_unused_parameters=True, broadcast_buffers=False,
+                gradient_as_bucket_view=True) if world > 1 else model
     wrapped.train()
     chunk_size = world * args.accumulation
     stop_reason = None
@@ -656,6 +657,7 @@ def train(args):
                             raise FloatingPointError('Nonfinite training NLL')
                         (nll * (world / int(token_count))).backward()
                         local_nll += nll.detach().double()
+                        del output, nll, labels, inputs
                 report = gradient_report(model)
                 if state['updates'] == 0 or args.smoke_steps:
                     log(dict(event='gradient_scope', update=state['updates'] + 1, **report), rank)

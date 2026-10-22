@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-22",
+  "complete": true,
+  "scope": "CPU mathematical and checkpoint equivalence of a memory-layout-only fix; official 30B GPU two-update repair not yet verified.",
+  "failed_operation": "Second update backward grouped_mm_fallback grad_weight=zeros_like(weight), 768MiB OOM",
+  "old_production_source_sha256": "f52c120bf154c8377657004875f7c16e4148b81e76a30090bdb4a74ad903db51",
+  "new_production_source_sha256": "7c4636262726addbef7735ecc1e9717b66c922ed2a2ef20f264d08ddd22f33bb",
+  "minimal_changes": ["DistributedDataParallel gradient_as_bucket_view=True", "After each slot backward and detached NLL accumulation, delete output/nll/labels/inputs references"],
+  "source_CPU_evidence": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni30b_ddp_bucketview_cpu_v4.json",
+  "experiment": {"task_id": "AdLoia", "exit_code": 0, "backend": "Gloo", "ranks": 2, "text_layers": 48, "hidden_size": 32, "experts": 2, "trainable_keys": 628, "linear_targets": 216, "expert_parameter_targets": 96, "base_dtype": "BF16", "trainable_and_Adam_dtype": "FP32", "rank": 2, "alpha": 4, "fixture_only": true},
+  "actual_step2_gradient_storage": {"bucket_view_false_unique_storages": 628, "bucket_view_true_unique_storages": 1, "bucket_view_true_gradients_with_base": 628, "gradient_tensor_bytes_each_configuration": 182464},
+  "all_configuration_gradient_adapter_Adam_hashes_exact": true,
+  "two_updates_full_checkpoint_then_third_update_resume_exact": true,
+  "frozen_base_unchanged": true,
+  "slot_release_old_logits_weakref_dead_at_next_forward": true,
+  "production_selftest": {"task_id": "nWrp0q", "exit_code": 0, "real_tiny_Qwen2_5_and_Qwen3_two_updates_and_exact_continuation": true},
+  "official_GPU_peak_memory_measured_by_this_CPU_test": false,
+  "expert_scope_or_rank_reduced": false,
+  "expert_PEFT_fold_rounding_changed": false,
+  "next_run": "Same official initialization and seed in a fresh v4 directory; preserve u1 checkpoint, do not relabel or cross-source resume",
+  "full_active_goal_completed": false
+}

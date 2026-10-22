@@ -449,7 +449,7 @@ def formal_training_provenance(metadata_path, caption_version):
         rewrite_source = verify(row["rewrite_source"])
         rewrite = read_json(rewrite_source["path"])
         reject_fixture(rewrite)
-        approved_review(approval, rewrite_source["path"])
+        approved_review(approval, rewrite_source["path"], record)
         if (row.get("trained_caption_approved") is not True or row.get("human_review") != approval or
                 row.get("source_record_manifest") != manifest_source or row.get("review_source") != review_source or
                 row.get("approval_provenance") != dict(manifest=manifest_source, review=review_source, rewrite=rewrite_source) or

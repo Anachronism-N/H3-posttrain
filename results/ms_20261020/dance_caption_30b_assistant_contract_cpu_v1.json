@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-22",
+  "complete": true,
+  "scope": "CPU verification of official30B frozen Thinker text rewriting and delegated AI evidence review contracts; not completed target generation or formal training.",
+  "source_sha256": "c74f5e1694f827a180e40e425730e13cdd660775e6756acc7fbbb0c8a29b6f3d",
+  "independent_test_task": "Two3xS",
+  "exit_code": 0,
+  "tests": 18,
+  "actual_model_family": "qwen3_omni_moe",
+  "processor": "Qwen3OmniMoeProcessor",
+  "thinker": "Qwen3OmniMoeThinkerForConditionalGeneration",
+  "thinker_config_extracted_from_full_config": true,
+  "no_Talker_Code2Wav_or_token2wav_instantiated": true,
+  "actual_official_processor_CPU_observation": {"keys": ["input_ids", "attention_mask"], "context_tokens": 635, "EOS": 151645, "PAD": 151643, "assistant_JSON_prefill": "{", "audio_images_videos": null},
+  "Thinker_loader_missing_mismatched_error_rejected": true,
+  "unexpected_weight_keys_allow_only_output_speech_prefixes": true,
+  "model_config_processor_all_weight_shard_SHA_required": true,
+  "evidence_review": {"review_kind": "assistant_delegated", "explicit_user_delegation_required": true, "document_row_review_kind_match": true, "four_approvals_and_window_reviewer_notes_required": true, "paired_video_and_observed_contact_sheet_minimum": true, "evidence_actual_path_SHA_size_verified": true, "unknown_original_window_not_fabricated_verified": true, "human_approved_stdout": false},
+  "H3_context_compatibility": {"changed_call": "approved_review(approval, rewrite_path, record)", "source_sha256": "68199706bb58248ff685f929510a563b3a8e9da01629108cb32eab82a06247bc", "independent_test_task": "LMlkRm", "exit_code": 0},
+  "fake_CPU_review_simulations_used_real_MS_review": false,
+  "full_active_goal_completed": false
+}

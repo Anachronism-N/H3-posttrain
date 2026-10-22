@@ -1056,3 +1056,11 @@ H3正式100/300数据来源门禁已实现并主线程C2GQhv独立CPU全部通�
 用户要求更详细记录音乐替换文本的逐轮实验/结论/分析，取消后续7B微调对照，尽快正式推进；在澄清目标审核后明确回复“我希望你来进行审核,此外,也可以直接进行推进”。这取代需用户逐条人工POST的当前前置：允许透明assistant_delegated AI证据审核真实配对片段和来源事实，不冒human分数，不把unknown原rich/MS窗口伪verified。
 
 已实际完成新30B-only pilot来源prepare ZyNQ3t，512train/128val，共640记录，`MS/dance_caption_pilot640_30b_only_manifest_v1.json` SHA624408c0bba8926ed21d0756e12c9161ca12dc917569a6e8be5317c0376ab729；所有目标仍未生成/未批准，不是formalSFT。当前实际推进32媒体AI观察、30B冻结teacher重写兼容与透明审核契约；文档notes28的音乐替换文本R0–R7逐轮章节同步补详。距离正式pilot剩真实审核目标→640监督→导出/数据签名→当次8卡准入，技术接口不再重复验、7B不再训练，不等待用户再逐条审批。完成这条关键路径后直接官方30B fresh三epoch/smoke0，未完成前不假称已经正式训练或给未经证据的日历时间。
+
+#### 2026-10-23 实际委托AI审核与官方30B目标重写启动
+
+32配对normalized视频实际CPU全部解码81@16，逐条Read12帧图共384帧，审核旧正文为1粗粒度可留/26需重写/5拒当前target（不是拒媒体）。已保存透明AI观察与89条保守window OBS事实；original rich/MS源窗仍unknown，未冒human评分/全部facts自动True。观察报告在生成manifest冻结后仅修订旧producer26/6与当前validator27/5的说明，source SHA从f59b…改581645…；派生89facts只同步父引用由58a…改c9e2…。当前运行manifest内嵌旧实际观测并保父f59指纹，不重标旧SHA，公开报告保完整lineage。
+
+冻结teacher入口从硬编码7B改为官方30B config/processor/ThinkerConfig（也保历史7B兼容），完整weights loading missing/mismatch/error拒，speech-output unexpected白名单，不创建Talker/Code2Wav；模型全冻结text-only、assistant {预填充与EOS/PAD保持。新审核kind assistant_delegated、明确用户delegation、实际本条video和帧图path/SHA/size、reviewer/window/evidence及四项检查必需；human历史缺kind兼容，不用AI冒人工。最终fusion SHA c74f5e1694f827a180e40e425730e13cdd660775e6756acc7fbbb0c8a29b6f3d，主线程Two3xS18CPUtests实际exit0；H3审批调用传实际record的单行适配后SHA68199706bb58248ff685f929510a563b3a8e9da01629108cb32eab82a06247bc，LMlkRm原正式门禁/恢复CPU全部通过。
+
+新32素材manifest fd2f6a9e78b2ddc232c9c534f128991a10b572ff9ad70525a245ab665b544119 保raw rich/MS与原sources，增加actual normalized OBS观察、冲突与优先限制，不谎原时间mappingverified。N7GPU0经freshUID/argv/CUDA/UUID/host/cgroup准入，真实manager3179081/child3179110，唯一LekoXm实际启动官方30B冻结32重写；只是正式监督准备，**不是30B学生SFT**。已有实际输出，首两条仍有正文保留冲突动作的问题（如承认近膝不可见却正文仍写近膝；承认无下移却正文仍下移），不能以JSON格式通过自动批准，须按OBS保守事实进一步修正后再扩512/128。旧完整7B/30B两更新不重跑。

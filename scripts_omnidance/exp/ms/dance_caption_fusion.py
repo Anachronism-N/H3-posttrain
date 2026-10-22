@@ -1,7 +1,7 @@
 """Isolated rich + original-MS target preparation, text-only rewriting and reviewed SFT export.
 
 Preparation never rebuilds the pool or touches old caches. A successful format check
-is not a semantic/human approval; uncertain time coverage requires human review.
+is not a semantic approval; uncertain time coverage requires evidence-backed review.
 """
 import argparse
 import contextlib
@@ -22,6 +22,14 @@ ROOT = Path('/apdcephfs_gy4/share_302533218/cedricnie')
 EXP = ROOT / 'diff/logs_omnidance/exp'
 PROTOCOL = 'dance_caption_rich_ms_v1'
 AUDIO_WINDOW_SECONDS = [0.0, 5.0625]
+ASSISTANT_REVIEW_BASIS = 'normalized_media_observation_and_source_facts'
+ASSISTANT_DELEGATION = 'user explicitly requested assistant review and direct progression on 2026-10-22'
+TEACHER_FAMILIES = {
+    'qwen2_5_omni': ('Qwen2_5OmniProcessor', 'Qwen2_5OmniThinkerForConditionalGeneration',
+                     'Qwen2_5OmniThinkerConfig'),
+    'qwen3_omni_moe': ('Qwen3OmniMoeProcessor', 'Qwen3OmniMoeThinkerForConditionalGeneration',
+                       'Qwen3OmniMoeThinkerConfig'),
+}
 SFT_INSTRUCTION = ('Listen to the supplied music and propose one coherent dance choreography '
                    'that could suit this excerpt. Write a continuous English movement narrative '
                    'covering dance style and energy, connected phrases and transitions, body '
@@ -367,7 +375,11 @@ def prepare(args):
                     selection=dict(limit=args.limit, val_limit=val_count, policy='deterministic genre then kinematic-cell round robin',
                                    quantile_cuts=cuts),
                     prior_cache_policy='Old caption hidden/y cache never reused; no cache builder invoked',
-                    review_requirement='Human facts, narrative, conflicts and source-window verification before export or expansion',
+                    review_requirement='Evidence-backed facts, narrative, conflicts and source-window review before export or expansion; human or explicitly assistant_delegated',
+                    assistant_review_schema=dict(review_kind='assistant_delegated', delegation=ASSISTANT_DELEGATION,
+                                                 review_basis=ASSISTANT_REVIEW_BASIS,
+                                                 review_evidence='At least two actual path/sha256/size_bytes sources on every row: this record paired video and an observed JPG/PNG contact sheet; no fabricated observations',
+                                                 document_and_record_review_kind_must_match=True),
                     human_review_schema=dict(protocol=PROTOCOL, manifest_sha256='SHA of this manifest',
                                              preview_manifest=dict(path='this manifest path', sha256='SHA of this manifest'),
                                              rewrites_dir='actual rewrite directory',
@@ -394,7 +406,9 @@ def text_generation_inputs(processor, conversation, continue_final_message=False
     if 'input_ids' not in inputs or set(inputs) - {'input_ids', 'attention_mask', 'token_type_ids'}:
         raise ValueError(f'Unexpected multimodal processor outputs in text-only rewrite: {set(inputs)}')
     tokenizer = processor.tokenizer
-    for token in ('<|AUDIO|>', '<|audio_bos|>', '<|IMAGE|>', '<|VIDEO|>', '<|vision_bos|>'):
+    for token in ('<|AUDIO|>', '<|audio_bos|>', '<|audio|>', '<|audio_start|>', '<|audio_end|>',
+                  '<|IMAGE|>', '<|VIDEO|>', '<|vision_bos|>', '<|vision_start|>',
+                  '<|image_pad|>', '<|video_pad|>'):
         if token in tokenizer.get_vocab():
             if (inputs['input_ids'] == tokenizer.convert_tokens_to_ids(token)).any().item():
                 raise ValueError(f'Multimodal token in rewrite text input: {token}')
@@ -490,26 +504,66 @@ def load_manifest(path):
     return manifest
 
 
+def review_kind(review):
+    kind = review.get('review_kind', 'human')
+    if kind not in ('human', 'assistant_delegated'):
+        raise ValueError(f'Unknown review kind: {kind!r}')
+    return kind
+
+
 def review_record_map(review):
     if review.get('protocol') != PROTOCOL or not isinstance(review.get('records'), list):
-        raise ValueError('Wrong human review schema')
+        raise ValueError('Wrong review schema')
+    kind = review_kind(review)
+    if kind == 'assistant_delegated' and review.get('delegation') != ASSISTANT_DELEGATION:
+        raise ValueError('Assistant review requires the explicit user delegation')
+    if any(review_kind(row) != kind for row in review['records']):
+        raise ValueError('Document and record review kinds must match')
     ids = [valid_id(row['id']) for row in review['records']]
     if len(ids) != len(set(ids)):
-        raise ValueError('Duplicate human review IDs')
+        raise ValueError('Duplicate review IDs')
     return {row['id']: row for row in review['records']}
 
 
-def approved_review(row, target_path):
+def approved_review(row, target_path, record):
     required = ('facts_approved', 'narrative_approved', 'window_verified', 'conflicts_resolved')
     if any(row.get(key) is not True for key in required):
-        raise ValueError(f'Human facts/narrative/window/conflict approval missing: {row["id"]}')
+        raise ValueError(f'Review facts/narrative/window/conflict approval missing: {row["id"]}')
     window = row.get('reviewed_audio_window_seconds')
     if (not isinstance(window, list) or any(type(value) not in (int, float) for value in window)
             or window != AUDIO_WINDOW_SECONDS):
-        raise ValueError(f'Human review window must be exactly {AUDIO_WINDOW_SECONDS}: {row["id"]}')
+        raise ValueError(f'Review window must be exactly {AUDIO_WINDOW_SECONDS}: {row["id"]}')
     if any(not isinstance(row.get(key), str) or not row[key].strip() for key in ('reviewer', 'window_evidence', 'notes')):
         raise ValueError(f'Missing actual reviewer/window evidence/notes: {row["id"]}')
     source_record(target_path, row.get('rewrite_sha256', 'missing'))
+    evidence_sources = []
+    if review_kind(row) == 'assistant_delegated':
+        if row.get('review_basis') != ASSISTANT_REVIEW_BASIS:
+            raise ValueError(f'Assistant review requires normalized media and source-fact observations: {row["id"]}')
+        evidence = row.get('review_evidence')
+        if not isinstance(evidence, list) or len(evidence) < 2:
+            raise ValueError(f'Assistant review requires paired-video and contact-sheet evidence: {row["id"]}')
+        for entry in evidence:
+            if (not isinstance(entry, dict) or not isinstance(entry.get('path'), str)
+                    or not Path(entry['path']).is_absolute()
+                    or not isinstance(entry.get('sha256'), str)
+                    or not re.fullmatch(r'[0-9a-f]{64}', entry['sha256'])
+                    or type(entry.get('size_bytes')) is not int or entry['size_bytes'] <= 0):
+                raise ValueError(f'Invalid assistant evidence source: {row["id"]}')
+            actual = source_record(entry['path'], entry['sha256'])
+            if actual['size_bytes'] != entry['size_bytes']:
+                raise ValueError(f'Assistant evidence size mismatch: {row["id"]}')
+            evidence_sources.append(actual)
+        video = record.get('provenance', {}).get('paired_video', {})
+        expected_path = str(Path(record.get('paired_video_path', '')).absolute())
+        if (video.get('path') != expected_path
+                or not any(source['path'] == expected_path and source['sha256'] == video.get('sha256')
+                           for source in evidence_sources)):
+            raise ValueError(f'Assistant evidence must include this record\'s paired video: {row["id"]}')
+        if not any(Path(source['path']).suffix.lower() in ('.jpg', '.jpeg', '.png')
+                   and source['path'] != expected_path for source in evidence_sources):
+            raise ValueError(f'Assistant evidence must include an observed contact sheet: {row["id"]}')
+    return evidence_sources
 
 
 def expansion_approval(path):
@@ -522,34 +576,68 @@ def expansion_approval(path):
     if len(preview['records']) != 32 or review.get('stage') != 'preview32_approved':
         raise ValueError('Expansion requires a reviewed 32-record preview, not a selection-only manifest')
     reviews = review_record_map(review)
+    if review.get('manifest_sha256') != preview_source['sha256'] or set(reviews) != {record['id'] for record in preview['records']}:
+        raise ValueError('Review must match the exact preview manifest SHA and IDs')
+    if any(value.get('fixture_only') is True or value.get('formal_reuse_forbidden') is True
+           for value in (preview, review, *preview['records'], *review['records'])):
+        raise ValueError('Fixture-only inputs cannot approve formal expansion')
+    evidence_sources = []
     for record in preview['records']:
         target_path = Path(review['rewrites_dir']) / (record['id'] + '.json')
-        approved_review(reviews[record['id']], target_path)
+        evidence_sources.extend(approved_review(reviews[record['id']], target_path, record))
         target = read_json(target_path)
+        if target.get('fixture_only') is True or target.get('formal_reuse_forbidden') is True:
+            raise ValueError('Fixture rewrite cannot approve formal expansion')
         if target.get('id') != record['id'] or target.get('split') != record['split'] or target.get('rewrite_input_sha256') != record['rewrite_input_sha256'] or target.get('manifest_sha256') != preview_source['sha256'] or not validate_target(target['target'], record)['format_valid']:
             raise ValueError('Preview rewrite is not from the reviewed manifest or fails format checks')
+    for source in evidence_sources:
+        source_record(source['path'], source['sha256'])
     return source_record(path)
+
+
+def teacher_family(config):
+    family = config.get('model_type')
+    if family not in TEACHER_FAMILIES or not isinstance(config.get('thinker_config'), dict):
+        raise ValueError('Rewrite teacher must have a supported local Omni full/Thinker config')
+    return TEACHER_FAMILIES[family]
 
 
 def model_provenance(model_path):
     config_path = model_path / 'config.json'
     config = read_json(config_path)
-    if config.get('model_type') != 'qwen2_5_omni':
-        raise ValueError('Rewrite teacher must be local Qwen2.5-Omni, not a folder-name guess')
+    processor_name, class_name, config_name = teacher_family(config)
     index_path = model_path / 'model.safetensors.index.json'
     if index_path.is_file():
         index = read_json(index_path)
         shards = sorted(set(index['weight_map'].values()))
-        if any(Path(shard).name != shard for shard in shards):
-            raise ValueError('Model index shard escapes model directory')
+        if not shards or any(Path(shard).name != shard or shard in ('.', '..') for shard in shards):
+            raise ValueError('Model index shard escapes model directory or is empty')
         index_source = source_record(index_path)
     else:
         shards, index_source = ['model.safetensors'], None
-    return dict(model_path=str(model_path.absolute()), class_name='Qwen2_5OmniThinkerForConditionalGeneration',
+    processor_files = sorted(path for path in model_path.iterdir() if path.is_file()
+                             and (path.name in ('chat_template.jinja', 'chat_template.json', 'merges.txt', 'vocab.json')
+                                  or path.name.startswith(('tokenizer', 'preprocessor', 'processor', 'special_tokens'))))
+    return dict(model_path=str(model_path.absolute()), model_type=config['model_type'],
+                class_name=class_name, processor_class_name=processor_name, thinker_config_class_name=config_name,
                 config=source_record(config_path), weight_index=index_source,
                 weight_shards=[source_record(model_path / shard) for shard in shards],
+                processor_files=[source_record(path) for path in processor_files],
+                thinker_config_sha256=object_sha(config['thinker_config']),
                 revision='local full weight/config SHA256; original download revision unknown',
                 model_input_modalities=dict(audio=None, images=None, videos=None), frozen=True)
+
+
+def thinker_loading_checks(loading):
+    required = ('missing_keys', 'mismatched_keys', 'unexpected_keys', 'error_msgs')
+    if any(not isinstance(loading.get(key), (list, set, tuple)) for key in required):
+        raise RuntimeError('Thinker loader did not return complete loading diagnostics')
+    if loading['missing_keys'] or loading['mismatched_keys'] or loading['error_msgs']:
+        raise RuntimeError(f'Incomplete or mismatched Thinker weights: {loading}')
+    if any(not isinstance(key, str) or not key.startswith(('talker.', 'code2wav.', 'token2wav.'))
+           for key in loading['unexpected_keys']):
+        raise RuntimeError(f'Unexpected non-output-module Thinker weights: {loading["unexpected_keys"]}')
+    return {key: sorted(loading[key]) for key in required}
 
 
 def rewrite(args):
@@ -557,8 +645,8 @@ def rewrite(args):
         raise ValueError('Invalid shard/nshard')
     manifest_source = source_record(args.manifest)
     manifest = load_manifest(args.manifest)
-    approval = expansion_approval(args.review) if len(manifest['records']) > 32 else None
     selected_records = manifest['records'][:args.rewrite_limit] if args.rewrite_limit else manifest['records']
+    approval = expansion_approval(args.review) if len(selected_records) > 32 else None
     jobs = selected_records[args.shard::args.nshard]
     if not jobs:
         raise ValueError('No jobs for requested shard')
@@ -567,15 +655,22 @@ def rewrite(args):
     provenance = model_provenance(model_path)
     import torch
     import transformers
-    from transformers import Qwen2_5OmniProcessor, Qwen2_5OmniThinkerForConditionalGeneration
     torch.manual_seed(42)
     torch.set_num_threads(2)
-    processor = Qwen2_5OmniProcessor.from_pretrained(model_path, local_files_only=True)
-    model = Qwen2_5OmniThinkerForConditionalGeneration.from_pretrained(
-        model_path, torch_dtype=torch.bfloat16, device_map='cuda',
-        attn_implementation='sdpa', local_files_only=True).eval().requires_grad_(False)
-    if any(parameter.requires_grad for parameter in model.parameters()):
-        raise RuntimeError('Rewrite teacher is not frozen')
+    processor_class = getattr(transformers, provenance['processor_class_name'])
+    thinker_class = getattr(transformers, provenance['class_name'])
+    thinker_config_class = getattr(transformers, provenance['thinker_config_class_name'])
+    processor = processor_class.from_pretrained(model_path, local_files_only=True)
+    thinker_config = thinker_config_class.from_pretrained(model_path, local_files_only=True)
+    model, loading = thinker_class.from_pretrained(
+        model_path, config=thinker_config, torch_dtype=torch.bfloat16, device_map='cuda',
+        attn_implementation='sdpa', local_files_only=True, output_loading_info=True)
+    provenance['thinker_loading_info'] = thinker_loading_checks(loading)
+    model.eval().requires_grad_(False)
+    if model.training or any(parameter.requires_grad for parameter in model.parameters()):
+        raise RuntimeError('Rewrite teacher is not frozen in eval mode')
+    if any(hasattr(model, name) for name in ('talker', 'code2wav', 'token2wav')):
+        raise RuntimeError('Text rewrite instantiated an audio-output module')
     out.mkdir(exist_ok=False)
     run = dict(protocol=PROTOCOL, manifest=manifest_source, source_code=args.source_code,
                rewrite_model_version=provenance, torch_version=torch.__version__,
@@ -630,6 +725,10 @@ def rewrite(args):
     source_record(args.manifest, manifest_source['sha256'])
     source_record(__file__, args.source_code['sha256'])
     source_record(run['h3_wrapper_source']['path'], run['h3_wrapper_source']['sha256'])
+    for source in [provenance['config'], *provenance['weight_shards'], *provenance['processor_files']]:
+        source_record(source['path'], source['sha256'])
+    if provenance['weight_index'] is not None:
+        source_record(provenance['weight_index']['path'], provenance['weight_index']['sha256'])
     run['complete'] = True
     atomic_json(out / 'run_complete.json', run)
 
@@ -643,10 +742,10 @@ def export_sft(args):
            for value in (manifest, review, *manifest['records'], *review.get('records', []))):
         raise ValueError('Fixture-only or formal-reuse-forbidden inputs cannot be exported for training')
     if review.get('manifest_sha256') != manifest_source['sha256']:
-        raise ValueError('Human review must name the exact export manifest SHA')
+        raise ValueError('Review must name the exact export manifest SHA')
     reviews = review_record_map(review)
     if set(reviews) != {record['id'] for record in manifest['records']}:
-        raise ValueError('Human review IDs must exactly match the export manifest')
+        raise ValueError('Review IDs must exactly match the export manifest')
     out = check_new(args.out)
     rows, sidecar, h3_rows, combined = {'train': [], 'val': []}, [], [], []
     verified_sources = [manifest_source, review_source, source_record(__file__)]
@@ -661,7 +760,9 @@ def export_sft(args):
             raise ValueError(f'Fixture rewrite cannot be exported for training: {record["id"]}')
         if result.get('id') != record['id'] or result.get('split') != record['split'] or result.get('manifest_sha256') != manifest_source['sha256'] or result.get('rewrite_input_sha256') != record['rewrite_input_sha256']:
             raise ValueError(f'Rewrite provenance mismatch: {record["id"]}')
-        approved_review(reviews[record['id']], path)
+        evidence_sources = approved_review(reviews[record['id']], path, record)
+        kind = review_kind(reviews[record['id']])
+        approval_kind = 'assistant_evidence_review' if kind == 'assistant_delegated' else 'human_review'
         target = result['target']
         if not validate_target(target, record)['format_valid']:
             raise ValueError(f'Invalid reviewed caption: {record["id"]}')
@@ -716,12 +817,13 @@ def export_sft(args):
                             source_record_manifest=manifest_source, review_source=review_source,
                             used_facts=target['used_facts'], conflicts=target['conflicts'],
                             source_time_scope=scope, time_scope=target['time_scope'],
-                            human_review=reviews[record['id']], trained_caption_approved=True,
+                            human_review=reviews[record['id']], review_kind=kind, approval_kind=approval_kind,
+                            trained_caption_approved=True,
                             approval_provenance=approval_provenance,
                             motion_caption=target['motion_caption'], caption_version=caption_version,
                             audio_window_seconds=window, video_window_seconds=list(window),
                             h3_prompt=h3_prompt(target['motion_caption'])))
-        verified_sources.extend([rewrite_source, *media.values()])
+        verified_sources.extend([rewrite_source, *media.values(), *evidence_sources])
     if not caption_versions or any(not entries for entries in rows.values()):
         raise ValueError('Export requires nonempty train and val partitions')
     if audio_splits['train'] & audio_splits['val'] or video_splits['train'] & video_splits['val']:
@@ -738,6 +840,8 @@ def export_sft(args):
     counts = {key: len(value) for key, value in rows.items()}
     atomic_json(out / 'source_sidecar.json', dict(protocol=PROTOCOL, complete=True, records=sidecar,
                                                  manifest=manifest_source, review=review_source,
+                                                 review_kind=review_kind(review),
+                                                 approval_kind='assistant_evidence_review' if review_kind(review) == 'assistant_delegated' else 'human_review',
                                                  caption_version=next(iter(caption_versions)),
                                                  source_code=verified_sources[2], counts=counts,
                                                  outputs={name: source_record(out / name) for name in
@@ -751,7 +855,9 @@ def export_sft(args):
                                                                          reason='H3 reader does not filter split; cache/train only the train-only metadata'),
                                                  user_gt_leakage=False,
                                                  caption_loss_policy='Student trainer must mask user/audio/padding; only assistant caption tokens supervised'))
-    print(json.dumps(dict(out=str(out), counts=counts, human_approved=True)))
+    print(json.dumps(dict(out=str(out), counts=counts, reviewed_approved=True,
+                          review_kind=review_kind(review),
+                          human_approved=review_kind(review) == 'human')))
 
 
 class CpuChecks(unittest.TestCase):
@@ -1026,6 +1132,391 @@ class CpuChecks(unittest.TestCase):
                 with self.assertRaises((ValueError, FileNotFoundError)), contextlib.redirect_stdout(io.StringIO()):
                     export_sft(args)
                 self.assertFalse(args.out.exists(), case)
+
+    def assistant_review_simulation(self, review, manifest_path):
+        review.update(review_kind='assistant_delegated', delegation=ASSISTANT_DELEGATION)
+        records = {record['id']: record for record in read_json(manifest_path)['records']}
+        for row in review['records']:
+            sheet_path = Path(manifest_path).parent / (row['id'] + '-CPU-synthetic-sheet.png')
+            from PIL import Image
+            Image.new('RGB', (2, 2), color='black').save(sheet_path)
+            row.update(review_kind='assistant_delegated', review_basis=ASSISTANT_REVIEW_BASIS,
+                       review_evidence=[dict(records[row['id']]['provenance']['paired_video']), source_record(sheet_path)],
+                       reviewer='CPU-assistant-review-simulation-NOT-actual-review')
+        return review
+
+    def test_assistant_export_transparently_preserves_unknown_scope(self):
+        with tempfile.TemporaryDirectory(prefix='fusion-assistant-CPU-simulation-') as directory:
+            args = self.synthetic_export_inputs(Path(directory))
+            review = self.assistant_review_simulation(read_json(args.review), args.manifest)
+            args.review.write_text(json.dumps(review), encoding='utf-8')
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                export_sft(args)
+            summary = json.loads(output.getvalue().splitlines()[-1])
+            self.assertEqual(summary['review_kind'], 'assistant_delegated')
+            self.assertFalse(summary['human_approved'])
+            sidecar = read_json(args.out / 'source_sidecar.json')
+            for row in sidecar['records']:
+                self.assertEqual(row['review_kind'], 'assistant_delegated')
+                self.assertEqual(row['approval_kind'], 'assistant_evidence_review')
+                self.assertEqual(row['human_review']['review_evidence'],
+                                 next(entry['review_evidence'] for entry in review['records'] if entry['id'] == row['id']))
+                self.assertEqual(row['source_time_scope']['status'], 'unknown')
+                self.assertEqual(row['time_scope']['status'], 'unknown')
+
+    def test_assistant_export_rejects_unsubstantiated_review(self):
+        cases = ('missing_evidence', 'empty_evidence', 'nonlist_evidence', 'missing_evidence_file',
+                 'evidence_sha_changed', 'evidence_size_changed', 'evidence_size_boolean',
+                 'empty_evidence_file', 'missing_evidence_sha', 'relative_evidence_path',
+                 'wrong_basis', 'unknown_kind', 'unknown_document_kind', 'missing_document_kind',
+                 'missing_row_kind', 'mixed_row_kind', 'missing_delegation', 'wrong_delegation',
+                 'missing_reviewer', 'missing_notes', 'missing_window_evidence',
+                 'invented_target_window', 'invalid_target', 'one_evidence', 'only_text_evidence',
+                 'other_video_evidence', 'missing_sheet_evidence')
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory(prefix='fusion-assistant-negative-') as directory:
+                root = Path(directory)
+                args = self.synthetic_export_inputs(root)
+                evidence_path = root / 'synthetic_evidence.json'
+                atomic_json(evidence_path, dict(synthetic_cpu_contract_fixture=True,
+                                               observation='Synthetic evidence only; no actual review'))
+                review = self.assistant_review_simulation(read_json(args.review), args.manifest)
+                row = review['records'][0]
+                evidence = row['review_evidence'][1]
+                evidence_path = Path(evidence['path'])
+                if case == 'missing_evidence':
+                    row.pop('review_evidence')
+                elif case == 'empty_evidence':
+                    row['review_evidence'] = []
+                elif case == 'nonlist_evidence':
+                    row['review_evidence'] = 'unsubstantiated assertion'
+                elif case == 'missing_evidence_file':
+                    evidence['path'] = str(root / 'nonexistent.json')
+                elif case == 'evidence_sha_changed':
+                    evidence_path.write_text('changed synthetic evidence', encoding='utf-8')
+                elif case == 'evidence_size_changed':
+                    evidence['size_bytes'] += 1
+                elif case == 'evidence_size_boolean':
+                    evidence['size_bytes'] = True
+                elif case == 'empty_evidence_file':
+                    evidence_path.write_text('', encoding='utf-8')
+                    row['review_evidence'][1] = source_record(evidence_path)
+                elif case == 'missing_evidence_sha':
+                    evidence.pop('sha256')
+                elif case == 'relative_evidence_path':
+                    evidence['path'] = 'synthetic_evidence.json'
+                elif case == 'one_evidence':
+                    row['review_evidence'] = row['review_evidence'][:1]
+                elif case == 'only_text_evidence':
+                    row['review_evidence'] = [source_record(args.manifest), source_record(root / 'synthetic_evidence.json')]
+                elif case == 'other_video_evidence':
+                    row['review_evidence'][0] = review['records'][1]['review_evidence'][0]
+                elif case == 'missing_sheet_evidence':
+                    row['review_evidence'][1] = source_record(root / 'synthetic_evidence.json')
+                elif case == 'wrong_basis':
+                    row['review_basis'] = 'automatic_boolean_pass'
+                elif case == 'unknown_kind':
+                    row['review_kind'] = 'automatic'
+                elif case == 'unknown_document_kind':
+                    review['review_kind'] = 'automatic'
+                elif case == 'missing_document_kind':
+                    review.pop('review_kind')
+                elif case == 'missing_row_kind':
+                    row.pop('review_kind')
+                elif case == 'mixed_row_kind':
+                    row['review_kind'] = 'human'
+                elif case == 'missing_delegation':
+                    review.pop('delegation')
+                elif case == 'wrong_delegation':
+                    review['delegation'] = 'assistant assumed approval'
+                elif case in ('missing_reviewer', 'missing_notes', 'missing_window_evidence'):
+                    row.pop(case.removeprefix('missing_'))
+                elif case in ('invented_target_window', 'invalid_target'):
+                    rewrite_path = args.rewrites / (row['id'] + '.json')
+                    result = read_json(rewrite_path)
+                    if case == 'invented_target_window':
+                        result['target']['time_scope']['status'] = 'verified_paired_window'
+                    else:
+                        result['target']['motion_caption'] = 'The dancer follows the music.'
+                    rewrite_path.write_text(json.dumps(result), encoding='utf-8')
+                    row['rewrite_sha256'] = source_record(rewrite_path)['sha256']
+                args.review.write_text(json.dumps(review), encoding='utf-8')
+                with self.assertRaises((ValueError, FileNotFoundError)), contextlib.redirect_stdout(io.StringIO()):
+                    export_sft(args)
+                self.assertFalse(args.out.exists(), case)
+
+    def synthetic_preview_inputs(self, root):
+        rewrites = root / 'synthetic_preview_rewrites'
+        rewrites.mkdir()
+        records = []
+        for index in range(32):
+            sid = f'synthetic{index:02d}'
+            record = self.record()
+            video_path = root / (sid + '-CPU-synthetic-video.mp4')
+            atomic_new(video_path, 'Synthetic test bytes; not a real video observation')
+            record.update(id=sid, split='train' if index < 24 else 'val', source_group=sid,
+                          paired_video_path=str(video_path), provenance=dict(paired_video=source_record(video_path)),
+                          rewrite_input={'synthetic_cpu_contract_fixture': sid},
+                          rewrite_input_sha256=object_sha({'synthetic_cpu_contract_fixture': sid}))
+            records.append(record)
+        manifest_path = root / 'synthetic_preview.json'
+        atomic_json(manifest_path, dict(protocol=PROTOCOL, records=records, blocked_ids=[],
+                                       synthetic_cpu_contract_fixture=True))
+        manifest_source = source_record(manifest_path)
+        rows = []
+        for record in records:
+            path = rewrites / (record['id'] + '.json')
+            atomic_json(path, dict(id=record['id'], split=record['split'],
+                                   manifest_sha256=manifest_source['sha256'],
+                                   rewrite_input_sha256=record['rewrite_input_sha256'], target=self.target()))
+            rows.append(dict(id=record['id'], facts_approved=True, narrative_approved=True,
+                             window_verified=True, conflicts_resolved=True,
+                             reviewed_audio_window_seconds=list(AUDIO_WINDOW_SECONDS),
+                             reviewer='CPU-preview-simulation-NOT-human-review',
+                             window_evidence='Synthetic CPU contract only; not actual source observations',
+                             notes='Temporary test simulation only', rewrite_sha256=source_record(path)['sha256']))
+        review_path = root / 'synthetic_preview_review.json'
+        review = dict(protocol=PROTOCOL, stage='preview32_approved', preview_manifest=manifest_source,
+                      manifest_sha256=manifest_source['sha256'], rewrites_dir=str(rewrites), records=rows)
+        return review_path, review
+
+    def test_expansion_requires_exact_review_and_delegation(self):
+        cases = ('legacy_human_valid', 'assistant_valid', 'missing_review', 'missing_delegation',
+                 'missing_evidence', 'unknown_kind', 'mismatched_kind', 'wrong_stage',
+                 'wrong_manifest_sha', 'missing_id', 'extra_id', 'rewrite_sha_changed',
+                 'boolean_approval', 'fixture_review', 'fixture_rewrite', 'invented_window',
+                 'other_video_evidence', 'only_text_evidence', 'missing_sheet_evidence')
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory(prefix='fusion-preview-CPU-only-') as directory:
+                root = Path(directory)
+                path, review = self.synthetic_preview_inputs(root)
+                if case != 'legacy_human_valid':
+                    self.assistant_review_simulation(review, review['preview_manifest']['path'])
+                row = review['records'][0]
+                if case == 'missing_review':
+                    with self.assertRaises(ValueError):
+                        expansion_approval(None)
+                    continue
+                if case == 'missing_delegation':
+                    review.pop('delegation')
+                elif case == 'missing_evidence':
+                    row.pop('review_evidence')
+                elif case == 'other_video_evidence':
+                    row['review_evidence'][0] = review['records'][1]['review_evidence'][0]
+                elif case == 'only_text_evidence':
+                    row['review_evidence'] = [review['preview_manifest'], dict(review['preview_manifest'])]
+                elif case == 'missing_sheet_evidence':
+                    row['review_evidence'][1] = review['preview_manifest']
+                elif case == 'unknown_kind':
+                    review['review_kind'] = 'automatic'
+                elif case == 'mismatched_kind':
+                    row['review_kind'] = 'human'
+                elif case == 'wrong_stage':
+                    review['stage'] = 'selection_only_pending_preview_approval'
+                elif case == 'wrong_manifest_sha':
+                    review['manifest_sha256'] = 'incorrect'
+                elif case == 'missing_id':
+                    review['records'].pop()
+                elif case == 'extra_id':
+                    review['records'].append(dict(row, id='syntheticExtra'))
+                elif case == 'boolean_approval':
+                    row['facts_approved'] = 1
+                elif case == 'fixture_review':
+                    review['fixture_only'] = True
+                elif case in ('rewrite_sha_changed', 'fixture_rewrite', 'invented_window'):
+                    target_path = Path(review['rewrites_dir']) / (row['id'] + '.json')
+                    target = read_json(target_path)
+                    if case == 'fixture_rewrite':
+                        target['fixture_only'] = True
+                    elif case == 'invented_window':
+                        target['target']['time_scope']['status'] = 'verified_paired_window'
+                    else:
+                        target['changed_synthetic_test'] = True
+                    target_path.write_text(json.dumps(target), encoding='utf-8')
+                    if case != 'rewrite_sha_changed':
+                        row['rewrite_sha256'] = source_record(target_path)['sha256']
+                atomic_json(path, review)
+                if case in ('legacy_human_valid', 'assistant_valid'):
+                    self.assertEqual(expansion_approval(path), source_record(path))
+                else:
+                    with self.assertRaises(ValueError):
+                        expansion_approval(path)
+
+    def test_teacher_family_uses_actual_config_and_full_weight_sources(self):
+        for family, names in TEACHER_FAMILIES.items():
+            with self.subTest(family=family), tempfile.TemporaryDirectory(prefix='fusion-config-CPU-only-') as directory:
+                root = Path(directory)
+                config = dict(model_type=family, thinker_config={'synthetic_cpu_contract_fixture': True})
+                atomic_json(root / 'config.json', config)
+                for shard in ('model-00001-of-00002.safetensors', 'model-00002-of-00002.safetensors'):
+                    atomic_new(root / shard, 'Synthetic SHA fixture only; NOT model weights')
+                atomic_json(root / 'model.safetensors.index.json', dict(weight_map={
+                    'thinker.synthetic': 'model-00001-of-00002.safetensors',
+                    'talker.synthetic': 'model-00002-of-00002.safetensors'}))
+                atomic_json(root / 'tokenizer_config.json', dict(synthetic_cpu_contract_fixture=True))
+                provenance = model_provenance(root)
+                self.assertEqual(teacher_family(config), names)
+                self.assertEqual(provenance['processor_class_name'], names[0])
+                self.assertEqual(provenance['class_name'], names[1])
+                self.assertEqual(provenance['thinker_config_class_name'], names[2])
+                self.assertEqual(provenance['model_type'], family)
+                self.assertEqual(len(provenance['weight_shards']), 2)
+                self.assertEqual(provenance['config'], source_record(root / 'config.json'))
+                self.assertEqual(provenance['processor_files'], [source_record(root / 'tokenizer_config.json')])
+                for source in provenance['weight_shards']:
+                    self.assertEqual(source, source_record(source['path']))
+        for config in ({'model_type': 'qwen3_omni_moe'}, {'model_type': 'unknown', 'thinker_config': {}},
+                       {'model_type': 'qwen3_omni_moe_thinker', 'thinker_config': {}}):
+            with self.assertRaises(ValueError):
+                teacher_family(config)
+
+    def test_thinker_loading_diagnostics_reject_partial_or_non_output_weights(self):
+        good = dict(missing_keys=[], mismatched_keys=[], error_msgs=[],
+                    unexpected_keys=['talker.synthetic', 'code2wav.synthetic', 'token2wav.synthetic'])
+        expected = {key: sorted(value) for key, value in good.items()}
+        self.assertEqual(thinker_loading_checks(good), expected)
+        self.assertEqual(thinker_loading_checks({key: set(value) for key, value in good.items()}), expected)
+        for key in ('missing_keys', 'mismatched_keys', 'error_msgs'):
+            with self.subTest(key=key), self.assertRaises(RuntimeError):
+                thinker_loading_checks(dict(good, **{key: ['synthetic failure']}))
+        for key in good:
+            partial = dict(good)
+            partial.pop(key)
+            with self.assertRaises(RuntimeError):
+                thinker_loading_checks(partial)
+        for unexpected in ('thinker.model.layers.0.synthetic', 'lm_head.weight', 'talkerish.weight'):
+            with self.assertRaises(RuntimeError):
+                thinker_loading_checks(dict(good, unexpected_keys=[unexpected]))
+
+    def test_text_only_processor_continues_assistant_json_and_rejects_media(self):
+        import torch
+        from unittest.mock import Mock
+        processor = Mock()
+        processor.apply_chat_template.return_value = 'synthetic assistant {'
+        processor.return_value = {'input_ids': torch.tensor([[1, 2]]), 'attention_mask': torch.tensor([[1, 1]])}
+        processor.tokenizer.get_vocab.return_value = {'<|AUDIO|>': 99, '<|image_pad|>': 98}
+        processor.tokenizer.convert_tokens_to_ids.side_effect = lambda token: processor.tokenizer.get_vocab()[token]
+        conversation = [dict(role='user', content=[dict(type='text', text='Synthetic source only')]),
+                        dict(role='assistant', content=[dict(type='text', text='{')])]
+        text_generation_inputs(processor, conversation, continue_final_message=True)
+        processor.apply_chat_template.assert_called_once_with(conversation, add_generation_prompt=False,
+                                                               continue_final_message=True, tokenize=False)
+        processor.assert_called_once_with(text='synthetic assistant {', audio=None, images=None, videos=None,
+                                          return_tensors='pt', padding=True)
+        for media in ('audio', 'image', 'video'):
+            with self.assertRaises(ValueError):
+                text_generation_inputs(processor, [dict(role='user', content=[dict(type=media, text='not text')])])
+        processor.return_value = dict(input_ids=torch.tensor([[99]]))
+        with self.assertRaises(ValueError):
+            text_generation_inputs(processor, conversation)
+        processor.return_value = dict(input_ids=torch.tensor([[1]]), pixel_values=torch.zeros(1))
+        with self.assertRaises(ValueError):
+            text_generation_inputs(processor, conversation)
+
+    def test_rewrite_selects_only_thinker_and_freezes_with_explicit_eos_pad(self):
+        import sys
+        import torch
+        from types import SimpleNamespace
+        from unittest.mock import Mock, patch
+
+        class SyntheticInputs(dict):
+            def to(self, device):
+                return self
+
+        class SyntheticThinker:
+            device = 'cpu'
+            training = True
+            frozen = False
+
+            def eval(self):
+                self.training = False
+                return self
+
+            def requires_grad_(self, value):
+                self.frozen = not value
+                return self
+
+            def parameters(self):
+                return []
+
+        for family, names in TEACHER_FAMILIES.items():
+            with self.subTest(family=family), tempfile.TemporaryDirectory(prefix='fusion-loader-CPU-only-') as directory:
+                root = Path(directory)
+                record = self.record()
+                rewrite_input = dict(synthetic_cpu_contract_fixture=True, facts=record['facts'])
+                record.update(id='syntheticClip', split='train', source_group='syntheticClip',
+                              rewrite_input=rewrite_input, rewrite_input_sha256=object_sha(rewrite_input))
+                manifest_path = root / 'synthetic_manifest.json'
+                atomic_json(manifest_path, dict(protocol=PROTOCOL, records=[record], blocked_ids=[],
+                                               synthetic_cpu_contract_fixture=True))
+                model_path = root / 'synthetic_model_config_NOT_actual_weights'
+                model_path.mkdir()
+                atomic_json(model_path / 'config.json', dict(model_type=family, thinker_config={}))
+                atomic_new(model_path / 'model.safetensors', 'NOT model weights; from_pretrained is mocked')
+                processor = Mock()
+                processor.tokenizer.eos_token_id = 11
+                processor.tokenizer.pad_token_id = 12
+                processor.tokenizer.get_vocab.return_value = {}
+                processor.tokenizer.decode.return_value = json.dumps(self.target())[1:]
+                processor.apply_chat_template.return_value = 'Synthetic assistant {'
+                processor.return_value = SyntheticInputs(input_ids=torch.tensor([[1, 2]]),
+                                                          attention_mask=torch.tensor([[1, 1]]))
+                model = SyntheticThinker()
+                model.generate = Mock(return_value=torch.tensor([[1, 2, 3]]))
+                config = object()
+                processor_class = SimpleNamespace(from_pretrained=Mock(return_value=processor))
+                thinker_class = SimpleNamespace(from_pretrained=Mock(return_value=(model,
+                    dict(missing_keys=set(), mismatched_keys=set(), error_msgs=[], unexpected_keys={'talker.synthetic'}))))
+                config_class = SimpleNamespace(from_pretrained=Mock(return_value=config))
+                fake_transformers = SimpleNamespace(__version__='CPU-mock-NOT-real-loading',
+                                                     **dict(zip(names, (processor_class, thinker_class, config_class))))
+                args = argparse.Namespace(manifest=manifest_path, model=model_path, out=root / 'synthetic_rewrite',
+                                          nshard=1, shard=0, rewrite_limit=0, review=None, max_new_tokens=100,
+                                          source_code=source_record(__file__))
+                with patch.dict(sys.modules, transformers=fake_transformers), \
+                        patch(__name__ + '.h3_prompt', return_value='synthetic CPU prompt only'), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    rewrite(args)
+                processor_class.from_pretrained.assert_called_once_with(model_path, local_files_only=True)
+                config_class.from_pretrained.assert_called_once_with(model_path, local_files_only=True)
+                thinker_class.from_pretrained.assert_called_once_with(model_path, config=config,
+                    torch_dtype=torch.bfloat16, device_map='cuda', attn_implementation='sdpa',
+                    local_files_only=True, output_loading_info=True)
+                self.assertFalse(model.training)
+                self.assertTrue(model.frozen)
+                self.assertEqual(model.generate.call_args.kwargs['eos_token_id'], 11)
+                self.assertEqual(model.generate.call_args.kwargs['pad_token_id'], 12)
+                run = read_json(args.out / 'run_complete.json')
+                self.assertTrue(run['complete'])
+                self.assertEqual(run['rewrite_model_version']['class_name'], names[1])
+                self.assertEqual(run['rewrite_model_version']['thinker_loading_info']['unexpected_keys'], ['talker.synthetic'])
+                self.assertEqual(run['assistant_json_prefill'], '{')
+
+    def test_diagnostic_prefix_does_not_bypass_full_expansion_review(self):
+        import sys
+        from unittest.mock import patch
+        module = sys.modules[__name__]
+        with tempfile.TemporaryDirectory(prefix='fusion-diagnostic-CPU-only-') as directory:
+            root = Path(directory)
+            manifest_path = root / 'synthetic_manifest.json'
+            atomic_json(manifest_path, {'synthetic_cpu_contract_fixture': True})
+            args = argparse.Namespace(manifest=manifest_path, model=root, out=root / 'not_created',
+                                      nshard=1, shard=0, rewrite_limit=32, review=None)
+            with patch.object(module, 'load_manifest', return_value={'records': [self.record() for _ in range(64)]}), \
+                    patch.object(module, 'expansion_approval') as approval, \
+                    patch.object(module, 'model_provenance', side_effect=ValueError('CPU test ends before model loading')):
+                with self.assertRaisesRegex(ValueError, 'CPU test ends before model loading'):
+                    rewrite(args)
+                approval.assert_not_called()
+            args.rewrite_limit = 0
+            args.nshard = 64
+            with patch.object(module, 'load_manifest', return_value={'records': [self.record() for _ in range(64)]}), \
+                    patch.object(module, 'expansion_approval', side_effect=ValueError('Review still required')) as approval:
+                with self.assertRaisesRegex(ValueError, 'Review still required'):
+                    rewrite(args)
+                approval.assert_called_once_with(None)
+            self.assertFalse(args.out.exists())
 
     def test_deterministic_genre_round_robin(self):
         ids = ['a', 'b', 'c', 'd']

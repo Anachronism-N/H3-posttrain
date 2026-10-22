@@ -1036,3 +1036,17 @@ N7共享梯度新v4已实际启动RueYFY，remote manager3163785/torchrun3163792
 N3严格接口链路已实际完成：NFFNKn cache8/Z8X1cc全媒体映射通过；LO83n0 fresh8GPU真实2updates、TcCK4m完整training/final各28文件marker/8Adamstep2/8RNG/model/scheduler/custom通过；ykvYup真实8GPU load_state后独立resave actualexit0，0ObpBn对26项（8model＋8Adam＋8RNG＋scheduler＋custom）state/tensor逐值严格相等、signature/progress一致。restore_finished与restore_audit主线程已独立读取核实。源9f5de5/wrapper89439全程冻结，原107/v1资产未覆或重标。
 
 GPU恢复未做额外更新（actual_additional_optimizer_updates=0，next_update_verified=false），不得包装为“恢复后下一更新已验证”。本次仍8条固定fixture/两更新接口，非正式SFT/收敛/画质，也不使首32事实窗自动获批。公开结果h3_video_repeatlast124_pretrained_smoke_and_restore_v2.json。
+
+#### 2026-10-22 官方30B完整接口验收完成，维度A/B已获实际近似反馈
+
+N7 bucketview freshv4 RueYFY真实exit0，Aw7Gjh独立完整验收exit0，verification.json verified=true；实际2updates、16examples、336assistant tokens，NLL4.10893354→3.35096491。第二步628tensor梯度齐，LM576/audioLoRA48/projector4非零，其中全部192expertLoRA非零；rank32/alpha64/FP32Adam及末4audio＋proj1/2范围未减。u0/u1/u2 marker全部文件SHA、628Adamstates step2/8rankRNG/sampler/history完整，生产load_checkpoint及processor训练部署prefix逐tensorexact，真实posttraincaption1条完成（另原入口epochval1条）。freshu0/u1adapter与v3同seed旧SHA一致，不是跨source恢复；原两次OOM分别为checkpointing未生效的forward与moments分配后的grouped_mm反传峰，当前完整接口确已越过，但不代表正式SFT或caption语义通过。公开报告omni30b_official_pretrained_smoke2_verified_v4.json。
+
+用户最新实际反馈：**“A「手臂主导＋优雅梦幻」、B「直立＋原地＋不跳跃」几乎完全一致”**。两个v8同case追加维度未建立可辨的配置间差异，不再等待此项人评；不推逐像素相等、不猜与v7也相同、不自动判各自质量通过或所有维度无效。v7仍是用户此前明确“更好且可用”的基线；32真实事实/窗四项审批仍0，不把视频正评代作训练标签审核。
+
+#### 2026-10-22 H3正式来源门禁与用户要求的完整归档
+
+用户要求将历史实验记忆及相关分析整理详细文档，并详细解释当前实验与资源利用。新独立归档见notes/28_experiment_history_failure_analysis_and_current_status_20261022.md，按阶段区分Wan/H3画质、原生audio/专用32D、三代rawH、ABC及新Omni+纯视频；不是新训练。
+
+H3正式100/300数据来源门禁已实现并主线程C2GQhv独立CPU全部通过，最终源码16c81225b62d77627b739522040128b957fddd4cabfc7f88417a421cf4086b40（不是先交付71284883）。默认data_scope=interface，仅明确max_train_steps2可做接口；正式100/300必须显式--data_scope reviewed_train。模型加载前独立验证fusion export complete/六outputSHA、train-only分区/统一版本、manifest/review/rewriteSHA/ID/四项审批/evidence/window/target和全媒体/meta SHA；缓存producer/scope/provenance/temporalpolicy再核，逐sample绑定trainID/captionSHA及完整成员，禁止翻marker将fixture升级正式。21metadata/9cache/四个漏显式scope拒例、合法100/300到model边界正例与原tiny恢复下一步bitexact全部通过。仅CPU合成审批链，不真实导出/上卡；旧9f5缓存/训练/GPU恢复封存，不重标新source已GPU通过。full3–10epoch完整预算/val平台入口仍待后续必要实施，不在现CPU门禁任务谎称full已支持或运行。
+
+本次八节点资源只读快照2026-10-22 23:17:39：模型实验0/64、holder48（N1/N2/N4/N5/N6运行40，N8停止T态8）、N3/N7真空闲16、未知compute0。holder每卡975MiB，运行者100%仅矩阵乘，不算训练。每节点实际cgroup limit约997.83GiB、headroom348–691GiB；64reserve全部已过1200秒保护，N1原watchdog可补占卡，因此不保证未来空闲。未launch/kill/刷新reserve。详细节点表及当前真实任务/已完成验收/正式监督0审批阻断均写notes28与cluster_resource_utilization_summary_20261022.json；不再把已结束30B/H3/GPU推理称运行中。

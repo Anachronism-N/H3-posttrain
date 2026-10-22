@@ -340,7 +340,8 @@ def write_complete_marker(root, signature, progress=None):
     files = file_manifest(root, checkpoint_files(root))
     if not files:
         raise ValueError("Cannot mark an empty checkpoint complete")
-    marker = {"format": "h3-video-complete-v1", "signature": signature, "files": files,
+    marker = {"format": "h3-video-complete-v1", "scope": signature.get("data_scope"),
+              "signature": signature, "files": files,
               "progress": progress.state_dict() if progress is not None else None}
     # Marker is written only after save_state returns on every rank and all files are hashed.
     with (root / COMPLETE_MARKER).open("x", encoding="utf-8") as stream:
@@ -378,6 +379,201 @@ def main_process_result(accelerator, operation):
     if "error" in payload[0]:
         raise ValueError(payload[0]["error"])
     return payload[0]["result"]
+
+
+def formal_training_provenance(metadata_path, caption_version):
+    from dance_caption_fusion import (AUDIO_WINDOW_SECONDS, PROTOCOL, approved_review,
+                                     load_manifest, read_json, review_record_map,
+                                     source_record, validate_target)
+    metadata_path = Path(metadata_path).resolve()
+    sidecar_path = metadata_path.parent / "source_sidecar.json"
+    sidecar = read_json(sidecar_path)
+    sources = {}
+
+    def verify(source):
+        if not isinstance(source, dict) or set(source) != {"path", "sha256", "size_bytes"}:
+            raise ValueError("Formal source requires a complete path/SHA/size record")
+        actual = source_record(source["path"], source["sha256"])
+        if actual != source:
+            raise ValueError("Formal source record changed")
+        sources[actual["path"]] = actual
+        return actual
+
+    def reject_fixture(value):
+        if any(value.get(key, False) is not False for key in ("fixture_only", "formal_reuse_forbidden")):
+            raise ValueError("Fixture or formal-reuse-forbidden data cannot enter formal training")
+
+    reject_fixture(sidecar)
+    if sidecar.get("protocol") != PROTOCOL or sidecar.get("complete") is not True:
+        raise ValueError("Formal training requires a completed reviewed export")
+    policy = sidecar.get("h3_metadata_policy", {})
+    expected_policy = {"train_only": "h3_video_train.json", "val_only": "h3_video_val.json",
+                       "combined": "h3_video.json", "combined_use": "exchange_and_audit_only",
+                       "combined_direct_cache_or_training_forbidden": True}
+    if any(policy.get(key) != value or type(policy.get(key)) is not type(value)
+           for key, value in expected_policy.items()):
+        raise ValueError("Formal export must enforce train-only H3 metadata")
+    outputs = sidecar.get("outputs", {})
+    names = {"train.jsonl", "val.jsonl", "omni.jsonl", "h3_video.json", "h3_video_train.json", "h3_video_val.json"}
+    if set(outputs) != names:
+        raise ValueError("Formal export outputs are incomplete")
+    for name, source in outputs.items():
+        if Path(source["path"]).resolve() != sidecar_path.parent / name:
+            raise ValueError("Export output path does not match its declared partition")
+        verify(source)
+    if metadata_path != Path(outputs["h3_video_train.json"]["path"]).resolve():
+        raise ValueError("Combined/val metadata cannot produce a formal training cache")
+    if (not isinstance(caption_version, str) or not caption_version.startswith(PROTOCOL + ":") or
+            not caption_version[len(PROTOCOL) + 1:].strip() or sidecar.get("caption_version") != caption_version):
+        raise ValueError("Formal export caption version differs from the frozen rewrite protocol")
+    manifest_source, review_source = verify(sidecar["manifest"]), verify(sidecar["review"])
+    verify(sidecar["source_code"])
+    manifest = load_manifest(manifest_source["path"])
+    review = read_json(review_source["path"])
+    reject_fixture(manifest)
+    reject_fixture(review)
+    reviews = review_record_map(review)
+    records = {record["id"]: record for record in manifest["records"]}
+    exported = sidecar.get("records", [])
+    if (not isinstance(exported, list) or len(exported) != len(records) or
+            {row["id"] for row in exported} != set(records) or set(reviews) != set(records) or
+            review.get("manifest_sha256") != manifest_source["sha256"]):
+        raise ValueError("Formal review/export IDs or manifest SHA differ")
+    expected_rows = []
+    videos = {"train": set(), "val": set()}
+    audios = {"train": set(), "val": set()}
+    for row in exported:
+        record, approval = records[row["id"]], reviews[row["id"]]
+        for value in (row, record, approval):
+            reject_fixture(value)
+        rewrite_source = verify(row["rewrite_source"])
+        rewrite = read_json(rewrite_source["path"])
+        reject_fixture(rewrite)
+        approved_review(approval, rewrite_source["path"])
+        if (row.get("trained_caption_approved") is not True or row.get("human_review") != approval or
+                row.get("source_record_manifest") != manifest_source or row.get("review_source") != review_source or
+                row.get("approval_provenance") != dict(manifest=manifest_source, review=review_source, rewrite=rewrite_source) or
+                rewrite.get("id") != row["id"] or rewrite.get("split") != record["split"] or
+                row.get("split") != record["split"] or row.get("source_group") != record["source_group"] or
+                rewrite.get("manifest_sha256") != manifest_source["sha256"] or
+                rewrite.get("rewrite_input_sha256") != record["rewrite_input_sha256"] or
+                rewrite.get("caption_version") != caption_version or row.get("caption_version") != caption_version):
+            raise ValueError("Formal row approval/rewrite provenance differs")
+        target = rewrite["target"]
+        if not validate_target(target, record)["format_valid"]:
+            raise ValueError("Reviewed rewrite fails its actual target contract")
+        if any(row.get(key) != target[key] for key in ("motion_caption", "used_facts", "conflicts", "time_scope")):
+            raise ValueError("Export caption/facts differ from the reviewed rewrite")
+        media = record.get("provenance", {})
+        if not {"audio", "image", "paired_video", "meta"} <= set(media):
+            raise ValueError("Formal manifest lacks paired media provenance")
+        for source in media.values():
+            verify(source)
+        for key, field in (("audio", "audio_path"), ("image", "image_path"), ("paired_video", "paired_video_path")):
+            if (str(Path(record[field]).absolute()) != media[key]["path"] or
+                    row.get(key + "_source") != media[key]):
+                raise ValueError("Formal media path differs from its reviewed source")
+        scope = record["time_scope"]
+        for window in (record.get("audio_window_seconds"), scope.get("training_audio_window_seconds"),
+                       row.get("audio_window_seconds"), row.get("video_window_seconds")):
+            if (not isinstance(window, list) or any(type(value) not in (int, float) for value in window) or
+                    window != AUDIO_WINDOW_SECONDS):
+                raise ValueError("Formal paired window is missing or invalid")
+        meta = read_json(media["meta"]["path"])
+        frames, fps = scope.get("paired_normalized_natural_frames"), scope.get("paired_normalized_fps")
+        if (type(frames) is not int or frames < 1 or type(fps) not in (int, float) or
+                not math.isfinite(fps) or fps <= 0 or frames / fps != AUDIO_WINDOW_SECONDS[1] or
+                meta.get("natural_output_frames") != frames or meta.get("target_fps") != fps or
+                meta.get("video") != media["paired_video"]["path"] or row.get("source_time_scope") != scope):
+            raise ValueError("Formal paired video/window evidence differs")
+        videos[record["split"]].add(str(Path(media["paired_video"]["path"]).resolve()))
+        audios[record["split"]].add(str(Path(media["audio"]["path"]).resolve()))
+        expected_rows.append(dict(id=row["id"], source_group=record["source_group"], split=record["split"],
+            motion_caption=target["motion_caption"], caption_version=caption_version,
+            video=media["paired_video"]["path"], references=[dict(type="image", image=media["image"]["path"])],
+            video_window_seconds=list(AUDIO_WINDOW_SECONDS), trained_caption_approved=True,
+            provenance=dict(manifest=manifest_source, review=review_source, rewrite=rewrite_source,
+                            image=media["image"], paired_video=media["paired_video"])))
+    for partition in ("train", "val"):
+        selected = [row for row in expected_rows if row["split"] == partition]
+        actual_rows = read_json(outputs["h3_video_" + partition + ".json"]["path"])
+        for item in actual_rows:
+            reject_fixture(item)
+            if item.get("trained_caption_approved") is not True or item.get("split") != partition:
+                raise ValueError("Formal metadata requires actual approved rows from its declared split")
+        if (not selected or type(sidecar.get("counts", {}).get(partition)) is not int or
+                sidecar["counts"][partition] != len(selected) or actual_rows != selected):
+            raise ValueError("Formal split metadata/counts differ from the reviewed export")
+    combined_rows = read_json(outputs["h3_video.json"]["path"])
+    for item in combined_rows:
+        reject_fixture(item)
+        if item.get("trained_caption_approved") is not True:
+            raise ValueError("Combined audit rows lack actual boolean approval")
+    if (combined_rows != expected_rows or
+            videos["train"] & videos["val"] or audios["train"] & audios["val"]):
+        raise ValueError("Formal export contains combined metadata drift or split media leakage")
+    return dict(protocol="h3-reviewed-train-provenance-v1", metadata=outputs["h3_video_train.json"],
+                sidecar=source_record(sidecar_path), verified_sources=sources,
+                validator_source=source_record(Path(__file__).with_name("dance_caption_fusion.py")),
+                caption_version=caption_version, h3_metadata_policy=policy,
+                train_ids=[row["id"] for row in expected_rows if row["split"] == "train"],
+                fixture_only=False, formal_reuse_forbidden=False, approval_chain_verified=True)
+
+
+def validate_data_boundary(dataset, args):
+    scope = getattr(args, "data_scope", "interface") or "interface"
+    if scope not in ("interface", "reviewed_train") or scope == "interface" and args.max_train_steps != 2:
+        raise ValueError("Interface data requires explicit max_train_steps=2; it cannot enter 100/300 training")
+    if dataset.load_from_cache:
+        root = Path(args.dataset_base_path)
+        marker = verify_complete_marker(root)
+        signature = marker["signature"]
+        code = {path.name: file_sha256(path) for path in (Path(__file__), Path(__file__).with_name("h3_video_only.py"))}
+        if (marker.get("scope") != scope or signature.get("data_scope") != scope or signature.get("caption_version") != args.caption_version or
+                signature.get("temporal_policy") != getattr(args, "temporal_policy", "native_down") or
+                signature.get("sources", {}).get("code") != code):
+            raise ValueError("Cache scope/caption/temporal policy/producer source differs; create a fresh cache")
+        cache_files = {str(Path(path).relative_to(root)) for path in dataset.cached_data}
+        expected_files = {name for name in marker["files"] if name.endswith(".pth")}
+        if (signature.get("dataset_size") != len(dataset) or cache_files != expected_files or
+                signature.get("dataset_metadata_path") is None):
+            raise ValueError("Cache dataset membership or producer metadata provenance differs")
+        provenance = signature.get("data_provenance", {})
+        if scope == "reviewed_train":
+            actual = formal_training_provenance(provenance.get("metadata", {}).get("path", ""), args.caption_version)
+            if (provenance != actual or len(dataset) != len(actual["train_ids"]) or
+                    signature["dataset_metadata_path"] != actual["metadata"]["path"] or
+                    signature.get("sources", {}).get("metadata_sha256") != actual["metadata"]["sha256"]):
+                raise ValueError("Formal cache approval/metadata/media provenance changed")
+        elif provenance.get("protocol") != "h3-interface-only-v1" or provenance.get("formal_reuse_forbidden") is not True:
+            raise ValueError("Interface cache lacks explicit nonformal provenance")
+        provenance_sha = hashlib.sha256(json.dumps(provenance, sort_keys=True).encode()).hexdigest()
+        expected_captions = {}
+        if scope == "reviewed_train":
+            expected_captions = {row["id"]: hashlib.sha256(teacher_video_prompt(row).encode()).hexdigest()
+                                 for row in json.loads(Path(provenance["metadata"]["path"]).read_text())}
+        sample_ids = set()
+        for path in dataset.cached_data:
+            value = validate_caption_cache(torch.load(path, map_location="cpu", weights_only=False), args.caption_version)
+            info = value[0]["h3_video_cache"]
+            if info.get("data_scope") != scope or info.get("data_provenance_sha256") != provenance_sha:
+                raise ValueError("Cached sample scope or approval binding differs from its producer")
+            if scope == "reviewed_train":
+                sid = info.get("sample_id")
+                if sid in sample_ids or sid not in expected_captions or info["caption_sha256"] != expected_captions[sid]:
+                    raise ValueError("Cached sample ID/caption differs from its approved train split")
+                sample_ids.add(sid)
+        if scope == "reviewed_train" and sample_ids != set(expected_captions):
+            raise ValueError("Formal cache is missing approved training samples")
+    elif scope == "reviewed_train":
+        provenance = formal_training_provenance(args.dataset_metadata_path, args.caption_version)
+        if (len(dataset) != len(provenance["train_ids"]) or
+                dataset.data != json.loads(Path(args.dataset_metadata_path).read_text())):
+            raise ValueError("Loaded formal dataset differs from its approved train metadata")
+    else:
+        provenance = dict(protocol="h3-interface-only-v1", metadata_path=str(Path(args.dataset_metadata_path).resolve()),
+                          metadata_sha256=file_sha256(args.dataset_metadata_path), formal_reuse_forbidden=True)
+    return dict(data_scope=scope, data_provenance=provenance)
 
 
 def source_fingerprint(dataset, args):
@@ -419,8 +615,10 @@ def source_fingerprint(dataset, args):
 
 
 def training_signature(accelerator, dataset, args):
-    return {"caption_version": args.caption_version, "dataset_base_path": str(Path(args.dataset_base_path).resolve()),
-            "dataset_metadata_path": args.dataset_metadata_path, "dataset_size": len(dataset),
+    boundary = main_process_result(accelerator, lambda: validate_data_boundary(dataset, args))
+    return {**boundary, "caption_version": args.caption_version, "dataset_base_path": str(Path(args.dataset_base_path).resolve()),
+            "dataset_metadata_path": str(Path(args.dataset_metadata_path).resolve()) if args.dataset_metadata_path else None,
+            "dataset_size": len(dataset),
             "anchor_lambda": args.anchor_lambda, "learning_rate": args.learning_rate, "weight_decay": args.weight_decay,
             "lora_rank": args.lora_rank, "lora_alpha": args.lora_alpha, "weights_root": args.weights_root,
             "world_size": accelerator.num_processes, "accumulation": args.gradient_accumulation_steps,
@@ -461,11 +659,16 @@ def launch_video_cache(accelerator, dataset, model, args):
     with torch.no_grad():
         for index, data in enumerate(loader):
             value = model(data)
+            value[0]["h3_video_cache"].update(data_scope=signature["data_scope"],
+                data_provenance_sha256=hashlib.sha256(json.dumps(signature["data_provenance"], sort_keys=True).encode()).hexdigest())
             value = model.transfer_data_to_device(value, "cpu")
             with (folder / f"{index}.pth").open("xb") as stream:
                 torch.save(value, stream)
     model.pipe.load_models_to_device([])
     accelerator.wait_for_everyone()
+    boundary = main_process_result(accelerator, lambda: validate_data_boundary(dataset, args))
+    if any(signature[key] != value for key, value in boundary.items()):
+        raise ValueError("Cache source approval or media changed during encoding")
     main_process_result(accelerator, lambda: write_complete_marker(output, signature))
     if accelerator.is_main_process:
         print(json.dumps({"event": "video_caption_cache_complete", "samples": len(dataset),
@@ -532,7 +735,7 @@ def launch_video_training(accelerator, dataset, model, model_logger, args):
         save_training_args(args)
         print(json.dumps({"event": "video_sft_budget", "effective_batch": accelerator.num_processes * args.gradient_accumulation_steps,
                           "optimizer_updates": progress.optimizer_updates, "max_train_steps": args.max_train_steps,
-                          "budget_scope": "interface_smoke_only" if args.max_train_steps == 2 else "human_gated_pilot_diagnostic",
+                          "budget_scope": "interface_smoke_only" if signature["data_scope"] == "interface" else "human_gated_pilot_diagnostic",
                           "checkpoint_scope": "accelerator model+optimizer+scheduler+RNG+epoch/batch progress"}), flush=True)
 
     def save_state(name):
@@ -602,6 +805,8 @@ def video_sft_parser():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max_train_steps", type=int, choices=(2, 100, 300), default=100,
                         help="2 is an interface/gradient smoke only; 100/300 are human-gated pilot diagnostics, not full-data training")
+    parser.add_argument("--data_scope", choices=("interface", "reviewed_train"), default="interface",
+                        help="Interface permits only max_train_steps=2; 100/300 require explicit reviewed_train and verified train-only export provenance")
     parser.add_argument("--resume_training_state", type=str)
     parser.add_argument("--cpu_self_test", action="store_true")
     parser.add_argument("--temporal_policy", choices=("native_down", "nearest24_repeat_last124"), default="native_down",
@@ -763,6 +968,186 @@ def cpu_self_test():
 
     import tempfile
 
+    def synthetic_formal_export(root, train_samples=1):
+        from dance_caption_fusion import CpuChecks, PROTOCOL, source_record, object_sha
+        root.mkdir(exist_ok=True)
+        version = PROTOCOL + ":CPU-boundary-simulation"
+        manifest_path, review_path = root / "manifest.json", root / "review.json"
+        records, rewrites, reviews, exported, h3_rows = [], [], [], [], []
+
+        def save(path, value):
+            path.write_text(json.dumps(value), encoding="utf-8")
+            return source_record(path)
+
+        for index, partition in enumerate(["train"] * train_samples + ["val"]):
+            sid = "synthetic" + str(index)
+            media = {}
+            for key in ("audio", "image", "paired_video"):
+                path = root / (sid + "." + key)
+                path.write_bytes(("Temporary CPU boundary simulation only: " + key + sid).encode())
+                media[key] = source_record(path)
+            meta = root / (sid + ".meta.json")
+            media["meta"] = save(meta, dict(video=media["paired_video"]["path"], natural_output_frames=81, target_fps=16))
+            record = CpuChecks().record()
+            record["time_scope"].update(paired_normalized_natural_frames=81, paired_normalized_fps=16,
+                                       training_audio_window_seconds=[0, 5.0625])
+            material = {"temporary_CPU_contract_simulation": sid}
+            record.update(id=sid, split=partition, source_group=sid, rewrite_input=material,
+                          rewrite_input_sha256=object_sha(material), audio_window_seconds=[0, 5.0625],
+                          audio_path=media["audio"]["path"], image_path=media["image"]["path"],
+                          paired_video_path=media["paired_video"]["path"], provenance=media)
+            records.append(record)
+        manifest_source = save(manifest_path, dict(protocol=PROTOCOL, records=records, blocked_ids=[],
+                                                   synthetic_cpu_contract_fixture=True))
+        for record in records:
+            target = CpuChecks().target()
+            rewrite = dict(id=record["id"], split=record["split"], manifest_sha256=manifest_source["sha256"],
+                           rewrite_input_sha256=record["rewrite_input_sha256"], caption_version=version, target=target)
+            rewrite_source = save(root / (record["id"] + ".rewrite.json"), rewrite)
+            approval = dict(id=record["id"], facts_approved=True, narrative_approved=True,
+                window_verified=True, conflicts_resolved=True, reviewed_audio_window_seconds=[0, 5.0625],
+                reviewer="CPU-contract-simulation-NOT-human", window_evidence="Temporary mocked approval only",
+                notes="No real target export or human approval claim", rewrite_sha256=rewrite_source["sha256"])
+            reviews.append(approval)
+            rewrites.append((rewrite, rewrite_source))
+        review_source = save(review_path, dict(protocol=PROTOCOL, records=reviews,
+                                               manifest_sha256=manifest_source["sha256"], synthetic_cpu_contract_fixture=True))
+        for record, approval, (rewrite, rewrite_source) in zip(records, reviews, rewrites):
+            media, target = record["provenance"], rewrite["target"]
+            provenance = dict(manifest=manifest_source, review=review_source, rewrite=rewrite_source)
+            exported.append(dict(id=record["id"], split=record["split"], source_group=record["source_group"],
+                rewrite_source=rewrite_source, audio_source=media["audio"], image_source=media["image"],
+                paired_video_source=media["paired_video"], source_record_manifest=manifest_source,
+                review_source=review_source, human_review=approval, trained_caption_approved=True,
+                approval_provenance=provenance, source_time_scope=record["time_scope"],
+                caption_version=version, audio_window_seconds=[0, 5.0625], video_window_seconds=[0, 5.0625], **target))
+            h3_rows.append(dict(id=record["id"], split=record["split"], source_group=record["source_group"],
+                motion_caption=target["motion_caption"], caption_version=version, video=media["paired_video"]["path"],
+                references=[dict(type="image", image=media["image"]["path"])], video_window_seconds=[0, 5.0625],
+                trained_caption_approved=True, provenance=dict(**provenance, image=media["image"], paired_video=media["paired_video"])))
+        outputs = {}
+        for name, rows in (("h3_video.json", h3_rows), ("h3_video_train.json", h3_rows[:train_samples]),
+                           ("h3_video_val.json", h3_rows[train_samples:])):
+            outputs[name] = save(root / name, rows)
+        for name in ("train.jsonl", "val.jsonl", "omni.jsonl"):
+            outputs[name] = save(root / name, {"synthetic_cpu_contract_fixture": True})
+        sidecar = dict(protocol=PROTOCOL, complete=True, fixture_only=False, records=exported,
+            manifest=manifest_source, review=review_source, caption_version=version,
+            source_code=source_record(Path(__file__).with_name("dance_caption_fusion.py")), counts={"train": train_samples, "val": 1},
+            outputs=outputs, h3_metadata_policy=dict(train_only="h3_video_train.json", val_only="h3_video_val.json",
+                combined="h3_video.json", combined_use="exchange_and_audit_only", combined_direct_cache_or_training_forbidden=True))
+        save(root / "source_sidecar.json", sidecar)
+        return root / "h3_video_train.json", version
+
+    formal_negative_cases = ("fixture", "row_fixture", "row_forbidden", "review_fixture", "review_forbidden", "bool_approval", "bool_review",
+        "combined", "val", "val_split", "export_sha", "review_sha", "rewrite_sha", "changed_media",
+        "changed_meta", "missing_export", "incomplete_export", "wrong_caption", "bool_window", "missing_evidence", "wrong_policy")
+    for case in formal_negative_cases:
+        with tempfile.TemporaryDirectory(prefix="h3-formal-gate-CPU-only-") as directory:
+            root = Path(directory)
+            metadata, version = synthetic_formal_export(root)
+            sidecar_path = root / "source_sidecar.json"
+            sidecar = json.loads(sidecar_path.read_text())
+            rows = json.loads(metadata.read_text())
+            dataset = VideoCaptionDataset(base_path=str(root), metadata_path=str(metadata), caption_version=version)
+            config = SimpleNamespace(dataset_base_path=str(root), dataset_metadata_path=str(metadata),
+                                     caption_version=version, max_train_steps=100, data_scope="reviewed_train",
+                                     temporal_policy="nearest24_repeat_last124")
+            assert validate_data_boundary(dataset, config)["data_provenance"]["approval_chain_verified"]
+            if case == "fixture":
+                sidecar["fixture_only"] = True
+            elif case in ("review_fixture", "review_forbidden", "bool_review", "bool_window", "missing_evidence"):
+                review = json.loads((root / "review.json").read_text())
+                approval = review["records"][0]
+                if case == "review_fixture":
+                    review["fixture_only"] = True
+                elif case == "review_forbidden":
+                    review["formal_reuse_forbidden"] = True
+                elif case == "bool_review":
+                    approval["facts_approved"] = 1
+                elif case == "bool_window":
+                    approval["reviewed_audio_window_seconds"] = [False, 5.0625]
+                else:
+                    approval["window_evidence"] = ""
+                (root / "review.json").write_text(json.dumps(review))
+                from dance_caption_fusion import source_record
+                sidecar["review"] = source_record(root / "review.json")
+            elif case in ("bool_approval", "val_split", "row_fixture", "row_forbidden"):
+                if case in ("row_fixture", "row_forbidden"):
+                    rows[0]["fixture_only" if case == "row_fixture" else "formal_reuse_forbidden"] = True
+                else:
+                    rows[0]["trained_caption_approved" if case == "bool_approval" else "split"] = 1 if case == "bool_approval" else "val"
+                metadata.write_text(json.dumps(rows))
+                from dance_caption_fusion import source_record
+                sidecar["outputs"][metadata.name] = source_record(metadata)
+            elif case in ("combined", "val"):
+                config.dataset_metadata_path = str(root / ("h3_video.json" if case == "combined" else "h3_video_val.json"))
+            elif case == "export_sha":
+                sidecar["outputs"]["h3_video_train.json"]["sha256"] = "wrong"
+            elif case == "review_sha":
+                sidecar["review"]["sha256"] = "wrong"
+            elif case == "rewrite_sha":
+                sidecar["records"][0]["rewrite_source"]["sha256"] = "wrong"
+            elif case in ("changed_media", "changed_meta"):
+                path = root / ("synthetic0.paired_video" if case == "changed_media" else "synthetic0.meta.json")
+                path.write_bytes(b"changed temporary media")
+            elif case == "missing_export":
+                sidecar["outputs"].pop("h3_video_val.json")
+            elif case == "incomplete_export":
+                sidecar["complete"] = 1
+            elif case == "wrong_caption":
+                config.caption_version += "-changed"
+            elif case == "wrong_policy":
+                sidecar["h3_metadata_policy"]["combined_direct_cache_or_training_forbidden"] = False
+            sidecar_path.write_text(json.dumps(sidecar))
+            argv = ["h3_video_sft.py", "--task", "sft:data_process", "--weights_root", str(root),
+                    "--caption_version", config.caption_version, "--dataset_base_path", str(root),
+                    "--dataset_metadata_path", config.dataset_metadata_path, "--output_path", str(root / "not-created"),
+                    "--max_train_steps", "100", "--data_scope", "reviewed_train", "--temporal_policy", "nearest24_repeat_last124"]
+            with patch.object(sys, "argv", argv), patch("accelerate.Accelerator", return_value=accelerate.Accelerator(cpu=True)), \
+                    patch(__name__ + ".H3VideoOnlyTrainingModule") as builder:
+                try:
+                    main()
+                except ValueError:
+                    pass
+                else:
+                    raise AssertionError("Formal boundary accepted negative case: " + case)
+                assert not builder.called, case
+            assert not (root / "not-created").exists()
+
+    with tempfile.TemporaryDirectory(prefix="h3-formal-main-positive-CPU-") as directory:
+        root = Path(directory)
+        metadata, version = synthetic_formal_export(root)
+        for budget in (100, 300):
+            argv = ["h3_video_sft.py", "--task", "sft:data_process", "--weights_root", str(root),
+                    "--caption_version", version, "--dataset_base_path", str(root),
+                    "--dataset_metadata_path", str(metadata), "--output_path", str(root / "not-created"),
+                    "--max_train_steps", str(budget), "--data_scope", "reviewed_train", "--temporal_policy", "nearest24_repeat_last124"]
+            class ExpectedModelBoundary(Exception):
+                pass
+            with patch.object(sys, "argv", argv), patch("accelerate.Accelerator", return_value=accelerate.Accelerator(cpu=True)), \
+                    patch(__name__ + ".H3VideoOnlyTrainingModule", side_effect=ExpectedModelBoundary) as builder:
+                try:
+                    main()
+                except ExpectedModelBoundary:
+                    pass
+                else:
+                    raise AssertionError("Legal formal source did not reach the model construction boundary")
+                assert builder.call_count == 1
+            assert not (root / "not-created").exists()
+            default_argv = list(argv)
+            position = default_argv.index("--data_scope")
+            del default_argv[position:position + 2]
+            with patch.object(sys, "argv", default_argv), patch("accelerate.Accelerator", return_value=accelerate.Accelerator(cpu=True)), \
+                    patch(__name__ + ".H3VideoOnlyTrainingModule") as builder:
+                try:
+                    main()
+                except ValueError:
+                    pass
+                else:
+                    raise AssertionError("Formal raw 100/300 budget accepted implicit default scope")
+                assert not builder.called
+
     class TinyCache(torch.utils.data.Dataset):
         load_from_cache = True
 
@@ -775,20 +1160,21 @@ def cpu_self_test():
         def __getitem__(self, index):
             latents = torch.full((1, 2, 2, 2, 2), index / 8.0)
             return ({"input_latents": latents, "audio_latents": torch.empty(2, 32, 0),
-                     "h3_video_cache": {"format": CACHE_FORMAT, "caption_version": "cpu-test", "caption_sha256": "test"}},
+                     "h3_video_cache": {"format": CACHE_FORMAT, "caption_version": formal_version, "caption_sha256": "test"}},
                     {"prompt_embeds": torch.ones(1, 2), "packed": {
                         "audio_pos": torch.empty(0, dtype=torch.long), "token_tags": torch.zeros(1, dtype=torch.long)}}, {})
 
     def run_tiny(output, max_steps, resume=None):
         accelerate.utils.set_seed(123)
-        tiny = H3VideoOnlyTrainingModule(caption_version="cpu-test", task="sft:train", pipe=TinyPipe(), lora_rank=2)
+        tiny = H3VideoOnlyTrainingModule(caption_version=formal_version, task="sft:train", pipe=TinyPipe(), lora_rank=2)
         accelerator = accelerate.Accelerator(cpu=True, gradient_accumulation_steps=2)
         config = SimpleNamespace(
             enable_model_cpu_offload=False, enable_optimizer_cpu_offload=False, customized_optimizer=None,
-            learning_rate=1e-5, weight_decay=0.01, dataset_num_workers=0, caption_version="cpu-test",
+            learning_rate=1e-5, weight_decay=0.01, dataset_num_workers=0, caption_version=formal_version,
             dataset_base_path=str(Path(temporary) / "cache"), dataset_metadata_path=None, anchor_lambda=0.1, lora_rank=2, lora_alpha=64,
             weights_root=str(Path(temporary) / "weights"), gradient_accumulation_steps=2, seed=123, resume_training_state=resume,
             output_path=output, max_train_steps=max_steps, num_epochs=2, save_steps=2,
+            data_scope="reviewed_train", temporal_policy="nearest24_repeat_last124",
         )
         logger = ModelLogger(output, remove_prefix_in_ckpt="pipe.dit.")
         launch_video_training(accelerator, TinyCache(config.dataset_base_path), tiny, logger, config)
@@ -798,12 +1184,49 @@ def cpu_self_test():
         fixture = Path(temporary)
         cache_root = fixture / "cache"
         cache_root.mkdir()
-        for index in range(8):
-            (cache_root / f"{index}.pth").write_bytes(f"fixture-{index}".encode())
-        write_complete_marker(cache_root, {"caption": "cpu-test", "sources": {"code": {
-            Path(__file__).name: file_sha256(__file__),
-            "h3_video_only.py": file_sha256(Path(__file__).with_name("h3_video_only.py")),
-        }}})
+        formal_metadata, formal_version = synthetic_formal_export(fixture / "formal-export", train_samples=8)
+        formal_provenance = formal_training_provenance(formal_metadata, formal_version)
+        for index, row in enumerate(json.loads(formal_metadata.read_text())):
+            value = TinyCache(cache_root)[index]
+            value[0]["h3_video_cache"].update(sample_id=row["id"], data_scope="reviewed_train",
+                caption_sha256=hashlib.sha256(teacher_video_prompt(row).encode()).hexdigest(),
+                data_provenance_sha256=hashlib.sha256(json.dumps(formal_provenance, sort_keys=True).encode()).hexdigest())
+            torch.save(value, cache_root / f"{index}.pth")
+        cache_signature = {"caption_version": formal_version, "data_scope": "reviewed_train", "dataset_size": 8,
+            "dataset_metadata_path": str(formal_metadata),
+            "data_provenance": formal_provenance, "temporal_policy": "nearest24_repeat_last124",
+            "sources": {"metadata_sha256": file_sha256(formal_metadata), "code": {
+                Path(__file__).name: file_sha256(__file__),
+                "h3_video_only.py": file_sha256(Path(__file__).with_name("h3_video_only.py")),
+        }}}
+        write_complete_marker(cache_root, cache_signature)
+        for budget in (100, 300):
+            argv = ["h3_video_sft.py", "--task", "sft:train", "--weights_root", str(fixture),
+                    "--caption_version", formal_version, "--dataset_base_path", str(cache_root),
+                    "--output_path", str(fixture / "positive-not-created"), "--max_train_steps", str(budget),
+                    "--data_scope", "reviewed_train", "--temporal_policy", "nearest24_repeat_last124"]
+            with patch.object(sys, "argv", argv), patch("accelerate.Accelerator", return_value=accelerate.Accelerator(cpu=True)), \
+                    patch(__name__ + ".H3VideoOnlyTrainingModule", side_effect=ExpectedModelBoundary) as builder:
+                try:
+                    main()
+                except ExpectedModelBoundary:
+                    pass
+                else:
+                    raise AssertionError("Legal formal cache did not reach the model construction boundary")
+                assert builder.call_count == 1
+            default_argv = list(argv)
+            position = default_argv.index("--data_scope")
+            del default_argv[position:position + 2]
+            with patch.object(sys, "argv", default_argv), patch("accelerate.Accelerator", return_value=accelerate.Accelerator(cpu=True)), \
+                    patch(__name__ + ".H3VideoOnlyTrainingModule") as builder:
+                try:
+                    main()
+                except ValueError:
+                    pass
+                else:
+                    raise AssertionError("Formal cache 100/300 budget accepted implicit default scope")
+                assert not builder.called
+        assert not (fixture / "positive-not-created").exists()
         model_root = fixture / "weights"
         (model_root / "transformer").mkdir(parents=True)
         (model_root / "transformer/config.json").write_text('{"fixture": true}')
@@ -820,14 +1243,21 @@ def cpu_self_test():
             def forward(self, data):
                 return data
 
+        class RawCacheFixture(TinyCache):
+            load_from_cache = False
+
+            def __init__(self):
+                self.data = json.loads(formal_metadata.read_text())
+
         cache_args = SimpleNamespace(
-            dataset_base_path=str(cache_root), dataset_metadata_path=None, weights_root=str(model_root),
-            caption_version="cpu-test", anchor_lambda=0.1, learning_rate=1e-5, weight_decay=0.01,
+            dataset_base_path=str(fixture), dataset_metadata_path=str(formal_metadata), weights_root=str(model_root),
+            caption_version=formal_version, anchor_lambda=0.1, learning_rate=1e-5, weight_decay=0.01,
             lora_rank=2, lora_alpha=64, gradient_accumulation_steps=1, seed=123,
-            dataset_num_workers=0, output_path=str(fixture / "cache-output"),
+            dataset_num_workers=0, output_path=str(fixture / "cache-output"), max_train_steps=100,
+            data_scope="reviewed_train", temporal_policy="nearest24_repeat_last124",
         )
         with patch.object(torch.cpu, "empty_cache", lambda: None, create=True):
-            launch_video_cache(accelerate.Accelerator(cpu=True), TinyCache(cache_root), CacheRunnerFixture(), cache_args)
+            launch_video_cache(accelerate.Accelerator(cpu=True), RawCacheFixture(), CacheRunnerFixture(), cache_args)
         assert len(list((fixture / "cache-output").rglob("*.pth"))) == 8
         verify_complete_marker(fixture / "cache-output")
         baseline = run_tiny(str(Path(temporary) / "baseline"), 3)
@@ -867,16 +1297,126 @@ def cpu_self_test():
         partial.mkdir()
         (partial / "optimizer.bin").write_bytes(b"partial")
         must_reject(lambda: verify_complete_marker(partial))
+        original_cache = (cache_root / "0.pth").read_bytes()
         (cache_root / "0.pth").write_bytes(b"modified-cache")
         must_reject(lambda: run_tiny(str(fixture / "reject-cache"), 3, str(checkpoint)))
-        (cache_root / "0.pth").write_bytes(b"fixture-0")
+        (cache_root / "0.pth").write_bytes(original_cache)
         original_optimizer = (checkpoint / "optimizer.bin").read_bytes()
         (checkpoint / "optimizer.bin").write_bytes(b"changed-optimizer")
         must_reject(lambda: verify_complete_marker(checkpoint))
         (checkpoint / "optimizer.bin").write_bytes(original_optimizer)
         (model_root / "transformer/model.safetensors").write_bytes(b"changed-model")
         must_reject(lambda: run_tiny(str(fixture / "reject-model"), 3, str(checkpoint)))
-    print(json.dumps({"cpu_self_test": "passed", "actual_lora_backward": True, "frozen_base_unchanged": True,
+    cached_negative_cases = ("interface_upgrade", "scope_override", "wrong_caption", "wrong_policy",
+                             "wrong_dataset_size", "sample_scope", "sample_binding", "val_sample", "source_review_drift")
+    for case in cached_negative_cases:
+        with tempfile.TemporaryDirectory(prefix="h3-cache-gate-CPU-only-") as directory:
+            root = Path(directory)
+            metadata, version = synthetic_formal_export(root / "export")
+            provenance = formal_training_provenance(metadata, version)
+            cache = root / "cache"
+            cache.mkdir()
+            row = json.loads(metadata.read_text())[0]
+            info = dict(format=CACHE_FORMAT, caption_version=version, sample_id=row["id"], data_scope="reviewed_train",
+                caption_sha256=hashlib.sha256(teacher_video_prompt(row).encode()).hexdigest(),
+                data_provenance_sha256=hashlib.sha256(json.dumps(provenance, sort_keys=True).encode()).hexdigest())
+            value = ({"input_latents": torch.zeros(1, 2, 2, 2, 2), "audio_latents": torch.empty(2, 32, 0),
+                      "h3_video_cache": info}, {"prompt_embeds": torch.ones(1, 2), "packed": {
+                      "audio_pos": torch.empty(0, dtype=torch.long), "token_tags": torch.zeros(1, dtype=torch.long)}}, {})
+            signature = dict(data_scope="reviewed_train", data_provenance=provenance, dataset_size=1,
+                dataset_metadata_path=str(metadata), caption_version=version, temporal_policy="nearest24_repeat_last124",
+                sources=dict(metadata_sha256=file_sha256(metadata), code={path.name: file_sha256(path)
+                    for path in (Path(__file__), Path(__file__).with_name("h3_video_only.py"))}))
+            budget, scope, policy, caption = 100, "reviewed_train", "nearest24_repeat_last124", version
+            if case in ("interface_upgrade", "scope_override"):
+                signature["data_scope"] = info["data_scope"] = "interface"
+                signature["data_provenance"] = dict(protocol="h3-interface-only-v1", formal_reuse_forbidden=True)
+                if case == "scope_override":
+                    scope = "interface"
+            elif case == "wrong_caption":
+                caption += "-changed"
+            elif case == "wrong_policy":
+                policy = "native_down"
+            elif case == "wrong_dataset_size":
+                signature["dataset_size"] = 2
+            elif case == "sample_scope":
+                info["data_scope"] = "interface"
+            elif case == "sample_binding":
+                info["data_provenance_sha256"] = "wrong"
+            elif case == "val_sample":
+                info["sample_id"] = "synthetic1"
+            elif case == "source_review_drift":
+                (root / "export/review.json").write_text("{}")
+            torch.save(value, cache / "0.pth")
+            write_complete_marker(cache, signature)
+            argv = ["h3_video_sft.py", "--task", "sft:train", "--weights_root", str(root),
+                    "--caption_version", caption, "--dataset_base_path", str(cache),
+                    "--output_path", str(root / "not-created"), "--max_train_steps", str(budget), "--temporal_policy", policy]
+            if scope:
+                argv += ["--data_scope", scope]
+            with patch.object(sys, "argv", argv), patch("accelerate.Accelerator", return_value=accelerate.Accelerator(cpu=True)), \
+                    patch(__name__ + ".H3VideoOnlyTrainingModule") as builder:
+                try:
+                    main()
+                except ValueError:
+                    pass
+                else:
+                    raise AssertionError("Cached boundary accepted negative case: " + case)
+                assert not builder.called, case
+            assert not (root / "not-created").exists()
+
+    with tempfile.TemporaryDirectory(prefix="h3-interface-scope-CPU-only-") as directory:
+        root = Path(directory)
+        metadata = root / "fixture.json"
+        metadata.write_text(json.dumps([dict(id="fixture", video=str(root / "unused.mp4"),
+            references=[dict(type="image", image=str(root / "unused.png"))], split="train", fixture_only=True,
+            formal_reuse_forbidden=True, caption_version="interface-only", motion_caption="The dancer bends and extends the arms.")]))
+        dataset = VideoCaptionDataset(base_path=str(root), metadata_path=str(metadata), caption_version="interface-only")
+        args = SimpleNamespace(dataset_base_path=str(root), dataset_metadata_path=str(metadata),
+                               caption_version="interface-only", max_train_steps=2, data_scope="interface",
+                               temporal_policy="native_down")
+        boundary = validate_data_boundary(dataset, args)
+        assert boundary["data_scope"] == "interface" and boundary["data_provenance"]["formal_reuse_forbidden"]
+        cache = root / "cache"
+        cache.mkdir()
+        value = ({"input_latents": torch.zeros(1, 2, 2, 2, 2), "audio_latents": torch.empty(2, 32, 0),
+                  "h3_video_cache": dict(format=CACHE_FORMAT, caption_version="interface-only", caption_sha256="fixture",
+                  data_scope="interface", data_provenance_sha256=hashlib.sha256(json.dumps(boundary["data_provenance"], sort_keys=True).encode()).hexdigest())},
+                 {"prompt_embeds": torch.ones(1, 2), "packed": {"audio_pos": torch.empty(0, dtype=torch.long),
+                                                               "token_tags": torch.zeros(1, dtype=torch.long)}}, {})
+        torch.save(value, cache / "0.pth")
+        signature = dict(**boundary, dataset_size=1, dataset_metadata_path=str(metadata), caption_version="interface-only",
+            temporal_policy="native_down", sources=dict(code={path.name: file_sha256(path)
+                for path in (Path(__file__), Path(__file__).with_name("h3_video_only.py"))}))
+        interface_marker = write_complete_marker(cache, signature)
+        assert interface_marker["scope"] == "interface"
+        cached = VideoCaptionDataset(base_path=str(cache), metadata_path=None, caption_version="interface-only")
+        cached_args = SimpleNamespace(**vars(args))
+        cached_args.dataset_base_path, cached_args.dataset_metadata_path = str(cache), None
+        assert validate_data_boundary(cached, cached_args) == boundary
+        for budget in (100, 300):
+            cached_args.max_train_steps, cached_args.data_scope = budget, "reviewed_train"
+            try:
+                validate_data_boundary(cached, cached_args)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError("Interface cache was upgraded to formal budget")
+            args.max_train_steps = budget
+            try:
+                validate_data_boundary(dataset, args)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError("Interface raw metadata was upgraded to formal budget")
+
+    print(json.dumps({"cpu_self_test": "passed", "formal_metadata_negative_cases": list(formal_negative_cases),
+                      "formal_cache_negative_cases": list(cached_negative_cases),
+                      "formal_models_loading_boundary_rejections": True, "formal_export_approval_chain_positive": True,
+                      "interface_scope_fixed_two_updates": True, "interface_cache_budget_upgrade_rejected": True,
+                      "formal_100_300_main_model_boundary_positive": True, "formal_budget_explicit_reviewed_scope_required": True,
+                      "cached_sample_scope_caption_approval_binding": True,
+                      "actual_lora_backward": True, "frozen_base_unchanged": True,
                       "soft_anchor_relative_check": True, "audio_forbidden_hooks": True,
                       "actual_optimizer_checkpoint_resume_parity": True,
                       "real_tiny_H3_lora_anchor_checkpoint_backward": True,
@@ -944,6 +1484,7 @@ def main():
     )
     if (args.task == "sft:train") != dataset.load_from_cache:
         parser.error("sft:train requires new cached inputs; sft/data_process requires teacher-caption metadata")
+    main_process_result(accelerator, lambda: validate_data_boundary(dataset, args))
     model = H3VideoOnlyTrainingModule(
         args.weights_root, caption_version=args.caption_version, task=args.task,
         device=accelerator.device if args.task == "sft:data_process" else "cpu" if args.initialize_model_on_cpu else accelerator.device,

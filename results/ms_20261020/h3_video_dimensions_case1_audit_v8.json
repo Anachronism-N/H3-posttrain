@@ -22,7 +22,11 @@
   "caption_window_and_dimension_window": "unknown",
   "inference_diagnostic_only": true,
   "formal_SFT_reuse_forbidden": true,
-  "new_configuration_human_review_received": false,
+  "new_configuration_human_review_received": true,
   "new_configuration_quality_accepted": false,
+  "human_feedback": "A「手臂主导＋优雅梦幻」、B「直立＋原地＋不跳跃」几乎完全一致",
+  "human_feedback_scope": "Single-case qualitative similarity between A and B; not pixel equality, standalone quality acceptance, relative comparison against v7, or proof that all prompt dimensions are ineffective.",
+  "A_B_user_visible_difference_established": false,
+  "A_B_vs_v7_relative_quality_review_received": false,
   "full_active_goal_completed": false
 }

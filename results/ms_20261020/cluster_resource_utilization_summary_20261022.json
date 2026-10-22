@@ -1,0 +1,33 @@
+{
+  "sampling_time_CST": "2026-10-22T23:17:39+08:00",
+  "sampling_time_UTC": "2026-10-22T15:17:39+00:00",
+  "snapshot_source": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/cluster_resource_snapshot_20261022_document_v1.json",
+  "read_only": true,
+  "hardware": "8 nodes, 64 NVIDIA A800-SXM4-80GB, 81920MiB each",
+  "counts": {"real_model_experiment_GPUs": 0, "project_holders": 48, "running_holders": 40, "stopped_holders": 8, "idle": 16, "unknown_compute": 0},
+  "cgroup_memory_limit_GiB_each": 997.83,
+  "nodes": [
+    {"name":"N1","host":"28.216.19.69","experiment_GPUs":0,"holder_GPUs":8,"idle_GPUs":0,"state":"running project holders","GPU_used_MiB_each":975,"GPU_util_percent_each":100,"host_available_GiB":1532.54,"cgroup_current_GiB":455.54,"cgroup_headroom_GiB":542.29},
+    {"name":"N2","host":"28.216.17.70","experiment_GPUs":0,"holder_GPUs":8,"idle_GPUs":0,"state":"running project holders","GPU_used_MiB_each":975,"GPU_util_percent_each":100,"host_available_GiB":605.85,"cgroup_current_GiB":409.66,"cgroup_headroom_GiB":588.18},
+    {"name":"N3","host":"28.216.19.213","experiment_GPUs":0,"holder_GPUs":0,"idle_GPUs":8,"state":"idle after completed H3 interface and GPU restore","GPU_used_MiB_each":0,"GPU_util_percent_each":0,"host_available_GiB":1662.05,"cgroup_current_GiB":494.92,"cgroup_headroom_GiB":502.92},
+    {"name":"N4","host":"28.216.19.143","experiment_GPUs":0,"holder_GPUs":8,"idle_GPUs":0,"state":"running project holders after completed inference","GPU_used_MiB_each":975,"GPU_util_percent_each":100,"host_available_GiB":1688.38,"cgroup_current_GiB":307.20,"cgroup_headroom_GiB":690.63},
+    {"name":"N5","host":"28.216.19.137","experiment_GPUs":0,"holder_GPUs":8,"idle_GPUs":0,"state":"running project holders","GPU_used_MiB_each":975,"GPU_util_percent_each":100,"host_available_GiB":1660.33,"cgroup_current_GiB":467.55,"cgroup_headroom_GiB":530.28},
+    {"name":"N6","host":"28.216.19.225","experiment_GPUs":0,"holder_GPUs":8,"idle_GPUs":0,"state":"running project holders","GPU_used_MiB_each":975,"GPU_util_percent_each":100,"host_available_GiB":1653.76,"cgroup_current_GiB":489.95,"cgroup_headroom_GiB":507.88},
+    {"name":"N7","host":"28.216.18.144","experiment_GPUs":0,"holder_GPUs":0,"idle_GPUs":8,"state":"idle after completed official30B interface","GPU_used_MiB_each":0,"GPU_util_percent_each":0,"host_available_GiB":1573.20,"cgroup_current_GiB":649.76,"cgroup_headroom_GiB":348.08},
+    {"name":"N8","host":"28.216.18.136","experiment_GPUs":0,"holder_GPUs":8,"idle_GPUs":0,"state":"stopped T-state holders retain CUDA contexts","GPU_used_MiB_each":975,"GPU_util_percent_each":0,"host_available_GiB":1566.97,"cgroup_current_GiB":555.20,"cgroup_headroom_GiB":442.64}
+  ],
+  "all_compute_processes_verified_as_project_holders": true,
+  "holder_matrix_multiplication_is_not_model_training": true,
+  "reserve_files_exist": 64,
+  "active_reserve_protections": 0,
+  "reserve_protection_seconds": 1200,
+  "existing_watchdog_node": "N1",
+  "existing_watchdog_PID": 4018413,
+  "watchdog_period_seconds": 600,
+  "future_idle_guaranteed": false,
+  "GPU_launch_kill_release_or_reserve_touch_performed": false,
+  "latest_independent_CPU_gate_selftest": {"task_id":"C2GQhv","exit_code":0,"formal_training_started":false},
+  "formal_supervision": {"preview_total":32,"format_valid":27,"format_invalid":5,"actual_human_approved":0},
+  "reason_not_to_launch_formal_SFT": "Real fact/window/narrative/conflict approvals have not passed the user-approved gate; current interface tests are already completed and not repeated.",
+  "full_active_goal_completed": false
+}

@@ -1,6 +1,6 @@
 # OmniDance/H3 实验历史、音乐替换文本失败分析与当前执行状态
 
-整理日期：2026-10-22（北京时间）。本文是用户要求的详细归档，不是新的实验启动命令。
+整理日期：2026-10-22；推进状态更新至2026-10-23（北京时间）。本文是用户要求的详细归档，不是新的实验启动命令。
 
 ## 1. 阅读规则与当前结论
 
@@ -19,7 +19,7 @@
 2. 当前主线改为 **音乐 → Omni 离散融合 caption → H3 原生图文 TC → 真纯视频生成**。
 3. Omni7B/官方30B真实两更新及保存/重载接口已通过；H3新124帧缓存、两更新、真实八卡恢复也通过。它们全部是独立 fixture 接口验证，不是正式 SFT。
 4. 原始 H3 真纯视频 rich/MS 两条同 case 均获可用正评；融合 v7 获“更好且可用”；新增维度 A/B 的最新反馈为“几乎完全一致”。
-5. 首32候选27格式过、5格式拒，真实事实/叙事/时间窗/冲突审批仍0，正式 pilot/full 和端到端验收尚未执行完成。
+5. 首32已完成真实AI证据审核：19条保留官方30B正文、13条明确由助手编辑修正，32条assistant_delegated批准；真实导出24train/8val已过Omni/H3来源链。不是人工评分，也不是正式512/128训练。640配对媒体已全部准备完成，正式caption目标仍待实际视觉生成/审核；pilot/full和端到端验收未完成。
 
 ## 2. 统一路径、数据与评审口径
 
@@ -657,6 +657,7 @@ CPU H3自测PID曾23:16:59存在，采样时已退出；独立受管理C2GQhv实
 | 官方30B完整接口 | [omni30b_official_pretrained_smoke2_verified](../results/ms_20261020/omni30b_official_pretrained_smoke2_verified_v4.json) |
 | H3新124训练与真实恢复 | [h3_video_repeatlast124_pretrained_smoke_and_restore](../results/ms_20261020/h3_video_repeatlast124_pretrained_smoke_and_restore_v2.json) |
 | H3正式100/300来源门禁CPU | [h3_video_reviewed_training_gate_cpu](../results/ms_20261020/h3_video_reviewed_training_gate_cpu_v3.json) |
+| 32实际AI批准/24+8导出及640媒体齐备 | [dance_caption_approved32_and_pilot640_media](../results/ms_20261020/dance_caption_approved32_and_pilot640_media_v3.json) |
 | 融合提取/重写/获审导出 | [dance_caption_fusion.py](../scripts_omnidance/exp/ms/dance_caption_fusion.py) |
 | Omni训练/部署/保存恢复 | [omni_dance_sft.py](../scripts_omnidance/exp/ms/omni_dance_sft.py) |
 | H3真纯视频执行 | [h3_video_only.py](../scripts_omnidance/exp/ms/h3_video_only.py) |
@@ -673,16 +674,19 @@ CPU H3自测PID曾23:16:59存在，采样时已退出；独立受管理C2GQhv实
 
 - 官方30B完整权重/processor身份已核，N7本地模型已暂存；8GPU真实2update/AdamRNG保存重载/部署文字生成已完整通过。
 - 真纯视频H3底座已得到rich/MS/fusion单case正评；H3八条124帧cache/2update/真实GPU恢复接口已通过。
-- 30B pilot的**512train/128val来源候选**已经实际prepare完成，清单`MS/dance_caption_pilot640_30b_only_manifest_v1.json`，SHA`624408c0bba8926ed21d0756e12c9161ca12dc917569a6e8be5317c0376ab729`。仍targets_generated=false：这是候选和来源审计，不是640条正式标签。
-- Omni三epochpilot入口可直接设置min_epochs=max_epochs=3、smoke_steps=0，沿正式数据/官方base fresh，不从接口fixture LoRA接训。
+- 30B pilot的**512train/128val来源候选与640条配对媒体**已齐备。首版13条音频不足完整窗口，严格拒绝后仅同split替换13条，627已有帧图复用；有效清单`MS/dance_caption_pilot640_30b_only_manifest_v2.json`，SHA`2f1c4d2ddc5b299f0a86161a59635c719b3f5b84646c49d9e78a484f4481573e`，标准visual index SHA`06d4f36a6116cde5cfc5c4ccfbbd42144409f244718ca3c254a752531ed00d68`。仍caption_targets_generated=false：媒体齐备不是640条正式标签。
+- 首32真实AI审核与导出已完成：19条保留原30B正文、13条透明助手编辑；32批准review SHA`7de27bda7bd2c39e1e03b79cf16f444b7cf31200620a6881f1d6471c5051c446`，导出24train/8val，实际Omni reader/H3正式来源链通过。AI批准不冒human，不把unknown原rich/MS源窗改verified。
+- Omni三epochpilot预算min_epochs=max_epochs=3、smoke_steps=0，沿正式数据/官方base fresh，不从接口fixture LoRA接训。2026-10-23发现旧Omni reader未核真实审批链/fixture/精确规模，必要显式formal scope与模型加载前来源门禁正在补齐；不能只设置三epoch就把普通JSONL宣告正式。
 
 ### 14.2 还缺哪些实际交付
 
 | 剩余交付 | 为何需要 | 完成后的动作 |
 |---|---|---|
 | 32条实际媒体AI观察 | **已完成**32片段/384帧图，89条保守OBS事实 | 旧正文1粗粒度可留、26需重写、5拒当前目标；媒体无缺失，原rich/MS源窗仍unknown |
-| 官方30B冻结重写与审核契约 | **代码和18项独立CPU测试已完成**，官方30B实际32重写已启动N7GPU0 | 新目标必须与真实OBS事实相符；当前首批仍有“conflicts称不可见、正文却写入”的问题，需排除旧冲突材料后重写，不自动批准 |
-| 512/128正式caption目标及逐项来源/质量检查 | 640来源清单只有候选，没有可用于CE的审核目标 | 导出统一版本omni.jsonl及H3 train-only/val-only元数据 |
+| 首32实际正文修正与目标审批 | **已完成**独立AI核帧/正文、13编辑/19保留、32透明AI批准、真实24/8导出/来源链 | 不再等待用户逐条POST；原raw、错误事实和编辑来源分别保存，不能升级为512formal |
+| 官方30B图像依据候选生成 | CPU真实图像processor和10契约测试已过；唯一视觉32任务真实启动，尚未完成 | 只读/proc确认共享权重第7/15分片冷读、GPU0尚0MiB；不重启、不称真实视觉前向通过 |
+| 512/128正式caption目标及逐项来源/质量检查 | 640媒体/索引已齐，caption尚未生成和逐条审批 | 实际核图/动作順序/正文冲突，透明派生兼容target，导出统一版本omni.jsonl及H3 train-only/val-only |
+| Omni正式来源门禁 | 旧reader未直接消费审批链，存在fixture/小预览误升级风险；最小修正与CPU测试正在执行 | 显式scope、精确512/128与三epoch、实际审批来源链进入resume fingerprint，不重跑GPU接口 |
 | 最后8GPU/host-cgroup准入与数据签名冻结 | 旧资源快照可能被watchdog补占卡 | 直接启动官方30B三完整epochpilot，不再另加smoke |
 
 不是“还需要模型下载、再验证7B、再验证音频关闭、再重训旧6000”。当前关键路径是**把候选转成真实可训练监督**，这项不能以一个批准布尔或格式通过代替。
@@ -696,7 +700,7 @@ CPU H3自测PID曾23:16:59存在，采样时已退出；独立受管理C2GQhv实
 ## 15. 下一步与停止边界
 
 - 不重跑旧6500cache、direct6000、18学生或ABC；A/B反馈已收，不自动重复评分或弱维度扫描。
-- 正式来源gate已完成CPU验证；按用户最新授权由助手执行透明AI证据审核32，产512/128正式目标并自主推进30B训练。不再以“尚未用户逐条人审”无限等待，不跳过实际目标质量与窗口证据。
+- H3正式来源gate已过CPU及真实32导出链；首32助手证据审核已完成。Omni直接训练入口的来源门禁正在独立补齐，继续实际视觉监督生成、512/128逐条AI目标审核和正式fresh30B训练。不再以“尚未用户逐条人审”无限等待，不跳过实际目标质量与窗口证据。
 - 获审后新版本caption/cache、正式pilot/full与端到端三个case验收按批准预算推进。
 - 所有阶段训练正确结束、完整来源/媒体审核、实际人评及最终GitHub核验之后，才宣告整体完成并取消本轮跟进。
 - 当前整体目标未完成；本详细归档、接口通过和单case正评都不会缩减正式目标。

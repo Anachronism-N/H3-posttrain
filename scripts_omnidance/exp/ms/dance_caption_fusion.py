@@ -415,6 +415,16 @@ def text_generation_inputs(processor, conversation, continue_final_message=False
     return inputs
 
 
+def caption_boundary_text(caption):
+    # These are body locations/orientations, not descriptions of identity or equipment.
+    caption = re.sub(r'\b(?:to\s+)?face\s+(?:away|toward|towards|forward|backward|the\s+(?:front|back|side))\b', 'orient', caption, flags=re.I)
+    caption = re.sub(r'\b(?:near|beside|by|around|across|past|toward|towards|between)\s+(?:(?:the|their|the dancer\'s)\s+)?face\b|\bface-side\b', 'head-location', caption, flags=re.I)
+    caption = re.sub(r'\b(?:toward|towards|away\s+from)\s+the\s+camera\b', 'view-direction', caption, flags=re.I)
+    caption = re.sub(r'\b(?:chest|shoulder|head)\s*,\s*(?:and\s+)?face\b', 'body-location-list', caption, flags=re.I)
+    caption = re.sub(r'\bsynchroni[sz](?:ed|ing)\s+with\s+(?:a\s+gentle\s+sway\s+of\s+)?(?:the\s+)?(?:torso|arms|body|hands|legs)\b', 'coordinated-body-motion', caption, flags=re.I)
+    return caption
+
+
 def validate_target(value, record):
     errors, flags = [], []
     fields = {'motion_caption', 'used_facts', 'conflicts', 'time_scope'}
@@ -425,7 +435,7 @@ def validate_target(value, record):
         errors.append('empty_or_nontext_caption')
         caption = ''
     for key, pattern in FORBIDDEN.items():
-        matches = pattern.findall(caption)
+        matches = pattern.findall(caption_boundary_text(caption))
         if matches:
             errors.append(key + ':' + ','.join(sorted(set(matches))))
     if re.search(r'[\u3400-\u9fff\u3040-\u30ff\uac00-\ud7a3\u0400-\u04ff\u0600-\u06ff]', caption):
@@ -481,7 +491,7 @@ def validate_target(value, record):
 
 def h3_prompt(caption):
     for name, pattern in FORBIDDEN.items():
-        if pattern.search(caption):
+        if pattern.search(caption_boundary_text(caption)):
             raise ValueError(f'Unsafe motion caption for pure-video H3: {name}')
     if not caption.strip() or '\n' in caption:
         raise ValueError('Expected one nonempty narrative')
@@ -891,6 +901,23 @@ class CpuChecks(unittest.TestCase):
         self.assertFalse(validate_target(fabricated, self.record())['format_valid'])
         fabricated = dict(good, time_scope=dict(status='verified_paired_window', reason='Guessed.'))
         self.assertFalse(validate_target(fabricated, self.record())['format_valid'])
+
+    def test_motion_orientation_is_not_appearance_or_music(self):
+        for text in ('The dancer turns to face away from the initial orientation.',
+                     'The hands move near the face and then open.',
+                     'One hand moves between the chest, shoulder, and face before lowering.',
+                     'The dancer steps forward toward the camera.',
+                     'The arms are synchronized with a gentle sway of the torso.'):
+            value = dict(self.target(), motion_caption=text)
+            self.assertTrue(validate_target(value, self.record())['format_valid'], text)
+            self.assertIn(text, h3_prompt(text))
+        for text in ('The dancer has a beautiful face.', 'The camera follows the dancer.',
+                     'The dancer is synchronized with the music.',
+                     'The arms are synchronized with the beat.',
+                     'The hands move near the face, showing facial expression.'):
+            self.assertFalse(validate_target(dict(self.target(), motion_caption=text), self.record())['format_valid'], text)
+            with self.assertRaises(ValueError):
+                h3_prompt(text)
 
     def test_angles_are_not_time_but_timestamps_remain_forbidden(self):
         for caption in ('The dancer holds bent elbows at 90 degrees.',

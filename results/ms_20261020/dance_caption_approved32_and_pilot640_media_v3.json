@@ -1,0 +1,119 @@
+{
+  "report_date_CST": "2026-10-23",
+  "scope": "Actual assistant-delegated target review/export and pilot media preparation; not formal student training",
+  "review_kind": "assistant_delegated",
+  "human_review_completed": false,
+  "approved32": {
+    "actual_normalized_clips_observed": 32,
+    "actual_sampled_frames_observed": 384,
+    "conservative_OBS_facts": 89,
+    "independent_target_frame_reviews": 2,
+    "retained_official30B_captions": 19,
+    "assistant_editorial_corrections": 13,
+    "original_generation_preserved": true,
+    "original_source_window_mapping_verified": false,
+    "manifest": {
+      "path": "MS/dance_caption_editorial32_approved_manifest_v3.json",
+      "sha256": "ea8f85e447ce407e1cb2578041b9154d75680795a1e88648b866a986fc1e1aff",
+      "size_bytes": 1538907
+    },
+    "review": {
+      "path": "MS/dance_caption_editorial32_assistant_review_v3.json",
+      "sha256": "7de27bda7bd2c39e1e03b79cf16f444b7cf31200620a6881f1d6471c5051c446",
+      "size_bytes": 77711
+    },
+    "caption_version": "dance_caption_rich_ms_v1:69b85f4ef18e0e02adaa86e16e9fb49a450926414c3f9b4e30cf9d3832212c19",
+    "limitations": [
+      "Twelve sampled images per clip are not exhaustive continuous-motion annotation.",
+      "AI approval concerns evidence-supported qualitative normalized-window targets, not human scoring or original RICH/MS window verification.",
+      "Evidence reliability and conservative wording do not prove optimal rich/MS quality, music synchronization or student generalization."
+    ]
+  },
+  "actual_export_independent_recheck": {
+    "task": "4TOoMk",
+    "exit_code": 0,
+    "omni_train": 24,
+    "omni_val": 8,
+    "H3_train": 24,
+    "approval_chain_verified": true,
+    "source_sidecar": {
+      "path": "MS/dance_caption_editorial32_verified_export_v3/source_sidecar.json",
+      "sha256": "7ef099c86f3d11a9765b1dcf036b6a48d27831c8dfab3c9207239c2c5f9a0ed8",
+      "size_bytes": 271255
+    },
+    "not_formal512_dataset": true
+  },
+  "pilot640_media": {
+    "counts": {"train": 512, "val": 128},
+    "prepared": 640,
+    "failed": 0,
+    "original_v1_prepared": 627,
+    "original_v1_short_audio_failures": 13,
+    "short_audio_failure_split": {"train": 11, "val": 2},
+    "short_audio_deficit_samples_at24k": {"one_sample_cases": 11, "sixteen_sample_cases": 2},
+    "replacement_same_split": true,
+    "reused_existing_sheets": 627,
+    "new_replacement_sheets": 13,
+    "audio_padded_or_window_relaxed": false,
+    "caption_targets_generated": false,
+    "all640_semantically_reviewed": false,
+    "candidate_manifest": {
+      "path": "MS/dance_caption_pilot640_30b_only_manifest_v2.json",
+      "sha256": "2f1c4d2ddc5b299f0a86161a59635c719b3f5b84646c49d9e78a484f4481573e",
+      "size_bytes": 22690869
+    },
+    "media_index": {
+      "path": "MS/pilot_media_inputs640_v2.json",
+      "sha256": "43276c9b26cc140bcf3d912b587115fae3bbadc81e720121ed5f9085a7df11d0",
+      "size_bytes": 14966237
+    },
+    "visual_sheet_index": {
+      "path": "MS/dance_caption_pilot640_visual_sheet_index_v2.json",
+      "sha256": "06d4f36a6116cde5cfc5c4ccfbbd42144409f244718ca3c254a752531ed00d68",
+      "size_bytes": 1291021
+    },
+    "replacement_plan": {
+      "path": "MS/dance_caption_pilot640_replacement_plan_v2.json",
+      "sha256": "6499622812fafa8cb15883f2d72a96fec9df3b486895b78d273ed3169cd03869",
+      "size_bytes": 538839
+    }
+  },
+  "current_visual32_snapshot": {
+    "task": "o53fJg",
+    "host": "28.216.18.144",
+    "gpu": 0,
+    "gpu_uuid": "GPU-b3b44a61-0f59-b3e7-268a-d292ff657936",
+    "manager_pid": 3181390,
+    "child_pid": 3181399,
+    "snapshot_time_CST_approx": "2026-10-23T02:00:00+08:00",
+    "actual_UID_and_argv_verified": true,
+    "process_state": "D",
+    "wchan": "generic_file_buffered_read",
+    "open_weight_shard": "model-00007-of-00015.safetensors",
+    "read_bytes": 31231873024,
+    "gpu_memory_used_MiB": 0,
+    "actual_visual_forward_verified": false,
+    "complete_verified": false,
+    "purpose": "Image-grounded frozen-teacher candidate generation, never student training or automatic approval",
+    "source_sha256": "17cc49ef31f89445ab9e7397263ac1e5badef073fca17790585ac6d271164357",
+    "fusion_source_sha256": "fc3872863a39baa6790d87a9ba19b74cd4eaeab7f06f2131452de6c5460aabbe",
+    "restarted_or_partial_overwritten": false
+  },
+  "CPU_regression_actual_results": {
+    "fusion": {"task": "4koyRO", "exit_code": 0, "tests": 19, "source_sha256": "fc3872863a39baa6790d87a9ba19b74cd4eaeab7f06f2131452de6c5460aabbe"},
+    "visual": {"task": "mSFQLU", "exit_code": 0, "tests": 10, "source_sha256": "17cc49ef31f89445ab9e7397263ac1e5badef073fca17790585ac6d271164357"},
+    "CPU_tests_are_semantic_approval": false,
+    "CPU_tests_are_pretrained_visual_forward": false
+  },
+  "remaining_required_work": [
+    "Actual visual32 generation and content/visual-hook/no-audio validation.",
+    "Evidence-reviewed conversion of six-field visual OBS candidates to immutable compatible manifest/targets; preserve raw generation and unknown original source-window mapping.",
+    "640 actual caption generation, individual AI content review and strict frozen-version export.",
+    "Omni model-loading preflight approval-chain and explicit formal-scope gate, including its identity in the resume fingerprint; current reader gap is being fixed separately.",
+    "Fresh official30B three-epoch 512/128 pilot after actual data and resource admission, then approved H3 and end-to-end experiments."
+  ],
+  "student_formal512_training_started": false,
+  "overall_goal_complete": false,
+  "path_base": "MS=/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS",
+  "no_weights_media_Adam_or_secrets_uploaded": true
+}

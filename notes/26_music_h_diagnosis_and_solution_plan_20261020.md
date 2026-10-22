@@ -1029,4 +1029,10 @@ N7共享梯度新v4已实际启动RueYFY，remote manager3163785/torchrun3163792
 4. **音乐→唯一配对动作文字本身一对多（待核数据假设）。** 相同音乐可支持不同舞步、故事与措辞，不同曲也可共享编舞，音乐无法确定具体左手靠哪只肩。旧逐tokenMSE可能平均化；最新CLIP不等于MSE，但按唯一配对caption做对比仍可能偏向样本识别/假负例而非合适编排。已有同曲source组mask不能消除跨曲动作语义近似。需真实语义正例/音乐窗口动作证据才能判，不能把低检索率当该假设已被证明。
 5. **文字词位置不是音乐时间；无显式编排/跟拍监督（确定缺项）。** 254音乐token对可变词数不构接口错误，但音乐声道优先时间序列与语言序列含义不同；CLIP均值/RMS不约束动作先后、过渡或拍点。教师caption的伪秒数未核，不能插值词索引制造时序标签；可恢复教师舞蹈也不保证额外跟拍。当前离散caption路线利用Omni自回归语言先验生成一套连贯可能编排，再由原TC生成合法H3条件，针对结构瓶颈而非承诺音乐能唯一恢复GT。H3微调再单独对动作遵循/连续性负责；两阶段还需正式数据与联调人评才能证实改善。
 
-排除过强结论：骨干确实训练，部署并未丢完整映射；5120相同不是语义等价、2T≠L不是接口必错；原P/原音频保留后仍近pose使“单纯没P/静音”不足以解释最新6000负结果；新rich/MS/fusion单case纯视频可用是新协议正证，不是旧18学生根因的单变量证明。最优先关注完整可生成序列的监督/分布与泛化，再是明确音乐时间约束；不无限延长同mean-CLIP配方，也不宣布已锁定唯一根因。
+排除过强结论：骨干确实训练，部署并未丢完整映射；5120相同不是语义等价、2T≠L不是接口必错；原P/原音频保留后仍近pose使“单纯没P/静音”不足以解释最新6000负结果；新rich/MS/fusion单case纯视频可用是新协议正证，不是旧18学生根因的单变量证明。最优先关注完整可生成序列的监督/分布与泛化，再是明确音乐时间约束；不无限延长同mean-CLIP配方，也不宣布已锁定唯一根因。旧纯文1800原曲预设曾获“有舞蹈、幅度分case”反馈，但不跟拍且换曲近pose，是反对“hidden替换绝对无效”的重要部分正证。旧6000实际上屏best的RMS比A.187144/B.974624，与last28的.223623/.990551分开；用户只给整体近pose，不伪造B单独排名。
+
+#### 2026-10-22 新124帧H3接口与真实GPU恢复全部验收完成
+
+N3严格接口链路已实际完成：NFFNKn cache8/Z8X1cc全媒体映射通过；LO83n0 fresh8GPU真实2updates、TcCK4m完整training/final各28文件marker/8Adamstep2/8RNG/model/scheduler/custom通过；ykvYup真实8GPU load_state后独立resave actualexit0，0ObpBn对26项（8model＋8Adam＋8RNG＋scheduler＋custom）state/tensor逐值严格相等、signature/progress一致。restore_finished与restore_audit主线程已独立读取核实。源9f5de5/wrapper89439全程冻结，原107/v1资产未覆或重标。
+
+GPU恢复未做额外更新（actual_additional_optimizer_updates=0，next_update_verified=false），不得包装为“恢复后下一更新已验证”。本次仍8条固定fixture/两更新接口，非正式SFT/收敛/画质，也不使首32事实窗自动获批。公开结果h3_video_repeatlast124_pretrained_smoke_and_restore_v2.json。

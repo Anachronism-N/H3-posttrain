@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-22",
+  "complete": true,
+  "scope": "Pretrained eight-GPU video-only interface: explicit124-frame cache, two updates, complete checkpoint and actual GPU restoration with exact resaved state. Not formal SFT or next-update GPU continuation.",
+  "fixture_only": true,
+  "formal_reuse_forbidden": true,
+  "source_sha256": "9f5de5e200098e482313ac01938b22ef7333037b726fec22ccbf4eea6f2e9505",
+  "wrapper_sha256": "89439d733d62f522bb3dd993bc456541b3ca15ead34ff2e19f86657a471c5055",
+  "queue": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_interface_repeatlast124_v2_queue",
+  "cache": {"task_id": "NFFNKn", "exit_code": 0, "audit_task": "Z8X1cc", "samples": 8, "latent_shape": [1,24,37,80,44], "actual_source_frames": 81, "actual_target_frames": 124, "natural_positions": 122, "terminal_padding": 2, "audio_rows": 0, "tag2_count": 0, "padding_is_not_new_motion_evidence": true},
+  "training": {"task_id": "LO83n0", "exit_code": 0, "audit_task": "TcCK4m", "actual_updates": 2, "world_size": 8, "ZeRO_stage": 3, "lora_rank": 32, "lora_alpha": 64, "anchor_lambda": 0.1, "learning_rate": 0.00001, "steps": [{"update": 1,"loss": 0.17657925188541412,"anchor_active": false},{"update": 2,"loss": 0.2171042263507843,"anchor_active": true,"anchor": 0.00012257839262019843}], "both_training_and_final_checkpoint_markers_verified": true, "checkpoint_manifest_files_each": 28, "Adam_shards": 8, "Adam_step_each": 2, "finite_nonzero_first_second_moments_each": true, "RNG_files": 8, "progress": {"epoch": 1,"batches_consumed": 1,"microbatches": 2,"optimizer_updates": 2}},
+  "restore": {"task_id": "ykvYup", "exit_code": 0, "audit_task": "0ObpBn", "actual_eight_GPU_load_state": true, "same_source_signature_and_progress": true, "model_shards_tensor_exact": 8, "Adam_shards_state_tensor_exact": 8, "RNG_states_exact": 8, "scheduler_and_custom_state_exact": true, "resaved_state_files_content_compared": 26, "actual_additional_optimizer_updates": 0, "next_update_verified": false, "audit": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_interface_repeatlast124_v2_queue/restore_audit.json"},
+  "old107_frame_assets_overwritten_or_relabelled": false,
+  "formal_caption_window_approved": false,
+  "completed_formal_SFT": false,
+  "human_quality_accepted": false,
+  "full_active_goal_completed": false
+}

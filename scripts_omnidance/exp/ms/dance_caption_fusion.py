@@ -67,7 +67,7 @@ SECTION = re.compile(r'\[(\d+)\.\s*([^\]]+)\]', re.I)
 FORBIDDEN = {
     'audio_or_music_reference': re.compile(r'<\s*(?:audio|sound|music)\b|\b(?:audio|sound|sounds|soundtrack|soundscape|non_diegetic|fully_copy|audio reuse|music|musical|bpm|song|acoustic|sound effects|listening|heard|audible|beat[- ]?sync|synchroni[sz]\w*)\b', re.I),
     'identity_or_scene': re.compile(r'\b(?:she|he|her|his|hers|him|woman|women|man|men|female|male|girl|boy|identity|face|facial|skin|ethnicity|ethnic appearance|hair|hairstyle|outfit|clothing|costume|dress|shirt|skirt|pants|trousers|shoes|socks|jacket|wears?|wearing|white|black|blond|brunette|makeup|eyes|gaze|smile|smiling|background|scenery|studio|stage|room|mirrors?|windows?|curtains?|camera|lens|lighting|resolution|picture|subject|prop|props)\b|<[^>]+>', re.I),
-    'exact_or_synthetic_time': re.compile(r'\b(?:seconds?|secs?|milliseconds?|minutes?|hours?|frames?|timestamps?|timecodes?)\b|\b\d+(?:\.\d+)?\s*(?:s\b|fps\b|:\s*\d)|\b(?:at|from|between)\s+\d+(?:\.\d+)?\b', re.I),
+    'exact_or_synthetic_time': re.compile(r'\b(?:seconds?|secs?|milliseconds?|minutes?|hours?|frames?|timestamps?|timecodes?)\b|\b\d+(?:\.\d+)?\s*(?:s\b|fps\b|:\s*\d)|\b(?:at|from|between)\s+\d+(?:\.\d+)?\b(?!\d|\.\d)(?!\s*(?:degrees?\b|°))', re.I),
     'finger_articulation': re.compile(r'\b(?:fingers?|thumbs?|index finger|pink(?:y|ie)|knuckles?|fingertips?)\b', re.I),
 }
 ACTION_PATTERNS = {
@@ -716,6 +716,16 @@ class CpuChecks(unittest.TestCase):
         self.assertFalse(validate_target(fabricated, self.record())['format_valid'])
         fabricated = dict(good, time_scope=dict(status='verified_paired_window', reason='Guessed.'))
         self.assertFalse(validate_target(fabricated, self.record())['format_valid'])
+
+    def test_angles_are_not_time_but_timestamps_remain_forbidden(self):
+        for caption in ('The dancer holds bent elbows at 90 degrees.',
+                        'The dancer opens the arms at 90.5 degrees.',
+                        'The dancer bends the elbows at 90°.'):
+            self.assertTrue(validate_target(dict(self.target(), motion_caption=caption), self.record())['format_valid'], caption)
+        for caption in ('The dancer turns at 90.', 'The dancer turns at 90.5.',
+                        'The dancer turns at 1.5 seconds.', 'The dancer turns between 1 and 2.',
+                        'A second later the dancer turns.', 'The dancer turns at 00:02.'):
+            self.assertFalse(validate_target(dict(self.target(), motion_caption=caption), self.record())['format_valid'], caption)
 
     def test_h3_has_no_audio_and_no_first_frame_lock(self):
         text = h3_prompt(self.target()['motion_caption'])

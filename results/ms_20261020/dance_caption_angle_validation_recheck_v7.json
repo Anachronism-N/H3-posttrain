@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-22",
+  "complete": true,
+  "scope": "Revalidation of unchanged v6 raw model outputs with a corrected boundary validator; not regeneration, output cleaning, or human approval.",
+  "source_manifest_sha256": "bc7d36e820ef274089e6d29e3533de1b5aa8914381f3643d3dba79ab1a0eabbb",
+  "historical_rewrite_source_sha256": "082e43dad5ad0175cc6a2cbc6aab2912e251210a37c10f91eadd5de214af625c",
+  "current_validator_source_sha256": "8e3ddf0e44d8e6b5c4084fd00401dd86fc6820794715a2f2144b8b0a8d5fb0e5",
+  "historical_format_valid": 26,
+  "produced": 32,
+  "current_format_valid": 27,
+  "fixed_false_positive": {
+    "id": "oEyYaJWyGGtdtgWp",
+    "original_text": "Both elbows are bent at 90 degrees",
+    "reason": "An explicit degree/degree-symbol unit denotes an angle, not an unverified timestamp.",
+    "current_format_valid": true,
+    "semantic_approval": false,
+    "remaining_flags": ["human_window_review_required", "lexical travel omission candidate is not semantic coverage proof"]
+  },
+  "still_invalid": [
+    {"id": "uYLVDCieBbwXnUaY", "error": "exact_or_synthetic_time:frame"},
+    {"id": "tZkbTHWCroUEzMiN", "error": "exact_or_synthetic_time:frame"},
+    {"id": "pkzQlYSAsxckREnF", "error": "exact_or_synthetic_time:second"},
+    {"id": "GuhBZbkKOrGqCDcH", "error": "exact_or_synthetic_time:frame"},
+    {"id": "SaNIZjgBIhyXYxDx", "error": "exact_or_synthetic_time:frame"}
+  ],
+  "selftest": {"task_id": "Cm5qV0", "tests": 9, "exit_code": 0, "integer_decimal_degree_symbol_allowed": true, "bare_numbers_second_time_ranges_timecodes_rejected": true},
+  "revalidation": {"task_id": "ca8PRY", "exit_code": 0, "all_32_raw_files_sha256_unchanged": true},
+  "initial_regression_failure": "Ph6mMy found sentence-terminal dot was incorrectly exempted; changed numeric backtracking guard to reject decimal continuations while permitting punctuation, then all 9 tests passed.",
+  "human_approved": 0,
+  "training_export_performed": false,
+  "full_active_goal_completed": false
+}

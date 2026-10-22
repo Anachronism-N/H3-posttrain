@@ -1,0 +1,18 @@
+{
+  "complete": true,
+  "date": "2026-10-22",
+  "scope": "Local code-server proxy with the real browser Host header, GET-only review and media verification; not an external HTTPS reachability claim or human approval.",
+  "port": 8773,
+  "managed_service_task": "BXYBuj",
+  "replaced_known_service_pid": 393189,
+  "manifest_sha256": "bc7d36e820ef274089e6d29e3533de1b5aa8914381f3643d3dba79ab1a0eabbb",
+  "fusion_source_sha256": "8e3ddf0e44d8e6b5c4084fd00401dd86fc6820794715a2f2144b8b0a8d5fb0e5",
+  "http_validation": {"task_id": "GTt8Gm", "exit_code": 0, "home": 200, "api": 200, "range": 206, "range_bytes": 1024, "range_matches_source_bytes": true},
+  "candidate_counts": {"ready": 27, "invalid": 5, "pending": 0},
+  "actual_approved": 0,
+  "real_review_file_created": false,
+  "real_human_POST_performed": false,
+  "old_other_review_services_modified": false,
+  "probe_repairs": ["Initial API probe omitted the session cookie and was correctly rejected with 403; included the page-issued cookie without bypassing CSRF/session checks.", "A probe assumed counts.actual_approved, but the actual API field is counts.approved; corrected the probe only. Production schema unchanged."],
+  "full_active_goal_completed": false
+}

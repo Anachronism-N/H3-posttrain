@@ -834,6 +834,20 @@ A最终last SHA=`fda86016041ad0c9eb3f9922ae3f27f05e5770dec49ccfe13ab5f2e2f6d7e7c
 
 独立跨配置来源核对入口为`scripts_omnidance/exp/ms/music_direct_cross_audit.py`：只在真实18与六媒体报告完成后比较原/换/zeroM实际波形重加载SHA、缓存P/Ptags、视觉reference哈希、原native音频保留、两个scheduler各50更新及生成音轨来源；不重跑训练/缓存、不调用TC或做额外生成。`hhfl1Z`显式synthetic18正例与六类坏输入拒绝回归已通过，CPU结果`results/ms_20261020/music_direct_cross_audit_cpu_v1.json`不冒充真实媒体。首CLI自测缺upstream PYTHONPATH失败已诊断，真实入口`1V5MC2`正确环境通过。当前代码与CPU测试仅技术准备，最终真实跨配置报告仍等待18完成事件。
 
+#### 2026-10-22 正式18学生生成、全媒体与反事实来源审核完成（真实人评待定）
+
+唯一`xLC6yO`实际exit0，`MS/music_direct6k_v2_final18_queue_v3/finished.json`为complete/expected18，六config各三个固定人物，全部sampler job exit0。六份`*_all3_audit_v1.json`实际各passed3/complete，主线程独立再次读六report核每条124帧、704×1280、24fps完整decord和ffmpeg选定音轨解码通过；checkpoint/cache/code/日志/视频SHA绑定和noTC、P/Ptags、原视觉/音频VAE、native真实音乐与音视频各50scheduler更新均保留。没有重训或追加case，所有旧失败目录保留。无ffprobe环境下选定音视频流完整解码已核，精确声明stream总数未独立核，报告明确保留该边界，不将完整性当舞蹈人评。
+
+`7KQMTP`在真实video manager退出后实际运行独立cross-audit，exit0；`MS/music_direct6k_v2_cross_configuration_audit_v1.json`为complete/expected18。两模型×三人物六项检查均通过：实际学生波形重加载内容SHA一致、zeroM精确零输入但native音乐与joint相同；aswap同时改变M和native音乐；同人物图/P/Ptags、visual参考及采样一致；生成音轨未被原曲mux替换。这里只证明反事实输入和来源正确，不声称M-only换曲因果或学习映射效果。
+
+部署使用A保存best epoch3 SHA `d4760eb62db72f4327bbb054b5c3d1d947d2458b6a37b85a3f9bd7ece6e21a4b`，B保存best epoch2 SHA `014dbe054c731a7f44e10a447b6660a33773c423ed8b02fa8c1e4948f4e06dee`。这不是epoch28 last生成；两个best选择按同一0.5%改善规则，B第3轮微改善未达门槛的历史事实仍保留。
+
+`zjrb2Z`实际在18全部审核后追加六组且保持旧models/samples/评分，生成`review_web/manifest_music_direct6k_v2_students_review_v3.json`并实际启动独立8771服务；旧8766、教师8769和用户8770不动。`okC7jK`核首页HTTP200、served manifest与文件精确一致、新六模型共18条；实际前端`api/manifest`、`api/reviews`均HTTP200。`27pSI8`对全部18视频逐条核HTTP206 Range、Content-Range和1024字节与源文件一致。原曲预设包括A/B与zeroM，换曲预设包括A/B aswap；zeroM在joint路径下，标签明确，不漏视频。人评需选择视频内音轨，避免外置原曲模式改变听到的声音。
+
+公开技术摘要：`results/ms_20261020/music_direct6k_v2_final18_technical_v1.json`，technical_complete=true但experiment_including_human_review_complete=false/human_review_received=false。视频完成报告SHA `bdd4ddb5d4ad20c15aea402821137bb36db1daaa971aca1b1ebe365e4dbb06d4`；跨配置报告SHA `e7651eb36045f072591fcc511f6e1e639df928505046b1e7423010556c75068f`；focused manifest SHA `596bd9b445db7d051f1a0707b72e1e934bbf24ea72b2ef06ee2bc2b8d5a2eb77`。权重/Adam/视频均不上传GitHub。前序代码与验证解释已实际推送并核remote main=`0ece2491a612371c8b83270a08f8a88d1bb559cf`。
+
+已向用户提供现实际VSCODE代理的8771页面，请对新6000 joint/aswap预设连续听看，反馈真正舞蹈/幅度/跟拍/换曲/人物保真。发布时仅本轮六新model IDs筛选实际评分jsonl，记录0条；不能迁移旧1800、teacher或noTC实验人评，也不能编造效果结论。下一步需真实用户反馈后记录正负结论、最终GitHub发布并核远端；当前保留跟进调度，不再用等待人评为理由追加预算/训练/推理。原6GPU6生成进程已结束，其他占用只读核查且不终止。
+
 #### 资源与最终验收
 
 仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。

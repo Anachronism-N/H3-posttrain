@@ -1016,3 +1016,17 @@ N4 `KpvJSZ`真实exit0，两新caption各cache/采样完成，主线程`4iwolz`�
 已完成下一最小显存布局修复CPU验证：AdLoia真实2rank Gloo、48层tiny Qwen3保216linear+96expert/628可训键、BF16base/FP32Adam，bucketview False/True ×局部释放两组，两更新及完整state重载后第三更新的gradient/adapter/Adamhash全逐位一致。step2 False有628个独立gradstorage，True全部grad._base有效并共享1bucket；slot释放使下一forward旧logits弱引用已死。仅CPU共享storage与数学证据，不当官方GPU峰值节省。主线程最小DDP gradient_as_bucket_view=True＋slotbackward累积detach NLL后del局部引用，源码7c4636262726addbef7735ecc1e9717b66c922ed2a2ef20f264d08ddd22f33bb，nWrp0q两真实tiny架构及完整恢复CPU自测exit0。保全部专家/audio/rank32/alpha64与FP32Adam，不改BF16专家折叠舍入。下轮N7同officialbase/seed42新v4fresh2，旧u1不覆/不重标/不跨源码假resume；再次GPU通过前不称30B错误全部修好。
 
 N7共享梯度新v4已实际启动RueYFY，remote manager3163785/torchrun3163792，fresh非u1恢复，原专家/audio/FP32Adam范围未缩。新124帧H3缓存8条真实审计已独立记录h3_video_repeatlast124_pretrained_cache8_v2.json：全部BF16latent[1,24,37,80,44]、81源帧/122自然/2末pad、packed无audio与tag2；marker0551d8628686e57f3705a99f66de2e62f779627f14ddb34d7c49261b084b25b8。N3LO83n0已真实exit0两更新，training-state-2/final两完整28文件/8Adamstep2/8RNG/模型分片/scheduler/custom审计通过。strict同源码GPUload/resave ykvYup正在独立output进行，只恢复已满2budget不再训练，不称下一更新GPU恢复已经验证。正式目标0批准、未pilot/full，所有当前smoke均fixture。
+
+#### 2026-10-22 用户要求：实验继续时分析旧音乐替换文本失败的可能原因
+
+当前新主线实际进度：v8两个维度视频完整审核并8774上线；N7 bucketview v4已真实两Adam更新，NLL4.1089335→3.3509649，第二更新192专家LoRA张量全非零，正在最终保存/恢复/processor/infer门禁；N3新124帧两更新和完整保存审计已完，实际GPUload_state已返回，零额外更新resave后的严格等价比对尚待。新正式pilot/full与首32真实事实/窗口审核仍未完成，不能用上述接口smoke替代。
+
+**优先判断：旧路线更像监督目标与冻结生成器所需条件不匹配，并伴随泛化不足，不只是训练没跑、骨干没训或shape不一致。** 最新旧6000两组实际28完整epoch/2632updates，400dense＋2Linear联训、完整映射部署、cached P/原生图音VAE/真实音乐/联合50步均已核，18学生视频人评仍近pose。既有旧1800/noTC/静音/预测长度协议的混杂保留为历史，不迁移为已恢复原条件的6000阶段工程归因。
+
+1. **确定的监督欠约束；主因仍须消融。** 实际direct loss仅对有效token均值的标准化L2向量做对称InfoNCE，B再约束每样本均值与全token/channel centered标量RMS（music_text_contrastive.py:859–896）。对token置换不变；可在不改mean/RMS的情况下大幅改变局部方向、顺序、token协方差与语义组合，而DiT读取整序列。单Linear又满足mean(Wf+b)=Wmean(f)+b，CLIP不能充分识别时序输出质量。不是“模型一定没有任何时间信息”，而是loss不能保证那些信息转成H3可读的编排。
+2. **输出看似5120维，仍受可达空间与条件分布限制（强假设）。** music_text_adapter.py:260–281共享Linear1024→5120使训练后每token落在同一b+col(W)，秩≤1024；骨干非线性不解除最后线性子空间限制。这不是旧32/256维瓶颈，但也不是自由5120条件。教师y是冻结Qwen-VL上下文化LM输出，含词语/位置/图上下文结构；学生直接交DiT而不再经过该LM，mean/RMS近似不等于进入有效语言hidden序列分布。旧oracle W/LN空间投影仍pose、PCA256部分舞蹈但液化，支持“方向/结构比误差总量重要”，不证明本次1024空间不足；ABC单caseB/C近似也不能证明多模态绑定是主因。
+3. **最新正式训练明显train/val分化（有量化证据）。** A epoch3→28 trainCLIP3.47866→0.11814，val500 5.76193→7.20104；B final val7.32763。最终R@1 A.007/B.008，训练probe64均1.0。epoch20降LR后8完整epoch未恢复留出验证，因此更多同配方更新不是优先修复。数值平台满足只表示既定停止条件；不能证明任意预算无效。实际18视频用best Aepoch3/Bepoch2，不能拿final raw RMS直接归因视频；B final尺度校准约.99055对A.22362不代表完整条件语义校准，且用户未给A/B逐模型排名。
+4. **音乐→唯一配对动作文字本身一对多（待核数据假设）。** 相同音乐可支持不同舞步、故事与措辞，不同曲也可共享编舞，音乐无法确定具体左手靠哪只肩。旧逐tokenMSE可能平均化；最新CLIP不等于MSE，但按唯一配对caption做对比仍可能偏向样本识别/假负例而非合适编排。已有同曲source组mask不能消除跨曲动作语义近似。需真实语义正例/音乐窗口动作证据才能判，不能把低检索率当该假设已被证明。
+5. **文字词位置不是音乐时间；无显式编排/跟拍监督（确定缺项）。** 254音乐token对可变词数不构接口错误，但音乐声道优先时间序列与语言序列含义不同；CLIP均值/RMS不约束动作先后、过渡或拍点。教师caption的伪秒数未核，不能插值词索引制造时序标签；可恢复教师舞蹈也不保证额外跟拍。当前离散caption路线利用Omni自回归语言先验生成一套连贯可能编排，再由原TC生成合法H3条件，针对结构瓶颈而非承诺音乐能唯一恢复GT。H3微调再单独对动作遵循/连续性负责；两阶段还需正式数据与联调人评才能证实改善。
+
+排除过强结论：骨干确实训练，部署并未丢完整映射；5120相同不是语义等价、2T≠L不是接口必错；原P/原音频保留后仍近pose使“单纯没P/静音”不足以解释最新6000负结果；新rich/MS/fusion单case纯视频可用是新协议正证，不是旧18学生根因的单变量证明。最优先关注完整可生成序列的监督/分布与泛化，再是明确音乐时间约束；不无限延长同mean-CLIP配方，也不宣布已锁定唯一根因。

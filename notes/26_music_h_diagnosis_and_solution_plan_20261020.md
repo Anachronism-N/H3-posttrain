@@ -870,6 +870,10 @@ A最终last SHA=`fda86016041ad0c9eb3f9922ae3f27f05e5770dec49ccfe13ab5f2e2f6d7e7c
 
 `cGYaJp`仅同case表示诊断：图文y raw RMS3.82674，纯文y14.92790，差异RMS14.30449、相对3.7380，逐token平均cosine.95935；这是实际raw表示/幅值差异，不能只看高cosine声称两教师等价，也不能代替B/C视频或确定图信息为唯一根因。
 
+单case最终技术结果已完成：C actualexit0，B-only恢复`ltnUeU`actualexit0，A复用原同case视频；`V37JDX`事件收集后实际保存`MS/music_teacher_prefix_case1_queue_v1/finished_recovered_v1.json`（SHA `16c1364cbd3e68ae58f2f4727716b05cd388732c1098126e3bae22b30d3c7a70`）。三条均完整124帧/音轨decord+ffmpeg通过；B/C各raw228×5120无P，图VAE SHA `9a20a47b2200ceb55381800ed1a625419d41834bdce1648f2589734f1fa40996`、音频VAE SHA `e7fe7b64e08f9eda36ce89b1663694b498f9cb381bf7f0f1aaf340577b48abf4`与native波形SHA `e4123d5d31c72346fe8a1ade737a7498341a817279e905916e70352d3a8b404a`均与A逐值一致，音视频各50更新，保实际生成音轨，noTC。A条件长度7665，B/C228，去P的packed位置变化明确；B/C同词ID但两编码历史/raw幅值不同，不把它们说成只改变单个“图信息”标量。
+
+独立评审`review_web/manifest_teacher_prefix_abc_case1_v1.json`已实际启动8772，只有这一个人物和三教师配置；主线程实际API200及3视频Range206字节核通过，8771旧学生服务保留。公开精简结果为`results/ms_20261020/teacher_prefix_abc_case1_v1.json`，技术complete但人评未定。既有58829f9代码/方案发布不是结果已完的证明，恢复结果本节单独记录。用户未提供这三条实际观感前不推断A/B/C舞蹈或身份优胜，不拿之前6000学生近pose人评迁移为本轮教师结论。
+
 #### 建议统一框架（设计，未启动新训练）
 
 训练和生成必须共用唯一学生`S=M_theta(music)`和一个选定的condition构造器（A/B/C诊断后再决定保P、去P及教师纯文/图文）。学生生成不读caption、教师词数或teacher tokens，H3/TC/VAE权重不训。音乐特征在原25Hz双声道时间坐标下输出raw5120，N=2T；文字长度L仍可不同，不机械插值词索引到音乐时刻、不用GT词长截学生。全局、局部与行为loss都读取同一实际部署S，禁止仅训练投影头吸收收益。

@@ -1,0 +1,90 @@
+{
+  "protocol": "h3_teacher_prefix_single_case_v1",
+  "date": "2026-10-22",
+  "technical_complete": true,
+  "human_quality_accepted": false,
+  "human_review_received": false,
+  "single_case": "wJPptuhclZmKAEWs",
+  "newly_generated_videos": 2,
+  "reused_baseline_videos": 1,
+  "same_caption_and_source_token_ids_verified": true,
+  "caption_sha256": "274e7a7a2d65be52e59e3974672536fb8242e89080b4175670d2d8f3532490c0",
+  "configurations": [
+    {
+      "label": "A",
+      "condition": "cached_P_plus_image_conditioned_y",
+      "reused": true,
+      "prefix_tokens": 7437,
+      "caption_tokens": 228,
+      "raw_condition_tokens": 7665,
+      "video_sha256": "221b7c8cf71fd90001fd54945982c60619a183f020ea7ea9e016eac4b06ebf87"
+    },
+    {
+      "label": "B",
+      "condition": "same_image_conditioned_y_without_P",
+      "reused": false,
+      "prefix_tokens": 0,
+      "caption_tokens": 228,
+      "raw_condition_tokens": 228,
+      "raw_y_sha256": "c9506d70e8bb0e76158090affde1d832aef771022fd05d81338c81b32029c31a",
+      "video_sha256": "d061e32bdbad05b33db684144a718deef0a2648794c9866a69e02e37e2914afc"
+    },
+    {
+      "label": "C",
+      "condition": "same_caption_pure_text_y_without_P",
+      "reused": false,
+      "prefix_tokens": 0,
+      "caption_tokens": 228,
+      "raw_condition_tokens": 228,
+      "raw_y_sha256": "61bcdab11ae872eb1c3e9270b69a96d3936f22466698145bad0349a913afa7e2",
+      "video_sha256": "ba6a6044f7a4891175f481d71b882934ee650f7e75d075acc09bd706770ff826"
+    }
+  ],
+  "controls": {
+    "same_visual_VAE_reference_sha256": "9a20a47b2200ceb55381800ed1a625419d41834bdce1648f2589734f1fa40996",
+    "same_native_audio_VAE_reference_sha256": "e7fe7b64e08f9eda36ce89b1663694b498f9cb381bf7f0f1aaf340577b48abf4",
+    "same_native_music_waveform_sha256": "e4123d5d31c72346fe8a1ade737a7498341a817279e905916e70352d3a8b404a",
+    "seed": 42,
+    "video_scheduler_updates": 50,
+    "audio_scheduler_updates": 50,
+    "cfg": 1,
+    "video_shift": 12,
+    "audio_shift": 3,
+    "width": 704,
+    "height": 1280,
+    "frames": 124,
+    "fps": 24,
+    "live_text_encoder_tokenizer_processor_loaded": false,
+    "generated_audio_preserved": true,
+    "full_selected_video_audio_decode_verified": true,
+    "exact_declared_stream_count_independently_verified": false,
+    "P_removal_changes_packed_position_layout": true
+  },
+  "raw_teacher_comparison_not_quality_score": {
+    "multimodal_y_raw_rms": 3.826737642288208,
+    "pure_text_y_raw_rms": 14.927900314331055,
+    "difference_rms": 14.304490089416504,
+    "relative_difference": 3.7380378246307373,
+    "paired_token_cosine_mean": 0.9593501687049866
+  },
+  "recovery": {
+    "first_B_admission_rejected": true,
+    "diagnosis": "CPU-only manager incorrectly counted as an H3 worker by exact script name",
+    "corrected_B_worker_count_requires_worker_argument": true,
+    "all_host_memory_cgroup_unknown_GPU_process_checks_preserved": true,
+    "B_recovery_exit_code": 0,
+    "C_exit_code": 0,
+    "C_not_repeated": true,
+    "original_failure_reports_preserved": true
+  },
+  "audit": {
+    "queue": "MS/music_teacher_prefix_case1_queue_v1",
+    "final_report": "MS/music_teacher_prefix_case1_queue_v1/finished_recovered_v1.json",
+    "final_report_sha256": "16c1364cbd3e68ae58f2f4727716b05cd388732c1098126e3bae22b30d3c7a70",
+    "review_manifest": "review_web/manifest_teacher_prefix_abc_case1_v1.json",
+    "review_port": 8772,
+    "actual_frontend_API200_verified": true,
+    "all_three_video_HTTP206_Range_verified": true
+  },
+  "scope": "One teacher-only diagnostic case, not a MusicFM student experiment or a trained-model ranking. A/B isolates explicit P removal including position-layout change; B/C compares image-context versus pure-text teacher encoding including raw magnitude/position-history differences. No quality verdict inferred from hashes, tensor similarity or media integrity."
+}

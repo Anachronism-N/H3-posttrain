@@ -860,6 +860,30 @@ A最终last SHA=`fda86016041ad0c9eb3f9922ae3f27f05e5770dec49ccfe13ab5f2e2f6d7e7c
 
 按用户已授权范围收尾本轮：保留全部权重、完整断点、18视频、审计与失败历史，更新代码/方案/分析/真实正负结论并以新commit推送核远端。不自动添加训练、生成行为loss、rich融合、骨干扫描或新case。最终发布核验后取消**仅本轮**跟进调度和反馈监控，保留8771新评审、8766/8769及用户8770服务，不停止未知GPU任务。后续研究需基于这一负结果独立设计受控方案，不能冒充已获续训授权。
 
+#### 2026-10-22 用户新授权：单case原生P／教师编码消融与统一训练设计
+
+原6000实验已最终人评近pose并发布`206c71fe2c8727a8d48edaa5bd814cce833bc602`、取消旧跟进调度。用户随后仅授权三种条件快速诊断各一个case，另要求统一训练方案解释；这不是授权重新训练。当前固定`wJPptuhclZmKAEWs`、同原图/真音乐/seed42/原生双VAE/50joint/CFG1/shift12与3/124帧/704×1280：A复用已经完整审核的`P+y_multimodal`教师identity视频；新B仅同`y_multimodal`无P；新C仅同prompt的`y_text`无P。A/B/C都是教师条件，不混入不同音乐学生权重；A复用不是冒充新生成。B/C各1条，拟用19.69和17.70各GPU6，总2卡，其他节点不占用。
+
+主线程`hSPjJr`实际加载P/图文y/纯文字y缓存：同caption SHA `274e7a7a2d65be52e59e3974672536fb8242e89080b4175670d2d8f3532490c0`和相同228个source token IDs；图文y与纯文y张量不同，P7437。复用完成缓存，不重跑builder/LM/cache；纯文字缓存虽旧partition=train仅历史标签，本轮只做教师推理、不进入6000训练。独立新脚本`music_teacher_prefix_ablation.py`使用原pipeline已有`text_embedding`入口，去P不改原生成/教师源码SHA。B/C直接检查raw exact、P已无、text tags全1、packed text_pos228、原native音频与图VAE哈希与A一致、两个scheduler各50、输出实际生成音轨与完整decord/ffmpeg审核。去P会改变packed布局/位置，不伪称只改视觉信息而其他位置逐值不变。
+
+初次管理任务`IE75J8`准备阶段重核已有三case manifest遇到CephFS P读等待但未新缓存；C实准入成功开始采样。B在启动GPU前准入失败，原错误报告保存。只读`yb6vSc`定位为同host CPU-only manager（CUDA_VISIBLE_DEVICES为空）被exact脚本名误计sampler；GPU6仅此前核过同uid项目holder。独立B-only恢复`ltnUeU`仅将sampler计数限定`--worker`，保主机/cgroup/GPU未知占用检查，实准入exit0；不改运行中脚本/source，不重跑C，不覆盖旧admission/partial。当前B/C尚未完成，结果及人工观感须后续真实产物报告。
+
+`cGYaJp`仅同case表示诊断：图文y raw RMS3.82674，纯文y14.92790，差异RMS14.30449、相对3.7380，逐token平均cosine.95935；这是实际raw表示/幅值差异，不能只看高cosine声称两教师等价，也不能代替B/C视频或确定图信息为唯一根因。
+
+#### 建议统一框架（设计，未启动新训练）
+
+训练和生成必须共用唯一学生`S=M_theta(music)`和一个选定的condition构造器（A/B/C诊断后再决定保P、去P及教师纯文/图文）。学生生成不读caption、教师词数或teacher tokens，H3/TC/VAE权重不训。音乐特征在原25Hz双声道时间坐标下输出raw5120，N=2T；文字长度L仍可不同，不机械插值词索引到音乐时刻、不用GT词长截学生。全局、局部与行为loss都读取同一实际部署S，禁止仅训练投影头吸收收益。
+
+总loss可写`lambda_g L_global + lambda_l L_local + lambda_b L_behavior + lambda_delta L_temporal_behavior + lambda_m L_moments`。全局项保固定train-only标准化后masked mean及双向CLIP；对确有同舞蹈描述的正例组可以另设计multi-positive监督，不能把所有不配对曲目自动当错误动作，当前6000单代表数据不等于全面语义假负例消除。moments仅弱尺度锚定，不保证编舞。
+
+局部项以S与Y每token距离构造N×L cost、对两侧有效tokens求有边缘质量约束的熵正则OT/Sinkhorn软匹配，并加局部对比负例，避免全token匹配一个教师词。使用固定统计和部署raw、不添加可丢训练head；OT不要求N=L，但无序OT仍不提供动作先后。没有真实时间标注时不加虚假对角/单调音乐→词索引约束；若取得真正对齐音乐片段的动作事件描述，可对每真实时间窗口重复全局/局部对齐。原MS叙述里的相对时词不是已核绝对时间标签。
+
+行为项冻结H3，在相同参考图/真实native音频、同VAE目标latent/噪声/联合scheduler时刻下比较teacher与student预测。两分支分别建自己的合法packed位置，只比较同语义目标视频latent网格（排除参考/P/padding），不拿整packed tensor直接相减；teacher no_grad，student保输入梯度，经S回传MusicFM＋adapter。训练不能直接调用整段`@torch.no_grad()`采样接口，需要底层model_fn与可微packing。噪声时间从原联合采样scheduler的多档实际(t_video,t_audio)抽取，不只sigma.9。对预测clean latent可同时比较相邻视频latent时间差、若有足够高质量教师/真实动作再做窗口运动幅度目标；不能对光流推断或文字位置赋伪时间保证。简单时间差会偏好教师轨迹，不保证pose变舞蹈或音乐跟拍。
+
+实现可以一进程自动微分，也可复用已实测leaf VJP机制：算`gS=grad(L_behavior,S)`，把梯度送回在线MusicFM并对`(S*gS.detach()).sum()`反传，严格绑定本步checkpoint/RNG/波形/output SHA，不用旧预测cache梯度。当前已有旧VJP是静音/旧adapter小实验，必须新测真实native/当前部署链，不冒称已落地统一框架。每个更新S只前向一次；cheap global/local用实际批，昂贵behavior可按预定比例选同batch子集，完整梯度同一次optimizer.step，明确batch大小/真实负例池和loss分项梯度，不能用累积伪称大CLIP候选池。初始保持global-only/moments历史对照，先小批真实链路smoke，再逐项加local/behavior的单变量诊断，不一次混所有项。
+
+统一框架必须分别验收：全局留出语义判别；局部token覆盖/时间窗口对应（如有真标签）；H3多噪声段heldout行为误差与运动趋势；最终原/换/zero反事实连续视频和真实人评。跟拍若教师不跟拍，需要独立音频时间锚（beat/onset与真实动作事件/可微motion表示），不能以matching文字或teacher velocity宣称已解决；该项数据与可微链路未实现，需单独资源方案与授权。当前只执行上述一个case教师消融，不开统一正式训练。
+
 #### 资源与最终验收
 
 仅允许 `28.216.19.69`、`28.216.17.70`、`28.216.19.213`、`28.216.19.143`、`28.216.19.137`、`28.216.19.225`，禁止18.136/18.144；不能用172.19地址或尾号匹配扩大授权。6500缓存预定六节点各一GPU，完成后A用19.69四GPU、B用17.70四GPU，其他四整节点明确释放。P约7437×5120×2字节/图，6500条可能约461GiB（另加teacher/metadata），需先检查磁盘，训练只读统计表和波形，不能把P全部load进内存。

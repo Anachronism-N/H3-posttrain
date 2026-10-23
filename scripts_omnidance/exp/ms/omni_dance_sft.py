@@ -28,6 +28,8 @@ from peft.utils import get_peft_model_state_dict, set_peft_model_state_dict
 
 SCHEMA = 'omni-dance-sft-v1'
 PLACEHOLDER = '<audio>'
+SOURCE_LABEL_PROTOCOL = 'omni-source-label-pilot-v1'
+SOURCE_LABEL_AUTHORIZATION = 'User authorized simple MotionScript + style pilot on 2026-10-23'
 
 
 def file_sha(path):
@@ -456,7 +458,219 @@ def load_checkpoint(checkpoint, model, optimizer, fingerprint, device, rank, wor
     return state['sampler']
 
 
-def provenance(args, rows, world):
+def source_label_caption(record):
+    import dance_caption_fusion as fusion
+    sentences = record.get('source_MS', {}).get('ms')
+    if not isinstance(sentences, list) or any(not isinstance(text, str) for text in sentences):
+        raise ValueError('Source-label caption requires original MotionScript sentences')
+    motion = ' '.join(text.strip() for text in sentences if text.strip())
+    if not motion:
+        raise ValueError('Source-label caption requires nonempty original MotionScript')
+    motion = re.sub(r'\b(?:a few seconds (?:earlier|later)|in the second right (?:before|after)|(?:one|a) second (?:earlier|later))\b\s*[,;:]?\s*', '', motion, flags=re.I)
+    motion = re.sub(r'\b(?:her|his)\b', "the dancer's", motion, flags=re.I)
+    motion = re.sub(r'\b(?:she|he)\b', 'the dancer', motion, flags=re.I)
+    motion = re.sub(r'\b(?:(?:the|this|a)\s+)?(?:subject|person|human)\b|\bsomeone\b', 'the dancer', motion, flags=re.I)
+    motion = re.sub(r'\babout-face\b', 'halfway', motion, flags=re.I)
+    motion = re.sub(r'\bface\s+to\b', 'oriented to', motion, flags=re.I)
+    motion = re.sub(r'\s+', ' ', motion).strip()
+    if not motion:
+        raise ValueError('Source-label caption is empty after removing synthetic timing')
+    for name, pattern in fusion.FORBIDDEN.items():
+        if pattern.search(motion):
+            raise ValueError(f'Unsafe original MotionScript boundary: {name}')
+    motion = re.sub(r'^the dancer\b', 'The dancer', motion)
+    if not motion.startswith('The dancer'):
+        motion = 'The dancer: ' + motion
+    genre = record.get('source_selected_caption', {}).get('dims', {}).get('genre')
+    if not isinstance(genre, str) or not genre.strip() or re.search(r'[<>\n\r]', genre):
+        raise ValueError('Source-label caption requires a plain original source genre')
+    return f'Dance style: {genre}. {motion}'
+
+
+def source_label_omni_provenance(metadata_path, caption_version, rows, training_rows, val_rows):
+    """Verify source labels and media identity, explicitly without semantic approval."""
+    import wave
+    import dance_caption_fusion as fusion
+    metadata_path = Path(metadata_path).resolve()
+    sidecar_path = metadata_path.parent / 'source_label_sidecar.json'
+    verified = {}
+    def verify(source):
+        if not isinstance(source, dict) or not isinstance(source.get('path'), str):
+            raise ValueError('Missing source-label source record')
+        actual = fusion.source_record(source['path'], source.get('sha256', 'missing'))
+        if actual != {key: source.get(key) for key in ('path', 'sha256', 'size_bytes')}:
+            raise ValueError('Source-label path/SHA/size differs from source record')
+        verified[actual['path']] = actual
+        return actual
+    sidecar_source = fusion.source_record(sidecar_path)
+    verified[sidecar_source['path']] = sidecar_source
+    sidecar = fusion.read_json(sidecar_path)
+    if (sidecar.get('protocol') != SOURCE_LABEL_PROTOCOL or sidecar.get('complete') is not True or
+            sidecar.get('label_quality') != 'source_labels_unreviewed' or
+            sidecar.get('authorization') != SOURCE_LABEL_AUTHORIZATION or
+            sidecar.get('human_review_completed') is not False or
+            sidecar.get('approval_chain_verified', False) is not False or
+            sidecar.get('semantic_approval') is not False or
+            sidecar.get('original_source_window_mapping') != 'unknown' or
+            any(sidecar.get(key, False) is not False for key in ('fixture_only', 'formal_reuse_forbidden'))):
+        raise ValueError('Source-label pilot requires explicit authorization and unreviewed unknown-window labels')
+    builder_source = verify(sidecar['source_code'])
+    manifest_source = verify(sidecar['manifest'])
+    manifest = fusion.load_manifest(manifest_source['path'])
+    if any(manifest.get(key, False) is not False for key in ('fixture_only', 'formal_reuse_forbidden', 'semantic_approval')):
+        raise ValueError('Source-label manifest cannot claim semantic approval or fixture reuse')
+    historical_producer = manifest['source_code']
+    for key in ('caps', 'split'):
+        if key in manifest['source_inputs']:
+            verify(manifest['source_inputs'][key])
+    selected_captions = fusion.read_json(manifest['source_inputs']['caps']['path'])
+    if caption_version != SOURCE_LABEL_PROTOCOL + ':' + manifest_source['sha256']:
+        raise ValueError('Source-label caption version differs from source manifest SHA')
+    output = verify(sidecar['outputs']['omni.jsonl'])
+    if metadata_path != Path(output['path']).resolve():
+        raise ValueError('Source-label metadata must be the declared omni.jsonl')
+    expected = []
+    media_groups = {'audio': {'train': set(), 'val': set()}}
+    for record in manifest['records']:
+        sid = record['id']
+        if (not isinstance(record.get('source_group'), str) or not record['source_group'] or
+                any(record.get(key, False) is not False for key in ('fixture_only', 'formal_reuse_forbidden'))):
+            raise ValueError('Invalid source-label record group or fixture identity')
+        sources = record['provenance']
+        for key in ('ms', 'audio'):
+            verify(sources[key])
+        source_ms = fusion.read_json(sources['ms']['path'])
+        if source_ms != record['source_MS'] or source_ms.get('sid') != sid:
+            raise ValueError('Source-label original MotionScript differs from its source or sid')
+        if selected_captions.get(sid) != record['source_selected_caption']:
+            raise ValueError('Source-label style differs from original selected caption source')
+        if (record['audio_path'] != sources['audio']['path'] or
+                record.get('audio_window_seconds') != [0., 5.0625]):
+            raise ValueError('Source-label media paths or explicit audio window differ')
+        with wave.open(sources['audio']['path'], 'rb') as audio:
+            if (audio.getframerate() <= 0 or audio.getnchannels() not in (1, 2) or
+                    audio.getnframes() / audio.getframerate() < 5.0625):
+                raise ValueError('Source-label requested normalized audio window is unavailable')
+        for key in media_groups:
+            media_groups[key][record['split']].add(sources[key]['path'])
+        expected.append(dict(id=sid, source_group=record['source_group'], split=record['split'],
+            caption_version=caption_version,
+            messages=[dict(role='user', content=fusion.SFT_INSTRUCTION + '\n<audio>'),
+                      dict(role='assistant', content=source_label_caption(record))],
+            audios=[sources['audio']['path']], audio_window_seconds=[0., 5.0625]))
+    if any(groups['train'] & groups['val'] for groups in media_groups.values()):
+        raise ValueError('Source-label normalized media leaks across train/val')
+    raw_rows = [json.loads(line, object_pairs_hook=fusion.unique_object)
+                for line in metadata_path.read_text().splitlines() if line.strip()]
+    counts = dict(train=len(training_rows), val=len(val_rows))
+    if (rows != expected or raw_rows != expected or
+            training_rows != [row for row in expected if row['split'] == 'train'] or
+            val_rows != [row for row in expected if row['split'] == 'val'] or
+            sidecar.get('counts') != counts or manifest.get('counts') != counts or
+            any(type(sidecar['counts'][key]) is not int for key in counts)):
+        raise ValueError('Source-label exact Omni rows, partitions or source counts differ')
+    for source in list(verified.values()):
+        verify(source)
+    return dict(protocol=SOURCE_LABEL_PROTOCOL, metadata=output, sidecar=sidecar_source,
+        manifest=manifest_source, builder_source=builder_source,
+        historical_manifest_producer=historical_producer,
+        validator_source=fusion.source_record(fusion.__file__),
+        all_verified_sources=list(verified.values()), caption_version=caption_version,
+        authorization=SOURCE_LABEL_AUTHORIZATION, label_quality='source_labels_unreviewed',
+        approval_chain_verified=False, human_review_completed=False, semantic_approval=False,
+        original_source_window_mapping='unknown', fixture_only=False, formal_reuse_forbidden=False,
+        train_ids=[row['id'] for row in training_rows], val_ids=[row['id'] for row in val_rows])
+
+
+def formal_omni_provenance(metadata_path, caption_version, rows, training_rows, val_rows):
+    """Reuse the complete H3 approval gate before comparing the exact Omni exports."""
+    import dance_caption_fusion as fusion
+    import h3_video_sft
+    metadata_path = Path(metadata_path).resolve()
+    sidecar_path = metadata_path.parent / 'source_sidecar.json'
+    sidecar_source = fusion.source_record(sidecar_path)
+    sidecar = fusion.read_json(sidecar_path)
+    if metadata_path != Path(sidecar['outputs']['omni.jsonl']['path']).resolve():
+        raise ValueError('Reviewed Omni training requires the declared omni.jsonl output')
+    approval = h3_video_sft.formal_training_provenance(
+        sidecar['outputs']['h3_video_train.json']['path'], caption_version)
+    if fusion.source_record(sidecar_path) != sidecar_source or approval.get('approval_chain_verified') is not True:
+        raise ValueError('Approval chain failed or the reviewed sidecar changed during validation')
+    expected = []
+    for record in sidecar['records']:
+        if (not isinstance(record.get('id'), str) or not record['id'] or
+                record.get('caption_version') != caption_version or
+                record.get('split') not in ('train', 'val') or
+                any(record.get(key, False) is not False for key in ('fixture_only', 'formal_reuse_forbidden'))):
+            raise ValueError('Reviewed Omni record ID/version/split/fixture identity differs')
+        expected.append(dict(id=record['id'], source_group=record['source_group'], split=record['split'],
+            caption_version=caption_version,
+            messages=[dict(role='user', content=fusion.SFT_INSTRUCTION + '\n<audio>'),
+                      dict(role='assistant', content=record['motion_caption'])],
+            audios=[record['audio_source']['path']], audio_window_seconds=record['audio_window_seconds']))
+    def raw_jsonl(path):
+        return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+    if rows != expected or raw_jsonl(metadata_path) != expected:
+        raise ValueError('Omni metadata differs from the approved caption/source/window/ID/version/split export')
+    for partition, actual in (('train', training_rows), ('val', val_rows)):
+        selected = [row for row in expected if row['split'] == partition]
+        if (actual != selected or raw_jsonl(sidecar['outputs'][partition + '.jsonl']['path']) != selected or
+                type(sidecar.get('counts', {}).get(partition)) is not int or
+                sidecar['counts'][partition] != len(selected)):
+            raise ValueError('Reviewed Omni partition/counts differ from the approved export')
+    return dict(protocol='omni-reviewed-training-provenance-v1', approval=approval,
+                metadata=fusion.source_record(metadata_path), sidecar=sidecar_source,
+                helper_source=fusion.source_record(h3_video_sft.__file__),
+                validator_source=fusion.source_record(fusion.__file__), caption_version=caption_version,
+                train_ids=[row['id'] for row in training_rows], val_ids=[row['id'] for row in val_rows],
+                approval_chain_verified=True, fixture_only=False, formal_reuse_forbidden=False)
+
+
+def validate_data_boundary(args):
+    scope = getattr(args, 'data_scope', 'interface')
+    if scope not in ('interface', 'reviewed_pilot', 'reviewed_full', 'source_label_pilot'):
+        raise ValueError('Unknown explicit data scope')
+    if scope == 'interface':
+        if args.smoke_steps != 2:
+            raise ValueError('Interface data requires --smoke-steps 2; formal training needs an explicit reviewed scope')
+    elif args.smoke_steps != 0:
+        raise ValueError('Reviewed data requires smoke_steps=0')
+    elif scope in ('reviewed_pilot', 'source_label_pilot') and (args.min_epochs != 3 or args.max_epochs != 3):
+        raise ValueError('Pilot requires exactly three full epochs')
+    elif scope == 'reviewed_full' and (args.min_epochs != 3 or args.max_epochs != 10):
+        raise ValueError('Reviewed full requires min_epochs=3/max_epochs=10')
+    rows, training_rows, val_rows = read_metadata(args.metadata)
+    if scope == 'interface':
+        return rows, training_rows, val_rows, dict(protocol='omni-interface-smoke-only-v1',
+            data_scope=scope, approval_chain_verified=False, formal_reuse_forbidden=True)
+    required_counts = (512, 128) if scope in ('reviewed_pilot', 'source_label_pilot') else (6000, 500)
+    if (len(training_rows), len(val_rows)) != required_counts:
+        raise ValueError(f'{scope} requires exact train/val counts {required_counts}')
+    versions = {row.get('caption_version') for row in rows if isinstance(row.get('caption_version'), str)}
+    if (len(versions) != 1 or any(row.get('caption_version') not in versions or not row['id'] or
+            any(row.get(key, False) is not False for key in ('fixture_only', 'formal_reuse_forbidden')) for row in rows)):
+        raise ValueError('Formal metadata requires one caption_version, nonempty IDs and no fixture flags')
+    validator = source_label_omni_provenance if scope == 'source_label_pilot' else formal_omni_provenance
+    data = validator(args.metadata, next(iter(versions)), rows, training_rows, val_rows)
+    data['data_scope'] = scope
+    return rows, training_rows, val_rows, data
+
+
+def main_process_result(operation, rank, world):
+    shared = [None]
+    if rank == 0:
+        try:
+            shared[0] = dict(result=operation())
+        except Exception as error:
+            shared[0] = dict(error=f'{type(error).__name__}: {error}')
+    if world > 1:
+        dist.broadcast_object_list(shared, src=0)
+    if 'error' in shared[0]:
+        raise ValueError(shared[0]['error'])
+    return shared[0]['result']
+
+
+def provenance(args, rows, world, data_provenance):
     import peft
     import transformers
     model_files = {}
@@ -470,7 +684,7 @@ def provenance(args, rows, world):
     recipe = {k: v for k, v in vars(args).items() if k not in ('out', 'resume', 'metadata', 'model', 'command')}
     payload = dict(schema=SCHEMA, source_sha256=file_sha(__file__), metadata_sha256=file_sha(args.metadata),
                    model_path=str(args.model.resolve()), model_id=args.model_id, model_files=model_files,
-                   audio_files=audio_files, recipe=recipe, world_size=world,
+                   audio_files=audio_files, data_provenance=data_provenance, recipe=recipe, world_size=world,
                    torch=torch.__version__, transformers=transformers.__version__, peft=peft.__version__)
     fingerprint = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
     return payload, fingerprint
@@ -539,31 +753,36 @@ def train(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
-    if not args.out.parent.is_dir() or not args.model.is_dir():
-        raise ValueError('Require existing output parent and local model directory')
-    if args.resume:
-        if not args.out.is_dir() or args.resume.resolve().parent != args.out.resolve():
-            raise ValueError('Resume checkpoint must belong to the existing output directory')
-        if (args.out / 'complete.json').exists():
-            raise ValueError('Cannot resume an already completed run')
-    elif rank == 0:
-        args.out.mkdir(exist_ok=False)
-    if world > 1:
-        dist.barrier()
-    rows, training_rows, val_rows = read_metadata(args.metadata)
-    if rank == 0:
-        payload, fingerprint = provenance(args, rows, world)
-    else:
-        payload, fingerprint = None, None
-    if world > 1:
-        identity = [payload, fingerprint]
-        dist.broadcast_object_list(identity, src=0)
-        payload, fingerprint = identity
-    if args.resume:
-        if json.loads((args.out / 'provenance.json').read_text()) != payload:
-            raise ValueError('Run provenance changed; refusing incomplete resume')
-    elif rank == 0:
-        atomic_json(args.out / 'provenance.json', payload)
+    def preflight():
+        if not args.out.parent.is_dir() or not args.model.is_dir():
+            raise ValueError('Require existing output parent and local model directory')
+        if args.resume:
+            if not args.out.is_dir() or args.resume.resolve().parent != args.out.resolve():
+                raise ValueError('Resume checkpoint must belong to the existing output directory')
+            if (args.out / 'complete.json').exists():
+                raise ValueError('Cannot resume an already completed run')
+        elif args.out.exists():
+            raise FileExistsError(f'Output already exists: {args.out}')
+        rows, training_rows, val_rows, data = validate_data_boundary(args)
+        payload, fingerprint = provenance(args, rows, world, data)
+        if args.resume:
+            if json.loads((args.out / 'provenance.json').read_text()) != payload:
+                raise ValueError('Run provenance/approval identity changed; refusing incomplete resume')
+            marker = json.loads((args.resume / 'complete.json').read_text())
+            if marker.get('schema') != SCHEMA or marker.get('fingerprint') != fingerprint:
+                raise ValueError('Resume checkpoint provenance/approval identity changed before model loading')
+        return rows, training_rows, val_rows, payload, fingerprint
+    try:
+        rows, training_rows, val_rows, payload, fingerprint = main_process_result(preflight, rank, world)
+        if not args.resume:
+            def create_output():
+                args.out.mkdir(exist_ok=False)
+                atomic_json(args.out / 'provenance.json', payload)
+            main_process_result(create_output, rank, world)
+    except Exception:
+        if world > 1:
+            dist.destroy_process_group()
+        raise
     family = identify_family(args.model)
     processor_cls, config_cls, model_cls = model_classes(family)
     processor = processor_cls.from_pretrained(args.model, local_files_only=True)
@@ -741,6 +960,10 @@ def train(args):
                 dist.barrier()
         result = dict(schema=SCHEMA, fingerprint=fingerprint, stop_reason=stop_reason,
                       completed_sft=not bool(args.smoke_steps), smoke_verified=bool(args.smoke_steps),
+                      data_scope=payload['data_provenance']['data_scope'],
+                      label_quality=payload['data_provenance'].get('label_quality',
+                          'reviewed' if payload['data_provenance']['approval_chain_verified'] else 'interface_only'),
+                      approval_chain_verified=payload['data_provenance']['approval_chain_verified'],
                       posttrain_predictions=posttrain_predictions,
                       checkpoint=checkpoint.name, updates=state['updates'], full_epochs=state['epoch'],
                       examples=state['examples'], assistant_tokens=state['tokens'], history=state['history'],
@@ -1056,10 +1279,320 @@ def selftest():
              labels_padding_eos_shift=True, real_random_architecture_gradient_tests=reports))
 
 
+def data_selftest(args):
+    """CPU contract simulations only: no actual review, model, training or durable export."""
+    import contextlib
+    import io
+    from unittest import mock
+    import dance_caption_fusion as fusion
+    import h3_video_sft
+    torch.set_num_threads(2)
+    if args.out and (not args.out.parent.is_dir() or args.out.exists()):
+        raise ValueError('Data selftest output requires a new JSON file in an existing parent')
+    checks = []
+    def rejects(name, operation):
+        try:
+            operation()
+        except (ValueError, KeyError, TypeError, FileNotFoundError):
+            checks.append(dict(case=name, rejected=True))
+        else:
+            raise AssertionError(f'Accepted invalid data: {name}')
+    def write_rows(path, rows):
+        Path(path).write_text(''.join(json.dumps(row) + '\n' for row in rows))
+    with tempfile.TemporaryDirectory(prefix='omni-formal-gate-synthetic-CPU-') as directory:
+        root = Path(directory)
+        fixture = fusion.CpuChecks()
+        exported = fixture.synthetic_export_inputs(root)
+        review = fixture.assistant_review_simulation(fusion.read_json(exported.review), exported.manifest)
+        atomic_json(exported.review, review)
+        with contextlib.redirect_stdout(io.StringIO()):
+            fusion.export_sft(exported)
+        metadata = exported.out / 'omni.jsonl'
+        rows, train_rows, val_rows = read_metadata(metadata)
+        version = rows[0]['caption_version']
+        with mock.patch.object(h3_video_sft, 'formal_training_provenance',
+                               wraps=h3_video_sft.formal_training_provenance) as shared:
+            data = formal_omni_provenance(metadata, version, rows, train_rows, val_rows)
+            assert shared.call_count == 1 and data['approval_chain_verified'] is True
+        checks.append(dict(case='real_shared_chain_1_1', passed=True,
+                           synthetic_cpu_contract_fixture=True, actual_approval=False))
+        # Real-chain corruption cases are restored after each check; no approval is forged.
+        original = {path: path.read_bytes() for path in exported.out.iterdir() if path.is_file()}
+        sidecar_path = exported.out / 'source_sidecar.json'
+        for case in ('output_sha', 'fake_approval', 'evidence_sha', 'sidecar_fixture', 'partition_drift',
+                     'wrong_metadata_path', 'wrong_version'):
+            sidecar = fusion.read_json(sidecar_path)
+            changed_review = None
+            if case == 'output_sha':
+                metadata.write_text(metadata.read_text() + '\n')
+            elif case in ('fake_approval', 'evidence_sha'):
+                changed_review = exported.review.read_bytes()
+                tampered = fusion.read_json(exported.review)
+                if case == 'fake_approval':
+                    tampered['records'][0]['facts_approved'] = 'true'
+                else:
+                    tampered['records'][0]['review_evidence'][1]['sha256'] = '0' * 64
+                atomic_json(exported.review, tampered)
+                review_source = fusion.source_record(exported.review)
+                sidecar['review'] = review_source
+                for record, approval in zip(sidecar['records'], tampered['records']):
+                    record['human_review'] = approval
+                    record['review_source'] = review_source
+                    record['approval_provenance']['review'] = review_source
+                atomic_json(sidecar_path, sidecar)
+            elif case == 'sidecar_fixture':
+                sidecar['fixture_only'] = True
+                atomic_json(sidecar_path, sidecar)
+            elif case == 'partition_drift':
+                swapped = copy.deepcopy(train_rows)
+                swapped[0]['messages'][1]['content'] += ' altered'
+                write_rows(exported.out / 'train.jsonl', swapped)
+                sidecar['outputs']['train.jsonl'] = fusion.source_record(exported.out / 'train.jsonl')
+                atomic_json(sidecar_path, sidecar)
+            check_path = exported.out / 'train.jsonl' if case == 'wrong_metadata_path' else metadata
+            check_version = version + '-wrong' if case == 'wrong_version' else version
+            rejects('real_chain_' + case, lambda: formal_omni_provenance(
+                check_path, check_version, rows, train_rows, val_rows))
+            for path, value in original.items():
+                path.write_bytes(value)
+            if changed_review is not None:
+                exported.review.write_bytes(changed_review)
+        pilot_root = root / 'source-label-synthetic-1-1'
+        pilot_root.mkdir()
+        pilot_manifest_path = pilot_root / 'manifest.json'
+        pilot_caps_path = pilot_root / 'caps.json'
+        pilot_manifest = fusion.read_json(exported.manifest)
+        caps = {}
+        for record in pilot_manifest['records']:
+            sid = record['id']
+            ms_path = pilot_root / (sid + '.ms.json')
+            source_ms = dict(sid=sid, ms=['A few seconds earlier, she raises her arms.',
+                                       'In the second right after, he bends his knees.'])
+            atomic_json(ms_path, source_ms)
+            record['source_MS'] = source_ms
+            record['provenance']['ms'] = fusion.source_record(ms_path)
+            record['source_selected_caption'] = dict(dims=dict(genre='hip-hop'))
+            caps[sid] = record['source_selected_caption']
+        atomic_json(pilot_caps_path, caps)
+        pilot_manifest.update(source_code=fusion.source_record(fusion.__file__),
+                              source_inputs=dict(caps=fusion.source_record(pilot_caps_path)),
+                              counts=dict(train=1, val=1))
+        atomic_json(pilot_manifest_path, pilot_manifest)
+        pilot_manifest_source = fusion.source_record(pilot_manifest_path)
+        pilot_version = SOURCE_LABEL_PROTOCOL + ':' + pilot_manifest_source['sha256']
+        pilot_rows = [dict(id=record['id'], source_group=record['source_group'], split=record['split'],
+            caption_version=pilot_version,
+            messages=[dict(role='user', content=fusion.SFT_INSTRUCTION + '\n<audio>'),
+                      dict(role='assistant', content=source_label_caption(record))],
+            audios=[record['audio_path']], audio_window_seconds=[0., 5.0625])
+            for record in pilot_manifest['records']]
+        pilot_metadata = pilot_root / 'omni.jsonl'
+        write_rows(pilot_metadata, pilot_rows)
+        pilot_sidecar_path = pilot_root / 'source_label_sidecar.json'
+        pilot_sidecar = dict(protocol=SOURCE_LABEL_PROTOCOL, complete=True,
+            label_quality='source_labels_unreviewed', authorization=SOURCE_LABEL_AUTHORIZATION,
+            human_review_completed=False, semantic_approval=False,
+            original_source_window_mapping='unknown', counts=dict(train=1, val=1),
+            manifest=pilot_manifest_source, source_code=fusion.source_record(__file__),
+            outputs={'omni.jsonl': fusion.source_record(pilot_metadata)})
+        atomic_json(pilot_sidecar_path, pilot_sidecar)
+        pilot_loaded = read_metadata(pilot_metadata)
+        def check_pilot():
+            return source_label_omni_provenance(pilot_metadata, pilot_version, *pilot_loaded)
+        with mock.patch.object(h3_video_sft, 'formal_training_provenance',
+                               side_effect=AssertionError('Weak labels must not enter reviewed H3 chain')) as shared:
+            pilot_data = check_pilot()
+            shared.assert_not_called()
+        assert pilot_data['approval_chain_verified'] is False and pilot_data['semantic_approval'] is False
+        assert pilot_rows[0]['messages'][1]['content'] == (
+            "Dance style: hip-hop. The dancer raises the dancer's arms. the dancer bends the dancer's knees.")
+        checks.append(dict(case='source_labels_real_sources_1_1', passed=True,
+                           synthetic_cpu_contract_fixture=True, actual_approval=False,
+                           approval_chain_verified=False, original_source_window_mapping='unknown'))
+        for key, value in (('authorization', 'unknown'), ('label_quality', 'reviewed'),
+                           ('human_review_completed', True), ('semantic_approval', True), ('approval_chain_verified', True),
+                           ('original_source_window_mapping', 'verified'), ('fixture_only', True),
+                           ('formal_reuse_forbidden', True), ('complete', 'true')):
+            atomic_json(pilot_sidecar_path, dict(pilot_sidecar, **{key: value}))
+            rejects('source_labels_wrong_' + key, check_pilot)
+        for key in ('source_code', 'manifest'):
+            corrupted = copy.deepcopy(pilot_sidecar)
+            corrupted[key]['sha256'] = '0' * 64
+            atomic_json(pilot_sidecar_path, corrupted)
+            rejects('source_labels_wrong_sha_' + key, check_pilot)
+        atomic_json(pilot_sidecar_path, pilot_sidecar)
+        for text in ('She follows the music.', 'He wears a shirt.', 'The dancer bends the fingers.',
+                     'At 3 seconds she turns.'):
+            bad_record = dict(pilot_manifest['records'][0], source_MS=dict(ms=[text]))
+            rejects('source_labels_unsafe_' + text, lambda: source_label_caption(bad_record))
+        rejects('source_labels_unsafe_genre', lambda: source_label_caption(dict(
+            pilot_manifest['records'][0], source_selected_caption=dict(dims=dict(genre='<|invented|>')))))
+        pilot_args = argparse.Namespace(metadata=pilot_metadata, data_scope='source_label_pilot',
+                                       smoke_steps=0, min_epochs=3, max_epochs=3)
+        rejects('source_labels_no_1_1_count_upgrade', lambda: validate_data_boundary(pilot_args))
+        for case, overrides in (('smoke', dict(smoke_steps=2)), ('max_epochs', dict(max_epochs=4)),
+                                ('min_epochs', dict(min_epochs=4)), ('unknown_scope', dict(data_scope='unknown'))):
+            rejects('source_labels_boundary_' + case, lambda overrides=overrides: validate_data_boundary(
+                argparse.Namespace(**(vars(pilot_args) | overrides))))
+        fake_budget = [dict(row, id=row['id'] + str(index)) for row, count in zip(pilot_rows, (24, 8))
+                       for index in range(count)]
+        write_rows(pilot_metadata, fake_budget)
+        rejects('source_labels_no_24_8_count_upgrade', lambda: validate_data_boundary(pilot_args))
+        write_rows(pilot_metadata, pilot_rows)
+        small = argparse.Namespace(metadata=metadata, data_scope='reviewed_pilot', smoke_steps=0,
+                                   min_epochs=3, max_epochs=3)
+        rejects('formal_1_1_budget', lambda: validate_data_boundary(small))
+        for scope, counts, maximum in (('reviewed_pilot', (512, 128), 3),
+                                        ('reviewed_full', (6000, 500), 10)):
+            trial = root / scope
+            trial.mkdir()
+            expected, records = [], []
+            for base, count in zip(rows, counts):
+                for index in range(count):
+                    row = copy.deepcopy(base)
+                    row['id'] = f'{scope}-{base["split"]}-{index:05d}'
+                    expected.append(row)
+                    records.append(dict(id=row['id'], split=row['split'], source_group=row['source_group'],
+                        caption_version=version, motion_caption=row['messages'][1]['content'],
+                        audio_source=dict(path=row['audios'][0]), audio_window_seconds=row['audio_window_seconds']))
+            trial_metadata = trial / 'omni.jsonl'
+            trial_sidecar = dict(records=records, caption_version=version, counts=dict(zip(('train', 'val'), counts)),
+                                 synthetic_cpu_contract_fixture=True, outputs={})
+            for name in ('omni.jsonl', 'train.jsonl', 'val.jsonl'):
+                selected = expected if name == 'omni.jsonl' else [row for row in expected if row['split'] == name[:-6]]
+                write_rows(trial / name, selected)
+                trial_sidecar['outputs'][name] = fusion.source_record(trial / name)
+            trial_sidecar['outputs']['h3_video_train.json'] = dict(path=str(trial / 'h3_video_train.json'))
+            atomic_json(trial / 'source_sidecar.json', trial_sidecar)
+            trial_args = argparse.Namespace(metadata=trial_metadata, data_scope=scope, smoke_steps=0,
+                                            min_epochs=3, max_epochs=maximum)
+            with mock.patch.object(h3_video_sft, 'formal_training_provenance', return_value=dict(
+                    approval_chain_verified=True, synthetic_mock=True, actual_approval=False)) as shared:
+                with mock.patch.dict(globals(), formal_omni_provenance=mock.Mock(wraps=formal_omni_provenance)):
+                    strict = globals()['formal_omni_provenance']
+                    result = validate_data_boundary(trial_args)
+                    assert strict.call_count == 1 and shared.call_count == 1
+                assert (len(result[1]), len(result[2])) == counts
+                shared.assert_called_with(str(trial / 'h3_video_train.json'), version)
+                checks.append(dict(case=scope + '_exact_boundary', passed=True, counts=list(counts),
+                                   strict_omni_helper_called=True, shared_h3_validator_mocked=True,
+                                   synthetic_mock=True, actual_approval=False))
+                if scope == 'reviewed_pilot':
+                    for case in ('caption', 'version', 'source', 'window', 'split', 'fixture',
+                                 'fixture_nonboolean', 'id', 'instruction'):
+                        corrupted = copy.deepcopy(expected)
+                        if case == 'caption':
+                            corrupted[0]['messages'][1]['content'] += ' changed'
+                        elif case == 'version':
+                            corrupted[0]['caption_version'] += '-wrong'
+                        elif case == 'source':
+                            corrupted[0]['audios'] = [str(exported.manifest)]
+                        elif case == 'window':
+                            corrupted[0]['audio_window_seconds'] = [0, 4]
+                        elif case == 'split':
+                            corrupted[0]['split'] = 'val'
+                        elif case in ('fixture', 'fixture_nonboolean'):
+                            corrupted[0]['fixture_only'] = True if case == 'fixture' else 'false'
+                        elif case == 'id':
+                            corrupted[0]['id'] = 'changed'
+                        else:
+                            corrupted[0]['messages'][0]['content'] = '<audio>Different instruction.'
+                        write_rows(trial_metadata, corrupted)
+                        rejects('mock_boundary_wrong_' + case, lambda: validate_data_boundary(trial_args))
+                    write_rows(trial_metadata, expected)
+                for case, overrides in (('wrong_epochs', dict(max_epochs=4)),
+                                        ('wrong_min_epochs', dict(min_epochs=4)),
+                                        ('smoke', dict(smoke_steps=2)),
+                                        ('implicit_scope', dict(data_scope='interface'))):
+                    invalid = argparse.Namespace(**(vars(trial_args) | overrides))
+                    rejects(scope + '_' + case, lambda: validate_data_boundary(invalid))
+            legacy = [row for partition, count in (('train', 24), ('val', 8))
+                      for row in [r for r in expected if r['split'] == partition][:count]]
+            write_rows(trial_metadata, legacy)
+            rejects(scope + '_legacy_24_8', lambda: validate_data_boundary(trial_args))
+        interface = argparse.Namespace(metadata=metadata, smoke_steps=2, min_epochs=3, max_epochs=10)
+        assert validate_data_boundary(interface)[3]['approval_chain_verified'] is False
+        checks.append(dict(case='default_interface_two_updates', passed=True, formal_reuse_forbidden=True))
+        interface.smoke_steps = 0
+        rejects('no_explicit_scope_formal', lambda: validate_data_boundary(interface))
+        broadcasts = []
+        def broadcast(value, src):
+            assert src == 0
+            broadcasts.append(copy.deepcopy(value))
+        with mock.patch.object(dist, 'broadcast_object_list', side_effect=broadcast):
+            rejects('rank0_error_broadcast', lambda: main_process_result(
+                lambda: (_ for _ in ()).throw(ValueError('synthetic preflight refusal')), 0, 2))
+        with mock.patch.object(dist, 'broadcast_object_list', side_effect=lambda value, src: value.__setitem__(0, broadcasts[0][0])):
+            rejects('rank1_same_error_refusal', lambda: main_process_result(lambda: None, 1, 2))
+        assert len(broadcasts) == 1 and 'synthetic preflight refusal' in broadcasts[0][0]['error']
+        model_fixture = root / 'synthetic_model_identity_only'
+        model_fixture.mkdir()
+        (model_fixture / 'model.safetensors').write_bytes(b'synthetic mock, never model weights')
+        identity_args = argparse.Namespace(metadata=metadata, model=model_fixture, model_id='synthetic-mock',
+            out=root / 'not-created', resume=None, command='train', data_scope='reviewed_pilot')
+        first_payload, first_fingerprint = provenance(identity_args, rows, 1, data)
+        changed_data = copy.deepcopy(data)
+        changed_data['sidecar']['sha256'] = '0' * 64
+        _, changed_fingerprint = provenance(identity_args, rows, 1, changed_data)
+        assert first_fingerprint != changed_fingerprint and first_payload['data_provenance'] == data
+        checks.append(dict(case='approval_identity_changes_fingerprint', passed=True, synthetic_mock=True))
+        checkpoint = root / 'synthetic_checkpoint_marker_only'
+        checkpoint.mkdir()
+        atomic_json(checkpoint / 'complete.json', dict(schema=SCHEMA, fingerprint=first_fingerprint))
+        rejects('resume_cross_approval_identity', lambda: load_checkpoint(
+            checkpoint, None, None, changed_fingerprint, torch.device('cpu'), 0, 1))
+        rejects('legacy_v4_identity_not_relabelled', lambda: load_checkpoint(
+            checkpoint, None, None, 'legacy-v4-fingerprint', torch.device('cpu'), 0, 1))
+        resume_out = root / 'synthetic_resume_preflight_only'
+        resume_out.mkdir()
+        resume_checkpoint = resume_out / 'checkpoint'
+        resume_checkpoint.mkdir()
+        resume_args = argparse.Namespace(metadata=metadata, model=model_fixture, model_id='synthetic-mock',
+            out=resume_out, resume=resume_checkpoint, command='train', data_scope='interface',
+            smoke_steps=2, min_epochs=3, max_epochs=10, seed=42, zero_stage1=False)
+        real_rows, _, _, interface_data = validate_data_boundary(resume_args)
+        resume_payload, resume_fingerprint = provenance(resume_args, real_rows, 1, interface_data)
+        atomic_json(resume_out / 'provenance.json', resume_payload)
+        for case, marker in (
+                ('fingerprint', dict(schema=SCHEMA, fingerprint='different-approval-identity')),
+                ('schema', dict(schema='synthetic-legacy-v4', fingerprint=resume_fingerprint))):
+            atomic_json(resume_checkpoint / 'complete.json', marker)
+            with contextlib.ExitStack() as stack:
+                stack.enter_context(mock.patch.dict(os.environ, WORLD_SIZE='1', RANK='0', LOCAL_RANK='0'))
+                stack.enter_context(mock.patch.object(torch.cuda, 'is_available', return_value=True))
+                stack.enter_context(mock.patch.object(torch.cuda, 'set_device'))
+                stack.enter_context(mock.patch.object(torch.cuda, 'is_bf16_supported', return_value=True))
+                stack.enter_context(mock.patch.object(torch, 'manual_seed'))
+                loading = mock.Mock(side_effect=AssertionError('Model loading must not be reached'))
+                boundary = mock.Mock(wraps=validate_data_boundary)
+                stack.enter_context(mock.patch.dict(globals(), identify_family=loading, validate_data_boundary=boundary))
+                try:
+                    train(resume_args)
+                except ValueError as error:
+                    assert 'Resume checkpoint provenance/approval identity changed before model loading' in str(error)
+                else:
+                    raise AssertionError('Actual train preflight accepted a changed checkpoint identity')
+                boundary.assert_called_once_with(resume_args)
+                loading.assert_not_called()
+            checks.append(dict(case='actual_train_preflight_resume_wrong_' + case, rejected=True,
+                               real_preflight_called=True, cuda_capabilities_mocked=True,
+                               pretrained_model_loaded=False, synthetic_mock=True))
+    result = dict(event='data_selftest_passed', complete=True, cpu_only=True,
+        synthetic_cpu_contract_fixture=True, boundary_tests_use_mock=True, actual_approval=False,
+        formal_training_performed=False, pretrained_model_loaded=False,
+        source_sha256=file_sha(__file__), helper_sha256=file_sha(h3_video_sft.__file__),
+        validator_sha256=file_sha(fusion.__file__), checks=checks)
+    if args.out:
+        atomic_json(args.out, result)
+    log(result)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest='command', required=True)
     subparsers.add_parser('selftest', help='CPU-only explicit fixtures; never loads pretrained weights')
+    data_check = subparsers.add_parser('data-selftest', help='CPU synthetic/mock approval gate tests; never actual approval')
+    data_check.add_argument('--out', type=Path)
     processor_check = subparsers.add_parser('processor-test', help='CPU real local processor and real audio; no model weights')
     processor_check.add_argument('--model', type=Path, required=True)
     processor_check.add_argument('--audio', type=Path, required=True)
@@ -1077,6 +1610,8 @@ def main():
         item.add_argument('--max-new-tokens', type=int, default=1536)
     training.add_argument('--resume', type=Path)
     training.add_argument('--smoke-steps', type=int, default=0)
+    training.add_argument('--data-scope', choices=['interface', 'reviewed_pilot', 'reviewed_full', 'source_label_pilot'], default='interface',
+                          help='interface: two-update smoke; reviewed_pilot: 512/128 three epochs; reviewed_full: 6000/500 3..10 epochs; source_label_pilot: authorized unreviewed 512/128 three epochs')
     training.add_argument('--infer', action='store_true', help='Generate up to three val captions after checkpoint reload, including smoke')
     training.add_argument('--lora-rank', type=int, default=32)
     training.add_argument('--lora-alpha', type=int, default=64)
@@ -1098,6 +1633,8 @@ def main():
     args = parser.parse_args()
     if args.command == 'selftest':
         selftest()
+    elif args.command == 'data-selftest':
+        data_selftest(args)
     elif args.command == 'processor-test':
         processor_test(args)
     elif args.command == 'train':

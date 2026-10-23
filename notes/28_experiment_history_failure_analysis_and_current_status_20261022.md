@@ -658,6 +658,7 @@ CPU H3自测PID曾23:16:59存在，采样时已退出；独立受管理C2GQhv实
 | H3新124训练与真实恢复 | [h3_video_repeatlast124_pretrained_smoke_and_restore](../results/ms_20261020/h3_video_repeatlast124_pretrained_smoke_and_restore_v2.json) |
 | H3正式100/300来源门禁CPU | [h3_video_reviewed_training_gate_cpu](../results/ms_20261020/h3_video_reviewed_training_gate_cpu_v3.json) |
 | 32实际AI批准/24+8导出及640媒体齐备 | [dance_caption_approved32_and_pilot640_media](../results/ms_20261020/dance_caption_approved32_and_pilot640_media_v3.json) |
+| 30B MS＋风格已实际开训、首轮重复负结果 | [omni30b_ms_style_pilot_actual_training](../results/ms_20261020/omni30b_ms_style_pilot_actual_training_v1.json) |
 | 融合提取/重写/获审导出 | [dance_caption_fusion.py](../scripts_omnidance/exp/ms/dance_caption_fusion.py) |
 | Omni训练/部署/保存恢复 | [omni_dance_sft.py](../scripts_omnidance/exp/ms/omni_dance_sft.py) |
 | H3真纯视频执行 | [h3_video_only.py](../scripts_omnidance/exp/ms/h3_video_only.py) |
@@ -676,7 +677,7 @@ CPU H3自测PID曾23:16:59存在，采样时已退出；独立受管理C2GQhv实
 - 真纯视频H3底座已得到rich/MS/fusion单case正评；H3八条124帧cache/2update/真实GPU恢复接口已通过。
 - 30B pilot的**512train/128val来源候选与640条配对媒体**已齐备。首版13条音频不足完整窗口，严格拒绝后仅同split替换13条，627已有帧图复用；有效清单`MS/dance_caption_pilot640_30b_only_manifest_v2.json`，SHA`2f1c4d2ddc5b299f0a86161a59635c719b3f5b84646c49d9e78a484f4481573e`，标准visual index SHA`06d4f36a6116cde5cfc5c4ccfbbd42144409f244718ca3c254a752531ed00d68`。仍caption_targets_generated=false：媒体齐备不是640条正式标签。
 - 首32真实AI审核与导出已完成：19条保留原30B正文、13条透明助手编辑；32批准review SHA`7de27bda7bd2c39e1e03b79cf16f444b7cf31200620a6881f1d6471c5051c446`，导出24train/8val，实际Omni reader/H3正式来源链通过。AI批准不冒human，不把unknown原rich/MS源窗改verified。
-- Omni三epochpilot预算min_epochs=max_epochs=3、smoke_steps=0，沿正式数据/官方base fresh，不从接口fixture LoRA接训。2026-10-23发现旧Omni reader未核真实审批链/fixture/精确规模，必要显式formal scope与模型加载前来源门禁正在补齐；不能只设置三epoch就把普通JSONL宣告正式。
+- Omni三epochpilot预算min_epochs=max_epochs=3、smoke_steps=0，沿正式数据/官方base fresh，不从接口fixture LoRA接训。2026-10-23发现并补齐旧Omni reader的真实审批链/fixture/精确规模缺口：最终源码`4186fddf…`显式`--data-scope reviewed_pilot`，模型加载/out创建前核512/128、统一版本、真实审批链和完整导出内容，审批身份进入resume fingerprint。37项CPU数据契约和原架构完整恢复回归已独立通过；真实24/8导出可读但正式pilot正确拒。不宣称已获640正式审批或新gate已GPU训练。
 
 ### 14.2 还缺哪些实际交付
 
@@ -684,23 +685,25 @@ CPU H3自测PID曾23:16:59存在，采样时已退出；独立受管理C2GQhv实
 |---|---|---|
 | 32条实际媒体AI观察 | **已完成**32片段/384帧图，89条保守OBS事实 | 旧正文1粗粒度可留、26需重写、5拒当前目标；媒体无缺失，原rich/MS源窗仍unknown |
 | 首32实际正文修正与目标审批 | **已完成**独立AI核帧/正文、13编辑/19保留、32透明AI批准、真实24/8导出/来源链 | 不再等待用户逐条POST；原raw、错误事实和编辑来源分别保存，不能升级为512formal |
-| 官方30B图像依据候选生成 | CPU真实图像processor和10契约测试已过；唯一视觉32任务真实启动，尚未完成 | 只读/proc确认共享权重第7/15分片冷读、GPU0尚0MiB；不重启、不称真实视觉前向通过 |
+| 官方30B图像依据候选生成 | **已结束**32严格JSON/实际32visualcalls/0audio，但旧80–180词标准0valid，三case另有真实动作顺序/幻觉错误 | 保失败原稿，视觉重试暂停，不再阻挡现有MS＋风格弱监督训练 |
 | 512/128正式caption目标及逐项来源/质量检查 | 640媒体/索引已齐，caption尚未生成和逐条审批 | 实际核图/动作順序/正文冲突，透明派生兼容target，导出统一版本omni.jsonl及H3 train-only/val-only |
-| Omni正式来源门禁 | 旧reader未直接消费审批链，存在fixture/小预览误升级风险；最小修正与CPU测试正在执行 | 显式scope、精确512/128与三epoch、实际审批来源链进入resume fingerprint，不重跑GPU接口 |
+| Omni正式来源门禁 | **已完成**显式scope/数量/预算、复用真实审批链、逐字段导出核对、审批身份恢复签名；37项CPU契约与原架构恢复独立通过 | 真实24/8helper链通过但formalpilot拒；新gate尚未正式GPU训练，不迁移旧smoke结论 |
 | 最后8GPU/host-cgroup准入与数据签名冻结 | 旧资源快照可能被watchdog补占卡 | 直接启动官方30B三完整epochpilot，不再另加smoke |
 
 不是“还需要模型下载、再验证7B、再验证音频关闭、再重训旧6000”。当前关键路径是**把候选转成真实可训练监督**，这项不能以一个批准布尔或格式通过代替。
 
-### 14.3 什么时候可以正式启动
+### 14.3 最新推进方式：先用简单MS＋风格训练
 
-**512/128正式目标的AI证据审核完成、导出SHA/划分/版本检查通过并完成当次8卡准入后，即启动30B三epochpilot，不再请求重复许可。** 目前不能准确给出日历时刻：目标修正/审核尚在执行，来源冷读和生成量均影响完成，但不是权限等待。不得为了给出时间承诺跳过目标质量或把32条/fixture两更新称正式512训练。
+2026-10-23用户明确严格融合数据处理持续过久不可接受，并授权“可以快速选用简单的motionscript+风格数据先开始实验”。当前优先**官方30B音乐→原MotionScript＋原风格的512/128三epoch弱监督基线**，不再将rich融合/视觉候选逐条审批作为该独立实验前置。新scope `source_label_pilot`明确label_quality=source_labels_unreviewed、human_review_completed=false、semantic_approval=false、原窗口映射unknown；核原MS/genre/音频与配对素材SHA、固定split、去人物代词/合成秒词和实际预算，不假审过标签，也不把fixture两更新升级为正式训练。
+
+该简化基线已实际fresh启动N7八卡：manager3198080/torchrun3198407、2026-10-23 07:55:54北京时间，生产源码4d82caff…冻结、数据SHAab2550fd…、smoke0，未复用接口权重。已80次更新且第一轮固定val NLL0.883553；三条自回归输出均长重复，明确不能以NLL宣布可用。保原三epoch继续，原6000/500标签转换同时进行，不要求512质量成功才准备全量，也不忽略明显输出错误机械扩量。不另请许可、不重下载、不做新smoke。严格融合的`reviewed_pilot`仍保原审批门禁，但已暂停视觉重试，不能继续阻挡用户最新授权的MS风格基线。训练完成后固定3case接冻结真纯视频H3；其视频效果决定下一步，不用表示指标或文档发布替代。
 
 30B首个正式训练产物必须记录`smoke_steps=0`、实际512/128、三完整epoch、每轮valNLL/自回归输出、完整Adam/RNG/sampler；正式训练后仍要固定3case视频验证，不能把captionNLL当舞蹈成功。
 
 ## 15. 下一步与停止边界
 
 - 不重跑旧6500cache、direct6000、18学生或ABC；A/B反馈已收，不自动重复评分或弱维度扫描。
-- H3正式来源gate已过CPU及真实32导出链；首32助手证据审核已完成。Omni直接训练入口的来源门禁正在独立补齐，继续实际视觉监督生成、512/128逐条AI目标审核和正式fresh30B训练。不再以“尚未用户逐条人审”无限等待，不跳过实际目标质量与窗口证据。
+- 首32真实审核链保留；用户新授权优先现成MS＋风格弱监督，暂停视觉教师重试。N7实际30B源标签512/128三epoch已启动；原6000/500标签转换和N3 H3弱标签缓存并行，不继续做无关全视频重复哈希或接口smoke。原窗unknown、语义审核false不伪装GT。
 - 获审后新版本caption/cache、正式pilot/full与端到端三个case验收按批准预算推进。
 - 所有阶段训练正确结束、完整来源/媒体审核、实际人评及最终GitHub核验之后，才宣告整体完成并取消本轮跟进。
 - 当前整体目标未完成；本详细归档、接口通过和单case正评都不会缩减正式目标。

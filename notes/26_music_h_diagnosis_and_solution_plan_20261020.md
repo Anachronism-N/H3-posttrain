@@ -1078,3 +1078,31 @@ H3正式100/300数据来源门禁已实现并主线程C2GQhv独立CPU全部通�
 实际图像依据的官方30B冻结入口 `omni30b_visual_caption_review.py` SHA `17cc49ef31f89445ab9e7397263ac1e5badef073fca17790585ac6d271164357`：图像processor CPU实测925image tokens、pixel_values[3700,1536]、grid[1,74,50]；10CPU契约通过，候选四项批准固定false。真实视觉32唯一队列 `omni30b_visual_caption32_queue_v1`，N7 GPU0，manager3181390/child3181399，已实际启动，未声称已完成。2026-10-23 02:00北京时间只读/proc证据：UID全0、argv匹配、State=D、wchan=generic_file_buffered_read、fd3指向共享official第7/15权重分片、read_bytes约31.23GB、GPU0显存0MiB。此时是模型内容SHA冷读，不是已知OOM/崩溃或实际GPU视觉前向；保唯一任务，不重启、不覆盖partial、不运行中改visual/fusion源码。
 
 当前剩余工程缺口已只读核实：视觉六字段OBS候选不是fusion四字段获审target，须经实际AI核图/正文后制作透明派生兼容manifest/target，保原raw与unknown映射；现格式/词覆盖不验证动作顺序或正文/conflicts矛盾，不能自动批准。Omni train原reader未接真实export审批链、数量及fixture门禁，需在模型加载前显式scope/preflight，复用H3已实现严格来源链并绑定恢复fingerprint。该必要门禁修正正在独立单文件实现/CPU测试，不重跑已通过官方30B两更新。正式学生SFT仍未启动，整体Cron继续。
+
+#### 2026-10-23 Omni正式审批门禁实际完成，视觉冷读继续推进
+
+首版Omni门禁源码 SHA `325b1ea7d9a42f787673bffd6fe6336e3e2a8c2e3245645f33ec9797c4d0bd6c`（最终补充resume marker前置校验为下述4186版本，不重标首版测试）。新增`--data-scope interface|reviewed_pilot|reviewed_full`，默认interface严格仅smoke2；pilot需显式reviewed_pilot、smoke0、512train/128val、三完整epoch，full需reviewed_full、6000/500、min3/max10。模型加载和out创建前rank0 preflight复用H3严格导出审批链，精确重建Omni/train/val文字、音频、窗、版本、ID和split；审批侧车及H3/fusion helper源码SHA进入完整resume fingerprint。rank0错误统一广播，禁止其它rank继续加载模型或因单rank提前退出挂集体操作。未改变LoRA范围、FP32Adam、bucketview与slot释放数学；官方30B内容身份由正式launcher核官方staging+固定revision，不靠名称猜模型。历史v4仍7c463626，不能重标新gate已GPU通过。
+
+主线程独立`B54Aod`37项CPU数据契约通过：5正例/32拒例；其中1/1小样本实际调用真实审批代码但数据是合成fixture，两大规模边界通过mock审批validator且actual_approval=false。测试拒伪布尔批准、证据SHA改变、输出漂移、错误文本/音频/窗/ID/版本/split、fixture、小24/8升级、漏scope、错误预算及跨审批/旧v4恢复。`I5nvid`另读取真实32已审导出，Omni新helper实际审批链通过，但正式pilot入口正确拒24/8、未开训练。`tiF5cw`原两架构CPU真实小模型梯度及完整Adam/RNG恢复下一步一致通过，非重复官方GPU smoke。
+
+2026-10-23 02:14北京时间再次只读检查唯一visual32 child3181399，仍UID/argv一致、D/generic_file_buffered_read；fd3已从第7推进至第10/15权重分片、read_bytes从31.23GB增至48.71GB，GPU0仍0MiB。证明共享权重内容冷读在推进，不是冻结死锁；实际视觉前向和候选完成尚未证明，继续保唯一任务。等待时并行实际观察640集合新增[32:48]/[48:64]共32张帧图，观察记录不自动目标批准。阶段`dc2e561d2e327742978465cc4a7f7fd65bbaecbb`已push，工具退出状态未捕获但实际`ls-remote origin refs/heads/main`与本地HEAD相同、stdout/stderr确认main更新；当前新Omni门禁另独立发布，整体仍未完成。
+
+#### 2026-10-23 用户明确优先简化标签基线，停止把融合审核设为全部训练前置
+
+用户原话：“你的意思是八个小时还没有解决训练数据的问题?具体问题在哪儿?请快速推进,如果数据不好处理,可以快速选用简单的motionscript+风格数据先开始实验.或者可以使用显卡先进行音乐替换文本方向的实验”。据此优先启动已公开官方30B、现有MotionScript＋原风格标签的512train/128val、三epoch音乐caption学生基线；不重跑旧MusicFM direct6000。rich/MS严格融合与视觉候选重试暂停，不再阻挡该明确授权的弱监督实验。
+
+简化标签来源为已备齐的candidate640v2媒体及其original MS/genre；只中性化人体代词、去规则合成秒词、保动作和原句顺序的弱标签含义，不引LLM重写/人物外观/参考图进入Omni学生。原rich/MS窗口映射仍unknown、human_review_completed=false、semantic_approval=false，不伪称640逐条获审。新data_scope=source_label_pilot与reviewed_pilot隔离，绑定本次授权、完整源SHA、512/128、三epoch、smoke0，保训练/部署共用接口及完整Adam/RNG。N7一个节点8卡、官方已核本地staging，无下载/旧接口重验；实际启动前核UID/argv/CUDA/UUID及host/cgroup，仅释放精确项目holder。
+
+实际visual32任务o53fJg已结束：32严格JSON，视觉前向总32、音频0；旧80–180词标准0/32，正文28–71词且部分另有身份/伪时间/指细节/OBS覆盖错误。actual generation总1215.09秒；长墙钟主要权重内容冷读/加载/末次来源核验，不把5小时全称GPU计算。前三case独立核图发现无据反向转、心形/对称手势、肘姿态/尾段错误，放宽长度不能解决；首case确有布料拿起/抛接，应因道具不在目标而排除，先前“服饰误认道具”的匆忙判断撤回。原32输出及0valid事实保留，不标成功或扩640。
+
+最终严格审核scope代码4186fddf已完成39CPU契约及原架构恢复独立通过；v1报告曾被并行agent误改sourceSHA，主线程恢复历史325b并保v2独立结果SHA31eee2db…；不重标历史GPU/CPU。新弱标签入口是用户最新授权的独立实验，不把它冒strict融合训练。已另完成640索引[32:64]真实32帧图观察、120保守OBS与sourceclaims对照，两报告SHA6dc05a83…/fad8877c…，四项审批保持false，当前不是学生SFT目标。
+
+#### 2026-10-23 MS风格30B已实际开训，资源合并为N7/N3/N4流水线
+
+复用已有6500原MS/风格，不重新打标。当前512train/128val、三epoch源标签pilot真实启动N7 8GPU，唯一任务vCxVVq，manager3198080/torchrun3198407，2026-10-23 07:55:54北京时间启动。代码4d82caffd4f6ce354fd6fbd240827d0cac69d66414de33e847501369b0e82dd2冻结，datasetSHAab2550fd5b9aee27324ee5d6cee03c40efaeb5894cd2565aa09fab45a6c084c2。真实source_label_pilot非fixture，弱标签明确unreviewed/unknown；只核音乐学生实际音频/MS/caps/split，取消不相关的全视频/图片重复读取。两个本次重复CPU全媒体校验任务已精确停止，保既有标签/sidecar，不删产物或未知服务。
+
+已核实际updates1–64成功，512example/168980assistanttokens；首batch NLL2.1317136、第64batch0.894406，只是不同batch日志不可当固定val改善。2026-10-23 08:24只读/proc显示rank0正在写独立隐藏checkpoint training_state.pt，其他rank在等待；100%GPU等待不冒有效训练。完整marker提交前不说epoch1保存已完成或可resume，所有旧模型/失败产物保。
+
+用户指出512太少、多个节点职责可合并；采用紧凑安排N7音乐30B、N3缓存后同节点顺序H3纯FM/anchor0.1/1、N4统一GT/预测caption/检查点三个case推理，N1 CPU组织，不新占N2/N5/N6/N8。512只快速中间预算，原6000/500标签转换与其并行，不要求512质量成功才接全量；完整源标签弱监督与严格rich融合来源分开。现正在复用原split/MS/caps准备6000/500，并接通H3独立source_label_train门禁与新caption缓存，不改正在运行的Omni生产SHA、不重旧smoke/6500hidden/6000CLIP。
+
+随后实际日志更新至80次optimizer更新，第一轮full_epoch_validation已返回：epoch1/update64、NLL0.8835530356、45003assistanttokens，三条固定AR样本均长重复“left hand moves farther from right elbow/shoulder”直到512token上限。此为重要负结果，不把teacher-forcing低NLL当输出质量通过；保原三epoch继续，不偷偷截断/加防重复生成参数把raw伪装合格。全量标签继续准备，但同配方扩量不自动按低NLL判可用，需结合后两轮自回归与三case视频。首epoch checkpoint写出期间跨rank等待是实际保存，不重复launch。

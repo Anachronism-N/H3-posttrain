@@ -1,0 +1,18 @@
+{
+  "source": "user_chat",
+  "date": "2026-10-23",
+  "review_kind": "user_preset_level_qualitative_feedback",
+  "preset": "新三case·音乐direct hidden@100",
+  "feedback_original": "这里的几个case都是摆pose,而GT·原MS＋风格→冻结H3真纯视频是舞蹈",
+  "scope": {
+    "direct_mean_and_token_at100": "所看预设case均近摆pose，未达连续舞蹈目标",
+    "source_MS_frozen_H3_video_only": "用户反馈有舞蹈"
+  },
+  "per_video_numeric_scores": null,
+  "model_ranking_not_given": true,
+  "identity_clarity_music_sync_not_separately_accepted": true,
+  "conditioning_protocols_differ": true,
+  "cannot_attribute_difference_to_one_variable": true,
+  "no_review_scores_POSTed_by_assistant": true,
+  "new_full6k_or_H3_finetuned_models_not_covered_by_this_feedback": true
+}

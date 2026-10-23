@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-24",
+  "source": "user_chat",
+  "scope": "preset_level_qualitative_feedback",
+  "feedback_original": "H3·原MS＋图像·pureFM@100和GT·原MS＋风格→冻结H3真纯视频都是有效的舞蹈,前者的动作还更大一些;Omni30B·6k u3000→冻结H3纯视有动作,但是比较重复单一,且比之前的两个要稍弱一些.",
+  "verdicts": {
+    "source_MS_frozen_H3_pure_video": "有效舞蹈",
+    "source_MS_pureFM100_H3_pure_video": "有效舞蹈，动作幅度比冻结基线更大",
+    "music_Omni_u3000_caption_frozen_H3": "有动作，但重复单一、比前两者稍弱"
+  },
+  "limits": {
+    "per_case_numeric_scores_not_given": true,
+    "full_resolution_face_hand_quality_not_separately_accepted": true,
+    "music_synchronization_not_separately_accepted": true,
+    "does_not_cover_anchor_or_full_token2250_models": true,
+    "user_saw_current_available_preset_cases_not_all_future_outputs": true
+  },
+  "no_numeric_reviews_POSTed_by_assistant": true
+}

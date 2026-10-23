@@ -1,6 +1,6 @@
 # 当前全部实验：有限完成标准、最新证据与代码归档
 
-日期：2026-10-24；只读快照：2026-10-24T01:05:03.330987+08:00。这是一份**运行中的有限验收清单**，不是“全部实验完成”声明。后续必须以新 completed marker / audit / evaluation JSON 更新本页，不用任务启动或旧代理报告冒充成功。
+日期：2026-10-24；基础快照01:05 CST，六视频完成更新至01:49 CST（其它在训数字保留各自观察时点）。这是一份**运行中的有限验收清单**，不是“全部实验完成”声明。后续必须以新 completed marker / audit / evaluation JSON 更新本页，不用任务启动或旧代理报告冒充成功。
 
 ## 1. 目标与结论边界
 
@@ -27,10 +27,10 @@ MS   = R/diff/logs_omnidance/exp/MS
 | N7 最终u3750 fixed3 caption | `omni_ms_style_full_eval3_queue_v2/finished.json` complete=true/exit0，3固定ID，无GT user、无新增训练 | 最新真实推理完成；不混同N6 u3000，不冒称最终三视频已产 |
 | N2 token-full6000/500 | `music_direct_token_full6k_n2_v1/progress.json` update=750、actual_exposures=6000、unique_train=6000、complete=false | 3epoch/2250更新进行中；不可把最初500 checkpoint或CPU2250 fixture当正式完成 |
 | N5 pureFM@100 | 训练exit0、final100 marker；旧local_v6 queue finished=false来自后验scheduler断言 | 100实际更新已完成；视频另验。旧失败记录保留，不重训已正确pureFM |
-| N5 soft-anchor0.1@100 | anchor_v8最新日志update=15；尚无finished或anchor01_verified | 运行中；从原底座独立起步，不是接pureFM权重 |
-| N4 pureFM100三视频 | `review_h3_purefm100_n4_chunked_v2/videos` 当前1/3 completed audit，无run_complete | 首case工程通过，其余生成中；非整组成功 |
-| N6 u3000三caption＋视频 | 3原始caption完成，两个512cap重复；`review_omni6k_u3000_n6_video_v2/videos` 当前1/3 completed audit | u3000部署与caption推理完成；三视频仍待全部产物、人评 |
-| N1 rich＋MS fusion v2 | 当前保存3062/6000个样本JSON，无run_complete | 尚未完；这是文件数，不虚构全部format-valid或全量导出 |
+| N5 soft-anchor0.1@100 | 同事最新观察update=33；尚无finished或anchor01_verified | 运行中；从原底座独立起步，不是接pureFM权重 |
+| N4 pureFM100三视频 | `review_h3_purefm100_n4_chunked_v2` finished/run_complete均true、video_exit0、3/3 completed audit | 整组三视频技术完成；分块LoRA运行marker存在，质量不自动判优 |
+| N6 u3000三caption＋视频 | 3原始caption完成，两个512cap重复；视频finished/run_complete均true、video_exit0、3/3 completed audit | u3000三视频技术完成；非最终u3750，human_quality_accepted仍false |
+| N1 rich＋MS fusion | 已转三分片v3生成＋v4源可信导出；基础v2计数仅历史，启动3026旧＋2974新 | 尚未full6000 complete；以v4真实导出marker为准，不逐次追加运行计数 |
 | 自动评审发布 | publisher从完整audit逐条更新原focused manifest，保留原baseline/presets/scores | 发布不等于人工评分；HTTP可访问验收另以实际结果记 |
 
 N7 NLL五轮：0.778760 / 0.767208 / 0.763533 / 0.773399 / 0.807810。停止原因是 validation_plateau_not_human_quality_acceptance；human_quality_accepted=false。
@@ -46,9 +46,9 @@ N7最终三raw caption已保存 `MS/omni_ms_style_full_eval3_queue_v2/full_predi
 | 配置 | wJPptuhclZmKAEWs（楼梯） | wJPrpFsThWAcBQIw（红衣） | wJQTclrlOLEYYfTB（商店） | 解释 |
 |---|---|---|---|---|
 | 原MS＋同图 → 冻结H3纯视频 | complete audit | complete audit | complete audit | 3/3；用户已有舞蹈正反馈，不代填逐case分数 |
-| 原MS＋同图 → pureFM100 H3 | complete audit | 待产 | 待产 | 同纯视频协议，推理LoRA激活分块；质量待人评 |
+| 原MS＋同图 → pureFM100 H3 | complete audit | complete audit | complete audit | 3/3技术完成；LoRA分块保持纯视频协议，未自动判质量通过 |
 | 原MS＋同图 → soft-anchor0.1 H3 | 待训练验收 | 待训练验收 | 待训练验收 | 先完成100更新与完整状态验证，再推理 |
-| 音乐→Omni u3000 raw→冻结H3 | complete audit | 待产 | 待产 | caption未清洗；并非最终u3750 |
+| 音乐→Omni u3000 raw→冻结H3 | complete audit | complete audit | complete audit | 3/3技术完成；caption未清洗，非最终u3750 |
 | 音乐→Omni最终u3750 raw | caption已产 | caption已产 | caption已产 | 暂无本配置三视频完成证据 |
 | mean/token direct@100 | 历史已交付 | 历史已交付 | 历史已交付 | AV joint/native音频＋noTC hidden；用户pose负评，不并入纯视频单变量排名 |
 | N2 token-full2250 | 未到最终预算 | 未到最终预算 | 未到最终预算 | 500val检索/hidden工程验收和fixed3视频质量是不同层级 |
@@ -58,7 +58,7 @@ N7最终三raw caption已保存 `MS/omni_ms_style_full_eval3_queue_v2/full_predi
 - 原MS：`MS/h3_ms_style_eval3_gt_videos_v1/run_complete.json`，三个 `<ID>.audit.json`。
 - pureFM：`MS/review_h3_purefm100_n4_chunked_v2/videos/<ID>.audit.json`。
 - u3000：`MS/review_omni6k_u3000_n6_video_v2/videos/<ID>.audit.json`；caption来源 `MS/n7_omni6k_u3000_eval_n6_v1/omni_prediction3_raw.json`。
-- anchor新评测：`MS/review_h3_anchor01_s100_n4_v1`；当前尚无complete视频。
+- anchor新评测：`MS/review_h3_anchor01_s100_n4_v2`；当前尚无complete视频。旧v1是取消的历史等待器，不是训练/推理失败。
 - 旧direct：`MS/music_direct_video_compare_n4_v1`。生成协议见 `scripts_omnidance/exp/ms/music_direct_video_manager_n4_v1.py:47`，并非真纯视频。
 
 u3000 caption真实生成边界
@@ -74,7 +74,7 @@ u3000 caption真实生成边界
 ## 4. 修错与独立CPU反例
 
 1. **N5训练后错误scheduler断言**：local_v6要求DeepSpeed model shard的lr_scheduler为真；本配方scheduler由Accelerate的scheduler.bin保存，DS lr_scheduler=None合法。新anchor_v8检查scheduler.bin以及原8rank模型/Adam/RNG，不篡改原训练SOURCE_SHA。历史错误断言见 `scripts_omnidance/exp/ms/runtime_jobs/h3_ms_style_train_manager_n5_local_v6.py:218`；修正验收见 `scripts_omnidance/exp/ms/runtime_jobs/h3_ms_style_train_manager_n5_anchor_v8.py:225`。prior summary明确full_checkpoint_content_reverified_this_run=false，不能把简要修正验收扩写为本次重新审计全部pureFM内容。
-2. **pureFM推理LoRA临时激活OOM**：分块两低秩matmul的临时激活，不改权重、完整条件或sampler。实现 `scripts_omnidance/exp/ms/h3_video_infer_chunked_lora_v1.py:18`；CPU FP32/BF16四shape通过，最大绝对差1.19e-7；GPU真实首case completed audit通过。CPUtoy不等于整模型GPU逐值证明。
+2. **pureFM推理LoRA临时激活OOM**：分块两低秩matmul的临时激活，不改权重、完整条件或sampler。实现 `scripts_omnidance/exp/ms/h3_video_infer_chunked_lora_v1.py:18`；CPU FP32/BF16四shape通过，最大绝对差1.19e-7；GPU真实三case completed audit/run_complete通过。CPUtoy不等于整模型GPU逐值证明。
 3. **N6 projector dtype**：加载modules_to_save前先把audio proj1/proj2转成保存dtype，逐tensor严格核实际加载值与saved值，不把BF16损失误当已完整加载。见 `scripts_omnidance/exp/ms/runtime_jobs/n7_omni6k_u3000_infer_n6_v1.py:74`。原失败queue保留，接续视频复用已产真实raw caption，不再重生成。
 4. **N7最终评测内存准入**：旧v1在模型加载前因cgroup headroom不足失败。已完成审计报告记录只对本人完成的training_state.pt作POSIX_FADV_DONTNEED，保留180GiB门禁，不全局drop_caches、不删文件、不杀其他进程；最新v2三caption确已complete。
 5. **评审manifest缓存原子替换竞态（本次独立发现并复测）**：读旧打开文件后stat新路径，会把旧gzip绑到新mtime，下一GET继续旧body。temp CPU fixture真实失败；主助手改用打开文件fstat后同反例通过。源码 `scripts_omnidance/exp/review_web/server.py:469`。这是本地非HTTP回归，不宣称已重启或远端HTTP验证。
@@ -87,13 +87,14 @@ u3000 caption真实生成边界
 - [ ] N1恰好6000样本processed、run_complete、实际failed/included统计；稳定全量导出与lineage。原动作可信，不加额外语义/BPM门禁。
 - [ ] N2实际2250成功更新、3epoch、18000曝光、6000unique、500val结果及完整model/Adam/RNG/sampler；固定三case推理，不用检索提升替代视频。
 - [ ] N5 anchor0.1独立100更新、八rank完整状态验收；不重新训练已完成pureFM、不额外插入anchor1/300。
-- [ ] pureFM100与u3000各固定3真实视频完整audit/run_complete；anchor100同固定3case完成。
+- [x] pureFM100与u3000各固定3真实视频完整audit/run_complete及video_exit0（共6条）；不代表人工质量通过。
+- [ ] anchor100同固定3case完成。
 - [ ] 若将最终u3750接到H3，独立命名配置并固定3视频；不得以u3000三视频替代最终模型验收。
 - [ ] 已完成视频逐条发布、保留旧baseline/presets/scores；真实manifest/媒体range HTTP验证。自动可播放不等于人工效果通过。
 - [ ] 汇报训练工程完成、效果通过/失败/待人评分离；目标未达成时记录有限负结果，不无限追加训练。
 - [ ] 最终Git仅显式纳入必要源码、方案和小结果；diff/CPU/安全检查后由主助手commit/push并核远端。本文作者未commit/push。
 
-资源边界：当前N5八卡训练、N2单卡映射、N1单卡融合、N4/N6有限推理按实际admission使用；anchor评测队列最多两条H3 pipeline/节点。未用节点/GPU应释放给用户其它任务，不把八节点全群默认独占。归档脚本资源快照仅历史证据，不能据此声称当前仍占用相同资源。
+资源边界：当前N5八卡训练、N2单卡映射、N1三卡分片融合、N4/N6有限推理按实际admission使用；anchor评测队列最多两条H3 pipeline/节点。未用节点/GPU应释放给用户其它任务，不把八节点全群默认独占。归档脚本资源快照仅历史证据，不能据此声称当前仍占用相同资源。
 
 ## 6. 必要Git源码与历史CPU provenance
 
@@ -164,3 +165,47 @@ u3000 caption真实生成边界
 本次独立temp CPU fixture通过：refs错误/旧flags非阻断；wrong source/group/hash/semantic批准伪造/撞cap/token数量不符拒绝；尾随JSON恢复，截断/空/重复键拒绝；重复结果拒绝；synthetic6000全不完整时不建立EXPORT或complete marker。未执行live export/wait、未读取私人6000source records或模型/视频，不用fixture冒实际全量完成。
 
 2026-10-24T01:13:30.049354+08:00只读plan/目录事实：3026旧记录复用、2974待新生成；shard0/1/2已保存17/12/10个16字符ID结果文件。v4 complete不存在，v3 run_complete不存在；这是**文件数**不是逐条独立eligible计数。仍须最终included=6000/unique=6000/unavailable=0与两导出文件SHA、完整来源lineage后才标全量完成；val500仍deferred。v3自身finalizer可能继续留下refs unavailable失败；不得拿其失败否定已完成的生成，也不得以独立v4已启动冒全量成功。
+
+## 10. 已读取真实启动里程碑与N2最终等待入口
+
+N1真实启动报告 `MS/fusion_parallel_rewrite_v3/parallel_startup_verified_v4.json`，SHA `d4d7d39e58a6cf0fae7a845dcad09f1a86159548a716e74e4af989f3d7f93811` 已独立核SHA并完整读取：milestone为three_shards_loaded_and_first3_real_forwards；复用3026、待新2974，分片分配987/992/995；首9条有路径/记录SHA/parsed_body=true，生成tokens均<2048。报告自带batch6000_complete=false，是**真实启动历史**而非全量完成；首9记录内容不重复读取或全文语义审核，GPU/worker currentidentity仍按该报告时点，不假装本次实时重新查询。小结果JSON已保存必要milestone字段与首9路径SHA，不上传caption正文或整worker/cgroup历史。
+
+N2最终等待入口 `scripts_omnidance/exp/ms/music_direct_full6k_final_video_n4_v1.py:44`，SHA `b1069ea048b6f694713b7871851760eabcff06b1e0a92323180cb12a77910458` 已完整读取并独立执行CPU自测：严格final2250/18000曝光/6000unique/3valepoch/467format4状态、配置scope正例；750/2249/2epoch/false或数值complete/布尔更新/500替代checkpoint/partialfailure/错误部署metadata共12负例全部拒绝。仅fixture，不coldread最终模型/Adam、不采GPU、不联网。
+
+实际小JSON phase仍 `waiting_final_no_GPU_no_model_coldread`；最终 `MS/music_direct_full6k_final2250_video_n4_v1/report.json` 与 `review_http.json` 均不存在，不写成已完。后续严格完成训练状态审核后才在N4 GPU3单pipeline生成fixed3；使用原native AV joint、video/audio各50步、原音乐mux，必须与历史mean/token对照，不和源caption纯视频当单变量。统一publisher还须注册本modelID/fixed3/preset及保留旧mean/token；等待manager看到真实HTTPmanifest＋3range验证后才出技术完成。
+
+## 11. 最终2250统一publisher v5的独立CPU验收
+
+新 `MS/publish_ready_eval_review_v5.py`，SHA `89f72e724e48aecb8d3123839e61065f26dbe24efd95250c563b2e7df159a40a` 已完整读取、AST和原文SHA核验，另存runtime_jobs（累计20份）。原v4文件不改；v5现为当前运行入口，托管任务KLT9Wr已独立核为running，`MS/publish_ready_eval_review_v5.log`真实首事件为pureFM/u3000各3、anchor/final2250各0。旧v4仅精确取代publisher，不是模型训练或推理失败。
+
+独立temp fixture验证：缺最终full receipt不给发布、2249拒、2250/18000/402Adam/467state/full RNG sampler＋真实nativejoint身份记录正例收；纯视频anchor故意audio_streams=1拒绝，但其它三组后续3/3仍发布；精确basename、nativeAV audio_input/output=true与purevideo=false明确区分，oldmean/token/preset/scores保留。仅fake媒体/audit/receipt，无HTTP/GPU/媒体hash或decode。只读真实fixed3 manifest核音频stem恰好等于各SID，当前direct文件名 `<SID>_<SID>.mp4` 与实际case一致。
+
+N2仍须真实finished与final_cpu_checkpoint、逐SID validated/audit再进入v5；CPU fixture2250不是训练2250，发布尚未验证的新模型不得预填槽位。既有pureFM/u3000两组六视频技术完成保持；anchor及最终N2/最终u3750仍按各自actual completion验收。
+
+## 12. fstat修复已实际加载到8775（原本仅CPU回归的后续闭环）
+
+运营只精确重载8775同argv/同focused manifest/同评分，不改source或其他端口。旧PID2974656启动16:24:20Z早于fstat修复mtime17:03:42Z，故旧进程确未加载该修复；新PID3105683/start523476104晚于修复。已独立读取实际托管任务MJNBOR状态running、其启动命令与 `MS/review_8775_fstat_loaded_v2.log` 的serve8775日志，当前fstat为**实际重载已加载修复**，不再仅是磁盘source/本地CPU通过。
+
+同事重载后检查6视频HTTP206、api/manifest200、reviews200且oldmean/token/base保留；具体已保存HTTP证据JSON路径仍在索取，未读取之前按同事实际检查报告标注，不伪造本代理另发HTTP验证。publisher v5 KLT9Wr继续运行，现pureFM/u3000各3、anchor/final2250各0；不把重载成功当全部实验完成。此前§4的本地非HTTP回归描述保留为修复历史。
+
+## 13. 02:06 实际进度与最终身份验收修补
+
+- N2主会话实际读取progress.json为1873/2250、epoch=3、曝光14984、unique_train6000、complete=false；随后最终评测消费者报告实际1903，latest仍1500。两个时点不矛盾。第三轮仍在运行，最终等待器不占GPU、不提前冷读模型，不把1500或检索指标当最终结果。
+- N5 anchor实际39/100，尚无100完整训练终态，评测继续等待。本轮pureFM100和u3000各三视频已技术完成，用户人评另见results/h3_purefm100_and_omni_u3000_user_review_20261024.json。
+- N1最新worker实测3586/6000，仍只有三个生成worker。已授权独立v5按剩余SID最多八GPU错峰加载；每次fresh cgroup预算准入、保旧完整正文（包括refs-only）、保SYSTEM和模型配方。这里是扩容实施中，不声明八worker已开始forward或6000已完成。
+- 最终u3750：主会话读取cache_exit.json=0；video child3962681、parent3962061实际Rl，GPU显存78134MiB，argv使用最终caption及其condition cache。三case audit与finished仍未产出。原sample_cached没有逐步stdout，故无采样日志不证明死锁；有进程/显存也不证明视频成功。已要求独立publisher v6增加final3750第五组，不能以中间u3000替代最终。
+- 完成checker独立CPU反例已证明可选SHA门禁会接受错误anchor LoRA或Omni caption，bool可混作exit_code/anchor_lambda，部分native完整状态字段不足也会误过。已授权修补一次性验收代码、强制实际来源绑定及typed budgets，并补交换u3000/final3750等负例；此时修复尚未交付，不把发现漏洞写成已修好。运行中的训练/推理源码保持冻结。
+- GitHub仍是阶段200cad1；完整目标当前未达成，最终发布须等全部有限训练、完整6000导出、五组15视频和真实HTTP通过后再次push并核HEAD。
+
+
+## 14. 最终五角色/15case验收材料的独立核查（仍非全部完成）
+
+当前五角色配置 `MS/goal_completion_video_roles_v1.json`：purefm100、anchor01_100、omni_u3000、direct_full2250、omni_final3750共5个不同modelID；每配置固定3个sourceID，合计15case。四个caption-H3配置是pure_video，direct2250保留原nativeAV，roles/protocol核查通过。02:06 CST实际completed audit仅pureFM3＋u3000 3＝6；anchor/direct2250/final3750尚无完整终态，融合最终v4 complete也不存在。
+
+严格checker实际运行 `MS/goal_actual_completion_audit_1792778114928.json` complete=false/pending，退出2是正确行为，不放宽。该环境Git lsremote超时只说明远端连通待核，**不能据此认定之前push失败**；当前HEAD200cad1仅阶段提交，最终GitHub核由主会话可连环境完成。
+
+独立temp CPU负测发现旧checker身份门禁缺口：source-assumed布尔False可被忽略；N7 exit_code=False与0相等；pureFM anchor_lambda=False与0相等且anchor full-state范围未约束；anchor loraSHA及两Omni captionSHA可选时错误身份仍通过；direct receipt state467/exposure18000/uniqueepoch及native音频/学生未读teacher的条件不足。现有selftest通过不能消除这些反例；已向主助手报告并协调独占checker修正，**不修改任何运行中训练/推理源**。当前video_config也缺anchor loraSHA与两Omni captionSHA，必须补明确身份，不能因为训练尚在跑而删除gate。
+
+小报告 `results/final_packaging_gate_verification_20261024_v1.json` 包含roles、6/15当前事实、真实负例与源码行号、融合v4最终路径、待核Git边界。最终3750运营源码 `scripts_omnidance/exp/ms/runtime_jobs/eval_omni_final3750_review_v1.py` 原文已归档SHA a21f4e278e…、字节一致＋AST通过，复制未再GPU验证（累计21份runtime）。
+
+发布材料只纳必要源码/小报告，不stage来源未知的notes26修改或agent6结果；不上传weights/media/原caption私有数据/Adam/凭证。本文作者不stage、不commit/push。

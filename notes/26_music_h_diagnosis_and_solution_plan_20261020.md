@@ -1192,3 +1192,5 @@ tlzwCx随后实际返回pureFM首成功更新：optimizer_updates=1、microbatch
 两项旧事件监测tlzwCx/RWXfHG实际均满30分钟后结束，训练4ITHij/FBQ4VO仍running且未见错误；这不是模型退出。已按既有事件方式续U0yaFG/HAbZDf，无重复训练launch。H3 pureFM随后已核6成功optimizer更新，仍继续既定100及后两anchor组，未验视频不自动300。
 
 随后实际日志推进至N7全量1600更新/12800曝光/5,164,256assistanttokens、第3epoch；N3 pureFM14成功更新，无训练错误。第二轮同case原始caption与两轮事件canonical JSON SHA已独立归档omni30b_ms_style_full_epoch2_v1.json；原epoch1报告/生成原文不覆盖。训练、两条最终固定三case依赖和资源范围未改变，不以归档替代真实视频验收。
+
+第三整轮固定验证已实际返回：epoch3/update2250/18000曝光/7,267,407训练assistanttokens；fixed val500/192753tokens，NLL0.7635331744495308，较第二轮下降0.479014%，未达到relative_delta0.5%，stale_epochs=1。同三个raw AR分别425/194/402词、8/17/7个不同整句、最高重复9/2/16；第一条肘伸屈长循环，第三条手与右膝近远长循环，第二条较多样但仍主要手/肘/肩规则动作，未证明全身编排或音乐控制。原文与解码参数未改，不去重/加惩罚或把循环稿交H3。新独立omni30b_ms_style_full_epoch3_v1.json保实际event/raw SHA、停止门槛及局部正负边界；patience尚未满足，继续原唯一训练及最终3holdout依赖，不以三轮曝光当整体结束。

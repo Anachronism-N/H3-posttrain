@@ -1202,3 +1202,7 @@ tlzwCx随后实际返回pureFM首成功更新：optimizer_updates=1、microbatch
 同一manager331804按原计划自动启动fresh anchor0.1，launcher348229，开始UTC2026-10-23T08:53:52.101420，N3同八卡同起点数据；训练来源247/cachemarker6eba保持冻结。NxCmF9已绑定这一组实际日志，后续anchor1及6mgBAg三个case/组评测仍原依赖。两组未完、未有训练后视频或质量正评，不续300或宣布整体完成。N7全量同时实际2700更新/21600曝光/8,719,628assistanttokens，第四轮进行中，第三val和AR负结果边界不变。
 
 纯FM完整状态独立审计已结束：EeTayx实际完成两份state共56成员/136,232,195,730bytes的SHA与size、8rank Adam100/FP32moment/master finite、8RNG及8model global_steps100核验后，在末尾错误假定scheduler.last_epoch=100时断言失败；旧失败不重标成功。只读实际scheduler为ConstantLR factor1/lr1e-5、last_epoch800/_step_count801，实际AcceleratedScheduler非split_batches循环8rank，每优化更新推进8次，故800与100优化更新一致且不改变固定学习率。kJYNaf仅重新读取小状态/正确scheduler计数及LoRA SHA，actualexit0；不重复136GB哈希、不修改训练或状态。custom与marker进度相同，两marker相同，LoRA SHA474f196094d7827c3c50c01f044a9b46fcebd69393be57508f3fdc5d067869e2。结果h3_ms_style_pureFM100_complete_audit_v3.json保失败与修正来源；未做额外GPU更新/真实resume/下一更新恢复验证，也不声称视频质量已过。
+
+第四轮Omni固定验证实际返回epoch4/update3000、24000曝光、9,689,876训练assistanttokens；val500/192753tokens，NLL0.7733987114458207，较第三轮恶化1.29209%，stale_epochs=2，尚未满足patience3。原同3case AR为191/157/143词、12/15/7个不同整句、最高精确整句重复1/2/1；较第三轮长死循环减轻，但正文仍主要手/肘/肩相对近远与同义改写，不能因精确重复降低便宣称语义多样/全身编排或音乐控制成功。原输出/解码参数不改，继续已批停止规则；若下一轮stale3则完整状态收尾后接m5K3wl固定三holdout。H3 anchor0.1已实际11更新，其中u10/u11锚定项激活且非零，未证明视频质量改善，原三组/评测依赖不变。
+
+随后实际全量3100更新/24800曝光/10,009,102assistanttokens，第5epoch已开始；anchor0.1达15成功更新，锚定非零。新omni30b_ms_style_full_epoch4_v1.json绑定第四轮event/raw caption SHA，保同case精确句重复与语义近义重复区别，不覆盖前轮或把literal loop减少变成编排获评通过。原唯一训练、停止规则及最终推理依赖保持。

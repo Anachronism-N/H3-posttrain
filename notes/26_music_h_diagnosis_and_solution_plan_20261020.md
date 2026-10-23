@@ -1106,3 +1106,31 @@ H3正式100/300数据来源门禁已实现并主线程C2GQhv独立CPU全部通�
 用户指出512太少、多个节点职责可合并；采用紧凑安排N7音乐30B、N3缓存后同节点顺序H3纯FM/anchor0.1/1、N4统一GT/预测caption/检查点三个case推理，N1 CPU组织，不新占N2/N5/N6/N8。512只快速中间预算，原6000/500标签转换与其并行，不要求512质量成功才接全量；完整源标签弱监督与严格rich融合来源分开。现正在复用原split/MS/caps准备6000/500，并接通H3独立source_label_train门禁与新caption缓存，不改正在运行的Omni生产SHA、不重旧smoke/6500hidden/6000CLIP。
 
 随后实际日志更新至80次optimizer更新，第一轮full_epoch_validation已返回：epoch1/update64、NLL0.8835530356、45003assistanttokens，三条固定AR样本均长重复“left hand moves farther from right elbow/shoulder”直到512token上限。此为重要负结果，不把teacher-forcing低NLL当输出质量通过；保原三epoch继续，不偷偷截断/加防重复生成参数把raw伪装合格。全量标签继续准备，但同配方扩量不自动按低NLL判可用，需结合后两轮自回归与三case视频。首epoch checkpoint写出期间跨rank等待是实际保存，不重复launch。
+
+#### 2026-10-23 全量现成标签已准备、N4基线运行、N3缓存超时修复
+
+原6500MS＋风格转换完整结束：6000/500源ID全保，94原门禁拒绝由86音频短窗（83差1sample、3差16sample@24k，最大0.667ms）及8身体朝向“face up”误判identity组成，均无音频/MS来源SHA错误。不是原6k标签缺失或需要重新打标。保持原失败v1报告/原句；新v2只把face up写成supine身体朝向，音频窗明确[0,min(5.0625,原wav真实时长)]，不补音、不伪完整长度、不删ID、不转split。swWRuE实际输出全部6000train/500val，metadata f7228fd20b0e4b41f3af1e9deeb95b7fdb6d6dd316e1a290f0f70685c14a234c；3HVuvk实际全量文字/音频/MS/风格/来源分区准入通过，仍weaklabels、unknown原MS窗口、semantic_approval=false。
+
+为不修改正在运行的4d82 Omni入口/H3父标签签名，新全量入口MS/omni_ms_style_full_train_v2.py在私有模块中复用已验训练实现，只替换数据边界，fullentry与labelbuilder指纹进入provenance；不改训练算法、不假同optimizer resume。cAJM0N已实际绑定N7 predecessor3198080 pidfd，等现192update/三epoch完整结束后fresh官方30B full6000/500、min3/max10、patience3/delta.005。完整Adam状态改存N7已有本地/opt，日志保shared queue，避免CephFS多次大checkpoint串行写入；不是已宣布full训练完成。原pilot第二轮fixed valNLL0.845635，三条AR仍长重复，保负结果不截断或加生成惩罚伪修。
+
+固定三case heldout输入OyF8TU已实际准备，Omni infer3 JSONL只音乐/指令，GT不进入学生。N4唯一4b69T9 manager3921537，已实际完成新GTcaption condition cache并进入video child3923064；原AV视频不得冒当前无音频同协议对照，三case视频尚未全部验收。
+
+H3 source_label_train弱监督门禁/完整恢复CPU SvfoGi通过，真实512/128metadata GELQn5实际结束（train metadata SHA6b145dfb01e3468b50a0e1870639551c726662367744d2dc4d47014f54d3cacf）。N3 initial POwQqO四rank缓存失败在rank1/2/3等待rank0发布NCCL uniqueID600秒，trace定位main_process_result的模型加载前来源检查；未进入cache forward，不判画质/算法/OOM失败。完整来源校验CephFS冷读超过默认分布式等待，旧队列/日志保留。新运行先在N3CPU做完整来源预检再上四卡，InitProcessGroupKwargs明确2小时以容纳存储阶段，未放宽来源SHA/标签/窗口门禁；仅此运行配置源码247e77eb365685a92680bd3934ac172c7d81242f06fb28f7f4aa665130233c63，Tz1cdG CPU回归另验。mHWhEu新cache v2任务已启动，不重复旧cache或重标f3旧producer。缓存4rank的原因是text62.13GiB+VAE9.70GiB每rankCPU权重，8rank可能超N3实际500GiB容器余量；后续训练仍8rank同节点顺序三组。
+
+已提交已开训代码和真实首轮负结果5c6b6c6；GitHub push失败因为既有VSCode askpass socket ECONNREFUSED，当前无gh/token可用，不谎称远端更新、不改认证config/跳hooks，不让发布认证阻断实际训练。
+
+#### 2026-10-23 三轮验证已齐，三节点实际链路继续
+
+实际pilot三轮validation均已返回：epoch1 NLL0.8835530356，epoch2 0.8456347593，epoch3 0.8377173103，每轮45003assistanttokens。训练192updates/1536example/506940tokens。三轮各三条AR均明显重复到512token上限，第三轮最多重复相同短句25/22/17次；此为自回归输出失败，不宣布caption可用。最终checkpoint/complete marker未提交时不称整个pilot已正确收尾。
+
+N3新mHWhEu已actual_N3_CPU_source_preflight_complete，四rank launcher118512已启动，rank0在完整源模型指纹读取/加载（第7/14TC权重、rchar约106GB），其余rank等待，GPU显存仅初始化上下文时不把100%等待当缓存已编码。新缓存complete后43N0Gj在同节点顺序三组8GPU100steps，完整DS最终state路径training-state-final-100（不是旧误猜final/complete），状态存/opt降低shared写等待。
+
+N4原GTcaption第一条wJPptuhclZmKAEWs纯视频实际完整：124@24/704×1280、1video0audio/全解码、50video scheduler、三audiohooks0，videoSHA810830ad5c264b40b08c1d257676ca482aa5cdd27c828fadc9f1d4e247035dc3。Lm6cBz采样12帧图已Read，能见手臂、重心/步位、屈腿抬脚与朝向变化；只静态抽样，不当连续听看/同步/完整身份验收。其他两条仍在生成，保持固定三case，不把旧AV基线当新纯视频重复。
+
+N4已有官方30B本地staging，故FcB3zI已绑定现pilot完整结束后在N4 GPU1做原始官方base/pilot192同三holdout音乐caption对比，与GPU0纯视频队列并行。调用现frozeninfer，不给GT文字、不加重复惩罚/截断raw；这条对照用于区分模型原先能力与弱监督造成的重复，不替最终视频质量。N7之后全量仍freshbase，不虚构跨数据optimizerresume。
+
+全量入口并行sourcehash结果列表已最小改为按路径排序，避免线程插入顺序让完全同数据的resume fingerprint漂移。旧仅等待的fullmanager3200910已精确UID/argv/pidfd停止，未开任何fulltrain、不动pilotworker；Clnp9E新v3队列与fullentryca5b5f9af16fb54f3b20bc127aefd6719a40c18777248784e695dc70e28aa985绑定，旧v2队列和3HVuvk准入证据保留，不重标历史SHA。
+
+vCxVVq实际exit0、192updates/三epoch完整完成，final checkpoint-u0000192-e03-p0000000已提交。hI1OVz独立真实torch.load全state核628Adam均step192/FP32moments有限、8rankRNG/sampler终态、fingerprint/latest一致；EBlzck独立4个文件SHA全核15,507,675,931bytes，complete marker4cb60769…，trainedadapter52102ba3…。这是完整预算与状态成功，不是AR/视频质量成功，无额外GPUresume或优化更新。完整结果见omni30b_ms_style_pilot_complete_audit_v1.json。
+
+完整pilot退出后Clnp9E已实际上卡full6000/500：N7 manager3201357/torchrun3201600，2026-10-23 09:32:47北京时间，新/opt/omni_ms_style_full_train_v2，fresh官方base非跨数据resume，min3/max10。当前launch不等同首optimizer更新已成功。N4 FcB3zI已开始base→pilot192 fixed3caption对比，base三个输出无旧SFT式长重复但包含多舞者/长编排/音乐叙述等未受单人motion-only约束；不自动投H3或称质量通过。pilot192还在生成，原文本全保。

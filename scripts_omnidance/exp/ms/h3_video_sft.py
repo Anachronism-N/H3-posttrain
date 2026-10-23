@@ -1,5 +1,6 @@
 """Opt-in caption/reference video-only H3 SFT; legacy AV training is untouched."""
 import argparse
+from datetime import timedelta
 import hashlib
 import json
 import math
@@ -520,10 +521,136 @@ def formal_training_provenance(metadata_path, caption_version):
                 fixture_only=False, formal_reuse_forbidden=False, approval_chain_verified=True)
 
 
+def source_label_training_provenance(metadata_path, caption_version):
+    """Bind unreviewed H3 targets to the authorized frozen Omni source-label pilot."""
+    import dance_caption_fusion as fusion
+    import omni_dance_sft as omni
+    metadata_path = Path(metadata_path).resolve()
+    sidecar_path = metadata_path.parent / "source_label_h3_sidecar.json"
+    sources = {}
+
+    def verify(source):
+        if not isinstance(source, dict) or not {"path", "sha256", "size_bytes"} <= set(source):
+            raise ValueError("Source-label H3 requires a complete path/SHA/size record")
+        actual = fusion.source_record(source["path"], source["sha256"])
+        if actual != {key: source[key] for key in ("path", "sha256", "size_bytes")}:
+            raise ValueError("Source-label H3 source record changed")
+        sources[actual["path"]] = actual
+        return actual
+
+    def reject_fixture(value):
+        if any(value.get(key, False) is not False for key in ("fixture_only", "formal_reuse_forbidden")):
+            raise ValueError("Fixture data cannot enter source-label H3 training")
+
+    sidecar_source = fusion.source_record(sidecar_path)
+    sources[sidecar_source["path"]] = sidecar_source
+    sidecar = fusion.read_json(sidecar_path)
+    reject_fixture(sidecar)
+    if (sidecar.get("protocol") != "h3-source-label-train-provenance-v1" or
+            sidecar.get("complete") is not True or sidecar.get("caption_version") != caption_version or
+            sidecar.get("authorization") != omni.SOURCE_LABEL_AUTHORIZATION or
+            sidecar.get("label_quality") != "source_labels_unreviewed" or
+            any(sidecar.get(key) is not False for key in ("approval_chain_verified", "human_review_completed", "semantic_approval")) or
+            sidecar.get("original_source_window_mapping") != "unknown"):
+        raise ValueError("Source-label H3 requires authorized unreviewed labels, not semantic/human approval")
+    validator_source = verify(sidecar["frozen_omni_validator_source"])
+    if validator_source["path"] != str(Path(omni.__file__).resolve()):
+        raise ValueError("Source-label H3 must reuse the frozen Omni training validator")
+    verify(sidecar["source_code"])
+    parent_metadata = verify(sidecar["parent_omni_metadata"])
+    parent_sidecar = verify(sidecar["parent_omni_sidecar"])
+    if Path(parent_sidecar["path"]) != Path(parent_metadata["path"]).parent / "source_label_sidecar.json":
+        raise ValueError("Source-label H3 parent sidecar and metadata directories differ")
+    parent_config = argparse.Namespace(metadata=Path(parent_metadata["path"]), data_scope="source_label_pilot",
+                                       smoke_steps=0, min_epochs=3, max_epochs=3)
+    rows, train, val, parent = omni.validate_data_boundary(parent_config)
+    if (parent.get("metadata") != parent_metadata or parent.get("sidecar") != parent_sidecar or
+            parent.get("caption_version") != caption_version or parent.get("approval_chain_verified") is not False or
+            sidecar.get("parent_caption_version") != caption_version or
+            parent.get("manifest") != sidecar.get("parent_manifest")):
+        raise ValueError("Source-label H3 parent metadata/version/manifest identity differs")
+    manifest_source = verify(sidecar["parent_manifest"])
+    manifest = fusion.load_manifest(manifest_source["path"])
+    reject_fixture(manifest)
+    records = {record["id"]: record for record in manifest["records"]}
+    if len(records) != len(rows) or set(records) != {row["id"] for row in rows}:
+        raise ValueError("Source-label H3 parent manifest IDs differ")
+    outputs = sidecar.get("outputs", {})
+    if set(outputs) != {"h3_video_train.json", "h3_video_val.json"}:
+        raise ValueError("Source-label H3 requires separate complete train/val outputs")
+    policy = dict(train_only="h3_video_train.json", val_only="h3_video_val.json",
+                  combined_direct_cache_or_training_forbidden=True)
+    if sidecar.get("h3_metadata_policy") != policy:
+        raise ValueError("Source-label H3 metadata policy must forbid combined/val training")
+    for name, source in outputs.items():
+        if Path(source["path"]).resolve() != metadata_path.parent / name:
+            raise ValueError("Source-label H3 output partition path differs")
+        verify(source)
+    if metadata_path != Path(outputs["h3_video_train.json"]["path"]).resolve():
+        raise ValueError("Source-label H3 cache/training requires train-only metadata")
+    expected_rows = []
+    groups = {key: {"train": set(), "val": set()} for key in ("source_group", "image", "paired_video")}
+    for row in rows:
+        record = records[row["id"]]
+        reject_fixture(row)
+        reject_fixture(record)
+        if (row["source_group"] != record["source_group"] or row["split"] != record["split"] or
+                row["caption_version"] != caption_version):
+            raise ValueError("Source-label H3 row ID/group/split/version differs from parent")
+        media = {key: verify(record["provenance"][key]) for key in ("image", "paired_video", "meta")}
+        if (record["paired_video_path"] != media["paired_video"]["path"] or
+                record["image_path"] != media["image"]["path"]):
+            raise ValueError("Source-label H3 image/video paths differ from parent manifest")
+        meta = fusion.read_json(media["meta"]["path"])
+        reject_fixture(meta)
+        if (type(meta.get("natural_output_frames")) is not int or meta["natural_output_frames"] != 81 or
+                type(meta.get("target_fps")) not in (int, float) or meta["target_fps"] != 16 or
+                meta.get("target_frames") != 81 or meta.get("tail_padding_frames") != 0 or
+                meta.get("video") != media["paired_video"]["path"] or
+                meta.get("first_frame") != media["image"]["path"]):
+            raise ValueError("Source-label H3 requires actual normalized 81-frame/16fps unpadded media evidence")
+        caption = omni.text_content(row["messages"][-1]["content"])
+        expected_rows.append(dict(id=row["id"], source_group=row["source_group"], split=row["split"],
+            motion_caption=caption, caption_version=caption_version, video=media["paired_video"]["path"],
+            references=[dict(type="image", image=media["image"]["path"])], video_window_seconds=[0, 5.0625],
+            trained_caption_approved=False, label_quality="source_labels_unreviewed",
+            provenance=dict(parent_omni_metadata=parent_metadata, parent_manifest=manifest_source, **media)))
+        groups["source_group"][row["split"]].add(row["source_group"])
+        for key in ("image", "paired_video"):
+            groups[key][row["split"]].add(str(Path(media[key]["path"]).resolve()))
+    if any(group["train"] & group["val"] for group in groups.values()):
+        raise ValueError("Source-label H3 source group or visual media leaks across train/val")
+    if sidecar.get("counts") != dict(train=512, val=128) or (len(train), len(val)) != (512, 128):
+        raise ValueError("Source-label H3 requires the actual 512/128 parent pilot")
+    for partition in ("train", "val"):
+        selected = [row for row in expected_rows if row["split"] == partition]
+        actual_rows = fusion.read_json(outputs["h3_video_" + partition + ".json"]["path"])
+        for row in actual_rows:
+            reject_fixture(row)
+            validate_video_inputs(row)
+            if row.get("trained_caption_approved") is not False or row.get("label_quality") != "source_labels_unreviewed":
+                raise ValueError("Source-label H3 metadata cannot claim caption approval")
+        if (type(sidecar["counts"][partition]) is not int or len(selected) != sidecar["counts"][partition] or
+                actual_rows != selected):
+            raise ValueError("Source-label H3 exact metadata/captions/partitions differ from parent Omni")
+    for source in list(sources.values()):
+        verify(source)
+    return dict(protocol="h3-source-label-train-provenance-v1", metadata=outputs["h3_video_train.json"],
+        sidecar=sidecar_source, parent_omni_provenance=parent, verified_sources=sources,
+        frozen_omni_validator_source=validator_source, caption_version=caption_version, h3_metadata_policy=policy,
+        train_ids=[row["id"] for row in expected_rows if row["split"] == "train"],
+        val_ids=[row["id"] for row in expected_rows if row["split"] == "val"],
+        authorization=omni.SOURCE_LABEL_AUTHORIZATION, label_quality="source_labels_unreviewed",
+        approval_chain_verified=False, human_review_completed=False, semantic_approval=False,
+        original_source_window_mapping="unknown", fixture_only=False, formal_reuse_forbidden=False)
+
+
 def validate_data_boundary(dataset, args):
     scope = getattr(args, "data_scope", "interface") or "interface"
-    if scope not in ("interface", "reviewed_train") or scope == "interface" and args.max_train_steps != 2:
+    if scope not in ("interface", "reviewed_train", "source_label_train") or scope == "interface" and args.max_train_steps != 2:
         raise ValueError("Interface data requires explicit max_train_steps=2; it cannot enter 100/300 training")
+    if scope == "source_label_train" and getattr(args, "temporal_policy", "native_down") != "nearest24_repeat_last124":
+        raise ValueError("Source-label H3 requires explicit nearest24_repeat_last124 temporal policy")
     if dataset.load_from_cache:
         root = Path(args.dataset_base_path)
         marker = verify_complete_marker(root)
@@ -545,11 +672,17 @@ def validate_data_boundary(dataset, args):
                     signature["dataset_metadata_path"] != actual["metadata"]["path"] or
                     signature.get("sources", {}).get("metadata_sha256") != actual["metadata"]["sha256"]):
                 raise ValueError("Formal cache approval/metadata/media provenance changed")
+        elif scope == "source_label_train":
+            actual = source_label_training_provenance(provenance.get("metadata", {}).get("path", ""), args.caption_version)
+            if (provenance != actual or len(dataset) != len(actual["train_ids"]) or
+                    signature["dataset_metadata_path"] != actual["metadata"]["path"] or
+                    signature.get("sources", {}).get("metadata_sha256") != actual["metadata"]["sha256"]):
+                raise ValueError("Source-label cache metadata or unreviewed source provenance changed")
         elif provenance.get("protocol") != "h3-interface-only-v1" or provenance.get("formal_reuse_forbidden") is not True:
             raise ValueError("Interface cache lacks explicit nonformal provenance")
         provenance_sha = hashlib.sha256(json.dumps(provenance, sort_keys=True).encode()).hexdigest()
         expected_captions = {}
-        if scope == "reviewed_train":
+        if scope in ("reviewed_train", "source_label_train"):
             expected_captions = {row["id"]: hashlib.sha256(teacher_video_prompt(row).encode()).hexdigest()
                                  for row in json.loads(Path(provenance["metadata"]["path"]).read_text())}
         sample_ids = set()
@@ -558,18 +691,23 @@ def validate_data_boundary(dataset, args):
             info = value[0]["h3_video_cache"]
             if info.get("data_scope") != scope or info.get("data_provenance_sha256") != provenance_sha:
                 raise ValueError("Cached sample scope or approval binding differs from its producer")
-            if scope == "reviewed_train":
+            if scope in ("reviewed_train", "source_label_train"):
                 sid = info.get("sample_id")
                 if sid in sample_ids or sid not in expected_captions or info["caption_sha256"] != expected_captions[sid]:
                     raise ValueError("Cached sample ID/caption differs from its approved train split")
                 sample_ids.add(sid)
-        if scope == "reviewed_train" and sample_ids != set(expected_captions):
+        if scope in ("reviewed_train", "source_label_train") and sample_ids != set(expected_captions):
             raise ValueError("Formal cache is missing approved training samples")
     elif scope == "reviewed_train":
         provenance = formal_training_provenance(args.dataset_metadata_path, args.caption_version)
         if (len(dataset) != len(provenance["train_ids"]) or
                 dataset.data != json.loads(Path(args.dataset_metadata_path).read_text())):
             raise ValueError("Loaded formal dataset differs from its approved train metadata")
+    elif scope == "source_label_train":
+        provenance = source_label_training_provenance(args.dataset_metadata_path, args.caption_version)
+        if (len(dataset) != len(provenance["train_ids"]) or
+                dataset.data != json.loads(Path(args.dataset_metadata_path).read_text())):
+            raise ValueError("Loaded source-label dataset differs from its unreviewed train metadata")
     else:
         provenance = dict(protocol="h3-interface-only-v1", metadata_path=str(Path(args.dataset_metadata_path).resolve()),
                           metadata_sha256=file_sha256(args.dataset_metadata_path), formal_reuse_forbidden=True)
@@ -735,7 +873,8 @@ def launch_video_training(accelerator, dataset, model, model_logger, args):
         save_training_args(args)
         print(json.dumps({"event": "video_sft_budget", "effective_batch": accelerator.num_processes * args.gradient_accumulation_steps,
                           "optimizer_updates": progress.optimizer_updates, "max_train_steps": args.max_train_steps,
-                          "budget_scope": "interface_smoke_only" if signature["data_scope"] == "interface" else "human_gated_pilot_diagnostic",
+                          "budget_scope": "interface_smoke_only" if signature["data_scope"] == "interface" else
+                              "source_label_weak_supervision" if signature["data_scope"] == "source_label_train" else "human_gated_pilot_diagnostic",
                           "checkpoint_scope": "accelerator model+optimizer+scheduler+RNG+epoch/batch progress"}), flush=True)
 
     def save_state(name):
@@ -804,9 +943,9 @@ def video_sft_parser():
     parser.add_argument("--initialize_model_on_cpu", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max_train_steps", type=int, choices=(2, 100, 300), default=100,
-                        help="2 is an interface/gradient smoke only; 100/300 are human-gated pilot diagnostics, not full-data training")
-    parser.add_argument("--data_scope", choices=("interface", "reviewed_train"), default="interface",
-                        help="Interface permits only max_train_steps=2; 100/300 require explicit reviewed_train and verified train-only export provenance")
+                        help="2 is an interface/gradient smoke only; 100/300 are explicit reviewed or source-label pilot diagnostics")
+    parser.add_argument("--data_scope", choices=("interface", "reviewed_train", "source_label_train"), default="interface",
+                        help="Interface permits only two updates; reviewed_train/source_label_train require their separate verified train-only provenance")
     parser.add_argument("--resume_training_state", type=str)
     parser.add_argument("--cpu_self_test", action="store_true")
     parser.add_argument("--temporal_policy", choices=("native_down", "nearest24_repeat_last124"), default="native_down",
@@ -1410,7 +1549,125 @@ def cpu_self_test():
             else:
                 raise AssertionError("Interface raw metadata was upgraded to formal budget")
 
-    print(json.dumps({"cpu_self_test": "passed", "formal_metadata_negative_cases": list(formal_negative_cases),
+    import dance_caption_fusion as fusion
+    import omni_dance_sft as omni
+    # These weak-label gate fixtures are synthetic and NOT reviewed/real media.
+    with tempfile.TemporaryDirectory(prefix="h3-source-label-synthetic-not-reviewed-CPU-") as directory:
+        root = Path(directory)
+        parent_metadata = root / "omni.jsonl"
+        parent_sidecar = root / "source_label_sidecar.json"
+        parent_metadata.write_text("synthetic parent reader is mocked; not real Omni training data")
+        parent_sidecar.write_text("{}")
+        version = "synthetic-source-label-not-reviewed"
+        records, omni_rows, h3_rows = [], [], []
+        manifest_path = root / "manifest.json"
+        for partition, count in (("train", 512), ("val", 128)):
+            image, video, meta_path = (root / (partition + suffix) for suffix in (".png", ".mp4", ".meta.json"))
+            image.write_bytes(b"synthetic not reviewed image")
+            video.write_bytes(b"synthetic not reviewed video")
+            meta_path.write_text(json.dumps(dict(natural_output_frames=81, target_fps=16, target_frames=81,
+                tail_padding_frames=0, video=str(video), first_frame=str(image))))
+            media = {key: fusion.source_record(path) for key, path in (("image", image), ("paired_video", video), ("meta", meta_path))}
+            for index in range(count):
+                sid = f"synthetic-{partition}-{index}"
+                caption = "The dancer bends and extends the arms."
+                records.append(dict(id=sid, source_group=sid, split=partition, provenance=media,
+                                    paired_video_path=str(video), image_path=str(image)))
+                omni_rows.append(dict(id=sid, source_group=sid, split=partition, caption_version=version,
+                                      messages=[dict(role="assistant", content=caption)]))
+        manifest_path.write_text(json.dumps(dict(records=records, synthetic_not_reviewed=True)))
+        manifest_source = fusion.source_record(manifest_path)
+        parent_source = fusion.source_record(parent_metadata)
+        for row, record in zip(omni_rows, records):
+            media = record["provenance"]
+            h3_rows.append(dict(id=row["id"], source_group=row["source_group"], split=row["split"],
+                motion_caption=row["messages"][-1]["content"], caption_version=version, video=media["paired_video"]["path"],
+                references=[dict(type="image", image=media["image"]["path"])], video_window_seconds=[0, 5.0625],
+                trained_caption_approved=False, label_quality="source_labels_unreviewed",
+                provenance=dict(parent_omni_metadata=parent_source, parent_manifest=manifest_source, **media)))
+        outputs = {}
+        for partition in ("train", "val"):
+            path = root / ("h3_video_" + partition + ".json")
+            path.write_text(json.dumps([row for row in h3_rows if row["split"] == partition]))
+            outputs[path.name] = fusion.source_record(path)
+        sidecar_path = root / "source_label_h3_sidecar.json"
+        sidecar = dict(protocol="h3-source-label-train-provenance-v1", complete=True, caption_version=version,
+            authorization=omni.SOURCE_LABEL_AUTHORIZATION, label_quality="source_labels_unreviewed",
+            approval_chain_verified=False, human_review_completed=False, semantic_approval=False,
+            original_source_window_mapping="unknown", frozen_omni_validator_source=fusion.source_record(omni.__file__),
+            source_code=fusion.source_record(__file__), parent_omni_metadata=parent_source,
+            parent_omni_sidecar=fusion.source_record(parent_sidecar), parent_caption_version=version,
+            parent_manifest=manifest_source, outputs=outputs, counts=dict(train=512, val=128),
+            h3_metadata_policy=dict(train_only="h3_video_train.json", val_only="h3_video_val.json",
+                                   combined_direct_cache_or_training_forbidden=True))
+        sidecar_path.write_text(json.dumps(sidecar))
+        train = [row for row in omni_rows if row["split"] == "train"]
+        val = [row for row in omni_rows if row["split"] == "val"]
+        parent = dict(metadata=parent_source, sidecar=fusion.source_record(parent_sidecar), caption_version=version,
+                      manifest=manifest_source, approval_chain_verified=False)
+        metadata = root / "h3_video_train.json"
+        with patch.object(omni, "validate_data_boundary", return_value=(omni_rows, train, val, parent)) as parent_reader, \
+                patch.object(fusion, "load_manifest", side_effect=fusion.read_json):
+            provenance = source_label_training_provenance(metadata, version)
+            assert provenance["approval_chain_verified"] is False and provenance["label_quality"] == "source_labels_unreviewed"
+            config = parent_reader.call_args.args[0]
+            assert (config.data_scope, config.smoke_steps, config.min_epochs, config.max_epochs) == ("source_label_pilot", 0, 3, 3)
+            for changes in ({"label_quality": "reviewed"}, {"fixture_only": True}, {"formal_reuse_forbidden": True},
+                            {"semantic_approval": True}, {"human_review_completed": True}, {"approval_chain_verified": 0}):
+                sidecar_path.write_text(json.dumps(dict(sidecar, **changes)))
+                must_reject(lambda: source_label_training_provenance(metadata, version))
+            sidecar_path.write_text(json.dumps(sidecar))
+            must_reject(lambda: source_label_training_provenance(root / "h3_video_val.json", version))
+            must_reject(lambda: source_label_training_provenance(root / "h3_video.json", version))
+            original_rows = json.loads(metadata.read_text())
+            for changes in ({"motion_caption": "Wrong label"}, {"fixture_only": True}, {"trained_caption_approved": True}, {"split": "val"}):
+                changed_rows = [dict(original_rows[0], **changes)] + original_rows[1:]
+                metadata.write_text(json.dumps(changed_rows))
+                changed_sidecar = json.loads(json.dumps(sidecar))
+                changed_sidecar["outputs"][metadata.name] = fusion.source_record(metadata)
+                sidecar_path.write_text(json.dumps(changed_sidecar))
+                must_reject(lambda: source_label_training_provenance(metadata, version))
+            metadata.write_text(json.dumps(original_rows))
+            sidecar_path.write_text(json.dumps(sidecar))
+        # Scope/cache binding is exercised with mocked provenance, never by upgrading a fixture.
+        one_row = h3_rows[0]
+        one_metadata = root / "one-synthetic.json"
+        one_metadata.write_text(json.dumps([one_row]))
+        mock_provenance = dict(provenance, metadata=fusion.source_record(one_metadata), train_ids=[one_row["id"]])
+        cache = root / "weak-cache"
+        cache.mkdir()
+        info = dict(format=CACHE_FORMAT, caption_version=version, data_scope="source_label_train", sample_id=one_row["id"],
+            caption_sha256=hashlib.sha256(teacher_video_prompt(one_row).encode()).hexdigest(),
+            data_provenance_sha256=hashlib.sha256(json.dumps(mock_provenance, sort_keys=True).encode()).hexdigest())
+        value = ({"input_latents": torch.zeros(1, 2, 2, 2, 2), "h3_video_cache": info},
+                 {"prompt_embeds": torch.ones(1, 2), "packed": {"audio_pos": torch.empty(0, dtype=torch.long),
+                 "token_tags": torch.zeros(1, dtype=torch.long)}}, {})
+        signature = dict(data_scope="source_label_train", data_provenance=mock_provenance, dataset_size=1,
+            dataset_metadata_path=str(one_metadata), caption_version=version, temporal_policy="nearest24_repeat_last124",
+            sources=dict(metadata_sha256=file_sha256(one_metadata), code={path.name: file_sha256(path)
+                for path in (Path(__file__), Path(__file__).with_name("h3_video_only.py"))}))
+        torch.save(value, cache / "0.pth")
+        write_complete_marker(cache, signature)
+        dataset = VideoCaptionDataset(base_path=str(cache), metadata_path=None, caption_version=version)
+        args = SimpleNamespace(dataset_base_path=str(cache), dataset_metadata_path=None, caption_version=version,
+                               max_train_steps=100, data_scope="source_label_train", temporal_policy="nearest24_repeat_last124")
+        with patch(__name__ + ".source_label_training_provenance", return_value=mock_provenance), \
+                patch(__name__ + ".formal_training_provenance", side_effect=AssertionError("Weak labels must not invoke review approval")):
+            assert validate_data_boundary(dataset, args)["data_provenance"]["approval_chain_verified"] is False
+            for changes in ({"sample_id": "synthetic-val-0"}, {"caption_sha256": "wrong"},
+                            {"data_scope": "interface"}, {"data_provenance_sha256": "wrong"}):
+                with patch(__name__ + ".verify_complete_marker", return_value=dict(scope="source_label_train", signature=signature, files={"0.pth": {}})), \
+                        patch.object(torch, "load", return_value=({**value[0], "h3_video_cache": dict(info, **changes)}, value[1], {})):
+                    must_reject(lambda: validate_data_boundary(dataset, args))
+            args.data_scope = "interface"
+            must_reject(lambda: validate_data_boundary(dataset, args))
+            args.max_train_steps = 2
+            must_reject(lambda: validate_data_boundary(dataset, args))
+        assert video_sft_parser().get_default("data_scope") == "interface"
+
+    print(json.dumps({"cpu_self_test": "passed", "source_label_synthetic_not_reviewed_gate": True,
+                      "source_label_bad_label_fixture_val_combined_scope_cache_rejected": True,
+                      "formal_metadata_negative_cases": list(formal_negative_cases),
                       "formal_cache_negative_cases": list(cached_negative_cases),
                       "formal_models_loading_boundary_rejections": True, "formal_export_approval_chain_positive": True,
                       "interface_scope_fixed_two_updates": True, "interface_cache_budget_upgrade_rejected": True,
@@ -1458,7 +1715,8 @@ def main():
     accelerate.utils.set_seed(args.seed)
     accelerator = accelerate.Accelerator(
         gradient_accumulation_steps=args.gradient_accumulation_steps,
-        kwargs_handlers=[accelerate.DistributedDataParallelKwargs(find_unused_parameters=args.find_unused_parameters)],
+        kwargs_handlers=[accelerate.DistributedDataParallelKwargs(find_unused_parameters=args.find_unused_parameters),
+                        accelerate.utils.InitProcessGroupKwargs(timeout=timedelta(hours=2))],
     )
     video_operator = UnifiedDataset.default_video_operator(
         base_path=args.dataset_base_path, max_pixels=args.max_pixels, height=args.height, width=args.width,

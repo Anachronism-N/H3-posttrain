@@ -659,6 +659,8 @@ CPU H3自测PID曾23:16:59存在，采样时已退出；独立受管理C2GQhv实
 | H3正式100/300来源门禁CPU | [h3_video_reviewed_training_gate_cpu](../results/ms_20261020/h3_video_reviewed_training_gate_cpu_v3.json) |
 | 32实际AI批准/24+8导出及640媒体齐备 | [dance_caption_approved32_and_pilot640_media](../results/ms_20261020/dance_caption_approved32_and_pilot640_media_v3.json) |
 | 30B MS＋风格已实际开训、首轮重复负结果 | [omni30b_ms_style_pilot_actual_training](../results/ms_20261020/omni30b_ms_style_pilot_actual_training_v1.json) |
+| 全6500标签恢复/三轮重复负结果/N3预检修复及N4首视频 | [ms_style_full_data_and_compact_pipeline](../results/ms_20261020/ms_style_full_data_and_compact_pipeline_v2.json) |
+| 30B三epoch完整结束及628Adam/八rankRNG/全部文件SHA | [omni30b_ms_style_pilot_complete_audit](../results/ms_20261020/omni30b_ms_style_pilot_complete_audit_v1.json) |
 | 融合提取/重写/获审导出 | [dance_caption_fusion.py](../scripts_omnidance/exp/ms/dance_caption_fusion.py) |
 | Omni训练/部署/保存恢复 | [omni_dance_sft.py](../scripts_omnidance/exp/ms/omni_dance_sft.py) |
 | H3真纯视频执行 | [h3_video_only.py](../scripts_omnidance/exp/ms/h3_video_only.py) |

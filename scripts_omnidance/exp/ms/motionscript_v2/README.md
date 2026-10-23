@@ -4,6 +4,8 @@
 
 本版复用已有 NLF NPZ，完成坐标质量控制、可审计动作事件和完整坐标缓存。无需重新运行 NLF、占用 GPU 或调用远程 LLM。这里的事件和描述是**待核验候选**，不代表真实舞蹈准确率、音乐同步效果或 H3 改善。
 
+后续追加的封闭词表／复读处理见 [REPETITION.md](REPETITION.md)：包括可回查的事件压缩、标签分布审计，以及不输入旧 MS 先验的开放词汇视觉观察。默认只导出请求；只有显式运行 `ms_visual_observe.py observe` 才会将采样帧发送给指定端点。
+
 ## 已实现的改动
 
 - 对轴角先转为旋转，再通过 SLERP 插值；旋转平滑使用符号连续、归一化的四元数。连续 yaw 在各个有效段内展开，避免先折回 ±180° 再普通平滑造成假反转。
@@ -14,6 +16,7 @@
 - 提取左右肘膝弯伸、相对躯干的上臂抬落、躯干倾斜、肩髋相对扭转、根朝向变化及水平位移。检测采用变化量、持续时间和反转迟滞阈值，按有效区间处理。
 - 所有事件保留身体部位、起止时间、量值、单位、所需关节和来源，按开始时间排序。首版不将同一固定时间 bin 的左右事件自动合并，也不强制填满某个部位的事件数量。
 - 生成带出处的英文测量描述，或导出供 GPT／其他 LLM 做事实保持改写的 JSON 请求；**不自动调用任何 API**。
+- 保留原始事件，并另外生成去除高度重叠副本、压缩已核实弯伸／抬落交替的 `compact_caption`。紧凑 LLM 请求允许按已核实事件组写一句，避免机械要求每个原语都生成一句；所有原始 ID 和时间仍须覆盖。
 - 可选用 v2 坐标运行原版 MotionScript 规则，单独记录其结果；不将新规则描述冒充历史 `ms_orig`。
 
 ## 输入与环境
@@ -78,6 +81,7 @@ python scripts_omnidance/exp/ms/ms_optimize.py \
 
 - `<sid>.coords.npz`：完整坐标、根旋转、时间轴和质量标记。
 - `<sid>.json`：质量元数据、事件、带出处测量描述、可选原版结果／LLM payload；固定保留 `semantic_approval=false`、`human_review_completed=false`、`hand_fingers_observed=false`。
+- `caption` 是完整事件的审计描述，`compact_caption` 是压缩后的描述视图；`event_summary` 保存原事件、去重映射和每次发生的时间。二者不是两份独立训练样本。
 - `<sid>.receipt.json`：对应 JSON 的内容哈希。
 
 数据集另输出 `protocol.json`、`manifest.json` 和 `manifest.receipt.json`。协议绑定输入选择、模板、实现源码、参数、依赖版本及可选上游源码哈希；清单绑定各输入、坐标和报告哈希。
@@ -112,12 +116,14 @@ python scripts_omnidance/exp/ms/ms_optimize.py \
 
 新 schema 尚未接入 `compose_caption.py`、`music_scale_data.py` 或 H3 teacher；不得标为 `motion_source=original` 直接替换训练数据。审核通过后再单独实现导出和固定参考图／种子的教师对照。
 
-增加手足观测点、学习式 MG／DEMO 对照、LLM 调用及改写验收属于下一阶段。已有 52 个模板点不表示有真实手指观测；从同一拟合增加网格点也不会自动恢复新动作。
+增加手足观测点、学习式 MG／DEMO 对照和实际模型效果对照属于下一阶段。已有 52 个模板点不表示有真实手指观测；从同一拟合增加网格点也不会自动恢复新动作。
 
 完整回归测试需额外安装 pytest，并从仓库根目录运行（只运行 unittest discover 不会收集坐标模块的 pytest 测试）：
 
 ```bash
-python -m pytest -q tests/test_motionscript_v2_coordinates.py tests/test_motionscript_v2_events.py tests/test_motionscript_v2_cli.py
+python -m pytest -q tests
 ```
 
 测试使用有明确生成方式的合成输入，验证数学、掩码、事件与缓存契约；不把它们称作真实舞蹈准确率测试。
+
+本次本地完整回归为 **119 项通过**。其中视觉入口实际执行了 FFmpeg 抽帧及双视频流一致性检查；没有调用远程模型、运行真实上游 MotionScript，或进行 Omni/H3 训练。

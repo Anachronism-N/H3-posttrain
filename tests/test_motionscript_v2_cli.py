@@ -74,6 +74,11 @@ class CLITests(unittest.TestCase):
         self.assertFalse(record["hand_fingers_observed"])
         self.assertIsNone(record["upstream"])
         self.assertIn("llm_payload", record)
+        self.assertEqual(record["event_summary"]["source_events"], record["events"])
+        self.assertEqual(record["compact_caption"], record["event_summary"]["compact_caption"])
+        self.assertEqual(record["llm_payload"]["task"], "fact_preserving_compact_motion_rewrite")
+        self.assertEqual(record["llm_payload"]["source_events"], record["events"])
+        self.assertFalse(record["event_summary"]["vocabulary_coverage"]["open_vocabulary"])
         with np.load(out / "synthetic.coords.npz", allow_pickle=False) as arrays:
             self.assertEqual(arrays["coords"].shape, (101, 54, 3))
             np.testing.assert_allclose(np.diff(arrays["time"]), .05, atol=1e-12)

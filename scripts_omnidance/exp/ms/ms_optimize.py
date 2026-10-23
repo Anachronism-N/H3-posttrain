@@ -24,7 +24,8 @@ import scipy
 
 from motionscript_v2 import SCHEMA
 from motionscript_v2.coordinates import preprocess
-from motionscript_v2.events import extract_events, make_llm_payload, render_caption
+from motionscript_v2.events import extract_events, render_caption
+from motionscript_v2.selection import make_summary_llm_payload, summarize_events
 
 
 def sha256(path: Path) -> str:
@@ -263,6 +264,7 @@ def run(args) -> dict:
             events = extract_events(arrays, min_duration_seconds=args.min_duration_seconds,
                 min_angle_change_degrees=args.min_angle_change_degrees,
                 min_distance_change_m=args.min_distance_change_m)
+            summary = summarize_events(events)
             upstream = original_captions(arrays, src, shim) if src is not None else None
             save_npz(coords_path, arrays)
             record = {"schema": SCHEMA, "sid": sid, "source": "motionscript_v2_rules",
@@ -270,10 +272,11 @@ def run(args) -> dict:
                       "fingerprint": fingerprint, "input_sha256": source_sha,
                       "coords_file": coords_path.name, "coords_sha256": sha256(coords_path),
                       "quality": quality, "events": events, "caption": render_caption(events),
+                      "event_summary": summary, "compact_caption": summary["compact_caption"],
                       "upstream": upstream, "semantic_approval": False, "human_review_completed": False,
                       "hand_fingers_observed": False}
             if args.emit_llm_payload:
-                record["llm_payload"] = make_llm_payload(events)
+                record["llm_payload"] = make_summary_llm_payload(summary)
             report_bytes = json_bytes(record)
             atomic_write(out / f"{sid}.receipt.json", json_bytes({
                 "report_sha256": hashlib.sha256(report_bytes).hexdigest()}))

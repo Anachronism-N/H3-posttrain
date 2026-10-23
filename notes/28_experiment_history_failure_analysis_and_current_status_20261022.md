@@ -663,6 +663,7 @@ CPU H3自测PID曾23:16:59存在，采样时已退出；独立受管理C2GQhv实
 | 30B三epoch完整结束及628Adam/八rankRNG/全部文件SHA | [omni30b_ms_style_pilot_complete_audit](../results/ms_20261020/omni30b_ms_style_pilot_complete_audit_v1.json) |
 | 三个MS风格GT纯视频完整审核及8775评审入口 | [h3_ms_style_gt_eval3_complete](../results/ms_20261020/h3_ms_style_gt_eval3_complete_v1.json) |
 | 同音乐三case原始/微调后caption对比与长重复负结果 | [omni30b_ms_style_eval3_base_pilot_comparison](../results/ms_20261020/omni30b_ms_style_eval3_base_pilot_comparison_v1.json) |
+| 6000/500首整轮验证与AR局部重复边界 | [omni30b_ms_style_full_epoch1](../results/ms_20261020/omni30b_ms_style_full_epoch1_v1.json) |
 | 融合提取/重写/获审导出 | [dance_caption_fusion.py](../scripts_omnidance/exp/ms/dance_caption_fusion.py) |
 | Omni训练/部署/保存恢复 | [omni_dance_sft.py](../scripts_omnidance/exp/ms/omni_dance_sft.py) |
 | H3真纯视频执行 | [h3_video_only.py](../scripts_omnidance/exp/ms/h3_video_only.py) |

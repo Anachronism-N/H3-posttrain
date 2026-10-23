@@ -1150,3 +1150,11 @@ FcB3zI实际exit0，原始官方30B和源标签pilot192各同三个旧holdout音
 真实标签诊断只读512train/128val原监督：最大同句重复均2次、重复≥10均0，caption中位长度244.5/256.5词。因此不是标签原文直接含20–25次整句循环；音乐一对多、关节规则句式/曝光偏置/学习配方等仍待区分，未锁定唯一根因，也不永久否定音乐文字SFT。结果omni30b_ms_style_eval3_base_pilot_comparison_v1.json保存原输出SHA95d07d…/9a2a3c…与指标定义。
 
 全量FBQ4VO已真实更新100次、曝光800、assistanttokens327037，原默认600秒来源预检超时已越过，当前处理node-local检查点，不把训练loss0.8256当留出质量。N3四rank各37条共148/512缓存已实际写出，仍未complete，继续原唯一队列与同节点三组100步接续。
+
+2026-10-23 10:42北京时间更新：全量实际400updates、3200example、1292473assistanttokens，首epoch还未val，不宣布质量/收敛。N3缓存各rank70/70/70/71，共281/512，完整marker尚未形成。GS2wPA已实际绑定N3现有sequence manager117386的精确UID/argv/pidfd：三组100step完整结束后核native step-100.safetensors、state marker/progress/source签名，仅将三份LoRA导出保存shared私有MS（不传Adam/base），随后N4同一GPU0复用三个已完成GT条件缓存，固定3case/组三组共9视频；原GT三条不重生，结果实际审核/用户反馈合格前不自动300。新增的是既定训练后的评测接续，不增加新配方/人物或节点。
+
+2026-10-23 10:56北京时间更新：全量30B已经500成功更新、4000example、1606361assistanttokens，尚首epoch未完成，训练batchloss不等同留出质量。N3已写333/512个真实缓存，继续原4rank，不重启动或把部分资产升级complete。m5K3wl已绑定现有N7 fullmanager3201860精确UID/argv/pidfd，完整全量训练结束后在同节点读取原本地checkpoint固定3holdout真实音乐caption，复用已有base/pilot192对照，不把15GB Adam状态跨节点复制、不加防重复惩罚或清洗raw。这是原已批最终验证的接续，不新增训练/人物/资源节点。
+
+2026-10-23 11:45北京时间实际首整轮全量验证：750成功更新/6000训练曝光/2422469assistanttokens；固定val500、192753assistanttokens，NLL0.7787595560，三条原始AR样本jqioQqErlscNpmsw/VcJqoXfwfamkasNI/sfcKTUdQUMQKqNQL分别156/154/166词、最大同句重复4/4/3。没有pilot式20–25次长句死循环，但三稿仍主要反复写手高低/相互靠近分开、缺少丰富全身编排。验证case与pilot不同，不能声称同case扩量修复或音乐增量通过；原文与生成设置都未清洗/改惩罚，继续已批min3/max10预算。阶段结果omni30b_ms_style_full_epoch1_v1.json。
+
+N3已实际全4rank各128文件写齐512，rank0正在读cache成员1/111.pth完成来源/缓存SHA与标签/窗完整性复验，complete marker未提交；此时只是文件齐备，不能上100步训练或伪正式缓存完毕。保唯一现有manager，提交后43N0Gj接三组同节点8GPU训练，既定N4评测接续不变。

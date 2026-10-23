@@ -1178,3 +1178,17 @@ N7唯一FBQ4VO最新只读日志已核1288成功更新/10304训练曝光/4,166,6
 随后N7实际推进至1300成功更新/10400曝光/4,208,644assistanttokens，保存阶段latest仍指向完整1200，尚无1300 hidden或complete；不能将更新成功当1300检查点已提交。各worker均存活，无Traceback，rank4 RSS约15GiB后回落至2.6GiB。实际torch2.8 ZeRO源码按rank1→7广播分片，每个非源rank都接收/torch.load，源rank先torch.save/bytearray/ByteTensor后搬GPU；此可解释CPU大RSS与其他GPU忙等，但无运行栈/NCCL序号证据，不锁定consolidate或RNG gather卡点、不自动判死锁/重新启动。
 
 五份本轮实际执行helper已原字节归档到scripts_omnidance/exp/ms：omni_ms_style_full_train_v2.py、prepare_omni_ms_style_full6500_v2.py、stage_h3_ms_style_cache512_local_v3.py、h3_ms_style_sequence100_manager_v1.py、h3_ms_style_train_eval3_followup_v1.py。主线程独立源/归档byte与SHA全相同、AST均过，不import/main/launch、不改MS或任何运行producer。归档仍依赖原MS私有数据及既有admission脚本，不冒全独立运行包。新小结果h3_local_cache_and_training_followup_v3.json记录迁移/旧零更新停止/新PID与来源/预算、1300更新vs完整1200和发布边界，不含权重/媒体/Adam/凭据。
+
+后续只读确认N7自然越过1300保存等待并推进至1400成功更新/11200曝光/4,524,202assistanttokens；latest已指向checkpoint-u0001300-e01-p0004400，complete记录1300且四成员存在。这里是marker/存在核验，不冒独立全Adam/RNG/SHA终态审计；原1300等待快照及解释保留，不再称仍卡1300，也没有因此重启。第二整轮val尚未返回。
+
+N3本地cache链已越过首来源门禁并完成原DiT ZeRO初始化，日志13:20:33北京时间记录33.12B参数；rank0随后进入保持不变的第二轮cache/来源签名校验，实际fd为/opt/h3_ms_style_cache512_v3/1/55.pth，rchar约275.2GB，GPU各约3.35GB。其他rank的高利用率是通信等待，尚无video_sft_budget/video_sft_update，不当真实optimizer更新。沿用唯一4ITHij及6mgBAg依赖，不改源码、scope或SHA门禁，不重编码、不重复launch。
+
+随后已有事件监测tlzwCx实际返回video_sft_budget：effective_batch=8、optimizer_updates=0、max_train_steps=100、budget_scope=source_label_weak_supervision，checkpoint_scope为完整Accelerator model/optimizer/scheduler/RNG/epoch-batch进度。确认所有初始化门禁和accelerator.prepare已越过，进入首batch阶段；首成功video_sft_update仍待真实事件，不把budget0当优化成功或完成100。
+
+tlzwCx随后实际返回pureFM首成功更新：optimizer_updates=1、microbatches=1、epoch=0、loss=0.17067448794841766、fm=0.4678272008895874、anchor=0、sigma=0.07042470574378967、scheduler_weight=0.3648237884044647、anchor_active=false。现确已进入优化更新，不再是进程/存储等待；这里只证明首步执行成功，不能当100预算完成、收敛或视频质量通过。原唯一训练、三组顺序及固定三case评测继续，不改运行源码。
+
+全量30B第二整轮验证实际返回：epoch2/update1500、12000曝光、4,844,938训练assistanttokens；fixed val500/192753tokens，NLL0.7672082108456767，较首轮0.778759556下降1.4833%，stale_epochs=0。但同三个val case的raw AR分别92/137/70词、4/6/4个不同整句、最高重复4/3/3；均主要右手靠近/远离左肘或肩，仍未建立丰富全身编排。此为teacher-forcing改善与AR语义贫乏并存的负结果，不将NLL下降或字数缩短当质量通过，不去重/加生成惩罚或把重复稿交H3；原min3/max10预算和最终3holdout验证继续。
+
+两项旧事件监测tlzwCx/RWXfHG实际均满30分钟后结束，训练4ITHij/FBQ4VO仍running且未见错误；这不是模型退出。已按既有事件方式续U0yaFG/HAbZDf，无重复训练launch。H3 pureFM随后已核6成功optimizer更新，仍继续既定100及后两anchor组，未验视频不自动300。
+
+随后实际日志推进至N7全量1600更新/12800曝光/5,164,256assistanttokens、第3epoch；N3 pureFM14成功更新，无训练错误。第二轮同case原始caption与两轮事件canonical JSON SHA已独立归档omni30b_ms_style_full_epoch2_v1.json；原epoch1报告/生成原文不覆盖。训练、两条最终固定三case依赖和资源范围未改变，不以归档替代真实视频验收。

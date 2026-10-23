@@ -1,0 +1,79 @@
+{
+  "date_CST": "2026-10-23",
+  "scope": "Second full epoch validation and same-case raw autoregressive comparison; interim weak-label result, not completed training or accepted choreography",
+  "training_task": "FBQ4VO",
+  "node": "N7",
+  "model": "Official Qwen3-Omni-30B-A3B-Instruct Thinker",
+  "official_revision": "26291f793822fb6be9555850f06dfe95f2d7e695",
+  "data_scope": "source_label_full",
+  "label_quality": "source_labels_unreviewed",
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "original_source_window_mapping": "unknown",
+  "frozen_core_sha256": "4d82caffd4f6ce354fd6fbd240827d0cac69d66414de33e847501369b0e82dd2",
+  "full_entry_sha256": "eaef744323841aa678b03709541ee631248c1c59bff2e8489eea3cadf7d7e804",
+  "metadata_sha256": "f7228fd20b0e4b41f3af1e9deeb95b7fdb6d6dd316e1a290f0f70685c14a234c",
+  "train_samples": 6000,
+  "fixed_val_samples": 500,
+  "fixed_val_assistant_tokens_each_epoch": 192753,
+  "epoch": 2,
+  "optimizer_updates_at_validation": 1500,
+  "training_exposures_at_validation": 12000,
+  "training_assistant_tokens_at_validation": 4844938,
+  "fixed_val_NLL": 0.7672082108456767,
+  "previous_epoch_NLL": 0.778759556040581,
+  "relative_NLL_reduction": 0.014833006035437135,
+  "stale_epochs": 0,
+  "event_hash_definition": "SHA256(json.dumps(actual full_epoch_validation event, sort_keys=True, ensure_ascii=False).encode())",
+  "epoch1_event_json_sha256": "3d91cdcdde36459feb6c101be5495dae5412c1dc556fc7c0e743e3919c459469",
+  "epoch2_event_json_sha256": "1a894a301db349cfe4604fffb9bbca9660d93f04f53535cf48cdb375c57e43b9",
+  "exact_sentence_metric": "Split raw caption by period, strip/lowercase and count nonempty sentences; literal repetition diagnostic, not semantic coverage or music alignment.",
+  "same_cases_across_epochs": true,
+  "autoregressive_samples": [
+    {
+      "id": "jqioQqErlscNpmsw",
+      "epoch1": {"words": 156, "unique_sentences": 8, "max_repeat": 4, "caption_sha256": "879a68d04fbef34d1b7fa202e007929a1cf7d1f834d87fe45f95ebed13bf6839"},
+      "epoch2": {"words": 92, "unique_sentences": 4, "max_repeat": 4, "caption_sha256": "3aacd49f51f66a7ff389b883282a3e4d2937deb150dbcc71273410af1dcb6236"},
+      "observed_epoch2_content": "Alternating right hand approaching and moving away from the left elbow. No broad whole-body sequence."
+    },
+    {
+      "id": "VcJqoXfwfamkasNI",
+      "epoch1": {"words": 154, "unique_sentences": 9, "max_repeat": 4, "caption_sha256": "69cdcd281ac590bd2452dec8dafeb321b1c591e06d3e5ab348ce1cef85e42417"},
+      "epoch2": {"words": 137, "unique_sentences": 6, "max_repeat": 3, "caption_sha256": "fb1a521d1ad81cbb0eaf541c350f15d0e3937abb34e57189554a8ace2b004059"},
+      "observed_epoch2_content": "Repeated right hand approach/separation relative to left elbow and shoulder. Style label differs, but a distinct whole-body choreography is not established."
+    },
+    {
+      "id": "sfcKTUdQUMQKqNQL",
+      "epoch1": {"words": 166, "unique_sentences": 9, "max_repeat": 3, "caption_sha256": "9c3a01068683068e4ce382b44e67b086d9bb8dfb982e5f0ce5895b3ca9610c37"},
+      "epoch2": {"words": 70, "unique_sentences": 4, "max_repeat": 3, "caption_sha256": "3f566d4dcf96b9cbb9024b0499b1213b9052053a560ab4785c7883d064978fb6"},
+      "observed_epoch2_content": "Alternating right hand approach/separation relative to left elbow; closely similar to the first case."
+    }
+  ],
+  "assessment": {
+    "teacher_forcing_NLL_improved": true,
+    "NLL_decline_equals_output_success": false,
+    "shorter_output_equals_semantic_improvement": false,
+    "coherent_whole_body_choreography_verified": false,
+    "music_incremental_control_verified": false,
+    "root_cause_identified": false,
+    "raw_generation_deduplicated_truncated_or_penalized": false,
+    "these_repetitive_validation_captions_sent_to_H3": false,
+    "human_quality_accepted": false
+  },
+  "ongoing_snapshot": {
+    "Omni_updates": 1600,
+    "Omni_training_exposures": 12800,
+    "Omni_assistant_tokens": 5164256,
+    "Omni_epoch_index": 2,
+    "H3_pureFM_updates": 14,
+    "H3_sequence_task": "4ITHij",
+    "H3_fixed_case_evaluation_dependency": "6mgBAg",
+    "Omni_final_three_holdout_inference_dependency": "m5K3wl"
+  },
+  "continue_budget": {"min_full_epochs": 3, "max_full_epochs": 10, "patience": 3, "relative_delta": 0.005},
+  "private_evidence": "MS/omni_ms_style_full_queue_v4/training.log full_epoch_validation(epoch1/epoch2)",
+  "full_training_completed": false,
+  "overall_goal_complete": false,
+  "no_models_media_Adam_or_secrets_uploaded": true,
+  "path_base": "MS=/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS"
+}

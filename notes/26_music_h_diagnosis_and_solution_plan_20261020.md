@@ -1194,3 +1194,11 @@ tlzwCx随后实际返回pureFM首成功更新：optimizer_updates=1、microbatch
 随后实际日志推进至N7全量1600更新/12800曝光/5,164,256assistanttokens、第3epoch；N3 pureFM14成功更新，无训练错误。第二轮同case原始caption与两轮事件canonical JSON SHA已独立归档omni30b_ms_style_full_epoch2_v1.json；原epoch1报告/生成原文不覆盖。训练、两条最终固定三case依赖和资源范围未改变，不以归档替代真实视频验收。
 
 第三整轮固定验证已实际返回：epoch3/update2250/18000曝光/7,267,407训练assistanttokens；fixed val500/192753tokens，NLL0.7635331744495308，较第二轮下降0.479014%，未达到relative_delta0.5%，stale_epochs=1。同三个raw AR分别425/194/402词、8/17/7个不同整句、最高重复9/2/16；第一条肘伸屈长循环，第三条手与右膝近远长循环，第二条较多样但仍主要手/肘/肩规则动作，未证明全身编排或音乐控制。原文与解码参数未改，不去重/加惩罚或把循环稿交H3。新独立omni30b_ms_style_full_epoch3_v1.json保实际event/raw SHA、停止门槛及局部正负边界；patience尚未满足，继续原唯一训练及最终3holdout依赖，不以三轮曝光当整体结束。
+
+#### 2026-10-23 纯视频pureFM百步正确结束并自动接anchor0.1
+
+纯FM收到真实video_sft_update100后先写native step-100.safetensors（310,165,048bytes），当时无complete marker，仅属于保存中；随后2bGqnH返回video_sft_finished100，原queue_v3 pure_fm_finished.json实际exit0/complete=true。training-state-100及training-state-final-100两完整marker均已提交，scope source_label_train、source247、anchor0；进度100optimizer/100microbatch/epoch1/batches36，两marker SHA均1b4a371b69181dbaa857c53e9da1725a31f58e428d9ad086a08d3e30c4bb522a，各28成员。独立全成员SHA、八rank Adam/RNG与model/progress审计EeTayx正在N3 CPU只读执行，不新增GPU更新/不声称真实resume已经执行。
+
+同一manager331804按原计划自动启动fresh anchor0.1，launcher348229，开始UTC2026-10-23T08:53:52.101420，N3同八卡同起点数据；训练来源247/cachemarker6eba保持冻结。NxCmF9已绑定这一组实际日志，后续anchor1及6mgBAg三个case/组评测仍原依赖。两组未完、未有训练后视频或质量正评，不续300或宣布整体完成。N7全量同时实际2700更新/21600曝光/8,719,628assistanttokens，第四轮进行中，第三val和AR负结果边界不变。
+
+纯FM完整状态独立审计已结束：EeTayx实际完成两份state共56成员/136,232,195,730bytes的SHA与size、8rank Adam100/FP32moment/master finite、8RNG及8model global_steps100核验后，在末尾错误假定scheduler.last_epoch=100时断言失败；旧失败不重标成功。只读实际scheduler为ConstantLR factor1/lr1e-5、last_epoch800/_step_count801，实际AcceleratedScheduler非split_batches循环8rank，每优化更新推进8次，故800与100优化更新一致且不改变固定学习率。kJYNaf仅重新读取小状态/正确scheduler计数及LoRA SHA，actualexit0；不重复136GB哈希、不修改训练或状态。custom与marker进度相同，两marker相同，LoRA SHA474f196094d7827c3c50c01f044a9b46fcebd69393be57508f3fdc5d067869e2。结果h3_ms_style_pureFM100_complete_audit_v3.json保失败与修正来源；未做额外GPU更新/真实resume/下一更新恢复验证，也不声称视频质量已过。

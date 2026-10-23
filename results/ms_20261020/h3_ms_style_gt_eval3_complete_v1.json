@@ -1,0 +1,79 @@
+{
+  "date_CST": "2026-10-23",
+  "scope": "Three completed frozen-H3 video-only source-label GT controls; not music-student output or accepted choreography quality",
+  "generation_task": "4b69T9",
+  "exit_code": 0,
+  "complete": true,
+  "source_sha256": "77bafd9f6165f80328d4e272c901b21fbf45da3898161bcc039a572e1c86a2f8",
+  "wrapper_sha256": "89439d733d62f522bb3dd993bc456541b3ca15ead34ff2e19f86657a471c5055",
+  "caption_sha256": "17ff545eff693e19fd18fb60f10f6ae452636e14a0f06a0b6a138e0cdbad8020",
+  "geometry": {"frames": 124, "fps": 24, "height": 1280, "width": 704},
+  "sampling": {"seed": 42, "cfg": 1, "video_scheduler_updates_each": 50},
+  "model": "Original frozen H3, no trained LoRA, image reference preserved, no target first-frame hard lock",
+  "labels": "Existing original MotionScript plus original style, weak supervision; source window mapping unknown",
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "videos": [
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "sha256": "810830ad5c264b40b08c1d257676ca482aa5cdd27c828fadc9f1d4e247035dc3",
+      "size_bytes": 2617716,
+      "media_complete_decode": true,
+      "video_streams": 1,
+      "audio_streams": 0
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "sha256": "b3b80ebb2d8ee68161233857f6af21e89ace6d6986431bd698fdfde31e7e5193",
+      "size_bytes": 1474982,
+      "media_complete_decode": true,
+      "video_streams": 1,
+      "audio_streams": 0
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "sha256": "4175c9ac09758d9ba5e9aea069c8dcf7af05076f42a211de68efbbb186e69ed0",
+      "size_bytes": 2081778,
+      "media_complete_decode": true,
+      "video_streams": 1,
+      "audio_streams": 0
+    }
+  ],
+  "audio_guard": {
+    "audio_vae": null,
+    "audio_scheduler": null,
+    "audio_patch_calls": 0,
+    "audio_head_calls": 0,
+    "audio_reference_encode_calls": 0,
+    "packed_audio_positions": 0,
+    "packed_tag2_count": 0,
+    "counter_note": "The per-case audit's observed video hook counts are cumulative over the shared pipeline: DiT50/100/150 and VAEdecode1/2/3; each video itself has50scheduler updates."
+  },
+  "assistant_sampled_frame_observation": {
+    "images_read": 3,
+    "sampled_panels_per_image": 12,
+    "frame_indices": [0, 11, 22, 33, 44, 55, 66, 77, 88, 99, 110, 123],
+    "case2": "Visible forearm crossing and opening, bent-arm raises and small torso/stance changes; feet partly outside the crop. Some hands are motion-blurred in sampled frames.",
+    "case3": "Visible wider and narrower stance changes, knee/torso lowering and rising, lateral weight changes and arm swings; several sampled face/hand regions are blurred during movement.",
+    "limitations": "Only sampled images were viewed. No continuous audiovisual human score, music synchronization, or overall quality acceptance is claimed. Appearance observations are quality checks, not music-only target labels."
+  },
+  "review_service": {
+    "port": 8775,
+    "code_server_proxy_path": "/proxy/8775/",
+    "manifest": "review_web/manifest_h3_ms_style_gt_eval3_v1.json",
+    "homepage_status": 200,
+    "proxy_homepage_status": 200,
+    "proxy_manifest_status": 200,
+    "all_three_actual_frontend_video_paths_Range_status": 206,
+    "Range_bytes_verified_against_source_each": 1024,
+    "default_view": "models",
+    "reviews_POST_performed": false,
+    "old_review_services_preserved": true,
+    "external_music_is_H3_input": false,
+    "public_artifact_or_media_upload_performed": false
+  },
+  "quality_accepted": false,
+  "overall_goal_complete": false,
+  "video_directory": "MS/h3_ms_style_eval3_gt_videos_v1",
+  "path_base": "MS=/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS"
+}

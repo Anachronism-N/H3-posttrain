@@ -1,0 +1,46 @@
+{
+  "date_CST": "2026-10-23",
+  "scope": "Completed fixed-three-case music-only comparison: original official30B vs192-update source-label pilot",
+  "task": "FcB3zI",
+  "exit_code": 0,
+  "complete": true,
+  "same_music_files_and_windows_verified": true,
+  "student_input_contains_ground_truth_caption": false,
+  "inference_core_sha256": "4d82caffd4f6ce354fd6fbd240827d0cac69d66414de33e847501369b0e82dd2",
+  "decoding": {"do_sample": false, "max_new_tokens": 512, "anti_repetition_penalty_added": false, "raw_text_cleaning": false},
+  "sources": {
+    "base_predictions": {"path": "MS/omni_ms_style_eval3_queue_v1/base_predictions.json", "sha256": "95d07d158af5ade9c7eb02b3212b045760212700a6527c988994b080ccd72e51"},
+    "pilot_predictions": {"path": "MS/omni_ms_style_eval3_queue_v1/pilot192_predictions.json", "sha256": "9a2a3ccf77d2156017491f27268383d50b204b9f0d6312450ff77436e5b3a9cf"}
+  },
+  "fixed_cases": [
+    {"id": "wJPptuhclZmKAEWs", "base_words": 305, "base_unique_sentences": 12, "base_max_exact_sentence_repetition": 1, "pilot_words": 424, "pilot_unique_sentences": 5, "pilot_max_exact_sentence_repetition": 20},
+    {"id": "wJPrpFsThWAcBQIw", "base_words": 365, "base_unique_sentences": 14, "base_max_exact_sentence_repetition": 1, "pilot_words": 400, "pilot_unique_sentences": 4, "pilot_max_exact_sentence_repetition": 18},
+    {"id": "wJQTclrlOLEYYfTB", "base_words": 295, "base_unique_sentences": 15, "base_max_exact_sentence_repetition": 1, "pilot_words": 415, "pilot_unique_sentences": 5, "pilot_max_exact_sentence_repetition": 25}
+  ],
+  "sentence_metric": "Split on .!?; strip, normalize whitespace and lowercase. Exact lexical repetition diagnostic, not semantic or music alignment score.",
+  "actual_pilot_label_repetition_diagnostic": {
+    "metadata": "MS/omni_ms_style_pilot640_v1/omni.jsonl",
+    "train_samples": 512,
+    "val_samples": 128,
+    "train_and_val_max_exact_clause_repetition": 2,
+    "train_and_val_samples_with_exact_repeat_ge10": 0,
+    "train_median_caption_words": 244.5,
+    "val_median_caption_words": 256.5,
+    "labels_were_not_rewritten_by_this_diagnostic": true
+  },
+  "content_assessment": {
+    "pilot": "All three outputs are long repetitive hand-to-elbow/knee clauses. This held-out192-update checkpoint does not produce a usable continuous choreography caption.",
+    "base": "The three outputs contain varied choreography without identical sentence loops in these samples, but are long multi-paragraph proposals and two include groups/formations. Music descriptions and inferred synchrony are not accepted as verified facts, and the outputs are not approved motion-only single-dancer H3 targets.",
+    "root_cause_identified": false,
+    "exact_label_repetition_explains_generated_loop": false,
+    "all_music_caption_SFT_is_invalid": false,
+    "low_teacher_forced_NLL_proves_generation_success": false
+  },
+  "decision": "Do not send the looping pilot captions to H3 or deduplicate/truncate them into apparent success. Keep raw negative evidence. Observe actual full6000 training's held-out generation before claiming data scale resolves the issue.",
+  "full_training_snapshot": {"task": "FBQ4VO", "train": 6000, "val": 500, "actual_optimizer_updates_verified": 100, "examples_verified": 800, "source_label_semantic_approval": false, "convergence_or_quality_verified": false},
+  "H3_cache_snapshot": {"task": "mHWhEu", "per_rank_files": [37, 37, 37, 37], "total_written_files": 148, "target_samples": 512, "complete_verified": false},
+  "human_quality_accepted": false,
+  "overall_goal_complete": false,
+  "no_models_media_Adam_or_secrets_uploaded": true,
+  "path_base": "MS=/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS"
+}

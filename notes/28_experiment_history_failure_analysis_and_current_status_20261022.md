@@ -664,6 +664,7 @@ CPU H3自测PID曾23:16:59存在，采样时已退出；独立受管理C2GQhv实
 | 三个MS风格GT纯视频完整审核及8775评审入口 | [h3_ms_style_gt_eval3_complete](../results/ms_20261020/h3_ms_style_gt_eval3_complete_v1.json) |
 | 同音乐三case原始/微调后caption对比与长重复负结果 | [omni30b_ms_style_eval3_base_pilot_comparison](../results/ms_20261020/omni30b_ms_style_eval3_base_pilot_comparison_v1.json) |
 | 6000/500首整轮验证与AR局部重复边界 | [omni30b_ms_style_full_epoch1](../results/ms_20261020/omni30b_ms_style_full_epoch1_v1.json) |
+| 512新纯视频缓存完整提交、已有GPU4任务安全等待 | [h3_ms_style_cache512_complete](../results/ms_20261020/h3_ms_style_cache512_complete_v2.json) |
 | 融合提取/重写/获审导出 | [dance_caption_fusion.py](../scripts_omnidance/exp/ms/dance_caption_fusion.py) |
 | Omni训练/部署/保存恢复 | [omni_dance_sft.py](../scripts_omnidance/exp/ms/omni_dance_sft.py) |
 | H3真纯视频执行 | [h3_video_only.py](../scripts_omnidance/exp/ms/h3_video_only.py) |

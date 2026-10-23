@@ -455,16 +455,18 @@ def build_manifest():
 
 
 _lock = threading.Lock()
-_cache = {"gz": None}
+_cache = {"gz": None, "mtime_ns": None}
 
 
 def manifest_gz(rebuild=False):
     with _lock:
-        if rebuild or _cache["gz"] is None:
+        current_mtime = os.stat(MANIFEST).st_mtime_ns if os.path.exists(MANIFEST) else None
+        if rebuild or _cache["gz"] is None or (FOCUSED_MANIFEST and current_mtime != _cache["mtime_ns"]):
             if rebuild or not os.path.exists(MANIFEST):
                 build_manifest()
             with open(MANIFEST, "rb") as f:
                 _cache["gz"] = gzip.compress(f.read(), 5)
+                _cache["mtime_ns"] = os.fstat(f.fileno()).st_mtime_ns
         return _cache["gz"]
 
 
@@ -568,6 +570,64 @@ def data_review_page(query):
     return (header + body).encode()
 
 
+def fusion_review_page(query):
+    base = os.path.join(EXP, "MS", "dance_caption_fusion6k_rewrite_v2")
+    parallel = os.path.join(EXP, "MS", "fusion_parallel_rewrite_v3")
+    roots = [base, os.path.join(parallel, "aggregate")] + [os.path.join(parallel, "shard" + str(i)) for i in range(3)]
+    paths = {}
+    for root in roots:
+        if not os.path.isdir(root):
+            continue
+        for entry in os.scandir(root):
+            if (entry.is_file() and re.fullmatch(r"[A-Za-z0-9_-]+\.json", entry.name)
+                    and not entry.name.startswith("run_")
+                    and entry.name not in ("first3_assistant_checked.json", "plan.json")):
+                paths[entry.name[:-5]] = entry.path
+    ids = sorted(paths)
+    sid = query.get("sid", ["FqlHJVDlFGLKCUJS"])[0]
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", sid) or sid not in ids:
+        return b"Unknown completed sample", 404
+    with open(paths[sid]) as stream:
+        record = json.load(stream)
+    source = record["original_source_record"]
+    material = source["actual_text_input"]
+    rich = "\n\n".join(item["text"] for item in material["sources"] if item["ref"].startswith("rich:"))
+    ms = "\n\n".join(item for item in source["raw_MS"]["ms"] if item.strip())
+    fused = (record.get("target") or {}).get("motion_caption", record.get("raw_generation", ""))
+    esc = lambda value: html.escape(str(value), quote=True)
+    index = ids.index(sid)
+    links = " · ".join('<a href="fusion-review?' + esc(urlencode({"sid": ids[position]})) + '">' + label + '</a>'
+                       for label, position in (("上一条", max(0, index - 1)), ("下一条", min(len(ids) - 1, index + 1))))
+    examples = " · ".join('<a href="fusion-review?' + esc(urlencode({"sid": example})) + '">' + esc(example) + '</a>'
+                          for example in ("FqlHJVDlFGLKCUJS", "WEcAPCGBYxREOgUO") if example in ids)
+    media = lambda path: "media?" + urlencode({"p": path})
+    image = os.path.join(DATA, "pose_preprocess_outputs/mainline/normalized_704x1280/main/first_frames", sid + ".png")
+    errors = json.dumps(record.get("validation_errors", []), ensure_ascii=False)
+    body = ('<!doctype html><html lang="zh"><meta charset="utf-8"><title>N1 rich＋MS 融合评审</title>'
+            '<style>body{font:16px sans-serif;margin:24px;background:#111418;color:#e6e9ee}'
+            'a{color:#8dbfff}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}'
+            'pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#1a1f26;padding:16px;line-height:1.5}'
+            'img{max-height:220px;max-width:100%}input,button{font:inherit}</style>'
+            '<h1>N1：rich＋MotionScript → 融合动作 caption</h1><p><a href="./">返回视频评审</a></p>'
+            '<p>只展示已保存的真实输出。规则通过不等于动作事实通过；原窗口对应未知。'
+            '本轮没有注入 BPM 或额外维度。按用户授权默认来源动作正确，检查重写保真与合理顺序；旧规则标记不等于动作不正确。以下保留原文，不代填评分。</p>'
+            '<p>两条示例：' + examples + '</p><p>' + links + '</p>'
+            '<form><label>样本 ID <input name="sid" value="' + esc(sid) + '"></label><button>查看</button></form>'
+            '<h2>' + esc(sid) + ' · ' + esc(record.get("genre", "")) + '</h2>'
+            '<p>当前已保存 ' + str(len(ids)) + ' 条；本条规则通过：' + esc(record.get("format_valid"))
+            + '；状态：' + esc(record.get("review_status")) + '；规则错误：' + esc(errors) + '</p>'
+            '<img alt="源参考图" src="' + esc(media(image)) + '">'
+            '<div class="grid"><section><h2>融合前 rich 动作原文</h2><pre>' + esc(rich) + '</pre></section>'
+            '<section><h2>融合前 MS 原文（非空句）</h2><pre>' + esc(ms) + '</pre></section>'
+            '<section><h2>真实融合输出</h2><pre>' + esc(fused) + '</pre></section></div>'
+            '<details><summary>完整原 rich（含未送入重写的章节）</summary><pre>' + esc(source.get("raw_rich", "")) + '</pre></details>'
+            '<details><summary>实际输入、冲突和不确定性</summary><pre>'
+            + esc(json.dumps({"actual_text_input": record.get("actual_text_input"), "conflicts": (record.get("target") or {}).get("conflicts"),
+                             "uncertainty": (record.get("target") or {}).get("uncertainty")}, ensure_ascii=False, indent=2))
+            + '</pre></details></html>')
+    return body.encode("utf-8"), 200
+
+
 class H(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
@@ -605,6 +665,9 @@ class H(BaseHTTPRequestHandler):
                     return
                 body = manifest_gz(rebuild=rebuild)
                 self._send(200, body, extra={"Content-Encoding": "gzip", "Cache-Control": "no-cache"})
+            elif path == "fusion-review":
+                body, code = fusion_review_page(q)
+                self._send(code, body, "text/html; charset=utf-8", {"Cache-Control": "no-cache"})
             elif path == "data-review":
                 self._send(200, data_review_page(q), "text/html; charset=utf-8", {"Cache-Control": "no-cache"})
             elif path == "reviews":

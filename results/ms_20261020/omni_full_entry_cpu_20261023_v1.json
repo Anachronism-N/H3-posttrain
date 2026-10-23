@@ -1,0 +1,486 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "actual_full_admission": false,
+  "gpu_smoke_repeated": false,
+  "entry": "scripts_omnidance/exp/ms/omni_dance_full_sft.py",
+  "entry_sha256": "a0214ca8a53fa2589e2d6a8dc81d1c0ce98f850b3c1c76c16bf9f1ba60fe1f63",
+  "original_entry_sha256": "4d82caffd4f6ce354fd6fbd240827d0cac69d66414de33e847501369b0e82dd2",
+  "python": "/opt/venv_h3/bin/python",
+  "reports": [
+    {
+      "event": "selftest_passed",
+      "fixture_only": true,
+      "pretrained_smoke": false,
+      "labels_padding_eos_shift": true,
+      "real_random_architecture_gradient_tests": [
+        {
+          "family": "qwen2.5",
+          "updates": 2,
+          "nonzero_by_scope": {
+            "lm": 14,
+            "audio_lora": 48,
+            "projector": 2
+          },
+          "fused_mlp_parameters": 0,
+          "pretrained_eval_mode_reproduced": true,
+          "actual_gradient_checkpoint_calls": 3,
+          "checkpoint_rng_optimizer_continuation_exact": true
+        },
+        {
+          "family": "qwen3",
+          "updates": 2,
+          "nonzero_by_scope": {
+            "lm": 12,
+            "audio_lora": 48,
+            "projector": 4
+          },
+          "fused_mlp_parameters": 2,
+          "pretrained_eval_mode_reproduced": true,
+          "actual_gradient_checkpoint_calls": 3,
+          "checkpoint_rng_optimizer_continuation_exact": true
+        }
+      ]
+    },
+    {
+      "event": "full_data_selftest_passed",
+      "complete": true,
+      "cpu_only": true,
+      "synthetic_cpu_contract_fixture": true,
+      "boundary_tests_use_mock": true,
+      "actual_admission": false,
+      "formal_training_performed": false,
+      "pretrained_model_loaded": false,
+      "source_sha256": "a0214ca8a53fa2589e2d6a8dc81d1c0ce98f850b3c1c76c16bf9f1ba60fe1f63",
+      "checks": [
+        {
+          "case": "full_exact_boundary_enabled_6000_500",
+          "passed": true,
+          "real_metadata_reader": true,
+          "validator_mocked": true
+        },
+        {
+          "case": "smoke",
+          "rejected": true
+        },
+        {
+          "case": "min_epochs",
+          "rejected": true
+        },
+        {
+          "case": "max_epochs",
+          "rejected": true
+        },
+        {
+          "case": "missing_scope",
+          "rejected": true
+        },
+        {
+          "case": "pilot_upgrade",
+          "rejected": true
+        },
+        {
+          "case": "tiny_upgrade",
+          "rejected": true
+        },
+        {
+          "case": "wrong_counts",
+          "rejected": true
+        },
+        {
+          "case": "multiple_versions",
+          "rejected": true
+        },
+        {
+          "case": "missing_version",
+          "rejected": true
+        },
+        {
+          "case": "fixture",
+          "rejected": true
+        },
+        {
+          "case": "false_string",
+          "rejected": true
+        },
+        {
+          "case": "forbidden_reuse",
+          "rejected": true
+        },
+        {
+          "case": "full_all_source_identity_changes_fingerprint",
+          "passed": true
+        },
+        {
+          "case": "full_changed_sources_resume",
+          "rejected": true
+        },
+        {
+          "case": "full_legacy_pilot_resume",
+          "rejected": true
+        },
+        {
+          "case": "rank0_validation_error_broadcast",
+          "rejected": true
+        },
+        {
+          "case": "rank1_receives_validation_error",
+          "rejected": true
+        },
+        {
+          "case": "rank0_checkpoint_error_broadcast",
+          "rejected": true
+        },
+        {
+          "case": "rank1_receives_checkpoint_error",
+          "rejected": true
+        }
+      ]
+    },
+    {
+      "event": "data_selftest_passed",
+      "complete": true,
+      "cpu_only": true,
+      "synthetic_cpu_contract_fixture": true,
+      "boundary_tests_use_mock": true,
+      "actual_approval": false,
+      "formal_training_performed": false,
+      "pretrained_model_loaded": false,
+      "source_sha256": "a0214ca8a53fa2589e2d6a8dc81d1c0ce98f850b3c1c76c16bf9f1ba60fe1f63",
+      "helper_sha256": "247e77eb365685a92680bd3934ac172c7d81242f06fb28f7f4aa665130233c63",
+      "validator_sha256": "fc3872863a39baa6790d87a9ba19b74cd4eaeab7f06f2131452de6c5460aabbe",
+      "checks": [
+        {
+          "case": "real_shared_chain_1_1",
+          "passed": true,
+          "synthetic_cpu_contract_fixture": true,
+          "actual_approval": false
+        },
+        {
+          "case": "real_chain_output_sha",
+          "rejected": true
+        },
+        {
+          "case": "real_chain_fake_approval",
+          "rejected": true
+        },
+        {
+          "case": "real_chain_evidence_sha",
+          "rejected": true
+        },
+        {
+          "case": "real_chain_sidecar_fixture",
+          "rejected": true
+        },
+        {
+          "case": "real_chain_partition_drift",
+          "rejected": true
+        },
+        {
+          "case": "real_chain_wrong_metadata_path",
+          "rejected": true
+        },
+        {
+          "case": "real_chain_wrong_version",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_real_sources_1_1",
+          "passed": true,
+          "synthetic_cpu_contract_fixture": true,
+          "actual_approval": false,
+          "approval_chain_verified": false,
+          "original_source_window_mapping": "unknown"
+        },
+        {
+          "case": "source_labels_wrong_authorization",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_label_quality",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_human_review_completed",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_semantic_approval",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_approval_chain_verified",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_original_source_window_mapping",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_fixture_only",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_formal_reuse_forbidden",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_complete",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_sha_source_code",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_wrong_sha_manifest",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_unsafe_She follows the music.",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_unsafe_He wears a shirt.",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_unsafe_The dancer bends the fingers.",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_unsafe_At 3 seconds she turns.",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_unsafe_genre",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_no_1_1_count_upgrade",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_boundary_smoke",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_boundary_max_epochs",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_boundary_min_epochs",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_boundary_unknown_scope",
+          "rejected": true
+        },
+        {
+          "case": "source_labels_no_24_8_count_upgrade",
+          "rejected": true
+        },
+        {
+          "case": "formal_1_1_budget",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_pilot_exact_boundary",
+          "passed": true,
+          "counts": [
+            512,
+            128
+          ],
+          "strict_omni_helper_called": true,
+          "shared_h3_validator_mocked": true,
+          "synthetic_mock": true,
+          "actual_approval": false
+        },
+        {
+          "case": "mock_boundary_wrong_caption",
+          "rejected": true
+        },
+        {
+          "case": "mock_boundary_wrong_version",
+          "rejected": true
+        },
+        {
+          "case": "mock_boundary_wrong_source",
+          "rejected": true
+        },
+        {
+          "case": "mock_boundary_wrong_window",
+          "rejected": true
+        },
+        {
+          "case": "mock_boundary_wrong_split",
+          "rejected": true
+        },
+        {
+          "case": "mock_boundary_wrong_fixture",
+          "rejected": true
+        },
+        {
+          "case": "mock_boundary_wrong_fixture_nonboolean",
+          "rejected": true
+        },
+        {
+          "case": "mock_boundary_wrong_id",
+          "rejected": true
+        },
+        {
+          "case": "mock_boundary_wrong_instruction",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_pilot_wrong_epochs",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_pilot_wrong_min_epochs",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_pilot_smoke",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_pilot_implicit_scope",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_pilot_legacy_24_8",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_full_exact_boundary",
+          "passed": true,
+          "counts": [
+            6000,
+            500
+          ],
+          "strict_omni_helper_called": true,
+          "shared_h3_validator_mocked": true,
+          "synthetic_mock": true,
+          "actual_approval": false
+        },
+        {
+          "case": "reviewed_full_wrong_epochs",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_full_wrong_min_epochs",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_full_smoke",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_full_implicit_scope",
+          "rejected": true
+        },
+        {
+          "case": "reviewed_full_legacy_24_8",
+          "rejected": true
+        },
+        {
+          "case": "default_interface_two_updates",
+          "passed": true,
+          "formal_reuse_forbidden": true
+        },
+        {
+          "case": "no_explicit_scope_formal",
+          "rejected": true
+        },
+        {
+          "case": "rank0_error_broadcast",
+          "rejected": true
+        },
+        {
+          "case": "rank1_same_error_refusal",
+          "rejected": true
+        },
+        {
+          "case": "approval_identity_changes_fingerprint",
+          "passed": true,
+          "synthetic_mock": true
+        },
+        {
+          "case": "resume_cross_approval_identity",
+          "rejected": true
+        },
+        {
+          "case": "legacy_v4_identity_not_relabelled",
+          "rejected": true
+        },
+        {
+          "case": "actual_train_preflight_resume_wrong_fingerprint",
+          "rejected": true,
+          "real_preflight_called": true,
+          "cuda_capabilities_mocked": true,
+          "pretrained_model_loaded": false,
+          "synthetic_mock": true
+        },
+        {
+          "case": "actual_train_preflight_resume_wrong_schema",
+          "rejected": true,
+          "real_preflight_called": true,
+          "cuda_capabilities_mocked": true,
+          "pretrained_model_loaded": false,
+          "synthetic_mock": true
+        }
+      ]
+    }
+  ],
+  "validator": "scripts_omnidance/exp/ms/omni_source_label_full.py",
+  "validator_sha256": "19c6d376081fa69ba213765b93aee45c5a5d34eadea9f55cbad2fcdef007352c",
+  "ast_regression": {
+    "changed_existing_functions": [
+      "save_checkpoint",
+      "validate_data_boundary",
+      "main"
+    ],
+    "all_other_existing_functions_identical": true
+  },
+  "validator_boundary": {
+    "synthetic_sidecar_fixture": true,
+    "actual_admission": false,
+    "checks": [
+      "valid_weak_flags",
+      "pending",
+      "human_false_integer",
+      "semantic_fake_approve",
+      "fixture_false_string",
+      "false_chain_string",
+      "wrong_auth",
+      "wrong_protocol",
+      "admitted_false_string"
+    ],
+    "passed": true
+  },
+  "actual_old_outputs_rejected": [
+    "omni_ms_style_full6500_v1_pending",
+    "omni_ms_style_full6500_v2_natural_window_protocol"
+  ],
+  "genre_scarcity_boundary": {
+    "cpu_only": true,
+    "synthetic_fixture": true,
+    "passed": true,
+    "checks": [
+      "truthful_same_coarse_changed_genre",
+      "fake_genre",
+      "fake_original",
+      "string_bool",
+      "integer_bool",
+      "missing_explicit_rule",
+      "cross_coarse",
+      "fake_old_pool_genre",
+      "truthful_same_genre_same_partition_group"
+    ]
+  },
+  "original_source_declaration_schema": {
+    "pool_and_pool_report": "original path+SHA declarations accepted, actual size collected and fingerprints bound",
+    "partial_declarations_keep_sha_verification": true
+  }
+}

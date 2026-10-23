@@ -1,0 +1,648 @@
+{
+  "date_CST": "2026-10-24",
+  "snapshot_time_CST": "2026-10-24T01:05:03.330987+08:00",
+  "scope": "Independent CPU source/feature verification plus read-only completed audit snapshot; not all experiments completed or accepted",
+  "overall_experiment_goal_complete": false,
+  "actual_GPU_training_performed_by_this_agent": false,
+  "network_calls_performed_by_CPU_tests": false,
+  "pretrained_model_loaded_by_CPU_tests": false,
+  "real_video_decoded_by_this_agent": false,
+  "private_media_or_Adam_uploaded": false,
+  "source_AST_first_pass": {
+    "files": 68,
+    "errors": []
+  },
+  "source_fingerprints": [
+    {
+      "path": "scripts_omnidance/exp/ms/omni_dance_sft.py",
+      "sha256": "4d82caffd4f6ce354fd6fbd240827d0cac69d66414de33e847501369b0e82dd2",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/omni_dance_full_sft.py",
+      "sha256": "a0214ca8a53fa2589e2d6a8dc81d1c0ce98f850b3c1c76c16bf9f1ba60fe1f63",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/omni_ms_style_full_train_v2.py",
+      "sha256": "eaef744323841aa678b03709541ee631248c1c59bff2e8489eea3cadf7d7e804",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/omni_source_label_full.py",
+      "sha256": "19c6d376081fa69ba213765b93aee45c5a5d34eadea9f55cbad2fcdef007352c",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/h3_video_sft.py",
+      "sha256": "247e77eb365685a92680bd3934ac172c7d81242f06fb28f7f4aa665130233c63",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/h3_video_only.py",
+      "sha256": "89439d733d62f522bb3dd993bc456541b3ca15ead34ff2e19f86657a471c5055",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/h3_video_infer.py",
+      "sha256": "77bafd9f6165f80328d4e272c901b21fbf45da3898161bcc039a572e1c86a2f8",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/h3_video_infer_chunked_lora_v1.py",
+      "sha256": "c611d16c26c38e918d4c91560f7fa72e6e88ad93b43ecad1b48fd80a91deb665",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/music_direct_token_compare.py",
+      "sha256": "b30f4fc0715cfb228c2d937b9ef76bccf7f30922d7638f5f44d03fd0cf5c39c2",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/music_direct_token_full6k.py",
+      "sha256": "bf9567b895aca485a74bd0d92cfc264d93051138571142c701a3eacae843bdd8",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/music_direct_condition_diag.py",
+      "sha256": "0a829e2919179d3c9209abe6138eeafe1d782af2a315dff2d88fd4ac7b4bf901",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/export_fusion_source_assumed_v1.py",
+      "sha256": "742dcfacf9d5dd2a3d9f6ef64ae80246f5a5f4b77ae4de03e624a1448d670cc0",
+      "AST_passed": true
+    },
+    {
+      "path": "scripts_omnidance/exp/review_web/server.py",
+      "sha256": "085bed7994bba3aae12da2fad968542624286d0e7778d620d2daa7ce32a47725",
+      "AST_passed": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "fusion_music_motion_sidecar_schema",
+      "passed": true,
+      "count": 7,
+      "command": "python3 -B scripts_omnidance/exp/build_fusion_music_motion_sidecar_v1.py --self-test"
+    },
+    {
+      "name": "fusion_export_deterministic_cleanup",
+      "passed": true,
+      "command": "import export_fusion_source_assumed_v1; export_fusion_source_assumed_v1.self_test()"
+    },
+    {
+      "name": "chunked_lora_FP32_BF16",
+      "passed": true,
+      "count": 4,
+      "max_absolute_error": 1.1920928955078125e-7,
+      "command": "python -B scripts_omnidance/exp/ms/h3_video_infer_chunked_lora_v1.py --self-test",
+      "boundary": "CPU toy shapes only, not a whole H3 GPU numerical proof"
+    },
+    {
+      "name": "H3_sft_complete_CPU_selftest",
+      "passed": true,
+      "command": "python -B scripts_omnidance/exp/ms/h3_video_sft.py --dataset_base_path /tmp --cpu_self_test",
+      "boundary": "synthetic provenance plus real tiny H3 LoRA/anchor/backward and exact optimizer/RNG resume; not full-weight GPU/ZeRO audit"
+    },
+    {
+      "name": "Omni_full_random_architecture",
+      "passed": true,
+      "families": [
+        "qwen2.5",
+        "qwen3"
+      ],
+      "updates_each": 2,
+      "command": "python -B scripts_omnidance/exp/ms/omni_dance_full_sft.py selftest",
+      "boundary": "random actual architectures and synthetic processor, not official checkpoint forward"
+    },
+    {
+      "name": "Omni_full_data_enabled_scope",
+      "passed": true,
+      "command": "python -B scripts_omnidance/exp/ms/omni_dance_full_sft.py full-data-selftest",
+      "boundary": "real metadata reader with mocked source validator; not current 6500 full-media admission"
+    },
+    {
+      "name": "H3_infer_CPU_without_media_decode",
+      "passed": true,
+      "count": 6,
+      "command": "unittest.TestSuite(h3_video_infer.CpuChecks(n) for n in dir(CpuChecks) if n.startswith(\"test_\") and \"actual_portrait_media\" not in n)",
+      "excluded": "test_actual_portrait_media_all_frames_no_audio"
+    },
+    {
+      "name": "music_direct_token_bounded_fixture",
+      "passed": true,
+      "command": "music_direct_token_compare.cpu_test(SimpleNamespace(moment_weight=1.0)) with fingerprints raising FixtureBoundaryReached",
+      "boundary": "all assertions through exact mean/token gradient + format4 Adam/RNG next-step parity; stops before private init/manifest/raw teacher, not complete original CPU admission"
+    },
+    {
+      "name": "focused_manifest_atomic_swap",
+      "initial_passed": false,
+      "after_fix_passed": true,
+      "source": "scripts_omnidance/exp/review_web/server.py:469",
+      "fix": "Bind cached gzip mtime to os.fstat(opened_file.fileno()) instead of os.stat(path)",
+      "fixture": "gzip compression hook atomically replaces old manifest(mtime1000) with new(mtime2000); second call must return new body"
+    },
+    {
+      "name": "long_sequence_global_permutation_claim",
+      "passed": false,
+      "sample": {
+        "seed": 42,
+        "B": 2,
+        "T": 128,
+        "D": 5120
+      },
+      "max_absolute_logits_error": 0.004588579759001732,
+      "source": "scripts_omnidance/exp/ms/music_text_contrastive.py:57",
+      "interpretation": "Ordered linspace subsampling to 64 tokens changes selected subset under full-sequence permutation. Chamfer aggregation is unordered only within the selected set; no explicit temporal correspondence loss.",
+      "training_source_modified": false
+    },
+    {
+      "name": "publisher_v4_isolated_failure_fixture",
+      "passed": true,
+      "boundary": "Temp manifest and fake video/audit placeholders; first group finishedfalse while other two later publish all3. Preserves old model/scores and terminates failure truthfully; no HTTP/real media decode."
+    },
+    {
+      "name": "N1_parallel_materialize_fixture",
+      "passed": true,
+      "source_sha256": "8917ef1d90094d1c392f0dd3097d546371ce62d81ec5fca2b5cfbcb23ed1e682",
+      "synthetic_rows": 6000,
+      "reused": 1500,
+      "shard_sizes": [
+        1500,
+        1500,
+        1500
+      ],
+      "boundary": "Disjoint i%3 tasks, raw reused bytes, taskSHA, exclusive overwrite rejection. Does not call plan/worker/finalize, private records/models, GPU or signals."
+    },
+    {
+      "name": "anchor_v2_receipt_boundary_fixture",
+      "passed": true,
+      "boundary": "Imported real safetensors package in existing H3 venv; mocked receipt/files only. Missing completion waits; failed completion and update99/RNG7/wrong marker/fewer optimizer shards reject. Does not parse real Adam/LoRA or launch GPU."
+    },
+    {
+      "name": "N1_v4_source_assumed_export_fixture",
+      "passed": true,
+      "source_sha256": "30cd043149375920c185e5195767f38b5f929e57d826f73cd32ccb09b6f73795",
+      "boundary": "Temp source/record/legacy mocks only. Generated refs/keyword flags nonblocking; true source/input/group/approval/cap/token-count failures reject; complete emitted trailing JSON recovery and truncated/empty/duplicate rejection; duplicate result rejection; synthetic6000 incomplete means no export directory or complete marker. No live export/wait/private sources/GPU/network."
+    }
+  ],
+  "CLI_invocation_note": "Initial h3_video_sft --cpu_self_test without required --dataset_base_path exited with argparse code2; corrected invocation passed, not a training defect.",
+  "runtime_copy_provenance": [
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/dance_caption_fusion6k_manager_v2.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_fusion6k_manager_v2.py",
+      "sha256": "3840aa1df7c5e331d8aea5e5470acf8d8bcfc6cbe4c4f295b07a680b3b8365be",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/dance_caption_observed32_30b_manager_v1.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/dance_caption_observed32_30b_manager_v1.py",
+      "sha256": "5645a9438ec277a452ae5e9b60b996fce1a5ec8252549a6044295da03b2ff9b4",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/eval_anchor100_review_n4_v1.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/eval_anchor100_review_n4_v1.py",
+      "sha256": "df2dbbfa0ecca1cff1fc275154091e8de8a4314d9b2dadc636ea48bf47e0aac3",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/eval_purefm_chunked_review_v2.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/eval_purefm_chunked_review_v2.py",
+      "sha256": "9e75abced0051ef55e1dd09f451a95617bccf1194189a74101c9145cab50d6ed",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/eval_ready_models_review_v1.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/eval_ready_models_review_v1.py",
+      "sha256": "8c3bc4dab8d624eb653b568edf1870a0095fdb1b72b4692b897e3f316876171e",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/h3_ms_style_cache_manager_n5_v2.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_ms_style_cache_manager_n5_v2.py",
+      "sha256": "337c6221c8b134235d901aa32759f216c0cc6fef750d08730a1ab7a028fe78fe",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/h3_ms_style_train_manager_n5_anchor_v8.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_ms_style_train_manager_n5_anchor_v8.py",
+      "sha256": "b7b3dc16943404867920b94cd62807b98a33f0d30f3b78e0ac776097771e905c",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/h3_ms_style_train_manager_n5_local_v6.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_ms_style_train_manager_n5_local_v6.py",
+      "sha256": "df6b26bf1fcd0f7900d70c00969ed78ec0d1efecd14d3529c210ba614ddbf5e1",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/h3_video_dimensions_case1_manager_v8.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_video_dimensions_case1_manager_v8.py",
+      "sha256": "5331eb12067c7e79966401896cbe3c6fbd7edc968ad3fd2e7ae3013552a973a4",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/n7_omni6k_u3000_infer_n6_v1.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/n7_omni6k_u3000_infer_n6_v1.py",
+      "sha256": "af14eab04c1851980a674c36eb81c85c9fcc38ef985e22126856a7ec642a2ae9",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/n7_omni6k_u3000_manager_n6_v1.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/n7_omni6k_u3000_manager_n6_v1.py",
+      "sha256": "0e3cf082c9f394c23c0f0dcba8d1ff26f3576eec79584c2841b384454fa679cd",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/n7_omni6k_u3000_stage_n6_v1.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/n7_omni6k_u3000_stage_n6_v1.py",
+      "sha256": "44d6c3875adea444614c5d8bc507063828a2ed00b001963d1d14e07e098dd424",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/omni_ms_style_full_eval3_followup_v1.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni_ms_style_full_eval3_followup_v1.py",
+      "sha256": "7f7ac79533f9e9d8c9e474c0391c1cec3efa6922e8d12d4bc94d49364ea374f6",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/omni_ms_style_full_manager_v2.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni_ms_style_full_manager_v2.py",
+      "sha256": "159d6b71728d09313116712601ada39d3a07ff01f7505b9a3d7d5cadb712c3b5",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/omni_ms_style_pilot_manager_v1.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni_ms_style_pilot_manager_v1.py",
+      "sha256": "2379dd917e1c795fe9f977098e572c42d2c4815631277a1b6bad731d0b0122a2",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/publish_ready_eval_review_v2.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/publish_ready_eval_review_v2.py",
+      "sha256": "0efd0c695a7d3db410d177751fd488dd98c8b7591c2d5b74d6be72c004758a29",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/stage_h3_cache_n5_local_v1.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/stage_h3_cache_n5_local_v1.py",
+      "sha256": "9012a522cc0dd597fdad27743331ca238302a9ab8406cbc0159dd0390e672a28",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/eval_anchor100_review_n4_v2.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/eval_anchor100_review_n4_v2.py",
+      "sha256": "3e01f5489c11809e03d1d3adb9cf5e2485415fbb97fb16e516540135139e9829",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    },
+    {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/publish_ready_eval_review_v4.py",
+      "historical_source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/publish_ready_eval_review_v4.py",
+      "sha256": "2500df1a159660e1a973cb703fa74afb050e3aca9fb4fa96e4b218d68628007c",
+      "source_bytes_identical": true,
+      "AST_passed": true,
+      "copied_version_GPU_reverified": false
+    }
+  ],
+  "current_read_only_snapshot": {
+    "N1": {
+      "saved_files": 3062,
+      "run_complete": false
+    },
+    "N2": {
+      "update": 750,
+      "actual_exposures": 6000,
+      "actual_unique_train": 6000,
+      "complete": false
+    },
+    "N5_anchor": {
+      "latest_logged_update": 15,
+      "finished_present": false,
+      "verified_present": false
+    },
+    "N7_final_eval": {
+      "complete": true,
+      "exit_code": 0,
+      "fixed_ids": [
+        "wJPptuhclZmKAEWs",
+        "wJPrpFsThWAcBQIw",
+        "wJQTclrlOLEYYfTB"
+      ],
+      "predictions": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni_ms_style_full_eval3_queue_v2/full_predictions.json",
+      "raw_caption_quality_verified": false,
+      "public_upload": false,
+      "no_GT_in_user_input": true,
+      "actual_training_added": false
+    },
+    "videos": [
+      {
+        "name": "h3_ms_style_eval3_gt_videos_v1",
+        "run_complete_present": true,
+        "finished_present": false,
+        "cases": [
+          {
+            "id": "wJPptuhclZmKAEWs",
+            "complete_audit": true,
+            "media_present": true,
+            "media": {
+              "verified": true,
+              "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+              "frames": 124,
+              "height": 1280,
+              "width": 704,
+              "fps": 24,
+              "video_streams": 1,
+              "audio_streams": 0,
+              "complete_decode": true
+            },
+            "sampling": {
+              "video_scheduler_updates": 50,
+              "packed": {
+                "audio_pos_numel": 0,
+                "tag2_count": 0,
+                "video_position_rows": 39984,
+                "text_position_rows": 7708,
+                "token_tag_counts": {
+                  "0": 47410,
+                  "1": 282,
+                  "-1": 52
+                }
+              },
+              "target_audio_generated": false
+            },
+            "audit_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_ms_style_eval3_gt_videos_v1/wJPptuhclZmKAEWs.audit.json",
+            "video_sha256": "810830ad5c264b40b08c1d257676ca482aa5cdd27c828fadc9f1d4e247035dc3"
+          },
+          {
+            "id": "wJPrpFsThWAcBQIw",
+            "complete_audit": true,
+            "media_present": true,
+            "media": {
+              "verified": true,
+              "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+              "frames": 124,
+              "height": 1280,
+              "width": 704,
+              "fps": 24,
+              "video_streams": 1,
+              "audio_streams": 0,
+              "complete_decode": true
+            },
+            "sampling": {
+              "video_scheduler_updates": 50,
+              "packed": {
+                "audio_pos_numel": 0,
+                "tag2_count": 0,
+                "video_position_rows": 39984,
+                "text_position_rows": 7677,
+                "token_tag_counts": {
+                  "0": 47410,
+                  "1": 251,
+                  "-1": 19
+                }
+              },
+              "target_audio_generated": false
+            },
+            "audit_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_ms_style_eval3_gt_videos_v1/wJPrpFsThWAcBQIw.audit.json",
+            "video_sha256": "b3b80ebb2d8ee68161233857f6af21e89ace6d6986431bd698fdfde31e7e5193"
+          },
+          {
+            "id": "wJQTclrlOLEYYfTB",
+            "complete_audit": true,
+            "media_present": true,
+            "media": {
+              "verified": true,
+              "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+              "frames": 124,
+              "height": 1280,
+              "width": 704,
+              "fps": 24,
+              "video_streams": 1,
+              "audio_streams": 0,
+              "complete_decode": true
+            },
+            "sampling": {
+              "video_scheduler_updates": 50,
+              "packed": {
+                "audio_pos_numel": 0,
+                "tag2_count": 0,
+                "video_position_rows": 39984,
+                "text_position_rows": 7786,
+                "token_tag_counts": {
+                  "0": 47410,
+                  "1": 360,
+                  "-1": 38
+                }
+              },
+              "target_audio_generated": false
+            },
+            "audit_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/h3_ms_style_eval3_gt_videos_v1/wJQTclrlOLEYYfTB.audit.json",
+            "video_sha256": "4175c9ac09758d9ba5e9aea069c8dcf7af05076f42a211de68efbbb186e69ed0"
+          }
+        ]
+      },
+      {
+        "name": "review_h3_purefm100_n4_chunked_v2",
+        "run_complete_present": false,
+        "finished_present": false,
+        "cases": [
+          {
+            "id": "wJPptuhclZmKAEWs",
+            "complete_audit": true,
+            "media_present": true,
+            "media": {
+              "verified": true,
+              "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+              "frames": 124,
+              "height": 1280,
+              "width": 704,
+              "fps": 24,
+              "video_streams": 1,
+              "audio_streams": 0,
+              "complete_decode": true
+            },
+            "sampling": {
+              "video_scheduler_updates": 50,
+              "packed": {
+                "audio_pos_numel": 0,
+                "tag2_count": 0,
+                "video_position_rows": 39984,
+                "text_position_rows": 7708,
+                "token_tag_counts": {
+                  "0": 47410,
+                  "1": 282,
+                  "-1": 52
+                }
+              },
+              "target_audio_generated": false
+            },
+            "audit_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/review_h3_purefm100_n4_chunked_v2/videos/wJPptuhclZmKAEWs.audit.json",
+            "video_sha256": "422ccb1a8073945becfd3034ddde7653cd071495cc353a2c7772ba11f7617659"
+          },
+          {
+            "id": "wJPrpFsThWAcBQIw",
+            "complete_audit": false,
+            "media_present": false
+          },
+          {
+            "id": "wJQTclrlOLEYYfTB",
+            "complete_audit": false,
+            "media_present": false
+          }
+        ]
+      },
+      {
+        "name": "review_omni6k_u3000_n6_video_v2",
+        "run_complete_present": false,
+        "finished_present": false,
+        "cases": [
+          {
+            "id": "wJPptuhclZmKAEWs",
+            "complete_audit": true,
+            "media_present": true,
+            "media": {
+              "verified": true,
+              "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+              "frames": 124,
+              "height": 1280,
+              "width": 704,
+              "fps": 24,
+              "video_streams": 1,
+              "audio_streams": 0,
+              "complete_decode": true
+            },
+            "sampling": {
+              "video_scheduler_updates": 50,
+              "packed": {
+                "audio_pos_numel": 0,
+                "tag2_count": 0,
+                "video_position_rows": 39984,
+                "text_position_rows": 7997,
+                "token_tag_counts": {
+                  "0": 47410,
+                  "1": 571,
+                  "-1": 19
+                }
+              },
+              "target_audio_generated": false
+            },
+            "audit_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/review_omni6k_u3000_n6_video_v2/videos/wJPptuhclZmKAEWs.audit.json",
+            "video_sha256": "9a0724ea5c4ce4b77b3c133d06a5f330097b2ba4df6ae1cbcc833749630d0a3b"
+          },
+          {
+            "id": "wJPrpFsThWAcBQIw",
+            "complete_audit": false,
+            "media_present": false
+          },
+          {
+            "id": "wJQTclrlOLEYYfTB",
+            "complete_audit": false,
+            "media_present": false
+          }
+        ]
+      },
+      {
+        "name": "review_h3_anchor01_s100_n4_v1",
+        "run_complete_present": false,
+        "finished_present": false,
+        "cases": [
+          {
+            "id": "wJPptuhclZmKAEWs",
+            "complete_audit": false,
+            "media_present": false
+          },
+          {
+            "id": "wJPrpFsThWAcBQIw",
+            "complete_audit": false,
+            "media_present": false
+          },
+          {
+            "id": "wJQTclrlOLEYYfTB",
+            "complete_audit": false,
+            "media_present": false
+          }
+        ]
+      }
+    ]
+  },
+  "prior_completed_audit_referenced_not_repeated": {
+    "path": "results/ms_20261020/omni30b_ms_style_full_complete_audit_v1.json",
+    "training_updates": 3750,
+    "epochs": 5,
+    "file_SHA_verified": 4,
+    "Adam_states": 628,
+    "Adam_step_all_states": 3750,
+    "RNG_rank_count": 8,
+    "FP32_moments_finite": true
+  },
+  "warning": "runtime_jobs copies retain historical paths/private hosts/UUID/UID/cgroup/source hashes for provenance only; do not directly run as future scheduler configuration. Copied files received AST + exact-byte checks only, no GPU rerun.",
+  "source_AST_final_pass": {
+    "files": 86,
+    "errors": []
+  },
+  "followup_time_CST": "2026-10-24T01:10:03+08:00",
+  "followup_note": "Operations switched after the 01:05 experiment snapshot; earlier actual training/video counts are intentionally not represented as newly completed.",
+  "current_operating_entrypoints": {
+    "anchor": "MS/eval_anchor100_review_n4_v2.py",
+    "publisher": "MS/publish_ready_eval_review_v4.py",
+    "N1": "scripts_omnidance/exp/ms/fusion_complete_parallel_n1_v3.py",
+    "retired_waiter": "MS/eval_anchor100_review_n4_v1.py (old /usr/bin/python environment lacks safetensors; exactly cancelled before inference/resource release)",
+    "N1_recipe": "same frozen legacy fusion manager; source-assumed policy unchanged; val500 deferred"
+  },
+  "N1_export_policy_followup": {
+    "time_CST": "2026-10-24T01:13:30.049354+08:00",
+    "source": "scripts_omnidance/exp/ms/fusion_source_assumed_full_n1_v4.py",
+    "source_sha256": "30cd043149375920c185e5195767f38b5f929e57d826f73cd32ccb09b6f73795",
+    "AST_passed": true,
+    "export_path": "MS/fusion_source_assumed_full6000_v4",
+    "reused": 3026,
+    "missing": 2974,
+    "shard_result_file_counts": {
+      "0": 17,
+      "1": 12,
+      "2": 10
+    },
+    "actual_complete_present": false,
+    "counts_are_files_not_independent_eligibility": true,
+    "v3_strict_refs_finalizer_nonportable_to_source_assumed_export": true,
+    "generation_recipe_changed": false
+  }
+}

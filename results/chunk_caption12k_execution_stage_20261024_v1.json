@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-24",
+  "scope": "12k execution stage, not complete goal or semantic quality acceptance",
+  "branch": "codex/motionscript-optimization",
+  "remote_start_commit": "aa9c06e2ba53e7ce204483ae9554a3188df43b16",
+  "selection": {
+    "target_ids": 12000,
+    "authority_ids": 11992,
+    "extra_real_ids": 8,
+    "manifest_sha256": "4b2efc8233fed8dd7cdb46acf8da318db76cb575faa1177e9e2bc113d453d283",
+    "selection_sha256": "7b4e28dd08b2b3d6921836fe9adb650751bc731920957319fc29b2481be4e026",
+    "source_group_definition": "original source_video path, not audited music near-duplicate identity",
+    "old_internal_planner_val_overlap": 507,
+    "new_training_split_created": false,
+    "original_audio_offset_mapping": "unknown"
+  },
+  "nlfs": {
+    "actual_extra8_completed": true,
+    "independent_CPU_verified": true,
+    "valid_counts": [
+      81,
+      81,
+      81,
+      80,
+      81,
+      81,
+      81,
+      78
+    ],
+    "frames": 81,
+    "fps": 16,
+    "missing_frames_not_fabricated": true,
+    "receipt": "MS/chunk_caption12k_nlf_extra8_run_v1/finished.json"
+  },
+  "cpu_tests": {
+    "full_repo": {
+      "passed": 294,
+      "subtests_passed": 91,
+      "warnings": 1,
+      "command": "N1 /opt/venv_eval/bin/python -B -m pytest -q tests with PATH=/opt/ms_tools:/usr/local/bin:/usr/bin:/bin"
+    },
+    "tests_do_not_prove_semantic_quality": true
+  },
+  "MS50": {
+    "clips": 50,
+    "window_candidates": 91,
+    "window_abstentions": 9,
+    "no_output_windows": 5,
+    "partial_support_windows": 4,
+    "failures": 0,
+    "A_nonempty_clips": 49,
+    "A_strict_candidate_clips": 45,
+    "B_two_candidate_clips": 42,
+    "B_one_candidate_clips": 7,
+    "B_no_candidate_clips": 1,
+    "raw_fourgram_repetition_A": 0.1093,
+    "raw_fourgram_repetition_B": 0.0713,
+    "repetition_not_action_diversity": true
+  },
+  "MS_full": {
+    "launched": true,
+    "source_sha256": "8057c48e7b02000c0d28a7dfbc584eaad984239670740037c1d10a5be8c68a00",
+    "nodes": 4,
+    "workers_per_node": 16,
+    "total_workers": 64,
+    "shard_count": 4,
+    "launch_manifest": "MS/ms_chunk12k_fixed_v2/launch.json",
+    "actual_result_files_observed": true,
+    "completed": false
+  },
+  "visual": {
+    "source_sha256": "15f591a63c92d0291a0d45c1ccefd3e4f84900ec0dbc76279658ba7c3956cf25",
+    "independent_review_closed_bugs": [
+      "half-open frame windows",
+      "length/nonstop generation rejection",
+      "missing metadata/raw SHA recovery guard",
+      "failure-specific immutable attempts"
+    ],
+    "local8B_actual_launched": true,
+    "host": "N1",
+    "physical_GPU": 6,
+    "managed_task": "x909Ee",
+    "child_PID": 3269259,
+    "GPU_model_load_or_generation_completed": false,
+    "fixed_holdouts": 3,
+    "fixed_manifest_sha256": "14a38a179bc0a1f0afc4fd9d6eef6e74797564db696cad20503e495b57d34361",
+    "planned_32B": "N1 local staged model TP2 on GPUs0,1 after actual first-stage check",
+    "direct32point": "blocked on real NLF canonical_joints and canonical_vertices assets; no fabricated substitute",
+    "actual_weights_loaded": true,
+    "actual_weights_GiB": 16.97,
+    "actual_engine_PID": 3270694,
+    "actual_generation_complete": false,
+    "phase": "image encoder profiling / JIT warmup after actual GPU weights load"
+  },
+  "resource": {
+    "unused_cards_have_project_holders": true,
+    "no_duplicate_holders_created": true,
+    "N8_existing_stopped_holders_resumed": 8,
+    "only_fresh_exact_owner_PID_UID_argv_start_UUID_release": true,
+    "extra8_N2GPU0_holder_restored": true,
+    "N5_existing_anchor_latest_actual_updates": 100,
+    "N5_complete_state_verification_pending": true,
+    "N4_final2250_native_AV_actual_started": true
+  },
+  "publishing": {
+    "private_media_models_Adam_full_captions_not_uploaded": true,
+    "other_sessions_dirty_changes_excluded": true
+  },
+  "complete": false,
+  "human_review_completed": false,
+  "semantic_approval": false
+}

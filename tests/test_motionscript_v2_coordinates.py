@@ -30,7 +30,7 @@ def template():
 def nlf(*, count=21, source_fps=20, yaw=None, pelvis=None, timestamps=None):
     rest = template()["J_template"][:24]
     yaw = np.zeros(count) if yaw is None else np.asarray(yaw)
-    rotation = Rotation.from_euler("y", yaw, degrees=True).as_matrix()
+    rotation = Rotation.from_euler("y", yaw[:, None], degrees=True).as_matrix()
     camera_axes = np.diag([1., -1., -1.])
     pose = np.zeros((count, 72))
     pose[:, :3] = Rotation.from_matrix(camera_axes @ rotation).as_rotvec()

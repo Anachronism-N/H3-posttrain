@@ -202,3 +202,30 @@
 - [当前音乐到文本训练校验入口](../scripts_omnidance/exp/ms/omni_ms_style_full_train_v2.py)
 - [MotionScript 官方方法与代码](https://github.com/pjyazdian/MotionScript)
 - [Beat This 拍点与小节首拍检测](https://github.com/CPJKU/beat_this)
+
+
+## 集群执行补充：12,000条真实视频编舞caption（2026-10-24）
+
+- 用户新授权：同步最新代码、自动推进实验、生成1.2万条视频数据的编舞caption；闲置GPU占卡。已fetch并切到跟踪分支 `codex/motionscript-optimization`，远端起点 `aa9c06e2ba53e7ce204483ae9554a3188df43b16`。原dirty notes26/results/运行脚本保留，没有reset/stash或覆盖。
+- 实际权威旧池 `MS/ids_all.txt` 为11,992唯一SID，`MS/nlf`缓存全部覆盖，全部命中当前精选train；污染的 `H3AR/full12k_ids.txt` 有状态与节点前缀，不作为裸ID列表。新输入保留11,992，再从真实精选train补8条不同source_video、相同声明媒体协议，形成**12,000唯一输入**；8条NLF仍需实际提取，不把输入清单完成当caption完成。
+- 输入产物 `MS/chunk_caption12k_input_v1/manifest.jsonl`，SHA `5bd94c0025ca0c63a81d01e0a21051a5db7185ca0b7a501fa06fce97c68d5e64`；selection SHA `a4a35ed9a73e5f715c5e1a8eae50beb47b1255545453a36380630238611387f9`。保存原CSV列/重复header/每样本来源、媒体和姿态路径，实际消费时核SHA和真实PTS，不用CSV原duration当窗口终点。
+- **这只是标注输入池，不是已完成的新planner训练划分。** 原11,992与旧内部planner验证联合有507条交叉，已公开；新模型训练前必须重新按歌曲/近重复/视频源分组划分。固定楼梯/红衣/商店三个case使用独立 `fixed3_manifest.jsonl` 与 `nlf_eval3`，不并入12,000。音频偏移与原source窗口映射仍unknown，不冒称音乐对齐已证实。
+- A整段原MS对照：使用同v2坐标和冻结原规则，真实单例 `hwrlCvOCYUKpljlV` 已在 `/opt/venv_eval` 跑通；50条整段基线 `MS/ms_chunk12k_A_whole50_1792786516895/manifest.json` complete/count=50。这是候选描述工程完成，不是50条人工事实验收。
+- B固定分段：补独立 `ms_chunk_caption.py` 批量入口，完整预处理一次，再以真实媒体end划分 `[0,2)`、`[2,5.0625)`等半开窗口，调用原版规则不跨缺口、不重置坐标。保raw、连续coords、计划窗口、实际支持子段/索引、清理前后与SHA；无描述/弃权/异常分别统计，不把空输出写成静止。
+- 真实单例ffprobe报告704×1280、16fps、81帧、流duration=5.062500；坐标末样本5.0是不同概念。默认PATH缺ffprobe，但已有longlive环境的ffprobe二进制实际调用通过，不需要运行该cephfs环境Python。完整原MS依赖在 `/opt/venv_eval`（h3环境缺matplotlib），复用现有环境而非替换/降级依赖。
+- C按拍分段暂不拿全局BPM伪造拍点；检测、可靠性和音画偏移证据未完成时B先行。D直接32点的真实NLF TorchScript导出接口已CPU核实，但缺匹配的canonical joints/vertices资产；不伪造T-pose或用模型内部部分点冒完整数组，D明确asset-blocked，不阻挡A/B与独立视觉标注。
+- 视频开放语义对照：另补 `ms_visual_batch.py`，只看实际窗口有序帧、无MS/rich/音乐先验，动作开放词汇且重复模式不机械复读，保frame evidence/raw/不确定性与独立source。先用已stage8B单卡做工程贯通，再32B TP2同三个case，成功后按实际资源增加副本；8B结果不冒32B质量结果，格式通过不冒语义审核。
+- 资源fresh：N5八卡旧anchor训练仍活跃，保留其有限训练，不重复启动；其它56卡都有项目holder。N8原八holder处于T，经身份核验SIGCONT后实测全部975MiB/100%，未新建重复holder。CPU标注并行不需要重跑11,992姿态；8条补充拟N2GPU0，视频VLM拟N1单卡8B与N6两卡32B。所有释放须fresh身份/UUID/argv/start核验、pidfd精确操作，并持reserve防watchdog抢占；未使用卡保holder。
+- 新分支回归首次在错误cwd出现import错误；更正后SciPy1.17单轴批量角fixture需显式 `[T,1]`，仅修测试输入shape，未改训练/生产数学。此后242 passed、10 skipped、75 subtests passed。新增batch入口和真实12k产物仍须各自回归及实际验收，窄回归不能证明全目标完成。
+- 最终验收要求：恰12,000唯一SID全部有处理终态；正文、abstain、failure数量分开，完整来源/窗口/媒体SHA、同源隔离边界与原文可回查；失败只重试缺失SID。不得把输入清单、启动/占卡、少量视频、synthetic tests或候选格式通过写成12,000高质量编舞监督已完成。代码、方案与必要小报告归档到本分支，不上传原始媒体、私有caption全文、大模型或Adam。
+
+### 已实际上机的后续里程碑（不冒充全量完成）
+
+- 输入最终冻结 revision2：manifest SHA `4b2efc8233fed8dd7cdb46acf8da318db76cb575faa1177e9e2bc113d453d283`、selection SHA `7b4e28dd08b2b3d6921836fe9adb650751bc731920957319fc29b2481be4e026`。上一段5bd94c/a4a35是构建历史，不作为当前消费准入；8条补充路径统一 `chunk_caption12k_input_v1/nlf_extra8`。
+- 14条真实媒体（extra8＋3authority smoke＋fixed3）已PyAV全帧解码/自然WAV头核验，实际81帧/16fps/704×1280/0..5.0625秒均通过；不是全12,000媒体已独立复核。主执行器消费时逐样本hash并核实际视频PTS与NLF count/fps/时间。
+- N2 GPU0已实际完成8条补充NLF，资源receipt和独立CPU复验8/8 shape/SHA/FPS/valid通过；有效帧数81/81/81/80/81/81/81/78，无效帧保持mask而非补坐标。原11,992输入未改。任务结束后GPU0恢复单一受管holder，975MiB/100%，不将holder任务仍running误称NLF未结束。
+- 真实同50样本A/B：A原MS非空49/50、严格支持candidate45/50；B两窗全candidate42/50、仅一窗candidate7/50、无候选1/50，窗口总100＝91candidate＋5no_output＋4partial_support，执行错误0。B raw平均133.03词/窗口、重复四词片段7.13%，A平均287.24词/片段、10.93%；机械中性代词会增加固定短语，文本重复不等于动作多样性或准确度。空/partial正文未偷偷填静止或A fallback。
+- MS入口实际freeze SHA `8057c48e7b02000c0d28a7dfbc584eaad984239670740037c1d10a5be8c68a00`，单例、固定三case、50源初跑及严格resume均通过；新独立18tests/16subtests通过。四节点 N1/N2/N3/N4 各16CPU worker、4个独立分片现已正式启动全12,000原MS标注，输出 `MS/ms_chunk12k_fixed_v2/shard0..3`，启动配置 `launch.json`。已实见各分片100余条原始候选记录，尚无四分片最终manifest，不写全量done。
+- VLM执行器独立审阅发现并修正了端点帧双计、length/缺generation元数据误接受及failed无法恢复；最终freeze SHA `15f591a63c92d0291a0d45c1ccefd3e4f84900ec0dbc76279658ba7c3956cf25`，N1真实CPU24/24＋与原视觉入口联测35/35（含实际FFprobe/FFmpeg）。`--retry-failed`仅给失败窗新attempt，保旧raw/receipt，正确候选不重复。仍需真实GPU首条模型调用，不把测试或准入叫VLM成功。
+- N1已存在本地32B `/opt/models/Qwen3-VL-32B-Instruct`（14/14分片66,714,912,872字节）与shm8B（4/4）。`venv_vllm`用Torch2.13.0+cu130/vLLM0.31/Transformers5.17；只append既有eval CPU库路径补SciPy、不prepend覆盖Torch、不安装/降级现有依赖。8B工程用N1 GPU6；32B首质量候选用N1 GPU0/1 TP2，避免单卡或跨节点共享coldread假定。模型广告262k context不替代实际16k/image16/seq1预算。
+- N5旧anchor日志已真实达到100更新（不是历史39/97），完整state/manager验收仍另等；N2最终2250旧评测先后遇diffsynth导入路径/imageio，已基于成功完整state receipt尝试完整H3环境独立恢复，不重读Adam、不更换模型/采样。相关最终视频/HTTP尚未全验收，不把12k新任务掩盖旧有限收尾。

@@ -1,4 +1,6 @@
-# 当前全部实验：有限完成标准、最新证据与代码归档
+# OmniDance/H3：模型身份、实验历史、当前证据与有限验收
+
+> **最新统一总结见第15–16节（2026-10-24 02:16 CST只读核查）**：实际模型是 `Qwen/Qwen3-Omni-30B-A3B-Instruct` 的 Thinker，不是专用 `Qwen3-Omni-30B-A3B-Captioner`。前14节保留历史观察时点；N2已达2250更新，但完整状态及全部视频尚未验收。用户已暂停自动目标，本次只整理文档，不恢复实验。
 
 日期：2026-10-24；基础快照01:05 CST，六视频完成更新至01:49 CST（其它在训数字保留各自观察时点）。这是一份**运行中的有限验收清单**，不是“全部实验完成”声明。后续必须以新 completed marker / audit / evaluation JSON 更新本页，不用任务启动或旧代理报告冒充成功。
 
@@ -209,3 +211,101 @@ N2仍须真实finished与final_cpu_checkpoint、逐SID validated/audit再进入v
 小报告 `results/final_packaging_gate_verification_20261024_v1.json` 包含roles、6/15当前事实、真实负例与源码行号、融合v4最终路径、待核Git边界。最终3750运营源码 `scripts_omnidance/exp/ms/runtime_jobs/eval_omni_final3750_review_v1.py` 原文已归档SHA a21f4e278e…、字节一致＋AST通过，复制未再GPU验证（累计21份runtime）。
 
 发布材料只纳必要源码/小报告，不stage来源未知的notes26修改或agent6结果；不上传weights/media/原caption私有数据/Adam/凭证。本文作者不stage、不commit/push。
+
+
+## 15. 模型身份与此前实验的统一总结
+
+本节区分官方checkpoint身份、实际加载模块、业务用途与本项目微调产物。本地脚本/目录带caption或captioner名称，不证明加载了官方Captioner权重。
+
+### 15.1 实际使用 Instruct，不是 Captioner
+
+| 用途 | 官方基底及模块 | 输入/输出 | 是否微调 |
+|---|---|---|---|
+| N1 rich＋MotionScript融合 | `Qwen/Qwen3-Omni-30B-A3B-Instruct`；`Qwen3OmniMoeThinkerForConditionalGeneration` | rich、MS、genre文本→一份动作caption；不输入音乐或视频 | 官方基底冻结，greedy文本推理，无LoRA |
+| N7 音乐→动作caption | 同一官方Instruct基底的Thinker＋音频编码链路 | 音乐→英文动作caption；不输入参考图或GT动作字段 | 本项目SFT；u3000与最终u3750不同 |
+| H3 舞蹈生成 | H3原生图文条件、冻结基线或DiT LoRA | 动作caption＋参考图→纯视频 | pureFM/anchor是H3训练，不是Omni变种 |
+
+官方Instruct revision：`26291f793822fb6be9555850f06dfe95f2d7e695`。本次核查依据：
+
+1. 实际读取N1的 `/opt/omni30b_action_rewrite_n1_v1/local_staging_complete.json`：`base_model=Qwen/Qwen3-Omni-30B-A3B-Instruct`、上述revision、`official_content_verified=true`；来源为 `models/Qwen3-Omni-30B-A3B-Instruct-official`。本次读取历史完整权重校验凭据，没有重新hash大模型；凭据destination保留原stage路径，不用它证明当前目录名。
+2. 原入口 `MS/dance_caption_fusion6k_manager_v2.py` 的MODEL指向该rewrite目录；v3/v5复用同一基底、SYSTEM和Thinker配方，没有换成Captioner。
+3. 实际N7入口 `MS/omni_ms_style_full_train_v2.py` 默认model为 `/opt/omni30b_dance_official_v1`，model-id为 `Qwen/Qwen3-Omni-30B-A3B-Instruct@26291f793822fb6be9555850f06dfe95f2d7e695`。实际 `MS/omni_ms_style_full_queue_v4/training.log` 多rank LOAD REPORT确为该目录的 `Qwen3OmniMoeThinkerForConditionalGeneration`。
+4. 仓库加载逻辑见 `scripts_omnidance/exp/ms/dance_caption_fusion.py` 的 `TEACHER_FAMILIES/teacher_family` 与 `scripts_omnidance/exp/ms/omni_dance_sft.py` 的 `model_classes`。Talker/Code2Wav不加载或执行；只加载Thinker不等于换用了官方Captioner checkpoint。
+
+准确表述：**官方Instruct-30B-A3B负责文本融合，并被本项目微调为音乐→动作caption模型；没有在使用官方专用Captioner。** 本轮未切换或对照评测专用Captioner。不能直接将当前重复/动作单一归因于型号选择，也不能预先宣称换型号即可解决。
+
+### 15.2 研究目标与路线演变
+
+目标始终是**音乐＋参考图→清晰、连续、有动作编排且合理响应音乐的舞蹈**，不是只换pose，也不是恢复音乐唯一对应的原舞步。音乐到编舞是多解任务。
+
+| 阶段 | 实际证据 | 决策 |
+|---|---|---|
+| Wan2.2及早期AR/蒸馏 | 工程/自动指标有改善，但2026-10-10用户否决画质 | 转H3，不能以指标代替可用性 |
+| 早期H3音乐控制/FM/CFG | 清单prompt、微调模糊、控制弱等问题并存；GT/自生成数据对照仍糊 | prompt、FM目标、分辨率、锚定分别检查，不把CFG或数据当唯一根因 |
+| MusicFM→H3文字hidden | 完整骨干＋1024→5120 adapter；旧完整6k与新mean/token@100有人评pose负结果 | 保留有限对照，检索/表示不能替代视频 |
+| 当前离散caption主线 | 音乐→Omni动作caption→H3原生图文TC→真纯视频 | 分开学习音乐编舞与H3动作生成 |
+| 当前H3 pureFM/anchor | 原MS＋图像，真实latent Flow Matching；pureFM100获有效舞蹈正评 | anchor100尚需完整状态与视频对照 |
+
+详见 [notes/28](28_experiment_history_failure_analysis_and_current_status_20261022.md) 的历史决策链与 [notes/27](27_dance_annotation_motionscript_vlm_and_dimensions_20261020.md) 的打标/维度定义。旧文档的“当前”不覆盖新终态。
+
+### 15.3 N1融合目标与数据使用边界
+
+- 同样本rich＋MS融合成**一份**正文，不分别重写；重复动作可同义改写或有依据细化，不虚构新舞步。保部位、左右方向、角度、幅度、合理顺序和真实重复。
+- 默认源动作正确是用户授权假设，不是已逐条视频审核；保真实来源绑定、split、SHA和lineage。缺完整JSON/空正文/截断需相应SID恢复，旧关键词或生成source_refs误拒不应禁用完整正文。
+- 冻结Thinker、text-only、seed42、greedy、2048新token上限。本轮不注入BPM等字段。6000行音乐/动作sidecar是metadata join，不等于6000融合完成或进入训练；BPM不等于视觉速度/跟拍真值。
+- 原6k融合由单worker扩到3GPU，新增v5目标最多8GPU、仅重分缺失SID并复用旧正文。启动不等于8worker实际加载/forward或6000导出。
+- **已结束的N7 6k训练使用原MS＋genre natural-window v2，不是尚未完成的rich＋MS融合数据。** 严格固定窗口v3的94条替换资产没有中途替换N7数据；资产准入/融合进度不能冒称该轮已用新数据。
+
+### 15.4 Omni与H3各自到底学什么
+
+**Omni音乐→caption：** 官方30B Instruct Thinker，语言attention/专家MLP及音频末4blocks LoRA，audio proj1/proj2全训；628可训练tensor，BF16冻结基底、FP32可训练参数和Adam。只对assistant正文＋EOS做CE；真实processor编码音乐，user/audio/pad不算目标loss。6000train/500val，实际3750更新、5epoch、30000曝光后因validation plateau退出，不因人工质量通过退出。
+
+**H3图文→舞蹈：** TC/VAE冻结，DiT LoRA rank32/alpha64、LR1e-5、8GPU ZeRO3＋activation checkpointing，真实视频latent加噪预测FM target。pureFM anchor_lambda=0；anchor0.1在sigma≥0.5追加冻结原H3预测一致性。先各100更新，不自动追加300或无限扩量。
+
+H3生成端是真纯视频：无audio VAE、音频参考编码、audio scheduler、audio patch/head调用；网页音乐仅外评播放。旧direct hidden保native real-reference-audio AV joint。因此**旧音乐hidden与当前纯视频不是仅改一个变量的对照**。当前动作结果更正向，不证明旧路线唯一根因已找到，也不等于音乐编舞/全部手脸画质验收。
+
+### 15.5 用户人评及可下的结论
+
+| 配置 | 用户反馈 | 尚不能推出 |
+|---|---|---|
+| 原MS＋风格→冻结H3纯视频 | 有效舞蹈 | 未独立评分全部手脸/跟拍 |
+| 原MS＋图像→pureFM100 | 有效舞蹈，幅度比冻结基线更大 | 未证明泛化或音乐控制成功 |
+| 音乐→Omni u3000→冻结H3 | 有动作，但重复单一、比前两组弱 | 不代表最终u3750，不能只归因于H3 |
+| mean/token direct@100 | 所看预设case近摆pose | 不替代新完整2250模型评审 |
+
+原话与范围已发布于 `results/direct100_user_review_20261023.json`、`results/h3_purefm100_and_omni_u3000_user_review_20261024.json`，未代填网页数值评分。当前分段结论：**H3原生文字动作条件已经能产生有效舞蹈；音乐→动作caption的多样性与编排仍未解决。** 这是证据支持的定位，不是排除了所有其它因素。
+
+## 16. 最新产物、修错与暂停边界（02:16 CST）
+
+以下为2026-10-24 02:16实际只读小JSON核查；不重新decode视频或coldread模型/Adam。
+
+| 项目 | 最新产物与状态 | 判定 |
+|---|---|---|
+| N7原MS训练 | finished true/exit0；u3750/e05、3750更新、30000曝光 | 训练预算结束；caption多样性/音乐编排未通过 |
+| N7最终u3750 | fixed3 rawcaption＋条件cache已存在；video_exit/finished缺，3audit缺 | 三视频尚无成功证据 |
+| N2新完整6k | finished true；2250更新、18000曝光、6000unique、3×500验证；latest=model_step02250.pt | 预算已结束；full-state/最终视频另待 |
+| N2完整状态 | live phase=actual_final_CPU_strict_load；final_cpu_checkpoint.json缺 | 未证明Adam/RNG/完整恢复审核通过 |
+| N5 pureFM100 | 100训练及3完整视频此前验收 | 用户有效舞蹈正评 |
+| N5 anchor0.1 | 最后独立实测39/100；本次finished/anchor01_verified缺、3audit缺 | 不写成100或完整视频结束 |
+| N1融合 | 最近明确3586/6000；本次v5 plan与full6000v5 complete缺 | 不宣称8GPU forward或6000完成 |
+| 五角色视频 | pureFM3＋u3000 3＝6/15；anchor、direct最终2250、Omni最终3750各待3 | 全视频/网页目标未完成 |
+
+N7五轮NLL：0.778760 / 0.767208 / 0.763533 / 0.773399 / 0.807810，最佳e03；终点e05是plateau规则而非质量批准。
+
+### 16.1 已修复问题与验证边界
+
+1. Omni GC未真实开启及第二步Adam/DDP峰值OOM：修训练模式与bucket gradient view，已有真实训练验证；接口两步不冒完整训练。
+2. N5共享cache重复核验导致IO/广播等待：512cache完整逐SHA本地复制，未重编码；pureFM实际跑完。管理器随后误要求DS内部scheduler，改按Accelerate独立scheduler.bin验收，不重训成功pureFM。
+3. pureFM推理LoRA临时激活OOM：只分块低秩matmul临时激活，保完整条件/704p/124帧/50步/seed42/CFG1；3视频技术完成，不降分辨率或将CPUtoy当整模型逐值证明。
+4. N6 projector精度不匹配：加载前保持保存dtype、逐tensor值核验后generate。保原始重复caption，不用后处理冒称原模型效果。
+5. review manifest原子替换竞态：打开文件fstat绑定gzip缓存，已真实部署；publisher仍须保人评/评分、不让单组失败阻其它。
+6. 最终checker七类误接受（错LoRA/caption、bool当数值、预算/状态不足等）已修。当前SHA `2de49bef6f96d8613066accc848c39d6e376ab93cd3f1325f083077965c8c89b` 的66负例及正例回归通过；更广的独立端到端复核在用户暂停前尚未交付。**窄回归通过不等于全部实验完成或无其它验收缺口**，HTTP/Git离线项不伪写true。
+
+### 16.2 固定评审与暂停/发布口径
+
+- 额外generation holdout固定 `wJPptuhclZmKAEWs`、`wJPrpFsThWAcBQIw`、`wJQTclrlOLEYYfTB`，不在6k train/500 val中；不能拼其它ID的caption冒同case。
+- 纯视频704×1280、124帧24fps、50video步、seed42、CFG1、flow shift12；完整decode/no-audio guard/来源SHA分别验收。direct最终保nativeAV、video/audio各50步、原音乐mux。
+- 用户已明确暂停自动目标。本次仅核模型、读产物、整理并发布文档；未恢复GPU实验/队友原任务，未重建循环。暂停目标不证明远端进程已退出，本次不作此保证。
+- 仍待anchor100及状态/视频、完整6000正文＋lineage/SHA、N2 full-state＋最终3视频、u3750最终3视频、五模型15case真实HTTP及全部最终分析。有限负结果可收尾，但不能省略未完成任务。
+- 阶段 `200cad1`、`d631579` 已发布；后者含用户人评/进度边界。本次是总结文档发布，**不是全部实验最终验收或代码全部发布**。
+- 只提交本次文档，不纳其它会话notes26或待核代码/报告；不上传模型、媒体、Adam、私有caption正文或凭证。

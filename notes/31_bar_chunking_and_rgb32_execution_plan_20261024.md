@@ -15,7 +15,7 @@
 |---|---|---|
 | 原身体表示的整段与固定分段 MS | 已有实际执行与候选统计 | 核对正文质量和完整覆盖 |
 | 按检测拍点分段 | 同 50 条对照已有报告；未识别小节首拍 | 与真正按小节的策略分开 |
-| 按小节首拍分段 | 当前入口未实现完整流程 | 检测 downbeat，构建并共享窗口清单 |
+| 按小节首拍分段 | BeatThis真实同50检测及strict／merged MS均已完成 | 三同源case共享VLM消费继续，不把检测或MS完成冒VLM已跑 |
 | NLF 官方 canonical 资产和 32 点规格 | 已取得并记录兼容性核验 | 在实际服务器复核文件身份后使用 |
 | 从真实 RGB 提取 32 点 | cached-box与新fresh-detector均已实跑3条 | 保来源分离，核验新框选择和新增点可靠性 |
 | 32 点视频叠加及动作核对 | 新旧三栏叠加与fresh／cached十二路动作支持控制已完成 | 未建立准确优势；画内仍不等于可见，未批准掌足监督 |
@@ -266,7 +266,7 @@ done
 
 2026-10-24 04:35:46 UTC的全量失败快照为44个SID、45个窗口：38个两帧证据拒绝、6个正文超过140词、1个abstain却正文非空。所有45窗均正常stop/EOS且未达1200 token cap，不能归因为OOM或截断；此快照不是最终全12k分母。原raw和失败记录保留，旧两窗pair-enum只修格式且caption逐字未变，不可冒充全失败池的动作事实修复。
 
-当前8分片仍继续生成，唯一原MS后验进程仍活且最终complete/receipt尚未产生；不重复启动、不修改运行源。BPM同50与BeatThis真实首拍检测的后续实跑已完成，见下述更新；真正小节窗口／MS-VLM共享消费与独立边界后验仍分开验收。整体12k可用正文、最终导出、最后Git远端HEAD与资源终态仍待真实验收。
+当前8分片仍继续生成。原MS首后验已提交真实12,000源／24,000窗口终态，随后唯一b65独立canonical只读验真仍在运行；不重复启动、不修改运行源。BPM同50与BeatThis真实首拍检测的后续实跑已完成，见下述更新；真正小节窗口／MS-VLM共享消费与独立边界后验仍分开验收。整体12k可用正文、最终导出、最后Git远端HEAD与资源终态仍待真实验收。
 
 ### 新三类失败窗口的单次重新观察
 
@@ -284,4 +284,10 @@ BPM同50已实际调用原MS：151个原等距长度格经短尾合并形成109�
 
 BeatThis官方final0已真实在隔离环境CPU执行fixed3＋同50共53条；53次成功，50条有115个相邻检测首拍间隔候选，2条首拍不足忠实保留。所有音频约5.06s，短context、拍号、音画offset、相位和准确性仍unknown／false。原v1检测源保持，独立v2修正“beats为空而downbeats非空”的门禁，对现53数组严格后验全部合法，不重新推理或把v2冒原producer。
 
-**尚未凭上述阶段结果宣称完成**：真正strict／merge-short-edges小节窗口的MS正文、三个同源case的VLM共享窗口实跑、全部12k可用正文与最后资源／Git验收。首拍检测成功不是小节caption成功，MS实际消费也不是VLM已经共享运行。
+**尚未凭上述阶段结果宣称完成**：三个同源case的VLM共享窗口实跑、全部12k可用正文与最后资源／Git验收。后续真正strict／merge-short-edges小节窗口的MS正文已完成同50，且独立50真videoPTS／150typed报告验真通过；这仍不是VLM已经共享运行。
+
+真实同50有限结果与来源见 [`music_windows_same50_finite_trials_20261024_v1.json`](../results/music_windows_same50_finite_trials_20261024_v1.json)。strict实际211窗／142candidate／69abstain，全50中14条全available正文，但48条首拍充分源内只有12条；merged实际136窗／111candidate／25abstain，全50中34条全available正文，首拍充分48源内32条。两条首拍不足只能保残段，不能将14／34冒完整小节覆盖。原115个相邻检测首拍区间在两策略中保持相同，不来自BPM网格。
+
+精确时间与类型伴随收据为 [`music_window_exact_pts_typed_verification_20261024_v1.json`](../results/music_window_exact_pts_typed_verification_20261024_v1.json)，SHA `89f7cee6d8df7155fecd2a5fb8b42edb79df7f0da6a33274c27bcccc0d54bda7`：实际probe50个视频时间数组并核三策略150份报告，精确digest与原共享plan绑定一致。此前字段摘要取NLF并在1e-5内匹配video，现由独立真probe证明，不修改原报告或推理源。独立canonical JSON类型比较拒False冒0、True冒索引等重封，前后验器误读MS窗口字段的失败保留、按真实window_start／end修正后实际运行exit0，不用窄测试替代真150份验真。
+
+原MS全量首后验已提交12,000源／24,000窗口；B固定窗口仅10,327源两窗完整、1,352源仅一窗、321源全弃权，合计1,673源不能给完整B正文。唯一v2 canonical只读验真继续运行，尚无外部终态收据时不宣称最终通过，不伪原框架killed句柄为exit0。完整视频VLM12k仍是另一在途主线。

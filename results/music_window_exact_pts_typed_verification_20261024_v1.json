@@ -1,0 +1,2438 @@
+{
+  "schema": "music_window_exact_pts_typed_verification_v1",
+  "complete": true,
+  "input_manifest_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/chunk_caption12k_input_v1/first50_manifest.jsonl",
+  "input_manifest_sha256": "64ae58dd23f5bd3ee05677a2669fec626ef8bcf0ba54adc3b3269f4cbf401b3b",
+  "video_probes": 50,
+  "reports_verified": 150,
+  "bundle_counts": {
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1": {
+      "summary_sha256": "702269bcfab5f5b536e03af2809ff5d51ff5822ae08fd565dc2c201f9635f16f",
+      "clips": 50,
+      "windows": 109
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1": {
+      "summary_sha256": "9f110fb60c6b2653d9596448ff206ee11f2104d513efbb98497f887aef4dd0de",
+      "clips": 50,
+      "windows": 211
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1": {
+      "summary_sha256": "57b7810b0e4178cf55f2881bb00486507fd5b32cd13fa2f097dc998918272440",
+      "clips": 50,
+      "windows": 136
+    }
+  },
+  "records": [
+    {
+      "id": "hwrlCvOCYUKpljlV",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/hwrlCvOCYUKpljlV.json",
+        "sha256": "38371655be5031c9442de2bd186cead57b1d1af20aa09c7480717931f4a3e969"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/hwrlCvOCYUKpljlV.windows.json",
+        "sha256": "9e8c1878516dca06367d95a48e2fe30cc6a129e7f96368ace367a3131bed8844"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LglrebUOmlpWTFrr",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/LglrebUOmlpWTFrr.json",
+        "sha256": "d8cc04b1ce18a4108f01a64fa8e4b72948a5f898a9ce67d36f0c931350d2298d"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/LglrebUOmlpWTFrr.windows.json",
+        "sha256": "fe9b54ba95e8d68542625bd0a8a1ee236824d23e5cb0f05687b7ab860111c13a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "qKgmlBaDdOeqvUZZ",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/qKgmlBaDdOeqvUZZ.json",
+        "sha256": "87c978507733b47c3a8fb13ff850bc08a1d7730f0a6e57b5bdd4f406ed8f82b1"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/qKgmlBaDdOeqvUZZ.windows.json",
+        "sha256": "1271d2c6d16a106f983f27de32af66285af71f9c7016269c985d2ef838ab6f9a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "BqcYHceVIIcvxAnf",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/BqcYHceVIIcvxAnf.json",
+        "sha256": "ec5c7cbbb7428b8ea5544968c79a14838d6e81447f0ba64b38ba87ce56183e7c"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/BqcYHceVIIcvxAnf.windows.json",
+        "sha256": "f5b8a53274afbe48421cb09ae3293fa177efc524c196e7d49acb5016a29774ac"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "GgtvjcfpuStDRYyk",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/GgtvjcfpuStDRYyk.json",
+        "sha256": "b7a3928467d7dee8a2346481dd5d4e3a1abd45187c9b2f7c281f0455c19057f5"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/GgtvjcfpuStDRYyk.windows.json",
+        "sha256": "37862dc5e634e2c96599213088d8d2ab960c9b3d4b2a0b51606e73e45dce5f2d"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KMcaVVwQmswUfTuP",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/KMcaVVwQmswUfTuP.json",
+        "sha256": "4d7144b8401cb38e275aadff95a51e5c3c795d955eeeb085b7aa77ba519b74d1"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/KMcaVVwQmswUfTuP.windows.json",
+        "sha256": "41a2835de06e61516640bbee9d8b1f685de96444c236e0f79a9f9cb97b48d58f"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "AztczvBPGEjgAoaQ",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/AztczvBPGEjgAoaQ.json",
+        "sha256": "75b1689db9efa44148d160478e59679e38ff92ec72b858259444506a8c2fd779"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/AztczvBPGEjgAoaQ.windows.json",
+        "sha256": "faec457fa5247ef009664852c168b4e9feb275342e0641cf7e926b6e6d5c7949"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rVpMcDoGoVnzzlWr",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rVpMcDoGoVnzzlWr.json",
+        "sha256": "44abe88bed7c9ba96ab9ac07bb1165aba55a891f1e2294cf9294830649c8bdbf"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rVpMcDoGoVnzzlWr.windows.json",
+        "sha256": "57e6aef29b31b1dc6a5b5a2b6fe821ff2efd7af82d318c21a159bb72f7e53de8"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "IKwZrGBMoyeDneiV",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/IKwZrGBMoyeDneiV.json",
+        "sha256": "95a1cb130fc5534b5e4c3ef1542878188c1d49496bc6be4a769934b59aa974cc"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/IKwZrGBMoyeDneiV.windows.json",
+        "sha256": "8367c1cfa5e2e4f47bb6c3dbe736e198006beb2ed2e2ab1bec0b980f0e4b61fb"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "WLPBRUltlyCSuVkQ",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/WLPBRUltlyCSuVkQ.json",
+        "sha256": "2f7a68975fda1df1ff8b424e5b01b29899fc91e165ba665f9abceacfcf139d6b"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/WLPBRUltlyCSuVkQ.windows.json",
+        "sha256": "502120a056024abfb647167b28ad79e777cc612ab7d51f2e386f758e5b283f1b"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "ViZyGwKPESaRpZYU",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/ViZyGwKPESaRpZYU.json",
+        "sha256": "c091351aa68f1f1966d05b21b4f3ec276a4a9bbea7bfdc4aa03f44bac2b75f57"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/ViZyGwKPESaRpZYU.windows.json",
+        "sha256": "63f30700a7c5782554eea13d106f0470804bddd1389074b3951a3730b8919af5"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "wyQnBiPnklLqkXTo",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/wyQnBiPnklLqkXTo.json",
+        "sha256": "6d4901a209a9589d7924f46255c5125d925b006e501c7eca10e5edbd783bbcc6"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/wyQnBiPnklLqkXTo.windows.json",
+        "sha256": "2858bc14413c55d1c9ac5d8ab2f3e3b5d3cff03faa0d020ef80b13db0b1dbb34"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rVuiYlFZGXBDUBvD",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rVuiYlFZGXBDUBvD.json",
+        "sha256": "7ac56ebf6734981e0e71ed1135233b744771c373eaab2c9e398d8f9813cd8667"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rVuiYlFZGXBDUBvD.windows.json",
+        "sha256": "e58188584a1dbcb9ab73487a43933f47cd81de2d0bcfae5415a12572da85fba9"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LTuVPxiJwWHsWHEK",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/LTuVPxiJwWHsWHEK.json",
+        "sha256": "cf33b60db9554181ead92401810c0dde4c0b061c3492bd78eccd00a2cf24565f"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/LTuVPxiJwWHsWHEK.windows.json",
+        "sha256": "0a2df8d3251457bf38cd26d4b780ff8f3f89ac2e9a70935926461c905b646434"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "AkymiWDtlZBiaCSv",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/AkymiWDtlZBiaCSv.json",
+        "sha256": "854c6bfe6c265ad6afa195c3279c8373f85e7512e67ddce37ccaa9aaf8eed377"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/AkymiWDtlZBiaCSv.windows.json",
+        "sha256": "7060f511a4a052d1973980c75466bad46df4d60d619745953e87d62ccd11d806"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "JCqipvPlGsJnfqsA",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/JCqipvPlGsJnfqsA.json",
+        "sha256": "913cd6ee034e18135e50f3c29de7044c27674bac73fe9326dada2c71c03c9f43"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/JCqipvPlGsJnfqsA.windows.json",
+        "sha256": "c3722288a05cb7a9bf913035630e0f52ad1cc5dea3a12d873bc0f3aa9f6685c6"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "WiRlMMamMUxVFhkj",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/WiRlMMamMUxVFhkj.json",
+        "sha256": "77e44942c70157b942a38ee0efabb23d26e47fa95c5b91ff990b5b57423adccd"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/WiRlMMamMUxVFhkj.windows.json",
+        "sha256": "0b2833246249fbc3502b6ca246591460314a6b3fdfdf65d1859dee9c343ea510"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "igpWHVmTlgsnhvyR",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/igpWHVmTlgsnhvyR.json",
+        "sha256": "d7e6c9fb6052bae14661de6fe6459bc85f411327dd455c10ca355a10f125fc4d"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/igpWHVmTlgsnhvyR.windows.json",
+        "sha256": "23633bb5f75aef4713a7bc7019b83e029fff813070de47d616e2f9ae426e25a1"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "xebsViqKRrNvBuGq",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/xebsViqKRrNvBuGq.json",
+        "sha256": "ef9e5003654b3f2ede516b07b0739a0f1d38b60ef2a18ccc1dfb968b1d9e441d"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/xebsViqKRrNvBuGq.windows.json",
+        "sha256": "c1aac17ea1805eb57fc344c86f1aae7e0cf856cbdf633ca755a01f2ef54dd741"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "EmwJpBMScUVuCZPQ",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/EmwJpBMScUVuCZPQ.json",
+        "sha256": "9679328456bfcfb845c31c3cf6999b0048e4b4314bc840044bd003398bea69c4"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/EmwJpBMScUVuCZPQ.windows.json",
+        "sha256": "bff2841b4305577110ebb9575be851c84a95244f27eb3a515f2b7037d5ca639a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "vQyUBtdfDuIVeEEs",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/vQyUBtdfDuIVeEEs.json",
+        "sha256": "90963e3d19dd97d9c7c21bf5081ece472a6e88e5cf9b883403aaf2336792eda2"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/vQyUBtdfDuIVeEEs.windows.json",
+        "sha256": "9584afa85e72c22565817ad26a1a5bb6ef81488b9d71e1b520bf17d6f0916be9"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "BjRYoiJetSBrdvoF",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/BjRYoiJetSBrdvoF.json",
+        "sha256": "0dd8810990d55a30055462ac8e1882cb69c6ca70e18817e65244761a77e9adca"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/BjRYoiJetSBrdvoF.windows.json",
+        "sha256": "8bfbe0302b51174eaed67c1fbf3350d0e33f62ddc7367529ecce882c6a3a4084"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "VjJMWqNPpNOGoSRQ",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/VjJMWqNPpNOGoSRQ.json",
+        "sha256": "615c823622da38d9ac405c552cbc32fcf938f21b6a850974eee7f13f74ead19b"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/VjJMWqNPpNOGoSRQ.windows.json",
+        "sha256": "0b916fe2346baadf2582aec1de7ee27a2858d1a95d4bccf8b0146351b72a14dd"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "MfUyrXZdpabbUPym",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/MfUyrXZdpabbUPym.json",
+        "sha256": "44b46f048549ead5f5ccfbc1182d0677df86a2eb876011d9e0b82f9ae25a7268"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/MfUyrXZdpabbUPym.windows.json",
+        "sha256": "459b5ef93981c45bc93feea201b858b4a2d629f078db2b10f78555b7b5d6d455"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LgAdcQSZLviMKRSJ",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/LgAdcQSZLviMKRSJ.json",
+        "sha256": "a0a6e8e4f658e87d07bbe105c1bafcbf4cc195f8d1134f87e09588f4a762a3a0"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/LgAdcQSZLviMKRSJ.windows.json",
+        "sha256": "2a945c5c1dde9c76bc0fab854570c7aad596aacf003f54795dd2e093ad3c0f5a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rQrWDffuEytftMEN",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rQrWDffuEytftMEN.json",
+        "sha256": "3b44f72376befdf8ed4b29bd6cc9961ac477fbe678a041bd739b78c0473846d9"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rQrWDffuEytftMEN.windows.json",
+        "sha256": "899cdddcbcc83929e480ff2bec82509d33f9e87c16a5180925e13fdb87e45727"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "yzSxvYKeKGSxsgmg",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/yzSxvYKeKGSxsgmg.json",
+        "sha256": "8fe17817c18a0b9321d49b100464287317c5c9a8c1d113c305ddf7e06278f8c6"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/yzSxvYKeKGSxsgmg.windows.json",
+        "sha256": "ea52b509d4a8b4169414fbc18552c11e747d4270ab989742b87b4c0b8cb89b92"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rRcdvhSgomRFneuo",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rRcdvhSgomRFneuo.json",
+        "sha256": "f6e4c80dcdf8352dd40b9542c2a02ae1de6f4da12e83bc265391a0b9346d2384"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rRcdvhSgomRFneuo.windows.json",
+        "sha256": "d709bfad20856f5fe9db869b10c6b751bb2568254b2e9da67c7288173e13236c"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "aUMaIbBZDDfBrRbm",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/aUMaIbBZDDfBrRbm.json",
+        "sha256": "c392ef46aa8f42506a1e6699f62ae6405433a3f58eebb61d96a468f6738010a7"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/aUMaIbBZDDfBrRbm.windows.json",
+        "sha256": "a9dcffd9a52cc19da897d21138216babce93d99d1726a29501c06a34dfd45037"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "MlHAstnfEElTLvYu",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/MlHAstnfEElTLvYu.json",
+        "sha256": "a227757ffbbef9f7cac76011431578ba2b1072d4abd96a599be2e27adb49080d"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/MlHAstnfEElTLvYu.windows.json",
+        "sha256": "dfbb4fb9ad431f28c57d7849d7e20a3747300110e8f158695e812eaeb395ef0f"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "sjwqSJqqKRVVVmKF",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/sjwqSJqqKRVVVmKF.json",
+        "sha256": "931d6b5d0106ffdcdf0834aeff350e4499f34ea2216838d7e2dc7c5a6d7a4064"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/sjwqSJqqKRVVVmKF.windows.json",
+        "sha256": "c670eaa1369d2c0b9d3d28155820d388263b0e3aea1ccb6b3336aaa0a6bbf419"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KFbUdXODuqKBBqxB",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/KFbUdXODuqKBBqxB.json",
+        "sha256": "aa249341eeff58f012794f384e568f5712393f5aa46c360f4395b159465e4784"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/KFbUdXODuqKBBqxB.windows.json",
+        "sha256": "35661ab794ac0667a280c60eaefa3207ecdd3b74d534a16baef0526bed4fc304"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "ytUqERnVdYnflUJW",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/ytUqERnVdYnflUJW.json",
+        "sha256": "11907aaba79354325476d903fd13ca93a91b27244921d5234e5bed342749d7eb"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/ytUqERnVdYnflUJW.windows.json",
+        "sha256": "aa07bf935a7a0e516f46697937435cf3189d75ae9be56e023a07fcf9e480d726"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "arGqdpJnNCBMuHHL",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/arGqdpJnNCBMuHHL.json",
+        "sha256": "d629b8a51fad95e89d12ae50e84bde213856e80695dcf81a6c994d053aafccd1"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/arGqdpJnNCBMuHHL.windows.json",
+        "sha256": "29d406b6ff1a78262d644a2b2a2a68a56364cec38f92a2de159ef88fc7bdf22d"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "CLWeAsQuVrxzfTrZ",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/CLWeAsQuVrxzfTrZ.json",
+        "sha256": "1b5b1cca3e1ace8988eb5bd4d38ab3cc4be01a698cd38ab5c32ad655799eee73"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/CLWeAsQuVrxzfTrZ.windows.json",
+        "sha256": "cd9691e714eb43d8b2878fb772baa9ec5282a412fac08c2ccf7ae5659e7e78b9"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "FeTpACGYCoUIdbjr",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/FeTpACGYCoUIdbjr.json",
+        "sha256": "1feac454f5ae5be9deb250514edb9b58adcffb48901a571b05d423ac42cecc9f"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/FeTpACGYCoUIdbjr.windows.json",
+        "sha256": "7926c24a2fb9e17913f46f9da988ebb87f58174e1f3506133585503654b237e9"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "HuaxuBwyBCpcGcTL",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/HuaxuBwyBCpcGcTL.json",
+        "sha256": "737596abe1178eaca45747115897fad4dcc1023ef5f2a01269aeec343ecb81d5"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/HuaxuBwyBCpcGcTL.windows.json",
+        "sha256": "284bc52c622a4872a1f7367bcf4ea4bd5d54fd19345165fdbd402f25a048e86c"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rdrNVpGywJSyGmRK",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rdrNVpGywJSyGmRK.json",
+        "sha256": "999a77e0a463125ccbb71f13938dd7e678a06fa9313151b79a2fa56592c738c1"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/rdrNVpGywJSyGmRK.windows.json",
+        "sha256": "da17f5ffd9a234937f014ee20924bc8195b7bd6584a98025bbff2e5203d03dd3"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KchlAfjUzORkuOtV",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/KchlAfjUzORkuOtV.json",
+        "sha256": "c061bc77f0c7592922e42b70126b658bf413d4ddf39fa0b9aa73a97cf24fc83e"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/KchlAfjUzORkuOtV.windows.json",
+        "sha256": "c4c84a8e1c893d62b5996c2ac370ff8036a90ff91e9213cb6a9c251b7a04e000"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LwzAARbOSCibapNg",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/LwzAARbOSCibapNg.json",
+        "sha256": "aa614baecd49571f5e2498f0b4a52a60b887f5470b900cec50dc53527372d9c2"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/LwzAARbOSCibapNg.windows.json",
+        "sha256": "183ab25c33ce6d5945bc8212f836a200a9aefb0b535a547c2261b01ac1e68347"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "VVlxOttcekcLVwsS",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/VVlxOttcekcLVwsS.json",
+        "sha256": "b458970dd9a017046f9b9f191bd0e9806298d7988653ba6e78f3712f396e15ed"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/VVlxOttcekcLVwsS.windows.json",
+        "sha256": "ded9e5932ad606770915f23eddebd4f66b17b8f572fa1db90387ba44debfe801"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "pvzEWmqdjcmADqOC",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/pvzEWmqdjcmADqOC.json",
+        "sha256": "40abc140a7e6b107e8d61a4e6c627b4114fb58451540205c55194619f49ea308"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/pvzEWmqdjcmADqOC.windows.json",
+        "sha256": "9e4f470b10f845d587cf51dbaecdce78f66825d9a41c5f535239636e7db25ffa"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "CynaHjYRtpNWqiTO",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/CynaHjYRtpNWqiTO.json",
+        "sha256": "06749a1ded711d08bb91d0c1cb1ac5149e26e91dddba4d91f36988098475d507"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/CynaHjYRtpNWqiTO.windows.json",
+        "sha256": "fe00d7672fc3af8c0216ba47cbbab99eb15abc48ca9a9879cc858cc4dbc25a6f"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "saBuilfyOJlWTdeg",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/saBuilfyOJlWTdeg.json",
+        "sha256": "5472e6d9ef5364beb62a22b7a7fe6c314e9c100ae85f5b36fef8712fbc20b7e5"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/saBuilfyOJlWTdeg.windows.json",
+        "sha256": "39cfb87eade22f9c2386c509eaa6806b00878a1abea1634524c54857e561b153"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "YUhhumTphbQhyelB",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/YUhhumTphbQhyelB.json",
+        "sha256": "512ecb07864f94f45336a5391b51a7d6a48f65895f49512952a87111953ab03e"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/YUhhumTphbQhyelB.windows.json",
+        "sha256": "b5b7a5fbb9c698ad3f32acc9d76aea2033a67227ba0c1d707bb66fd30753e817"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "RnepAMWPzNvAAkjF",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/RnepAMWPzNvAAkjF.json",
+        "sha256": "b9209cfcc616312c3e061f9cd787076cf8d0979ec8e9b47274541de7407686ff"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/RnepAMWPzNvAAkjF.windows.json",
+        "sha256": "e2efa08dea678bb8e257019d01d19339ad2a2cf6ea3565b4a877f23553627aaa"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "UnUfrMWLqfWrMyxA",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/UnUfrMWLqfWrMyxA.json",
+        "sha256": "9c72996005be49864623dfe8db031d65dd1231acdcbff6b7816469005bce08cb"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/UnUfrMWLqfWrMyxA.windows.json",
+        "sha256": "97106104058c59054627cafd253e860874fbf42c2d0a1013b1fed618310ce911"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "mPdXgCGbwaudDOgC",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/mPdXgCGbwaudDOgC.json",
+        "sha256": "844c1f90420a57a473d08a8b1791176e51fa7b79063b3b6f523385c810f2586f"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/mPdXgCGbwaudDOgC.windows.json",
+        "sha256": "9f1d4c75d5767ffcdd5e99efc6194e5a6696ef7bb2c13e3b46f28d36ed1482b1"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "NxymecTyWYgsXWjM",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/NxymecTyWYgsXWjM.json",
+        "sha256": "18c21032ae7fe3f4a99e6ca2e5a59d758df0c0d83de714fffbc640d5b1348f58"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/NxymecTyWYgsXWjM.windows.json",
+        "sha256": "66b726177cccb536d06be496acda38629306ab64ec488e90ff7b99b88c823301"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KzctponEGMhyazdK",
+      "policy": "bpm",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/KzctponEGMhyazdK.json",
+        "sha256": "0b5eda697161ad5d66339fcaa8723d3c2be048d3f6bc226fc0543fce0f6059f5"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/KzctponEGMhyazdK.windows.json",
+        "sha256": "bf33251a104b08b4e4f0dab19ef3da500347779d0d24fa5c95993a33b7e217f1"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "hwrlCvOCYUKpljlV",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/hwrlCvOCYUKpljlV.json",
+        "sha256": "7ebc315cfcf8caec60cc4d0a89ebf13a42ed440299e2010803ef6e53110cb1e2"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/hwrlCvOCYUKpljlV.windows.json",
+        "sha256": "1c03c6542e3e18c4db808b69e328e61ea468498c3d3a5ed56e9030e2d4a78422"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LglrebUOmlpWTFrr",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/LglrebUOmlpWTFrr.json",
+        "sha256": "2cb069f0516d5a0d2ecbe310bae0fdfb3ad16eef6d369dd1a04a4b4b906844a1"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/LglrebUOmlpWTFrr.windows.json",
+        "sha256": "eff5daf63b434365b5cac77b2fe05ae6305cc8d39f5be2c4a60e31e978bc9f09"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "qKgmlBaDdOeqvUZZ",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/qKgmlBaDdOeqvUZZ.json",
+        "sha256": "e0a7b9789e490c7f28ce74e115459f03e44ef649d5f85ae3cf7e9dc4763dea4b"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/qKgmlBaDdOeqvUZZ.windows.json",
+        "sha256": "f575fb5f8b48ad5cf5c308af3fc0126e8ef4e9223a3accc02c0319363269502a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "BqcYHceVIIcvxAnf",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/BqcYHceVIIcvxAnf.json",
+        "sha256": "f77a046ccf0731e9bf44c9eca882c73e927c8702dd4f47e20aa4ac38e6786660"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/BqcYHceVIIcvxAnf.windows.json",
+        "sha256": "83f927bfe2079b4f848353c9e1d1e29ded59908390b6e7a38327577622965c39"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "GgtvjcfpuStDRYyk",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/GgtvjcfpuStDRYyk.json",
+        "sha256": "59a7837c22f80e9049903f23426cacb18a3a42947c178abf32393521cb637572"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/GgtvjcfpuStDRYyk.windows.json",
+        "sha256": "4eaff8a0aef46a0c1a46180e65e24ddd11567cf47eec2307523450da767ea369"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KMcaVVwQmswUfTuP",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/KMcaVVwQmswUfTuP.json",
+        "sha256": "5d08f137a13dc961f9f3e8ba2f223a40e4ab9fb7ecc5f10e6892ec0b647905f2"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/KMcaVVwQmswUfTuP.windows.json",
+        "sha256": "57fb7bd9fa6ef0809ba3679251810fc62db42108cb6b8b06be30b3db40592ff0"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "AztczvBPGEjgAoaQ",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/AztczvBPGEjgAoaQ.json",
+        "sha256": "1140843904909a7cd07801033bd470bc3631ed7dbed748c8d5c4b442b6840aa6"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/AztczvBPGEjgAoaQ.windows.json",
+        "sha256": "1641b3201aa8be4777204577dad87ac76e170248a6da4a6e80a39589c7ce4a28"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rVpMcDoGoVnzzlWr",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rVpMcDoGoVnzzlWr.json",
+        "sha256": "a10523865d314fda6943fd3c7541dd6743c126528e5fc7ff2d163b54cb22e359"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rVpMcDoGoVnzzlWr.windows.json",
+        "sha256": "2b06fc49af742e2e1af874f5ba7a95aa2c9bceadf3a7aae931cab587c8c47604"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "IKwZrGBMoyeDneiV",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/IKwZrGBMoyeDneiV.json",
+        "sha256": "e489a9a9621cb540a75a61195abc6564e34be737d6c619e6ca120460d981e145"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/IKwZrGBMoyeDneiV.windows.json",
+        "sha256": "9ee9e32469b4edfac0eccca64c507562547e25111bef062dfeb5a646de10becb"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "WLPBRUltlyCSuVkQ",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/WLPBRUltlyCSuVkQ.json",
+        "sha256": "e81a75dbb69c1502a9cfc541476d85346d94b0364ce1930c5f31059763444cea"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/WLPBRUltlyCSuVkQ.windows.json",
+        "sha256": "5ed41c645fbb1f03e95c24b5603afdd4eaba0244904c23603c15386c0754f741"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "ViZyGwKPESaRpZYU",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/ViZyGwKPESaRpZYU.json",
+        "sha256": "c5090054ddad4d1c766e4f95c740e420ad8b89bd1512975be3557f088f51073f"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/ViZyGwKPESaRpZYU.windows.json",
+        "sha256": "2822e4fead73801520c229dcc82e2f4dde0d561b232c0427305cd017024c8f79"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "wyQnBiPnklLqkXTo",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/wyQnBiPnklLqkXTo.json",
+        "sha256": "c350c1287541ae561d91ef892ca74fbed46e06a97089914f9d5a2f1c09cc08b1"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/wyQnBiPnklLqkXTo.windows.json",
+        "sha256": "be3cb53dd46f8d58fa2f7736d90352895570d03749f3bf568fff6ed404770c04"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rVuiYlFZGXBDUBvD",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rVuiYlFZGXBDUBvD.json",
+        "sha256": "73fe3a9a4c053ef3bfb77369f64028993a2714b4650f4ae6a7d64c0aadc59cd6"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rVuiYlFZGXBDUBvD.windows.json",
+        "sha256": "091d28c589f416a6a6179e295f32cf63b8b423e4dde9ce07f0bc74f8841568b4"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LTuVPxiJwWHsWHEK",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/LTuVPxiJwWHsWHEK.json",
+        "sha256": "ed13a742b6d7982fa1716fe945769cd221880eab4648244e0eee6a3ce67c3294"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/LTuVPxiJwWHsWHEK.windows.json",
+        "sha256": "6d62be5e8a341c2809f4867396217a183b68ae4df0da44644566a3d12dc1b2a6"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "AkymiWDtlZBiaCSv",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/AkymiWDtlZBiaCSv.json",
+        "sha256": "75404288f9552acd56135fec5722672285422904e686354fd6c8e25938a85ccb"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/AkymiWDtlZBiaCSv.windows.json",
+        "sha256": "eededf182dd60bd6a46c43a8e105d91664197b8ffbf570ae14253eed2c777d28"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "JCqipvPlGsJnfqsA",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/JCqipvPlGsJnfqsA.json",
+        "sha256": "c3ce11ce0fbce7c05b2bb991a88adc002253f1b29b9c7d10a2800bf91313857c"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/JCqipvPlGsJnfqsA.windows.json",
+        "sha256": "fa804305f18cae7ed04a93066caae4d5d24c20b7ba31e5ff1e982d72567131d6"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "WiRlMMamMUxVFhkj",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/WiRlMMamMUxVFhkj.json",
+        "sha256": "106acc38d6b1c2df3ca152db7795e3f73990c964c2b62d889b1dc2d32df1eb41"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/WiRlMMamMUxVFhkj.windows.json",
+        "sha256": "44d0121d965fd0a398b6cf8170acef28a40ec19611b010e486c8f851889bb158"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "igpWHVmTlgsnhvyR",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/igpWHVmTlgsnhvyR.json",
+        "sha256": "7d106febd1a75e0b6f94fd5fadd97dbddcf3c790f1df0f2a324aa52a0b834d90"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/igpWHVmTlgsnhvyR.windows.json",
+        "sha256": "42657db11b20aeda8b4d48125eb43fcde1c268022c6041e12ae95f70f346f9ea"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "xebsViqKRrNvBuGq",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/xebsViqKRrNvBuGq.json",
+        "sha256": "a6c22cab8766e2087b1ede100431f356fc043d25c300fbbb00b7cf47ed3f6685"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/xebsViqKRrNvBuGq.windows.json",
+        "sha256": "1e7802968a06aefba1c56476c3f2856226ec2b11cdef91b10cb7d9092e579667"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "EmwJpBMScUVuCZPQ",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/EmwJpBMScUVuCZPQ.json",
+        "sha256": "8e929acf7e8339b82ac4325f5958d68c40cc46059e46c645d5c2dfe831537d84"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/EmwJpBMScUVuCZPQ.windows.json",
+        "sha256": "3879ca61c244b7ba37a45b693d20daa85ec947df6c744ba36b8de97c674dcc4a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "vQyUBtdfDuIVeEEs",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/vQyUBtdfDuIVeEEs.json",
+        "sha256": "9afeb71ace4cc1bba58a97b06ce4eb43e65e300339896ece4ab75b46c0b55cb9"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/vQyUBtdfDuIVeEEs.windows.json",
+        "sha256": "12fe780ee1853b788563979192c3ccddbf8b1ff0ab7ec4de22a222753ea9b3ba"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "BjRYoiJetSBrdvoF",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/BjRYoiJetSBrdvoF.json",
+        "sha256": "0de7de875b058939c097013c48068312d7678c2fb62e62f35731315c5fa8bbc2"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/BjRYoiJetSBrdvoF.windows.json",
+        "sha256": "e0a47b002640bb13fec29190396bbca32c6a0ae46d7b1133faf02e87ee69ab6a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "VjJMWqNPpNOGoSRQ",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/VjJMWqNPpNOGoSRQ.json",
+        "sha256": "d7d2682588f002fdd330ca5eb3ce97645a2aa7470020dbb459aaeaae5f0a5f77"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/VjJMWqNPpNOGoSRQ.windows.json",
+        "sha256": "a93051b9588d4a631bf36c673156db2275067b357dbb6557bd8fc7b82b564c11"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "MfUyrXZdpabbUPym",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/MfUyrXZdpabbUPym.json",
+        "sha256": "e2963874042509154beaf566d0e46ecb0fd3a0d89f2ff979ca84bce742871e87"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/MfUyrXZdpabbUPym.windows.json",
+        "sha256": "7b0c3a2818abc250ad66ebbf781f5e08e980ae04fc1d5d3f1716ceec79d57edb"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LgAdcQSZLviMKRSJ",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/LgAdcQSZLviMKRSJ.json",
+        "sha256": "b2db72220e297a552bff2c4721d6a552dda405c64be834d2453f557c519bac80"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/LgAdcQSZLviMKRSJ.windows.json",
+        "sha256": "dcb9edddcb1eb61eab9bfb28823101df702d8ef0b94f766fac5e6f96971d259d"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rQrWDffuEytftMEN",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rQrWDffuEytftMEN.json",
+        "sha256": "77ba23b3d3fb9b36d8ef2af77e42e8176c5363c90bfe3f7588a69a6f005237c8"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rQrWDffuEytftMEN.windows.json",
+        "sha256": "7daa50bd5cf166c9301fad57ebe712c5c42ddba395390f070476b55c145eea15"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "yzSxvYKeKGSxsgmg",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/yzSxvYKeKGSxsgmg.json",
+        "sha256": "1f7cde9d5d250766a0fd02f5699384b3573a27b2d53a812e7f6f59947f1dfba4"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/yzSxvYKeKGSxsgmg.windows.json",
+        "sha256": "be8a5e1eb834d779d587db1b8dcec1ee72845baa86cfe2bdae8f8eb41d48011d"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rRcdvhSgomRFneuo",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rRcdvhSgomRFneuo.json",
+        "sha256": "c552a6e6d5da9d1b63c6d493eecd8e0349ee14832df23904491b7abf585ca5f9"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rRcdvhSgomRFneuo.windows.json",
+        "sha256": "64baf92d2d8d13fa217829a27156c716d25247e443941dab1a864f2969e7b000"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "aUMaIbBZDDfBrRbm",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/aUMaIbBZDDfBrRbm.json",
+        "sha256": "c2ba8ef64784e5f2e8689a42e4ae3f3ce38800a9ca739077e7b67646c53f9dfe"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/aUMaIbBZDDfBrRbm.windows.json",
+        "sha256": "1337ffd362261a54daf2824107fe7ee1595a564b32783644fe5f41e9cf28dc2c"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "MlHAstnfEElTLvYu",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/MlHAstnfEElTLvYu.json",
+        "sha256": "95a4d5e614a28f0c90640ec39a58645b703471b14091a9b9d38781f6954b3245"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/MlHAstnfEElTLvYu.windows.json",
+        "sha256": "ffaccd430ca86b14ae9eab1f152ded464e25d3870086a16d67463c9ea23abcf1"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "sjwqSJqqKRVVVmKF",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/sjwqSJqqKRVVVmKF.json",
+        "sha256": "19587ecd50ea6988ea4c5f3fa5f960a32fb92b32de08f9a266b470bfae0b71fe"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/sjwqSJqqKRVVVmKF.windows.json",
+        "sha256": "71cda3231fea7d6bcad70b65f57cbd5c16e292e2d491ea0ea375b1129a4917c2"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KFbUdXODuqKBBqxB",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/KFbUdXODuqKBBqxB.json",
+        "sha256": "c88de11443c50f1c39b850c2d6cb307a3fa67f47d026d631b43edf75a4644598"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/KFbUdXODuqKBBqxB.windows.json",
+        "sha256": "4f5c130e17f7769858fd1f0d4b8947462e1ab34f1ce0f51616916fc572e1a78c"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "ytUqERnVdYnflUJW",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/ytUqERnVdYnflUJW.json",
+        "sha256": "ec7019b14a2db0a43066c15a94aacacf36e335b1263a3e2dfd1c6f0b1485dcc1"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/ytUqERnVdYnflUJW.windows.json",
+        "sha256": "9a43e79b31f3ca01f4b2861b28fea1cb4704a1f364c1e41ac774b59ca1def4e6"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "arGqdpJnNCBMuHHL",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/arGqdpJnNCBMuHHL.json",
+        "sha256": "0ce3621ae2624eacd9f39ca8f55fb55ee3dccb4bea54a3e911f220fd16e35ac0"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/arGqdpJnNCBMuHHL.windows.json",
+        "sha256": "ec16c63dae34b7fe7fdf91af1141ea194f84d50d114f39e3e8b0cf51cc30a6ce"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "CLWeAsQuVrxzfTrZ",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/CLWeAsQuVrxzfTrZ.json",
+        "sha256": "e9a5e5f0b695920b564febebab230e6546a2ba166a7f94e83c86fa0ac205636a"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/CLWeAsQuVrxzfTrZ.windows.json",
+        "sha256": "d7536fbfa07e99cd084f63244b8d517bf25fd42921be74d4430e9d689561e23c"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "FeTpACGYCoUIdbjr",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/FeTpACGYCoUIdbjr.json",
+        "sha256": "c34b97ef94db623b9788bc03e7f4074dd20fc40bdf6180e141cfe1effed02c19"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/FeTpACGYCoUIdbjr.windows.json",
+        "sha256": "41ee8b5f59b8269febb160097c0a8471b552a676f245be50273dcc8f5a677bba"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "HuaxuBwyBCpcGcTL",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/HuaxuBwyBCpcGcTL.json",
+        "sha256": "40c3684044054c2fdac0a89b571223ee2414dce9b424adb882428ad8c5983ba1"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/HuaxuBwyBCpcGcTL.windows.json",
+        "sha256": "f73893e244568610031bd429897ad91f9940aeeca56fecd48ea85b265ddd069f"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rdrNVpGywJSyGmRK",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rdrNVpGywJSyGmRK.json",
+        "sha256": "a176edcc901c32ca8ae4c7970c3fa86bbcc35f9c2469dbc854c48fad4bfb6dd2"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/rdrNVpGywJSyGmRK.windows.json",
+        "sha256": "d454014ea4d50f4e658a6852cfc79d652069f4ab9ae6d455d88d09c3ac67f25b"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KchlAfjUzORkuOtV",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/KchlAfjUzORkuOtV.json",
+        "sha256": "e81c81134cf473b5d8c896afcb8b46878e13d68fe269dfcd0441b8f42ccb2927"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/KchlAfjUzORkuOtV.windows.json",
+        "sha256": "33a6703696303706921936f7fdf52c3b6694e6d1b63929a46ec51047e5ee6693"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LwzAARbOSCibapNg",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/LwzAARbOSCibapNg.json",
+        "sha256": "49ad239f68f0e60cff9fe59909d71f5ca991aa28bcb09d10e9896d55e08e001f"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/LwzAARbOSCibapNg.windows.json",
+        "sha256": "1b0d76288d1de7116e9e9cf706df584a63db5306890bff60563e82b06416d401"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "VVlxOttcekcLVwsS",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/VVlxOttcekcLVwsS.json",
+        "sha256": "597eb37f8d056a611f8fe63ef6391c5492a92fae116598ad4e5a8d3d7311c0ee"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/VVlxOttcekcLVwsS.windows.json",
+        "sha256": "3bb12a8db6fff852e0b4530a352c59d302711394c72d623f6c3d5ee6c4f0c5e1"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "pvzEWmqdjcmADqOC",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/pvzEWmqdjcmADqOC.json",
+        "sha256": "da21b3912daba440ebf678452f9b2e56640aca1feb8c779b08efc862aebc1d8a"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/pvzEWmqdjcmADqOC.windows.json",
+        "sha256": "8435685e7a07851d520b989a824cd61fc844388da8b4d00bf115321204860df3"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "CynaHjYRtpNWqiTO",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/CynaHjYRtpNWqiTO.json",
+        "sha256": "274c1d2ce27c2b35bf23eaa307b32c9f8836fa78cbe8618746dfd75e6db4fa73"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/CynaHjYRtpNWqiTO.windows.json",
+        "sha256": "2d6fc706767fcb54c5d2d3ac0e55b0bfc0937973656ba29aeb560b27ed847565"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "saBuilfyOJlWTdeg",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/saBuilfyOJlWTdeg.json",
+        "sha256": "fe8e677ba46ee4a83141fe9d0716d5578448b240464511077e923613b18ff07a"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/saBuilfyOJlWTdeg.windows.json",
+        "sha256": "6177ff8bfc2e1d316b4473e35d53011656259edfae9d76cbdc9f631c32bfc865"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "YUhhumTphbQhyelB",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/YUhhumTphbQhyelB.json",
+        "sha256": "1dea280d94eae957bc31fb45934c5293f485297aebc7d2fada18313237b2ed09"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/YUhhumTphbQhyelB.windows.json",
+        "sha256": "8988b1d67374d42e45228b64d14d0b320135214ab3e0e1053d325a81c3dfa1a2"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "RnepAMWPzNvAAkjF",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/RnepAMWPzNvAAkjF.json",
+        "sha256": "4d4a1f31dd052d5f71edb8dea83f7e526958864a134fa5321005db9ccbe205cc"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/RnepAMWPzNvAAkjF.windows.json",
+        "sha256": "7855c2cb9a6cee01a5b5dc60a3871ecf7190666583b78fc9f12c54d7b7c5352d"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "UnUfrMWLqfWrMyxA",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/UnUfrMWLqfWrMyxA.json",
+        "sha256": "56268ec7645531b880d5bfa4fa8b564a84b24f6ec22450b985fbba5d37cbf482"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/UnUfrMWLqfWrMyxA.windows.json",
+        "sha256": "2a333a7d4cac66650598741c5d2c26ac9b6b56f33fd6b113ec54c6d160fc6bed"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "mPdXgCGbwaudDOgC",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/mPdXgCGbwaudDOgC.json",
+        "sha256": "04a2989f79921f33ea4aa06073c9b99c0959e1e439ddd62ebe8df7301058c0ef"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/mPdXgCGbwaudDOgC.windows.json",
+        "sha256": "66d34f789615380d29bdf3513968a408a67e2411cba82d41635637544397e757"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "NxymecTyWYgsXWjM",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/NxymecTyWYgsXWjM.json",
+        "sha256": "d00f219cea9a4c84c74a0ad6e8ff1819838ccd1dc440e83f255300da0f6a8909"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/NxymecTyWYgsXWjM.windows.json",
+        "sha256": "ab1074a283371f32e22774716bebee8aa216909d179e09ed8b11135aeac12b64"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KzctponEGMhyazdK",
+      "policy": "strict",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/KzctponEGMhyazdK.json",
+        "sha256": "0f058cd90d2c98c701744bb934ec2b2a5872091574b4219593d6d09563214ded"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/KzctponEGMhyazdK.windows.json",
+        "sha256": "b4daae197422d4875564c28bf550784f287187881f2fcd7b55d5c2ea5b89f032"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "hwrlCvOCYUKpljlV",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/hwrlCvOCYUKpljlV.json",
+        "sha256": "1939f706c587835e12ff1d0d3fc5fb6611b2d2f30e091004585302f4a6c88c60"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/hwrlCvOCYUKpljlV.windows.json",
+        "sha256": "9ddca36ff6a6f63af03dfd063dcb51dbfef8baf96e59d50cd6da7b6f8134cec9"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LglrebUOmlpWTFrr",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/LglrebUOmlpWTFrr.json",
+        "sha256": "d0e8d66d3d86662296c89fb3fcfd0bceea677723ab5d949f7e6f41f3bbe805b4"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/LglrebUOmlpWTFrr.windows.json",
+        "sha256": "da8721276bb459a479c890109effed5be2258445d633417ff2a8a1faf7035005"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "qKgmlBaDdOeqvUZZ",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/qKgmlBaDdOeqvUZZ.json",
+        "sha256": "453157027b00a560b004facdbad850dcd317a5f554a458f234f23853f5d1952b"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/qKgmlBaDdOeqvUZZ.windows.json",
+        "sha256": "3340bc6ab265414e503328b7bc53cc60af466df7ee5ac0f79ad028ff2bafb3a8"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "BqcYHceVIIcvxAnf",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/BqcYHceVIIcvxAnf.json",
+        "sha256": "942b1c34e0e4e64e99b70a536b003bf63c8bc3ba2350397423ecc7fa4e9cf2f0"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/BqcYHceVIIcvxAnf.windows.json",
+        "sha256": "6c886478f36d8cba69229cced0eedb0364ca60a76095603b131476072eb5bec5"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "GgtvjcfpuStDRYyk",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/GgtvjcfpuStDRYyk.json",
+        "sha256": "a05e11683b264ae56e91761faf794ba685cd8859d340f7ac3ffa9e8084d886b4"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/GgtvjcfpuStDRYyk.windows.json",
+        "sha256": "77c82234d3c47d559ec092e429fa55e3ad3b6832159b8ce06216ddf03fe5e9cb"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KMcaVVwQmswUfTuP",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/KMcaVVwQmswUfTuP.json",
+        "sha256": "74ff5a31105fef68db241af2c1465f718e5983a274d9f1139265b3c5fa648c6f"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/KMcaVVwQmswUfTuP.windows.json",
+        "sha256": "12c9b4ab81c47f682a33016826cb932496208fed512495e110137c567f8d8a57"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "AztczvBPGEjgAoaQ",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/AztczvBPGEjgAoaQ.json",
+        "sha256": "e91b1096463b546303d15c8b5c806b1a127326944db00975d7c832fcb0248264"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/AztczvBPGEjgAoaQ.windows.json",
+        "sha256": "9e49084b4eadc3d38327f2df0b4467dce8a78fe0cd165a9bcb5a198b9d47d336"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rVpMcDoGoVnzzlWr",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rVpMcDoGoVnzzlWr.json",
+        "sha256": "4027ef1775e896bd53fe7f2f8723bfe79839711151dffaca5c64e6e3c9ad7fd5"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rVpMcDoGoVnzzlWr.windows.json",
+        "sha256": "058a86943396ff596fc93b1cab9c522a67be40cc269fa4671461f052f31baaf6"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "IKwZrGBMoyeDneiV",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/IKwZrGBMoyeDneiV.json",
+        "sha256": "36aaa937c4e5fcdbf7b2afec890931a757a3a5f7b0e2875572a896dc32f34439"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/IKwZrGBMoyeDneiV.windows.json",
+        "sha256": "26f0203175ac0498b6cd4acc7650c52b56363bb2844ad04a67146c095151edc0"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "WLPBRUltlyCSuVkQ",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/WLPBRUltlyCSuVkQ.json",
+        "sha256": "36f8d7eab942c25720be76d94243e3106b4eecfb403ff2301e1d9bc6fa8f360f"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/WLPBRUltlyCSuVkQ.windows.json",
+        "sha256": "81d3f09137391007b888b852e6ef955a5ff4d7ba4279c59567f637131fdad1b6"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "ViZyGwKPESaRpZYU",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/ViZyGwKPESaRpZYU.json",
+        "sha256": "6d1242129db99ec4d09127b9eb9ee7a05005f3fbf3bb889bc92f6408d4ca0e67"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/ViZyGwKPESaRpZYU.windows.json",
+        "sha256": "8699d16b6c48554eedc26b68518e52f226d4ac9281a62f425b7b81cd1f5465a0"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "wyQnBiPnklLqkXTo",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/wyQnBiPnklLqkXTo.json",
+        "sha256": "999bb82353deabc0ecc6e06f3bf8cd68bd060905b3f622ac18777c2b3456d402"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/wyQnBiPnklLqkXTo.windows.json",
+        "sha256": "94bf80aa93aef0d999249dd9a8f79a134688fdc47165b6574406592809e3e7e3"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rVuiYlFZGXBDUBvD",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rVuiYlFZGXBDUBvD.json",
+        "sha256": "7202de52f425c96e0061be92f1256cb8b2d6f5fecd31b73fcaa065ec12361483"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rVuiYlFZGXBDUBvD.windows.json",
+        "sha256": "0d40fd3294753650cf6d8c9043191f42b93591c184ff3b0a8ef0f7f8c906dff2"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LTuVPxiJwWHsWHEK",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/LTuVPxiJwWHsWHEK.json",
+        "sha256": "f9419deb1e1edcbff87e9a142e2051b28cc78fe451391c0f3d158edd2ec07c9e"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/LTuVPxiJwWHsWHEK.windows.json",
+        "sha256": "66cea379fc6ab6a0329e306d47ddb6b4d5783d2c0916e101f4bd4df31132b7a7"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "AkymiWDtlZBiaCSv",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/AkymiWDtlZBiaCSv.json",
+        "sha256": "88e4139be07e67db6ddf16fa370858ecdb1d3e20df64f7c04e2c995ce4187a1b"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/AkymiWDtlZBiaCSv.windows.json",
+        "sha256": "0928e63c3fd800a42ed6c8736982c0d8084bfa7d9d32dbc576cdc1732b0338d6"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "JCqipvPlGsJnfqsA",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/JCqipvPlGsJnfqsA.json",
+        "sha256": "5547c46f4c11a20f4e8505029fb0b2bf39ebfc513d717900aa3924d2cbe6454f"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/JCqipvPlGsJnfqsA.windows.json",
+        "sha256": "24140e99c12b3cc12cdb3e64c2440e18ff927f147aa4216bda77401a6371d0da"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "WiRlMMamMUxVFhkj",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/WiRlMMamMUxVFhkj.json",
+        "sha256": "ae9d83e6e7e8f2467d70a10fae843291053b3f4164a3c59f427dcf46356eac69"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/WiRlMMamMUxVFhkj.windows.json",
+        "sha256": "d970f0a16d2d120181bddcfd0ffca823626c5dd26fe2ec0e7720acb10739a47e"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "igpWHVmTlgsnhvyR",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/igpWHVmTlgsnhvyR.json",
+        "sha256": "e4d8fb560807f7935713e2cc373b0d8ab9961297c321519c47108056e9083952"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/igpWHVmTlgsnhvyR.windows.json",
+        "sha256": "92a6fc7198eceb250719a7b4be7102bb3b42d0a553dc647c5bcab1afd4913b61"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "xebsViqKRrNvBuGq",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/xebsViqKRrNvBuGq.json",
+        "sha256": "a659348517e841bf00122b8cc910d4f25e1840cbf527364e7d5289f3f1b1713e"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/xebsViqKRrNvBuGq.windows.json",
+        "sha256": "d42cf14026f012fa212a03ff47d19d6802af48faedcf3eade11c0f5a0fef8c8c"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "EmwJpBMScUVuCZPQ",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/EmwJpBMScUVuCZPQ.json",
+        "sha256": "df9b1d9ab86a436011f6df46615181298b366b7c39a4591fda3fd6851f0f0874"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/EmwJpBMScUVuCZPQ.windows.json",
+        "sha256": "eb59fec27a637712d91650f3832a558df68997d6553202363e03f34dccbec8cc"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "vQyUBtdfDuIVeEEs",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/vQyUBtdfDuIVeEEs.json",
+        "sha256": "94034d2b8b21e8192bbb9bdfe0b69e5e8ad16e91fc69442f230344ea1985a645"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/vQyUBtdfDuIVeEEs.windows.json",
+        "sha256": "a45f68c8eca63a1feafd021ef6539a021c3e8355d4e3555667150dc02e76d0a3"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "BjRYoiJetSBrdvoF",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/BjRYoiJetSBrdvoF.json",
+        "sha256": "498d85b8bed5cb0aa0d3e45b70ae54bb6c5c355a7e89779d6d34fefaa2dc180f"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/BjRYoiJetSBrdvoF.windows.json",
+        "sha256": "2d7eeb0e4d29d896f23c0e903af6924133c9facf73e51cbdfd43d7daddc8c6e5"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "VjJMWqNPpNOGoSRQ",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/VjJMWqNPpNOGoSRQ.json",
+        "sha256": "5033a641db6a1522353d13e038724c3179fb679af56960ba54157c3251551385"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/VjJMWqNPpNOGoSRQ.windows.json",
+        "sha256": "39e5d7f63c6c492dc07b6bbfab17c2ee53d8398e5784952c68ee636df8b640a5"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "MfUyrXZdpabbUPym",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/MfUyrXZdpabbUPym.json",
+        "sha256": "e427caa14fc6d29470e859dc201dd12f2255503597e1339bd0b69a3b1f846fb6"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/MfUyrXZdpabbUPym.windows.json",
+        "sha256": "7639a07341d992c37fea9fee7baf829220ffcbc0db4f84d9f208465020b7e375"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LgAdcQSZLviMKRSJ",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/LgAdcQSZLviMKRSJ.json",
+        "sha256": "160a7bae36d77aa42880574f811e24b72fe72541528780d8549732eb32e28aaf"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/LgAdcQSZLviMKRSJ.windows.json",
+        "sha256": "1dd3b416ab8f15579e9f8da504c00df095e049b62ed3908c567a2cbf84de5c4b"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rQrWDffuEytftMEN",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rQrWDffuEytftMEN.json",
+        "sha256": "a5958feef4ebb220d6cdc225e8c4ece92312badc93a592db0390f56609f22a0c"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rQrWDffuEytftMEN.windows.json",
+        "sha256": "923c8c12529fa8509220aae05ca0a66778eacc7800599666e7e1a3720cfaee91"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "yzSxvYKeKGSxsgmg",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/yzSxvYKeKGSxsgmg.json",
+        "sha256": "5d52582da34ea469fcc915d2914451329c6377977f842583611515122cd225bd"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/yzSxvYKeKGSxsgmg.windows.json",
+        "sha256": "0a91865a9f6ef48cb9689ef430d4e0e2f0ba9183e9ece6d6df2f34ff46411b1b"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rRcdvhSgomRFneuo",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rRcdvhSgomRFneuo.json",
+        "sha256": "b213eccac888eb1ad883406a868f41b5b9ab220b212a84edf6446d2311fe8db5"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rRcdvhSgomRFneuo.windows.json",
+        "sha256": "6eaa10e5fa7c6db3534498387aab3eb2e8d915cb40179ac6d1c4eed0a295729f"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "aUMaIbBZDDfBrRbm",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/aUMaIbBZDDfBrRbm.json",
+        "sha256": "164a0630f2466158d41fcde9d0c22ddbc01c45043d9fe8f3fe5b6e5a37852a9a"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/aUMaIbBZDDfBrRbm.windows.json",
+        "sha256": "f047626ab31f7417ed3c1f56ef55e75f4bbc38919a3ece8190e44bd9f817b221"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "MlHAstnfEElTLvYu",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/MlHAstnfEElTLvYu.json",
+        "sha256": "e666c0a8ba2eec713f13286dfc9f2e51ef8c6c5b129bea6cd5dd58b9ed427345"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/MlHAstnfEElTLvYu.windows.json",
+        "sha256": "96ba80ff319c87aef1e7ce4c48229a8b3a63f043f6e27acbc029df6d8637044a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "sjwqSJqqKRVVVmKF",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/sjwqSJqqKRVVVmKF.json",
+        "sha256": "50f069fef59a86123f6cd83045b7dfcfd8e97f0db432125ab5b80e1fa58dc339"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/sjwqSJqqKRVVVmKF.windows.json",
+        "sha256": "17d6d1a42cf004b37e5538bca46dfd19216056154e6c98886eef257cf1b544b4"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KFbUdXODuqKBBqxB",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/KFbUdXODuqKBBqxB.json",
+        "sha256": "a13c55c855a080c8ff2ca71b7410c9bd01d87659ed2b03f555ac88354cf09c79"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/KFbUdXODuqKBBqxB.windows.json",
+        "sha256": "b3b64604336911ccf8709d78a9c42ada90f52694d83b2185c665377783fc7b61"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "ytUqERnVdYnflUJW",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/ytUqERnVdYnflUJW.json",
+        "sha256": "0414d5e63e0f59cf5267d96e2a312addffdfa43c79ae4e6357ef4548f0c79d75"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/ytUqERnVdYnflUJW.windows.json",
+        "sha256": "04ad5a90723b31dff4224b1a5aa9c240433f5f854797432873b55acaafd5a16c"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "arGqdpJnNCBMuHHL",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/arGqdpJnNCBMuHHL.json",
+        "sha256": "889c8e792a467520071bde9b4910f4f9e93fbab0699fd83b744eb5ded1638656"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/arGqdpJnNCBMuHHL.windows.json",
+        "sha256": "b670bfac32451907e4a0882e4123775907c5c16b1833f50a28a75e87e1d54c9b"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "CLWeAsQuVrxzfTrZ",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/CLWeAsQuVrxzfTrZ.json",
+        "sha256": "d94d2af9d20c97242693781c9601a2ad062476d74231fe790f2bf86a62023401"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/CLWeAsQuVrxzfTrZ.windows.json",
+        "sha256": "1e4ff12ead35174e27dabeb9a6417f9f5a1169d55022ba18bd5e51ad02619520"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "FeTpACGYCoUIdbjr",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/FeTpACGYCoUIdbjr.json",
+        "sha256": "46e2e9096201f9894843b7b30823b0c550a2e8585f6c7672af05c19ec017175a"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/FeTpACGYCoUIdbjr.windows.json",
+        "sha256": "4aef3bf5d208faa0db1d9366f9de797eace46a790c0589fd5a91977822e8ac03"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "HuaxuBwyBCpcGcTL",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/HuaxuBwyBCpcGcTL.json",
+        "sha256": "040971d9d41b6a7faf632b7fa1348dc60475d1ecb2a6ad009ee64d193e7bc590"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/HuaxuBwyBCpcGcTL.windows.json",
+        "sha256": "493c919aa5774a4525a36b8a3ee49d08f0d89d6bba540d7d55d3de70182ea49c"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "rdrNVpGywJSyGmRK",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rdrNVpGywJSyGmRK.json",
+        "sha256": "1d116949b1ba4fd73abd3482f6535f28a0a0b1aaba1f3db9ef2639341d5b44c2"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/rdrNVpGywJSyGmRK.windows.json",
+        "sha256": "9c3307c36dc54391de52ce4ff244c6e4bc1c1108d6dd1d31c732d257bcec09a9"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KchlAfjUzORkuOtV",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/KchlAfjUzORkuOtV.json",
+        "sha256": "be28e5ff12838873e6f0e5929415d3d70f4f24261ffa4c1ad6b66dac1519cb0b"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/KchlAfjUzORkuOtV.windows.json",
+        "sha256": "51eca056d702757b69c664408152ed0e64e9874c5461d72022a10ba0fd5458bb"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "LwzAARbOSCibapNg",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/LwzAARbOSCibapNg.json",
+        "sha256": "d990251eac43aad6d6d017df39254f9d4835104c6dfe4bfbf0af2ee5825011c5"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/LwzAARbOSCibapNg.windows.json",
+        "sha256": "4ca38bf588e8c7d87d3d6534356d67df319cf93cb1d0c5c8fd39e7d1c2747c16"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "VVlxOttcekcLVwsS",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/VVlxOttcekcLVwsS.json",
+        "sha256": "9d9d1b5afad40a9261239cb45a6827644ef28d8de65cd954429943fd9c3060f4"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/VVlxOttcekcLVwsS.windows.json",
+        "sha256": "bc07b4513af76ec70e6681b602ee9228c9f7d591a08e562defbdba8e500a92cd"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "pvzEWmqdjcmADqOC",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/pvzEWmqdjcmADqOC.json",
+        "sha256": "37ce19e8f96a17e3a08a4cd80448778ca296a34567644d2ebcb52dff319dba05"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/pvzEWmqdjcmADqOC.windows.json",
+        "sha256": "a18a0acab2b0a7b274441f8c3cd6ff53c387a2a01192978d403c207b841bdb58"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "CynaHjYRtpNWqiTO",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/CynaHjYRtpNWqiTO.json",
+        "sha256": "261113ffba6e74086aa9c71e8c99a8215c64493e3cf2e9675ddd77292d57f636"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/CynaHjYRtpNWqiTO.windows.json",
+        "sha256": "04c0c5381dd6d691188bf3f8f2fe0f05689425cc38f8218897fcea1ddf8f964a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "saBuilfyOJlWTdeg",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/saBuilfyOJlWTdeg.json",
+        "sha256": "d12db90a3f45d985a8f4b1fee40fc2d34cee256e32ae4a109680a6a017a84a82"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/saBuilfyOJlWTdeg.windows.json",
+        "sha256": "06f1ead722eba5e4ab343db0b08c58637854aeab18e1c66b30e16b619c31941e"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "YUhhumTphbQhyelB",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/YUhhumTphbQhyelB.json",
+        "sha256": "dc8bc49aef081452b85009d14ceb448f73368c9dfb222e7c10378c13c3baa1f6"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/YUhhumTphbQhyelB.windows.json",
+        "sha256": "e6e0f86a553280bc6338b88e24a9bdab5839e76c0f05e1cf584d4c623cb9aa0c"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "RnepAMWPzNvAAkjF",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/RnepAMWPzNvAAkjF.json",
+        "sha256": "066a0727205ecf48793921e4b016ba3711fd832c4d908c034485cca0f86a863b"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/RnepAMWPzNvAAkjF.windows.json",
+        "sha256": "101bd9fdbf2204b4e56add4e2547423106d0f52f4622cd35827237b75d47b77a"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "UnUfrMWLqfWrMyxA",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/UnUfrMWLqfWrMyxA.json",
+        "sha256": "53586e3c563eb2130abbb3f4c325ba1c222579f264c20697b485e8661abac8c2"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/UnUfrMWLqfWrMyxA.windows.json",
+        "sha256": "19b1acec60460df9127e8f2e6ca6199c0e24e8f3dd95eba5decd1e8fe6f23b06"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "mPdXgCGbwaudDOgC",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/mPdXgCGbwaudDOgC.json",
+        "sha256": "e235a631149fa56713f0338582f8ce36037f182bd78efd36531c5fdae9cbf53c"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/mPdXgCGbwaudDOgC.windows.json",
+        "sha256": "12f4fb51a13b0531fc8c2640b43419b66e9de9fe55fadef53d37b8c51da2522f"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "NxymecTyWYgsXWjM",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/NxymecTyWYgsXWjM.json",
+        "sha256": "bf13fdc3770f853bc89463ab70b485e8cf6996c361183ddc18e799c1053fd2e7"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/NxymecTyWYgsXWjM.windows.json",
+        "sha256": "00e31419cc7d7cb6cea4ce43d9e5795bb9d986c224bda8958f847809feba1c72"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    },
+    {
+      "id": "KzctponEGMhyazdK",
+      "policy": "merge_short_edges",
+      "actual_video_pts_sha256": "a4319245012b25b385f0a6b0c68c239b11a190581778291c81825dd868498570",
+      "frame_count": 81,
+      "report": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/KzctponEGMhyazdK.json",
+        "sha256": "a7d6da0dfc07c57b63bdd0c491492d5cfc2faa1334d23393db35818066a36f9e"
+      },
+      "plan": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/KzctponEGMhyazdK.windows.json",
+        "sha256": "47def73455be0d66b66efc67441aa1e1c6bf4151e3a469debe82685e3512910d"
+      },
+      "exact_pts_digest_equal_original": true,
+      "canonical_typed_plan_verified": true
+    }
+  ],
+  "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_music_windows.py",
+  "source_sha256": "1b1a1309c92f25bd9faf86cc663ab61686e78f668e20398c817ce15a305bed82",
+  "verifier_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/verify_music_window_pts_and_types.py",
+  "verifier_sha256": "26091e34109c0ee0f10ca1d55885c2c98bddcd67e3f63a2ee41e006af23cbd24",
+  "actual_video_pts_probed_not_inferred_from_nlf": true,
+  "old_reports_and_captions_modified": false,
+  "MS_or_model_inference_repeated": false,
+  "source_video_bytes_rehashed": false,
+  "audio_video_alignment_verified": false,
+  "motion_accuracy_verified": false,
+  "GPU_used": false
+}

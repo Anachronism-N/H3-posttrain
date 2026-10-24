@@ -1,0 +1,104 @@
+{
+  "schema": "music_windows_same50_finite_trials_public_summary_v1",
+  "finite_MS_trials_complete": true,
+  "source_count": 50,
+  "strategies": [
+    {
+      "strategy": "bpm_duration",
+      "evidence": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_bpm_duration_first50_v1/summary.json",
+        "sha256": "702269bcfab5f5b536e03af2809ff5d51ff5822ae08fd565dc2c201f9635f16f"
+      },
+      "processed_sources": 50,
+      "execution_failed_sources": 0,
+      "planned_windows": 109,
+      "window_status_counts": {
+        "candidate": 99,
+        "abstain": 10
+      },
+      "abstain_reasons": {
+        "no_output": 6,
+        "partial_support": 4
+      },
+      "full_available_support_clips": 42,
+      "raw_fourgram_fraction_not_accuracy": 0.06622464282895256,
+      "VLM_shared_manifest_actual_execution": false
+    },
+    {
+      "strategy": "strict_bars",
+      "evidence": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_strict_v1/summary.json",
+        "sha256": "9f110fb60c6b2653d9596448ff206ee11f2104d513efbb98497f887aef4dd0de"
+      },
+      "processed_sources": 50,
+      "execution_failed_sources": 0,
+      "planned_windows": 211,
+      "window_status_counts": {
+        "abstain": 69,
+        "candidate": 142
+      },
+      "abstain_reasons": {
+        "no_output": 61,
+        "no_samples_in_window": 4,
+        "partial_support": 4
+      },
+      "full_available_support_clips": 14,
+      "raw_fourgram_fraction_not_accuracy": 0.04441379310344828,
+      "VLM_shared_manifest_actual_execution": false
+    },
+    {
+      "strategy": "merged_short_edges",
+      "evidence": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_truebar_first50_merge_short_edges_v1/summary.json",
+        "sha256": "57b7810b0e4178cf55f2881bb00486507fd5b32cd13fa2f097dc998918272440"
+      },
+      "processed_sources": 50,
+      "execution_failed_sources": 0,
+      "planned_windows": 136,
+      "window_status_counts": {
+        "candidate": 111,
+        "abstain": 25
+      },
+      "abstain_reasons": {
+        "no_output": 21,
+        "partial_support": 4
+      },
+      "full_available_support_clips": 34,
+      "raw_fourgram_fraction_not_accuracy": 0.06103082012885252,
+      "VLM_shared_manifest_actual_execution": false
+    }
+  ],
+  "exact_pts_and_types": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/music_window_exact_pts_typed_verification_20261024_v1.json",
+    "sha256": "89f7cee6d8df7155fecd2a5fb8b42edb79df7f0da6a33274c27bcccc0d54bda7"
+  },
+  "source_refs": {
+    "scripts_omnidance/exp/ms/ms_music_windows.py": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_music_windows.py",
+      "sha256": "1b1a1309c92f25bd9faf86cc663ab61686e78f668e20398c817ce15a305bed82"
+    },
+    "scripts_omnidance/exp/ms/ms_truebar_caption.py": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_truebar_caption.py",
+      "sha256": "c1b925e1949692a6b98da7b12ef72fb42be02581dac6c2778dce431539b816be"
+    },
+    "scripts_omnidance/exp/ms/verify_music_window_pts_and_types.py": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/verify_music_window_pts_and_types.py",
+      "sha256": "26091e34109c0ee0f10ca1d55885c2c98bddcd67e3f63a2ee41e006af23cbd24"
+    }
+  },
+  "detected_adjacent_downbeat_intervals": 115,
+  "bar_ready_sources": 48,
+  "bar_insufficient_sources": [
+    "CLWeAsQuVrxzfTrZ",
+    "YUhhumTphbQhyelB"
+  ],
+  "strict_ready48_full_available_support_clips": 12,
+  "merged_ready48_full_available_support_clips": 32,
+  "B_fixed_same50_full_available_support_clips": 42,
+  "comparison_limit": "Different windows and contexts alter counts and text repetition; none proves motion or musical alignment accuracy.",
+  "motion_accuracy_approved": false,
+  "audio_video_alignment_verified": false,
+  "raw_caption_or_media_uploaded": false,
+  "shared_VLM_trial_complete": false,
+  "full_12000_delivery_complete": false
+}

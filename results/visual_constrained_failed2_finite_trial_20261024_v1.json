@@ -1,0 +1,69 @@
+{
+  "schema": "visual_constrained_failed2_finite_trial_public_summary_v1",
+  "finite_trial_complete": true,
+  "selected_windows": 2,
+  "case_status_counts": {
+    "candidate": 2,
+    "abstain": 0,
+    "failed": 0
+  },
+  "cases": [
+    {
+      "id": "TKBOLWtIPQzcxGLa",
+      "window": {
+        "start": 0.0,
+        "end": 2.0
+      },
+      "status": "candidate",
+      "caption_verbatim_same_as_original_failed_response": true,
+      "normal_stop_and_budget": true,
+      "lineage_sha256": "fd1837f7a57a98194a77c66764e7bde88586680ac55a5e2177935ac3c1b4788e"
+    },
+    {
+      "id": "HtezJbaEumeOaxQT",
+      "window": {
+        "start": 2.0,
+        "end": 5.0625
+      },
+      "status": "candidate",
+      "caption_verbatim_same_as_original_failed_response": true,
+      "normal_stop_and_budget": true,
+      "lineage_sha256": "7c551c0e2368a420044e4cb980e883bc438b2000e2d4183e0852f97b17dddb91"
+    }
+  ],
+  "refs": {
+    "summary.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_constrained_failed2_v1/summary.json",
+      "sha256": "c86100f3c58ee06c671ed600dea971bf9cf37ff035c39164236ab809a9979557"
+    },
+    "run.receipt.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_constrained_failed2_v1/run.receipt.json",
+      "sha256": "b5a5bf5d35371fb2c7bbec8b9154a41bfaaa2467c47a358861c1ba1040b24195"
+    },
+    "load.receipt.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_constrained_failed2_v1/load.receipt.json",
+      "sha256": "4de53329712b5236fe53d17905569f4b57b62dbbba4d608f29c36d1565809697"
+    },
+    "independent_audit_cpu_v1.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_constrained_failed2_v1/independent_audit_cpu_v1.json",
+      "sha256": "5ade00549ac22172774b44e8280f901d1810832c7caa5f5575b7864f0b3e9810"
+    },
+    "assistant_sampled_source_review_v1.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_constrained_failed2_v1/assistant_sampled_source_review_v1.json",
+      "sha256": "14e1bae62b0142dcf4d92cf45255b546b1714e33ece684cc28c03f3d109c4b37"
+    }
+  },
+  "runner_source": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_visual_constrained_retry.py",
+    "sha256": "9270c3f9ca58771a65f7335e17dfdfab83138c74aac44558d4bdeb7f5b681968"
+  },
+  "explicit_xgrammar_pair_enum": true,
+  "original_messages_and_frames_preserved": true,
+  "motion_caption_improvement_established": false,
+  "full_pool_updated": false,
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "formal_training": false,
+  "private_raw_captions_or_media_uploaded": false,
+  "conclusion": "Two constrained outputs pass the frame-pair syntax gate but preserve the original caption verbatim; sampled source-frame facts did not establish support or motion accuracy improvement. No failure-pool replacement."
+}

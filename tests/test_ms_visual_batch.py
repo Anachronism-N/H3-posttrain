@@ -113,6 +113,13 @@ class BatchTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "duplicate JSON key"):
             batch.read_manifest(path)
 
+    def test_request_clarifies_real_validator_schema_without_action_prior(self):
+        self.assertIn("unique nonempty JSON string", batch.OBSERVE_TEXT)
+        self.assertIn("at least two distinct", batch.OBSERVE_TEXT)
+        self.assertIn("both events and motion_caption", batch.OBSERVE_TEXT)
+        self.assertNotIn("cross-behind", batch.OBSERVE_TEXT)
+        self.assertNotIn("genre", batch.OBSERVE_TEXT)
+
     def test_missing_assets_fail_without_creating_nlf_placeholders(self):
         row = self.manifest_row()
         with self.assertRaisesRegex(ValueError, "missing.*no placeholder"):
@@ -383,6 +390,9 @@ class BatchTests(unittest.TestCase):
             request = json.loads((bundle / "request.json").read_text())
             self.assertEqual(request["messages"][0]["content"], batch.SYSTEM)
             content = request["messages"][1]["content"]
+            expected = json.dumps([frame["index"] for frame in manifest["frames"]])
+            self.assertIn("Allowed Source frame indices for this window: " + expected, content[0]["text"])
+            self.assertIn(batch.OBSERVE_TEXT, content[0]["text"])
             self.assertEqual(sum(item["type"] == "image_url" for item in content), len(manifest["frames"]))
             self.assertNotIn("THIS RICH TEXT", json.dumps(request))
             self.assertNotIn("NOT AN OBSERVER INPUT", json.dumps(request))

@@ -1,0 +1,124 @@
+{
+  "schema": "nlf-official-canonical-asset-discovery-and-match-v1",
+  "task_scope": "定位真实官方canonical资产及匹配验证；准备3case同窗overlay比较设计，未执行RGB32点",
+  "official_release": {
+    "tag": "v0.2.0",
+    "url": "https://github.com/isarandi/nlf/releases/download/v0.2.0/nlf_data_files.zip",
+    "archive_bytes": 939515409,
+    "downloaded_bytes": 309414,
+    "full_archive_downloaded": false,
+    "full_archive_sha256_computed": false,
+    "provenance": "官方GitHub releases API枚举+ZIP中央目录+仅两成员HTTP206 Range提取+CRC32校验"
+  },
+  "model": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/nlf_l_multi_0.3.2.torchscript",
+    "sha256": "52bee28edb6ea9148691331df87cfc238d7e3d9134dc60104a5aaed282a9ddad",
+    "bytes": 493117974,
+    "filename_version": "0.3.2",
+    "official_original_model_digest": "GitHub v0.3.2原始asset.digest为空；未重下493MB核远端SHA",
+    "source_commit": "29046738a8101c15dc366ab45945b45e40debf17"
+  },
+  "assets": [
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/canonical_joints/smplx.npy",
+      "shape": [
+        55,
+        3
+      ],
+      "dtype": "float64",
+      "units": "m",
+      "sha256": "30714ed208e449ffdc334a6859314b0282a5283953bf11731621d064b7eb92d4"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/canonical_verts/smplx.npy",
+      "shape": [
+        10475,
+        3
+      ],
+      "dtype": "float64",
+      "units": "m",
+      "sha256": "69d81abf8c080013e2973d2799aa17d3cd501554c4c7e804ab09812c3c67fe74"
+    }
+  ],
+  "match": {
+    "passed": true,
+    "consumer_dtype": "float32",
+    "embedded_smplx_shape": [
+      1079,
+      3
+    ],
+    "all_55_joints_bitwise_equal": true,
+    "all_1024_vertices_bitwise_equal": true,
+    "max_abs_error": 0,
+    "vertex_matching": "逐float32字节查表；1024个都唯一exact匹配，不用近邻近似",
+    "body_model_vertices": 10475,
+    "body_model_joints": 55,
+    "scope": "官方资产完整数组来自真实发布包；精确兼容性直接验证涵盖模型内嵌的55关节和1024顶点，不声称模型内嵌整个10475表",
+    "missing_required_foot_indices_in_model_subset": [
+      5780,
+      8463,
+      8474,
+      8635
+    ],
+    "buffer867_not_used": true,
+    "receipt": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/compatibility_cpu_receipt.json",
+    "receipt_sha256": "be5a567e8861947f1f29080f2c9c0e21f6dd55541b65ad9737f172dc6ea34c23"
+  },
+  "spec": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/body_palm_foot32.json",
+    "sha256": "bcb8f9afcb8d0dcc62640e193e3de31dc875020f7e0191fc8af3c5800dad555f",
+    "point_count": 32,
+    "body_points": 22,
+    "palm_points": 4,
+    "foot_surface_points": 6,
+    "new_relative_to_body22": 10,
+    "purpose": "32个点同次从RGB直接查询；不是缓存body22/TPL52补点",
+    "source_script": "H3-posttrain/scripts_omnidance/exp/ms/ms_landmarks.py",
+    "script_modified": false,
+    "source_identity_metadata_note": "现build_smplx_spec仍保守声明supplied_by_operator；独立official download/compatibility receipt证明实际来源，不为此改冻结代码"
+  },
+  "license": {
+    "nlf_code": "固定commit LICENSE=MIT",
+    "pretrained_models": "官方README及初始release声明仅非商业研究",
+    "canonical_archive": "28成员无独立LICENSE；作为官方NLF研究数据资产使用，不声明商业许可，也不公开再分发SMPL-X派生数据",
+    "user_private_credentials_used": false
+  },
+  "generation_evidence": {
+    "official_code": "https://github.com/isarandi/nlf/blob/29046738a8101c15dc366ab45945b45e40debf17/nlf/tf/canonical/canonical_space.py",
+    "sequence": "SMPL neutral指定canonical_pose→symmetrize_verts→SMPL2SMPLX官方转换→fit canonical joints；绝非普通SMPL-X Tpose",
+    "unit_basis": "官方SMPLfitter body-model metres convention、资产人体范围约1.5m、对本地API canonical float32逐值完全相同，故无需×1000 canonical输入；API预测3D另÷1000变米",
+    "local_document_correction": "LANDMARKS.md的尚未核公开小下载入口/需用户提供资产已经过时；两数组仍不在Git源码树，但在官方v0.2.0 release archive，不再block"
+  },
+  "next_true_rgb_validation": {
+    "resource": "须主会话明确授权资源队友1GPU顺序3case；本人未GPU",
+    "fixed3_ids": [
+      "wJPptuhclZmKAEWs",
+      "wJPrpFsThWAcBQIw",
+      "wJQTclrlOLEYYfTB"
+    ],
+    "video_root": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos",
+    "boxes_root": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_eval3",
+    "extractor": "ms_landmarks.py extract直接get_weights_for_canonical_points＋estimate_poses_batched，禁止SMPL fallback",
+    "initial_config": {
+      "bs": 8,
+      "num_aug": 3,
+      "device": "cuda",
+      "ffprobe": "/opt/ms_tools/ffprobe",
+      "ffmpeg": "/usr/local/bin/ffmpeg"
+    },
+    "overlay_design": [
+      "每case实际81@16fps/0–5.0625s按PTS严格同窗对齐；消费raw.npz/manifest/receipt逐SHA核视频、boxes、spec、model及names顺序，不只看exit0",
+      "使用直接points2d_px原生像素叠加完整视频：身体22一色、左右掌4与足6分别异色，名字/索引固定；逐valid画线，缺点/越界/退化明确标出，不插值填真实点",
+      "不把uncertainty当visibility/probability；数值分布仅诊断，不机械套旧joint_uncertainties阈值",
+      "同窗比较旧j3d/body22、旧完整pose72及既有模板恢复的腕/足朝向，原pose有旋转信息必须保留，不以位置22缺掌点证明旧表示无信息",
+      "新点使用NLF直接输出2D；旧3D若投影要显式记录默认55°FOV、无真实相机标定的限制，不能当像素GT或用投影误差冒accuracy",
+      "先看原RGB手掌翻面、脚跟/前足位置、左右、遮挡跳点；输出人工review候选视频+perpoint支持和连续几何，真实语义/准确率仍待人审",
+      "保持原MS/A-B分段、VLM提示、视频窗口和文本预算不变；32点分支独立out/receipt，不修改full12kMS/VLMsource，不全量扩量"
+    ]
+  },
+  "real_rgb32_extraction_completed": false,
+  "accuracy_review_completed": false,
+  "gpu_used": false,
+  "existing_ms_vlm_sources_modified": false,
+  "existing_inputs_modified": false
+}

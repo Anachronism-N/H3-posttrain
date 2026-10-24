@@ -229,3 +229,25 @@
 - VLM执行器独立审阅发现并修正了端点帧双计、length/缺generation元数据误接受及failed无法恢复；最终freeze SHA `15f591a63c92d0291a0d45c1ccefd3e4f84900ec0dbc76279658ba7c3956cf25`，N1真实CPU24/24＋与原视觉入口联测35/35（含实际FFprobe/FFmpeg）。`--retry-failed`仅给失败窗新attempt，保旧raw/receipt，正确候选不重复。仍需真实GPU首条模型调用，不把测试或准入叫VLM成功。
 - N1已存在本地32B `/opt/models/Qwen3-VL-32B-Instruct`（14/14分片66,714,912,872字节）与shm8B（4/4）。`venv_vllm`用Torch2.13.0+cu130/vLLM0.31/Transformers5.17；只append既有eval CPU库路径补SciPy、不prepend覆盖Torch、不安装/降级现有依赖。8B工程用N1 GPU6；32B首质量候选用N1 GPU0/1 TP2，避免单卡或跨节点共享coldread假定。模型广告262k context不替代实际16k/image16/seq1预算。
 - N5旧anchor日志已真实达到100更新（不是历史39/97），完整state/manager验收仍另等；N2最终2250旧评测先后遇diffsynth导入路径/imageio，已基于成功完整state receipt尝试完整H3环境独立恢复，不重读Adam、不更换模型/采样。相关最终视频/HTTP尚未全验收，不把12k新任务掩盖旧有限收尾。
+
+### 11:26 CST实证与全量语义标注准入
+
+- 原MS四分片已全部实际exit0、锁退出、manifest/receipt SHA匹配，每片3000源/6000窗口，总12,000源/24,000窗口；候选22,006、弃权1,994、执行错误0。各分片完成只表示已处理候选/弃权，完整B全文覆盖、A正文可用数须等独立全后验结果。唯一首轮导出后验 `LUL39M` 真实仍活跃并读取已有coords/metadata；未生成final complete，未将IO等待误判死锁，也不重复启动。
+- 独立恶例发现旧后验恢复时仅相信重封文件自报SHA/字典相等，可接受被填造的B完整正文、A正文冒B以及bool/int互换。新增独立 `ms_chunk_export_v2.py` 比对从producer重建的三份canonical JSONL与存盘字节、严格summary类型，核source/input_path/Bmode；保持首run旧source和历史产物，不中途改live代码。合成测试与独立复测分别标记，不用窄测试替实际12k验收。
+- 同源first50 32B真实执行与独立后验均完成：50源/100窗口全部候选、0弃权/失败；100真实源帧/request/raw/generation/receipt及与MS50来源/顺序核齐，stop/EOS全通过。该视频第一手候选独立于原MS空/partial窗，未将其隐填成MS标签。摘要SHA `f32fa4e40774de5cd5ed8facbb68db81f8026ad91f404d85b879ffd0de8d9205`、逐窗审计SHA `d7280a7a28e2888e7fce903bdf42ac7e7f439d50cf888b4e0b9a823d21a995bd`。
+- first50实测端到端約2.98源/min（含启动、一次模型hash、profile、CPU采样与CephIO，不是纯模型TPS），GPU两卡峰72,035MiB，平均util约48%。不能外推全量线性加速或用占卡/词数当准确率。100caption中有6窗明确场景词、14窗衣发/身份词、64窗解剖左右主张及36窗宽泛时间措辞；它们是非穷尽筛查命中、不是已核动作错误率。原文/negative flags全保，formal训练/语义/人审批准均false。
+- 用户要求本轮12,000视频编舞caption，允许继续全池**未审核video-first弱标签**生成，原MS对照与新source严格分开，不要求逐条人工审核阻实验，也不由结构通过自动批准训练。采用冻结32B/4fps/最多16帧/16k上下文/TP2/batch2/seq2/prepare2协议；阶段动作描述较原微几何更直接，但场景、侧别、时序风险未消除，不能命名质量winner。
+- 主会话实际创建 `MS/visual12k_local32b_full_v1/launch_lead_v1.json`：nshard8、limit0、每1500唯一SID；shard0/1为N1 GPU0–3的两组，shard2=N3 GPU0/1，shard3=N5 GPU0/1，shard4/5=N6 GPU0–3两组，shard6/7=N8 GPU0–3两组。最多16GPU，实际每组须fresh内存/租约/身份准入；若不足保持该shard pending，不更改已经运行的分片集合。
+- N1已有同25文件本地32B identity `26722d150f791da5ff1befaf753efd651a105b17849adb74ea07cfe0ba01779c`。N3/N5/N6/N8四个受管localstage已实际复制并逐file SHA核验中，完成marker放模型目录外以不改变identity；不放shm、不动235B或环境、不全群无谓copy。先用N1本地ready副本错峰生成，余节点完整stage后加入；不能把stage或launcher存在写成全量生成完成。
+- 原模型五组15视频技术闭环已完成且独立核验：12纯视频/3nativeAV保持各协议、源SHA与完整解码、实际网页HTTP200/15Range206字节匹配；独立最终报告 `review_web/finalpublished_eval15_v6_20261024.json` SHA `e49bea0233da82cd29a05f716d71c3d79cf42ccc9ae54369bca4fd715f650c1a`。旧BrokenPipe是完整采样之后发布管道失败，保原故障与实际v3独立成功receipt，不伪造旧manager exit0或别名。
+- anchor100实际完整state/416 A-B来源及三视频、独立HTTP通过；N2final2250完整state/3原生AV/fullPtags/audio-video各50步及独立actualv3HTTP通过，人评仍pending。N4 GPU2/3自然终态后均已安全恢复holder；其它闲卡已有holder。最终整体目标仍待12k首轮导出/新全量32B候选与最终分析发布，不用15视频技术完成替代数据目标。
+
+- 11:28 CST：全12,000视频候选的第0分片已真正受管启动（NGpDSC、N1 GPU0/1、child3507063），unique leadplan SHA `43a38cb9c5d730ea5c34a30bcc97c18394946dd1cee0a7a0f99996d53d8b2e18`；每1500SID、nshard8/limit0。此时仅CPU准备/模型加载前阶段，尚无fullrun候选；第1分片和其余6组按真实加载/首生成、模型stage和预算门禁依次准入，不宣称八组全部运行。
+
+### 新增32点与按拍分段的实际执行补充
+
+- 此前32点未执行是匹配canonical资产缺失，不是增点算法已被判无效。现从官方NLF v0.2.0 release的 `nlf_data_files.zip` 以Range仅取得两份小数组（总传输309,414字节，非整939MB包），ZIPCRC核通过；55×3 joints与10,475×3 vertices均float64有限。joint SHA `30714ed208e449ffdc334a6859314b0282a5283953bf11731621d064b7eb92d4`，verts SHA `69d81abf8c080013e2973d2799aa17d3cd501554c4c7e804ab09812c3c67fe74`。
+- 对本次真NLF 0.3.2权重CPU核验：内嵌smplx canonical总1,079点＝1,024顶点subset＋55关节；官方joint float32 cast与最后55点逐值相等，前1,024点逐一唯一匹配官方全vertices，maxabs0。4个所需足部顶点不在subset，说明不能用部分buffer代替完整查询表。该匹配解除spec前置，不证明新预测点或caption准确；许可为原NLF非商业研究边界，不声称数据包可商用。
+- 计划使用真canonical构建固定32点spec，在三个真实holdout源RGB＋已有框上调用直接点接口（不SMPL拟合／不固定模板补新点），保存81×32三维、2D像素点、uncertainty、时间戳与valid。随后做原视频叠加、掌／足方向轨迹及旧body22/完整pose同窗对照；无可靠观察不造动作。全12k正在运行的旧body/v2与32B标签source保持独立，不中途改成已用32点。
+- 已补独立 `ms_beat_chunk_compare.py` 的C实验：实际WAV字节、onset＋原numpy beatDP（60–180BPM/120先验）放独立音频子进程，默认4个检测拍点、1.5–4秒可2/8拍调整。0/end保留、内部边界从检测拍点取；弱节奏或覆盖不足明确fixed回退，tempo-only等距网格只作为单列近似对照，不冒实际拍点／小节首拍。音画零点对齐是当前假设，原偏移unknown；不加入动作踩拍已验证的断言。
+- C真实三个authority样本已3/3处理、0执行错误，6窗4候选/2无描述；A2/3、B4/6/C4/6的少量结果不足判断语义优劣。同first50原字节清单的50条CPU对照已受管执行，全部raw/窗范围/支持/回退原因保留，尚待真实50终态统计。不改变已生成A/B12k、8057原producer、5fc首后验或b362dc视觉模型运行源码。

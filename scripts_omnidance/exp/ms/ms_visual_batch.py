@@ -36,6 +36,13 @@ from motionscript_v2.chunks import fixed_windows
 SCHEMA = "motionscript_local_visual_batch_v1"
 FIELDS = ("id", "video_path", "audio_path", "nlf_path", "source_group", "split")
 SOURCE_FIELDS = ("video_path", "audio_path", "nlf_path")
+OBSERVE_TEXT = """Observe this ordered frame sequence. Only describe supported body movements.
+Schema clarification: each event id must be a unique nonempty JSON string,
+for example "e1" or "e2", never a number. Every event needs at least two distinct
+supplied frame indices. A fact visible in only one frame is not supported: omit
+it from both events and motion_caption, or abstain if no movement is supported.
+Do not describe unobserved contacts or invent missing evidence.
+"""
 
 
 def digest(value):
@@ -198,7 +205,8 @@ def select_frames(times, start, end, sample_fps=4.0, max_frames=16):
 
 def params_identity(args, code):
     value = {"chunk_seconds": 2.0, "min_tail_seconds": 1.5, "sample_fps": 4.0, "max_frames": 16,
-        "system_sha256": hashlib.sha256(SYSTEM.encode()).hexdigest(), "code_sha256": code["sha256"],
+        "system_sha256": hashlib.sha256(SYSTEM.encode()).hexdigest(),
+        "observe_text_sha256": hashlib.sha256(OBSERVE_TEXT.encode()).hexdigest(), "code_sha256": code["sha256"],
         "model_path": str(Path(args.model).resolve()), "tensor_parallel_size": args.tp,
         "batch_size": args.batch_size, "max_num_seqs": args.max_num_seqs,
         "max_model_len": 16384, "max_pixels": args.max_pixels, "gpu_memory_utilization": args.gpu_memory_utilization,
@@ -245,8 +253,9 @@ def prepare_window(bundle, row, source, probe, window, binding, args):
     verify_source(source)
     if len(images) != len(selected):
         raise ValueError("frame extraction count mismatch")
-    evidence, content = [], [{"type": "text", "text":
-        "Observe this ordered frame sequence. Only describe supported body movements."}]
+    evidence, content = [], [{"type": "text", "text": OBSERVE_TEXT +
+        "Allowed Source frame indices for this window: " + json.dumps(selected) +
+        ". Use only these actual indices; never fill in missing evidence."}]
     for index, image in zip(selected, images):
         evidence.append({"index": index, "time": probe["times"][index],
             "source_timestamp": probe["source_timestamps"][index], "file": image.relative_to(bundle).as_posix(),

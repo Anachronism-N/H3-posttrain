@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-24",
+  "scope": "Additional verified code and completed finite evaluations; not whole 12k caption delivery completion",
+  "MS": {
+    "producer_sha256": "8057c48e7b02000c0d28a7dfbc584eaad984239670740037c1d10a5be8c68a00",
+    "processed_sources": 12000,
+    "processed_windows": 24000,
+    "candidate_windows": 22006,
+    "abstain_windows": 1994,
+    "execution_errors": 0,
+    "first_exporter_sha256": "5fcf77e46a028d55a574d2dc22c7656c1bd0e8b81b462cb1a1bdc9cd8a1e5b34",
+    "first_export_complete": false,
+    "existing_export_verifier_sha256": "b65a9db1f54419665394da921d4eb2456954bad9e4a877f06e9f8893f3346264",
+    "independent_resealed_artifact_and_typed_summary_negative_cases_passed": true,
+    "readonly_historical_export_compatibility_test_passed": true
+  },
+  "video_first": {
+    "producer_sha256": "b362dc5275b19c70a6f4f4d149b974e75571ad07e7e4f1f0a2251222fd839204",
+    "first50_actual_sources": 50,
+    "first50_audited_windows": 100,
+    "first50_candidate_windows": 100,
+    "first50_eos_stop_windows": 100,
+    "first50_independent_receipt_sha256": "f32fa4e40774de5cd5ed8facbb68db81f8026ad91f404d85b879ffd0de8d9205",
+    "full_run_plan_sha256": "43a38cb9c5d730ea5c34a30bcc97c18394946dd1cee0a7a0f99996d53d8b2e18",
+    "full_source_manifest_sha256": "4b2efc8233fed8dd7cdb46acf8da318db76cb575faa1177e9e2bc113d453d283",
+    "full_target_sources": 12000,
+    "actual_launched_replicas": 8,
+    "actual_GPUs": 16,
+    "full_run_complete": false,
+    "caption_semantic_quality_approved": false,
+    "first50_formal_approval": false,
+    "first50_unreviewed_flags_verified": true
+  },
+  "evaluations": {
+    "technical_cases_completed": 15,
+    "technical_groups_completed": 5,
+    "independent_actual_HTTP_and_byte_SHA_verified": true,
+    "report_sha256": "e49bea0233da82cd29a05f716d71c3d79cf42ccc9ae54369bca4fd715f650c1a",
+    "old_native_manager_BrokenPipe_preserved_not_false_exit0": true,
+    "human_quality_pending": true
+  },
+  "regression": {
+    "relevant_tests_passed": 81,
+    "relevant_subtests_passed": 30,
+    "command": "N1 venv_eval pytest test_ms_chunk_export.py test_ms_chunk_export_v2.py test_ms_visual_batch.py test_publish_ready_eval_review_v6.py",
+    "test_fixture_or_receipts_not_whole_live_goal_proof": true
+  },
+  "extra_trials": {
+    "RGB32point": "Official arrays obtained and bitwise compatible with the actual NLF 1079 embedded points; fixed3 RGB extraction authorized, not yet accuracy approved.",
+    "beat_chunks": "Same50 detected-beat C trial completed: A full45/50, B full42/50, C full41/50; no calibrated beat or semantic superiority claim."
+  },
+  "private_data_not_published": true,
+  "technical_goal_complete": false,
+  "caption_delivery_complete": false
+}

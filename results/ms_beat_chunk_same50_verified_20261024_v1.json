@@ -1,0 +1,98 @@
+{
+  "schema": "motionscript_detected_beat_C_compare_v1",
+  "fingerprint": "b524eb46e620c44b9d3831c2c0ea1d529b7bfd2d8092831e2b6b33b9d08040be",
+  "selected_count": 50,
+  "processed_count": 50,
+  "failed_count": 0,
+  "errors": [],
+  "complete": true,
+  "formal_approval": false,
+  "accepted": false,
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "strategy_counts": {
+    "detected_beats": 50
+  },
+  "fallback_reasons": {},
+  "bpm_mean": 118.66306541765404,
+  "C_duration_mean": 2.4107142857142856,
+  "A_B_C_same_processed_source_stats": {
+    "A": {
+      "source_clip_denominator": 50,
+      "view_denominator": 50,
+      "status_counts": {
+        "candidate": 45,
+        "abstain": 5
+      },
+      "abstain_reasons": {
+        "no_output": 1,
+        "partial_support": 4
+      },
+      "raw_text": {
+        "caption_denominator": 50,
+        "nonempty_count": 49,
+        "total_words": 14362,
+        "mean_words_all": 287.24,
+        "fourgram_occurrences": 14215,
+        "extra_repeated_fourgrams_within_caption": 1554,
+        "repeat_fourgram_micro_fraction": 0.10932113964122406,
+        "definition": "token regex words; no timing headers; repeated count-1 within each individual caption/window, no cross-window concatenation"
+      },
+      "all_windows_candidate_clip_count": 45
+    },
+    "B": {
+      "source_clip_denominator": 50,
+      "view_denominator": 100,
+      "status_counts": {
+        "candidate": 91,
+        "abstain": 9
+      },
+      "abstain_reasons": {
+        "no_output": 5,
+        "partial_support": 4
+      },
+      "raw_text": {
+        "caption_denominator": 100,
+        "nonempty_count": 94,
+        "total_words": 13303,
+        "mean_words_all": 133.03,
+        "fourgram_occurrences": 13021,
+        "extra_repeated_fourgrams_within_caption": 929,
+        "repeat_fourgram_micro_fraction": 0.07134628676752938,
+        "definition": "token regex words; no timing headers; repeated count-1 within each individual caption/window, no cross-window concatenation"
+      },
+      "all_windows_candidate_clip_count": 42
+    },
+    "C": {
+      "source_clip_denominator": 50,
+      "view_denominator": 105,
+      "status_counts": {
+        "abstain": 10,
+        "candidate": 95
+      },
+      "abstain_reasons": {
+        "no_output": 6,
+        "partial_support": 4
+      },
+      "raw_text": {
+        "caption_denominator": 105,
+        "nonempty_count": 98,
+        "total_words": 12758,
+        "mean_words_all": 121.5047619047619,
+        "fourgram_occurrences": 12464,
+        "extra_repeated_fourgrams_within_caption": 751,
+        "repeat_fourgram_micro_fraction": 0.06025353016688061,
+        "definition": "token regex words; no timing headers; repeated count-1 within each individual caption/window, no cross-window concatenation"
+      },
+      "all_windows_candidate_clip_count": 41
+    }
+  },
+  "tempo_grid_is_not_C": true,
+  "beat_boundaries_are_verified_action_boundaries": false,
+  "scope": "finite matched input only; onset/DP beats not calibrated/bar annotated; no semantic acceptance or training approval",
+  "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_beat_C_first50_v1/summary.json",
+  "source_report_sha256": "4f5728aa2c9f94d3ca9ba8f1c793c10a53d6e81800d11e20c77d614be77eb0ba",
+  "independent_verification_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_beat_C_first50_v1/independent_verification.json",
+  "independent_verification_sha256": "7abb5e73cb834eb92e2965cb2b682d338e699bcae874f826df554cf88ea5bc8a",
+  "private_raw_text_or_media_published": false
+}

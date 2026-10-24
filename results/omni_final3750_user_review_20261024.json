@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-24",
+  "source": "user_chat",
+  "context": "Feedback followed the completion notice for Omni final-u3750 fixed three videos",
+  "feedback_original": "三个视频中有一些动作还是重复了,可能就是caption中有大量重复的动作.omni训练的指标怎么样?在测试集上表现如何?",
+  "verdict": "部分动作仍重复，用户怀疑caption中的重复动作描述是原因",
+  "scope": "three available final-u3750 videos, qualitative observation",
+  "limits": {
+    "not_all_motion_failed": true,
+    "per_case_numeric_scores_not_given": true,
+    "causal_hypothesis_not_controlled_ablation": true,
+    "no_final_vs_u3000_ranking_given": true,
+    "music_sync_face_hand_quality_not_separately_accepted": true
+  },
+  "no_numeric_reviews_POSTed_by_assistant": true
+}

@@ -1,0 +1,187 @@
+{
+  "scope": "completed finite eval15 publication, not whole research goal or human quality approval",
+  "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/finalpublished_eval15_v6_20261024.json",
+  "source_report_sha256": "e49bea0233da82cd29a05f716d71c3d79cf42ccc9ae54369bca4fd715f650c1a",
+  "protocol": "focused_eval15_publication_independent_v6",
+  "utc": "2026-10-24T03:18:45.141918+00:00",
+  "complete": true,
+  "complete_case_count": 15,
+  "complete_group_count": 5,
+  "human_quality_pending": true,
+  "numeric_scores_written": false,
+  "overall_goal_completed": false,
+  "no_v1_alias": true,
+  "manifest_sha256": "595debf8638e5a804de65a47acc41395abab48a6cb6a677d3d4d764bf77cb20d",
+  "manifest_http_status": 200,
+  "all15_fresh_source_gate": true,
+  "all15_http_range_bytes_verified": true,
+  "checks": [
+    {
+      "model_id": "MS/review_h3_purefm100_n4_chunked_v2/videos",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_sha256": "422ccb1a8073945becfd3034ddde7653cd071495cc353a2c7772ba11f7617659",
+      "status": 206,
+      "content_range": "bytes 0-1023/2651809",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_h3_purefm100_n4_chunked_v2/videos",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_sha256": "323387eded373e18ad16273742e4cd98be78f4e7ae6ea127178546adb968caa4",
+      "status": 206,
+      "content_range": "bytes 0-1023/1315972",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_h3_purefm100_n4_chunked_v2/videos",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_sha256": "0616fe763149a826133e338b5d04fa9b7453d641c4c32b897519f93780840655",
+      "status": 206,
+      "content_range": "bytes 0-1023/2544292",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_omni6k_u3000_n6_video_v2/videos",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_sha256": "9a0724ea5c4ce4b77b3c133d06a5f330097b2ba4df6ae1cbcc833749630d0a3b",
+      "status": 206,
+      "content_range": "bytes 0-1023/2162609",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_omni6k_u3000_n6_video_v2/videos",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_sha256": "29d15b9896c5ee980197f82924097dbf945d4870bddb14c988a0fd6e5eb5af86",
+      "status": 206,
+      "content_range": "bytes 0-1023/1580268",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_omni6k_u3000_n6_video_v2/videos",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_sha256": "c9c6d75a0db3b973912909e4ebc1aee140752b3b5f4dd1b074922eff9c92fab9",
+      "status": 206,
+      "content_range": "bytes 0-1023/1943760",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_omni6k_final_u3750_n6_v1/videos",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_sha256": "9c2767feb921eb49289990060e7d13fb96f9c1b76901075dd90188c389e938db",
+      "status": 206,
+      "content_range": "bytes 0-1023/1700081",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_omni6k_final_u3750_n6_v1/videos",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_sha256": "b145bdf7383030c0662414cbd1776865aa90bee685f903dc9339be61b145b4d2",
+      "status": 206,
+      "content_range": "bytes 0-1023/1740697",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_omni6k_final_u3750_n6_v1/videos",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_sha256": "a732d57c580d65f489b4dd1da0a4aa95ce0a2dffef0413aec80a8f53d480f14d",
+      "status": 206,
+      "content_range": "bytes 0-1023/1971298",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_h3_anchor01_s100_n4_v3/videos",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_sha256": "50dada75be05b6bf31a56b90e36e321c9f968eb6190f3282e8843226ba0517aa",
+      "status": 206,
+      "content_range": "bytes 0-1023/2654593",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_h3_anchor01_s100_n4_v3/videos",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_sha256": "0dd1f39c791bb7b60892aaa29449ce67b54f52be3c6e950e24d61d0c3da58839",
+      "status": 206,
+      "content_range": "bytes 0-1023/1340624",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/review_h3_anchor01_s100_n4_v3/videos",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_sha256": "8457aa187e1434896b8fe19655b141d8f85c057b49213a02ef428f93aa9ea901",
+      "status": 206,
+      "content_range": "bytes 0-1023/2308244",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/music_direct_full6k_final2250_video_n4_v3",
+      "sample_id": "wJPptuhclZmKAEWs",
+      "video_sha256": "a61dda2af8a5dfdf43d92f9c78ae4d68840bb2b3df46f01ca0b67f93f61012b0",
+      "status": 206,
+      "content_range": "bytes 0-1023/10246673",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/music_direct_full6k_final2250_video_n4_v3",
+      "sample_id": "wJPrpFsThWAcBQIw",
+      "video_sha256": "b67ef057d695a4ba3c68d392c62d304919abb03f514503314527702653a9bc77",
+      "status": 206,
+      "content_range": "bytes 0-1023/6024689",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    },
+    {
+      "model_id": "MS/music_direct_full6k_final2250_video_n4_v3",
+      "sample_id": "wJQTclrlOLEYYfTB",
+      "video_sha256": "ce57487907751a6a82373e0b224fa456a504cfa8e3688e35a4ea40e7f7cc661b",
+      "status": 206,
+      "content_range": "bytes 0-1023/6593904",
+      "bytes_verified": 1024,
+      "range_bytes_match_disk": true,
+      "producer_full_decode_gate": true
+    }
+  ],
+  "publisher": {
+    "source": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/runtime_jobs/publish_ready_eval_review_v6.py",
+    "source_sha256": "92541ff7d2784c3c423392ec743abba5d6cc2ebd8c3cc232b26e4e996b561240",
+    "last_pid": 3338832,
+    "last_pid_alive": false,
+    "status_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/ready_eval_review_publisher_v6_status.json",
+    "status_sha256": "e28454cd9062b3718e9226a4f064fbb3b4cecc41b0042fc7bef082742e3c2626",
+    "status_complete": true,
+    "managed_task": "u2IhzT",
+    "managed_exit_code": null,
+    "managed_handle_currently_unknown": true
+  },
+  "server": {
+    "port": 8775,
+    "source_sha256": "7326ed7bc63210ba32de9bc316811dbef60562c40c2ce67e10ab017f560c5475"
+  },
+  "does_not_include_private_video_caption_or_model_bytes": true
+}

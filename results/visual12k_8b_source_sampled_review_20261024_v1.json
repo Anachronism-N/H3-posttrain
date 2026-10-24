@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-24",
+  "scope": "assistant qualitative inspection of 24 source-video sampled frames; not a user score or full-video semantic approval",
+  "source_model": "Qwen3-VL-8B-Instruct local frozen video-first v2",
+  "source_code_sha256": "b362dc5275b19c70a6f4f4d149b974e75571ad07e7e4f1f0a2251222fd839204",
+  "sampled_times_seconds": [
+    0,
+    0.5,
+    1.5,
+    2,
+    2.5,
+    3.5,
+    4.5,
+    5
+  ],
+  "observations": {
+    "wJPptuhclZmKAEWs": "Source samples contain a raised/bent leg at the beginning and end as well as repeated chest-level hand movements; arm-only/hair-focused text omits visible lower-body content.",
+    "wJPrpFsThWAcBQIw": "Raised arm near 2.5 s appears on viewer-right; the caption anatomical right-arm statement needs side/mirroring verification rather than automatic approval.",
+    "wJQTclrlOLEYYfTB": "Samples near 1.5-2 s contain a raised leg and raised arm; these sampled frames do not provide clear support for holding a small object or toward-a-shelf as body-motion facts."
+  },
+  "limits": {
+    "not_full_video_motion_review": true,
+    "not_frame_by_frame_side_calibration": true,
+    "not_music_synchronization_score": true,
+    "not_face_hand_quality_rating": true,
+    "formal_approval": false,
+    "human_review_completed": false,
+    "no_images_or_full_captions_uploaded": true
+  },
+  "raw_outputs_not_modified": true,
+  "recommendation": "Compare the same fixed cases with local 32B TP2 under the unchanged source-frame/schema protocol; do not treat lack of repeated ngrams as choreography quality."
+}

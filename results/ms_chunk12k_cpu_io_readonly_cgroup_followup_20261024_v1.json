@@ -1,0 +1,198 @@
+{
+  "schema": "ms-chunk12k-four-node-readonly-diagnosis-summary-v1",
+  "diagnosis_done": true,
+  "production_12000_done": false,
+  "nodes": [
+    {
+      "shard": 0,
+      "host": "28.216.19.69",
+      "sample_start_utc": "2026-10-23T20:53:24.406440+00:00",
+      "sample_seconds": 20.014132738113403,
+      "parent_pids": [],
+      "cpu_cores": 0,
+      "rchar_delta_bytes": 0,
+      "read_bytes_delta_bytes": 0,
+      "already_exited": true,
+      "manifest_reported": {
+        "complete": true,
+        "selected_count": 3000,
+        "completed_count": 3000,
+        "chunk_count": 6000,
+        "dataset_processed": true,
+        "all_input_manifest_processed": false,
+        "status_counts": {
+          "candidate": 5502,
+          "abstain": 498
+        },
+        "errors": []
+      },
+      "log_counts": [
+        3000,
+        3000
+      ],
+      "cgroup_scope": "N1 SSH same pod; active producer unavailable; no causal hot-cache comparison"
+    },
+    {
+      "shard": 1,
+      "host": "28.216.17.70",
+      "sample_start_utc": "2026-10-23T20:53:24.472445+00:00",
+      "sample_seconds": 24.83793830871582,
+      "parent_pids": [
+        2998805
+      ],
+      "cpu_cores": 0.6498123877832626,
+      "rchar_delta_bytes": 54447688,
+      "read_bytes_delta_bytes": 28340224,
+      "worker_count": [
+        16,
+        16
+      ],
+      "worker_states": [
+        {
+          "D": 15,
+          "S": 1
+        },
+        {
+          "S": 2,
+          "R": 2,
+          "D": 12
+        }
+      ],
+      "log_counts": [
+        1441,
+        1449
+      ],
+      "log_errors": [
+        0,
+        0
+      ],
+      "log_sample_seconds": 10.01533317565918,
+      "quota_cpu_cores": 136,
+      "delta_throttle_periods": 0,
+      "memory_usage_bytes": 423068962816,
+      "memory_limit_bytes": 1071415808000,
+      "failcnt": 0,
+      "pgmajfault_delta": 0,
+      "cache_delta_bytes": 12247040,
+      "local_blkio_changed": false
+    },
+    {
+      "shard": 2,
+      "host": "28.216.19.213",
+      "sample_start_utc": "2026-10-23T20:53:24.540169+00:00",
+      "sample_seconds": 25.49451780319214,
+      "parent_pids": [
+        407467
+      ],
+      "cpu_cores": 1.0559132833110254,
+      "rchar_delta_bytes": 74028095,
+      "read_bytes_delta_bytes": 34656256,
+      "worker_count": [
+        16,
+        16
+      ],
+      "worker_states": [
+        {
+          "D": 12,
+          "S": 2,
+          "R": 2
+        },
+        {
+          "D": 13,
+          "R": 1,
+          "S": 2
+        }
+      ],
+      "log_counts": [
+        1426,
+        1434
+      ],
+      "log_errors": [
+        0,
+        0
+      ],
+      "log_sample_seconds": 10.010336637496948,
+      "quota_cpu_cores": 136,
+      "delta_throttle_periods": 0,
+      "memory_usage_bytes": 760714199040,
+      "memory_limit_bytes": 1071415808000,
+      "failcnt": 0,
+      "pgmajfault_delta": 0,
+      "cache_delta_bytes": 17838080,
+      "local_blkio_changed": false
+    },
+    {
+      "shard": 3,
+      "host": "28.216.19.143",
+      "sample_start_utc": "2026-10-23T20:53:24.510252+00:00",
+      "sample_seconds": 23.38675546646118,
+      "parent_pids": [
+        1615
+      ],
+      "cpu_cores": 0.8885371051063704,
+      "rchar_delta_bytes": 61491802,
+      "read_bytes_delta_bytes": 28237824,
+      "worker_count": [
+        16,
+        16
+      ],
+      "worker_states": [
+        {
+          "D": 13,
+          "S": 3
+        },
+        {
+          "D": 15,
+          "S": 1
+        }
+      ],
+      "log_counts": [
+        1476,
+        1481
+      ],
+      "log_errors": [
+        0,
+        0
+      ],
+      "log_sample_seconds": 10.014461755752563,
+      "quota_cpu_cores": 136,
+      "delta_throttle_periods": 0,
+      "memory_usage_bytes": 423292874752,
+      "memory_limit_bytes": 1071415808000,
+      "failcnt": 0,
+      "pgmajfault_delta": 0,
+      "cache_delta_bytes": 9052160,
+      "local_blkio_changed": false
+    }
+  ],
+  "observed_waits": [
+    "openat create/exclusive temp files: path_openat/rwsem",
+    "rename: lock_rename/fuse_rename_common",
+    "newfstatat: fuse_lookup/dentry_revalidate/lookup_slow"
+  ],
+  "source_hash": "8057c48e7b02000c0d28a7dfbc584eaad984239670740037c1d10a5be8c68a00",
+  "manifest_hash": "4b2efc8233fed8dd7cdb46acf8da318db76cb575faa1177e9e2bc113d453d283",
+  "conclusion": "N2–4 Ceph-FUSE metadata and shared-directory lock wait; continued progress; no sampled CPU throttle or memory failure evidence",
+  "limitations": [
+    "N1 active-workload sample unavailable; media hot-cache causality not proven",
+    "local blkio/proc read_bytes not Ceph network bandwidth",
+    "node PSI is not producer-specific",
+    "producer-reported N1 completion not whole12k audit"
+  ],
+  "recommendation": "Keep live shards unchanged, do not add workers or duplicate shards. Next authorized VLM batch: only consumed videos bounded SHA-bound local stage, independent output/receipt, small-batch throughput validation before expanding. No full12k stage or live migration.",
+  "code_references": [
+    "scripts_omnidance/exp/ms/ms_optimize.py:43",
+    "scripts_omnidance/exp/ms/ms_chunk_caption.py:382",
+    "scripts_omnidance/exp/ms/ms_chunk_caption.py:399",
+    "scripts_omnidance/exp/ms/ms_chunk_caption.py:413"
+  ],
+  "raw_evidence": [
+    "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/ms_chunk12k_cpu_io_readonly_diagnosis_20261024_v1.json",
+    "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/ms_chunk12k_cpu_io_readonly_cgroup_precise_20261024_v1.json"
+  ],
+  "source_modified": false,
+  "producer_modified": false,
+  "manifest_modified": false,
+  "signaled_processes": false,
+  "gpu_used": false
+}

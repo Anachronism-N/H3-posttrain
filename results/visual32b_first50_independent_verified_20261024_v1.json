@@ -1,0 +1,105 @@
+{
+  "source_report": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual12k_local32b_first50_v1/independent_audit_cpu_v1/summary.json",
+  "source_report_sha256": "f32fa4e40774de5cd5ed8facbb68db81f8026ad91f404d85b879ffd0de8d9205",
+  "private_caption_and_frame_bytes_excluded": true,
+  "schema": "motionscript_visual_first50_independent_audit_v1",
+  "source_code_sha256": "b362dc5275b19c70a6f4f4d149b974e75571ad07e7e4f1f0a2251222fd839204",
+  "input_manifest_sha256": "64ae58dd23f5bd3ee05677a2669fec626ef8bcf0ba54adc3b3269f4cbf401b3b",
+  "parent_manifest_sha256": "4b2efc8233fed8dd7cdb46acf8da318db76cb575faa1177e9e2bc113d453d283",
+  "processed_sources": 50,
+  "audited_windows": 100,
+  "sid_status_counts": {
+    "candidate": 50
+  },
+  "window_status_counts": {
+    "candidate": 100,
+    "abstain": 0,
+    "failed": 0,
+    "prepared": 0
+  },
+  "strict_hash_and_original_schema_validation_passed_windows": 100,
+  "eos_stop_windows": 100,
+  "returned_last_token_is_eos_windows": 100,
+  "prompt_tokens_total": 261800,
+  "completion_tokens_total": 33343,
+  "caption_words_range": [
+    44,
+    124
+  ],
+  "captions_with_exact_sentence_duplicates": 0,
+  "captions_with_repeated_4grams": 16,
+  "caption_lexical_risk_flag_window_counts": {
+    "identity_clothing_hair_lexical": 14,
+    "prop_or_contact_lexical": 7,
+    "vague_time_claim_lexical": 36,
+    "scene_or_camera_lexical": 15,
+    "anatomical_side_claim_lexical": 64
+  },
+  "flags_are_screening_hits_not_semantic_video_verdicts": true,
+  "lexical_action_coverage_counts": {
+    "VLM_video_window": {
+      "arm_hand": 100,
+      "leg_foot": 79,
+      "torso_head": 99,
+      "travel_steps": 36,
+      "turn_pivot": 40,
+      "transition_words": 93,
+      "jump_hop": 10,
+      "low_floor": 7
+    },
+    "MS_B_rule_window": {
+      "torso_head": 64,
+      "arm_hand": 91,
+      "leg_foot": 75,
+      "transition_words": 86,
+      "turn_pivot": 28
+    },
+    "MS_A_rule_whole": {
+      "arm_hand": 49,
+      "leg_foot": 41,
+      "torso_head": 41,
+      "transition_words": 47,
+      "turn_pivot": 24
+    }
+  },
+  "coverage_counts_are_not_semantic_accuracy_or_dance_diversity": true,
+  "nonmonotonic_event_min_indices": [
+    {
+      "id": "yzSxvYKeKGSxsgmg",
+      "window_index": 1,
+      "event_min_indices": [
+        36,
+        32,
+        48
+      ]
+    }
+  ],
+  "ms_B_windows": {
+    "candidate": 91,
+    "abstain": 9
+  },
+  "throughput": {
+    "basis": "resource sample first UTC to last final.json mtime on same node; wall including hashing/startup/CPU preparation/IO/inference",
+    "first_resource_sample_utc": "2026-10-23T21:23:17Z",
+    "final_output_end_utc": "2026-10-23T21:40:04.721512+00:00",
+    "observed_end_to_end_seconds": 1007.7215116024017,
+    "observed_sources_per_minute": 2.9770129598897115,
+    "observed_windows_per_minute": 5.954025919779423,
+    "first_completion_utc": "2026-10-23T21:26:18.077930+00:00",
+    "last_completion_utc": "2026-10-23T21:40:03.614188+00:00",
+    "first_to_last_completion_seconds": 825.5362582206726,
+    "post_first_completion_interval_windows_per_minute": 7.19532296837311,
+    "post_first_completion_interval_includes_cpu_preparation_and_IO_not_pure_model_tps": true,
+    "no_12k_runtime_estimate_or_scaling_guarantee": true
+  },
+  "model_identity_sha256": "26722d150f791da5ff1befaf753efd651a105b17849adb74ea07cfe0ba01779c",
+  "runtime_vllm": "0.31.0",
+  "body_only_anatomical_side_time_semantics_not_verified": true,
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "formal_training": false,
+  "ground_truth": false,
+  "full_12k_annotation_complete": false,
+  "raw_candidate_frames_and_requests_modified": false,
+  "window_audit_sha256": "d7280a7a28e2888e7fce903bdf42ac7e7f439d50cf888b4e0b9a823d21a995bd"
+}

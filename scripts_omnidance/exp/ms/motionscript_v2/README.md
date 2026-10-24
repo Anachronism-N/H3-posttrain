@@ -8,7 +8,7 @@
 
 编舞规划器所需的分段标注方案见 [MotionScript 分段标注与编舞规划器训练方案](../../../../notes/30_motionscript_chunk_annotation_plan_20261024.md)。已有 `ms_chunk_caption.py` 固定分段与 `ms_beat_chunk_compare.py` 按拍对照；按拍不等于已检测小节首拍。具体小节窗口、首尾残段和32点服务器实跑安排见 [按小节构造编舞标签与 RGB 32 关键点实跑方案](../../../../notes/31_bar_chunking_and_rgb32_execution_plan_20261024.md)。候选导出与训练准入、语义验收分别记录。
 
-新增观测信息实验见 [LANDMARKS.md](LANDMARKS.md)：独立入口 `ms_landmarks.py` 从RGB直接查询32个身体／掌面／足部点，不经SMPL拟合或固定模板补点；完整保留连续坐标和相对角轨迹。本版不采指尖／细手指链。官方canonical资产和规格已准备，真实RGB32点提取与准确性核对尚未完成，下一步需实际运行三个案例。
+新增观测信息实验见 [LANDMARKS.md](LANDMARKS.md)：已有三个真实案例完成直接RGB32点提取、叠加和支持条件对照，尚未建立caption准确性优势；数值有效不等于可见。既有32点主要表示身体、掌面和足部，不表达完整手指动作。手势舞及手部清晰片段保留并优先验证手部细节，按需比较完整手部观测，见 [手部细节与跨段一致性的舞蹈标注优化执行方案](../../../../notes/32_adaptive_motion_annotation_hands_and_chunk_rewrite_20261024.md)；该文也给出跨chunk核对、LLM全文改写及有限样本执行方案。
 
 ## 已实现的改动
 

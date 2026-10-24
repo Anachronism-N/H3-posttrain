@@ -16,7 +16,7 @@ Flamingo 和 MOSS 完成更新 97（3104 曝光）后，在构造更新 98 的 r
 
 两路已有 failure/exit1/resources_safe 回执，锁及租约恢复、占卡程序实际恢复；资源安全不等于训练完成。最后完整断点是更新 3，更新 97 只有日志，不可伪称可恢复到 97。更新 4–97 的 3008 曝光属于未保存、丢弃的旧实验资源开销。Captioner 的同更新风险由相同源排序/代码推导；每次必须读新日志才能认定实际失败，不能把风险预测当真实退出。
 
-初始串行仅 header 审计因存储 I/O 推进缓慢而停止，未声称全量通过。替换为 max4 并发的只读 WAV header 审计，不 Path.resolve、不全音频内容 SHA、不写原数据。完整审计结果存放实验 runtime，完成后再决定候选边界是否覆盖所有 train/val。
+初始串行仅 header 审计因存储 I/O 推进缓慢而停止，未声称全量通过。替换为 max4 并发的只读 WAV header 审计，不 Path.resolve、不全音频内容 SHA、不写原数据。完整审计结果已存放实验 runtime/audio_header_audit_v9.json：全部 train10720/val490 header 已读取，但 +5 帧候选未通过。train 分布：10608 精确、105 条 -1 帧、2 条 +5 帧、1 条 +16 帧、3 条 -16 帧、1 条 -3312 帧。最后一条只有 118188 帧/24kHz=4.9245 秒；val484 精确、6 条 -1 帧。不能将该真短源当微量 overrun 放行。下一步追溯五条额外异常的原音视频，不能 pad/trim/跳样本或偷改旧 manifest。当前 normalized rows 的 original_source_window_mapping=unknown、audio_video_alignment_verified=false，恢复完整时间窗也需要来源证据。新 GPU 重跑尚未批准代码门禁，不以“审计结束”冒称“审计通过”。
 
 ## 已批准的新版本方案
 

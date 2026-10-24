@@ -40,6 +40,20 @@ CPU 审计/回归不是 GPU 训练或质量验收。新启动里程碑必须三�
 
 同一个冻结 pure-video H3、无 LoRA 混用、相同参考图/prompt 协议：704×1280、124 帧、24fps、50 步、seed42、CFG1、flow shift12；每模型仅固定 3 case。用户重点清晰、连续、有编排、动作幅度与音乐响应，不能只摆 pose。H3 本地权重与 GPU 准入仍须实查，不能猜路径或占其他会话节点。
 
+## 用户批准排除异常源后的新共同合同
+
+2026-10-25 用户明确允许少量问题数据直接从训练列表移除，不再让这几条源恢复阻挡推进。已创建独立 music_planner_fixed2s_baseline_20261025_clean_v1；原始基准及 WAV 不动。依据完成的严格旧音频门禁 header 审计排除 7 条（+5 帧两条、+16 帧一条、-16 帧三条、真实短源一条），而不是仅排除 +5 帧候选的五条剩余异常。保留严格音频门禁，不需要靠放宽容差接受这些源。原 candidate/source_v9 未运行快照不是新数据正式执行版本。
+
+新 train=10713、val=490、test=500；保留训练行原字节与相对顺序，val/test 文件逐字节不变。每 epoch 的最后一个 global batch 消费 25 个真实源，不补入额外训练曝光。2 epoch 仍为 335×2=670 optimizer 更新，正式源曝光改为 21426。通过独立 CPU 提取真实 epoch_order/update_slices/validate_cursor 的两 epoch 仿真，核所有源每 epoch 恰好一次、尾批 25、最终 cursor(epoch2,position0,update670,exposure21426)。CPU 仿真不是 GPU 通过。
+
+exclusion_receipt.json 保存父基准/审计 SHA、七条排除原因；training_contract.json 保存三模型共用合同。已再次核过滤字节、split ID/source_group/audio SHA 隔离。旧 manager 的10720固定count与旧 eval 基准门禁不适用新清单，必须在后续明确的新冻结执行版本同步更新，不能用旧队列或旧fingerprint硬resume。
+
+暂停阶段仅创建与核验新数据合同并取消遗留巡检。用户随后恢复全目标，三模型 clean_v10 于 UTC 2026-10-24 20:59:19–20:59:20 启动：全部旧 v8 已真实在更新98输入检查失败、占卡安全恢复，未再强杀任务。新管理器严格固定 train10713/val490、source budget21426，完整分片同时要求 optim/model 的 rank0..7、mp00 精确集合；其余 pidfd/flock/租约/资源恢复逻辑保留。新 source_v10、manager 和三份配置独立冻结，不改旧快照或旧断点；严格旧长度门禁恢复，只有报错定位信息增强。
+
+新评测门禁要求清洗排除回执内容SHA、父基准身份、训练行精确有序过滤及val/test SHA不变。现有eval CPU单测17通过、train CPU单测32通过/2跳过/3未运行；在N2真实原七源经三族_audio共21次严格拒绝，正常源完整输入通过。新管理器在各实际授权节点只读校验配置/来源SHA、fresh八卡holder与准入余量，另三种非法合同拒绝。CPU验证不表示GPU保存恢复或质量通过。
+
+UTC21:00:46实查：Flamingo/MOSS已真实完成更新2，正在保存；Captioner仍模型初始化，八卡训练rank已在驱动中。全部暂未见新失败，但尚没有smoke.saved/approved，不宣称三路正式训练通过。当前上游源恢复调查不再阻挡实验，被排除条目不替换也不补零。
+
 ## 当前结论
 
 未完成三模型新版本 GPU 启动验收、670 更新、最终文本评测或 H3 人评，因此没有最强模型结论。只把已执行的 CPU 诊断/回归与真实 v8 失败作为当前证据。后续真实 queue、日志、完整回执优先于本文快照。GitHub 提交仅包含本实验明确源码、测试及分析，不打包其他会话脏工作区、权重、私有音频/图像或凭据。

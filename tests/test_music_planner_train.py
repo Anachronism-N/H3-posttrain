@@ -109,8 +109,9 @@ def test_audio_identity_cache_does_not_hash_each_epoch(tmp_path, monkeypatch):
         cache.verify(a)
 
 
-def test_all_sources_once_with_partial_global_batch():
-    order = train.epoch_order(10720, 42, 0)
+@pytest.mark.parametrize('source_count', [10720, 10713])
+def test_all_sources_once_with_partial_global_batch(source_count):
+    order = train.epoch_order(source_count, 42, 0)
     consumed, seen = 0, []
     while consumed < len(order):
         per_rank = [train.update_slices(order, consumed, 1, 4, rank, 8) for rank in range(8)]
@@ -119,10 +120,10 @@ def test_all_sources_once_with_partial_global_batch():
         for slices, _ in per_rank:
             seen.extend(i for micro in slices for i in micro)
         consumed += per_rank[0][1]
-    assert len(seen) == 10720
-    assert set(seen) == set(range(10720))
+    assert len(seen) == source_count
+    assert set(seen) == set(range(source_count))
     assert len(set(seen)) == len(seen)
-    assert consumed == 10720
+    assert consumed == source_count
     # Non-divisible source count exercises empty rank/micro slots, not duplication/drop_last.
     tail = train.epoch_order(35, 42, 0)
     seen = []
@@ -134,13 +135,14 @@ def test_all_sources_once_with_partial_global_batch():
     assert len(seen) == len(set(seen)) == 35
 
 
-def test_cursor_strict_source_exposures():
-    state = dict(epoch=1, position=32, update=336, source_exposures=10752)
-    train.validate_cursor(state, 10720, 2, 32)
+@pytest.mark.parametrize('source_count', [10720, 10713])
+def test_cursor_strict_source_exposures(source_count):
+    state = dict(epoch=1, position=32, update=336, source_exposures=source_count + 32)
+    train.validate_cursor(state, source_count, 2, 32)
     with pytest.raises(ValueError, match='exposures'):
-        train.validate_cursor(dict(state, source_exposures=10753), 10720, 2, 32)
+        train.validate_cursor(dict(state, source_exposures=source_count + 33), source_count, 2, 32)
     with pytest.raises(ValueError, match='boundary'):
-        train.validate_cursor(dict(state, position=31), 10720, 2, 32)
+        train.validate_cursor(dict(state, position=31), source_count, 2, 32)
 
 
 def test_causal_nll_is_assistant_token_weighted_and_empty_batch_has_grad():

@@ -1,0 +1,51 @@
+{
+  "schema": "music-planner-clean-v10-execution-contract-v1",
+  "split_counts": {
+    "train": 10713,
+    "val": 490,
+    "test": 500
+  },
+  "global_batch": 32,
+  "world_size": 8,
+  "microbatch": 1,
+  "accumulation": 4,
+  "epochs": 2,
+  "total_updates": 670,
+  "source_exposure_budget": 21426,
+  "last_batch_sources": 25,
+  "excluded_train_sources": 7,
+  "val_test_unchanged": true,
+  "original_audio_unmodified": true,
+  "fresh_base_required": true,
+  "strict_audio_length_gate": true,
+  "pretrained_GPU_save_resume_approved": false,
+  "full_budget_completed": false,
+  "quality_accepted": false,
+  "stage": "GPU smoke started; actual completion receipts required",
+  "CPU_tests": {
+    "eval_passed": 17,
+    "train_passed": 32,
+    "train_skipped": 2,
+    "train_deselected": 3,
+    "bad_waveform_strict_rejections": 21
+  },
+  "renderer_protocol": {
+    "width": 704,
+    "height": 1280,
+    "frames": 124,
+    "fps": 24,
+    "steps": 50,
+    "seed": 42,
+    "cfg": 1,
+    "flow_shift": 12,
+    "configs_must_use_same_frozen_H3": true,
+    "cases": 3
+  },
+  "ranking": {
+    "within_family_val_checkpoint_selection_only": true,
+    "across_tokenizer_NLL_ranking": false,
+    "test_final_once_only": true,
+    "automatic_winner": false
+  },
+  "explicit_dance_style_ground_truth_available": false
+}

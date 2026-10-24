@@ -266,4 +266,22 @@ done
 
 2026-10-24 04:35:46 UTC的全量失败快照为44个SID、45个窗口：38个两帧证据拒绝、6个正文超过140词、1个abstain却正文非空。所有45窗均正常stop/EOS且未达1200 token cap，不能归因为OOM或截断；此快照不是最终全12k分母。原raw和失败记录保留，旧两窗pair-enum只修格式且caption逐字未变，不可冒充全失败池的动作事实修复。
 
-当前8分片仍继续生成，唯一原MS后验进程仍活且最终complete/receipt尚未产生；不重复启动、不修改运行源。BPM长度窗由新独立入口推进，BeatThis以新隔离环境复用兼容依赖、先CPU真实3条及同50音乐检测，不修改现有环境，不以部署或测试通过替代首拍/小节caption实际运行。整体12k可用正文、最终导出、最后Git远端HEAD与资源终态仍待真实验收。
+当前8分片仍继续生成，唯一原MS后验进程仍活且最终complete/receipt尚未产生；不重复启动、不修改运行源。BPM同50与BeatThis真实首拍检测的后续实跑已完成，见下述更新；真正小节窗口／MS-VLM共享消费与独立边界后验仍分开验收。整体12k可用正文、最终导出、最后Git远端HEAD与资源终态仍待真实验收。
+
+### 新三类失败窗口的单次重新观察
+
+实际有限结果见 [`visual32b_failed3_reobserve_finite_trial_20261024_v1.json`](../results/visual32b_failed3_reobserve_finite_trial_20261024_v1.json)。与旧pair-enum两窗不同，本次保持原RGB九帧和原SYSTEM，仅追加统一短正文／两帧真实阶段支持／空弃权提示，自由JSON重新生成，不喂旧caption、不剪文或补证据、不改full12k运行源。
+
+- 证据类ydBjl：83词变81词，模型重写为有时间跨度的动作阶段，格式candidate，但正文左腿与event右膝、arms on hips throughout与起始举臂仍冲突，未批准语义。
+- 词数类nVtCI：173词变97词，由模型真实压缩而非人工裁剪，通过原140词硬限制，未达到90词软目标；精确侧别和另一手保持静止等仍未核准。
+- 弃权类Mtxhl：80词变59词，仍abstain=true且正文非空，原门禁正确保持failed；九帧有限观察近静态，不为了凑正文创造运动或手清raw伪弃权。
+
+三窗均真实normalstop／EOS151645，362／354／116 tokens小于1200。原request、raw、generation、帧及源保持，主独立按SHA／新request追加规则／EOS／原validator核验。受管worker真实exit1是一个数据响应失败，不是OOM；模型及TP进程退出，GPU4／5项目holder均恢复。有限试验已结束，不等于三类全部修复，更不等于12k失败池回填完成。
+
+### 实际BPM与首拍检测阶段结果
+
+BPM同50已实际调用原MS：151个原等距长度格经短尾合并形成109个实际窗口，99candidate／10abstain（6no_output、4partial_support），42条全计划窗口有完整available-support正文；8条不得拼接假全文。原coords与MS规则／源顺序不变，策略仍是4×60/BPM的长度近似，首0不是首拍。A/B/C/BPM窗内重复4gram约10.93%／7.13%／6.03%／6.62%，上下文及分母不同，不是动作准确率或按BPM优胜证明。已执行入口保持SHA `1b1a1309c92f25bd9faf86cc663ab61686e78f668e20398c817ce15a305bed82`；窗口typed重封与真videoPTS哈希的边界问题用独立新后验／consumer修复，不热改原已执行报告或重跑冗余正文。
+
+BeatThis官方final0已真实在隔离环境CPU执行fixed3＋同50共53条；53次成功，50条有115个相邻检测首拍间隔候选，2条首拍不足忠实保留。所有音频约5.06s，短context、拍号、音画offset、相位和准确性仍unknown／false。原v1检测源保持，独立v2修正“beats为空而downbeats非空”的门禁，对现53数组严格后验全部合法，不重新推理或把v2冒原producer。
+
+**尚未凭上述阶段结果宣称完成**：真正strict／merge-short-edges小节窗口的MS正文、三个同源case的VLM共享窗口实跑、全部12k可用正文与最后资源／Git验收。首拍检测成功不是小节caption成功，MS实际消费也不是VLM已经共享运行。

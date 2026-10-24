@@ -1,0 +1,229 @@
+{
+  "schema": "visual_failed3_reobserve_finite_trial_public_summary_v1",
+  "finite_trial_complete": true,
+  "selected_windows": 3,
+  "processed_windows": 3,
+  "case_status_counts": {
+    "candidate": 2,
+    "abstain": 0,
+    "failed": 1
+  },
+  "refs": {
+    "summary": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_v1/summary.json",
+      "sha256": "9b7a8dc8d01925ad4114a6703083d93519af9224e380599e3e1061a108e2f5bb"
+    },
+    "independent_audit": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_v1/independent_audit_cpu_v1.json",
+      "sha256": "53d59f4231ce4e8df37eb338abc4b808f43a0822b87bce43533405d8a58c69b4"
+    },
+    "sampled_source_review": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_v1/assistant_sampled_source_review_v1.json",
+      "sha256": "8db154a5bbbcc2635991552fc91acee958e9230d591c3a047460977f4fa6a419"
+    },
+    "run": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_v1/run.receipt.json",
+      "sha256": "e1f009f7852c7d7f265fca63bdd66635cf774309e2a0458fa1c9afa42538719b"
+    },
+    "load": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_v1/load.receipt.json",
+      "sha256": "c6649adf3a968aac86884c11217d90f9b1b2f16e638695128a3c847103bfa583"
+    },
+    "worker_exit": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_resource_v1/worker_exit.json",
+      "sha256": "e05d8b051e862d98fe6a43413d4db74c3cb5af45fb9d11c16694aa88741978fc"
+    },
+    "runner": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_visual_failed3_reobserve.py",
+      "sha256": "0db2044d2d7229de997bec618908d7371882df200ef4e5e582c921bae94e273d"
+    },
+    "tests": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/tests/test_ms_visual_failed3_reobserve.py",
+      "sha256": "2a84897e028aade7154ac30c4b3aa7c61d6c35bd6e2407a989fdc993c4641523"
+    }
+  },
+  "worker_exit": {
+    "exit_code": 1,
+    "new_source_unchanged": true,
+    "original_producer_unchanged": true,
+    "original_cases_unchanged": true,
+    "cgroup_before": 662533840896,
+    "cgroup_peak": 667709153280,
+    "gpu_peak_MiB": {
+      "4": 71277,
+      "5": 71279
+    },
+    "summary_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_v1/summary.json",
+    "summary": {
+      "schema": "motionscript_visual_failed3_reobserve_v1",
+      "selected_cases": 3,
+      "processed_cases": 3,
+      "case_status_counts": {
+        "candidate": 2,
+        "abstain": 0,
+        "failed": 1
+      },
+      "nonempty_candidate_window_count": 2,
+      "results": [
+        {
+          "schema": "motionscript_visual_failed3_reobserve_v1",
+          "id": "ydBjlNRKChxUjCzl",
+          "window": {
+            "start": 0,
+            "end": 2
+          },
+          "failure_class": "frame_support",
+          "status": "candidate",
+          "error": null,
+          "files_sha256": {
+            "request.original.json": "b9790c11cd6704e466c8621c3b0f3e87b642310cbf16d9a79b4ce8d7916da54e",
+            "request.json": "9de65db6b2195247ad5637f762b6df746d1802d8f34f2293e46126d5beb157d0",
+            "lineage.json": "d8f2073433c1c4fd6e82a6ceb8a4cfafbb5e17a2ea1ad466970ce7f74cdc8ff9",
+            "response.raw.txt": "b54f13b36b478367951c1e0c278988f52e645c4b5c55d5306a7387962231e6fc",
+            "generation.json": "bf0c7e636d357d49a44a2206272fab4027b656dfcc6c37e9d56b88ed6c9808cb",
+            "candidate.json": "13e1c0b962b9f42814c8aa0185d51dd661308a7665520ced11c5261e59feea32"
+          },
+          "original_failures_preserved": true,
+          "no_response_cleaning_or_frame_completion": true,
+          "full_pool_updated": false,
+          "semantic_approval": false,
+          "human_review_completed": false,
+          "formal_training": false,
+          "case_out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_v1/cases/ydBjlNRKChxUjCzl_w0000"
+        },
+        {
+          "schema": "motionscript_visual_failed3_reobserve_v1",
+          "id": "nVtCIoarVOUShrzG",
+          "window": {
+            "start": 0,
+            "end": 2
+          },
+          "failure_class": "word_limit",
+          "status": "candidate",
+          "error": null,
+          "files_sha256": {
+            "request.original.json": "70f3007e6ba9dd0e76b7586f827616b9967737e7d52fbb1b32d03e117805fcad",
+            "request.json": "4aa353bd4cbcf795cda692a88595e7585463f887b5b8e07da0875677b752ecac",
+            "lineage.json": "ecdaaeba0536d96b24b8280e1fa0551fb8dc37eb081245e26270866e10976df2",
+            "response.raw.txt": "9047679ef792b3bb5fba768e863da7666fb70100f84d641dca79a66900ffa79f",
+            "generation.json": "8b8f08a8c6a8fb8e560ed83cb5c8e1b977cf0aad33e87e233beec69be8d5fef3",
+            "candidate.json": "b35dd5388cd00ab073d264e55d71fec3e226e322d866cf55ee089dd7b4b70ad4"
+          },
+          "original_failures_preserved": true,
+          "no_response_cleaning_or_frame_completion": true,
+          "full_pool_updated": false,
+          "semantic_approval": false,
+          "human_review_completed": false,
+          "formal_training": false,
+          "case_out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_v1/cases/nVtCIoarVOUShrzG_w0000"
+        },
+        {
+          "schema": "motionscript_visual_failed3_reobserve_v1",
+          "id": "MtxhlICkhdLzjAlQ",
+          "window": {
+            "start": 0,
+            "end": 2
+          },
+          "failure_class": "abstention_contract",
+          "status": "failed",
+          "error": "abstention must have empty caption and events",
+          "files_sha256": {
+            "request.original.json": "e4157059354da3848303ab4647cdab746f5c4a112e7931f7a05e36ff8e176a93",
+            "request.json": "3ef91746c2187e94b1a0af49bcb20bb4b08e226577b27e819c95fdc9a24636fb",
+            "lineage.json": "c4c907871a1941f4e5a93d85a41d6291cd9a1ad1d1025cf519bac3b642649046",
+            "response.raw.txt": "b8e405ae3debef09b6348a499dc2080b359d39a8e6656f2ec3027fe89999eee0",
+            "generation.json": "3d60e7c6a4aa1254957a3be8e0ca3f0b38ca046dff60976597d7d717909925ce"
+          },
+          "original_failures_preserved": true,
+          "no_response_cleaning_or_frame_completion": true,
+          "full_pool_updated": false,
+          "semantic_approval": false,
+          "human_review_completed": false,
+          "formal_training": false,
+          "case_out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_v1/cases/MtxhlICkhdLzjAlQ_w0000"
+        }
+      ],
+      "params_sha256": "8918e1fff36ab7f7180f9f920987f7cf64fb427c2cdd76d3d21aaaf0d84c2d41",
+      "one_trial_completed": true,
+      "original_all_files_and_frames_unchanged": true,
+      "old_failures_not_replaced": true,
+      "abstention_is_valid_but_does_not_fill_caption_delivery": true,
+      "full_pool_updated": false,
+      "semantic_approval": false,
+      "human_review_completed": false,
+      "formal_training": false
+    },
+    "full_pool_updated": false,
+    "semantic_approval": false
+  },
+  "new_params_sha256": "8918e1fff36ab7f7180f9f920987f7cf64fb427c2cdd76d3d21aaaf0d84c2d41",
+  "same_original_RGB_evidence_used": true,
+  "previous_caption_supplied_to_model": false,
+  "structured_pair_forcing_used": false,
+  "validator_hard_words": 140,
+  "prompt_goal_words": 90,
+  "cases": [
+    {
+      "id": "ydBjlNRKChxUjCzl",
+      "failure_class": "frame_support",
+      "status": "candidate",
+      "old_words": 83,
+      "new_words": 81,
+      "caption_changed": true,
+      "completion_tokens": 362,
+      "normal_stop_and_EOS": true,
+      "original_bytes_preserved": true,
+      "format_candidate_not_motion_truth": true
+    },
+    {
+      "id": "nVtCIoarVOUShrzG",
+      "failure_class": "word_limit",
+      "status": "candidate",
+      "old_words": 173,
+      "new_words": 97,
+      "caption_changed": true,
+      "completion_tokens": 354,
+      "normal_stop_and_EOS": true,
+      "original_bytes_preserved": true,
+      "format_candidate_not_motion_truth": true
+    },
+    {
+      "id": "MtxhlICkhdLzjAlQ",
+      "failure_class": "abstention_contract",
+      "status": "failed",
+      "old_words": 80,
+      "new_words": 59,
+      "caption_changed": true,
+      "completion_tokens": 116,
+      "normal_stop_and_EOS": true,
+      "original_bytes_preserved": true,
+      "format_candidate_not_motion_truth": true
+    }
+  ],
+  "sampled_review_scope": "Only the original nine supplied source JPEG frames for each of the three windows, displayed as local hash-verified contact sheets. Not a continuous video/audio/beat or human scoring review.",
+  "unresolved_risks": [
+    "Evidence-class response still has anatomical-side inconsistency and an incorrect throughout phrase.",
+    "Word-cap response is shorter but exact sides and stationary-arm details remain unapproved.",
+    "Abstain response still contains nonempty59-word static text and is correctly failed."
+  ],
+  "full_pool_updated": false,
+  "all_failures_repaired": false,
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "formal_training": false,
+  "raw_caption_or_media_uploaded": false,
+  "overall_goal_complete": false,
+  "resource_restore_refs": [
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_resource_v1/holder_restored_gpu4.json",
+      "sha256": "c11f6a4e1fafeadbda11cb6d250e8c9a80c96a344f0f072d69da1a811fb4e064",
+      "actual_mtime_ns": "1792817608928706504"
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual32b_failed3_reobserve_resource_v1/holder_restored_gpu5.json",
+      "sha256": "6162879ede26dbdc110ebed0d3dc7ed8ed7776b787cc85ed434ace48e76208ec",
+      "actual_mtime_ns": "1792817612133479922"
+    }
+  ],
+  "final_cluster_resource_audit_complete": false
+}

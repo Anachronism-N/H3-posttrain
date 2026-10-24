@@ -1,0 +1,86 @@
+{
+  "schema": "original_MS12000_first_commit_public_summary_v1",
+  "first_export_committed": true,
+  "independent_canonical_verification_complete": false,
+  "complete_ref": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_chunk12k_final_export_v1/complete.json",
+    "sha256": "caeaa3967245e49f365990268103538a35f82fde044017c669b9489c391aa2ae"
+  },
+  "commit_receipt_ref": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/ms_chunk12k_final_export_v1/complete.receipt.json",
+    "sha256": "2da49ad9552037be877a27a99861bc0992c39e98b00aeb72fcb02a4a7130e8cf"
+  },
+  "source_binding": {
+    "schema": "motionscript_verified_A_B_export_v1",
+    "launch_sha256": "2dfe308ef4cc1bd96aa40353f98ff26995ade165ed9ae818b8ab71f4cad7eefa",
+    "input_manifest_sha256": "4b2efc8233fed8dd7cdb46acf8da318db76cb575faa1177e9e2bc113d453d283",
+    "producer_source_sha256": "8057c48e7b02000c0d28a7dfbc584eaad984239670740037c1d10a5be8c68a00",
+    "exporter_source_sha256": "5fcf77e46a028d55a574d2dc22c7656c1bd0e8b81b462cb1a1bdc9cd8a1e5b34",
+    "shards": [
+      {
+        "shard": 0,
+        "protocol_sha256": "ad672579bcddc46eb02136363b349d36bb4d6803b48d10e558cf5f0589fac275",
+        "manifest_sha256": "01aa9c3c374e39efd0bdfb4865eb31cdc882d41c734dc64d6465f15b755272ac",
+        "manifest_receipt_sha256": "47fec27d944775399e034de9be720b792b73dd943b4ee9e5a3e4f2d017f30d06",
+        "chunks_sha256": "c6183970c696edbf8b39b7c2e83f1e33cfc22702fe545b40357403724f0d1306"
+      },
+      {
+        "shard": 1,
+        "protocol_sha256": "edc9c342b3d80ed9836a1dff3e2a94f85892f62641aa6d193a1037c2f1e91bd3",
+        "manifest_sha256": "8dfc97067b4035983a3870c1378902875690a24d1fb56856c9ceaf8f628b1ce0",
+        "manifest_receipt_sha256": "616f874acab2307c324b0873a04ee9a525d807ff68dd5890039e9060e1c46908",
+        "chunks_sha256": "f7025f4a1331f396d35947748d29d88471720f788aa1f896026d91a3cad5cb3f"
+      },
+      {
+        "shard": 2,
+        "protocol_sha256": "c096ad01205515fc5896ef9a7bebf8b18e4e5bf9b09e671f786df753d0b974fb",
+        "manifest_sha256": "07d71e6aa969ad9cf424dd9b29f9bbc67a579afb0699193e81d320a0606944b4",
+        "manifest_receipt_sha256": "1aba83e8a250698320e559c29ed39e13063a08e51ff1b025a4ddaa47ea0f54dc",
+        "chunks_sha256": "d11e29a8e61dbb8536d460d3ffaa1460f6e403eb51823bcbb5fdf81c89f7749c"
+      },
+      {
+        "shard": 3,
+        "protocol_sha256": "62bdefddf9255631355f783287a206a3c00cf8964fb328468ef6546f1c47de44",
+        "manifest_sha256": "84805dd129420c035cc61f587ebd1543822eee4430b99cff2976d0076a243734",
+        "manifest_receipt_sha256": "836ae5460c33965fce8912e44f0f43b7687b78a5ed83d36e1540ec8128a0c37d",
+        "chunks_sha256": "d46c7b25285fdfd579ad112c7eaa989d02ad1241dae240ec483bf4e0de25dd04"
+      }
+    ],
+    "target_count": 12000,
+    "formal_approval": false
+  },
+  "unique_source_count": 12000,
+  "processed_count": 12000,
+  "execution_failed_source_count": 0,
+  "A_status_counts": {
+    "candidate": 11041,
+    "abstain": 959
+  },
+  "A_abstain_reasons": {
+    "partial_support": 895,
+    "no_output": 64
+  },
+  "B_window_status_counts": {
+    "candidate": 22006,
+    "abstain": 1994
+  },
+  "B_abstain_reasons": {
+    "partial_support": 1104,
+    "no_output": 890
+  },
+  "strict_B_full_caption_clip_count": 10327,
+  "strict_B_one_caption_clip_count": 1352,
+  "strict_B_all_abstain_clip_count": 321,
+  "strict_B_incomplete_clips": 1673,
+  "canonical_stream_sha256": {
+    "captions.jsonl": "506142fb03f819335129c0c4b3ff4a1e110b3c66ba75bef46c45466cb5dfecf7",
+    "lineage.jsonl": "1477680203b462b7bc1bbf06fbe372ee94ffb0cb2944f82297e8cba0f203e419",
+    "errors.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "raw_caption_or_video_uploaded": false,
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "formal_training": false,
+  "video_first12000_caption_delivery_complete": false,
+  "scheduler_exit_status": "original framework handle killed; actual exporter commit recovered independently; do not infer original process exit code"
+}

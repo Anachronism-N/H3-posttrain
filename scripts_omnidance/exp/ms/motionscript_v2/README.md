@@ -6,9 +6,9 @@
 
 后续追加的封闭词表／复读处理见 [REPETITION.md](REPETITION.md)：包括可回查的事件压缩、标签分布审计，以及不输入旧 MS 先验的开放词汇视觉观察。默认只导出请求；只有显式运行 `ms_visual_observe.py observe` 才会将采样帧发送给指定端点。
 
-编舞规划器所需的分段标注方案见 [MotionScript 分段标注与编舞规划器训练方案](../../../../notes/30_motionscript_chunk_annotation_plan_20261024.md)：采用先切窗口、再调用原版规则的思路，区分窗口时间与动作时间，并说明固定时长／按拍分段的小批量验证。原版规则的音乐分段调用及训练导出尚未接入；新32点证据的可选窗口处理见下文链接。
+编舞规划器所需的分段标注方案见 [MotionScript 分段标注与编舞规划器训练方案](../../../../notes/30_motionscript_chunk_annotation_plan_20261024.md)。已有 `ms_chunk_caption.py` 固定分段与 `ms_beat_chunk_compare.py` 按拍对照；按拍不等于已检测小节首拍。具体小节窗口、首尾残段和32点服务器实跑安排见 [按小节构造编舞标签与 RGB 32 关键点实跑方案](../../../../notes/31_bar_chunking_and_rgb32_execution_plan_20261024.md)。候选导出与训练准入、语义验收分别记录。
 
-新增观测信息实验见 [LANDMARKS.md](LANDMARKS.md)：独立入口 `ms_landmarks.py` 从RGB直接查询32个身体／掌面／足部点，不经SMPL拟合或固定模板补点；完整保留连续坐标和相对角轨迹。本版不采指尖／细手指链，尚未通过真实NLF运行或真实舞蹈准确率验证。
+新增观测信息实验见 [LANDMARKS.md](LANDMARKS.md)：独立入口 `ms_landmarks.py` 从RGB直接查询32个身体／掌面／足部点，不经SMPL拟合或固定模板补点；完整保留连续坐标和相对角轨迹。本版不采指尖／细手指链。官方canonical资产和规格已准备，真实RGB32点提取与准确性核对尚未完成，下一步需实际运行三个案例。
 
 ## 已实现的改动
 

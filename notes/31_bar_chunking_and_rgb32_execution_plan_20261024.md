@@ -284,7 +284,17 @@ BPM同50已实际调用原MS：151个原等距长度格经短尾合并形成109�
 
 BeatThis官方final0已真实在隔离环境CPU执行fixed3＋同50共53条；53次成功，50条有115个相邻检测首拍间隔候选，2条首拍不足忠实保留。所有音频约5.06s，短context、拍号、音画offset、相位和准确性仍unknown／false。原v1检测源保持，独立v2修正“beats为空而downbeats非空”的门禁，对现53数组严格后验全部合法，不重新推理或把v2冒原producer。
 
-**尚未凭上述阶段结果宣称完成**：三个同源case的VLM共享窗口实跑、全部12k可用正文与最后资源／Git验收。后续真正strict／merge-short-edges小节窗口的MS正文已完成同50，且独立50真videoPTS／150typed报告验真通过；这仍不是VLM已经共享运行。
+**整体仍未完成**：全12k可用正文、全量canonical／视频导出后验、最终资源／Git包验收仍在推进。后续真正strict／merge-short-edges小节窗口的MS正文已完成同50，且独立50真videoPTS／150typed报告验真通过；共享前三源三策略22窗VLM也已实际结束，另有来源／EOS／资源恢复收据，不回写旧MS报告的历史VLM=false字段。
+
+### 共享前三源三策略22窗的真实VLM有限收尾
+
+见 [`shared_music_windows_first3_finite_trial_20261024_v1.json`](../results/shared_music_windows_first3_finite_trial_20261024_v1.json)。hwrl／Lgl／qKg同三视频分别消费实际BPM／strict／merged原窗口JSON；5＋11＋6=22窗，九个策略-源组合，一次32B TP2加载，22次正常stop／EOS生成均为格式candidate。正文、原frames／request／raw／candidate／receipt与原MS计划SHA独立核验，短边缘不延窗，不读取MS动作正文或音乐条件作为视觉先验。
+
+该有限试验已自然exit0，模型／Engine／TP进程退出，GPU4／5恢复项目holder3954286／3954438，实际各975MiB、100%占用。full12k原16卡任务保持，48闲卡占卡是当前运行态，不冒最终64卡收尾。
+
+有限24源帧回看仍有脚步低估、衣发／物件越协议范围、精确侧别和接触疑点。衣发／物件词命中11／22是诊断，不是完整语义错误率；strict首短窗两帧满足格式支持也不自动证明真实运动。未批准语义、人审、训练、音画对齐或踩拍正确性，不按22全candidate判策略优胜，更不填补全量MS或VLM缺口。
+
+独立最终验收门禁复核还发现四类反例可错误接受：原raw未实际读取、换源记录未锚原共享计划、manifest binding漏检及支持弃权可留虚构正文。真实22窗原raw和来源已经单独验真，不代表门禁没有漏洞；修复只改独立checker／tests，不修改已执行producer、原始响应或再运行模型，修后另做反例与真实小收据回归。
 
 真实同50有限结果与来源见 [`music_windows_same50_finite_trials_20261024_v1.json`](../results/music_windows_same50_finite_trials_20261024_v1.json)。strict实际211窗／142candidate／69abstain，全50中14条全available正文，但48条首拍充分源内只有12条；merged实际136窗／111candidate／25abstain，全50中34条全available正文，首拍充分48源内32条。两条首拍不足只能保残段，不能将14／34冒完整小节覆盖。原115个相邻检测首拍区间在两策略中保持相同，不来自BPM网格。
 

@@ -1,0 +1,79 @@
+{
+  "schema": "shared_music_windows_first3_finite_trial_public_summary_v1",
+  "finite_trial_complete": true,
+  "source_count": 3,
+  "strategy_source_count": 9,
+  "actual_model_windows": 22,
+  "window_status_counts": {
+    "candidate": 22,
+    "abstain": 0,
+    "failed": 0,
+    "prepared": 0
+  },
+  "usable_complete_strategy_source_count": 9,
+  "windows_by_strategy": {
+    "bpm": 5,
+    "bar_strict": 11,
+    "bar_merge_short_edges": 6
+  },
+  "refs": {
+    "summary": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual_music_windows_first3_run_v1/summary.json",
+      "sha256": "0c5313664cebdbc82dd2ecdab47ff985a57f32ca7e5493e1e7d6fe0babb65faf"
+    },
+    "run": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual_music_windows_first3_run_v1/run.receipt.json",
+      "sha256": "6f39fc4106f762c38ad5a6cc6f9407ab73158a1139980145e1cf332d743de308"
+    },
+    "load": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual_music_windows_first3_run_v1/load.receipt.json",
+      "sha256": "e2314e061c24afa51758d889b87c31d4a0e21463eec664260bc169701ca447c7"
+    },
+    "independent_audit": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual_music_windows_first3_run_v1/independent_audit_cpu_v1.json",
+      "sha256": "c1dc56769223f9defea5c8b769902be36ae956ff391839c0046dcad11c74db02"
+    },
+    "sampled_source_review": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual_music_windows_first3_run_v1/assistant_sampled_source_review_v1.json",
+      "sha256": "64ac5ba9b737aea691334b51fa1cc77b2d4585edabeb63452714b7e1341f6dba"
+    },
+    "worker_exit": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual_music_windows_first3_resource_run_v1/worker_exit.json",
+      "sha256": "85d03f52b9d4f8830ba90353ddfda8fe03f83e7c2af7ebf4120e07641e69e13a"
+    },
+    "gpu4_restored": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual_music_windows_first3_resource_run_v1/holder_restored_gpu4.json",
+      "sha256": "dcea1fe18db7819204753c332553ae81a760f7e948c2f5cb92f27da3ca0218ff"
+    },
+    "gpu5_restored": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/visual_music_windows_first3_resource_run_v1/holder_restored_gpu5.json",
+      "sha256": "768926004be4197c0737478d6a4b995c946dda680ac79a3ba9aafc5f0ac444b7"
+    }
+  },
+  "one_model_load_across_three_strategies": true,
+  "unchanged_MS_shared_windows_consumed": true,
+  "MS_actions_music_labels_not_supplied_to_VLM": true,
+  "tokens_range": [
+    179,
+    398
+  ],
+  "prompt_tokens": 49244,
+  "completion_tokens": 6631,
+  "all22_normal_stop_EOS": true,
+  "source_review_scope": "Assistant observed24 hash-bound original JPEG frames, not continuous video, audio, human scoring, or beat accuracy review.",
+  "unresolved_risks": [
+    "Some captions underdescribe visible steps and weight shifts.",
+    "Body-only protocol is violated by clothes/hair/objects in11 of22 captions; diagnostic hits are not semantic error rates.",
+    "Exact anatomical sides, hand/contact details and broad timing claims remain unapproved.",
+    "Strict short residual windows can describe poses rather than a reliable motion phase;2frames is a format support condition, not motion accuracy."
+  ],
+  "raw_captions_or_source_media_uploaded": false,
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "audio_video_alignment_verified": false,
+  "motions_on_beats_verified": false,
+  "formal_training": false,
+  "full_pool_updated": false,
+  "full12000_caption_delivery_complete": false,
+  "final64_cluster_complete": false
+}

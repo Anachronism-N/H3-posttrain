@@ -1,0 +1,209 @@
+{
+  "schema": "nlf-fresh-detector32-finite-execution-caption-control-closeout-v1",
+  "complete": true,
+  "execution_ref": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/nlf_rgb32_fresh_detector_fixed3_execution_compare_20261024_v1.json",
+    "sha256": "8dc98a5e470b45fac3e5ed02a4fec45e911ff7e6b493e6aef6d6752826407461",
+    "schema": "nlf-fresh-detector32-fixed3-execution-and-compare-terminal-v1"
+  },
+  "caption_control_ref": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/caption_control_v1/terminal_receipt.json",
+    "sha256": "7b9ecc068b530886571835b096870853aae82a7e42b4a0d9ad3bc9fac53f5d9d",
+    "schema": "nlf-fresh-detector32-caption-support-control-terminal-v1"
+  },
+  "independent_control_ref": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/nlf_rgb32_fresh_caption_support_control_20261024_v1.json",
+    "sha256": "63c87955f82cd3ce67d38ee0683850f93b63753a978f5a232756a2df2563c28c"
+  },
+  "helper_ref": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/runtime_jobs/nlf_rgb32_fresh_caption_control_v1.py",
+    "sha256": "c189030c12d71a19078c460f377ed602ec6ae86117b1d6c6c0b014685f5107f8"
+  },
+  "cases": [
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "runs": [
+        {
+          "source": "fresh",
+          "mode": "numeric",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 31,
+          "foot_event_count": 0,
+          "window_event_counts": [
+            11,
+            18
+          ],
+          "report_sha256": "dae53fef45a9d216e2ee0e8bee4d0af29fd8f7a658db41ba7130d5e6e3b910d9",
+          "coords_sha256": "d3ce07dfd11266bbb97d9abc4736d74a5cf4ec7b13f310767563546fb6b1f06c"
+        },
+        {
+          "source": "fresh",
+          "mode": "necessary",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 31,
+          "foot_event_count": 0,
+          "window_event_counts": [
+            11,
+            18
+          ],
+          "report_sha256": "4b8c9e8b9526b25c8f9c5a8f1669e26f7f27215e7e029f56b02152892a1c86ff",
+          "coords_sha256": "d3ce07dfd11266bbb97d9abc4736d74a5cf4ec7b13f310767563546fb6b1f06c"
+        },
+        {
+          "source": "cached",
+          "mode": "numeric",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 35,
+          "foot_event_count": 0,
+          "window_event_counts": [
+            12,
+            21
+          ],
+          "report_sha256": "ed513641f822d0aad63a39843c9ac613cf374caf66270d188bb9b659df96e346",
+          "coords_sha256": "77659b23746ae6e2af7a01d46c7f12d39189a0f9fdfcfc8f79c67b82de104607"
+        },
+        {
+          "source": "cached",
+          "mode": "necessary",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 35,
+          "foot_event_count": 0,
+          "window_event_counts": [
+            12,
+            21
+          ],
+          "report_sha256": "d6f195112145e8f14f65a0011f6153fe7ae497e6f3c460ee26beab2e7825c8b1",
+          "coords_sha256": "77659b23746ae6e2af7a01d46c7f12d39189a0f9fdfcfc8f79c67b82de104607"
+        }
+      ]
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "runs": [
+        {
+          "source": "fresh",
+          "mode": "numeric",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 36,
+          "foot_event_count": 2,
+          "window_event_counts": [
+            19,
+            14
+          ],
+          "report_sha256": "6cdb90594e0e111aa3544b14ece6e92aaea0b02e22025f926e128f46037a26c3",
+          "coords_sha256": "5c35bf322b30841b298df99330a4c00ed11b2152dfd496432a7f5fe4530626b1"
+        },
+        {
+          "source": "fresh",
+          "mode": "necessary",
+          "selected_support_pointframes": 1575,
+          "whole_event_count": 27,
+          "foot_event_count": 0,
+          "window_event_counts": [
+            11,
+            14
+          ],
+          "report_sha256": "865f98594c011e661e614e238d887dd6eca973efc1d90a0c0dcb336cd0dfe35c",
+          "coords_sha256": "e097042b5742deda34d435591111b5aa189e579c3ac47734e895e2a0bc902e88"
+        },
+        {
+          "source": "cached",
+          "mode": "numeric",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 36,
+          "foot_event_count": 1,
+          "window_event_counts": [
+            19,
+            16
+          ],
+          "report_sha256": "1a73d1993e652c6591931fdd3d5acd18028c4371fba7ba2a0febec27502f45f8",
+          "coords_sha256": "b4a900ef0f35125c70bec4480281de14f48a5f48dd3bc6d42feeb520fce9df35"
+        },
+        {
+          "source": "cached",
+          "mode": "necessary",
+          "selected_support_pointframes": 1575,
+          "whole_event_count": 28,
+          "foot_event_count": 0,
+          "window_event_counts": [
+            11,
+            16
+          ],
+          "report_sha256": "9256acaf0f7c86db421518ee826369806416caa9bb1dd5a6e795a12bdf598e68",
+          "coords_sha256": "fbcbbbb61d41c54e2852ca7062ae92c0efbb014db9d3ca7e88040d57040f5be8"
+        }
+      ]
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "runs": [
+        {
+          "source": "fresh",
+          "mode": "numeric",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 27,
+          "foot_event_count": 2,
+          "window_event_counts": [
+            7,
+            19
+          ],
+          "report_sha256": "234fceae995aa1c403731f8f208a155c2ea43983ca6079f93d3a0c72bb16095e",
+          "coords_sha256": "56f54c3560cdfc03f2597e5549f1e36d390d9ca39c99884b71c4c650de8f6740"
+        },
+        {
+          "source": "fresh",
+          "mode": "necessary",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 27,
+          "foot_event_count": 2,
+          "window_event_counts": [
+            7,
+            19
+          ],
+          "report_sha256": "f49ab3157c05cb3ab5d2b8aa031140e4f6585407266956e9d769cd092a818e7c",
+          "coords_sha256": "56f54c3560cdfc03f2597e5549f1e36d390d9ca39c99884b71c4c650de8f6740"
+        },
+        {
+          "source": "cached",
+          "mode": "numeric",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 29,
+          "foot_event_count": 2,
+          "window_event_counts": [
+            7,
+            20
+          ],
+          "report_sha256": "ad3190298a062a127dcaf1ff1d258b0ab585e7014335011d28f8323a6ba669a5",
+          "coords_sha256": "dc380a897e1229658b3f836f8f0a2927eccbf5dddb1fb19bdc4b7865eadad617"
+        },
+        {
+          "source": "cached",
+          "mode": "necessary",
+          "selected_support_pointframes": 2592,
+          "whole_event_count": 29,
+          "foot_event_count": 2,
+          "window_event_counts": [
+            7,
+            20
+          ],
+          "report_sha256": "36151dbb4cae7ede2947c214bb9e5d64b50bba2ea7594f416848eecbd89a4681",
+          "coords_sha256": "dc380a897e1229658b3f836f8f0a2927eccbf5dddb1fb19bdc4b7865eadad617"
+        }
+      ]
+    }
+  ],
+  "fresh_actual_fixed3_gpu_executed": true,
+  "comparison_actual_fixed3_cpu_completed": true,
+  "geometry_caption_support_controls_verified": 12,
+  "source_and_old_public_libraries_frozen": true,
+  "mask_support_is_visibility": false,
+  "missing_rejected_points_not_filled": true,
+  "accuracy_advantage_established": false,
+  "GT_approved": false,
+  "training_approved": false,
+  "tracking_guaranteed": false,
+  "raw_updated": false,
+  "push_or_commit_done": false,
+  "conclusion": "NLF阶段fresh检测并一起查询32点已实际跑通；同原视频比较及必要mask几何/caption控制闭环，但裁切/遮挡/heel定位可靠性限制保持，未建立caption准确优势。",
+  "next_same_first50_started": false
+}

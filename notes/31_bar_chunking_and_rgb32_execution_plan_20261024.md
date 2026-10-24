@@ -1,7 +1,7 @@
 # 按小节构造编舞标签与 RGB 32 关键点实跑方案
 
 
-> **后续集群实证更新（2026-10-24）**：本篇初始“32点尚未实际运行”状态已被后续产物超越。cached-box直接32点及必要画内支持对照已完成；新fresh-detector入口也已真实完成三个case，每条81帧，由RGB新检测框并直接查询32点，不使用旧框或旧pose条件。原始数据、多个检测返回、最大面积选择及新增三栏叠加已独立验真，新坐标的动作caption与必要支持控制仍在收尾。红衣画外足点说明finite valid不等于可见，尚未建立新增caption准确优势。按检测拍点C50已完成但不是小节首拍检测；真实BPM长度窗与BeatThis downbeat小节窗独立推进，不能用旧C重命名替代。
+> **后续集群实证更新（2026-10-24）**：本篇初始“32点尚未实际运行”状态已被后续产物超越。cached-box直接32点及必要画内支持对照已完成；新fresh-detector入口也已真实完成三个case，每条81帧，由RGB新检测框并直接查询32点，不使用旧框或旧pose条件。原始数据、多个检测返回、最大面积选择及新增三栏叠加已独立验真，新坐标的whole／fixed动作caption与十二路必要支持控制也已完成。红衣画外足点说明finite valid不等于可见，尚未建立新增caption准确优势。按检测拍点C50已完成但不是小节首拍检测；真实BPM长度窗与BeatThis downbeat小节窗独立推进，不能用旧C重命名替代。
 
 日期：2026 年 10 月 24 日。代码状态基线：`codex/motionscript-optimization` 的 `a34dc7023e543672898e6436dd1484ff98c52349`。
 
@@ -18,7 +18,7 @@
 | 按小节首拍分段 | 当前入口未实现完整流程 | 检测 downbeat，构建并共享窗口清单 |
 | NLF 官方 canonical 资产和 32 点规格 | 已取得并记录兼容性核验 | 在实际服务器复核文件身份后使用 |
 | 从真实 RGB 提取 32 点 | cached-box与新fresh-detector均已实跑3条 | 保来源分离，核验新框选择和新增点可靠性 |
-| 32 点视频叠加及动作核对 | cached-box与fresh三栏叠加均已完成；fresh新caption控制收尾中 | 核对新增点、遮挡跳点与旧完整pose，不能把画内视为可见 |
+| 32 点视频叠加及动作核对 | 新旧三栏叠加与fresh／cached十二路动作支持控制已完成 | 未建立准确优势；画内仍不等于可见，未批准掌足监督 |
 | 新标签训练与 H3 跟随收益 | 尚未验收 | 用通过核对的小样本分开验证 |
 
 MS 原身体分段处理、开放词汇 VLM 标注、NLF 资产准备和 RGB 32 点推理是不同任务。旧分段池处理完成、VLM 能生成文字或 32 点规格存在，都不能作为“服务器已经实际提取 32 点”的证据。
@@ -244,7 +244,23 @@ done
 
 必要支持仅为`valid & finite(2D) & 0<=x<width & 0<=y<height`。红衣1017个点帧不满足画内必要支持；画内仍可能遮挡或定位错误。叠加、掌足事件与旧cached-box32的比较独立进行，数值差异、工程exit0与全finite均不构成准确度或训练批准。运行资源owner确认CLI自然exit0、GPU2项目holder已恢复，未抢占在途16张VLM卡。
 
-新三栏叠加与CPU比较已随后完成，实际小报告为 [`nlf_rgb32_fresh_detector_fixed3_execution_compare_20261024_v1.json`](../results/nlf_rgb32_fresh_detector_fixed3_execution_compare_20261024_v1.json)，SHA256 `8dc98a5e470b45fac3e5ed02a4fec45e911ff7e6b493e6aef6d6752826407461`。三条叠加视频均实际解码81帧@16fps。新旧同源视频、规格、模型、点名与PTS一致；必要画内mask逐值一致，主会话独立核对比较NPZ及其分位数。画内点位差中位数分别约0.92／2.17／1.59px，仅表示新旧结果差异，不是准确率或body逐值不变的证据。红衣足面仍全画外，画内掌／鞋跟遮挡问题没有解决。新的fresh坐标事件caption及maxgap0必要支持控制继续用独立CPU产物，不将旧cached-box描述或这份叠加报告充当新caption已完成。
+新三栏叠加与CPU比较已随后完成，实际小报告为 [`nlf_rgb32_fresh_detector_fixed3_execution_compare_20261024_v1.json`](../results/nlf_rgb32_fresh_detector_fixed3_execution_compare_20261024_v1.json)，SHA256 `8dc98a5e470b45fac3e5ed02a4fec45e911ff7e6b493e6aef6d6752826407461`。三条叠加视频均实际解码81帧@16fps。新旧同源视频、规格、模型、点名与PTS一致；必要画内mask逐值一致，主会话独立核对比较NPZ及其分位数。画内点位差中位数分别约0.92／2.17／1.59px，仅表示新旧结果差异，不是准确率或body逐值不变的证据。红衣足面仍全画外，画内掌／鞋跟遮挡问题没有解决。后续新的fresh坐标事件caption及maxgap0必要支持控制也已真实完成，独立终态和实际结果见下一节，不使用旧cached-box描述或这份叠加报告冒充新caption。
+
+### Fresh坐标动作描述与必要支持控制收尾
+
+实际收尾报告：[`nlf_rgb32_fresh_fixed3_finite_closeout_20261024_v1.json`](../results/nlf_rgb32_fresh_fixed3_finite_closeout_20261024_v1.json)，SHA256 `026896f861081b4d02f9a1c7f775cf5774dea7c61611547abcbf0e0f6edcc41f`；它绑定新fresh提取／叠加实证和独立控制终态`7b9ecc068b530886571835b096870853aae82a7e42b4a0d9ad3bc9fac53f5d9d`。
+
+三个源各执行fresh／cached × numeric／necessary四路，共12路真实CPU控制。全部使用同20fps插值、0.025s平滑、maxgap0、最短事件0.15s、角阈20°、整段及固定`[0,2)`／`[2,5.0625)`窗口；保原raw、所有报告与坐标、候选正文及支持信息，不跨拒绝点补gap。主独立读取12份报告与coords并核SHA、事件依赖点全valid、红衣脚部拒绝及旧cached基线逐事件一致。
+
+| Case | fresh numeric事件／足事件 | fresh necessary事件／足事件 | cached numeric事件／足事件 | cached necessary事件／足事件 |
+|---|---:|---:|---:|---:|
+| 楼梯 | 31／0 | 31／0 | 35／0 | 35／0 |
+| 红衣 | 36／2 | 27／0 | 36／1 | 28／0 |
+| 商店 | 27／2 | 27／2 | 29／2 | 29／2 |
+
+红衣新旧均由2592 numeric点帧降至1575必要支持，排除1017点帧；其画外足派生坐标保持NaN、足事件为0。商店画内的两个足候选仍有heel与遮挡疑点，不批准精确方向／接触监督。事件数减少或点差较小都不证明准确优势。
+
+**有限结论**：NLF阶段fresh检测并一起查询32点已实际可执行，三源提取、叠加与whole／fixed动作支持控制均结束；裁切、遮挡和鞋跟定位限制仍在，未建立caption准确度优势，未批准GT、可见性、tracking或训练监督。未启动新的50条或全12k NLF提取；无需再重复同数学CLI来“证明”已有12路控制完成。
 
 ### 全量与新增音乐分窗的未完成边界
 

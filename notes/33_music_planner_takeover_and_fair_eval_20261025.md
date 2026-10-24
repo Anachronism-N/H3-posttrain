@@ -54,6 +54,14 @@ exclusion_receipt.json 保存父基准/审计 SHA、七条排除原因；trainin
 
 UTC21:00:46仍在初始GPU更新2保存。UTC21:16:43重新核验：三族均已有smoke.saved和smoke.approved，完整checkpoint与新进程恢复更新3通过，均进入full_training新进程；/proc start_ticks/argv与8GPU rank集合逐项相符，无新失败。该快照Flamingo85、MOSS53，Captioner正式进程刚启动，尚未打印更新4。UTC21:18:28 Flamingo已完成98，超越旧97失败点，但新训练顺序已随过滤改变，不能以更新数本身断言所有剩余数据都已消费。正式启动里程碑通过不等完整670更新、val选择或质量通过。当前上游源恢复调查不再阻挡实验，被排除条目不替换也不补零。
 
+## 训练后单卡评测接续与renderer准备
+
+新增独立 music_planner_eval_manager.py，最终源码SHA58dea033347a84ceda239f6ff67c9a90c692056e2add313c2bb604f2ca1ddd59；主会话独立重跑29项CPU测试并在运行前后核源码及测试SHA一致。未运行的并发修改候选不作为dispatch版本。实际部署准备为独立runtime/planner_eval_manager_v2.py，不改正在运行的source_v10或训练manager。该管理器要求本族真实670更新/21426曝光/2epoch完整回执、资源安全、实际epoch335/670全val490内部NLL最小checkpoint及预冻结best/markerSHA；test还要求三族共同final_selection及永久O_EXCL每族一次claim。GPU0采用精确pidfd/flock/lease与恢复holder流程，其他七卡不操作。正式评测前一次当前官方base内容SHA/LFS/gitblob审计及完整checkpoint文件内容审计；CPU tests不等真实30B单卡fit或GPU输出通过。
+
+val32/test的EOS、budget truncation、unknown stop和空raw输出是保留的模型诊断，不把弱模型复读当技术接口失败，也不因截断偷偷改变cap或重测test；native输出字段不一致、超预算、缺失真实接口证据等仍拒绝技术采集完成。fixed3有效H3 handoff保留严格完整停止及caption schema门槛。所有技术完成回执仍quality_accepted/human_quality_accepted=false。
+
+H3准备原worker恢复后未重新注册，不冒称继续运行；主会话只读核三节点既有相同H3环境版本和Ref2VA的13个DiT、14个text、视频VAE和processor存在。独立h3_renderer_v10冻结同h3_video_infer/h3_video_only、288个当前DiffSynth Python源码SHA及三节点环境版本凭据；N2空CUDA执行tinyH3 wrapper自测、7renderer CPU tests通过。未读取H3大权重内容或执行预训练GPU渲染。实际渲染前仍核模型内容身份、源码/环境未漂移与GPU安全准入；空闲卡由既有占卡保持。
+
 ## 当前结论
 
 未完成三模型新版本 GPU 启动验收、670 更新、最终文本评测或 H3 人评，因此没有最强模型结论。只把已执行的 CPU 诊断/回归与真实 v8 失败作为当前证据。后续真实 queue、日志、完整回执优先于本文快照。GitHub 提交仅包含本实验明确源码、测试及分析，不打包其他会话脏工作区、权重、私有音频/图像或凭据。

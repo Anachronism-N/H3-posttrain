@@ -300,5 +300,51 @@ class MusicPlannerEvalTest(unittest.TestCase):
                 evaluation.validate_data(clean)
 
 
+    def test_clean_dataset_helper_preserves_parent_and_rejects_reuse(self):
+        source = PATH.parent / 'music_planner_clean_dataset.py'
+        spec = importlib.util.spec_from_file_location('clean_dataset_fixture', source)
+        helper = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(helper)
+        with tempfile.TemporaryDirectory() as directory:
+            parent, output = Path(directory) / 'parent', Path(directory) / 'out'
+            parent.mkdir()
+            counts = dict(train=10720, val=490, test=500)
+            refs, values = {}, {}
+            for split, count in counts.items():
+                entries = [dict(row(f'{split}-{i}'), split=split) for i in range(count)]
+                value = ''.join(json.dumps(entry) + chr(10) for entry in entries).encode()
+                path = parent / (split + '.jsonl')
+                path.write_bytes(value)
+                values[split] = value
+                refs[split] = dict(path=str(path), sha256=hashlib.sha256(value).hexdigest())
+            summary = dict(schema='music_planner_fixed2s_weak_baseline_v1', complete_sources=sum(counts.values()),
+                split_counts=counts, source_and_exact_audio_split_overlap=0, split_artifacts=refs)
+            (parent / 'summary.json').write_text(json.dumps(summary))
+            removed = [dict(id=f'train-{i}', line=i + 1, audio_path=f'/private/train-{i}.wav',
+                frames=121505, sample_rate=24000, extra_frames=5) for i in range(7)]
+            audit = dict(complete=True, summary=dict(train=dict(audited=10720, old_length_gate_rejected=removed),
+                val=dict(audited=490, old_length_gate_rejected=[])), split_refs=refs)
+            audit_path = Path(directory) / 'audit.json'
+            audit_path.write_text(json.dumps(audit))
+            result = helper.clean_dataset(parent, audit_path, output)
+            self.assertEqual(result, dict(train=10713, val=490, test=500))
+            self.assertEqual((output / 'val.jsonl').read_bytes(), values['val'])
+            self.assertEqual((output / 'test.jsonl').read_bytes(), values['test'])
+            self.assertEqual((parent / 'train.jsonl').read_bytes(), values['train'])
+            self.assertEqual((output / 'train.jsonl').read_bytes(), b''.join(values['train'].splitlines(keepends=True)[7:]))
+            splits, _ = evaluation.validate_data(output)
+            self.assertEqual(len(splits['train']), 10713)
+            contract = json.loads((output / 'training_contract.json').read_text())
+            self.assertEqual((contract['total_optimizer_updates'], contract['source_exposure_budget']), (670, 21426))
+            with self.assertRaises(FileExistsError):
+                helper.clean_dataset(parent, audit_path, output)
+            bad = dict(audit, summary=dict(audit['summary']))
+            bad['summary']['train'] = dict(audit['summary']['train'], old_length_gate_rejected=removed[:6])
+            audit_path.write_text(json.dumps(bad))
+            with self.assertRaisesRegex(ValueError, 'seven audited'):
+                helper.clean_dataset(parent, audit_path, Path(directory) / 'bad')
+            self.assertFalse((Path(directory) / 'bad').exists())
+
+
 if __name__ == '__main__':
     unittest.main()

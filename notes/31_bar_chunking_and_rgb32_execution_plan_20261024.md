@@ -1,10 +1,13 @@
 # 按小节构造编舞标签与 RGB 32 关键点实跑方案
 
+
+> **后续集群实证更新（2026-10-24）**：本篇初始“32点尚未实际运行”状态已被后续产物超越。cached-box直接32点及必要画内支持对照已完成；新fresh-detector入口也已真实完成三个case，每条81帧，由RGB新检测框并直接查询32点，不使用旧框或旧pose条件。原始数据及多人返回、最大面积选择已独立验真，新增叠加与动作控制仍在收尾。红衣画外足点说明finite valid不等于可见，尚未建立新增caption准确优势。按检测拍点C50已完成但不是小节首拍检测；真实BPM长度窗与BeatThis downbeat小节窗独立推进，不能用旧C重命名替代。
+
 日期：2026 年 10 月 24 日。代码状态基线：`codex/motionscript-optimization` 的 `a34dc7023e543672898e6436dd1484ff98c52349`。
 
 编舞规划器采用音乐输入、自然语言编舞 caption 输出。标注侧先识别音乐小节，再对相应视频窗口生成动作描述；规划器仍可读取完整音乐片段，渲染器读取参考图与编舞文本。
 
-32 点实验补充的是掌面和足部的动作观测，音乐分段组织的是这些动作在时间上的描述。两项先独立比较，再考虑组合。用户本轮明确确认：**服务器尚未真正完成 RGB 32 点提取，希望实际运行，不能继续只停留在代码和资产准备。** 首轮按已有三个真实案例、单 GPU 顺序执行，再核对原视频叠加结果。
+32 点实验补充的是掌面和足部的动作观测，音乐分段组织的是这些动作在时间上的描述。两项先独立比较，再考虑组合。用户在本篇初始计划时明确要求：**实际运行 RGB 32 点提取，不能继续只停留在代码和资产准备。** 后续真实终态见本文末的执行记录。 首轮按已有三个真实案例、单 GPU 顺序执行，再核对原视频叠加结果。
 
 ## 当前实现与待完成事项
 
@@ -14,8 +17,8 @@
 | 按检测拍点分段 | 同 50 条对照已有报告；未识别小节首拍 | 与真正按小节的策略分开 |
 | 按小节首拍分段 | 当前入口未实现完整流程 | 检测 downbeat，构建并共享窗口清单 |
 | NLF 官方 canonical 资产和 32 点规格 | 已取得并记录兼容性核验 | 在实际服务器复核文件身份后使用 |
-| 从真实 RGB 提取 32 点 | 尚未完成实际运行 | 先完成三个案例的直接点预测 |
-| 32 点视频叠加及动作核对 | 尚未完成 | 核对新增点、遮挡跳点与旧完整 pose 对照 |
+| 从真实 RGB 提取 32 点 | cached-box与新fresh-detector均已实跑3条 | 保来源分离，核验新框选择和新增点可靠性 |
+| 32 点视频叠加及动作核对 | cached-box叠加/必要mask已完成；fresh对照收尾中 | 核对新增点、遮挡跳点与旧完整pose，不能把画内视为可见 |
 | 新标签训练与 H3 跟随收益 | 尚未验收 | 用通过核对的小样本分开验证 |
 
 MS 原身体分段处理、开放词汇 VLM 标注、NLF 资产准备和 RGB 32 点推理是不同任务。旧分段池处理完成、VLM 能生成文字或 32 点规格存在，都不能作为“服务器已经实际提取 32 点”的证据。
@@ -138,7 +141,7 @@ Beat This 默认 minimal 后处理选择预测峰，并将首拍对齐到附近�
 | 32 点规格 | 上述目录中的 `body_palm_foot32.json` |
 | 三个案例 | `wJPptuhclZmKAEWs`、`wJPrpFsThWAcBQIw`、`wJQTclrlOLEYYfTB` |
 
-路径基于已提交服务器记录，实际执行前仍需核对文件存在、SHA、环境及输入配对。完整位置、数组／模型／规格 SHA 见 [官方资产兼容性记录](../results/nlf_official_canonical_match_20261024_v1.json)。该记录的 `real_rgb32_extraction_completed=false` 与用户本轮确认一致。
+路径基于已提交服务器记录，实际执行前仍需核对文件存在、SHA、环境及输入配对。完整位置、数组／模型／规格 SHA 见 [官方资产兼容性记录](../results/nlf_official_canonical_match_20261024_v1.json)。该资产记录的 `real_rgb32_extraction_completed=false` 是资产核验当时的状态，不代表后续提取尚未运行；最新真实提取终态另行记录。
 
 ## 三案例真实运行安排
 
@@ -217,3 +220,32 @@ done
 - [原版 MS 固定分段入口](../scripts_omnidance/exp/ms/ms_chunk_caption.py)
 - [窗口校验与坐标切片](../scripts_omnidance/exp/ms/motionscript_v2/chunks.py)
 - [同 50 条整段与分段候选统计](../results/ms_beat_chunk_same50_verified_20261024_v1.json)
+
+## 最新计划的实际推进与来源区分
+
+- 远端 `3eabafb10745f55f5032b4623bac985dbe0f3e47` 已获取并安全合并。本地真实进度先提交保护，正常三方合并保留了notes30/LANDMARKS追加和用户其他未提交工作，未reset/stash或覆写在途Python源。新远端仅四份文档，没有新增detector32/BPM/bar运行代码。
+- 旧模板实际direct32三case产物在 `MS/point32_direct_fixed3_v1`；官方canonical已bitwise兼容，提取/2D叠加/旧pose72及24父链对照/必要mask原文与源SHA保存。必要控制阻止了红衣画外足面事件，但画内合掌/鞋跟遮挡疑点仍未解除，不以工程成功批准细节监督。
+- 新独立NLF32入口 `ms_nlf_rgb32.py` 已在N2 GPU2真实完成固定三case：actual `get_weights_for_canonical_points(32)`＋`detect_poses_batched(images, weights32)`同时返回新人物框与32点，不再以旧box/pose缓存作模型条件。crop features对查询点共享，但detector是另一个网络、aug3及内部batch仍有额外计算，不能称整个过程只有一次网络forward。先新fixed3与旧cached-box32对照，再扩大有限样本；不联SMPL-X1079拟合或把SMPL旧24与新SMPL-X布局混淆。
+- BPM长度策略单独按实际估计 `60×拍数/BPM` 构造标注窗口并调用描述器，首0属于长度近似而非小节首拍；必须标tempo_grid、beat_phase_verified=false。此前C脚本只将该策略存在comparison字段，没有真正生成这些BPM窗的MS正文，新增真实运行不能用C50重命名替代。
+- 真正小节策略将读取实际BeatThis等模型的beats/downbeats，保原始小节与首尾残段，分别执行strict_bar与merge_short_edges；MS和视觉源消费同一份videoSHA/实际PTS/音频SHA绑定窗口清单。未知音画偏移保为假设/未验证，不因为未知而伪造barphase，也不让缺downbeat模型阻碍独立BPM近似小试。
+- 在途12k固定窗MS/32B视频候选作为现有基线继续完成，所有Python依赖SHA保持；新方法用独立源码与输出目录。新增32点、BPM长度、检测拍点、downbeat小节是不同轴的对照，不能同时换多项后只归因为“增点”或“按BPM”。
+
+### Fresh-detector32真实执行与独立原始数据核验
+
+新产物：`MS/nlf_rgb32_fresh_detector_fixed3_v1/finished.json`，schema为`nlf-fresh-detector32-terminal-v1`，`complete=true`、`expected=actual=3`。入口源码SHA256为`8875af505ead1e86313bcafe4aaf18f76c87eac0287d6dd1a2c0877e61c985d5`，固定三case输入SHA为`14a38a179bc0a1f0afc4fd9d6eef6e74797564db696cad20503e495b57d34361`。原模型、canonical规格与旧接口依赖未改变。
+
+| Case | 实际帧数 | 有检测帧数 | 返回多个检测的帧数 | 原始numeric valid点帧 | 画内必要支持点帧 |
+|---|---:|---:|---:|---:|---:|
+| wJPptuhclZmKAEWs | 81 | 81 | 0 | 2592 | 2592 |
+| wJPrpFsThWAcBQIw | 81 | 81 | 37 | 2592 | 1575 |
+| wJQTclrlOLEYYfTB | 81 | 81 | 0 | 2592 | 2592 |
+
+主会话独立读取三份raw及manifest/receipt，实际核验SHA、32点shape、ragged offsets/counts、全部检测几何、最大XYWH面积选择及原始二维点对应，未修改产物。37帧返回多个检测不等于37帧确有多个人；每帧选最大面积不保证同一身份追踪。当前三条没有零检帧，零检NaN/mask政策有测试覆盖，不能声称真实零检案例已经验证。
+
+必要支持仅为`valid & finite(2D) & 0<=x<width & 0<=y<height`。红衣1017个点帧不满足画内必要支持；画内仍可能遮挡或定位错误。叠加、掌足事件与旧cached-box32的比较独立进行，数值差异、工程exit0与全finite均不构成准确度或训练批准。运行资源owner确认CLI自然exit0、GPU2项目holder已恢复，未抢占在途16张VLM卡。
+
+### 全量与新增音乐分窗的未完成边界
+
+2026-10-24 04:35:46 UTC的全量失败快照为44个SID、45个窗口：38个两帧证据拒绝、6个正文超过140词、1个abstain却正文非空。所有45窗均正常stop/EOS且未达1200 token cap，不能归因为OOM或截断；此快照不是最终全12k分母。原raw和失败记录保留，旧两窗pair-enum只修格式且caption逐字未变，不可冒充全失败池的动作事实修复。
+
+当前8分片仍继续生成，唯一原MS后验进程仍活且最终complete/receipt尚未产生；不重复启动、不修改运行源。BPM长度窗由新独立入口推进，BeatThis以新隔离环境复用兼容依赖、先CPU真实3条及同50音乐检测，不修改现有环境，不以部署或测试通过替代首拍/小节caption实际运行。整体12k可用正文、最终导出、最后Git远端HEAD与资源终态仍待真实验收。

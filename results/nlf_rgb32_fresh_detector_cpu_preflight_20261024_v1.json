@@ -1,0 +1,59 @@
+{
+  "schema": "nlf-fresh-detector32-cpu-preflight-v1",
+  "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_nlf_rgb32.py",
+  "source_sha256": "8875af505ead1e86313bcafe4aaf18f76c87eac0287d6dd1a2c0877e61c985d5",
+  "tests_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/tests/test_ms_nlf_rgb32.py",
+  "tests_sha256": "c468aa38dd861c9fb5be343c31c9b7e0167517a6cd779bbb0734fb0bae8864fb",
+  "N1_pytest": {
+    "passed": 16,
+    "subtests": 13
+  },
+  "N2_unittest": {
+    "passed": 16,
+    "status": "OK",
+    "reason": "N2 no pytest; no dependency installed or modified"
+  },
+  "N2_real_input_and_original_output_guard": true,
+  "input_manifest_sha256": "14a38a179bc0a1f0afc4fd9d6eef6e74797564db696cad20503e495b57d34361",
+  "model_sha256": "52bee28edb6ea9148691331df87cfc238d7e3d9134dc60104a5aaed282a9ddad",
+  "spec_sha256": "bcb8f9afcb8d0dcc62640e193e3de31dc875020f7e0191fc8af3c5800dad555f",
+  "frozen_ms_landmarks_sha256": "f7b3ee3c1c59b9ac19b96f2a73f3bb18a79d4804e715bc1f7334c3e363c467c1",
+  "actual_model_export_methods_verified_on_CPU": [
+    "detect_poses_batched",
+    "get_weights_for_canonical_points"
+  ],
+  "model_contract_evidence": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/nlf_detector32_contract_evidence_20261024_v1.json",
+  "planned_host": "N2",
+  "planned_gpu": 2,
+  "resource_owner": "goal-live-pipelines-2",
+  "argv": [
+    "/opt/venv_eval/bin/python",
+    "-B",
+    "-u",
+    "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_nlf_rgb32.py",
+    "--manifest",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/chunk_caption12k_input_v1/fixed3_manifest.jsonl",
+    "--spec",
+    "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/body_palm_foot32.json",
+    "--model",
+    "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/nlf_l_multi_0.3.2.torchscript",
+    "--device",
+    "cuda",
+    "--bs",
+    "8",
+    "--num-aug",
+    "3",
+    "--limit",
+    "0",
+    "--ffprobe",
+    "/opt/ms_tools/ffprobe",
+    "--ffmpeg",
+    "/usr/local/bin/ffmpeg",
+    "--out",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1"
+  ],
+  "gpu_started": false,
+  "source_library_modified": false,
+  "old_pose_or_box_cache_consumed_by_model": false,
+  "synthetic_tests_do_not_certify_accuracy": true
+}

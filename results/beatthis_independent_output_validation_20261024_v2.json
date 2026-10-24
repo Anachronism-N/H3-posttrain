@@ -1,0 +1,433 @@
+{
+  "schema": "beatthis_independent_output_validation_v2",
+  "status": "completed",
+  "exit_code": 0,
+  "created_unix": 1792817709.820736,
+  "operation": "strict downbeat-subset validation of existing v1 real model outputs; NOT a model rerun",
+  "actual_model_inference_rerun": false,
+  "original_v1_outputs_and_source_untouched": true,
+  "invalid_emptybeats_nonempty_downbeats_rejected": true,
+  "validated_count": 53,
+  "invalid_count": 0,
+  "validation_helper_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/runtime_jobs/beatthis_audio_v2.py",
+  "validation_helper_sha256": "83131d4e4f0b69ddbc5bc96cca1ca1d9753962df39cbfd25428be1081bde1075",
+  "actual_v1_helper_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/runtime_jobs/beatthis_audio_v1.py",
+  "actual_v1_helper_sha256": "2a06e5baebbf5115825359fe50835656057bb83bca8e5d42399d05198d3c1784",
+  "v2_tests_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/tests/test_beatthis_audio_v2.py",
+  "v2_tests_sha256": "1d4908d699393993f50a88797beedd72f84db5359e3cf46a66b9537102ef8259",
+  "v2_cpu_tests_passed": 8,
+  "v2_cpu_tests_exit_code": 0,
+  "checkpoint_sha256": "8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331",
+  "checkpoint_source_manifest_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/models/BeatThis/source_manifest.json",
+  "checkpoint_source_manifest_sha256": "b5bf945c8e124f06532cb82a0e614b45d3da8e51d47e6c15b567365921edd4f1",
+  "groups": {
+    "fixed3": {
+      "expected_count": 3,
+      "checked_count": 3,
+      "valid_count": 3,
+      "invalid_count": 0,
+      "detections_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/beatthis_fixed3_v1/detections.jsonl",
+      "detections_sha256": "908a068fb124ab7906737e8aa1db2e891217356b407fec6a834e80d4f5571630",
+      "actual_v1_run_receipt_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/beatthis_fixed3_v1/run_receipt.json",
+      "actual_v1_run_receipt_sha256": "ac8140452e58546d9b50d25c4919a8f723e5f337f94670947653f641bbe89dc7",
+      "actual_v1_helper_sha256": "2a06e5baebbf5115825359fe50835656057bb83bca8e5d42399d05198d3c1784",
+      "all_outputs_equal_v2_strict_revalidation": true,
+      "rows": [
+        {
+          "id": "wJPptuhclZmKAEWs",
+          "valid": true,
+          "beat_count": 12,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "wJPrpFsThWAcBQIw",
+          "valid": true,
+          "beat_count": 10,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "wJQTclrlOLEYYfTB",
+          "valid": true,
+          "beat_count": 10,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        }
+      ]
+    },
+    "first50": {
+      "expected_count": 50,
+      "checked_count": 50,
+      "valid_count": 50,
+      "invalid_count": 0,
+      "detections_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/beatthis_first50_v1/detections.jsonl",
+      "detections_sha256": "dcbebf170a73a9daa03557e4e85514d3b3030a437f072185dd2bf03021ba71ac",
+      "actual_v1_run_receipt_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/beatthis_first50_v1/run_receipt.json",
+      "actual_v1_run_receipt_sha256": "79740367acb197a6c57484001beff7654c782839cdf40b317490c0f8a538506c",
+      "actual_v1_helper_sha256": "2a06e5baebbf5115825359fe50835656057bb83bca8e5d42399d05198d3c1784",
+      "all_outputs_equal_v2_strict_revalidation": true,
+      "rows": [
+        {
+          "id": "hwrlCvOCYUKpljlV",
+          "valid": true,
+          "beat_count": 10,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "LglrebUOmlpWTFrr",
+          "valid": true,
+          "beat_count": 10,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "qKgmlBaDdOeqvUZZ",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "BqcYHceVIIcvxAnf",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 5,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "GgtvjcfpuStDRYyk",
+          "valid": true,
+          "beat_count": 10,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "KMcaVVwQmswUfTuP",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "AztczvBPGEjgAoaQ",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 7,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "rVpMcDoGoVnzzlWr",
+          "valid": true,
+          "beat_count": 9,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "IKwZrGBMoyeDneiV",
+          "valid": true,
+          "beat_count": 8,
+          "downbeat_count": 5,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "WLPBRUltlyCSuVkQ",
+          "valid": true,
+          "beat_count": 9,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "ViZyGwKPESaRpZYU",
+          "valid": true,
+          "beat_count": 12,
+          "downbeat_count": 6,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "wyQnBiPnklLqkXTo",
+          "valid": true,
+          "beat_count": 13,
+          "downbeat_count": 4,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "rVuiYlFZGXBDUBvD",
+          "valid": true,
+          "beat_count": 7,
+          "downbeat_count": 4,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "LTuVPxiJwWHsWHEK",
+          "valid": true,
+          "beat_count": 17,
+          "downbeat_count": 4,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "AkymiWDtlZBiaCSv",
+          "valid": true,
+          "beat_count": 12,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "JCqipvPlGsJnfqsA",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 5,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "WiRlMMamMUxVFhkj",
+          "valid": true,
+          "beat_count": 12,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "igpWHVmTlgsnhvyR",
+          "valid": true,
+          "beat_count": 10,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "xebsViqKRrNvBuGq",
+          "valid": true,
+          "beat_count": 6,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "EmwJpBMScUVuCZPQ",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "vQyUBtdfDuIVeEEs",
+          "valid": true,
+          "beat_count": 12,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "BjRYoiJetSBrdvoF",
+          "valid": true,
+          "beat_count": 8,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "VjJMWqNPpNOGoSRQ",
+          "valid": true,
+          "beat_count": 13,
+          "downbeat_count": 5,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "MfUyrXZdpabbUPym",
+          "valid": true,
+          "beat_count": 13,
+          "downbeat_count": 4,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "LgAdcQSZLviMKRSJ",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 4,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "rQrWDffuEytftMEN",
+          "valid": true,
+          "beat_count": 10,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "yzSxvYKeKGSxsgmg",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 6,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "rRcdvhSgomRFneuo",
+          "valid": true,
+          "beat_count": 8,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "aUMaIbBZDDfBrRbm",
+          "valid": true,
+          "beat_count": 12,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "MlHAstnfEElTLvYu",
+          "valid": true,
+          "beat_count": 12,
+          "downbeat_count": 5,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "sjwqSJqqKRVVVmKF",
+          "valid": true,
+          "beat_count": 8,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "KFbUdXODuqKBBqxB",
+          "valid": true,
+          "beat_count": 8,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "ytUqERnVdYnflUJW",
+          "valid": true,
+          "beat_count": 7,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "arGqdpJnNCBMuHHL",
+          "valid": true,
+          "beat_count": 8,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "CLWeAsQuVrxzfTrZ",
+          "valid": true,
+          "beat_count": 0,
+          "downbeat_count": 0,
+          "insufficient_downbeats": true
+        },
+        {
+          "id": "FeTpACGYCoUIdbjr",
+          "valid": true,
+          "beat_count": 7,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "HuaxuBwyBCpcGcTL",
+          "valid": true,
+          "beat_count": 7,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "rdrNVpGywJSyGmRK",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "KchlAfjUzORkuOtV",
+          "valid": true,
+          "beat_count": 10,
+          "downbeat_count": 6,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "LwzAARbOSCibapNg",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "VVlxOttcekcLVwsS",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "pvzEWmqdjcmADqOC",
+          "valid": true,
+          "beat_count": 7,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "CynaHjYRtpNWqiTO",
+          "valid": true,
+          "beat_count": 9,
+          "downbeat_count": 4,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "saBuilfyOJlWTdeg",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "YUhhumTphbQhyelB",
+          "valid": true,
+          "beat_count": 6,
+          "downbeat_count": 1,
+          "insufficient_downbeats": true
+        },
+        {
+          "id": "RnepAMWPzNvAAkjF",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "UnUfrMWLqfWrMyxA",
+          "valid": true,
+          "beat_count": 7,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "mPdXgCGbwaudDOgC",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 3,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "NxymecTyWYgsXWjM",
+          "valid": true,
+          "beat_count": 11,
+          "downbeat_count": 5,
+          "insufficient_downbeats": false
+        },
+        {
+          "id": "KzctponEGMhyazdK",
+          "valid": true,
+          "beat_count": 8,
+          "downbeat_count": 2,
+          "insufficient_downbeats": false
+        }
+      ]
+    }
+  },
+  "accuracy_verification": {
+    "beat_accuracy": false,
+    "downbeat_accuracy": false,
+    "bar_phase": false,
+    "audio_video_offset": false,
+    "meter": "unknown"
+  },
+  "bar_MS_consumer_execution": "separate music-windows-implementation work, not claimed by this validation"
+}
+

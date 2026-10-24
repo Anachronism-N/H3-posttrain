@@ -1,0 +1,61 @@
+{
+  "schema": "visual_recovery_production_contract_CPU_verified_v2",
+  "code_contract_verified": true,
+  "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_visual_recovery.py",
+  "source_sha256": "d0dddb6dbe4005166113a3f3bb3270e221cfceeb88498b4250e7e0170e0169a3",
+  "tests_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/tests/test_ms_visual_recovery.py",
+  "tests_sha256": "e2e8330026136153aa241a32f282a22f1faf0b35c3e646c3f02c2932894f9eb9",
+  "lead_actual_test_task": "qQl6Sa",
+  "lead_test_count": 66,
+  "lead_test_failed": 0,
+  "independent_test_source": {
+    "path": "/tmp/test_ms_visual_recovery_canonical_roundtrip_20261024.py",
+    "sha256": "1dd2ef4a4f463b515161f701e0fbd5c0627b32498297adc9a2572aca94752f67",
+    "case_count": 25
+  },
+  "original_recovery_tests_count": 41,
+  "verified_production_chains": [
+    "Nonempty plan_stage writes canonical targets, load_plan verifies the same canonical target digest.",
+    "Source digest reuses pinned producer input order, not sorted nested export dictionaries.",
+    "run_stage with an uncertain durable claim returns failed without importing vLLM or loading weights; repeating preserves the same claim and never reissues a call.",
+    "The same immutable plan rejects a second run-output tree before source traversal or model import.",
+    "Preserved rows are compared with actual original.verify_record output, not an unchecked exported caption.",
+    "Original RGB request plus one fixed clarification, frame-derived schema, target, and new lineage are verified before accepting recovery records."
+  ],
+  "negative_results": [
+    {
+      "case": "resealed_caption_prior",
+      "legal_candidate_baseline_passed": true,
+      "rejected": true,
+      "reason": "new request is not pinned original RGB messages plus unique clarification"
+    },
+    {
+      "case": "second_run_output",
+      "legal_claim_baseline_passed": true,
+      "rejected": true,
+      "reason": "run --out differs from immutable plan run output"
+    },
+    {
+      "case": "modified_original_good_caption",
+      "legal_producer_reconstruction_baseline_passed": true,
+      "rejected": true,
+      "reason": "original verified-export row differs from rebuilt producer proof"
+    }
+  ],
+  "history": {
+    "superseded_source": "334adb0b1830f62271948c51faaec48ecac96a1b8b5023d51d5a7ba75b395ce4",
+    "old_nonempty_plan_failed": true,
+    "old_sorted_input_source_digest_incompatible": true,
+    "old_partial_tests_not_relabelled": true
+  },
+  "CPU_only": true,
+  "real_model_inference_run": false,
+  "real_recovery_plan_or_targets_created": false,
+  "full_12000_caption_delivery_complete": false,
+  "source_media_or_weights_read": false,
+  "original_b362_4a_882_modified": false,
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "formal_training": false,
+  "limits": "This verifies synthetic code contracts, not real recovery results. Original eight workers must finish and their source-bound export must verify before any recovery GPU admission."
+}

@@ -61,6 +61,7 @@ td.l{text-align:left;max-width:420px;overflow:hidden;text-overflow:ellipsis}
 <header>
   <b>OmniDance 评审</b>
   <a href="data-review">MotionScript 数据评审</a>
+  <button id="annotationTab" type="button">32点／分窗caption</button>
   <span><button data-tab="cmp" class="tabbtn on">对比评审</button> <button data-tab="sum" class="tabbtn">汇总</button></span>
   <label>评审人 <input id="reviewer" size="8" placeholder="名字"></label>
   <label>预设 <select id="preset"><option value="">（自定义）</option></select></label>
@@ -391,6 +392,80 @@ function bindUI(){
   requestAnimationFrame(tick);
 }
 init().catch(e=>{status("初始化失败："+e);console.error(e)});
+</script>
+
+<script>
+/* Independent, read-only annotation view: never enters model scoring state. */
+(()=>{
+  const dataPath="/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/annotation_compare_v1/data.json";
+  const panel=document.createElement("section");panel.id="annotationCompare";panel.hidden=true;
+  panel.style.cssText="padding:20px;max-width:1800px;margin:auto";document.body.append(panel);
+  let bundle=null;
+  const element=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=String(text);return e};
+  const link=(text,path)=>{const a=element("a",text);a.href=media(path);a.target="_blank";a.rel="noopener";return a};
+  const box=()=>{const e=element("div");e.style.cssText="background:#1a1f26;border:1px solid #2b323c;padding:14px;border-radius:6px";return e};
+  const select=(rows,callback)=>{const e=element("select");rows.forEach(([v,l])=>{const o=element("option",l);o.value=v;e.append(o)});e.onchange=()=>callback(e.value);return e};
+  const video=(path)=>{const e=element("video");e.controls=true;e.preload="metadata";e.src=media(path);e.style.cssText="max-height:600px;max-width:100%;display:block;background:black";return e};
+  const textBlock=(text)=>{const e=element("pre",text);e.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.6 sans-serif";return e};
+  function returnToModels(){panel.hidden=true;document.getElementById("main").style.display="";panel.querySelectorAll("video,audio").forEach(x=>x.pause());document.getElementById("annotationTab").classList.remove("on");if(location.hash==="#annotation")history.replaceState(null,"",location.pathname+location.search)}
+  function render(){
+    panel.replaceChildren();panel.append(element("h1","新32点骨架与不同分窗caption对照"));
+    panel.append(element("p",bundle.note));
+    panel.append(element("p","只展示真实已保存输出。候选不等于动作正确；BPM长度网格首0不是实际拍点，小节来自估计downbeat，音画偏移及踩拍未核准。不会保存评分。"));
+    const back=element("button","返回模型评审");back.onclick=returnToModels;panel.append(back);
+    const skeleton=box();skeleton.append(element("h2","A. 新NLF fresh-detector 32点骨架"));
+    skeleton.append(element("p","绿色：身体22点；蓝色：左侧新增点；橙色：右侧新增点。新增的是掌面MCP和足面锚点，不是指尖。图内只是必要支持，不是可见性保证。"));
+    const host=element("div");skeleton.append(select(bundle.skeleton_cases.map(c=>[c.id,c.id]),id=>drawSkeleton(id)));skeleton.append(host);panel.append(skeleton);
+    const pointNames={22:"左食指掌指关节",23:"左小指掌指关节",24:"右食指掌指关节",25:"右小指掌指关节",26:"左大趾",27:"左小趾",28:"左脚跟",29:"右大趾",30:"右小趾",31:"右脚跟"};
+    function drawSkeleton(id){
+      host.querySelectorAll("video").forEach(v=>v.pause());host.replaceChildren();const c=bundle.skeleton_cases.find(x=>x.id===id);
+      host.append(element("p","预览原视频第"+c.frame_index+"帧，时间"+c.time.toFixed(4)+"秒。下方对照视频依次为原RGB／旧框32点／新检测32点。"));
+      const a=link("",c.preview),img=element("img");img.src=media(c.preview);img.alt="原RGB与新32点骨架编号叠加";img.style.cssText="width:100%;max-width:1408px";a.append(img);host.append(a);
+      host.append(element("p","点击骨架图可打开原尺寸图；红衣case足点全程画外，不补点，也不作为可见足部动作监督。"));
+      const points=element("ul");c.extra_points.forEach(p=>points.append(element("li",p.index+" · "+pointNames[p.index]+" · "+p.name+" · "+(p.in_frame_support?"画内必要支持，遮挡未核准":"画外：不绘制、不视为可见"))));host.append(points);
+      host.append(video(c.video));host.append(link("打开原始视频",c.original_video));
+    }
+    drawSkeleton(bundle.skeleton_cases[0].id);
+    const captions=box();captions.style.marginTop="20px";captions.append(element("h2","B. 同一个源视频，不同chunk策略的原caption"));
+    captions.append(element("p","本区三case与骨架区三case不同，不伪称同源增点分窗联合对照。MotionScript和独立RGB VLM分开；保留英文原文，不填补弃权。时间头是观察窗口，不是精确动作边界。"));
+    let caseId=bundle.caption_cases[0].id,sourceFilter="MotionScript";
+    const controls=element("div");controls.style.cssText="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px";
+    controls.append(select(bundle.caption_cases.map(c=>[c.id,c.id]),id=>{caseId=id;drawCaptions()}));
+    controls.append(select([["MotionScript","原MotionScript"],["独立VLM RGB","独立VLM RGB"],["all","全部来源"]],s=>{sourceFilter=s;drawCaptions()}));captions.append(controls);
+    const captionHost=element("div");captions.append(captionHost);panel.append(captions);
+    function drawCaptions(){
+      captionHost.querySelectorAll("video,audio").forEach(v=>v.pause());captionHost.replaceChildren();const c=bundle.caption_cases.find(x=>x.id===caseId);
+      const v=video(c.video);captionHost.append(v);const audio=element("audio");audio.controls=true;audio.preload="none";audio.src=media(c.audio);captionHost.append(element("p","原配对音乐（可单独播放；音画偏移未独立验证）"),audio);
+      const grid=element("div");grid.style.cssText="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px";
+      c.views.filter(x=>sourceFilter==="all"||x.source===sourceFilter).forEach(view=>{
+        const column=box();column.append(element("h3",view.label),element("p",view.source));
+        view.windows.forEach(w=>{
+          const section=element("section");section.style.cssText="padding:10px 0;border-top:1px solid #2b323c";
+          const seek=element("button","["+w.start.toFixed(6)+", "+w.end.toFixed(6)+") 秒");
+          seek.onclick=()=>{const go=()=>{v.pause();v.currentTime=w.start;v.scrollIntoView({block:"nearest",behavior:"smooth"})};v.readyState?go():v.addEventListener("loadedmetadata",go,{once:true})};section.append(seek);
+          section.append(element("p",w.status+(w.reason?" · "+w.reason:"")));
+          section.append(textBlock(w.caption||"【无完整正文／弃权，未补写静止动作】"));
+          if(w.partial_caption){const d=element("details");d.append(element("summary","仅部分支持正文，不是完整窗口caption"),textBlock(w.partial_caption));section.append(d)}
+          if(w.raw_original_MS){const d=element("details");d.append(element("summary","原MS聚合与非聚合输出（原文）"),textBlock(JSON.stringify(w.raw_original_MS,null,2)));section.append(d)}
+          if(w.events){const d=element("details");d.append(element("summary","原VLM事件与证据帧（非精确动作时间）"),textBlock(JSON.stringify(w.events,null,2)));section.append(d)}
+          column.append(section);
+        });grid.append(column);
+      });captionHost.append(grid);
+    }
+    drawCaptions();
+  }
+  async function show(){
+    if(typeof pauseAll==="function")pauseAll();document.getElementById("main").style.display="none";panel.hidden=false;document.getElementById("annotationTab").classList.add("on");
+    if(location.hash!=="#annotation")history.replaceState(null,"",location.pathname+location.search+"#annotation");
+    if(!bundle){panel.replaceChildren(element("p","加载已完成骨架和caption对照…"));try{const res=await fetch(media(dataPath)+"&v=annotation-20261024",{cache:"no-store"});if(!res.ok)throw Error("HTTP "+res.status);const data=await res.json();if(data.schema!=="annotation_compare_review_bundle_v1")throw Error("数据来源版本不符");bundle=data}catch(e){panel.replaceChildren(element("p","对照数据加载失败："+e.message));return}}
+    render();
+  }
+  document.getElementById("annotationTab").onclick=show;
+  document.querySelectorAll(".tabbtn").forEach(b=>b.addEventListener("click",returnToModels,true));
+  document.addEventListener("keydown",e=>{if(!panel.hidden&&!['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))e.stopImmediatePropagation()},true);
+  window.addEventListener("hashchange",()=>{if(location.hash==="#annotation")show();else if(!panel.hidden)returnToModels()});
+  if(location.hash==="#annotation")show();
+})();
 </script>
 </body>
 </html>

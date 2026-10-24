@@ -1,0 +1,91 @@
+{
+  "schema": "ms_visual_recovery_independent_final_cpu_review_v1",
+  "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_visual_recovery.py",
+  "source_start_sha256": "d0dddb6dbe4005166113a3f3bb3270e221cfceeb88498b4250e7e0170e0169a3",
+  "source_end_sha256": "d0dddb6dbe4005166113a3f3bb3270e221cfceeb88498b4250e7e0170e0169a3",
+  "tests_start_sha256": "e2e8330026136153aa241a32f282a22f1faf0b35c3e646c3f02c2932894f9eb9",
+  "tests_end_sha256": "e2e8330026136153aa241a32f282a22f1faf0b35c3e646c3f02c2932894f9eb9",
+  "independent_report": {
+    "path": "/tmp/ms_visual_recovery_independent_d0dd_cpu_report_20261024_v1.json",
+    "sha256": "e7631f4629b8ab9abcd003e6490ff5ddb90e6272ba3c88adb69ef5fabb007aba",
+    "cases": 25,
+    "passed": 25
+  },
+  "independent_script": {
+    "path": "/tmp/test_ms_visual_recovery_canonical_roundtrip_20261024.py",
+    "sha256": "1dd2ef4a4f463b515161f701e0fbd5c0627b32498297adc9a2572aca94752f67"
+  },
+  "existing_cpu_regression": {
+    "recovery_passed": 41,
+    "combined_passed": 112,
+    "combined_skipped": 1,
+    "skipped_reason": "tests/test_ms_visual_batch.py:365 installed FFmpeg/FFprobe unavailable; no installation attempted",
+    "files": [
+      "tests/test_ms_visual_recovery.py",
+      "tests/test_ms_visual_export.py",
+      "tests/test_ms_visual_batch.py",
+      "tests/test_ms_visual_constrained_retry.py"
+    ]
+  },
+  "actual_shape_cpu_probe": {
+    "path": "/tmp/ms_visual_recovery_shape_cpu_probe_20261024.py",
+    "sha256": "f9755a5ead4738f4bef5339001e785cf9ff9cc52c3626cc55b990654a7da534f",
+    "python": "/opt/venv_vllm/bin/python",
+    "cpu_site_path": "/opt/venv_eval/lib/python3.11/site-packages",
+    "CUDA_VISIBLE_DEVICES": "",
+    "source_sha256": "d0dddb6dbe4005166113a3f3bb3270e221cfceeb88498b4250e7e0170e0169a3",
+    "schema_sha256": "02d033e767547c2418708faabf1844129872dd10b9c2dc31093004df74c67c09",
+    "indices": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      31
+    ],
+    "versions": {
+      "vllm": "0.31.0",
+      "xgrammar": "0.2.7",
+      "llguidance": "1.7.6"
+    },
+    "results": {
+      "valid_candidate": true,
+      "true_empty_abstain": true,
+      "nonempty_abstain": false,
+      "single_frame": false,
+      "foreign_frame": false,
+      "duplicate_indices_shape_only": true,
+      "duplicate_indices_original_validator_rejected": true
+    },
+    "actual_CPU_compile_performed": true,
+    "synthetic_ASCII_tokenizer_only": true
+  },
+  "verified_boundaries": [
+    "Legal full source/request/frame/raw/target/lineage/candidate proof passes before each changed artifact is rejected.",
+    "Prior request injection with resealed request SHA rejected; same old RGB plus exactly one clarification retained.",
+    "Actual nonempty production plan_stage/canonical targets JSONL/load_plan/expected artifacts/run_stage two uncertain resumes execute; no model load or repeated claim; runB rejected before original pool read.",
+    "Actual original.verify_record rebuild, with canonical serialized exported original_input, passes matching base and rejects resealed good caption and bool-int facts.",
+    "Shape-only XGrammar CPU compile accepts true empty abstention and does not force distinct pair facts; duplicates rejected only by original postvalidator.",
+    "Candidate+abstain or failed terminal windows do not satisfy full available caption delivery; no semantic/human/GT approval.",
+    "Active original pool pending before exporter/frame traversal; missing original frame rejected without call claim."
+  ],
+  "historical_true_bug": {
+    "source_sha256": "334adb0b1830f62271948c51faaec48ecac96a1b8b5023d51d5a7ba75b395ce4",
+    "issue": "Nonempty production plan_stage wrote sorted JSONL but stored insertion-order batch.digest(target), causing load_plan target content SHA mismatch. Canonical nested original_input also required original producer input-order source reconstruction.",
+    "fixed_by": "New target_digest uses original canonical serialization; source identity rebuilt from pinned original manifest/final input insertion order, after typed content equality.",
+    "snapshot": "/tmp/ms_visual_recovery_334adb_snapshot.py",
+    "independent_trace_script_snapshot": "/tmp/test_ms_visual_recovery_independent_334adb_snapshot.py"
+  },
+  "synthetic_only": true,
+  "shared_files_modified": false,
+  "GPU_or_LLM_call": false,
+  "actual_model_loaded": false,
+  "actual_media_read": false,
+  "actual_recovery_run_verified": false,
+  "actual_full12000_caption_delivery_verified": false,
+  "technical_code_contract_review_complete": true,
+  "scope_limits": "Only these finite small-synthetic CPU interfaces reviewed. Full8 actual terminal/export, actual recovery GPU generation, resource exit/final merge and full12000 nonempty caption delivery remain unverified by this report."
+}

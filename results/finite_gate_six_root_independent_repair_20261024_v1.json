@@ -1,0 +1,142 @@
+{
+  "schema": "finite_gate_six_root_independent_repair_summary_v1",
+  "six_root_repair_complete": true,
+  "runs": [
+    {
+      "ref": {
+        "path": "/tmp/finite_independent_883c_actual_cpu_report_20261024_v1.json",
+        "sha256": "44e74ce0d807dd5b7c9c39c360b8914bc3441e09dfc44247c2e320a47002a9fa"
+      },
+      "source_start": "883c4b5e01ae0d52920145f8d7f3fa7d8544dd0533ccfb8c9805b61183c9a7af",
+      "source_end": "883c4b5e01ae0d52920145f8d7f3fa7d8544dd0533ccfb8c9805b61183c9a7af",
+      "tests_start": "769910b2e6646ed9f825de310c9d9d42e6f17eb7aa53a334fe768c0e85865052",
+      "tests_end": "769910b2e6646ed9f825de310c9d9d42e6f17eb7aa53a334fe768c0e85865052",
+      "case_count": 32,
+      "case_counts": {
+        "accepted": 11,
+        "pending": 2,
+        "rejected": 19
+      },
+      "pytest_counts": {
+        "failed": 11,
+        "passed": 21
+      },
+      "executable_ref": {
+        "path": "/tmp/final_gate_independent_audit_432abe09_snapshot.py",
+        "sha256": "37581487b39e61969f0d529f8155cf27c98d2e6f2b346ffae45876e09b34a3d1"
+      }
+    },
+    {
+      "ref": {
+        "path": "/tmp/finite_independent_8c6c_actual_cpu_report_20261024_v1.json",
+        "sha256": "7857a39ae358b8f48eaf6abce8cbd12c8ee2ddd7521e143cff2f3da06957e00e"
+      },
+      "source_start": "8c6c7a5d26a3f77ac33382ab3dd6aa4121088c733b568c2bd0de4806b71a1458",
+      "source_end": "8c6c7a5d26a3f77ac33382ab3dd6aa4121088c733b568c2bd0de4806b71a1458",
+      "tests_start": "4e4ada56d3033b39f79ccf77388f95b1221f539b6b0690b5b98701b97df03c8e",
+      "tests_end": "4e4ada56d3033b39f79ccf77388f95b1221f539b6b0690b5b98701b97df03c8e",
+      "case_count": 34,
+      "case_counts": {
+        "accepted": 4,
+        "pending": 2,
+        "rejected": 28
+      },
+      "pytest_counts": {
+        "failed": 2,
+        "passed": 32
+      },
+      "executable_ref": {
+        "path": "/tmp/final_gate_independent_audit_8c6c_bound.py",
+        "sha256": "ea3a5f5fd1ac830f79a98ed8cf4d4348b19f1d891cd8e71fbe7fa93fc0984278"
+      }
+    },
+    {
+      "ref": {
+        "path": "/tmp/finite_independent_final_c8c6_actual_cpu_report_20261024_v1.json",
+        "sha256": "7df35819d131c2c992c603ffcfeaac6cb9502986fc70d97ef9e7dd790438ba40"
+      },
+      "source_start": "c8c6d3a3f262a541196300827afb3b46229b98d36319ffdf467c5342c7f70059",
+      "source_end": "c8c6d3a3f262a541196300827afb3b46229b98d36319ffdf467c5342c7f70059",
+      "tests_start": "a3bd5a4ea151a05bd1b09e31bbc20ac098cd1c9d380568227585b52e59a9d115",
+      "tests_end": "a3bd5a4ea151a05bd1b09e31bbc20ac098cd1c9d380568227585b52e59a9d115",
+      "case_count": 34,
+      "case_counts": {
+        "accepted": 2,
+        "pending": 2,
+        "rejected": 30
+      },
+      "pytest_counts": {
+        "failed": 0,
+        "passed": 34
+      },
+      "executable_ref": {
+        "path": "/tmp/final_gate_independent_audit_final_20261024.py",
+        "sha256": "a84b3471c35896d5c2af01b9cb7efe75b00b01158e4bfeb43017bfaf4e14a45c"
+      }
+    }
+  ],
+  "original_wrong_accepts": 11,
+  "final_all11_rejected": true,
+  "final_legal_positive_bases": 2,
+  "final_original21_cases_not_accepted": true,
+  "fixed_cases": [
+    {
+      "name": "test_latest_required_consumer_omitted_from_git_must_not_pass",
+      "result": "rejected",
+      "reason": "package omits required final checker/exporter/producer/publisher code or tests"
+    },
+    {
+      "name": "test_shared_model_inventory_spoof_must_not_pass",
+      "result": "rejected",
+      "reason": "model canonical identity digest differs from declared root/file paths and content SHAs"
+    },
+    {
+      "name": "test_adversarial_must_not_pass[raw_missing]",
+      "result": "rejected",
+      "reason": "actual original raw response file missing"
+    },
+    {
+      "name": "test_adversarial_must_not_pass[raw_corrupted]",
+      "result": "rejected",
+      "reason": "actual original raw response bytes SHA differs from receipt"
+    },
+    {
+      "name": "test_adversarial_must_not_pass[candidate_raw_disagrees]",
+      "result": "rejected",
+      "reason": "shared candidate facts differ from original raw parser/validator reconstruction"
+    },
+    {
+      "name": "test_adversarial_must_not_pass[source_identity_reseal]",
+      "result": "rejected",
+      "reason": "shared source canonical identity differs from pinned input/plan"
+    },
+    {
+      "name": "test_adversarial_must_not_pass[record_sid_reused]",
+      "result": "rejected",
+      "reason": "shared actual receipt ID/source/window/params differs from pinned input"
+    },
+    {
+      "name": "test_adversarial_must_not_pass[manifest_source_wrong]",
+      "result": "rejected",
+      "reason": "shared evidence manifest source/input/window binding differs"
+    },
+    {
+      "name": "test_adversarial_must_not_pass[candidate_binding_wrong]",
+      "result": "rejected",
+      "reason": "shared candidate raw/source/model/request binding differs"
+    },
+    {
+      "name": "test_original_short_negative[support_abstain_caption_filled]",
+      "result": "rejected",
+      "reason": "short-support abstention summary contains fabricated caption/events"
+    },
+    {
+      "name": "test_original_short_negative[short_support_other_sid]",
+      "result": "rejected",
+      "reason": "short-support receipt not bound to actual source/window/model"
+    }
+  ],
+  "actual_full12000_goal_completed": false,
+  "real_model_or_media_read_by_independent_auditor": false,
+  "real_producer_or_raw_modified": false
+}

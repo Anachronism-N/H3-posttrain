@@ -265,7 +265,7 @@
 
 以上章节保留当时状态；后续实证详见 [notes31](31_bar_chunking_and_rgb32_execution_plan_20261024.md)，不得把旧“未运行”作为当前结论。
 
-- 原MS全12,000源／24,000固定窗口首后验已真实提交，`complete.json` SHA `caeaa3967245e49f365990268103538a35f82fde044017c669b9489c391aa2ae`。A严格候选11,041／12,000；B候选22,006／24,000。B两窗完整10,327源、仅一窗1,352、全弃权321，合计1,673源没有完整B正文，不用A回填、不把部分支持改静止。独立b65 canonical只读验真仍唯一执行，外部验真receipt未到则最终MS门禁仍pending。旧框架句柄killed不伪原exit0，数据commit与任务生命周期分别记录。
+- 原MS全12,000源／24,000固定窗口首后验已真实提交，`complete.json` SHA `caeaa3967245e49f365990268103538a35f82fde044017c669b9489c391aa2ae`。A严格候选11,041／12,000；B候选22,006／24,000。B两窗完整10,327源、仅一窗1,352、全弃权321，合计1,673源没有完整B正文，不用A回填、不把部分支持改静止。独立b65 canonical只读验真已真实结束exit0，外部receipt SHA `b6c1ca622508f5f387fe9abdfa8dcd0202ff87c426fa01bf44bec7293c27f6a7`证明全部canonical预期字节一致；MS基线技术任务结束，但其正文覆盖不足不改。旧框架句柄killed不伪原exit0，数据commit与任务生命周期分别记录。
 - 新NLF阶段fresh detector＋32点已真实三源执行；原RGB／cached32／fresh32叠加与fresh-cached×numeric-necessary共12路whole／fixed动作控制均完成。红衣画外足面被必要支持mask排除，掌足遮挡／鞋跟可靠性仍受限，未建立caption准确优势。源码、测试与有限实证已发布，不扩大50或12k新NLF。
 - BPM同50真实MS以4×60/BPM长度网格生成109实际窗口，99候选／10弃权，42源全available-support正文；不是旧C拍点或小节首拍。BeatThis官方final0在隔离环境CPU真实检测fixed3＋同50共53音频，并由独立v2严格验证原数组，不热改v1源。
 - 真正相邻检测downbeat原115小节区间保留，两条首拍不足不补造。strict同50实际211窗／142候选／69弃权、全50完整14（48个首拍充分源内12）；merged短边缘实际136窗／111候选／25弃权、全50完整34（首拍充分源内32）。不以全文覆盖或重复4gram当动作准确率／踩拍证明。

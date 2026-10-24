@@ -266,7 +266,7 @@ done
 
 2026-10-24 04:35:46 UTC的全量失败快照为44个SID、45个窗口：38个两帧证据拒绝、6个正文超过140词、1个abstain却正文非空。所有45窗均正常stop/EOS且未达1200 token cap，不能归因为OOM或截断；此快照不是最终全12k分母。原raw和失败记录保留，旧两窗pair-enum只修格式且caption逐字未变，不可冒充全失败池的动作事实修复。
 
-当前8分片仍继续生成。原MS首后验已提交真实12,000源／24,000窗口终态，随后唯一b65独立canonical只读验真仍在运行；不重复启动、不修改运行源。BPM同50与BeatThis真实首拍检测的后续实跑已完成，见下述更新；真正小节窗口／MS-VLM共享消费与独立边界后验仍分开验收。整体12k可用正文、最终导出、最后Git远端HEAD与资源终态仍待真实验收。
+当前8分片仍继续生成。原MS首后验已提交真实12,000源／24,000窗口终态，随后唯一b65独立canonical只读验真也已结束exit0并产生来源绑定外部收据；不重复启动、不修改运行源。BPM同50与BeatThis真实首拍检测的后续实跑已完成，见下述更新；真正小节窗口／MS-VLM共享消费与独立边界后验仍分开验收。整体12k可用正文、最终导出、最后Git远端HEAD与资源终态仍待真实验收。
 
 ### 新三类失败窗口的单次重新观察
 
@@ -296,8 +296,14 @@ BeatThis官方final0已真实在隔离环境CPU执行fixed3＋同50共53条；53
 
 独立最终验收门禁最终复核在32次合成生产调用中发现11个错误接受反例、六类根因：原raw未实际读取或候选未从raw重建，源/SID未锚原共享计划，manifest/candidate binding漏检，支持弃权可留虚构正文或异SID，模型25文件清单可保标签而伪造，以及Git最小包遗漏新增必验代码。真实22窗原raw和来源已经单独验真，不代表门禁没有漏洞；修复只改独立checker／tests，不修改已执行producer、原始响应或再运行模型。修后须先通过符合原四键协议与真实摘要定义的合法基线，再逐11个单点反例证明拒绝，不能把fixture本身非法导致拒绝当修复完成。
 
+**上述六类门禁修复已随后完成**：最终checker源码SHA `c8c6d3a3f262a541196300827afb3b46229b98d36319ffdf467c5342c7f70059`，tests SHA `a3bd5a4ea151a05bd1b09e31bbc20ac098cd1c9d380568227585b52e59a9d115`。作者、主会话及独立审计均实际执行166项回归通过；独立34项中两合法基线先通过、30项拒绝、两准备／过期状态正确pending，原11个错误接受反例全部拒绝，不写成所有32negative都rejected。模型摘要严格复用原root／path／SHA不排序字节定义，另绑定25文件内容与尺寸摘要，不再读取67GB权重。修后真实22原raw／来源／candidate／模型清单小产物复验通过，未改实际producer或原始响应。
+
+详见 [`finite_gate_six_root_independent_repair_20261024_v1.json`](../results/finite_gate_six_root_independent_repair_20261024_v1.json)，三版证据各保原source／test／反例结果，未把原883c或中修8c6c报告冒最终版。实际综合验收仍pending，剩主video-first全12k正文／导出、最后Git包与最终64卡资源；166测试或有限22成功不充整体goal。
+
+MS独立canonical全12k收尾详见 [`ms12000_independent_canonical_verified_20261024_v1.json`](../results/ms12000_independent_canonical_verified_20261024_v1.json)：原首后验三JSONL均与b65从producer重建的预期字节一致，实际supervisor exit0。B全文仍只有10,327源，未把1673缺口批准为完整caption或训练目标。
+
 真实同50有限结果与来源见 [`music_windows_same50_finite_trials_20261024_v1.json`](../results/music_windows_same50_finite_trials_20261024_v1.json)。strict实际211窗／142candidate／69abstain，全50中14条全available正文，但48条首拍充分源内只有12条；merged实际136窗／111candidate／25abstain，全50中34条全available正文，首拍充分48源内32条。两条首拍不足只能保残段，不能将14／34冒完整小节覆盖。原115个相邻检测首拍区间在两策略中保持相同，不来自BPM网格。
 
 精确时间与类型伴随收据为 [`music_window_exact_pts_typed_verification_20261024_v1.json`](../results/music_window_exact_pts_typed_verification_20261024_v1.json)，SHA `89f7cee6d8df7155fecd2a5fb8b42edb79df7f0da6a33274c27bcccc0d54bda7`：实际probe50个视频时间数组并核三策略150份报告，精确digest与原共享plan绑定一致。此前字段摘要取NLF并在1e-5内匹配video，现由独立真probe证明，不修改原报告或推理源。独立canonical JSON类型比较拒False冒0、True冒索引等重封，前后验器误读MS窗口字段的失败保留、按真实window_start／end修正后实际运行exit0，不用窄测试替代真150份验真。
 
-原MS全量首后验已提交12,000源／24,000窗口；B固定窗口仅10,327源两窗完整、1,352源仅一窗、321源全弃权，合计1,673源不能给完整B正文。唯一v2 canonical只读验真继续运行，尚无外部终态收据时不宣称最终通过，不伪原框架killed句柄为exit0。完整视频VLM12k仍是另一在途主线。
+原MS全量首后验已提交12,000源／24,000窗口；B固定窗口仅10,327源两窗完整、1,352源仅一窗、321源全弃权，合计1,673源不能给完整B正文。唯一v2 canonical只读验真已实际完成exit0，外部receipt `b6c1ca622508f5f387fe9abdfa8dcd0202ff87c426fa01bf44bec7293c27f6a7`及supervisor finished证明原三JSONL预期字节一致；不伪原框架killed句柄为exit0。完整视频VLM12k仍是另一在途主线。

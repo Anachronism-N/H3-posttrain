@@ -1,0 +1,476 @@
+{
+  "schema": "nlf-fresh-detector32-fixed3-execution-and-compare-terminal-v1",
+  "complete": true,
+  "actual_fresh_detector_execution": true,
+  "actual_fixed3": 3,
+  "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_nlf_rgb32.py",
+  "source_sha256": "8875af505ead1e86313bcafe4aaf18f76c87eac0287d6dd1a2c0877e61c985d5",
+  "test_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/tests/test_ms_nlf_rgb32.py",
+  "test_sha256": "c468aa38dd861c9fb5be343c31c9b7e0167517a6cd779bbb0734fb0bae8864fb",
+  "tests": {
+    "N1_pytest_passed": 16,
+    "N1_subtests_passed": 13,
+    "N2_unittest_passed": 16,
+    "N2_pytest_unavailable_not_installed": true
+  },
+  "compare_helper_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/runtime_jobs/nlf_rgb32_fresh_compare_v1.py",
+  "compare_helper_sha256": "3f21369fbe60ab5f2f341260b1eab682c6fb35bb563f0aa577640d794e82146b",
+  "producer_terminal_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/finished.json",
+  "producer_terminal_sha256": "87ed9a42f1e496a2c84802c00ce64c377b63c4e590b28e483d904b6d93dc38f5",
+  "independent_comparison_receipt_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison_verification_cpu.json",
+  "independent_comparison_receipt_sha256": "ac281672a0be6a3f71922509d95ed07e296be72fef213f4ec8373590e9911ace",
+  "resource_refs": {
+    "finished.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/finished.json",
+      "sha256": "07d859e9ba7b6d50a8edeb5bfd819ef2f7fac46fd1a845d38241b8aea34ddc4f"
+    },
+    "worker_exit.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/worker_exit.json",
+      "sha256": "4def447d247b044b1454e8851e47f6fe22f2fe4444d9062ce8ec35fffdc5e97e"
+    },
+    "holder_restored.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/holder_restored.json",
+      "sha256": "6c19f009ac38d3d92bc636967ec588452ba8e546c209c14286807a332690fd62"
+    },
+    "admission.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/admission.json",
+      "sha256": "cc9310ea0f180b922f7809702a1401cf358fc758b6cb10baa4e873d273cd8489"
+    },
+    "live.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/live.json",
+      "sha256": "e2bc04c82f89eee3a286ff163827d2b2810f53f4d966b4357e92ef0d718f407f"
+    }
+  },
+  "resource_usage": {
+    "exit_code": 0,
+    "child_pid": 3071298,
+    "source_unchanged": true,
+    "cgroup_before": 414578720768,
+    "cgroup_peak": 417224896512,
+    "gpu_peak_MiB": 2187
+  },
+  "gpu2_restored_holder": {
+    "pid": 3071686,
+    "uid": 0,
+    "ppid": 3071153,
+    "start_ticks": 527318943,
+    "argv": [
+      "/opt/venv_eval/bin/python",
+      "-u",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/hold_gpu.py"
+    ],
+    "state": "R"
+  },
+  "gpu2_uuid": "GPU-8b229be5-2232-3cb4-19ce-4189062ceb8d",
+  "gpu2_restore_confirmed_by_actual_nvidia_smi_read": {
+    "index": 2,
+    "util_percent": 100,
+    "used_memory_MiB": 975,
+    "pid": 3071686,
+    "parent": 3071153,
+    "state": "R"
+  },
+  "cases": [
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "manifest_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/raw/wJPptuhclZmKAEWs/manifest.json",
+      "manifest_sha256": "1859194a920f20a6ecd05bf69736a0d531d284293019b14222558954c0979c08",
+      "raw_sha256": "912a7850bda91e424ba400b871e3a7d34436f4133d0b7516b69c8819ca58e5b2",
+      "frame_count": 81,
+      "detected_frames": 81,
+      "multiple_person_frames": 0,
+      "raw_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/raw/wJPptuhclZmKAEWs/raw.npz",
+      "source_paths": {
+        "video": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJPptuhclZmKAEWs.mp4",
+        "model": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/nlf_l_multi_0.3.2.torchscript",
+        "spec": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/body_palm_foot32.json",
+        "input_manifest": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/chunk_caption12k_input_v1/fixed3_manifest.jsonl"
+      },
+      "source_sha256": {
+        "video": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+        "model": "52bee28edb6ea9148691331df87cfc238d7e3d9134dc60104a5aaed282a9ddad",
+        "spec": "bcb8f9afcb8d0dcc62640e193e3de31dc875020f7e0191fc8af3c5800dad555f",
+        "input_manifest": "14a38a179bc0a1f0afc4fd9d6eef6e74797564db696cad20503e495b57d34361"
+      },
+      "selected_index_histogram": {
+        "0": 81
+      },
+      "fresh_numeric_valid_pointframes": 2592,
+      "fresh_cached_box_IoU_quantiles": [
+        0.9989155530929565,
+        1,
+        1
+      ],
+      "adjacent_selected_box_IoU_min": 0.782193124294281,
+      "adjacent_box_IoU_below_0_3_frameends": [],
+      "independent_allpeople_offsets_largestarea_and_emptyshape_verified": true,
+      "allpeople_geometry_shapes": {
+        "all_boxes": [
+          81,
+          5
+        ],
+        "all_points_m": [
+          81,
+          32,
+          3
+        ],
+        "all_points2d_px": [
+          81,
+          32,
+          2
+        ],
+        "all_uncertainty": [
+          81,
+          32
+        ]
+      },
+      "raw_geometry_shape": [
+        81,
+        32,
+        3
+      ],
+      "raw_pixels_shape": [
+        81,
+        32,
+        2
+      ],
+      "source_group": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/part_000/video/wJPptuhclZmKAEWs.mp4",
+      "split": "test",
+      "no_external_boxes_supplied": true,
+      "detection_config": {
+        "threshold": 0.3,
+        "nms_iou_threshold": 0.7,
+        "max_detections": 150,
+        "suppress_implausible_poses": true,
+        "extra_boxes": null
+      },
+      "native_api_result_scope": "boxes/person counts retained after NLF exported suppress_implausible_poses filtering; not claimed pre-filter detector proposals",
+      "comparison_receipt_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPptuhclZmKAEWs/comparison_receipt.json",
+      "comparison_receipt_sha256": "f20eafa8ecb08b864e08ef04217e2dbf51b63fb0dbc09f50b2afb57829152d6b",
+      "necessary_pointframes_cached_fresh": [
+        2592,
+        2592
+      ],
+      "inframe_pointdifference_px_quantiles": [
+        0.9233266413211823,
+        2.42232735157013,
+        6.524636831283612
+      ],
+      "fresh_extra_outside_counts": {
+        "left_index_mcp": 0,
+        "left_little_mcp": 0,
+        "right_index_mcp": 0,
+        "right_little_mcp": 0,
+        "left_big_toe": 0,
+        "left_little_toe": 0,
+        "left_heel": 0,
+        "right_big_toe": 0,
+        "right_little_toe": 0,
+        "right_heel": 0
+      },
+      "comparison_artifacts": {
+        "frame_000.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPptuhclZmKAEWs/frame_000.png",
+          "sha256": "59a332cb3471c1418aad7402456803d276d26496d12d440b0006cb217a4c1a64"
+        },
+        "same_rgb_mask_comparison.npz": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPptuhclZmKAEWs/same_rgb_mask_comparison.npz",
+          "sha256": "510cc7df63f6f0f851e441897e31269d31599479a4c7c4399f096c5daaaa6f38"
+        },
+        "frame_032.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPptuhclZmKAEWs/frame_032.png",
+          "sha256": "d61662b81583be24fd9b90cbd1793fddef794b84ea76322e4d9228ebff40e71a"
+        },
+        "frame_080.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPptuhclZmKAEWs/frame_080.png",
+          "sha256": "a6c13051cbb35f3249aa28cdd29e7585f873a448ae82360bdb2f884bc5c6071f"
+        },
+        "original_cached32_fresh_detector32.mp4": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPptuhclZmKAEWs/original_cached32_fresh_detector32.mp4",
+          "sha256": "a1fa6f61edbf4b3f722378bac63463669b4f89d026b3ee747a8387d41fee4ceb"
+        }
+      },
+      "comparison_video_frames": 81,
+      "comparison_video_fps": 16
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "manifest_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/raw/wJPrpFsThWAcBQIw/manifest.json",
+      "manifest_sha256": "305391754de9d08bae3066e0b8e5e3b8147de8818fecc7479db3766c1efbd8b3",
+      "raw_sha256": "6a205ac3ac803c5c203482c07e3c353736bb2a8929f4bac3000c79192ac2dbbc",
+      "frame_count": 81,
+      "detected_frames": 81,
+      "multiple_person_frames": 37,
+      "raw_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/raw/wJPrpFsThWAcBQIw/raw.npz",
+      "source_paths": {
+        "video": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJPrpFsThWAcBQIw.mp4",
+        "model": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/nlf_l_multi_0.3.2.torchscript",
+        "spec": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/body_palm_foot32.json",
+        "input_manifest": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/chunk_caption12k_input_v1/fixed3_manifest.jsonl"
+      },
+      "source_sha256": {
+        "video": "a967740e4258bcdc0f0cb3c03d8d4fa4f7b180d703812e951ce90330ca3ed963",
+        "model": "52bee28edb6ea9148691331df87cfc238d7e3d9134dc60104a5aaed282a9ddad",
+        "spec": "bcb8f9afcb8d0dcc62640e193e3de31dc875020f7e0191fc8af3c5800dad555f",
+        "input_manifest": "14a38a179bc0a1f0afc4fd9d6eef6e74797564db696cad20503e495b57d34361"
+      },
+      "selected_index_histogram": {
+        "0": 81
+      },
+      "fresh_numeric_valid_pointframes": 2592,
+      "fresh_cached_box_IoU_quantiles": [
+        0.9991747736930847,
+        1,
+        1
+      ],
+      "adjacent_selected_box_IoU_min": 0.766028881072998,
+      "adjacent_box_IoU_below_0_3_frameends": [],
+      "independent_allpeople_offsets_largestarea_and_emptyshape_verified": true,
+      "allpeople_geometry_shapes": {
+        "all_boxes": [
+          118,
+          5
+        ],
+        "all_points_m": [
+          118,
+          32,
+          3
+        ],
+        "all_points2d_px": [
+          118,
+          32,
+          2
+        ],
+        "all_uncertainty": [
+          118,
+          32
+        ]
+      },
+      "raw_geometry_shape": [
+        81,
+        32,
+        3
+      ],
+      "raw_pixels_shape": [
+        81,
+        32,
+        2
+      ],
+      "source_group": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/part_000/video/wJPrpFsThWAcBQIw.mp4",
+      "split": "test",
+      "no_external_boxes_supplied": true,
+      "detection_config": {
+        "threshold": 0.3,
+        "nms_iou_threshold": 0.7,
+        "max_detections": 150,
+        "suppress_implausible_poses": true,
+        "extra_boxes": null
+      },
+      "native_api_result_scope": "boxes/person counts retained after NLF exported suppress_implausible_poses filtering; not claimed pre-filter detector proposals",
+      "comparison_receipt_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPrpFsThWAcBQIw/comparison_receipt.json",
+      "comparison_receipt_sha256": "39b76c8aefcde20ebbfd7297ec9426b9229f098a22245e6f68cf1859d17cea1b",
+      "necessary_pointframes_cached_fresh": [
+        1575,
+        1575
+      ],
+      "inframe_pointdifference_px_quantiles": [
+        2.1728439331054688,
+        5.350486469268799,
+        9.916548118591308
+      ],
+      "fresh_extra_outside_counts": {
+        "left_index_mcp": 14,
+        "left_little_mcp": 13,
+        "right_index_mcp": 9,
+        "right_little_mcp": 9,
+        "left_big_toe": 81,
+        "left_little_toe": 81,
+        "left_heel": 81,
+        "right_big_toe": 81,
+        "right_little_toe": 81,
+        "right_heel": 81
+      },
+      "comparison_artifacts": {
+        "frame_000.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPrpFsThWAcBQIw/frame_000.png",
+          "sha256": "e55432f1a21eab434de28c29cc7ebc457b34b2b58c43402787c538f12095119f"
+        },
+        "same_rgb_mask_comparison.npz": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPrpFsThWAcBQIw/same_rgb_mask_comparison.npz",
+          "sha256": "dec01adbb185ecc733697be14cfdc992d599c8f1cf0f56d1bad30d6b634713c3"
+        },
+        "frame_032.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPrpFsThWAcBQIw/frame_032.png",
+          "sha256": "55cb5ff2aaec4ea2245818b99aeb3c180094ef9d31569cc4238581114126b50c"
+        },
+        "frame_080.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPrpFsThWAcBQIw/frame_080.png",
+          "sha256": "2395a32624ab5c2fbd1285f3cf2d73f69e3217917f23fd9521c03529376ba597"
+        },
+        "original_cached32_fresh_detector32.mp4": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPrpFsThWAcBQIw/original_cached32_fresh_detector32.mp4",
+          "sha256": "52ba54af91e061c4cec59f92db429d0e2295d80df58c2c969832a5d3dcbbf3ad"
+        }
+      },
+      "comparison_video_frames": 81,
+      "comparison_video_fps": 16
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "manifest_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/raw/wJQTclrlOLEYYfTB/manifest.json",
+      "manifest_sha256": "f71b41a1c9f12b594a2b2dfb5171475efcbb2aa6fe6d544de8194d594858d295",
+      "raw_sha256": "02eeef9968fdaf725031e55ce28cf69f154490457655faee722eec8356079b78",
+      "frame_count": 81,
+      "detected_frames": 81,
+      "multiple_person_frames": 0,
+      "raw_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/raw/wJQTclrlOLEYYfTB/raw.npz",
+      "source_paths": {
+        "video": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJQTclrlOLEYYfTB.mp4",
+        "model": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/nlf_l_multi_0.3.2.torchscript",
+        "spec": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/body_palm_foot32.json",
+        "input_manifest": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/chunk_caption12k_input_v1/fixed3_manifest.jsonl"
+      },
+      "source_sha256": {
+        "video": "187d2b2d4542eb4a6d0fdcdb8bad717876d56cf103772d0af439b2cf3656bc71",
+        "model": "52bee28edb6ea9148691331df87cfc238d7e3d9134dc60104a5aaed282a9ddad",
+        "spec": "bcb8f9afcb8d0dcc62640e193e3de31dc875020f7e0191fc8af3c5800dad555f",
+        "input_manifest": "14a38a179bc0a1f0afc4fd9d6eef6e74797564db696cad20503e495b57d34361"
+      },
+      "selected_index_histogram": {
+        "0": 81
+      },
+      "fresh_numeric_valid_pointframes": 2592,
+      "fresh_cached_box_IoU_quantiles": [
+        0.9988073706626892,
+        1,
+        1
+      ],
+      "adjacent_selected_box_IoU_min": 0.6897870898246765,
+      "adjacent_box_IoU_below_0_3_frameends": [],
+      "independent_allpeople_offsets_largestarea_and_emptyshape_verified": true,
+      "allpeople_geometry_shapes": {
+        "all_boxes": [
+          81,
+          5
+        ],
+        "all_points_m": [
+          81,
+          32,
+          3
+        ],
+        "all_points2d_px": [
+          81,
+          32,
+          2
+        ],
+        "all_uncertainty": [
+          81,
+          32
+        ]
+      },
+      "raw_geometry_shape": [
+        81,
+        32,
+        3
+      ],
+      "raw_pixels_shape": [
+        81,
+        32,
+        2
+      ],
+      "source_group": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/part_000/video/wJQTclrlOLEYYfTB.mp4",
+      "split": "test",
+      "no_external_boxes_supplied": true,
+      "detection_config": {
+        "threshold": 0.3,
+        "nms_iou_threshold": 0.7,
+        "max_detections": 150,
+        "suppress_implausible_poses": true,
+        "extra_boxes": null
+      },
+      "native_api_result_scope": "boxes/person counts retained after NLF exported suppress_implausible_poses filtering; not claimed pre-filter detector proposals",
+      "comparison_receipt_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJQTclrlOLEYYfTB/comparison_receipt.json",
+      "comparison_receipt_sha256": "98c1435ab65ae2c9dfe53c2b1107355df108bad4cc3ac325207dbde2dca1c81d",
+      "necessary_pointframes_cached_fresh": [
+        2592,
+        2592
+      ],
+      "inframe_pointdifference_px_quantiles": [
+        1.5925660133361816,
+        3.470772218704224,
+        7.042944264411941
+      ],
+      "fresh_extra_outside_counts": {
+        "left_index_mcp": 0,
+        "left_little_mcp": 0,
+        "right_index_mcp": 0,
+        "right_little_mcp": 0,
+        "left_big_toe": 0,
+        "left_little_toe": 0,
+        "left_heel": 0,
+        "right_big_toe": 0,
+        "right_little_toe": 0,
+        "right_heel": 0
+      },
+      "comparison_artifacts": {
+        "frame_000.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJQTclrlOLEYYfTB/frame_000.png",
+          "sha256": "91bfc25fc0c4d19721e5585287e7fb0e6d48f52afc2e5ad38b436c9866bf69bb"
+        },
+        "same_rgb_mask_comparison.npz": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJQTclrlOLEYYfTB/same_rgb_mask_comparison.npz",
+          "sha256": "648f20988a7c3534b5754ac190f6350749009314e0b4e6c07c9502fd098ada14"
+        },
+        "frame_032.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJQTclrlOLEYYfTB/frame_032.png",
+          "sha256": "b76dff14a60b187aa500c1ff846bd34b5501493eb86911fcc3ef823cdd41943b"
+        },
+        "frame_080.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJQTclrlOLEYYfTB/frame_080.png",
+          "sha256": "a601cddd95faab3931eb9b43b6974c07c827f63fbd130b3a946c7dd133005134"
+        },
+        "original_cached32_fresh_detector32.mp4": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJQTclrlOLEYYfTB/original_cached32_fresh_detector32.mp4",
+          "sha256": "ad00abf8da24362fae062bddfe0606429a3fcf4e40fe0333bf3df357b3c19803"
+        }
+      },
+      "comparison_video_frames": 81,
+      "comparison_video_fps": 16
+    }
+  ],
+  "same_video_spec_model_names_and_PTS_comparison_verified": true,
+  "fresh_frames_each": 81,
+  "fresh_fps": 16,
+  "source_media_end_seconds": 5.0625,
+  "selected32_and_all_ragged_preserved": true,
+  "no_legacy_nlfbox_or_pose_conditioning": true,
+  "no_smplfit_or_templateFK": true,
+  "no_union1083_postfit": true,
+  "detector_is_separate_neural_network": true,
+  "num_aug": 3,
+  "internal_crop_batch64_may_split": true,
+  "single_total_neural_forward_claim": false,
+  "selection_is_person_tracking": false,
+  "all_zero_detection_actual_cases": false,
+  "zero_detection_nan_masks_CPU_tests_passed": true,
+  "inframe_mask_is_visibility": false,
+  "image_samples_actually_read": [
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPptuhclZmKAEWs/frame_032.png",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJPrpFsThWAcBQIw/frame_032.png",
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison/wJQTclrlOLEYYfTB/frame_032.png"
+  ],
+  "observations": [
+    "All3 genuine fresh detection completed, each81frames; largest-area selection remained index0 but not an identity-tracking guarantee.",
+    "Red-shirt retained37 multiple-person frames (118 total returned detections) vs81 each in others; all outputs preserved.",
+    "Same-frame primary boxes closely agree with cachedbox baseline (minimum IoU>0.998); native2D point differences not bitwise identical and not accuracy metrics.",
+    "Red-shirt6footpoints remain out of image all81frames despite finitevalid2592; necessary support1575/2592, same as prior; no reliability gain follows from fresh detection.",
+    "Stairs/shop necessary support2592, but previous palm occlusion/heel-location doubts persist; sampled overlay not whole-video semantic approval."
+  ],
+  "accuracy_approved": false,
+  "training_approved": false,
+  "raw_is_GT": false,
+  "frozen_library_or_fullVLM_modified": false,
+  "private_media_uploaded": false,
+  "git_commit_or_push_executed": false,
+  "samefirst50_authorized_or_started": false
+}

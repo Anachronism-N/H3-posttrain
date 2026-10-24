@@ -253,5 +253,52 @@ class MusicPlannerEvalTest(unittest.TestCase):
         self.assertTrue(review['authorization_required_before_private_audio_upload'])
 
 
+    def test_clean_baseline_exact_exclusion_and_unchanged_holdouts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            parent, clean = Path(directory) / 'parent', Path(directory) / 'clean'
+            parent.mkdir()
+            clean.mkdir()
+            counts = dict(train=10720, val=490, test=500)
+            values = {}
+            for split, count in counts.items():
+                entries = [row(f'{split}-{index}') for index in range(count)]
+                for entry in entries:
+                    entry['split'] = split
+                values[split] = ''.join(json.dumps(entry) + chr(10) for entry in entries).encode()
+                (parent / (split + '.jsonl')).write_bytes(values[split])
+            parent_summary = dict(schema='music_planner_fixed2s_weak_baseline_v1', split_counts=counts,
+                source_and_exact_audio_split_overlap=0,
+                split_artifacts={split: dict(path=str(parent / (split + '.jsonl')),
+                    sha256=hashlib.sha256(value).hexdigest()) for split, value in values.items()})
+            (parent / 'summary.json').write_text(json.dumps(parent_summary))
+            excluded = [dict(id=f'train-{index}') for index in range(7)]
+            for split, value in values.items():
+                if split == 'train':
+                    value = b''.join(value.splitlines(keepends=True)[7:])
+                (clean / (split + '.jsonl')).write_bytes(value)
+            receipt = dict(schema='music_planner_training_exclusion_v1', removed=excluded,
+                exclusion_count=7, clean_train_count=10713, val_and_test_bytes_unchanged=True,
+                parent_summary_ref=evaluation.file_ref(parent / 'summary.json'))
+            (clean / 'exclusion_receipt.json').write_text(json.dumps(receipt))
+            summary = dict(parent_summary, split_counts=dict(train=10713, val=490, test=500),
+                training_exclusion_receipt_ref=evaluation.file_ref(clean / 'exclusion_receipt.json'),
+                split_artifacts={split: dict(path=str(clean / (split + '.jsonl')),
+                    sha256=hashlib.sha256((clean / (split + '.jsonl')).read_bytes()).hexdigest())
+                    for split in counts})
+            (clean / 'summary.json').write_text(json.dumps(summary))
+            splits, _ = evaluation.validate_data(clean)
+            self.assertEqual({split: len(entries) for split, entries in splits.items()}, summary['split_counts'])
+            self.assertEqual((clean / 'val.jsonl').read_bytes(), values['val'])
+            self.assertEqual((clean / 'test.jsonl').read_bytes(), values['test'])
+            with self.assertRaisesRegex(ValueError, 'cleaned fixed'):
+                evaluation.validate_data(parent)
+            actual = (clean / 'train.jsonl').read_bytes().splitlines(keepends=True)
+            (clean / 'train.jsonl').write_bytes(b''.join(reversed(actual)))
+            summary['split_artifacts']['train']['sha256'] = hashlib.sha256((clean / 'train.jsonl').read_bytes()).hexdigest()
+            (clean / 'summary.json').write_text(json.dumps(summary))
+            with self.assertRaisesRegex(ValueError, 'exact ordered exclusion'):
+                evaluation.validate_data(clean)
+
+
 if __name__ == '__main__':
     unittest.main()

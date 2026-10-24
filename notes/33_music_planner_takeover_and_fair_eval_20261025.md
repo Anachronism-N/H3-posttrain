@@ -52,7 +52,7 @@ exclusion_receipt.json 保存父基准/审计 SHA、七条排除原因；trainin
 
 新评测门禁要求清洗排除回执内容SHA、父基准身份、训练行精确有序过滤及val/test SHA不变。现有eval CPU单测17通过、train CPU单测32通过/2跳过/3未运行；在N2真实原七源经三族_audio共21次严格拒绝，正常源完整输入通过。新管理器在各实际授权节点只读校验配置/来源SHA、fresh八卡holder与准入余量，另三种非法合同拒绝。CPU验证不表示GPU保存恢复或质量通过。
 
-UTC21:00:46实查：Flamingo/MOSS已真实完成更新2，正在保存；Captioner仍模型初始化，八卡训练rank已在驱动中。全部暂未见新失败，但尚没有smoke.saved/approved，不宣称三路正式训练通过。当前上游源恢复调查不再阻挡实验，被排除条目不替换也不补零。
+UTC21:00:46仍在初始GPU更新2保存。UTC21:16:43重新核验：三族均已有smoke.saved和smoke.approved，完整checkpoint与新进程恢复更新3通过，均进入full_training新进程；/proc start_ticks/argv与8GPU rank集合逐项相符，无新失败。该快照Flamingo85、MOSS53，Captioner正式进程刚启动，尚未打印更新4。UTC21:18:28 Flamingo已完成98，超越旧97失败点，但新训练顺序已随过滤改变，不能以更新数本身断言所有剩余数据都已消费。正式启动里程碑通过不等完整670更新、val选择或质量通过。当前上游源恢复调查不再阻挡实验，被排除条目不替换也不补零。
 
 ## 当前结论
 

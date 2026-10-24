@@ -18,10 +18,10 @@
   "original_audio_unmodified": true,
   "fresh_base_required": true,
   "strict_audio_length_gate": true,
-  "pretrained_GPU_save_resume_approved": false,
+  "pretrained_GPU_save_resume_approved": true,
   "full_budget_completed": false,
   "quality_accepted": false,
-  "stage": "GPU smoke started; actual completion receipts required",
+  "stage": "All three real 2-update saves and new-process update3 restores approved; full training live at last read",
   "CPU_tests": {
     "eval_passed": 17,
     "train_passed": 32,
@@ -47,5 +47,16 @@
     "test_final_once_only": true,
     "automatic_winner": false
   },
-  "explicit_dance_style_ground_truth_available": false
+  "explicit_dance_style_ground_truth_available": false,
+  "startup_verification": {
+    "observed_UTC": "2026-10-24T21:16:43Z",
+    "all_three_full_process_PID_and_start_ticks_and_argv_verified": true,
+    "all_three_GPU_rank_set_exactly_8": true,
+    "latest_updates": {
+      "music_flamingo": 85,
+      "moss": 53,
+      "omni_captioner": 3
+    },
+    "omni_full_update4_not_observed_at_this_snapshot": true
+  }
 }

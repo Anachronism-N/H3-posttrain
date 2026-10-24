@@ -62,6 +62,12 @@ val32/test的EOS、budget truncation、unknown stop和空raw输出是保留的�
 
 H3准备原worker恢复后未重新注册，不冒称继续运行；主会话只读核三节点既有相同H3环境版本和Ref2VA的13个DiT、14个text、视频VAE和processor存在。独立h3_renderer_v10冻结同h3_video_infer/h3_video_only、288个当前DiffSynth Python源码SHA及三节点环境版本凭据；N2空CUDA执行tinyH3 wrapper自测、7renderer CPU tests通过。未读取H3大权重内容或执行预训练GPU渲染。实际渲染前仍核模型内容身份、源码/环境未漂移与GPU安全准入；空闲卡由既有占卡保持。
 
+## clean_v10 首轮val后保存新故障
+
+UTC2026-10-24 21:57:11左右 MusicFlamingo 在epoch335验证函数返回后的save_checkpoint→trainable_state GatheredParameters退出时触发DeepSpeed0.17.5 Cannot partition a param in flight。最后打印update334/10688曝光；checkpoint335仅空目录，没有complete marker、validation或best，不拿函数调用顺序替代丢失的val收据。最后完整断点为300。既有manager已恢复8holder并写resources_safe，旧snapshot/config/失败目录保留，不硬resume新trainer指纹。
+
+这是新的验证与ZeRO参数生命周期问题，不是之前音频长度、OOM或模型质量验收。正在读实际DS源码并做最小根因修复；不能手填ds_status、删hooks、关闭checkpoint或绕过断言。UTC22:00:51重新核MOSS仍275、Captioner在100保存（最后打印99），两者实际训练进程存活，尚无新failure；不能将Flamingo失败直接归为其他族已失败。自动完成后评测协调器只完成代码与CPU门禁验证，当前旧clean_v10完整回执缺失，不运行评测调度。
+
 ## 当前结论
 
 未完成三模型新版本 GPU 启动验收、670 更新、最终文本评测或 H3 人评，因此没有最强模型结论。只把已执行的 CPU 诊断/回归与真实 v8 失败作为当前证据。后续真实 queue、日志、完整回执优先于本文快照。GitHub 提交仅包含本实验明确源码、测试及分析，不打包其他会话脏工作区、权重、私有音频/图像或凭据。

@@ -144,6 +144,18 @@ F1/ROUGE与配对不确定性提交ae3e73f已推送，并以远端refs核实一�
 
 H3 Flamingo三个条件缓存已有真实complete、exit0及三个固定ID；GPU0峰值为62655MiB（约61.2GiB），原生text_encoder与video_vae_encode各调用3次，DiT/decode为0且无音频分支。随后进入Flamingo视频阶段。缓存完成证明真实GPU条件计算，不代表视频已完成；最近快照仍无视频case audit。其他七卡holder身份不变。人评准备选择隔离离线匿名包，不修/重启共享review_web，也不把现网页不完整匿名、共享评分或有缺陷shuffle当成已经具备严格盲评。
 
+## 时间戳、动作评分与训练前后对照新增要求
+
+用户进一步要求核时间戳/动作表现，允许独立LLM打分，并比较训练前后。标签源ms_visual_batch.py:215固定chunk_seconds=2/min_tail=1.5，:398按固定桶分窗，:285明确window_boundaries_are_action_boundaries=False。因此现有双窗100%只能叫固定时间分桶/非空格式合规，窗口动作F1也只是同桶弱参考一致性，不能叫精细动作起止时间准确率、自由边界检测或音乐同步验收。当前fixed3协议无target_text或事件边界GT，不为它编造F1/时间真值。
+
+独立匿名LLM已实际审阅val32每族全部32原音乐caption；序数意见在跨窗承接/动态动作/动作多样性/细节四轴为Flamingo3/3/2/3、Captioner4/3/3/3、MOSS3/3/2/3。此为文本意见，不是校准准确率；未听音频/看视频，不能当音乐匹配、动作边界或H3人评。
+
+同一完整val490在更新2与670的NLL分别为Flamingo1.826934→0.765656，MOSS1.804309→0.735513，Captioner1.693363→0.684887。每族内部参考拟合有进步，但更新2已训练过64源，不能称未训练基座；也不跨tokenizer按NLL排模型，不能单凭下降说创作编排/音乐理解提高。
+
+新增最小同条件基座对照正在独立实现：原官方基座checkpoint=None/lora_rank=None，不attach LoRA/modules_to_save，同原完整音频/原native audio-only prefix/greedy/seed42/cap2048，每族仅同固定3case；训练后已有fixed3原始输出直接复用，不重测test500、不增加训练。MOSS缓存/位置频率和Captioner EOS推理兼容修复须两阶段一致，不能把推理bug当训练收益。仅各指定节点GPU0，N7需fresh holder核验，N2等当前H3完整安全后、N4等首次test完整安全后；未派发基座GPU任务，尚无前后质量结论。之后对六匿名组×3case做独立LLM盲文本比较，报告理由、相近/未知，三case结果只作诊断不外推全测试集显著提升。
+
+离线匿名人评包脚本已主会话独立11/11 CPU+synthetic ffmpeg回归验收并冻结：runtime/h3_review_pack_v1/，脚本SHAd07db03ddb996884ae9c2e79fe8f9e61b957f0e0cda4dfbb2c205edaca1333cb，测试SHAe857a11a640df40bb7c9e02744721f4555808a5f24bc69ca2dbcca7c2669e626。每case另存字节一致完整WAV、视频轨copy无损/AAC音轨有损，bundle_id绑定公开manifest/private key/评分JSON；公开包仅隐藏标签，不声称对抗数据拥有者追踪。唯一CPU接续kdE2Vs已启动，必须现有H3九片实际complete/resources_safe且全部门禁通过才构建；没有启动共享server、没有用户评分/接受结论。追加只读审查调用曾遇网关empty-stream，不能拿该失败调用冒新审查证据；本次主会话实测与已经收到的独立只读复核保留各自证据边界。
+
 ## 当前结论
 
 三模型clean_v11正式训练均已真实完成670更新、2epoch、21426源曝光及完整保存/新进程恢复。完整val32三条件文本工程门槛均通过。弱参考F1与匿名文本审阅暂倾向Captioner，但相关跨模型配对区间含0，没有显著或端到端最强结论。Flamingo/MOSS首次test500已完整并安全；Captioner首次test500仍实跑，最终三模型test汇总未完成。H3已完成Flamingo三个真实GPU条件缓存并进入视频阶段，实际九片视频及用户人评尚未验收。GitHub只包含本实验明确源码、测试及分析，不上传权重、私有音频/图像或凭据，不改变其他会话任务。

@@ -20,6 +20,7 @@ import torch.nn.functional as F
 SCHEMA = 'music-planner-train-v1'
 FAMILIES = ('moss', 'music_flamingo', 'omni_captioner')
 LENGTH_POLICY = 'one-full-5.0625s-audio-two-text-windows-no-truncation-v1'
+ZERO3_PARAMETER_LIFECYCLE = 'native-partition-all-then-reset-after-validation-before-save-v1'
 
 
 def file_sha(path):
@@ -232,6 +233,15 @@ def restore_rng(state):
         np.random.set_state(state['numpy'])
 
 
+def finish_zero3_forward(model, zero3=False):
+    if not zero3:
+        return
+    # The final no-grad forward has no following forward hook/optimizer step to drain prefetches.
+    offload = model.optimizer.parameter_offload
+    offload.partition_all_parameters()
+    offload.get_param_coordinator().reset_step()
+
+
 def trainable_state(model, rank=0, zero3=False):
     result = {}
     for name, parameter in model.named_parameters():
@@ -318,6 +328,7 @@ def assert_portable_equal(expected, actual):
 def save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, rank=0, world=1,
                     zero3=False, barrier=lambda: None, adapter=None):
     path = Path(path)
+    finish_zero3_forward(model, zero3)
     if rank == 0:
         path.mkdir(parents=True, exist_ok=False)
     barrier()
@@ -429,6 +440,23 @@ def training_outputs(args, state, data, checkpoint, fingerprint, starting_update
     if not all(nonzero.values()):
         raise ValueError('Training result lacks nonzero language LoRA/audio bridge gradients')
     mode = 'full' if not args.max_updates else 'resume_smoke' if args.resume else 'smoke'
+    lifecycle = ZERO3_PARAMETER_LIFECYCLE if args.backend == 'deepspeed' else 'not-applicable'
+    smoke_validation_ref = None
+    if args.max_updates:
+        path = args.out / f'smoke-validation-u{state["update"]:07d}.json'
+        validation = json.loads(path.read_text())
+        if (validation.get('schema') != 'music-planner-smoke-validation-v1' or
+            validation.get('family') != args.family or validation.get('fingerprint') != fingerprint or
+            validation.get('cursor') != state or validation.get('source_count') != data['val']['sources'] or
+            validation.get('source_val_sha256') != data['val']['sha256'] or
+            validation.get('phase') != 'diagnostic-only-not-checkpoint-selection' or
+            validation.get('checkpoint_selection_performed') is not False or validation.get('test_used') is not False or
+            validation.get('comparison_scope') != 'within-family-tokenizer-only' or
+            validation.get('zero3_parameter_lifecycle') != lifecycle or
+            validation.get('smoke_validation_before_save') is not True or validation.get('nll_finite') is not True or
+            not math.isfinite(validation.get('nll', float('nan'))) or validation.get('assistant_tokens', 0) <= 0):
+            raise ValueError('Training result lacks matching full-val-before-save smoke evidence')
+        smoke_validation_ref = file_ref(path)
     continued = bool(args.resume) and state['update'] > starting_update
     return dict(schema='music-planner-outputs-v1', family=args.family, mode=mode, world_size=world,
         optimizer_updates=state['update'], invocation_optimizer_updates=state['update'] - starting_update,
@@ -437,7 +465,8 @@ def training_outputs(args, state, data, checkpoint, fingerprint, starting_update
         train_count=data['train']['sources'], val_count=data['val']['sources'],
         epochs_completed=state['epoch'], source_exposures=state['source_exposures'],
         source_sha256=dict(train=data['train']['sha256'], val=data['val']['sha256']), fingerprint=fingerprint,
-        run_config=file_ref(args.out / 'run_config.json'),
+        run_config=file_ref(args.out / 'run_config.json'), zero3_parameter_lifecycle=lifecycle,
+        smoke_validation_before_save=True, smoke_validation=smoke_validation_ref,
         gradient_groups={key: dict(finite=True, nonzero=count > 0, observed_parameters=count) for key, count in nonzero.items()},
         gradient_evidence=gradient_refs, checkpoint_complete=True, checkpoint=file_ref(checkpoint / 'trainer_state.json'),
         trainable=file_ref(checkpoint / 'trainable.pt'), checkpoint_files=marker['files'],
@@ -519,24 +548,40 @@ def move_batch(batch, device):
             for key, value in batch.items() if key != 'labels'}
 
 
-def evaluate(model, adapter, rows, cache, accelerator, micro, native_autocast=False):
+def evaluate(model, adapter, rows, cache, accelerator, micro, native_autocast=False, zero3=False):
     model.eval()
     total = torch.zeros(2, dtype=torch.float64, device=accelerator.device)
     world, rank = accelerator.num_processes, accelerator.process_index
-    for start in range(0, len(rows), micro * world):
-        selected = rows[start + rank * micro:start + (rank + 1) * micro]
-        batch = prepare_batch(adapter, selected or [rows[0]], cache, empty=not selected)
-        autocast = nullcontext() if native_autocast else torch.autocast(accelerator.device.type, dtype=torch.bfloat16)
-        with torch.no_grad(), autocast:
-            output = model(**move_batch(batch, accelerator.device))
-            loss, count = shifted_nll(output.logits, batch['labels'].to(accelerator.device))
-        total += torch.stack((loss.detach().double(), count.double()))
-    total = accelerator.reduce(total, reduction='sum')
-    model.train()
+    try:
+        for start in range(0, len(rows), micro * world):
+            selected = rows[start + rank * micro:start + (rank + 1) * micro]
+            batch = prepare_batch(adapter, selected or [rows[0]], cache, empty=not selected)
+            autocast = nullcontext() if native_autocast else torch.autocast(accelerator.device.type, dtype=torch.bfloat16)
+            with torch.no_grad(), autocast:
+                output = model(**move_batch(batch, accelerator.device))
+                loss, count = shifted_nll(output.logits, batch['labels'].to(accelerator.device))
+            total += torch.stack((loss.detach().double(), count.double()))
+        total = accelerator.reduce(total, reduction='sum')
+    finally:
+        finish_zero3_forward(model, zero3)
+        model.train()
     if total[1].item() <= 0 or not torch.isfinite(total[0]):
         raise ValueError('Invalid within-family validation NLL')
     return dict(nll=(total[0] / total[1]).item(), assistant_tokens=int(total[1].item()),
                 source_count=len(rows), comparison_scope='within-family-tokenizer-only', test_used=False)
+
+
+def validate_smoke_before_save(args, model, adapter, rows, cache, accelerator, state, data, fingerprint, zero3=False):
+    validation = evaluate(model, adapter, rows, cache, accelerator, args.micro,
+                          native_autocast=zero3, zero3=zero3)
+    path = args.out / f'smoke-validation-u{state["update"]:07d}.json'
+    if accelerator.is_main_process:
+        atomic_json(path, dict(schema='music-planner-smoke-validation-v1', family=args.family,
+            phase='diagnostic-only-not-checkpoint-selection', checkpoint_selection_performed=False,
+            cursor=dict(state), source_val_sha256=data['val']['sha256'], fingerprint=fingerprint,
+            zero3_parameter_lifecycle=ZERO3_PARAMETER_LIFECYCLE if zero3 else 'not-applicable',
+            smoke_validation_before_save=True, nll_finite=math.isfinite(validation['nll']), **validation))
+    return path
 
 
 def train(args):
@@ -590,7 +635,9 @@ def train(args):
         load_dtype='bf16', compute_dtype='bf16', trainable_dtype='float32',
         adapter_source_sha256=file_sha(importlib.import_module(loader.__module__).__file__),
         optimizer='AdamW-FP32-full-states', gradient_checkpointing=True, checkpointing_use_reentrant=True, parameter_groups=group_names,
-        trainable_signature=parameter_signature(model), trainer_sha256=file_sha(__file__))
+        trainable_signature=parameter_signature(model), trainer_sha256=file_sha(__file__),
+        zero3_parameter_lifecycle=ZERO3_PARAMETER_LIFECYCLE if plugin else 'not-applicable',
+        smoke_validation_before_save=True)
     fingerprint = object_sha(config)
     if accelerator.is_main_process:
         config_path = args.out / 'run_config.json'
@@ -706,21 +753,27 @@ def train(args):
         if epoch_finished:
             state['epoch'] += 1
             state['position'] = 0
-            validation = evaluate(model, adapter, val_rows, cache, accelerator, args.micro, native_autocast=bool(plugin))
-            improved = state['best_val_nll'] is None or validation['nll'] < state['best_val_nll']
-            if improved:
-                state['best_val_nll'] = validation['nll']
-            checkpoint = save()
-            if accelerator.is_main_process:
-                atomic_json(checkpoint / 'validation.json', validation)
+            if not args.max_updates:
+                validation = evaluate(model, adapter, val_rows, cache, accelerator, args.micro,
+                                      native_autocast=bool(plugin), zero3=bool(plugin))
+                improved = state['best_val_nll'] is None or validation['nll'] < state['best_val_nll']
                 if improved:
-                    atomic_json(args.out / 'best.json', dict(checkpoint=str(checkpoint), **validation))
-        elif args.save_every and state['update'] % args.save_every == 0:
+                    state['best_val_nll'] = validation['nll']
+                checkpoint = save()
+                if accelerator.is_main_process:
+                    atomic_json(checkpoint / 'validation.json', validation)
+                    if improved:
+                        atomic_json(args.out / 'best.json', dict(checkpoint=str(checkpoint), **validation))
+        elif (args.save_every and state['update'] % args.save_every == 0 and
+              not (args.max_updates and state['update'] >= args.max_updates)):
             save()
         update_loss = accelerator.reduce(update_loss, reduction='sum')
         if accelerator.is_main_process:
             print(json.dumps(dict(update=state['update'], epoch=state['epoch'], position=state['position'],
                 source_exposures=state['source_exposures'], train_token_nll=(update_loss / global_tokens).item())), flush=True)
+    if args.max_updates:
+        validate_smoke_before_save(args, model, adapter, val_rows, cache, accelerator,
+                                   state, data, fingerprint, zero3=bool(plugin))
     checkpoint = save()
     if args.max_updates and args.verify_reload:
         restored = load_checkpoint(checkpoint, model, optimizer, scheduler, fingerprint, **checkpoint_args)

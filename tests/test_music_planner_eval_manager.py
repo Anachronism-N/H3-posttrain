@@ -35,7 +35,7 @@ class CPUHandoff(unittest.TestCase):
         self.exp = self.root / 'experiment'
         self.rt = self.exp / 'runtime'
         self.data = self.root / 'data'
-        self.handoff = self.exp / 'eval_handoff_clean_v10'
+        self.handoff = self.exp / 'eval_handoff_clean_v11'
         self.handoff.mkdir(parents=True)
         self.data.mkdir()
         for split, count in (('train', 10713), ('val', 490), ('test', 500)):
@@ -60,13 +60,13 @@ class CPUHandoff(unittest.TestCase):
 
     def family(self, node):
         host, family = m.SCOPE[node]
-        launch = json.loads((ORIGINAL_RT / (family + '_launch_clean_v10.json')).read_text())
+        launch = json.loads((ORIGINAL_RT / (family + '_launch_clean_v11.json')).read_text())
         old_out = Path(launch['out'])
-        out = self.exp / 'runs' / (family + '_fixed2s_clean_v10')
+        out = self.exp / 'runs' / (family + '_fixed2s_clean_v11')
         train = out / 'train'
         train.mkdir(parents=True)
         launch['out'] = str(out)
-        launch['queue'] = str(self.exp / 'queues' / (family + '_fixed2s_clean_v10'))
+        launch['queue'] = str(self.exp / 'queues' / (family + '_fixed2s_clean_v11'))
         for phase in ('smoke', 'resume_smoke', 'full'):
             launch[phase + '_result'] = str(train / Path(launch[phase + '_result']).name)
             argv = [arg.replace(str(old_out), str(out)) for arg in launch[phase + '_argv']]
@@ -79,7 +79,7 @@ class CPUHandoff(unittest.TestCase):
                 launch['dataset'][split] = dict(path=argv[index], sha256=m.sha(argv[index]),
                                                count=10713 if split == 'train' else 490)
             launch[phase + '_argv'] = argv
-        launch_ref = write_json(self.rt / (family + '_launch_clean_v10.json'), launch)
+        launch_ref = write_json(self.rt / (family + '_launch_clean_v11.json'), launch)
         config = dict(family=family, data=dict(test_used=False,
             train=dict(sources=10713, sha256=m.sha(self.data / 'train.jsonl')),
             val=dict(sources=490, sha256=m.sha(self.data / 'val.jsonl'))), max_length=8192,

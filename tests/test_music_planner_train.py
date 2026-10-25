@@ -376,34 +376,62 @@ def test_ds_loaded_weights_are_compared_not_overwritten(tmp_path, monkeypatch):
         train.load_checkpoint(checkpoint, model, opt, scheduler, 'fixture', zero3=True)
 
 
-def test_outputs_smoke_does_not_claim_resume_and_requires_actual_gradients(tmp_path):
+@pytest.mark.parametrize('resumed', [False, True])
+def test_outputs_smoke_does_not_claim_resume_and_requires_actual_gradients(tmp_path, resumed):
     model = TinyPlanner()
     opt, scheduler = make_optimizer(model)
     update(model, opt, scheduler)
     update(model, opt, scheduler)
-    state = dict(epoch=0, position=64, update=2, source_exposures=64, best_val_nll=None)
-    checkpoint = train.save_checkpoint(tmp_path / 'checkpoint-0000002', model, opt, scheduler, state, 'fixture')
+    current_update, starting_update = (3, 2) if resumed else (2, 0)
+    state = dict(epoch=0, position=current_update * 32, update=current_update,
+                 source_exposures=current_update * 32, best_val_nll=None)
+    checkpoint = train.save_checkpoint(tmp_path / f'checkpoint-{current_update:07d}', model, opt, scheduler, state, 'fixture')
     train.atomic_json(tmp_path / 'run_config.json', dict(fingerprint='fixture'))
-    evidence_path = tmp_path / 'backward-evidence-u0000000-rank0.json'
-    evidence = dict(starting_update=0, actual_backward_observed=True, actual_checkpoint_calls=dict(decoder=2),
+    evidence_path = tmp_path / f'backward-evidence-u{starting_update:07d}-rank0.json'
+    evidence = dict(starting_update=starting_update, actual_backward_observed=True, actual_checkpoint_calls=dict(decoder=2),
                     gradient_norms=dict(lora_A=1., audio_projector=2.))
     train.atomic_json(evidence_path, evidence)
     args = train.parser().parse_args(['--family', 'moss', '--model', '.', '--train', 'a', '--val', 'b',
-                                    '--out', str(tmp_path), '--max-updates', '2'])
+                                    '--out', str(tmp_path), '--max-updates', str(current_update)])
+    if resumed:
+        args.resume = tmp_path / 'source-checkpoint-0000002'
+        train.atomic_json(tmp_path / f'resume-from-{starting_update:07d}-rank0.json',
+            dict(new_process=True, strict_trainable_verified=True, rng_restored=True, scheduler_restored=True,
+                 optimizer=dict(optimizer_state_initialized=True, moments_fp32=True, moments_finite=True)))
     data = dict(train=dict(sources=10720, sha256='a' * 64), val=dict(sources=490, sha256='b' * 64))
-    result = train.training_outputs(args, state, data, checkpoint, 'fixture', 0, 1)
+    validation_path = tmp_path / f'smoke-validation-u{current_update:07d}.json'
+    validation = dict(schema='music-planner-smoke-validation-v1', family='moss', fingerprint='fixture',
+        cursor=state, source_count=490, source_val_sha256='b' * 64, nll=1., nll_finite=True,
+        assistant_tokens=1470, comparison_scope='within-family-tokenizer-only', test_used=False,
+        phase='diagnostic-only-not-checkpoint-selection', checkpoint_selection_performed=False,
+        zero3_parameter_lifecycle=train.ZERO3_PARAMETER_LIFECYCLE, smoke_validation_before_save=True)
+    train.atomic_json(validation_path, validation)
+    result = train.training_outputs(args, state, data, checkpoint, 'fixture', starting_update, 1)
     assert result['schema'] == 'music-planner-outputs-v1'
-    assert result['mode'] == 'smoke'
-    assert result['optimizer_updates'] == result['invocation_optimizer_updates'] == 2
-    assert result['resume_verified'] is result['verified_new_process'] is False
+    assert result['mode'] == ('resume_smoke' if resumed else 'smoke')
+    assert result['optimizer_updates'] == current_update
+    assert result['invocation_optimizer_updates'] == current_update - starting_update
+    assert result['resume_verified'] is result['verified_new_process'] is resumed
     assert result['source_exposure_budget'] == 21440
     assert result['quality_accepted'] is False
     assert all(value['nonzero'] and value['finite'] for value in result['gradient_groups'].values())
     assert result['checkpoint']['sha256'] == train.file_sha(checkpoint / 'trainer_state.json')
+    assert result['smoke_validation'] == train.file_ref(validation_path)
+    assert result['zero3_parameter_lifecycle'] == train.ZERO3_PARAMETER_LIFECYCLE
+    assert result['smoke_validation_before_save'] is True
+    for key, bad in [('source_count', 489), ('source_val_sha256', 'wrong'), ('cursor', dict(state, update=current_update + 1)),
+                     ('nll', float('nan')), ('assistant_tokens', 0), ('test_used', True),
+                     ('phase', 'best-selection'), ('checkpoint_selection_performed', True),
+                     ('zero3_parameter_lifecycle', 'old'), ('smoke_validation_before_save', False)]:
+        changed = dict(validation, **{key: bad})
+        validation_path.write_text(json.dumps(changed))
+        with pytest.raises(ValueError, match='full-val-before-save'):
+            train.training_outputs(args, state, data, checkpoint, 'fixture', starting_update, 1)
+    train.atomic_json(validation_path, validation)
     evidence['gradient_norms']['audio_projector'] = 0.
     train.atomic_json(evidence_path, evidence)
     with pytest.raises(ValueError, match='nonzero language LoRA/audio bridge'):
-        train.training_outputs(args, state, data, checkpoint, 'fixture', 0, 1)
+        train.training_outputs(args, state, data, checkpoint, 'fixture', starting_update, 1)
 
 
 
@@ -559,6 +587,270 @@ def test_validation_autocast_uses_native_engine_only_when_configured(tmp_path, n
                             accelerator, 1, native_autocast=native)
     assert result['assistant_tokens'] == 3 and result['source_count'] == 1
     assert model.training is True and result['test_used'] is False
+
+
+def test_zero3_boundary_calls_native_partition_before_reset():
+    pytest.importorskip('deepspeed')
+    from deepspeed.runtime.zero.parameter_offload import DeepSpeedZeRoOffload
+    from deepspeed.runtime.zero.partition_parameters import _init_external_params
+    events = []
+    coordinator = SimpleNamespace(release_and_reset_all=lambda module: events.append(('release', module)),
+                                  reset_step=lambda: events.append(('reset', None)))
+    offload = DeepSpeedZeRoOffload.__new__(DeepSpeedZeRoOffload)
+    offload.module = torch.nn.Module()
+    _init_external_params(offload.module)
+    offload.param_coordinator = coordinator
+    engine = SimpleNamespace(optimizer=SimpleNamespace(parameter_offload=offload))
+    train.finish_zero3_forward(engine, zero3=True)
+    assert events == [('release', offload.module), ('reset', None)]
+
+
+@pytest.fixture
+def cpu_zero3_planner(tmp_path, monkeypatch):
+    ds = pytest.importorskip('deepspeed')
+    from deepspeed.accelerator import get_accelerator
+    from deepspeed.runtime import torch_autocast
+    from torch.utils.checkpoint import checkpoint
+    if get_accelerator().device_name() != 'cpu':
+        pytest.skip('CPU-only fixture; run with CUDA_VISIBLE_DEVICES empty')
+    if torch.distributed.is_initialized():
+        pytest.skip('Fixture requires its own single-rank CPU process group')
+    monkeypatch.setenv('LOCAL_RANK', '0')
+    monkeypatch.setattr(torch_autocast, 'TORCH_AUTOCAST_INITIALIZED', torch_autocast.TORCH_AUTOCAST_INITIALIZED)
+    ds.init_distributed(dist_backend='gloo', init_method=f'file://{tmp_path}/dist',
+                        rank=0, world_size=1, auto_mpi_discovery=False)
+
+    class Output(dict):
+        @property
+        def logits(self):
+            return self['logits']
+
+    class Planner(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.base = torch.nn.Parameter(torch.ones(4), requires_grad=False)
+            self.lora_A = torch.nn.ModuleList([torch.nn.Linear(4, 4, bias=False) for _ in range(3)])
+            self.audio_projector = torch.nn.Linear(4, 4, bias=False)
+
+        def forward(self, x):
+            for layer in [*self.lora_A, self.audio_projector]:
+                x = checkpoint(layer, x, use_reentrant=True) if self.training else layer(x)
+            return Output(logits=x)
+
+    args = train.parser().parse_args(['--family', 'moss', '--model', '.', '--train', 'a',
+                                     '--val', 'b', '--out', 'c', '--accum', '1'])
+    config = train.deepspeed_config(args, 1)
+    # Tiny-only limits retain backward-prefetch work at the end of a no-grad forward.
+    config['zero_optimization'].update(stage3_param_persistence_threshold=0,
+        stage3_max_reuse_distance=0, stage3_prefetch_bucket_size=16,
+        stage3_max_live_parameters=32, reduce_bucket_size=64)
+    config['steps_per_print'] = 100000
+    model = Planner()
+    optimizer = torch.optim.AdamW(train.optimizer_groups(model, 1e-3, 1e-3, torch.float32)[0])
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda step: 1. / (step + 1))
+    engine, _, _, _ = ds.initialize(model=model, optimizer=optimizer, config=config, dist_init_required=False)
+    try:
+        yield engine, scheduler
+    finally:
+        engine.destroy()
+        # DS 0.17.5's destructor repeats destroy after this fixture's process group is gone.
+        engine.optimizer = None
+        ds.comm.destroy_process_group()
+
+
+def test_real_cpu_zero3_validation_save_return_to_train(cpu_zero3_planner, tmp_path):
+    from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
+    engine, scheduler = cpu_zero3_planner
+    labels = torch.tensor([[-100, 0, 1, 2]])
+
+    def step():
+        engine.train()
+        output = engine(x=torch.ones(1, 4, 4, requires_grad=True))
+        assert output.logits.dtype == torch.bfloat16
+        nll, count = train.shifted_nll(output.logits, labels)
+        assert torch.isfinite(nll) and count.item() == 3
+        engine.backward(nll / count)
+        engine.step()
+        scheduler.step()
+        evidence = train.optimizer_evidence(engine.optimizer)
+        assert all(evidence[key] for key in ('optimizer_state_initialized', 'moments_fp32', 'moments_finite'))
+        return evidence
+
+    for _ in range(3):
+        before = step()
+    scheduler_before = copy.deepcopy(scheduler.state_dict())
+    rng_before = train.capture_rng()
+    rows = [row(tmp_path, f'val-{i}', 'val') for i in range(4)]
+    adapter = SimpleNamespace(collate=lambda selected: dict(x=torch.ones(1, 4, 4), labels=labels.clone()))
+    accelerator = SimpleNamespace(device=torch.device('cpu'), num_processes=1, process_index=0,
+                                  reduce=lambda value, reduction: value)
+    cache = train.AudioIdentityCache(tmp_path / 'cache.json')
+    hooks_before = tuple(len(hooks) for hooks in
+                         (engine.optimizer.parameter_offload.forward_hooks, engine.optimizer.parameter_offload.backward_hooks))
+    # This is the old lifecycle: real forward hooks/prefetch, no synthetic INFLIGHT assignment.
+    train.evaluate(engine, adapter, rows, cache, accelerator, 1, native_autocast=True)
+    assert engine.module.ds_inflight_param_registry
+    assert any(p.ds_status == ZeroParamStatus.INFLIGHT for p in engine.module.parameters())
+    with pytest.raises(AssertionError, match='Cannot partition a param in flight'):
+        train.trainable_state(engine.module, zero3=True)
+
+    accelerator.is_main_process = True
+    args = train.parser().parse_args(['--family', 'music_flamingo', '--model', '.', '--train', 'a',
+                                     '--val', 'b', '--out', str(tmp_path), '--max-updates', '3'])
+    smoke_state = dict(epoch=0, position=96, update=3, source_exposures=96, best_val_nll=None)
+    smoke_rows = (rows * 123)[:490]
+    validation_path = train.validate_smoke_before_save(args, engine, adapter, smoke_rows, cache, accelerator,
+        smoke_state, dict(val=dict(sources=490, sha256='b' * 64)), 'fixture-native-lifecycle', zero3=True)
+    validation = json.loads(validation_path.read_text())
+    assert validation['assistant_tokens'] == 1470 and validation['source_count'] == 490
+    assert validation['cursor'] == smoke_state and smoke_state['best_val_nll'] is None
+    assert not (tmp_path / 'best.json').exists()
+    assert engine.module.training is True and not engine.module.ds_inflight_param_registry
+    assert all(p.ds_status == ZeroParamStatus.NOT_AVAILABLE and not p.ds_active_sub_modules
+               for p in engine.module.parameters())
+    assert train.optimizer_evidence(engine.optimizer) == before
+    assert_nested_equal(scheduler.state_dict(), scheduler_before)
+    train.assert_rng_equal(rng_before, train.capture_rng())
+
+    # Independently exercise save's native drain, not merely evaluate's cleanup.
+    engine.eval()
+    with torch.no_grad():
+        for _ in range(4):
+            engine(x=torch.ones(1, 4, 4))
+    assert engine.module.ds_inflight_param_registry
+    engine.train()
+    state = dict(epoch=1, position=0, update=3, source_exposures=3, best_val_nll=validation['nll'])
+    checkpoint = train.save_checkpoint(tmp_path / 'ckpt', engine, engine.optimizer, scheduler,
+                                       state, 'fixture-native-lifecycle', zero3=True)
+    marker = json.loads((checkpoint / 'trainer_state.json').read_text())
+    assert marker['complete'] is True and marker['cursor'] == state
+    portable = torch.load(checkpoint / 'trainable.pt', map_location='cpu', weights_only=True)
+    assert portable and all(value.dtype == torch.float32 and torch.isfinite(value).all() for value in portable.values())
+    assert not engine.module.ds_inflight_param_registry
+    assert train.optimizer_evidence(engine.optimizer) == before
+    assert_nested_equal(scheduler.state_dict(), scheduler_before)
+    train.assert_rng_equal(rng_before, train.capture_rng())
+    assert tuple(len(hooks) for hooks in (engine.optimizer.parameter_offload.forward_hooks,
+                                          engine.optimizer.parameter_offload.backward_hooks)) == hooks_before
+    after = step()
+    assert after['optimizer_state_sha256'] != before['optimizer_state_sha256']
+    assert scheduler.last_epoch == scheduler_before['last_epoch'] + 1
+
+
+def test_validation_restores_training_after_failure(tmp_path, monkeypatch):
+    events = []
+    model = TinyPlanner()
+    monkeypatch.setattr(train, 'finish_zero3_forward', lambda current, zero3: events.append(('finish', current.training)))
+    adapter = SimpleNamespace(collate=lambda rows: dict(x=torch.ones(1, 4, 3), labels=torch.tensor([[-100, 0, 1, 2]])))
+    monkeypatch.setattr(model, 'forward', lambda **kwargs: (_ for _ in ()).throw(RuntimeError('forward failed')))
+    accelerator = SimpleNamespace(device=torch.device('cpu'), num_processes=1, process_index=0)
+    with pytest.raises(RuntimeError, match='forward failed'):
+        train.evaluate(model, adapter, [row(tmp_path, 'val', 'val')],
+                       train.AudioIdentityCache(tmp_path / 'cache.json'), accelerator, 1, zero3=True)
+    assert events == [('finish', False)] and model.training is True
+
+
+def test_failed_zero3_drain_cannot_publish_checkpoint_marker(tmp_path, monkeypatch):
+    model = TinyPlanner()
+    optimizer, scheduler = make_optimizer(model)
+    monkeypatch.setattr(train, 'finish_zero3_forward', lambda current, zero3: (_ for _ in ()).throw(RuntimeError('drain failed')))
+    checkpoint = tmp_path / 'ckpt'
+    with pytest.raises(RuntimeError, match='drain failed'):
+        train.save_checkpoint(checkpoint, model, optimizer, scheduler,
+                              dict(update=1), 'fixture', zero3=True)
+    assert not checkpoint.exists()
+
+
+def test_failed_portable_save_cannot_publish_complete_marker(tmp_path, monkeypatch):
+    model = TinyPlanner()
+    optimizer, scheduler = make_optimizer(model)
+    monkeypatch.setattr(train, 'trainable_state', lambda *args: (_ for _ in ()).throw(RuntimeError('gather failed')))
+    checkpoint = tmp_path / 'ckpt'
+    with pytest.raises(RuntimeError, match='gather failed'):
+        train.save_checkpoint(checkpoint, model, optimizer, scheduler, dict(update=1), 'fixture')
+    assert not (checkpoint / 'trainer_state.json').exists()
+
+
+def test_nonzero_boundary_is_noop_but_zero_requires_native_offload():
+    train.finish_zero3_forward(TinyPlanner())
+    with pytest.raises(AttributeError, match='optimizer'):
+        train.finish_zero3_forward(TinyPlanner(), zero3=True)
+
+
+def test_actual_ddp_smoke2_resume3_fullval_before_save_without_extra_updates(tmp_path, monkeypatch):
+    pytest.importorskip('accelerate')
+    from torch.utils.checkpoint import checkpoint
+    train_rows = [row(tmp_path, f'train-{i}', 'train') for i in range(128)]
+    val_rows = [row(tmp_path, 'val', 'val')] * 490
+    data = dict(train=dict(sources=128, sha256='a' * 64), val=dict(sources=490, sha256='b' * 64))
+    events = []
+
+    class Planner(TinyPlanner):
+        def __init__(self):
+            super().__init__()
+            self.config = SimpleNamespace(use_cache=True)
+            self.gradient_checkpointing = False
+
+        def gradient_checkpointing_enable(self, gradient_checkpointing_kwargs):
+            assert gradient_checkpointing_kwargs == {'use_reentrant': True}
+            self.gradient_checkpointing = True
+            self._gradient_checkpointing_func = lambda fn, x: checkpoint(fn, x, use_reentrant=True)
+
+        def forward(self, x):
+            logits = self._gradient_checkpointing_func(super().forward, x) if self.training else super().forward(x)
+            return SimpleNamespace(logits=logits)
+
+    def loader(**kwargs):
+        return SimpleNamespace(model=Planner(),
+            collate=lambda selected: dict(x=torch.ones(1, 4, 3, requires_grad=True),
+                                           labels=torch.tensor([[-100, 0, 1, 2]])),
+            save_pretrained=lambda *args, **kwargs: None)
+
+    loader.__module__ = 'torch'
+    monkeypatch.setattr(train, 'resolve_adapter', lambda: loader)
+    monkeypatch.setattr(train, 'check_data', lambda *args: (train_rows, val_rows, data))
+    monkeypatch.setattr(train, 'local_model_identity', lambda *args: dict(fixture=True))
+    actual_validate, actual_save = train.validate_smoke_before_save, train.save_checkpoint
+
+    def validate(*args, **kwargs):
+        state = copy.deepcopy(args[6])
+        result = actual_validate(*args, **kwargs)
+        assert args[6] == state
+        events.append(('fullval', state['update'], state['source_exposures']))
+        return result
+
+    def save(*args, **kwargs):
+        state = args[4]
+        assert events[-1] == ('fullval', state['update'], state['source_exposures'])
+        assert (Path(args[0]).parent / f'smoke-validation-u{state["update"]:07d}.json').is_file()
+        events.append(('save', state['update'], state['source_exposures']))
+        return actual_save(*args, **kwargs)
+
+    monkeypatch.setattr(train, 'validate_smoke_before_save', validate)
+    monkeypatch.setattr(train, 'save_checkpoint', save)
+    args = train.parser().parse_args(['--family', 'moss', '--model', '.', '--train', 'a', '--val', 'b',
+        '--out', str(tmp_path / 'run'), '--backend', 'ddp', '--accum', '32', '--max-updates', '2', '--save-every', '2'])
+    train.train(args)
+    first = json.loads((args.out / 'outputs-u0000002.json').read_text())
+    assert first['cursor'] == dict(epoch=0, position=64, update=2, source_exposures=64, best_val_nll=None)
+    assert first['smoke_validation']['sha256'] == train.file_sha(args.out / 'smoke-validation-u0000002.json')
+    args.resume = args.out / 'checkpoint-0000002'
+    args.max_updates = 3
+    monkeypatch.setattr(train, 'PROCESS_IDENTITY', dict(train.PROCESS_IDENTITY, nonce='fresh-ddp-fixture'))
+    train.train(args)
+    second = json.loads((args.out / 'outputs-u0000003.json').read_text())
+    assert second['cursor'] == dict(epoch=0, position=96, update=3, source_exposures=96, best_val_nll=None)
+    assert second['invocation_optimizer_updates'] == 1 and second['resume_verified'] is True
+    assert events == [('fullval', 2, 64), ('save', 2, 64), ('fullval', 3, 96), ('save', 3, 96)]
+    assert not (args.out / 'best.json').exists()
+    config = json.loads((args.out / 'run_config.json').read_text())
+    assert config['smoke_validation_before_save'] is True
+    assert config['zero3_parameter_lifecycle'] == 'not-applicable'
+    for update in (2, 3):
+        receipt = json.loads((args.out / f'smoke-validation-u{update:07d}.json').read_text())
+        assert receipt['source_count'] == 490 and receipt['assistant_tokens'] == 1470
+        assert receipt['checkpoint_selection_performed'] is receipt['test_used'] is False
+        assert receipt['phase'] == 'diagnostic-only-not-checkpoint-selection'
 
 
 def test_missing_adapter_loader_is_explicit_blocked(monkeypatch):

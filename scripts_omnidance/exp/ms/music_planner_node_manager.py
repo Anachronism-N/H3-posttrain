@@ -547,6 +547,10 @@ def check_training_result(cfg, phase, previous_result=None):
     expected = (10713, 490)
     if (value.get('train_count'), value.get('val_count')) != expected:
         raise RuntimeError('training result actual split counts mismatch')
+    lifecycle = 'native-partition-all-then-reset-after-validation-before-save-v1'
+    if (value.get('zero3_parameter_lifecycle') != lifecycle or
+            value.get('smoke_validation_before_save') is not True):
+        raise RuntimeError('Native validation/save parameter lifecycle evidence missing')
     updates = value.get('optimizer_updates')
     start = 0 if phase == 'smoke' else 2 if phase == 'resume_smoke' else 3
     wanted_updates = 2 if phase == 'smoke' else 3 if phase == 'resume_smoke' else 670
@@ -557,6 +561,28 @@ def check_training_result(cfg, phase, previous_result=None):
             or value.get('source_exposure_budget') != 21426
             or value.get('source_exposures') != (21426 if phase == 'full' else wanted_updates * 32)):
         raise RuntimeError('same-baseline fair exposure budget mismatch')
+    if phase != 'full':
+        ref = value.get('smoke_validation')
+        if not isinstance(ref, dict):
+            raise RuntimeError('Full-val-before-save smoke receipt missing')
+        validation_path = verified_ref(cfg, ref)
+        validation = json.loads(validation_path.read_text())
+        if (validation_path != path.parent / ('smoke-validation-u%07d.json' % wanted_updates) or
+                validation.get('schema') != 'music-planner-smoke-validation-v1' or
+                validation.get('family') != cfg['family'] or validation.get('fingerprint') != value.get('fingerprint') or
+                validation.get('cursor') != value.get('cursor') or validation.get('source_count') != 490 or
+                validation.get('source_val_sha256') != cfg['dataset']['val']['sha256'] or
+                validation.get('phase') != 'diagnostic-only-not-checkpoint-selection' or
+                validation.get('checkpoint_selection_performed') is not False or validation.get('test_used') is not False or
+                validation.get('comparison_scope') != 'within-family-tokenizer-only' or
+                validation.get('zero3_parameter_lifecycle') != lifecycle or
+                validation.get('smoke_validation_before_save') is not True or validation.get('nll_finite') is not True or
+                type(validation.get('nll')) not in (int, float) or not math.isfinite(validation['nll']) or
+                validation['nll'] < 0 or type(validation.get('assistant_tokens')) is not int or
+                validation['assistant_tokens'] <= 0):
+            raise RuntimeError('Full-val-before-save smoke evidence is not actual matching val490')
+    elif value.get('smoke_validation') is not None:
+        raise RuntimeError('Final training output must not reuse smoke validation as checkpoint selection')
     options = cfg[phase + '_argv'][cfg[phase + '_argv'].index(cfg['producer']['path']) + 1:]
     for split in ('train', 'val'):
         source = argv_option(options, '--' + split)

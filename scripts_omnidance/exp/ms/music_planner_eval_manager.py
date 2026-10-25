@@ -26,21 +26,21 @@ sys.dont_write_bytecode = True
 ROOT = Path('/apdcephfs_gy4/share_302533218/cedricnie')
 EXP = ROOT / 'diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1'
 RT = EXP / 'runtime'
-FROZEN = RT / 'source_v10'
+FROZEN = RT / 'source_v11'
 DATA = EXP.parent / 'music_planner_fixed2s_baseline_20261025_clean_v1'
-HANDOFF = EXP / 'eval_handoff_clean_v10'
-MANAGER = RT / 'planner_node_manager_clean_v10.py'
+HANDOFF = EXP / 'eval_handoff_clean_v11'
+MANAGER = RT / 'planner_node_manager_clean_v11.py'
 STAGE = RT / 'stage_models.py'
 HOLDER_SOURCE = ROOT / 'diff/scripts_omnidance/exp/hold_gpu.py'
 GPU0_LOCK = Path('/tmp/ms12k_gpu_0.lock')
 PINNED = {
     str(HOLDER_SOURCE): '814d796dec843d9a3e255fd7085d9ab6d105275905cfa604e03b474c922f1c66',
-    str(MANAGER): 'fe2405a0f730a035c6ab220e314e53ae133d77504086afaf9562044203c3da78',
+    str(MANAGER): '9dc57d2af5026ad73ff8397d588b347c38d021475854fdf50e38d8b89b0ea6bf',
     str(STAGE): 'c40037d2da67848b888c1dd729d72743fcdc17001d0fb803fb37e47e6f8b907d',
-    str(FROZEN / 'music_planner_train.py'): 'bf57b53ce5706c47ef2bec6ae49bd8635456053045aa735f76f44d2c0db28e68',
+    str(FROZEN / 'music_planner_train.py'): '9583342d51c3f9b08a1c07f57958c102313364e24b9ed92620e49901fc20fae3',
     str(FROZEN / 'music_planner_adapters.py'): '713dc3eb89408396bbae35a5e2957cb65b212a1b55276a728779ac2acf5fa4d1',
     str(FROZEN / 'music_planner_eval.py'): '55ca82f4ec117ffa05087e7dba54c1787de15ce6522ab0cd69e95f8f1270bea6',
-    str(FROZEN / 'music_planner_fixed3_eval.py'): 'bc8f015cf011340e3f064d43534d685970aaf49f089faf6687292ac464c7d101',
+    str(FROZEN / 'music_planner_fixed3_eval.py'): '3a0f69cb46df350282a1ea4bc454490936544d678f5471446e4c92addee8058c',
 }
 SCOPE = {'N2': ('28.216.17.70', 'music_flamingo'),
          'N4': ('28.216.19.143', 'omni_captioner'),
@@ -122,11 +122,11 @@ def validate_scope(cfg):
     if queue == out or queue.is_relative_to(out) or out.is_relative_to(queue):
         raise RuntimeError('queue/output overlap')
     family = cfg['family']
-    exact = {'training_launch': RT / (family + '_launch_clean_v10.json'),
-             'full_complete': EXP / 'queues' / (family + '_fixed2s_clean_v10') / 'full.complete.json',
-             'resources_safe': EXP / 'queues' / (family + '_fixed2s_clean_v10') / 'resources_safe.json',
+    exact = {'training_launch': RT / (family + '_launch_clean_v11.json'),
+             'full_complete': EXP / 'queues' / (family + '_fixed2s_clean_v11') / 'full.complete.json',
+             'resources_safe': EXP / 'queues' / (family + '_fixed2s_clean_v11') / 'resources_safe.json',
              'protocol': HANDOFF / 'protocol.json',
-             'checkpoint_selection': EXP / 'runs' / (family + '_fixed2s_clean_v10') / 'train/best.json'}
+             'checkpoint_selection': EXP / 'runs' / (family + '_fixed2s_clean_v11') / 'train/best.json'}
     for key, path in exact.items():
         if cfg[key]['path'] != str(path):
             raise RuntimeError('wrong frozen path: ' + key)
@@ -374,10 +374,10 @@ def check_final_selection(cfg, manager, fixed, ev, protocol):
         launch = ref_json(scope['training_launch'])
         if (launch['node'], launch['host'], launch['family']) != (node, host, family):
             raise RuntimeError('final selection launch scope mismatch')
-        for key, expected in (('training_launch', RT / (family + '_launch_clean_v10.json')),
-                ('full_complete', EXP / 'queues' / (family + '_fixed2s_clean_v10') / 'full.complete.json'),
-                ('resources_safe', EXP / 'queues' / (family + '_fixed2s_clean_v10') / 'resources_safe.json'),
-                ('checkpoint_selection', EXP / 'runs' / (family + '_fixed2s_clean_v10') / 'train/best.json')):
+        for key, expected in (('training_launch', RT / (family + '_launch_clean_v11.json')),
+                ('full_complete', EXP / 'queues' / (family + '_fixed2s_clean_v11') / 'full.complete.json'),
+                ('resources_safe', EXP / 'queues' / (family + '_fixed2s_clean_v11') / 'resources_safe.json'),
+                ('checkpoint_selection', EXP / 'runs' / (family + '_fixed2s_clean_v11') / 'train/best.json')):
             if scope[key]['path'] != str(expected):
                 raise RuntimeError('final selection wrong family receipt path')
         launch, result = check_completed(scope, manager, local=False)

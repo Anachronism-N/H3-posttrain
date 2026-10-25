@@ -68,6 +68,16 @@ UTC2026-10-24 21:57:11左右 MusicFlamingo 在epoch335验证函数返回后的sa
 
 这是新的验证与ZeRO参数生命周期问题，不是之前音频长度、OOM或模型质量验收。正在读实际DS源码并做最小根因修复；不能手填ds_status、删hooks、关闭checkpoint或绕过断言。UTC22:00:51重新核MOSS仍275、Captioner在100保存（最后打印99），两者实际训练进程存活，尚无新failure；不能将Flamingo失败直接归为其他族已失败。自动完成后评测协调器只完成代码与CPU门禁验证，当前旧clean_v10完整回执缺失，不运行评测调度。
 
+## v11 完整预算验收与评测真实进展
+
+原生ZeRO生命周期修复已经完成，trainer9583342d51c3f9b08a1c07f57958c102313364e24b9ed92620e49901fc20fae3；主会话独立N2真实DS0.17.5 CPU45项全过，源码与测试SHA前后相同，临时pytest工具自动清理且未安装训练env。GPU smoke now includes update2/fullval490/save2以及新进程update3/fullval490/save3，诊断val不加入训练曝光或best选择。v11新源和manager独立冻结，旧v10失败与300断点不改，不迁移旧fingerprint。
+
+2026-10-25 UTC03:44实查：三模型均有full.complete与resources_safe，实际670更新、2epoch、21426曝光、完整670断点及恢复证据。模型内部完整val490选择均为epoch670；NLL仅族内选择，不能跨族排名。MusicFlamingo的val32原音乐/错配/静音共96真实GPU输出已技术完成，均EOS、无接口失败、无截断或空输出，但不能据此宣称编舞或音乐同步效果通过。
+
+MOSS首次面板attempt在worker启动前被内存安全准入拒绝，资源已恢复，协调器正确停止派发，旧failure/claim保留。对结束的自有MOSS完整断点进行只读DONTNEED缓存建议，没有改文件/权重或杀其他任务；未将无明显即时缓存下降宣称修复。后续fresh headroom约217GB超过固定160GiB准入阈值，新独立manual_recovery_v1记录失败诊断与授权范围，同数据/weights/解码协议重新captureGPU0生成新attempt，仍保内存门禁。正式test尚无claim或生成，不重测test。
+
+三模型真实选择在eval_handoff_clean_v11/final_selection.json提前冻结，含各实际best/marker/fingerprint/训练完成与资源安全SHA、统一数据和greedyseed42/cap2048解码协议。新任务Flamingofixed3、Captionervalpanel、MOSSvalpanel已按对应原节点GPU0受控启动，当前审计所用checkpoint全部state文件和本地officialbase完整内容，未以长审计或未创建queue误判失败；其他7卡占卡保持。fixed3完整handoff、test500及H3三case人评尚未完成，没有赢家结论。
+
 ## 当前结论
 
 未完成三模型新版本 GPU 启动验收、670 更新、最终文本评测或 H3 人评，因此没有最强模型结论。只把已执行的 CPU 诊断/回归与真实 v8 失败作为当前证据。后续真实 queue、日志、完整回执优先于本文快照。GitHub 提交仅包含本实验明确源码、测试及分析，不打包其他会话脏工作区、权重、私有音频/图像或凭据。

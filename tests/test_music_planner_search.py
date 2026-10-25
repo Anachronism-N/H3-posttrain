@@ -17,6 +17,13 @@ from scripts_omnidance.exp.ms.music_planner_search import (
 )
 
 
+def mock_runtime():
+    source = dict(path='mock-runtime-fixture.py', sha256='d' * 64, size_bytes=1)
+    return dict(schema='music_planner_sampling_runtime_v1', adapter_source_ref=source,
+                moss_cache=dict(requested_ref=source, applied_ref=source, status='applied'),
+                eos_bridge=dict(requested_ref=source, applied_ref=None, status='native_eos_already_valid'))
+
+
 def write_wave(path, frames=121500):
     with wave.open(str(path), 'wb') as stream:
         stream.setparams((1, 2, 24000, frames, 'NONE', 'not compressed'))
@@ -58,6 +65,7 @@ def mock_sampler(row, *, seed, temperature, top_p, top_k, max_new_tokens):
                               num_beams=1, repetition_penalty=1.0, no_repeat_ngram_size=0,
                               encoder_repetition_penalty=1.0),
                 input_tokens=3, prefix_sha256='b' * 64, audio_input='full-waveform',
+                runtime_provenance=mock_runtime(),
                 silence_applied=False, processor_sample_rate=16000, n_samples=81000)
 
 
@@ -372,6 +380,12 @@ def test_cli_request_export_and_check_complete_round_trip(tmp_path, pool, policy
 
 
 class TinyTokenizer:
+    eos_token_id = 2
+
+    def encode(self, text, **kwargs):
+        assert text == '<|im_end|>'
+        return [2]
+
     def decode(self, ids, skip_special_tokens=True, **kwargs):
         body = f'[0-2s] Steps left {ids[0]}. [2-5.062s] Waves both hands {ids[0]}.'
         return body if skip_special_tokens else body + '<eos>'
@@ -410,7 +424,12 @@ def test_real_torch_sampling_reuses_each_native_prefix_audio_checks_and_restores
             super().__init__()
             self.weight = torch.nn.Parameter(torch.ones(1))
             self.generation_config = SimpleNamespace(eos_token_id=2)
+            self.config = SimpleNamespace(model_type='moss_music')
+            self._planner_native_forward = self.forward
             self.calls = []
+
+        def prepare_inputs_for_generation(self, input_ids, **kwargs):
+            return dict(input_ids=input_ids, **kwargs)
 
         def generate(self, **kwargs):
             self.calls.append(kwargs)
@@ -431,6 +450,8 @@ def test_real_torch_sampling_reuses_each_native_prefix_audio_checks_and_restores
     assert sample_native(adapter, row, seed=0, temperature=.8, top_p=.9, top_k=30,
                          max_new_tokens=16) == outputs[0]
     assert all(value['n_samples'] == 81000 and value['stop_reason'] == 'eos' for value in outputs)
+    assert all(value['runtime_provenance']['moss_cache']['status'] ==
+               ('applied' if family == 'moss' else 'not_moss') for value in outputs)
     if family == 'omni_captioner':
         assert processor.messages == [{'role': 'user', 'content': [{'type': 'audio', 'audio': 'native-waveform'}]}]
         assert TASK_INSTRUCTION not in str(processor.messages)
@@ -445,6 +466,11 @@ def test_real_torch_sampling_reuses_each_native_prefix_audio_checks_and_restores
     short_row = dict(row, audio_path=str(short), audio_sha256=file_sha(short))
     with pytest.raises(ValueError, match='complete 5.0625-second'):
         sample_native(adapter, short_row, seed=0, max_new_tokens=16)
+    overlong = short.with_name('overlong.wav')
+    write_wave(overlong, frames=121505)
+    with pytest.raises(ValueError, match='complete 5.0625-second'):
+        sample_native(adapter, dict(row, audio_path=str(overlong), audio_sha256=file_sha(overlong)),
+                      seed=0, max_new_tokens=16)
 
 
 def test_native_sampling_does_not_accept_prefix_change_or_context_truncation(inputs):
@@ -455,6 +481,10 @@ def test_native_sampling_does_not_accept_prefix_change_or_context_truncation(inp
             super().__init__()
             self.weight = torch.nn.Parameter(torch.ones(1))
             self.generation_config = SimpleNamespace(eos_token_id=2)
+            self.config = SimpleNamespace(model_type='moss_music')
+            self._planner_native_forward = self.forward
+        def prepare_inputs_for_generation(self, input_ids, **kwargs):
+            return dict(input_ids=input_ids, **kwargs)
         def generate(self, **kwargs):
             return torch.tensor([[8, 7, 9, 17, 2]])
     row = inputs[0][0]
@@ -464,3 +494,208 @@ def test_native_sampling_does_not_accept_prefix_change_or_context_truncation(inp
     adapter.max_length = 5
     with pytest.raises(ValueError, match='budget exceeds context'):
         sample_native(adapter, row, seed=0, max_new_tokens=16)
+
+
+def test_sampling_actually_executes_eos_bridge_without_mutating_config(inputs):
+    torch = pytest.importorskip('torch')
+    from scripts_omnidance.exp.ms.music_planner_adapters import PlannerAdapter
+    class MissingEOS(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight = torch.nn.Parameter(torch.ones(1))
+            self.generation_config = SimpleNamespace(eos_token_id=None)
+            self.calls = []
+        def generate(self, **kwargs):
+            self.calls.append(kwargs)
+            tokens = [17, 2] if kwargs.get('eos_token_id') == [2] else [17, 2, 9, 2]
+            return torch.cat((kwargs['input_ids'], torch.tensor([tokens])), dim=1)
+    model = MissingEOS()
+    result = sample_native(PlannerAdapter('omni_captioner', model, TinyProcessor()),
+                           inputs[0][0], seed=7, max_new_tokens=16)
+    assert model.calls[0]['eos_token_id'] == [2]
+    assert result['new_token_ids'] == [17, 2]
+    assert model.generation_config.eos_token_id is None
+    receipt = result['runtime_provenance']['eos_bridge']
+    assert receipt['status'] == 'applied'
+    assert receipt['applied_ref'] == receipt['requested_ref']
+    assert receipt['applied_ref']['sha256'] == file_sha(receipt['applied_ref']['path'])
+
+
+def test_sampling_actually_executes_moss_cached_decode_patch(inputs):
+    torch = pytest.importorskip('torch')
+    from scripts_omnidance.exp.ms.music_planner_adapters import PlannerAdapter
+    class CachedMoss(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight = torch.nn.Parameter(torch.ones(1))
+            self.config = SimpleNamespace(model_type='moss_music')
+            self.generation_config = SimpleNamespace(eos_token_id=2)
+            self._planner_native_forward = self.forward
+            self.positions = []
+        def prepare_inputs_for_generation(self, input_ids, **kwargs):
+            self.positions.append(kwargs.get('cache_position'))
+            return dict(input_ids=input_ids, **kwargs)
+        def generate(self, **kwargs):
+            ids = kwargs['input_ids']
+            cached = SimpleNamespace(get_seq_length=lambda: ids.shape[1])
+            self.prepare_inputs_for_generation(torch.cat((ids, torch.tensor([[17]])), dim=1),
+                                               past_key_values=cached)
+            return torch.cat((ids, torch.tensor([[17, 2]])), dim=1)
+    model = CachedMoss()
+    result = sample_native(PlannerAdapter('moss', model, TinyProcessor()),
+                           inputs[0][0], seed=7, max_new_tokens=16)
+    assert model.positions[0].tolist() == [3]
+    receipt = result['runtime_provenance']['moss_cache']
+    assert receipt['status'] == 'applied'
+    assert receipt['applied_ref']['sha256'] == file_sha(receipt['applied_ref']['path'])
+
+
+def test_tokens_generated_after_first_eos_never_become_valid_success(inputs, policy):
+    def bad_eos(row, **kwargs):
+        result = mock_sampler(row, **kwargs)
+        result.update(new_token_ids=[17, 2, 9, 2], stop_reason='tokens_after_eos')
+        return result
+    pool = generate_candidates(inputs[0][:1], inputs[1], inputs[2], sampler=bad_eos)
+    assert pool['candidates'][0]['generation']['new_token_ids'] == [17, 2, 9, 2]
+    assert not pool['candidates'][0]['diagnostics']['format_eligible']
+    assert not export_reviewed(pool, policy, reviews_for(pool, policy))['pseudo_sft']
+
+
+def test_blind_package_hides_model_rank_scores_and_binds_real_audio(pool, policy):
+    from scripts_omnidance.exp.ms.music_planner_search_harness import blind_package, validate_blind_package
+    public, private = blind_package(pool, policy, secret='1' * 64)
+    serialized = json.dumps(public)
+    assert pool['generator']['model_id'] not in serialized
+    for key in ('candidate_sha256', 'source_id', 'index', 'format_eligible', 'decoding', 'generator'):
+        assert '"' + key + '"' not in serialized
+    assert len({row['opaque_id'] for row in public['candidates']}) == len(pool['candidates'])
+    assert all(file_sha(row['audio_ref']['path']) == row['audio_ref']['sha256'] for row in public['candidates'])
+    assert validate_blind_package(pool, policy, public, private)
+    assert blind_package(pool, policy, secret='1' * 64) == (public, private)
+
+
+def blind_response_for(pool, policy, public, private):
+    by_hash = {row['candidate_sha256']: row for row in reviews_for(pool, policy)['reviews']}
+    response = dict(schema='music_planner_blind_reviews_v1', request_sha256=public['request_sha256'],
+                    judge=policy['judge'], rubric=policy['rubric'], reviews=[])
+    for binding in private['bindings']:
+        row = by_hash[binding['candidate_sha256']]
+        response['reviews'].append(dict({key: value for key, value in row.items()
+                                         if key not in ('candidate_sha256', 'source_id')},
+                                       opaque_id=binding['opaque_id']))
+    return response
+
+
+def test_blind_reviews_restore_strict_candidate_bindings_and_detect_tampering(pool, policy):
+    from scripts_omnidance.exp.ms.music_planner_search_harness import blind_package, import_blind_reviews
+    public, private = blind_package(pool, policy, secret='2' * 64)
+    response = blind_response_for(pool, policy, public, private)
+    restored, receipt = import_blind_reviews(pool, policy, public, private, response)
+    assert restored == reviews_for(pool, policy)
+    assert receipt['imported_reviews_sha256'] == object_sha(restored)
+    altered = copy.deepcopy(public)
+    altered['candidates'][0]['proposed_plan_text'] += 'tampered'
+    with pytest.raises(ValueError, match='exact candidate/audio/policy'):
+        import_blind_reviews(pool, policy, altered, private, response)
+    response['reviews'][0]['audio_sha256'] = 'f' * 64
+    with pytest.raises(ValueError, match='another audio'):
+        import_blind_reviews(pool, policy, public, private, response)
+
+
+@pytest.mark.parametrize('change', ('opaque', 'duplicate', 'judge', 'mapping'))
+def test_blind_import_rejects_unknown_duplicate_or_stale_binding(pool, policy, change):
+    from scripts_omnidance.exp.ms.music_planner_search_harness import blind_package, import_blind_reviews
+    public, private = blind_package(pool, policy, secret='3' * 64)
+    response = blind_response_for(pool, policy, public, private)
+    if change == 'opaque':
+        response['reviews'][0]['opaque_id'] = '0' * 32
+    elif change == 'duplicate':
+        response['reviews'].append(response['reviews'][0])
+    elif change == 'judge':
+        response['judge'] = dict(response['judge'], version='old')
+    else:
+        private['bindings'][0]['source_id'] = 'other'
+    with pytest.raises(ValueError):
+        import_blind_reviews(pool, policy, public, private, response)
+
+
+def test_budget_report_separates_train_dev_without_inventing_quality_reward(pool, policy):
+    from scripts_omnidance.exp.ms.music_planner_search_harness import search_report
+    result = search_report(pool, policy)
+    assert result['baseline_kind'] == 'single_stochastic_sample_index0_not_fair_greedy'
+    assert set(result['splits']) == {'train', 'dev'}
+    assert result['splits']['train']['sources'] == result['splits']['dev']['sources'] == 1
+    assert result['splits']['train']['candidate_calls'] == 3
+    assert result['splits']['train']['search_new_tokens'] == 6
+    assert result['splits']['train']['baseline_new_tokens'] == 2
+    assert result['format_and_length_are_diagnostics_not_music_rewards'] is True
+    assert all(row['selected_candidate_sha256'] is None for row in result['sources'])
+    assert result['splits']['dev']['independent_audit_source_bootstrap'] is None
+
+
+def test_paired_independent_audit_can_reject_apparent_selection_gain(pool, policy):
+    from scripts_omnidance.exp.ms.music_planner_search_harness import search_report
+    selection = reviews_for(pool, policy)
+    index = {item['candidate_sha256']: item['index'] for item in pool['candidates']}
+    for row in selection['reviews']:
+        top = index[row['candidate_sha256']] == 1
+        row['verdict'] = 'approve' if top else 'reject'
+        row['scores'] = {key: 5. if top else 2. for key in DIMENSIONS}
+    audit_policy = copy.deepcopy(policy)
+    audit_policy['judge']['id'] = 'independent-auditor-2'
+    audit = reviews_for(pool, audit_policy)
+    for row in audit['reviews']:
+        row['scores'] = {key: 1. if index[row['candidate_sha256']] == 1 else 5. for key in DIMENSIONS}
+    result = search_report(pool, policy, selection, audit_policy=audit_policy, audit_reviews=audit)
+    for split in ('train', 'dev'):
+        stats = result['splits'][split]
+        assert stats['descriptive_same_review_mean_delta'] == 3.
+        assert stats['same_review_generalization_ci'] is None
+        assert stats['independently_audited_pairs'] == 1
+        assert stats['independent_audit_source_bootstrap']['mean'] == -4.
+        assert stats['independent_audit_source_bootstrap']['small_sample_warning'] is True
+    assert result == search_report(pool, policy, selection, audit_policy=audit_policy, audit_reviews=audit)
+    with pytest.raises(ValueError, match='independent of selection'):
+        search_report(pool, policy, selection, audit_policy=policy, audit_reviews=selection)
+
+
+def test_blind_cli_preflights_both_outputs_before_writing(tmp_path, pool, policy):
+    pool_path, policy_path = tmp_path / 'pool.json', tmp_path / 'policy.json'
+    write_json(pool_path, pool)
+    write_json(policy_path, policy)
+    private, public = tmp_path / 'private.json', tmp_path / 'public.json'
+    private.write_text('already exists', encoding='utf-8')
+    result = subprocess.run([sys.executable, '-m', 'scripts_omnidance.exp.ms.music_planner_search_harness',
+                             'blind-request', '--pool', str(pool_path), '--policy', str(policy_path),
+                             '--public-out', str(public), '--private-out', str(private)],
+                            capture_output=True, text=True, check=False)
+    assert result.returncode != 0 and not public.exists()
+    assert private.read_text(encoding='utf-8') == 'already exists'
+
+
+def test_blind_request_import_report_cli_complete_round_trip(tmp_path, pool, policy):
+    paths = {name: tmp_path / (name + '.json') for name in
+             ('pool', 'policy', 'public', 'private', 'response', 'restored', 'receipt', 'report')}
+    write_json(paths['pool'], pool)
+    write_json(paths['policy'], policy)
+    prefix = [sys.executable, '-m', 'scripts_omnidance.exp.ms.music_planner_search_harness']
+    common = ['--pool', str(paths['pool']), '--policy', str(paths['policy'])]
+    result = subprocess.run(prefix + ['blind-request'] + common +
+                            ['--public-out', str(paths['public']), '--private-out', str(paths['private'])],
+                            capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stderr
+    public, private = read_json(paths['public']), read_json(paths['private'])
+    write_json(paths['response'], blind_response_for(pool, policy, public, private))
+    result = subprocess.run(prefix + ['import-blind'] + common +
+                            ['--public', str(paths['public']), '--private', str(paths['private']),
+                             '--response', str(paths['response']), '--out', str(paths['restored']),
+                             '--receipt-out', str(paths['receipt'])], capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stderr
+    result = subprocess.run(prefix + ['report'] + common + ['--reviews', str(paths['restored']),
+                                                            '--out', str(paths['report'])],
+                            capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stderr
+    report = read_json(paths['report'])
+    assert report['splits']['train']['selected_sources'] == 1
+    assert report['splits']['dev']['same_review_generalization_ci'] is None
+    assert read_json(paths['receipt'])['imported_reviews_sha256'] == object_sha(read_json(paths['restored']))

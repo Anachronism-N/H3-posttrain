@@ -136,15 +136,68 @@ def validate_sampling(sampling):
         raise ValueError('max_new_tokens must be a positive integer')
 
 
+def prepare_sampling_runtime(adapter):
+    """Apply the actual upstream model hooks, which adapter.generate alone cannot cover."""
+    from scripts_omnidance.exp.ms import music_planner_adapters
+    from scripts_omnidance.exp.ms.music_planner_moss_generation_patch import (
+        apply_moss_generation_patch, generation_patch_ref,
+    )
+    from scripts_omnidance.exp.ms.music_planner_generation_eos_patch import (
+        apply_generation_eos_patch, generation_eos_patch_ref,
+    )
+    source = Path(music_planner_adapters.__file__).resolve()
+    moss = apply_moss_generation_patch(adapter) if adapter.family == 'moss' else None
+    eos = apply_generation_eos_patch(adapter)
+    return dict(schema='music_planner_sampling_runtime_v1',
+                adapter_source_ref=dict(path=str(source), sha256=file_sha(source),
+                                        size_bytes=source.stat().st_size),
+                moss_cache=dict(requested_ref=generation_patch_ref(), applied_ref=moss,
+                                status='applied' if moss else 'not_moss'),
+                eos_bridge=dict(requested_ref=generation_eos_patch_ref(), applied_ref=eos,
+                                status='applied' if eos else 'native_eos_already_valid'))
+
+
+def _runtime_provenance(value):
+    _keys(value, ('schema', 'adapter_source_ref', 'moss_cache', 'eos_bridge'), 'sampling runtime')
+    if value['schema'] != 'music_planner_sampling_runtime_v1':
+        raise ValueError('Unknown sampling runtime provenance')
+    def ref(item):
+        _keys(item, ('path', 'sha256', 'size_bytes'), 'runtime source reference')
+        _text(item['path'], 'runtime source path')
+        _sha(item['sha256'], 'runtime source SHA')
+        if type(item['size_bytes']) is not int or item['size_bytes'] <= 0:
+            raise ValueError('Runtime source size must be positive')
+    ref(value['adapter_source_ref'])
+    for key, skipped in (('moss_cache', 'not_moss'), ('eos_bridge', 'native_eos_already_valid')):
+        entry = value[key]
+        _keys(entry, ('requested_ref', 'applied_ref', 'status'), 'runtime patch receipt')
+        ref(entry['requested_ref'])
+        if entry['status'] == 'applied':
+            ref(entry['applied_ref'])
+            if entry['applied_ref'] != entry['requested_ref']:
+                raise ValueError('Applied runtime patch differs from requested source')
+        elif entry['status'] != skipped or entry['applied_ref'] is not None:
+            raise ValueError('Invalid runtime patch application status')
+
+
+def _stop_reason(tokens, eos, budget):
+    stop = classify_stop(tokens, eos, budget)
+    # A cap ending in EOS is not a genuine EOS stop if generation passed an earlier
+    # assistant terminator. Preserve those tokens; do not clean them into success.
+    first = next((index for index, token in enumerate(tokens) if token in eos), None)
+    return 'tokens_after_eos' if first is not None and first != len(tokens) - 1 else stop
+
+
 def sample_native(adapter, row, *, seed, temperature=.9, top_p=.95, top_k=50,
                   max_new_tokens=2048):
-    """Stochastic native decoding; never monkey-patches the fair greedy adapter."""
+    """Stochastic native decoding with instance-local upstream inference fixes."""
     import torch
     params = dict(temperature=temperature, top_p=top_p, top_k=top_k,
                   max_new_tokens=max_new_tokens)
     validate_sampling(params)
     if type(seed) is not int or not 0 <= seed < 2 ** 63:
         raise ValueError('seed must be an integer in [0,2**63)')
+    runtime = prepare_sampling_runtime(adapter)
     # prefix retains the native family template, SHA check, full waveform length,
     # processor resampling, and context checks. Only audio keys reach it.
     batch = adapter.prefix(row)
@@ -177,13 +230,14 @@ def sample_native(adapter, row, *, seed, temperature=.9, top_p=.95, top_k=50,
         raise ValueError('Native generation changed its input prefix')
     tokens = sequence[0, prefix.shape[1]:].cpu().tolist()
     eos = adapter.eos_token_ids()
-    stop = classify_stop(tokens, eos, max_new_tokens)
+    stop = _stop_reason(tokens, eos, max_new_tokens)
     return dict(raw_text=adapter.tokenizer.decode(tokens, skip_special_tokens=True,
                                                   clean_up_tokenization_spaces=False),
                 raw_with_special_tokens=adapter.tokenizer.decode(tokens, skip_special_tokens=False,
                                                                  clean_up_tokenization_spaces=False),
                 new_token_ids=tokens, eos_token_ids=eos, stop_reason=stop,
                 budget_truncated=stop == 'budget_truncation', seed=seed, decoding=decoding,
+                runtime_provenance=runtime,
                 input_tokens=prefix.shape[1], prefix_sha256=object_sha(prefix.cpu().tolist()),
                 audio_input='full-waveform', silence_applied=False, **adapter._last_audio_info)
 
@@ -237,14 +291,17 @@ def _diagnostics(generation, budget):
     _sha(generation.get('prefix_sha256'), 'native prefix')
     if type(generation.get('seed')) is not int or not 0 <= generation['seed'] < 2 ** 63:
         raise ValueError('Invalid recorded sampling seed')
-    stop = classify_stop(generation['new_token_ids'], generation['eos_token_ids'], budget)
+    if type(generation.get('input_tokens')) is not int or generation['input_tokens'] <= 0:
+        raise ValueError('Missing positive native input-token count')
+    _runtime_provenance(generation.get('runtime_provenance'))
+    stop = _stop_reason(generation['new_token_ids'], generation['eos_token_ids'], budget)
     if generation.get('stop_reason') != stop or generation.get('budget_truncated') is not (stop == 'budget_truncation'):
         raise ValueError('Recorded stop reason differs from raw token evidence')
     if generation.get('audio_input') != 'full-waveform' or generation.get('silence_applied') is not False:
         raise ValueError('Search requires the complete original music waveform')
     if generation.get('processor_sample_rate') != 16000 or type(generation.get('n_samples')) is not int:
         raise ValueError('Missing native audio length evidence')
-    if abs(generation['n_samples'] - 81000) > 5:
+    if abs(generation['n_samples'] - 81000) > 2:
         raise ValueError('Native audio length no longer matches the full source')
     metrics = text_metrics(generation['raw_text'])
     temporal = metrics['temporal']
@@ -284,7 +341,7 @@ def generate_candidates(rows, isolation, generator, *, count=4, seed=42, samplin
                         diagnostics=_diagnostics(generation, sampling['max_new_tokens']))
             item['candidate_sha256'] = object_sha(item)
             candidates.append(item)
-    pool = dict(schema='music_planner_candidate_pool_v1', isolation=isolation,
+    pool = dict(schema='music_planner_candidate_pool_v2', isolation=isolation,
                 isolation_sha256=object_sha(isolation), generator=generator, sampling=sampling,
                 candidates_per_source=count, candidates=candidates)
     pool['run_sha256'] = object_sha(pool)
@@ -295,8 +352,8 @@ def generate_candidates(rows, isolation, generator, *, count=4, seed=42, samplin
 def validate_pool(pool):
     _keys(pool, ('schema', 'isolation', 'isolation_sha256', 'generator', 'sampling',
                  'candidates_per_source', 'candidates', 'run_sha256'), 'candidate pool')
-    if pool['schema'] != 'music_planner_candidate_pool_v1':
-        raise ValueError('Unknown candidate pool schema')
+    if pool['schema'] != 'music_planner_candidate_pool_v2':
+        raise ValueError('Require candidate pool v2 with actual runtime patch provenance; regenerate old pools')
     if pool['run_sha256'] != object_sha({k: v for k, v in pool.items() if k != 'run_sha256'}):
         raise ValueError('Candidate pool run hash differs')
     members = validate_isolation(pool['isolation'])
@@ -328,6 +385,9 @@ def validate_pool(pool):
         if item['generator'] != pool['generator']:
             raise ValueError('Candidate generator identity differs')
         gen, sampling = item['generation'], pool['sampling']
+        if ((item['generator']['family'] == 'moss') !=
+                (gen.get('runtime_provenance', {}).get('moss_cache', {}).get('status') == 'applied')):
+            raise ValueError('MOSS runtime cache patch application does not match model family')
         expected_decoding = dict(do_sample=True, num_beams=1, repetition_penalty=1.0,
                                  no_repeat_ngram_size=0, encoder_repetition_penalty=1.0,
                                  **{key: sampling[key] for key in ('temperature', 'top_p', 'top_k')})

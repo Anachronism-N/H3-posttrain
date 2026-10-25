@@ -7,6 +7,7 @@
 ## 已实现的边界
 
 - 三族模型 `moss`、`music_flamingo`、`omni_captioner` 均复用现有 adapter 的原生 `prefix()`、音频 SHA 校验、完整 5.0625 秒波形检查、预处理和上下文长度限制。
+- 实际采样路径应用上游 MOSS KV-cache 兼容补丁，以及缺失原生 EOS 时的 assistant EOS bridge。补丁修改当前模型实例的推理 hook／调用参数；不改训练权重、原生前缀、音频或公平基线源码。每个候选记录实际 requested/applied source ref、SHA 及无需补丁的原因。
 - 独立采样函数明确使用 `do_sample=True`、temperature/top-p/top-k；每个源生成 2–32 个候选。没有调用原本的 greedy `generate()` 后仅更换 seed。原公平基线接口及解码设置保持原样。
 - 每个候选保留完整解码文本、包含特殊 token 的解码文本、全部新增 token、EOS、停止原因、预算截断标志、采样参数、seed、原生前缀哈希、音频 SHA 与长度、模型内容身份。
 - 不裁切输入音乐，沿用当前 `[0-2s]`、`[2-5.062s]` 两个文本窗口。采样不会自动改变模型的任务前缀、补训舞种能力或适配新 caption 契约。Captioner 继续使用其原生音频前缀。
@@ -14,6 +15,8 @@
 - 没有独立评审时只有待审候选，不产生优选结果。独立评审不能证明实际人体执行或逐帧卡点。
 
 采样允许产生重复方案，工具不伪造差异。完全相同的 chosen/rejected 文本不会导出为偏好对；最高分批准方案并列时保留并列状态，不按 hash 随意选一个。
+
+候选池现使用 `music_planner_candidate_pool_v2`。旧 v1 缺少上述实际推理补丁证据，须重新生成并送审，不能修改 schema 字符串复用旧批准。若生成越过第一个 EOS 后又在预算尾部输出 EOS，原始 token 全保留，标记 `tokens_after_eos` 并阻断准入，不清理文本来伪造自然结束。
 
 ## 从当前 fair 数据开始
 
@@ -45,12 +48,12 @@ python -m scripts_omnidance.exp.ms.music_planner_search generate \
   --model-version planner-checkpoint-100 \
   --count 4 --seed 42 --temperature 0.9 --top-p 0.95 --top-k 50 \
   --max-new-tokens 2048 --max-length 8192 --device cuda:0 \
-  --out /path/to/candidate_pool_v1.json
+  --out /path/to/candidate_pool_v2.json
 ```
 
 没有微调 checkpoint 时省略 `--checkpoint`。另外两族改变 family、模型路径和真实模型身份即可；不要把模型别名用于掩盖相同基座。调用会读取并哈希实际本地模型顶层文件及 checkpoint adapter 文件，可能耗时；`model_sha256` 是该文件内容身份清单的规范哈希，不是模型名称的哈希。
 
-模型加载后还会检查真实波形的单声道、有限值、完整时长及字节身份。上下文不足则报错，不截断音乐或前缀。`--device` 只选择已有设备，不分配服务器资源。CPU 测试使用微型 mock，不代表实际大模型已经运行。
+模型加载后还会检查真实波形的单声道、有限值、完整时长及字节身份。已合入上游严格时长检查，不再允许旧的 24 kHz 五帧过长例外。上下文不足则报错，不截断音乐或前缀。`--device` 只选择已有设备，不分配服务器资源。CPU 测试使用微型 mock，不代表实际大模型已经运行。
 
 所有输出默认拒绝覆盖；新一轮使用新路径。
 
@@ -113,7 +116,7 @@ Path("review_policy_v1.json").write_text(
 
 ```bash
 python -m scripts_omnidance.exp.ms.music_planner_search review-request \
-  --pool /path/to/candidate_pool_v1.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
   --out /path/to/review_request_v1.json
 ```
 
@@ -159,15 +162,59 @@ Path("reviews_to_complete.json").write_text(
 
 这个未完成模板会被拒绝作为音乐评审。完成真实评审后才把 `original_audio_reviewed` 改为 true，并填写 approve/reject/uncertain、三项分数、置信度及依据。允许平局和不确定；不要求每组一定有胜者。`allow_preference_use` 须由评审者明确批准。
 
+## 推荐使用盲评包
+
+原 `review-request` 用于内部追溯，含候选身份和诊断。对外评审优先使用独立 harness：
+
+```bash
+python -m scripts_omnidance.exp.ms.music_planner_search_harness blind-request \
+  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --seed 42 --public-out /path/to/blind_public_v1.json \
+  --private-out /path/to/blind_private_v1.json
+```
+
+只把 public 文件给评审者。public 使用随机密钥派生的 opaque ID 和打乱顺序，保留真实音频引用／SHA、完整波形范围、固定 rubric 和动作原文；没有模型／checkpoint 身份、candidate index、源 split、已有分数或格式是否合格。private 保存反查关系、密钥、原 run／policy／request 身份，不能随评审包发送。
+
+真实 `audio_path` 仍可能含来源名称，故不声称完全遮蔽歌曲来源；工具主要去除模型与排名偏置信息。它不为隐藏文件名而改变音频、伪造 URL 或创建不存在的音频引用。需要更严的来源盲化时，可另做经 SHA 核对的中性音频副本并重新生成候选证据。
+
+盲评响应的顶层为 `music_planner_blind_reviews_v1`，含 public 的 `request_sha256`、约定的 `judge`、同一 `rubric` 和 `reviews` 数组。每条使用以下字段：
+
+```json
+{
+  "opaque_id": "public里的opaque_id",
+  "audio_sha256": "public里audio_ref.sha256",
+  "original_audio_reviewed": false,
+  "verdict": "uncertain",
+  "scores": {"music_fit": 0.0, "genre_compatibility": 0.0, "transition_coherence": 0.0},
+  "confidence": 0.0,
+  "reason": "未评审；完成真实音乐评审后填写",
+  "allow_preference_use": false
+}
+```
+
+保持未评审状态的模板不能作为完成评审导入。完成后执行：
+
+```bash
+python -m scripts_omnidance.exp.ms.music_planner_search_harness import-blind \
+  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --public /path/to/blind_public_v1.json --private /path/to/blind_private_v1.json \
+  --response /path/to/completed_blind_reviews_v1.json \
+  --out /path/to/restored_reviews_v1.json --receipt-out /path/to/blind_import_receipt_v1.json
+```
+
+回填逐项核对 public、private、原候选、原音频、rubric 和 judge 版本，再转成原严格 reviews schema；未知／重复 opaque ID、错误音频、文本或 mapping 篡改均拒绝。记录回填 receipt。两个输出路径须不同且不存在，避免只写出 public 后发现 private 已存在而丢失新 mapping。
+
+`restored_reviews_v1.json` 可直接交给下述 export/check。回填不会改变 train/dev/test 准入条件。
+
 ## 导入、数据准入和复核
 
 ```bash
 python -m scripts_omnidance.exp.ms.music_planner_search export \
-  --pool /path/to/candidate_pool_v1.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
   --reviews /path/to/completed_reviews_v1.json --out /path/to/reviewed_staging_v1.json
 
 python -m scripts_omnidance.exp.ms.music_planner_search check \
-  --pool /path/to/candidate_pool_v1.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
   --reviews /path/to/completed_reviews_v1.json --staging /path/to/reviewed_staging_v1.json
 ```
 
@@ -198,6 +245,31 @@ python -m scripts_omnidance.exp.ms.music_planner_search check \
 
 每次固定模型、音频清单、窗口、token budget 和评审，单独改变 temperature/top-p 或候选数；记录批准率、待审／阻断率、重复文本率、音乐适配人工偏好及推理成本。分数提高不等同于已经学会实际舞蹈执行。
 
+生成可复核的 source 级预算与选择报告：
+
+```bash
+python -m scripts_omnidance.exp.ms.music_planner_search_harness report \
+  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --reviews /path/to/restored_reviews_v1.json --out /path/to/search_report_v1.json
+```
+
+省略 `--reviews` 时只记录候选数、生成 token／上限、重复文本数等预算诊断，保持待独立评审。报告分别统计 train 与 dev，保留每个 source 的配对数据；基线固定 candidate index 0，明确称为 **single stochastic sample baseline**，不是原公平实验的 greedy baseline。token 预算只覆盖生成调用，不含 judge、音频处理耗时或真实硬件费用；不同模型 tokenizer 的 token 数不能直接当统一成本单位。
+
+若用同一份评分选择并报告优选，平均分差只称为描述性 selection 结果，存在挑选偏差，**不给泛化置信区间**。格式、词数、动作类别数仍不作为音乐质量分。
+
+若需要独立复核，先固定上述选择，再用第二名独立评审者／独立模型、相同 rubric 对原基线与选定方案评审；按新 policy 再走一次盲评回填。然后：
+
+```bash
+python -m scripts_omnidance.exp.ms.music_planner_search_harness report \
+  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --reviews /path/to/restored_reviews_v1.json \
+  --audit-policy /path/to/independent_audit_policy_v1.json \
+  --audit-reviews /path/to/independent_audit_reviews_v1.json \
+  --seed 42 --out /path/to/search_independent_audit_v1.json
+```
+
+同一个 reviewer ID、同模型／同基座／同模型内容身份的第二评分被拒绝作为独立 audit。独立 audit 在 source 层计算配对差值和 bootstrap，train/dev 分别统计，小样本明确标记；它只描述这些源的独立评审分，不能证明未见歌曲泛化。歌曲／近重复仍 unknown 时，报告显式保留未核验状态。审计可发现选择分升高、独立复核反而下降的情况。常规 reviews 本身不证明执行过盲评，应同时查对应回填 receipt。
+
 训练集与开发集、测试集必须按歌曲及近重复分组隔离。当前 song/near-duplicate unknown 时，先做候选评审实验，得到空训练导出是正确状态；不要为通过门槛填造分组。
 
 CPU 验证：
@@ -206,4 +278,4 @@ CPU 验证：
 python -m pytest -q tests/test_music_planner_search.py
 ```
 
-测试覆盖实际 torch 随机采样及 RNG 恢复、三族 adapter 前缀路径及完整音频检查（mock processor/model）、音频与评审身份绑定、同模型自评拒绝、平局、不完整评审、截断、heldout 隔离、unknown grouping 阻断训练、确定性导出及 CLI 全流程。没有运行实际预训练大模型或人工音乐质量验收。
+测试覆盖实际 torch 随机采样及 RNG 恢复、三族 adapter 前缀路径及完整音频检查（mock processor/model）、实际上游缓存／EOS hook 的调用和 provenance、越过 EOS、音频与评审身份绑定、盲包／回填及篡改拒绝、分 split 的 source 配对报告、独立审计反转选择结果、同模型自评拒绝、平局、不完整评审、截断、heldout 隔离、unknown grouping 阻断训练、确定性导出及 CLI 全流程。没有运行实际预训练大模型或人工音乐质量验收；官方原生模型的真实 HF 解码验证依赖本地模型源码／processor 与 transformers。

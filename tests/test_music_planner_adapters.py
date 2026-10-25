@@ -200,7 +200,7 @@ def test_full_audio_sha_stat_cache_and_silence(adapter, row, monkeypatch):
 
 @pytest.mark.parametrize('family', FAMILIES)
 @pytest.mark.parametrize('rate,extra_frames,accepted', [
-    (24000, 0, True), (24000, 1, True), (24000, 5, True),
+    (24000, 0, True), (24000, -1, True), (24000, 1, True), (24000, 5, False),
     (24000, 6, False), (24000, -2, False),
     (16000, 5, False), (48000, 5, False),
 ])

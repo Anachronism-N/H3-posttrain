@@ -16,9 +16,9 @@ ROOT = Path("/apdcephfs_gy4/share_302533218/cedricnie")
 REPO = ROOT / "H3-posttrain"
 MS = ROOT / "diff/logs_omnidance/exp/MS"
 EXP = MS / "music_planner_fixed2s_training_20261024_v1"
-DATA = MS / "music_planner_fixed2s_baseline_20261024_v1"
-HANDOFF = EXP / "eval_handoff_v1"
-FROZEN = EXP / "runtime/source_v7"
+DATA = MS / "music_planner_fixed2s_baseline_20261025_clean_v1"
+HANDOFF = EXP / "eval_handoff_clean_v11"
+FROZEN = EXP / "runtime/source_v11"
 IDS = ["wJPptuhclZmKAEWs", "wJPrpFsThWAcBQIw", "wJQTclrlOLEYYfTB"]
 FAMILIES = ("moss", "music_flamingo", "omni_captioner")
 METADATA = MS / "omni_h3_ms_style_eval3_v1/omni_infer3.jsonl"
@@ -97,13 +97,13 @@ def prepare_protocol():
     if HANDOFF.exists():
         raise FileExistsError("Protocol output must be fresh: " + str(HANDOFF))
     ev = frozen_eval()
-    templates = EXP / "runtime/training_templates_v8.json"
+    templates = EXP / "runtime/training_templates_v11.json"
     bindings = json.loads(templates.read_text())["source_sha256"]
     code_paths = [FROZEN / ("music_planner_" + name + ".py") for name in ("train", "adapters", "eval")]
     code_paths.append(EXP / "runtime/stage_models.py")
     for path in code_paths:
         if ev.file_ref(path)["sha256"] != bindings[str(path)]:
-            raise ValueError("Source differs from frozen v8 training binding")
+            raise ValueError("Source differs from frozen cleaned training binding")
     splits, summary = ev.validate_data(DATA)
     metadata = [json.loads(line) for line in METADATA.read_text().splitlines() if line.strip()]
     rows = holdout_rows(metadata, json.loads(IMAGES.read_text())["records"], splits, ev)

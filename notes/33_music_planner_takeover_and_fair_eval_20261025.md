@@ -180,6 +180,27 @@ Flamingo视频阶段已完整3case/实际exit0，主会话在N2授权节点只�
 
 预先冻结的训练前后LLM rubric已保留发布副本results/music_planner_prepost_LLM_rubric_20261025_v1.json；这不是实际评分。首次Captioner test最近447/500，8rank仍以原once账本跑；最终三模型文本report和另外两基座仍待各自actual complete/safe。
 
+## 三模型首次test500全部完成与最终文本结果
+
+Captioner首次test500已真实完成500唯一源和原global顺序，118177/118177 native logits forwards有限、8rank完整、真实test.exit0及resources_safe八卡全部恢复；主会话用冻结v2 collector独立重验并核80条相关输入ref。498EOS、2条原2048预算截断，failure均0，双窗99.6%；原raw和token完全保留，未增cap、未裁输出、未重测。Flamingo/MOSS此前500/exit0/safe亦已核。因此三模型首次最终文本技术评测已经完整结束，不再称Captioner仅部分完成。
+
+唯一CPU接续aACKpW已实际成功写H/final_text_report_v1.json，SHA=eb8e75bb3313fe17910a995d7b4390016a8570f529217317cb6e6600b6e31077；主会话独立重算六项macro/micro全部与记录case计数一致、三族各500同ID/顺序、172个输入文件当前SHA全部一致。公开纯指标总结为results/music_planner_final_test500_text_20261025_v1.json，不上传full report的原始caption或私有媒体。
+
+| test500 macro F1 | Flamingo | MOSS | Captioner |
+|---|---:|---:|---:|
+| ROUGE-1 | 0.4886 | 0.4926 | 0.4944 |
+| ROUGE-2 | 0.1744 | 0.1738 | 0.1774 |
+| ROUGE-L | 0.2595 | 0.2621 | 0.2621 |
+| 同窗口词F1 | 0.4260 | 0.4286 | 0.4297 |
+| 同窗口动作类别F1 | 0.6008 | 0.6163 | 0.6006 |
+| 同窗口身体类别F1 | 0.6833 | 0.6959 | 0.6986 |
+
+Captioner词级ROUGE略高，但对MOSS所有词级/身体相关macro分差配对95%区间含0；MOSS动作类别F1最高，对Captioner的差值0.01572，5000次seed42同源配对percentile95%区间[0.00214,0.02961]未跨0（没有多重比较校正，不能等同整体质量显著胜出）。MOSS对Flamingo动作差值区间亦未跨0；Captioner对Flamingo身体差值区间仅略不跨0。多指标存在取舍，不能继续把val32 text-only偏Captioner冒“各项最终都优”。这些仍是单个弱参考同桶一致性，而非创作唯一真值/精细动作时间准确/音乐同步。
+
+本报告跨case整条exact复用比例明确计所有count>1组的成员：Flamingo18.2%、MOSS4.4%、Captioner3.8%；此前10.8%/2.4%是(500-unique)/500即多出的副本比例，非组成员比例，两种定义不能混用。unique分别446/488/490。句内复读均值2.70%/4.64%/4.92%，4gram复读11.72%/12.18%/12.58%；Captioner不是每项都好、还存在2条预算截断。无test调阈值/重选checkpoint/重训。
+
+Captioner基座唯一接续hOPNx3在真实test安全结束后已freshcapture并派发N4仅GPU0，run_config SHA=aac0e369fc4051faa58f456262b23cc05893e7999207ce791a552b8295842925；base_fixed3.live PID661885/start_ticks537676327与/proc一致，其余七卡均恢复原占卡流程。该快照仍CPU加载、raw0，不能叫基座已经GPU生成完成。MOSS基座已完整safe，Flamingo基座仍等H3全安全。H3三片Flamingo视频已完整，Captioner三cache完成正视频生成，九片及真实人评尚未完成。
+
 ## 当前结论
 
-三模型clean_v11正式训练均已真实完成670更新、2epoch、21426源曝光及完整保存/新进程恢复。完整val32三条件文本工程门槛均通过。弱参考F1与匿名文本审阅暂倾向Captioner，但相关跨模型配对区间含0，没有显著或端到端最强结论。Flamingo/MOSS首次test500已完整并安全；Captioner首次test500仍实跑，最终三模型test汇总未完成。H3已完成Flamingo三个真实GPU条件缓存并进入视频阶段，实际九片视频及用户人评尚未验收。GitHub只包含本实验明确源码、测试及分析，不上传权重、私有音频/图像或凭据，不改变其他会话任务。
+三模型clean_v11正式训练均已真实完成670更新、2epoch、21426源曝光及完整保存/新进程恢复。完整val32三条件工程门槛均通过；三模型首次test500均已完整、真实exit0、资源安全恢复，最终文本指标已独立重验并汇总。val32匿名文本意见偏Captioner，但test500存在取舍：Captioner词级略优且对MOSS区间跨0，MOSS同窗口动作类别F1最高，不能宣布Captioner整体最强。Captioner2条预算截断原样保留，固定双窗不是动作真实边界。H3 Flamingo三片视频已完整exit0独立验收，Captioner正在视频阶段，MOSS视频待，共九片及用户人评未完。MOSS原基座3case完整safe，Captioner基座已唯一派发、Flamingo基座仍等H3安全；18条前后独立盲评尚待真实材料齐全。GitHub仅精准本实验代码、测试及脱敏纯指标分析，不上传权重/私有音视频/凭据，不改其他会话任务。

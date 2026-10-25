@@ -1,0 +1,1542 @@
+{
+  "schema": "music-planner-first-final-test500-public-text-summary-v1",
+  "scope": "three trained models, first once-only held-out test500; unchanged same greedy decoding and selected checkpoint670",
+  "source_count_per_family": 500,
+  "selected_update_per_family": {
+    "music_flamingo": 670,
+    "moss": 670,
+    "omni_captioner": 670
+  },
+  "reports": {
+    "music_flamingo": {
+      "rouge1": {
+        "count": 500,
+        "macro": {
+          "precision": 0.4809622514935075,
+          "recall": 0.5025288762659055,
+          "f1": 0.4885750753917483
+        },
+        "micro": {
+          "precision": 0.47825097566248337,
+          "recall": 0.502384452651583,
+          "f1": 0.4900207512415771,
+          "overlap": 42033,
+          "predicted": 87889,
+          "reference": 83667
+        }
+      },
+      "rouge2": {
+        "count": 500,
+        "macro": {
+          "precision": 0.17256627048082349,
+          "recall": 0.17854426597649992,
+          "f1": 0.174433403820482
+        },
+        "micro": {
+          "precision": 0.1714288983739372,
+          "recall": 0.18013154255894767,
+          "f1": 0.17567250639086285,
+          "overlap": 14981,
+          "predicted": 87389,
+          "reference": 83167
+        }
+      },
+      "rougeL": {
+        "count": 500,
+        "macro": {
+          "precision": 0.25539771525631916,
+          "recall": 0.26695615060098865,
+          "f1": 0.2594562161704971
+        },
+        "micro": {
+          "precision": 0.2536381117090876,
+          "recall": 0.2664371855092211,
+          "f1": 0.25988015575089185,
+          "overlap": 22292,
+          "predicted": 87889,
+          "reference": 83667
+        }
+      },
+      "window_token": {
+        "count": 1000,
+        "macro": {
+          "precision": 0.421554294034848,
+          "recall": 0.4403491920938972,
+          "f1": 0.4259683390040051
+        },
+        "micro": {
+          "precision": 0.41765181080681313,
+          "recall": 0.43872733574766637,
+          "f1": 0.4279302385226982,
+          "overlap": 36707,
+          "predicted": 87889,
+          "reference": 83667
+        }
+      },
+      "window_action_categories": {
+        "count": 1000,
+        "macro": {
+          "precision": 0.5709464285714285,
+          "recall": 0.7006202380952381,
+          "f1": 0.600816946941947
+        },
+        "micro": {
+          "precision": 0.5629996193376475,
+          "recall": 0.6953455571227081,
+          "f1": 0.6222128733697939,
+          "overlap": 2958,
+          "predicted": 5254,
+          "reference": 4254
+        }
+      },
+      "window_body_categories": {
+        "count": 1000,
+        "macro": {
+          "precision": 0.7669666666666667,
+          "recall": 0.6680166666666667,
+          "f1": 0.6832836219336219
+        },
+        "micro": {
+          "precision": 0.7537985368598762,
+          "recall": 0.659040590405904,
+          "f1": 0.7032418952618453,
+          "overlap": 2679,
+          "predicted": 3554,
+          "reference": 4065
+        }
+      },
+      "diagnostics": {
+        "source_count": 500,
+        "failure_count": 0,
+        "unique_full_prediction_count": 446,
+        "exact_full_prediction_duplicate_case_fraction": 0.182,
+        "full_prediction_exact_match_definition": "SHA256 of raw UTF8 text, no normalization; all cases in count>1 groups / source_count",
+        "stop_reason_counts": {
+          "eos": 500,
+          "native_stop": 0,
+          "budget_truncation": 0,
+          "unknown_stop": 0
+        },
+        "empty_raw_count": 0,
+        "valid_two_window_fraction": 1,
+        "nonempty_two_window_fraction": 1,
+        "mean_word_count": 175.778,
+        "mean_exact_sentence_max_count": 1.144,
+        "mean_repeated_sentence_fraction": 0.02704862914862915,
+        "mean_repeated_4gram_fraction": 0.11720450183434575,
+        "mean_distinct_1": 0.42882024400187246,
+        "mean_action_category_count": 6.22,
+        "mean_body_category_count": 4.288,
+        "corpus_distinct_1": 0.0053437433203208495,
+        "corpus_distinct_2": 0.03275294437090588
+      }
+    },
+    "moss": {
+      "rouge1": {
+        "count": 500,
+        "macro": {
+          "precision": 0.48889871517323436,
+          "recall": 0.5031175543794407,
+          "f1": 0.492599024685709
+        },
+        "micro": {
+          "precision": 0.48744399291445245,
+          "recall": 0.5032091505611531,
+          "f1": 0.4952011291460833,
+          "overlap": 42102,
+          "predicted": 86373,
+          "reference": 83667
+        }
+      },
+      "rouge2": {
+        "count": 500,
+        "macro": {
+          "precision": 0.17262885451713816,
+          "recall": 0.177368315714516,
+          "f1": 0.17384180297265758
+        },
+        "micro": {
+          "precision": 0.17317433884923084,
+          "recall": 0.17880890256952878,
+          "f1": 0.17594652153336487,
+          "overlap": 14871,
+          "predicted": 85873,
+          "reference": 83167
+        }
+      },
+      "rougeL": {
+        "count": 500,
+        "macro": {
+          "precision": 0.2601654555117927,
+          "recall": 0.2677586809934034,
+          "f1": 0.26211547138546926
+        },
+        "micro": {
+          "precision": 0.25891192849617356,
+          "recall": 0.26728578770602507,
+          "f1": 0.2630322277111268,
+          "overlap": 22363,
+          "predicted": 86373,
+          "reference": 83667
+        }
+      },
+      "window_token": {
+        "count": 1000,
+        "macro": {
+          "precision": 0.42713054482830015,
+          "recall": 0.43985105880159436,
+          "f1": 0.42862834880336126
+        },
+        "micro": {
+          "precision": 0.425156009401086,
+          "recall": 0.4389066179019207,
+          "f1": 0.4319219007292402,
+          "overlap": 36722,
+          "predicted": 86373,
+          "reference": 83667
+        }
+      },
+      "window_action_categories": {
+        "count": 1000,
+        "macro": {
+          "precision": 0.5862809523809523,
+          "recall": 0.7146765873015873,
+          "f1": 0.6163178848928849
+        },
+        "micro": {
+          "precision": 0.5805646245438832,
+          "recall": 0.7106252938410907,
+          "f1": 0.6390444984673924,
+          "overlap": 3023,
+          "predicted": 5207,
+          "reference": 4254
+        }
+      },
+      "window_body_categories": {
+        "count": 1000,
+        "macro": {
+          "precision": 0.7842666666666667,
+          "recall": 0.68235,
+          "f1": 0.6958733044733044
+        },
+        "micro": {
+          "precision": 0.7707922187764308,
+          "recall": 0.6725707257072571,
+          "f1": 0.7183394640042039,
+          "overlap": 2734,
+          "predicted": 3547,
+          "reference": 4065
+        }
+      },
+      "diagnostics": {
+        "source_count": 500,
+        "failure_count": 0,
+        "unique_full_prediction_count": 488,
+        "exact_full_prediction_duplicate_case_fraction": 0.044,
+        "full_prediction_exact_match_definition": "SHA256 of raw UTF8 text, no normalization; all cases in count>1 groups / source_count",
+        "stop_reason_counts": {
+          "eos": 500,
+          "native_stop": 0,
+          "budget_truncation": 0,
+          "unknown_stop": 0
+        },
+        "empty_raw_count": 0,
+        "valid_two_window_fraction": 1,
+        "nonempty_two_window_fraction": 1,
+        "mean_word_count": 172.746,
+        "mean_exact_sentence_max_count": 1.21,
+        "mean_repeated_sentence_fraction": 0.04638593073593073,
+        "mean_repeated_4gram_fraction": 0.12182583128445615,
+        "mean_distinct_1": 0.42971170266639236,
+        "mean_action_category_count": 6.256,
+        "mean_body_category_count": 4.21,
+        "corpus_distinct_1": 0.005837043480251336,
+        "corpus_distinct_2": 0.038688660458370265
+      }
+    },
+    "omni_captioner": {
+      "rouge1": {
+        "count": 500,
+        "macro": {
+          "precision": 0.48407815339920374,
+          "recall": 0.5129979776749868,
+          "f1": 0.4943668199691127
+        },
+        "micro": {
+          "precision": 0.46750405451003013,
+          "recall": 0.5133565204919502,
+          "f1": 0.48935855075766205,
+          "overlap": 42951,
+          "predicted": 91873,
+          "reference": 83667
+        }
+      },
+      "rouge2": {
+        "count": 500,
+        "macro": {
+          "precision": 0.1738682077657158,
+          "recall": 0.18381856054554796,
+          "f1": 0.17737110415543314
+        },
+        "micro": {
+          "precision": 0.16899959506637627,
+          "recall": 0.18567460651460316,
+          "f1": 0.1769451128681105,
+          "overlap": 15442,
+          "predicted": 91373,
+          "reference": 83167
+        }
+      },
+      "rougeL": {
+        "count": 500,
+        "macro": {
+          "precision": 0.2565425238827182,
+          "recall": 0.272584761027898,
+          "f1": 0.26213131320514094
+        },
+        "micro": {
+          "precision": 0.24811424466382942,
+          "recall": 0.2724491137485508,
+          "f1": 0.25971288595191977,
+          "overlap": 22795,
+          "predicted": 91873,
+          "reference": 83667
+        }
+      },
+      "window_token": {
+        "count": 1000,
+        "macro": {
+          "precision": 0.42208445447774406,
+          "recall": 0.4474676051677941,
+          "f1": 0.429673464193142
+        },
+        "micro": {
+          "precision": 0.42233845039170403,
+          "recall": 0.44588666977422403,
+          "f1": 0.43379321972802165,
+          "overlap": 37306,
+          "predicted": 88332,
+          "reference": 83667
+        }
+      },
+      "window_action_categories": {
+        "count": 1000,
+        "macro": {
+          "precision": 0.6090940476190476,
+          "recall": 0.6602265873015873,
+          "f1": 0.6005957625707625
+        },
+        "micro": {
+          "precision": 0.6053431798436143,
+          "recall": 0.655148095909732,
+          "f1": 0.629261684353127,
+          "overlap": 2787,
+          "predicted": 4604,
+          "reference": 4254
+        }
+      },
+      "window_body_categories": {
+        "count": 1000,
+        "macro": {
+          "precision": 0.7610166666666667,
+          "recall": 0.7014666666666667,
+          "f1": 0.6986051948051948
+        },
+        "micro": {
+          "precision": 0.7526997840172787,
+          "recall": 0.6858548585485855,
+          "f1": 0.7177242888402626,
+          "overlap": 2788,
+          "predicted": 3704,
+          "reference": 4065
+        }
+      },
+      "diagnostics": {
+        "source_count": 500,
+        "failure_count": 0,
+        "unique_full_prediction_count": 490,
+        "exact_full_prediction_duplicate_case_fraction": 0.038,
+        "full_prediction_exact_match_definition": "SHA256 of raw UTF8 text, no normalization; all cases in count>1 groups / source_count",
+        "stop_reason_counts": {
+          "eos": 498,
+          "native_stop": 0,
+          "budget_truncation": 2,
+          "unknown_stop": 0
+        },
+        "empty_raw_count": 0,
+        "valid_two_window_fraction": 0.996,
+        "nonempty_two_window_fraction": 0.996,
+        "mean_word_count": 183.746,
+        "mean_exact_sentence_max_count": 1.5,
+        "mean_repeated_sentence_fraction": 0.04915294547252278,
+        "mean_repeated_4gram_fraction": 0.12584586496096736,
+        "mean_distinct_1": 0.43325512890562934,
+        "mean_action_category_count": 5.7,
+        "mean_body_category_count": 4.372,
+        "corpus_distinct_1": 0.006234454242982201,
+        "corpus_distinct_2": 0.04544716415325156
+      }
+    }
+  },
+  "technical_evidence": {
+    "music_flamingo": {
+      "world_size": 1,
+      "physical_gpu": 0,
+      "native_token_and_stop_evidence_revalidated": true,
+      "actual_forward_count": null,
+      "finite_native_logits_forward_count": null,
+      "hook_evidence_not_recorded_by_this_frozen_serial_producer": true,
+      "revalidated_using": "actual frozen v3 manager check_worker_outputs; no invented hooks"
+    },
+    "moss": {
+      "world_size": 8,
+      "rank_count": 8,
+      "actual_forward_count": 111281,
+      "finite_native_logits_forward_count": 111281,
+      "native_logits_all_finite": true,
+      "revalidated_using": "actual frozen v2 manager check_worker_outputs + producer collect_shards"
+    },
+    "omni_captioner": {
+      "world_size": 8,
+      "rank_count": 8,
+      "actual_forward_count": 118177,
+      "finite_native_logits_forward_count": 118177,
+      "native_logits_all_finite": true,
+      "revalidated_using": "actual frozen v2 manager check_worker_outputs + producer collect_shards"
+    }
+  },
+  "bootstrap": {
+    "replicates": 5000,
+    "seed": 42,
+    "unit": "one source ID with both windows intact",
+    "paired_same_draws_across_families": true,
+    "interval": "two-sided percentile 95%, linear interpolation",
+    "family_intervals": {
+      "music_flamingo": {
+        "rouge1": {
+          "macro": {
+            "precision": {
+              "low": 0.4729677350960911,
+              "high": 0.48903268754497387
+            },
+            "recall": {
+              "low": 0.4961348284486119,
+              "high": 0.5091343357395415
+            },
+            "f1": {
+              "low": 0.48196656132073884,
+              "high": 0.4951902327132727
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.47017521059815565,
+              "high": 0.486244949924268
+            },
+            "recall": {
+              "low": 0.49592631289106515,
+              "high": 0.5089653682521049
+            },
+            "f1": {
+              "low": 0.48335033572386815,
+              "high": 0.4966158109826084
+            }
+          }
+        },
+        "rouge2": {
+          "macro": {
+            "precision": {
+              "low": 0.16614252641763183,
+              "high": 0.1791409272265802
+            },
+            "recall": {
+              "low": 0.17268853859823374,
+              "high": 0.1847245887339103
+            },
+            "f1": {
+              "low": 0.1685037259796184,
+              "high": 0.1806874025812716
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.16506113702214736,
+              "high": 0.17794603327996317
+            },
+            "recall": {
+              "low": 0.17415548708728476,
+              "high": 0.18633505610083548
+            },
+            "f1": {
+              "low": 0.16962189819607998,
+              "high": 0.18197512666659083
+            }
+          }
+        },
+        "rougeL": {
+          "macro": {
+            "precision": {
+              "low": 0.25049449880324537,
+              "high": 0.26027865202152606
+            },
+            "recall": {
+              "low": 0.26288293956235,
+              "high": 0.2710973036352134
+            },
+            "f1": {
+              "low": 0.25539496136803824,
+              "high": 0.2637052196996801
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.2488115426797154,
+              "high": 0.258402240440711
+            },
+            "recall": {
+              "low": 0.2623657771048553,
+              "high": 0.2706316765886892
+            },
+            "f1": {
+              "low": 0.2557745818055234,
+              "high": 0.26409570257639464
+            }
+          }
+        },
+        "window_token": {
+          "macro": {
+            "precision": {
+              "low": 0.41444588399826404,
+              "high": 0.4288232262941773
+            },
+            "recall": {
+              "low": 0.4343773848300128,
+              "high": 0.4464957905511575
+            },
+            "f1": {
+              "low": 0.42013588545807296,
+              "high": 0.4319589825061725
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.41057164389772827,
+              "high": 0.42486405155452467
+            },
+            "recall": {
+              "low": 0.4326677582479806,
+              "high": 0.44473140294179425
+            },
+            "f1": {
+              "low": 0.4220614783779814,
+              "high": 0.433856760108862
+            }
+          }
+        },
+        "window_action_categories": {
+          "macro": {
+            "precision": {
+              "low": 0.5554893452380953,
+              "high": 0.5861396130952383
+            },
+            "recall": {
+              "low": 0.6841585019841263,
+              "high": 0.7165732440476187
+            },
+            "f1": {
+              "low": 0.5869742236235984,
+              "high": 0.6143334337884333
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.5480762864169505,
+              "high": 0.5779587383202296
+            },
+            "recall": {
+              "low": 0.6801426872770512,
+              "high": 0.7104775716397231
+            },
+            "f1": {
+              "low": 0.6096128148061084,
+              "high": 0.6343392506303687
+            }
+          }
+        },
+        "window_body_categories": {
+          "macro": {
+            "precision": {
+              "low": 0.7517649999999999,
+              "high": 0.782152083333333
+            },
+            "recall": {
+              "low": 0.6523491666666665,
+              "high": 0.6830674999999992
+            },
+            "f1": {
+              "low": 0.6705112950937948,
+              "high": 0.6955682215007214
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.7386378314507768,
+              "high": 0.769428987614003
+            },
+            "recall": {
+              "low": 0.6438634601930018,
+              "high": 0.6738545845583778
+            },
+            "f1": {
+              "low": 0.6913740650198905,
+              "high": 0.7146570155862683
+            }
+          }
+        }
+      },
+      "moss": {
+        "rouge1": {
+          "macro": {
+            "precision": {
+              "low": 0.4813732758990599,
+              "high": 0.49659852015518013
+            },
+            "recall": {
+              "low": 0.4960546038973535,
+              "high": 0.5102125587704659
+            },
+            "f1": {
+              "low": 0.4862613195946063,
+              "high": 0.4991321888156299
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.4799388875037577,
+              "high": 0.49523562682509914
+            },
+            "recall": {
+              "low": 0.4960310708461623,
+              "high": 0.5102882244019455
+            },
+            "f1": {
+              "low": 0.4888844067181688,
+              "high": 0.5018004269780593
+            }
+          }
+        },
+        "rouge2": {
+          "macro": {
+            "precision": {
+              "low": 0.16652179694561708,
+              "high": 0.1788904463639496
+            },
+            "recall": {
+              "low": 0.17138321465140705,
+              "high": 0.18348186899623073
+            },
+            "f1": {
+              "low": 0.1679756045634309,
+              "high": 0.17984450511749972
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.1670128257787592,
+              "high": 0.1795261411283749
+            },
+            "recall": {
+              "low": 0.1728052374863178,
+              "high": 0.1849931185796601
+            },
+            "f1": {
+              "low": 0.1700042896771464,
+              "high": 0.1820914511438303
+            }
+          }
+        },
+        "rougeL": {
+          "macro": {
+            "precision": {
+              "low": 0.2555883414553121,
+              "high": 0.2648988344646678
+            },
+            "recall": {
+              "low": 0.26351131613269235,
+              "high": 0.2723186101199699
+            },
+            "f1": {
+              "low": 0.25815590765328944,
+              "high": 0.2663062503407903
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.25433316475901946,
+              "high": 0.2636916424385821
+            },
+            "recall": {
+              "low": 0.26295618256704606,
+              "high": 0.27183377986665147
+            },
+            "f1": {
+              "low": 0.25899989885848584,
+              "high": 0.2672827890806827
+            }
+          }
+        },
+        "window_token": {
+          "macro": {
+            "precision": {
+              "low": 0.4203137181626489,
+              "high": 0.4342186525295993
+            },
+            "recall": {
+              "low": 0.4334313019820836,
+              "high": 0.44638099473746146
+            },
+            "f1": {
+              "low": 0.4227179975273037,
+              "high": 0.43466307699093293
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.41829288715600776,
+              "high": 0.4323212346290366
+            },
+            "recall": {
+              "low": 0.4324125638147689,
+              "high": 0.44550589643807703
+            },
+            "f1": {
+              "low": 0.4260196883502921,
+              "high": 0.43800338234795533
+            }
+          }
+        },
+        "window_action_categories": {
+          "macro": {
+            "precision": {
+              "low": 0.5701499107142858,
+              "high": 0.6020541964285714
+            },
+            "recall": {
+              "low": 0.6992846130952375,
+              "high": 0.730281557539682
+            },
+            "f1": {
+              "low": 0.602955895354646,
+              "high": 0.629657802197802
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.5652171846586213,
+              "high": 0.5953204347244551
+            },
+            "recall": {
+              "low": 0.6970738978428561,
+              "high": 0.7248121104246014
+            },
+            "f1": {
+              "low": 0.6274166104338479,
+              "high": 0.6505505859200287
+            }
+          }
+        },
+        "window_body_categories": {
+          "macro": {
+            "precision": {
+              "low": 0.7688658333333331,
+              "high": 0.8000341666666665
+            },
+            "recall": {
+              "low": 0.6653329166666667,
+              "high": 0.6991504166666669
+            },
+            "f1": {
+              "low": 0.6821526803751802,
+              "high": 0.7092020616883112
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.7556832511289493,
+              "high": 0.7861145853027152
+            },
+            "recall": {
+              "low": 0.655924506328255,
+              "high": 0.6892365025083272
+            },
+            "f1": {
+              "low": 0.7055262589246406,
+              "high": 0.7303568752534607
+            }
+          }
+        }
+      },
+      "omni_captioner": {
+        "rouge1": {
+          "macro": {
+            "precision": {
+              "low": 0.4757688407161777,
+              "high": 0.49244032297692947
+            },
+            "recall": {
+              "low": 0.5053923867345441,
+              "high": 0.5206086610606157
+            },
+            "f1": {
+              "low": 0.486912613800116,
+              "high": 0.5016356010155264
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.44133308603548166,
+              "high": 0.48836782816577196
+            },
+            "recall": {
+              "low": 0.5056840216181969,
+              "high": 0.5209146946231796
+            },
+            "f1": {
+              "low": 0.47371427804947647,
+              "high": 0.5023315410968614
+            }
+          }
+        },
+        "rouge2": {
+          "macro": {
+            "precision": {
+              "low": 0.1672863955742572,
+              "high": 0.18054036625289985
+            },
+            "recall": {
+              "low": 0.17726917670364473,
+              "high": 0.1903574573557999
+            },
+            "f1": {
+              "low": 0.17092286383481034,
+              "high": 0.18383722098724936
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.15840740086847732,
+              "high": 0.17903897051304268
+            },
+            "recall": {
+              "low": 0.17906076713785857,
+              "high": 0.19226836783202558
+            },
+            "f1": {
+              "low": 0.16894557225874363,
+              "high": 0.18467370803274819
+            }
+          }
+        },
+        "rougeL": {
+          "macro": {
+            "precision": {
+              "low": 0.25157674954927517,
+              "high": 0.2614307495658558
+            },
+            "recall": {
+              "low": 0.2678474508541,
+              "high": 0.27725013007299154
+            },
+            "f1": {
+              "low": 0.2576778813049305,
+              "high": 0.26659952448554336
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.2347737587131854,
+              "high": 0.25906135907569056
+            },
+            "recall": {
+              "low": 0.26763960984005264,
+              "high": 0.2770806757967995
+            },
+            "f1": {
+              "low": 0.25169232457205665,
+              "high": 0.2666321155820659
+            }
+          }
+        },
+        "window_token": {
+          "macro": {
+            "precision": {
+              "low": 0.414644282005727,
+              "high": 0.42960211137098625
+            },
+            "recall": {
+              "low": 0.4401065221250065,
+              "high": 0.45508890434993443
+            },
+            "f1": {
+              "low": 0.42288775278303525,
+              "high": 0.4365510894655693
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.41529940052041925,
+              "high": 0.42964049506358337
+            },
+            "recall": {
+              "low": 0.43858137411192155,
+              "high": 0.45354357315197497
+            },
+            "f1": {
+              "low": 0.42727063680890387,
+              "high": 0.4404304729966633
+            }
+          }
+        },
+        "window_action_categories": {
+          "macro": {
+            "precision": {
+              "low": 0.5921196428571426,
+              "high": 0.6253812202380958
+            },
+            "recall": {
+              "low": 0.6417666269841271,
+              "high": 0.6786407341269834
+            },
+            "f1": {
+              "low": 0.5860048033216781,
+              "high": 0.6148439004745254
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.5895972808702775,
+              "high": 0.6205554200724587
+            },
+            "recall": {
+              "low": 0.637934568091634,
+              "high": 0.6724806020293489
+            },
+            "f1": {
+              "low": 0.6161871449062919,
+              "high": 0.642157344745832
+            }
+          }
+        },
+        "window_body_categories": {
+          "macro": {
+            "precision": {
+              "low": 0.7449324999999996,
+              "high": 0.7766670833333329
+            },
+            "recall": {
+              "low": 0.6845479166666671,
+              "high": 0.7177170833333331
+            },
+            "f1": {
+              "low": 0.6853026388888888,
+              "high": 0.7118740133477629
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.7371353556295484,
+              "high": 0.7674548148820391
+            },
+            "recall": {
+              "low": 0.6693824156014422,
+              "high": 0.7015932840631038
+            },
+            "f1": {
+              "low": 0.7057756880498374,
+              "high": 0.7296335669573383
+            }
+          }
+        }
+      }
+    },
+    "paired_differences": {
+      "music_flamingo_minus_moss": {
+        "rouge1": {
+          "macro": {
+            "precision": {
+              "low": -0.014458724099966893,
+              "high": -0.0014620033954793295
+            },
+            "recall": {
+              "low": -0.007198685571376341,
+              "high": 0.005915238773426397
+            },
+            "f1": {
+              "low": -0.009831494816208904,
+              "high": 0.0017621374152941658
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.015706756176287365,
+              "high": -0.002644162070540159
+            },
+            "recall": {
+              "low": -0.007421836662956195,
+              "high": 0.005655356298114231
+            },
+            "f1": {
+              "low": -0.010962499961915628,
+              "high": 0.000619975253453768
+            }
+          }
+        },
+        "rouge2": {
+          "macro": {
+            "precision": {
+              "low": -0.005206385788429973,
+              "high": 0.0051659898553826425
+            },
+            "recall": {
+              "low": -0.003933251647257633,
+              "high": 0.006530726909955545
+            },
+            "f1": {
+              "low": -0.004321667060149637,
+              "high": 0.005669570970757613
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.006871731591278017,
+              "high": 0.003433673405362952
+            },
+            "recall": {
+              "low": -0.003827155472501872,
+              "high": 0.006786287052463799
+            },
+            "f1": {
+              "low": -0.005252186672994462,
+              "high": 0.0050260542934812795
+            }
+          }
+        },
+        "rougeL": {
+          "macro": {
+            "precision": {
+              "low": -0.00889196079107196,
+              "high": -0.0005611174534780581
+            },
+            "recall": {
+              "low": -0.004802775172287131,
+              "high": 0.0031769179357792466
+            },
+            "f1": {
+              "low": -0.0062614978954489324,
+              "high": 0.001014344562080386
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.00927492259817187,
+              "high": -0.0011710560033123337
+            },
+            "recall": {
+              "low": -0.004839384849022131,
+              "high": 0.0030711927528351986
+            },
+            "f1": {
+              "low": -0.0067750533081438885,
+              "high": 0.0004633963681784536
+            }
+          }
+        },
+        "window_token": {
+          "macro": {
+            "precision": {
+              "low": -0.011320357841337586,
+              "high": 0.0000563606889381225
+            },
+            "recall": {
+              "low": -0.005756415090335122,
+              "high": 0.00672544256324419
+            },
+            "f1": {
+              "low": -0.007947218963789478,
+              "high": 0.0025248484660201857
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.013183157264624892,
+              "high": -0.0018462569765613267
+            },
+            "recall": {
+              "low": -0.006414075109286367,
+              "high": 0.005967153138207006
+            },
+            "f1": {
+              "low": -0.009277383311018694,
+              "high": 0.0012010355649760378
+            }
+          }
+        },
+        "window_action_categories": {
+          "macro": {
+            "precision": {
+              "low": -0.0275364880952376,
+              "high": -0.002709077380952611
+            },
+            "recall": {
+              "low": -0.032803273809524115,
+              "high": 0.004048859126983809
+            },
+            "f1": {
+              "low": -0.02878513521200949,
+              "high": -0.0026837402181153643
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.0286694286790913,
+              "high": -0.006441067107355434
+            },
+            "recall": {
+              "low": -0.03389468962269284,
+              "high": 0.0018813032194314725
+            },
+            "f1": {
+              "low": -0.02884476266389662,
+              "high": -0.0047690214324395035
+            }
+          }
+        },
+        "window_body_categories": {
+          "macro": {
+            "precision": {
+              "low": -0.03206666666666625,
+              "high": -0.002765833333333163
+            },
+            "recall": {
+              "low": -0.03381749999999942,
+              "high": 0.004717083333332713
+            },
+            "f1": {
+              "low": -0.02713851911976923,
+              "high": 0.002234722222221518
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.03067831834727309,
+              "high": -0.003813299325243528
+            },
+            "recall": {
+              "low": -0.03225966859691051,
+              "high": 0.004935536553332477
+            },
+            "f1": {
+              "low": -0.02872071848048316,
+              "high": -0.0014145457234817924
+            }
+          }
+        }
+      },
+      "music_flamingo_minus_omni_captioner": {
+        "rouge1": {
+          "macro": {
+            "precision": {
+              "low": -0.010586161469064145,
+              "high": 0.004434982438694737
+            },
+            "recall": {
+              "low": -0.01818604909440919,
+              "high": -0.0025371172954517683
+            },
+            "f1": {
+              "low": -0.012818954448760324,
+              "high": 0.0014520446450907785
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.009597266180459378,
+              "high": 0.03641876599415624
+            },
+            "recall": {
+              "low": -0.01865906500114147,
+              "high": -0.0030347776737564107
+            },
+            "f1": {
+              "low": -0.012031492933019198,
+              "high": 0.01621634323825572
+            }
+          }
+        },
+        "rouge2": {
+          "macro": {
+            "precision": {
+              "low": -0.006976419010992577,
+              "high": 0.004342981196016288
+            },
+            "recall": {
+              "low": -0.01119275192735404,
+              "high": 0.0008502219528387393
+            },
+            "f1": {
+              "low": -0.008569383501796606,
+              "high": 0.0027513107627513307
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.006320921790694689,
+              "high": 0.012814444181244644
+            },
+            "recall": {
+              "low": -0.011473179026110569,
+              "high": 0.0004734253548902879
+            },
+            "f1": {
+              "low": -0.008037022856215333,
+              "high": 0.006172603662071819
+            }
+          }
+        },
+        "rougeL": {
+          "macro": {
+            "precision": {
+              "low": -0.005504909952256364,
+              "high": 0.0032963191064615187
+            },
+            "recall": {
+              "low": -0.01015517140507471,
+              "high": -0.0010444271262014255
+            },
+            "f1": {
+              "low": -0.006911997389468898,
+              "high": 0.0015841878711870855
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.00502075283634263,
+              "high": 0.018692048697066702
+            },
+            "recall": {
+              "low": -0.010534517634189592,
+              "high": -0.0014132612805005293
+            },
+            "f1": {
+              "low": -0.006377439202374807,
+              "high": 0.007996227716062067
+            }
+          }
+        },
+        "window_token": {
+          "macro": {
+            "precision": {
+              "low": -0.0073274984118139415,
+              "high": 0.0062393774289848354
+            },
+            "recall": {
+              "low": -0.014548533806575531,
+              "high": 0.0005826480630791483
+            },
+            "f1": {
+              "low": -0.010264393695903307,
+              "high": 0.00308258307310433
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.0112573308568304,
+              "high": 0.0017743480806712644
+            },
+            "recall": {
+              "low": -0.014613154579122888,
+              "high": 0.0006065578135121491
+            },
+            "f1": {
+              "low": -0.012166515963016709,
+              "high": 0.0006033021571463692
+            }
+          }
+        },
+        "window_action_categories": {
+          "macro": {
+            "precision": {
+              "low": -0.051831130952381364,
+              "high": -0.02414139880952387
+            },
+            "recall": {
+              "low": 0.019776815476190365,
+              "high": 0.061161636904761466
+            },
+            "f1": {
+              "low": -0.014081443556443493,
+              "high": 0.01428098366910891
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.05507653110510517,
+              "high": -0.030184773382187568
+            },
+            "recall": {
+              "low": 0.0209799286526716,
+              "high": 0.05947959812737756
+            },
+            "f1": {
+              "low": -0.02031784835793603,
+              "high": 0.0056017598885941475
+            }
+          }
+        },
+        "window_body_categories": {
+          "macro": {
+            "precision": {
+              "low": -0.01005083333333324,
+              "high": 0.02133333333333343
+            },
+            "recall": {
+              "low": -0.052967500000000466,
+              "high": -0.013566666666667157
+            },
+            "f1": {
+              "low": -0.030699458874457877,
+              "high": -0.0002211381673880503
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.012992596577742132,
+              "high": 0.015056102659180216
+            },
+            "recall": {
+              "low": -0.04583112426142368,
+              "high": -0.008044556789448778
+            },
+            "f1": {
+              "low": -0.028834967357495474,
+              "high": -0.0004229751846969803
+            }
+          }
+        }
+      },
+      "moss_minus_omni_captioner": {
+        "rouge1": {
+          "macro": {
+            "precision": {
+              "low": -0.002142885021272396,
+              "high": 0.011906170227948381
+            },
+            "recall": {
+              "low": -0.017355145500907332,
+              "high": -0.002160522573382691
+            },
+            "f1": {
+              "low": -0.008693279908806943,
+              "high": 0.0050838330590721814
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.000047224789961602995,
+              "high": 0.04474796653058764
+            },
+            "recall": {
+              "low": -0.01760375965815424,
+              "high": -0.002369663709178863
+            },
+            "f1": {
+              "low": -0.006422235853980573,
+              "high": 0.020931969305613137
+            }
+          }
+        },
+        "rouge2": {
+          "macro": {
+            "precision": {
+              "low": -0.006669022615629825,
+              "high": 0.004298695730906051
+            },
+            "recall": {
+              "low": -0.012276421345877055,
+              "high": -0.0005950872830515946
+            },
+            "f1": {
+              "low": -0.009013497073163273,
+              "high": 0.0020440708412203666
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.004373007264760017,
+              "high": 0.013815923085318134
+            },
+            "recall": {
+              "low": -0.012701286419836432,
+              "high": -0.0009511335449585426
+            },
+            "f1": {
+              "low": -0.007576743179867029,
+              "high": 0.005778616603121237
+            }
+          }
+        },
+        "rougeL": {
+          "macro": {
+            "precision": {
+              "low": -0.0009446152842935943,
+              "high": 0.008168317758813463
+            },
+            "recall": {
+              "low": -0.009423791037777251,
+              "high": -0.00022797054301009864
+            },
+            "f1": {
+              "low": -0.004161881661713949,
+              "high": 0.00418695890007384
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.0003730671400994299,
+              "high": 0.02357190302299276
+            },
+            "recall": {
+              "low": -0.009744233595006715,
+              "high": -0.0005701379866516673
+            },
+            "f1": {
+              "low": -0.003194812530427052,
+              "high": 0.011017510070254144
+            }
+          }
+        },
+        "window_token": {
+          "macro": {
+            "precision": {
+              "low": -0.0011833397653212214,
+              "high": 0.01142413293376603
+            },
+            "recall": {
+              "low": -0.014867626391033483,
+              "high": -0.0001931358363447019
+            },
+            "f1": {
+              "low": -0.0071870157219540475,
+              "high": 0.005209991568376383
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.003224816482172814,
+              "high": 0.008916117365848037
+            },
+            "recall": {
+              "low": -0.014341155979190726,
+              "high": 0.0003100250314355354
+            },
+            "f1": {
+              "low": -0.007861289939503748,
+              "high": 0.004014683753425387
+            }
+          }
+        },
+        "window_action_categories": {
+          "macro": {
+            "precision": {
+              "low": -0.03665529761904807,
+              "high": -0.008910386904761926
+            },
+            "recall": {
+              "low": 0.03506148809523788,
+              "high": 0.07440818452380925
+            },
+            "f1": {
+              "low": 0.0021394461094459863,
+              "high": 0.02961351585914089
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": -0.036575467318437596,
+              "high": -0.013112075914044844
+            },
+            "recall": {
+              "low": 0.037088332056126654,
+              "high": 0.07404828042328039
+            },
+            "f1": {
+              "low": -0.0026740280452605125,
+              "high": 0.022316501477132746
+            }
+          }
+        },
+        "window_body_categories": {
+          "macro": {
+            "precision": {
+              "low": 0.008199583333333005,
+              "high": 0.038302083333334076
+            },
+            "recall": {
+              "low": -0.039733333333333294,
+              "high": 0.0014866666666663434
+            },
+            "f1": {
+              "low": -0.018440005411254196,
+              "high": 0.01311694444444461
+            }
+          },
+          "micro": {
+            "precision": {
+              "low": 0.00410877987996659,
+              "high": 0.03202683204408376
+            },
+            "recall": {
+              "low": -0.03356264344581435,
+              "high": 0.0068731902982236085
+            },
+            "f1": {
+              "low": -0.013927911435870055,
+              "high": 0.014985821404012546
+            }
+          }
+        }
+      }
+    },
+    "not_a_quality_ranking_or_multiple_comparison_adjusted_significance_test": true
+  },
+  "original_full_report_sha256": "eb8e75bb3313fe17910a995d7b4390016a8570f529217317cb6e6600b6e31077",
+  "full_report_case_numeric_reaggregation_independently_verified": true,
+  "full_report_input_SHA_refs_independently_verified": 172,
+  "weak_single_reference_agreement_not_unique_choreography_accuracy": true,
+  "fixed_window_format_not_real_action_boundary_accuracy": true,
+  "independent_dance_style_ground_truth_available": false,
+  "test_used_for_metric_or_threshold_selection": false,
+  "checkpoint_reselection_performed": false,
+  "training_or_generation_performed_for_this_summary": false,
+  "raw_media_or_caption_text_uploaded": false,
+  "multiple_comparison_adjustment_performed": false,
+  "interpretation": {
+    "no_overall_text_winner_by_all_metrics": true,
+    "Captioner_has_slightly_highest_ROUGE_but_pairwise_CI_with_MOSS_includes_zero": true,
+    "MOSS_highest_window_action_category_F1": true,
+    "MOSS_minus_Captioner_action_F1_95CI_excludes_zero_unadjusted": true,
+    "Captioner_two_budget_truncations_kept_as_quality_diagnostics": true,
+    "exact_duplicate_fraction_definition": "all case members of identical raw UTF8 prediction groups with count>1 divided by500; not extra duplicates/500",
+    "historical_excess_copy_fraction_fl_moss": {
+      "music_flamingo": 0.108,
+      "moss": 0.024
+    },
+    "current_duplicate_group_member_fraction_fl_moss_captioner": {
+      "music_flamingo": 0.182,
+      "moss": 0.044,
+      "omni_captioner": 0.038
+    }
+  },
+  "H3_or_human_quality_acceptance": false,
+  "final_winner": null
+}

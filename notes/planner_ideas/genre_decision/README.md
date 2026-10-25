@@ -2,6 +2,8 @@
 
 这是独立实验分支 `codex/planner-genre-decision`。已合并公平实验上游 `4e22b8ef8016ee3bdfa85670a9d71aba7d277686`，保留双方历史，不修改上游 `TASK_INSTRUCTION`、训练入口、数据或 fingerprint。条件协议为 `planner-selected-genre-prompt-v1`，新增路由协议为 `planner-genre-uncertainty-route-v1`，结果应与公平基线分别报告。三个方向的执行先后和证据边界参见[实验总指南](../EXPERIMENT_SEQUENCE_20261025.md)。
 
+已进一步合并上游 `236d4221039647bd2a229ba28a211d88eb5ab844`。针对 Captioner 新增独立的[assistant header 联合 SFT 与生成协议](CAPTIONER_ASSISTANT_HEADER.md)：支持 fair/direct checkpoint 初始化、训练/恢复、从确切 joint checkpoint 导出特征训练 head，以及 assistant 侧条件生成。下文旧 `genre_decision generate` 的 Captioner unsupported 仍指该“user prompt 条件”接口；使用 Captioner 应走新入口，不向其原生 audio-only user 拼文字。
+
 ## 本轮实现与边界
 
 实现链路：原 `PlannerAdapter.prefix` → 仅输入 prefill → 取音频占位 token 的最终 hidden states → masked mean pooling＋MLP → 舞种概率 → 独立 calibration 温度 → 置信/分差路由 → 条件生成或原生无指定舞种 fallback → 连续自然语言 caption。

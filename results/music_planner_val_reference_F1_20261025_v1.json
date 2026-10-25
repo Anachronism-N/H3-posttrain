@@ -1,0 +1,912 @@
+{
+  "schema": "music-planner-weak-reference-F1-v1",
+  "scope": "complete val32 by condition, each matched to original weak source reference",
+  "reports": {
+    "music_flamingo": {
+      "original": {
+        "rouge1": {
+          "count": 32,
+          "macro": {
+            "precision": 0.4988644413868839,
+            "recall": 0.5103588762887972,
+            "f1": 0.5010777611661954
+          },
+          "micro": {
+            "precision": 0.49694134580784455,
+            "recall": 0.5128109914593391,
+            "f1": 0.5047514619883041,
+            "overlap": 2762,
+            "predicted": 5558,
+            "reference": 5386
+          }
+        },
+        "rouge2": {
+          "count": 32,
+          "macro": {
+            "precision": 0.18685114407201184,
+            "recall": 0.1882162591041021,
+            "f1": 0.1862045511765462
+          },
+          "micro": {
+            "precision": 0.1860296778863554,
+            "recall": 0.192005976839746,
+            "f1": 0.1889705882352941,
+            "overlap": 1028,
+            "predicted": 5526,
+            "reference": 5354
+          }
+        },
+        "rougeL": {
+          "count": 32,
+          "macro": {
+            "precision": 0.2611078909856562,
+            "recall": 0.2668913316105466,
+            "f1": 0.2621222161168576
+          },
+          "micro": {
+            "precision": 0.25908600215905003,
+            "recall": 0.26735982176011885,
+            "f1": 0.2631578947368421,
+            "overlap": 1440,
+            "predicted": 5558,
+            "reference": 5386
+          }
+        },
+        "window_token": {
+          "count": 64,
+          "macro": {
+            "precision": 0.429718112922508,
+            "recall": 0.4371935226332505,
+            "f1": 0.42826455495654214
+          },
+          "micro": {
+            "precision": 0.42515293270960774,
+            "recall": 0.4387300408466394,
+            "f1": 0.4318347953216374,
+            "overlap": 2363,
+            "predicted": 5558,
+            "reference": 5386
+          }
+        },
+        "window_action_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.589546130952381,
+            "recall": 0.7089285714285715,
+            "f1": 0.6160770652958153
+          },
+          "micro": {
+            "precision": 0.5797101449275363,
+            "recall": 0.7117437722419929,
+            "f1": 0.6389776357827477,
+            "overlap": 200,
+            "predicted": 345,
+            "reference": 281
+          }
+        },
+        "window_body_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.7921875,
+            "recall": 0.69453125,
+            "f1": 0.7005366161616161
+          },
+          "micro": {
+            "precision": 0.7705627705627706,
+            "recall": 0.6742424242424242,
+            "f1": 0.7191919191919193,
+            "overlap": 178,
+            "predicted": 231,
+            "reference": 264
+          }
+        }
+      },
+      "mismatched": {
+        "rouge1": {
+          "count": 32,
+          "macro": {
+            "precision": 0.4639219668042608,
+            "recall": 0.4768615625869869,
+            "f1": 0.4672145827496732
+          },
+          "micro": {
+            "precision": 0.4622166246851385,
+            "recall": 0.47697734868176755,
+            "f1": 0.46948099415204675,
+            "overlap": 2569,
+            "predicted": 5558,
+            "reference": 5386
+          }
+        },
+        "rouge2": {
+          "count": 32,
+          "macro": {
+            "precision": 0.1574700550569525,
+            "recall": 0.16164563874380525,
+            "f1": 0.15843733708828928
+          },
+          "micro": {
+            "precision": 0.15798045602605862,
+            "recall": 0.16305565932013447,
+            "f1": 0.16047794117647057,
+            "overlap": 873,
+            "predicted": 5526,
+            "reference": 5354
+          }
+        },
+        "rougeL": {
+          "count": 32,
+          "macro": {
+            "precision": 0.24678514395847206,
+            "recall": 0.2547859011562594,
+            "f1": 0.24910330335559358
+          },
+          "micro": {
+            "precision": 0.24577186038143217,
+            "recall": 0.2536204975863349,
+            "f1": 0.2496345029239766,
+            "overlap": 1366,
+            "predicted": 5558,
+            "reference": 5386
+          }
+        },
+        "window_token": {
+          "count": 64,
+          "macro": {
+            "precision": 0.4103438301670793,
+            "recall": 0.4192853693419655,
+            "f1": 0.4102317820441121
+          },
+          "micro": {
+            "precision": 0.40644116588700974,
+            "recall": 0.4194207203861864,
+            "f1": 0.4128289473684211,
+            "overlap": 2259,
+            "predicted": 5558,
+            "reference": 5386
+          }
+        },
+        "window_action_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.6124255952380953,
+            "recall": 0.7415550595238095,
+            "f1": 0.650010492979243
+          },
+          "micro": {
+            "precision": 0.6086956521739131,
+            "recall": 0.7473309608540926,
+            "f1": 0.670926517571885,
+            "overlap": 210,
+            "predicted": 345,
+            "reference": 281
+          }
+        },
+        "window_body_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.7578125,
+            "recall": 0.6723958333333333,
+            "f1": 0.667285579004329
+          },
+          "micro": {
+            "precision": 0.7359307359307359,
+            "recall": 0.6439393939393939,
+            "f1": 0.686868686868687,
+            "overlap": 170,
+            "predicted": 231,
+            "reference": 264
+          }
+        }
+      },
+      "silence": {
+        "rouge1": {
+          "count": 32,
+          "macro": {
+            "precision": 0.49661144578313254,
+            "recall": 0.4920494042763611,
+            "f1": 0.4919750474234404
+          },
+          "micro": {
+            "precision": 0.49661144578313254,
+            "recall": 0.48978834014110656,
+            "f1": 0.4931762946345111,
+            "overlap": 2638,
+            "predicted": 5312,
+            "reference": 5386
+          }
+        },
+        "rouge2": {
+          "count": 32,
+          "macro": {
+            "precision": 0.16742424242424242,
+            "recall": 0.16434361663428312,
+            "f1": 0.16511540410386355
+          },
+          "micro": {
+            "precision": 0.16742424242424242,
+            "recall": 0.1651101979828166,
+            "f1": 0.16625916870415647,
+            "overlap": 884,
+            "predicted": 5280,
+            "reference": 5354
+          }
+        },
+        "rougeL": {
+          "count": 32,
+          "macro": {
+            "precision": 0.24943524096385541,
+            "recall": 0.24834244760786955,
+            "f1": 0.2477221726495543
+          },
+          "micro": {
+            "precision": 0.24943524096385541,
+            "recall": 0.2460081693278871,
+            "f1": 0.24770985230884277,
+            "overlap": 1325,
+            "predicted": 5312,
+            "reference": 5386
+          }
+        },
+        "window_token": {
+          "count": 64,
+          "macro": {
+            "precision": 0.4280838815789474,
+            "recall": 0.4244079642821921,
+            "f1": 0.4223297954647504
+          },
+          "micro": {
+            "precision": 0.426769578313253,
+            "recall": 0.4209060527292982,
+            "f1": 0.4238175359880351,
+            "overlap": 2267,
+            "predicted": 5312,
+            "reference": 5386
+          }
+        },
+        "window_action_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.53125,
+            "recall": 0.721391369047619,
+            "f1": 0.5946619352869352
+          },
+          "micro": {
+            "precision": 0.53125,
+            "recall": 0.7259786476868327,
+            "f1": 0.6135338345864663,
+            "overlap": 204,
+            "predicted": 384,
+            "reference": 281
+          }
+        },
+        "window_body_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.8046875,
+            "recall": 0.41302083333333334,
+            "f1": 0.5313244047619048
+          },
+          "micro": {
+            "precision": 0.8046875,
+            "recall": 0.39015151515151514,
+            "f1": 0.5255102040816327,
+            "overlap": 103,
+            "predicted": 128,
+            "reference": 264
+          }
+        }
+      }
+    },
+    "moss": {
+      "original": {
+        "rouge1": {
+          "count": 32,
+          "macro": {
+            "precision": 0.47813030295425424,
+            "recall": 0.5020519836524076,
+            "f1": 0.485353659487893
+          },
+          "micro": {
+            "precision": 0.4755281690140845,
+            "recall": 0.5014853323431118,
+            "f1": 0.48816193746611236,
+            "overlap": 2701,
+            "predicted": 5680,
+            "reference": 5386
+          }
+        },
+        "rouge2": {
+          "count": 32,
+          "macro": {
+            "precision": 0.16385116657292093,
+            "recall": 0.1723599225869749,
+            "f1": 0.1665112596878797
+          },
+          "micro": {
+            "precision": 0.165014164305949,
+            "recall": 0.17407545760179305,
+            "f1": 0.1694237411379749,
+            "overlap": 932,
+            "predicted": 5648,
+            "reference": 5354
+          }
+        },
+        "rougeL": {
+          "count": 32,
+          "macro": {
+            "precision": 0.24976085283114016,
+            "recall": 0.26171806130426967,
+            "f1": 0.25321291217143954
+          },
+          "micro": {
+            "precision": 0.24788732394366197,
+            "recall": 0.26141849238767173,
+            "f1": 0.2544731610337972,
+            "overlap": 1408,
+            "predicted": 5680,
+            "reference": 5386
+          }
+        },
+        "window_token": {
+          "count": 64,
+          "macro": {
+            "precision": 0.415863151744066,
+            "recall": 0.43671410646571884,
+            "f1": 0.42022621882220096
+          },
+          "micro": {
+            "precision": 0.41320422535211265,
+            "recall": 0.4357593761604159,
+            "f1": 0.42418217964937643,
+            "overlap": 2347,
+            "predicted": 5680,
+            "reference": 5386
+          }
+        },
+        "window_action_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.6303943452380952,
+            "recall": 0.6704241071428572,
+            "f1": 0.6085340874403374
+          },
+          "micro": {
+            "precision": 0.6118421052631579,
+            "recall": 0.6619217081850534,
+            "f1": 0.6358974358974359,
+            "overlap": 186,
+            "predicted": 304,
+            "reference": 281
+          }
+        },
+        "window_body_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.78125,
+            "recall": 0.7377604166666667,
+            "f1": 0.7189044462481963
+          },
+          "micro": {
+            "precision": 0.7529880478087649,
+            "recall": 0.7159090909090909,
+            "f1": 0.7339805825242719,
+            "overlap": 189,
+            "predicted": 251,
+            "reference": 264
+          }
+        }
+      },
+      "mismatched": {
+        "rouge1": {
+          "count": 32,
+          "macro": {
+            "precision": 0.4568541201152514,
+            "recall": 0.4821315347888469,
+            "f1": 0.46522519278827934
+          },
+          "micro": {
+            "precision": 0.45492957746478874,
+            "recall": 0.4797623468251021,
+            "f1": 0.4670160853063438,
+            "overlap": 2584,
+            "predicted": 5680,
+            "reference": 5386
+          }
+        },
+        "rouge2": {
+          "count": 32,
+          "macro": {
+            "precision": 0.14333934058854103,
+            "recall": 0.1537535432662201,
+            "f1": 0.14727410685052297
+          },
+          "micro": {
+            "precision": 0.14518413597733712,
+            "recall": 0.15315651849084796,
+            "f1": 0.1490638065806217,
+            "overlap": 820,
+            "predicted": 5648,
+            "reference": 5354
+          }
+        },
+        "rougeL": {
+          "count": 32,
+          "macro": {
+            "precision": 0.2279087336040981,
+            "recall": 0.24152214313895376,
+            "f1": 0.23255228691415616
+          },
+          "micro": {
+            "precision": 0.2267605633802817,
+            "recall": 0.23913850724099517,
+            "f1": 0.23278510753659856,
+            "overlap": 1288,
+            "predicted": 5680,
+            "reference": 5386
+          }
+        },
+        "window_token": {
+          "count": 64,
+          "macro": {
+            "precision": 0.3867089979371149,
+            "recall": 0.4083395564274221,
+            "f1": 0.39213411278905497
+          },
+          "micro": {
+            "precision": 0.384330985915493,
+            "recall": 0.4053100631266246,
+            "f1": 0.39454183986987174,
+            "overlap": 2183,
+            "predicted": 5680,
+            "reference": 5386
+          }
+        },
+        "window_action_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.636030505952381,
+            "recall": 0.6763020833333333,
+            "f1": 0.6254131285381285
+          },
+          "micro": {
+            "precision": 0.6282894736842105,
+            "recall": 0.6797153024911032,
+            "f1": 0.652991452991453,
+            "overlap": 191,
+            "predicted": 304,
+            "reference": 281
+          }
+        },
+        "window_body_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.7630208333333334,
+            "recall": 0.7390625,
+            "f1": 0.7116375811688311
+          },
+          "micro": {
+            "precision": 0.7450199203187251,
+            "recall": 0.7083333333333334,
+            "f1": 0.7262135922330097,
+            "overlap": 187,
+            "predicted": 251,
+            "reference": 264
+          }
+        }
+      },
+      "silence": {
+        "rouge1": {
+          "count": 32,
+          "macro": {
+            "precision": 0.46875,
+            "recall": 0.4590096419046783,
+            "f1": 0.4614441712735079
+          },
+          "micro": {
+            "precision": 0.46875,
+            "recall": 0.4595246936502042,
+            "f1": 0.46409150571910746,
+            "overlap": 2475,
+            "predicted": 5280,
+            "reference": 5386
+          }
+        },
+        "rouge2": {
+          "count": 32,
+          "macro": {
+            "precision": 0.16120426829268292,
+            "recall": 0.15497974410227044,
+            "f1": 0.15714451601730098
+          },
+          "micro": {
+            "precision": 0.16120426829268292,
+            "recall": 0.15801270078446022,
+            "f1": 0.15959252971137522,
+            "overlap": 846,
+            "predicted": 5248,
+            "reference": 5354
+          }
+        },
+        "rougeL": {
+          "count": 32,
+          "macro": {
+            "precision": 0.24640151515151515,
+            "recall": 0.242152676537515,
+            "f1": 0.24299784729834611
+          },
+          "micro": {
+            "precision": 0.24640151515151515,
+            "recall": 0.2415521722985518,
+            "f1": 0.24395274704669043,
+            "overlap": 1301,
+            "predicted": 5280,
+            "reference": 5386
+          }
+        },
+        "window_token": {
+          "count": 64,
+          "macro": {
+            "precision": 0.3966173835125448,
+            "recall": 0.3864006145832712,
+            "f1": 0.38695949357382353
+          },
+          "micro": {
+            "precision": 0.3918560606060606,
+            "recall": 0.38414407723728183,
+            "f1": 0.3879617476092255,
+            "overlap": 2069,
+            "predicted": 5280,
+            "reference": 5386
+          }
+        },
+        "window_action_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.5713541666666667,
+            "recall": 0.7173363095238096,
+            "f1": 0.6155425303862804
+          },
+          "micro": {
+            "precision": 0.5710227272727273,
+            "recall": 0.7153024911032029,
+            "f1": 0.6350710900473934,
+            "overlap": 201,
+            "predicted": 352,
+            "reference": 281
+          }
+        },
+        "window_body_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.8697916666666666,
+            "recall": 0.5518229166666666,
+            "f1": 0.6552455357142857
+          },
+          "micro": {
+            "precision": 0.86875,
+            "recall": 0.5265151515151515,
+            "f1": 0.6556603773584906,
+            "overlap": 139,
+            "predicted": 160,
+            "reference": 264
+          }
+        }
+      }
+    },
+    "omni_captioner": {
+      "original": {
+        "rouge1": {
+          "count": 32,
+          "macro": {
+            "precision": 0.5011736507199953,
+            "recall": 0.5165680277572763,
+            "f1": 0.505860675549629
+          },
+          "micro": {
+            "precision": 0.5029692280007199,
+            "recall": 0.5189379873746751,
+            "f1": 0.5108288403545647,
+            "overlap": 2795,
+            "predicted": 5557,
+            "reference": 5386
+          }
+        },
+        "rouge2": {
+          "count": 32,
+          "macro": {
+            "precision": 0.19130843982043494,
+            "recall": 0.19571928107238717,
+            "f1": 0.1924167874068763
+          },
+          "micro": {
+            "precision": 0.1934841628959276,
+            "recall": 0.19966380276428838,
+            "f1": 0.19652541593896497,
+            "overlap": 1069,
+            "predicted": 5525,
+            "reference": 5354
+          }
+        },
+        "rougeL": {
+          "count": 32,
+          "macro": {
+            "precision": 0.2616133484960475,
+            "recall": 0.2688381661226232,
+            "f1": 0.2636848900605433
+          },
+          "micro": {
+            "precision": 0.2616519704876732,
+            "recall": 0.2699591533605644,
+            "f1": 0.2657406561272046,
+            "overlap": 1454,
+            "predicted": 5557,
+            "reference": 5386
+          }
+        },
+        "window_token": {
+          "count": 64,
+          "macro": {
+            "precision": 0.4293252853465431,
+            "recall": 0.4429604343332558,
+            "f1": 0.43157396823257027
+          },
+          "micro": {
+            "precision": 0.42954831743746624,
+            "recall": 0.44318603787597477,
+            "f1": 0.43626062322946174,
+            "overlap": 2387,
+            "predicted": 5557,
+            "reference": 5386
+          }
+        },
+        "window_action_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.6679315476190476,
+            "recall": 0.6549479166666666,
+            "f1": 0.6252265963203463
+          },
+          "micro": {
+            "precision": 0.6441281138790036,
+            "recall": 0.6441281138790036,
+            "f1": 0.6441281138790036,
+            "overlap": 181,
+            "predicted": 281,
+            "reference": 281
+          }
+        },
+        "window_body_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.7916666666666666,
+            "recall": 0.7130208333333333,
+            "f1": 0.7251589556277056
+          },
+          "micro": {
+            "precision": 0.7931034482758621,
+            "recall": 0.696969696969697,
+            "f1": 0.7419354838709677,
+            "overlap": 184,
+            "predicted": 232,
+            "reference": 264
+          }
+        }
+      },
+      "mismatched": {
+        "rouge1": {
+          "count": 32,
+          "macro": {
+            "precision": 0.4516736805404727,
+            "recall": 0.4646291011222249,
+            "f1": 0.4539409632568972
+          },
+          "micro": {
+            "precision": 0.4498830304120929,
+            "recall": 0.4641663572224285,
+            "f1": 0.4569130951293064,
+            "overlap": 2500,
+            "predicted": 5557,
+            "reference": 5386
+          }
+        },
+        "rouge2": {
+          "count": 32,
+          "macro": {
+            "precision": 0.14169332427339468,
+            "recall": 0.14595659564729505,
+            "f1": 0.14240350117486433
+          },
+          "micro": {
+            "precision": 0.14244343891402714,
+            "recall": 0.14699290250280164,
+            "f1": 0.14468241566320433,
+            "overlap": 787,
+            "predicted": 5525,
+            "reference": 5354
+          }
+        },
+        "rougeL": {
+          "count": 32,
+          "macro": {
+            "precision": 0.2301172632950725,
+            "recall": 0.23875757625273358,
+            "f1": 0.23226509668148637
+          },
+          "micro": {
+            "precision": 0.2296202987223322,
+            "recall": 0.23691050872632752,
+            "f1": 0.233208443753998,
+            "overlap": 1276,
+            "predicted": 5557,
+            "reference": 5386
+          }
+        },
+        "window_token": {
+          "count": 64,
+          "macro": {
+            "precision": 0.3859388737343789,
+            "recall": 0.39898309346913424,
+            "f1": 0.3868876183768974
+          },
+          "micro": {
+            "precision": 0.3849199208205866,
+            "recall": 0.3971407352395098,
+            "f1": 0.3909348441926345,
+            "overlap": 2139,
+            "predicted": 5557,
+            "reference": 5386
+          }
+        },
+        "window_action_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.6155877976190476,
+            "recall": 0.6189732142857143,
+            "f1": 0.5830634643134643
+          },
+          "micro": {
+            "precision": 0.6014234875444839,
+            "recall": 0.6014234875444839,
+            "f1": 0.6014234875444839,
+            "overlap": 169,
+            "predicted": 281,
+            "reference": 281
+          }
+        },
+        "window_body_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.7419270833333333,
+            "recall": 0.6497395833333334,
+            "f1": 0.6498996663059163
+          },
+          "micro": {
+            "precision": 0.7112068965517241,
+            "recall": 0.625,
+            "f1": 0.6653225806451613,
+            "overlap": 165,
+            "predicted": 232,
+            "reference": 264
+          }
+        }
+      },
+      "silence": {
+        "rouge1": {
+          "count": 32,
+          "macro": {
+            "precision": 0.4506465517241379,
+            "recall": 0.39617890196763617,
+            "f1": 0.4196821779983095
+          },
+          "micro": {
+            "precision": 0.4506465517241379,
+            "recall": 0.3882287411808392,
+            "f1": 0.417115499700778,
+            "overlap": 2091,
+            "predicted": 4640,
+            "reference": 5386
+          }
+        },
+        "rouge2": {
+          "count": 32,
+          "macro": {
+            "precision": 0.1228298611111111,
+            "recall": 0.10991008575832488,
+            "f1": 0.11549127776701683
+          },
+          "micro": {
+            "precision": 0.1228298611111111,
+            "recall": 0.1057153530070975,
+            "f1": 0.11363180084320418,
+            "overlap": 566,
+            "predicted": 4608,
+            "reference": 5354
+          }
+        },
+        "rougeL": {
+          "count": 32,
+          "macro": {
+            "precision": 0.23232758620689656,
+            "recall": 0.20432058038870005,
+            "f1": 0.21638366804450074
+          },
+          "micro": {
+            "precision": 0.23232758620689656,
+            "recall": 0.20014853323431117,
+            "f1": 0.21504089367644125,
+            "overlap": 1078,
+            "predicted": 4640,
+            "reference": 5386
+          }
+        },
+        "window_token": {
+          "count": 64,
+          "macro": {
+            "precision": 0.3748505070799847,
+            "recall": 0.32737477357295697,
+            "f1": 0.3461950113763917
+          },
+          "micro": {
+            "precision": 0.3737068965517241,
+            "recall": 0.32194578536947643,
+            "f1": 0.34590065828845,
+            "overlap": 1734,
+            "predicted": 4640,
+            "reference": 5386
+          }
+        },
+        "window_action_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.71875,
+            "recall": 0.4140625,
+            "f1": 0.5060763888888888
+          },
+          "micro": {
+            "precision": 0.70625,
+            "recall": 0.40213523131672596,
+            "f1": 0.5124716553287982,
+            "overlap": 113,
+            "predicted": 160,
+            "reference": 281
+          }
+        },
+        "window_body_categories": {
+          "count": 64,
+          "macro": {
+            "precision": 0.6927083333333333,
+            "recall": 0.49765624999999997,
+            "f1": 0.56640625
+          },
+          "micro": {
+            "precision": 0.6927083333333334,
+            "recall": 0.5037878787878788,
+            "f1": 0.5833333333333334,
+            "overlap": 133,
+            "predicted": 192,
+            "reference": 264
+          }
+        }
+      }
+    }
+  },
+  "formulas": {
+    "token_f1": "multiset English word/CJK-character overlap; formatting timestamps removed",
+    "action_body_f1": "frozen regex category sets per expected window; invalid predicted windows get zero overlap",
+    "rougeL": "sequence LCS P/R harmonic F1, not ROUGE-Lsum",
+    "zero_division": 0
+  },
+  "reference_is_one_observed_choreography_not_only_valid_solution": true,
+  "metrics_are_weak_reference_agreement_not_choreography_accuracy": true,
+  "mismatch_silence_reference_remains_original_source": true,
+  "dance_style_f1": null,
+  "independent_dance_style_ground_truth_available": false,
+  "test_used_for_metric_or_threshold_selection": false,
+  "winner": null,
+  "human_quality_accepted": false,
+  "code": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/music_planner_reference_f1.py",
+    "sha256": "3cdbba545b861839978d553b00935966163fa20e294b7b388550f806dd546ced"
+  }
+}

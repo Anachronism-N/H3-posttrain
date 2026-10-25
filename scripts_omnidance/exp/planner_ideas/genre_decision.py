@@ -18,10 +18,18 @@ from torch.nn import functional as F
 from scripts_omnidance.exp.ms.music_planner_adapters import (
     FAMILIES, TASK_INSTRUCTION, PlannerAdapter, load_planner_adapter,
 )
+from scripts_omnidance.exp.ms.music_planner_generation_eos_patch import (
+    apply_generation_eos_patch, generation_eos_patch_ref,
+)
+from scripts_omnidance.exp.ms.music_planner_moss_generation_patch import (
+    apply_moss_generation_patch, generation_patch_ref,
+)
+from scripts_omnidance.exp.ms.music_planner_eval import classify_stop, parse_windows
 
 CACHE_SCHEMA = 'planner-genre-audio-prefill-v1'
 HEAD_SCHEMA = 'planner-genre-head-v1'
 CONDITION_PROTOCOL = 'planner-selected-genre-prompt-v1'
+ROUTE_PROTOCOL = 'planner-genre-uncertainty-route-v1'
 SUPPORTED_CONDITION_FAMILIES = ('moss', 'music_flamingo')
 
 
@@ -41,6 +49,18 @@ def read_jsonl(path):
 def write_json(path, value):
     Path(path).write_text(json.dumps(value, ensure_ascii=False, indent=2,
                                      allow_nan=False), encoding='utf-8')
+
+
+def require_fresh_output(path):
+    if Path(path).exists():
+        raise ValueError('Output already exists; choose a fresh evidence path')
+
+
+def write_jsonl_fresh(path, rows):
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    with Path(path).open('x', encoding='utf-8', newline='\n') as stream:
+        for row in rows:
+            stream.write(json.dumps(row, ensure_ascii=False, allow_nan=False) + '\n')
 
 
 def validate_classes(classes):
@@ -228,6 +248,49 @@ class GenreConditionedPlanner(PlannerAdapter):
             tokenize=False, add_generation_prompt=True)
 
 
+class RoutedGenrePlanner(GenreConditionedPlanner):
+    """One generation/patch owner for a batch, with an explicit native fallback."""
+    def __init__(self, base, protocol):
+        if protocol != CONDITION_PROTOCOL or base.family not in SUPPORTED_CONDITION_FAMILIES:
+            raise ValueError('Explicit supported selected-genre protocol required')
+        # Do not repeatedly create new patch owners over the same native model.
+        PlannerAdapter.__init__(self, base.family, base.model, base.processor, base.max_length)
+        self.genre = None
+        self.trainable_info = base.trainable_info
+        self._audio_identities = base._audio_identities
+
+    def select_genre(self, genre):
+        if genre is not None:
+            validate_classes([genre, '__validation_sentinel__'])
+        self.genre = genre
+
+    def _prompt(self):
+        return PlannerAdapter._prompt(self) if self.genre is None else super()._prompt()
+
+
+def prepare_generation_patches(adapter):
+    """Install applicable upstream fixes on the exact instance used for generation."""
+    native = adapter.model.get_base_model() if hasattr(adapter.model, 'get_base_model') else adapter.model
+    native_eos = getattr(getattr(native, 'generation_config', None), 'eos_token_id', None)
+    if adapter.family == 'moss' and (
+            getattr(getattr(native, 'config', None), 'model_type', None) != 'moss_music' or
+            not hasattr(native, '_planner_native_forward')):
+        raise ValueError('The generation bridge requires a prepared native MOSS runtime')
+    moss_ref = apply_moss_generation_patch(adapter) if adapter.family == 'moss' else None
+    eos_ref = apply_generation_eos_patch(adapter)
+    return dict(schema='planner-genre-generation-patches-v1', family=adapter.family,
+                requested_moss_patch_ref=generation_patch_ref(),
+                applied_moss_patch_ref=moss_ref,
+                moss_applicable=adapter.family == 'moss',
+                requested_eos_patch_ref=generation_eos_patch_ref(),
+                applied_eos_patch_ref=eos_ref,
+                eos_details=getattr(adapter, 'generation_eos_patch_details', dict(
+                    scope='no-patch-native-generation-EOS-already-valid',
+                    original_native_eos_token_id=native_eos)),
+                adapter_code_sha256=adapter_code_sha(),
+                weights_mutated=False, native_prefix_mutated_by_patches=False)
+
+
 def conditioned_collate(base, rows, selected_genre, protocol):
     """SFT integration: same prefix as conditioned generation, targets are actions only."""
     return GenreConditionedPlanner(base, selected_genre, protocol).collate(rows)
@@ -354,15 +417,105 @@ def load_head(path):
         raise ValueError('Invalid checkpoint temperature')
     head = GenreHead(**saved['config'])
     head.load_state_dict(saved['state_dict'], strict=True)
+    if any(not torch.isfinite(value).all() for value in head.state_dict().values()):
+        raise ValueError('Genre checkpoint contains nonfinite weights')
     return head.eval(), saved
 
 
 @torch.no_grad()
-def decide(head, features, mask, classes, temperature):
-    probabilities = (head(features, mask) / temperature).softmax(-1)
-    return [dict(selected_genre=classes[int(p.argmax())],
-                 probabilities=dict(zip(classes, p.tolist())),
-                 max_probability=float(p.max())) for p in probabilities]
+def decide(head, features, mask, classes, temperature, *, top_k=3,
+           min_confidence=.6, min_margin=.15):
+    validate_classes(classes)
+    if not math.isfinite(temperature) or temperature <= 0:
+        raise ValueError('Temperature must be finite and positive')
+    if (type(top_k) is not int or top_k < 1 or
+            any(type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 1
+                for value in (min_confidence, min_margin))):
+        raise ValueError('Positive top-k and finite confidence/margin thresholds in [0,1] required')
+    logits = head(features, mask)
+    if logits.shape[-1] != len(classes) or not torch.isfinite(logits).all():
+        raise ValueError('Genre logits have invalid class dimensions or nonfinite values')
+    probabilities = (logits / temperature).softmax(-1)
+    if not torch.isfinite(probabilities).all():
+        raise ValueError('Genre probabilities must be finite')
+    result = []
+    for row in probabilities:
+        values = row.tolist()
+        ranked = sorted(range(len(classes)), key=lambda i: (-values[i], i))
+        first, second = ranked[:2]
+        confidence, margin = values[first], values[first] - values[second]
+        reasons = []
+        if confidence < min_confidence:
+            reasons.append('below_min_confidence')
+        if margin < min_margin:
+            reasons.append('below_min_margin')
+        if margin <= 1e-12:
+            reasons.append('tied_top_probability')
+        accepted = not reasons
+        result.append(dict(predicted_genre=classes[first],
+            selected_genre=classes[first] if accepted else None,
+            probabilities=dict(zip(classes, values)), max_probability=confidence, top2_margin=margin,
+            top_k=[dict(genre=classes[i], probability=values[i]) for i in ranked[:top_k]],
+            routing=dict(schema=ROUTE_PROTOCOL,
+                route='selected_genre_condition' if accepted else 'native_unconditioned_fallback',
+                reasons=reasons, requested_top_k=top_k, returned_top_k=min(top_k, len(classes)),
+                min_confidence=min_confidence, min_margin=min_margin,
+                confidence_definition='maximum-temperature-scaled-class-probability',
+                semantic_quality_approved=False)))
+    return result
+
+
+def validate_inference_rows(rows, saved, final_test=False):
+    if not rows:
+        raise ValueError('No inference sources')
+    allowed = ('test',) if final_test else ('train', 'val', 'cal', 'predict')
+    seen = set()
+    for row in rows:
+        if row.get('split') not in allowed:
+            raise ValueError('Test requires --final-test; ordinary inference accepts train/val/cal/predict only')
+        for key in ('id', 'source_group_id', 'audio_sha256'):
+            if not isinstance(row.get(key), str) or not row[key].strip():
+                raise ValueError('Missing inference source identity: ' + key)
+        if row['id'] in seen:
+            raise ValueError('Duplicate inference source id')
+        seen.add(row['id'])
+    if final_test:
+        isolation = saved.get('evidence', {}).get('isolation')
+        if not isinstance(isolation, dict) or set(isolation) != {'train', 'val', 'cal'}:
+            raise ValueError('Final test needs complete head train/val/cal isolation evidence')
+        for previous in isolation.values():
+            for key in ('id', 'source_group_id', 'audio_sha256'):
+                if key not in previous:
+                    raise ValueError('Incomplete head isolation evidence: ' + key)
+                if set(previous[key]) & {r[key] for r in rows}:
+                    raise ValueError(f'Final-test leakage: {key}')
+
+
+def routing_options(args):
+    return dict(top_k=args.top_k, min_confidence=args.min_confidence, min_margin=args.min_margin)
+
+
+def validate_generated_caption(generation, budget):
+    """Format/completion gate only; raw model evidence is always retained separately."""
+    temporal = None
+    try:
+        ids, eos = generation['new_token_ids'], generation['eos_token_ids']
+        if (not isinstance(ids, list) or not isinstance(eos, list) or not eos or
+                any(type(value) is not int or value < 0 for value in ids + eos)):
+            raise ValueError('Missing valid raw generation/EOS token evidence')
+        stop = classify_stop(ids, eos, budget)
+        first_eos = next((i for i, value in enumerate(ids) if value in eos), None)
+        if stop != 'eos' or generation.get('stop_reason') != 'eos' or first_eos != len(ids) - 1:
+            raise ValueError('Generation must finish at its first native EOS, without truncation or trailing tokens')
+        raw = generation.get('raw_text')
+        if not isinstance(raw, str) or not raw.strip() or '<|' in raw or '<audio>' in raw:
+            raise ValueError('Generated action caption is empty or contains reserved tokens')
+        temporal = parse_windows(raw)
+        if not temporal['matches_fixed_windows'] or not temporal['nonempty_window_text']:
+            raise ValueError('Generated caption must cover both complete nonempty fixed time windows')
+        return dict(caption_valid=True, extraction_error=None, temporal=temporal)
+    except (ValueError, KeyError, TypeError) as error:
+        return dict(caption_valid=False, extraction_error=str(error), temporal=temporal)
 
 
 def run_export(args):
@@ -401,6 +554,7 @@ def run_export(args):
 
 
 def run_train(args):
+    require_fresh_output(args.out_dir)
     if args.epochs <= 0 or args.batch_size <= 0 or not math.isfinite(args.lr) or args.lr <= 0:
         raise ValueError('Positive epochs/batch-size/lr required')
     torch.manual_seed(args.seed)
@@ -443,27 +597,25 @@ def run_train(args):
 
 
 def run_predict(args):
+    require_fresh_output(args.out)
     head, saved = load_head(args.head)
     cache, identity = cache_manifest(args.features)
     if identity != saved['extractor']:
         raise ValueError('Prediction feature extractor differs from training')
     rows = list(cache.values())
-    if args.final_test:
-        if any(row['split'] != 'test' for row in rows):
-            raise ValueError('Final test accepts a pure test feature manifest')
-        for previous in saved['evidence']['isolation'].values():
-            for key in ('id', 'source_group_id', 'audio_sha256'):
-                if set(previous[key]) & {r[key] for r in rows}:
-                    raise ValueError(f'Final-test leakage: {key}')
+    validate_inference_rows(rows, saved, args.final_test)
+    head_sha = sha256(args.head)
     records = []
     for row in rows:
         features, mask = padded_batch([row])
-        prediction = decide(head, features, mask, saved['classes'], saved['temperature'])[0]
-        records.append(dict(id=row['id'], split=row['split'], **prediction))
-    args.out.write_text(''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in records), encoding='utf-8')
+        prediction = decide(head, features, mask, saved['classes'], saved['temperature'], **routing_options(args))[0]
+        records.append(dict(id=row['id'], split=row['split'], test_used=args.final_test,
+                            genre_head_sha256=head_sha, **prediction))
+    write_jsonl_fresh(args.out, records)
 
 
 def run_generate(args):
+    require_fresh_output(args.out)
     validate_model_identity(args.model_id)
     if args.family not in SUPPORTED_CONDITION_FAMILIES:
         raise ValueError('omni_captioner genre-conditioning protocol is unsupported')
@@ -473,23 +625,36 @@ def run_generate(args):
             saved['extractor']['code_sha256'] != sha256(__file__) or
             saved['extractor'].get('adapter_code_sha256') != adapter_code_sha()):
         raise ValueError('Generation model/code identity differs from genre-feature training')
+    rows = read_jsonl(args.sources)
+    validate_inference_rows(rows, saved, args.final_test)
     base = load_planner_adapter(args.family, args.model_path, checkpoint=args.checkpoint,
                                device=args.device, dtype=getattr(torch, args.dtype))
+    adapter = RoutedGenrePlanner(base, args.protocol)
+    patch_receipt = prepare_generation_patches(adapter)
+    head_sha, sources_sha = sha256(args.head), sha256(args.sources)
     records = []
-    for row in read_jsonl(args.sources):
+    for row in rows:
         source = audio_only_row(row)
         if not Path(source['audio_path']).is_absolute():
             source['audio_path'] = str((args.sources.resolve().parent / source['audio_path']).resolve())
         features, extraction = export_prefill_features(base, source)
         prediction = decide(head, features[None], torch.ones(1, len(features), dtype=torch.bool),
-                            saved['classes'], saved['temperature'])[0]
-        adapter = GenreConditionedPlanner(base, prediction['selected_genre'], args.protocol)
+                            saved['classes'], saved['temperature'], **routing_options(args))[0]
+        adapter.select_genre(prediction['selected_genre'])
         generation = adapter.generate(source, max_new_tokens=args.max_new_tokens)
-        records.append(dict(id=source['id'], protocol=CONDITION_PROTOCOL, extractor=saved['extractor'], **prediction,
-            caption_text='Dance style: ' + prediction['selected_genre'] + '.\n' + generation['raw_text'],
+        completion = validate_generated_caption(generation, args.max_new_tokens)
+        caption = generation['raw_text'] if completion['caption_valid'] else None
+        if caption is not None and prediction['selected_genre'] is not None:
+            caption = 'Dance style: ' + prediction['selected_genre'] + '.\n' + caption
+        records.append(dict(id=source['id'], split=row['split'], test_used=args.final_test,
+            protocol=ROUTE_PROTOCOL, requested_condition_protocol=CONDITION_PROTOCOL,
+            genre_head_sha256=head_sha, sources_manifest_sha256=sources_sha,
+            effective_prefix_protocol=CONDITION_PROTOCOL if adapter.genre is not None else 'native-audio-prefix-v1',
+            extractor=saved['extractor'], generation_patches=patch_receipt,
+            **prediction, **completion, caption_text=caption,
             action_generation=generation, extraction=extraction,
             conditioning_sft_performed=False))
-    args.out.write_text(''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in records), encoding='utf-8')
+    write_jsonl_fresh(args.out, records)
 
 
 def parser():
@@ -512,6 +677,8 @@ def parser():
             sub.add_argument('--out', type=Path, required=True)
             sub.add_argument('--protocol', choices=(CONDITION_PROTOCOL,), required=True)
             sub.add_argument('--max-new-tokens', type=int, default=1024)
+            sub.add_argument('--final-test', action='store_true')
+            add_routing_arguments(sub)
     train = commands.add_parser('train')
     train.set_defaults(run=run_train)
     train.add_argument('--features', type=Path, nargs='+', required=True)
@@ -531,7 +698,16 @@ def parser():
     predict.add_argument('--head', type=Path, required=True)
     predict.add_argument('--out', type=Path, required=True)
     predict.add_argument('--final-test', action='store_true')
+    add_routing_arguments(predict)
     return result
+
+
+def add_routing_arguments(parser):
+    parser.add_argument('--top-k', type=int, default=3, help='Report top-k genre hypotheses; never feed all as forced styles')
+    parser.add_argument('--min-confidence', type=float, default=.6,
+                        help='Minimum temperature-scaled top class probability; not a quality guarantee')
+    parser.add_argument('--min-margin', type=float, default=.15,
+                        help='Minimum probability gap between top two; otherwise use native unconditioned prefix')
 
 
 if __name__ == '__main__':

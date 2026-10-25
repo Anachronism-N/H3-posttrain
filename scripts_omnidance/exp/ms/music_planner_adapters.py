@@ -207,9 +207,7 @@ class PlannerAdapter:
         if audio.shape[1] != 1 or not np.isfinite(audio).all():
             raise ValueError('Require the original finite mono waveform')
         extra_frames = len(audio) - 5.0625 * rate
-        # Keep the full normalized 24kHz source, including its observed five-frame overrun.
-        normalized_source_overrun = rate == 24000 and 0 < extra_frames <= 5
-        if abs(len(audio) / rate - 5.0625) > 1 / rate and not normalized_source_overrun:
+        if abs(len(audio) / rate - 5.0625) > 1 / rate:
             raise ValueError('Audio must contain the complete 5.0625-second source: '
                              f'id={row.get("id")}, rate={rate}, samples={len(audio)}, '
                              f'expected={5.0625 * rate}, extra_frames={extra_frames}')

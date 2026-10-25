@@ -223,6 +223,26 @@ Captioner同3case H3视频阶段已完整且实际exit0，主会话在授权N2�
 
 离线包的冻结H3 prerequisites要求在授权N2执行；因此旧O3XtBy coordinator调用将在未来全片后被scope拒绝。主会话在尚未写公开包/密钥前精准停止这一个自有CPU等待器，没有停止GPU、没有改h3_review_pack_v2冻结源或跳过scope；新唯一0W9v4n等同九片comparecomplete/resources_safe后通过默认SSH到N2仅CPU做原门禁和离线mux。仍使用同独立planner_h3_review_offline_v2公开目录，key在目录外，未部署共享server、未外部上传。Flamingo基座唯一hrO7tP同样等H3全部安全后新capture；前后匿名材料UphFnd等所有基座实际齐全。不将任何等待器退出/巡检超时当全部实验完成。
 
+## 全部自动实验结束、完整前后盲评及真实人评待办
+
+H3九片原视频已全部完整生成，六阶段actualexit0、总h3.compare.complete与单卡resources_safe恢复；主会话在授权N2用冻结verify_complete独立重验9片/3固定case/同源与协议/媒体审计，另对全部九片当前SHA和累计50/100/150DiT及1/2/3decode再次核。纯技术验收摘要为results/music_planner_h3_all9_technical_20261025_v1.json，不能把technical complete当用户画质接受。
+
+Flamingo纯基座v3也已真实3条完成，354/354finite、3EOS、0双窗、actualexit0/safe；MOSS原基座v1及Captioner基座v3此前已完成。三族同音频/nativeprefix/greedy/cap2048前后合同与原训练后raw复用全部重验，技术摘要为results/music_planner_prepost_all3_technical_20261025_v3.json。所有24GPU当前均为原占卡恢复流程，未启动额外训练或test。
+
+独立前后六匿名组18条LLM评审曾遇Read工具输出截断：原审阅者把F组文件假判坏并评分可见前缀，磁盘Python完整json.loads实证六组全部有效、无literal truncated，主会话不使用该partial报告验收。原会话随后在停止指令抵达前修正其v1（误判/纠正过程保留于报告与会话），主会话另派独立完整v2审阅，直接将实际磁盘完整18条匿名正文和原预冻rubric内嵌，避免长Read截断；新审阅未看旧评分/模型/阶段/privatekey/音视频，实际18条四轴1–5评分，保存后独立核6sourceSHA、18唯一group×case、全部整数分/36精确substring证据/组均值才解盲。正式验收只用independent_llm_review_complete_v2.json SHA=aa290d88e2a6b66430f3c84c494c2bb05a19a7183a90d07d71314a7031fb352f。后续网关empty-stream通知不覆盖这份已落盘且独立核妥的真实报告。
+
+| 同3case盲文本四轴均值：组织/动态/多样/细节 | 原基座 | 训练后 |
+|---|---|---|
+| Flamingo | 3.33 / 4.00 / 3.67 / 3.00 | 4.00 / 4.00 / 3.67 / 4.00 |
+| MOSS | 4.00 / 4.00 / 4.00 / 4.00 | 4.00 / 3.67 / 3.00 / 3.67 |
+| Captioner | 1.00 / 1.00 / 1.00 / 1.00 | 3.67 / 2.33 / 2.33 / 3.67 |
+
+这轮固定3case中Flamingo训练改善组织和执行细节，动态与多样性持平；MOSS训练后未在动态/动作多样/细节上改善，部分指标退步；Captioner从完整音乐描述学成动作计划，但当前固定3case训练后多是摸头/扶髋/轻移重，动态多样性不强。不能说三模型各轴都变好、不能把仅3case序数均值当总体统计显著，不用未知音视频证据推音乐/真实时间准确率。完整非raw公开总结为results/music_planner_prepost_blind_text_review_20261025_v2.json，保留每条评分与简明判断，不上传原caption/媒体/私有密钥。
+
+九片离线匿名包已由唯一0W9v4n在授权N2实际CPU构建完成；主会话独立核9视频SHA/3完整原WAV/同bundle ID/页面无真实模型和caseID/JS语法/key公开外0600。包ID=b0cfae50578158ca66d1cecccd49aba6，indexSHA=e8cd89a12569105ec16851b0e8a5510c02dd524da68f30c5c669fff21b433532；公开tar仅目录内9MP4+3WAV+HTML+manifest，不含privatekey。原24GPU全部恢复占卡，评审包音轨AAC有损但视频轨copy与完整原WAV均保全，不截124帧尾。
+
+用户明确授权部署内网。新N2独立端口8766在确认未占用后，仅对planner_h3_review_offline_v2 public目录部署Python静态服务（managed后台2O9MnV）；未重启/修改已有review_web。http://28.216.17.70:8766/已从coordinatorHTTP实测网页/视频/WAV200、目录外private-key请求404。此页五轴ABC偏好是实际人评入口，支持相近/都不可用/未知，不是假九次pairwise；下载JSON包含同bundleID。已请求用户看视频并提供评分JSON路径或内容，目前尚未收到任何真实评分，不能自动human_quality_accepted或最终端到端winner。所有自动GPU训练/首次test/H3/基座和18条独立盲文本评审都已结束，剩余实际用户人评及其综合结论推送不可由助手编造。
+
 ## 当前结论
 
-三模型clean_v11正式训练均已真实完成670更新、2epoch、21426源曝光及完整保存/新进程恢复。完整val32三条件工程门槛均通过；三模型首次test500均已完整、真实exit0、资源安全恢复，最终文本指标已独立重验并汇总。val32匿名文本意见偏Captioner，但test500存在取舍：Captioner词级略优且对MOSS区间跨0，MOSS同窗口动作类别F1最高，不能宣布Captioner整体最强。Captioner2条预算截断原样保留，固定双窗不是动作真实边界。H3 Flamingo和Captioner各三片视频均完整exit0独立验收，合计6/9；MOSS视频待，共九片总资源安全及用户人评未完。MOSS原基座v1与Captioner修正基座v3均已各3case真实complete/exit0/finite/safe；Captioner双窗0→3仅证明目标形式学习，Flamingo基座仍等H3安全；18条前后动作独立盲评尚待第三族真实材料齐全。GitHub仅精准本实验代码、测试及脱敏纯指标分析，不上传权重/私有音视频/凭据，不改其他会话任务。
+三模型正式训练670更新/21426源曝光、首次test500、全部九片同H3视频和三族同条件纯基座对照都已真实完成/exit0/资源safe独立验收，24GPU恢复占卡。正式完整18条训练前后LLM盲审已保存并验证后才解盲；本轮固定3case中Flamingo组织/细节改善、MOSS部分轴不改善、Captioner学会动作目标形式但动态多样偏弱。test500 MOSS动作类别F1最高，CaptionerROUGE微优对MOSS区间跨0，不宣称全面赢家。固定时间窗输出不等精细动作边界准确，仍无独立事件时间或音乐同步真值。匿名九片/完整原WAV内网评审页已按用户授权部署并HTTP核妥，真实用户五轴评分尚未收到；所有自动实验已结束，但最终端到端模型优胜与全目标验收仍待该真实人评及综合结论发布，不用LLM或自动指标代替。GitHub只精确发布本实验code/test和脱敏纯指标/分析，不上传权重、私有音视频或密钥，不改其他会话任务。

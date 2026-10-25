@@ -78,6 +78,16 @@ MOSS首次面板attempt在worker启动前被内存安全准入拒绝，资源已
 
 三模型真实选择在eval_handoff_clean_v11/final_selection.json提前冻结，含各实际best/marker/fingerprint/训练完成与资源安全SHA、统一数据和greedyseed42/cap2048解码协议。新任务Flamingofixed3、Captionervalpanel、MOSSvalpanel已按对应原节点GPU0受控启动，当前审计所用checkpoint全部state文件和本地officialbase完整内容，未以长审计或未创建queue误判失败；其他7卡占卡保持。fixed3完整handoff、test500及H3三case人评尚未完成，没有赢家结论。
 
+## 最终推理兼容修复与严格结果边界
+
+MOSS在恢复准入后首次真实GPU96条均0token/142与141音频mask尺寸错误；根因是Transformers5.18不再维护cache_position，而官方MOSS prepare只靠该字段判定cached decode，未利用实际DynamicCache141，第二步重复处理全部prefix142与audio mask141。独立eval-only补丁仅用真实KV长度恢复原生单token分支，prefill和DeepStack原64音频位置不变，不padding、不禁cache、不改本地官方模型或训练指纹。主会话独立N7官方tiny9CPU回归通过；新v4manager保原29资源门禁并额外核每条native patch ref和独立sidecar。实际新GPU面板已产首条2048预算截断、无接口失败：截断是保留的模型诊断，尚未说明全部96完成或质量通过。
+
+Captioner旧val第一条2048tokens中im_end在第246号位置已有，随后重复595次im_start/im_end/newline。native GenerationConfig EOS=None，而adapter只在诊断时fallback tokenizer EOS151645，未传给实际generate。独立EOS补丁仅在native EOS缺失时给generate显式原训练助手终止ID，首EOS前logits/音频prefix/参数配置不变，既有有效EOS模型不打patch。主会话独立N4官方tiny9CPU回归通过；旧val经精确manager pidfd停止且占卡安全恢复，未裁剪或改写旧raw。新v5manager同29资源门禁与EOS provenance/first-end停止校验通过，新的实际CaptionerGPU面板已派发，仍须真实回执确认修复有效。
+
+以上是推理兼容修复，不是增加训练或用test调参。三个最终checkpoint/数据/greedyseed42/cap2048固定。Flamingo先前已有效EOS，无需补丁；其首次最终test500已开始生成，不重测。MOSS/Captioner尚未开始test；为使用其原节点闲置资源，计划按500固定ID全局顺序分为8个不重叠GPU子集，各source仅一次，同native协议与patch身份，聚合恢复原顺序。模型CPU加载串行、生成并行，八卡pidfd/flock/lease全部准入再释放，不能改变test once ledger或对失败partial test自动重测。当前该并行实现仍准备中，不冒称已启动或通过。
+
+H3单GPU0安全包装已独立7组CPU验证并冻结；必须真实三族fixed3有效raw交接、same参考图/renderer权重全SHA、50步seed42CFG1flow12/704×1280/124f24fps/noLoRA实际视频完成后，才能让用户盲评。当前尚无三族H3视频完成或赢家结论。所有旧失败记录保留，另七卡空闲时由原占卡程序保持。
+
 ## 当前结论
 
 未完成三模型新版本 GPU 启动验收、670 更新、最终文本评测或 H3 人评，因此没有最强模型结论。只把已执行的 CPU 诊断/回归与真实 v8 失败作为当前证据。后续真实 queue、日志、完整回执优先于本文快照。GitHub 提交仅包含本实验明确源码、测试及分析，不打包其他会话脏工作区、权重、私有音频/图像或凭据。

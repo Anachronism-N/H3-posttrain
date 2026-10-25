@@ -255,6 +255,14 @@ Flamingo纯基座v3也已真实3条完成，354/354finite、3EOS、0双窗、act
 
 用户希望仅按文本现在选一个使用。建议优先当前MOSS checkpoint670：完整test500同窗口动作类别F1=0.6163（Flamingo0.6008/Captioner0.6006），500正常EOS和双窗100%，ROUGE-L与Captioner近乎持平且其差值区间含0，跨case整条重复组成员4.4%显著少于Flamingo18.2%。这是一项文本用途的工程选用建议，不是综合视频/音乐同步最强裁决，不重选族内checkpoint、不调测试阈值或重测。Flamingo在固定3case独立盲审的动态/细节更好，但全量文本复用更明显；Captioner全量ROUGE微优，固定3case动作仍偏手势持姿且有2预算截断，不能只据val32早期意见全面优先。MOSS训练后并非所有维度都优于原基座，这与当前三种已训练模型里优先使用它不矛盾。原事件时间定位和视频真人验收仍未知，最终端到端winner不定。
 
+## 实际用户整体视频偏好与最终选用（2026-10-25）
+
+用户实际匿名评审原文已先存results/music_planner_human_overall_preferences_20261025_v1.json，再核同bundle和冻结private key SHA揭盲：A=Flamingo，B=Captioner，C=MOSS。case1：MOSS > Flamingo > Captioner；case2：Flamingo > MOSS > Captioner；case3：MOSS略优于Flamingo，两者都还行，用户未评价Captioner，不补造其名次。此为真实整体视觉偏好，不是分开的五轴数字评分；已接受用户文字反馈作为人评证据，无需强迫重复填写JSON，也未把缺轴或未评case3 B自行填全。
+
+综合当前实际使用需求，推荐已训练MOSS checkpoint670，Flamingo为备选，Captioner目前不优先。MOSS在3例中2例用户偏好领先Flamingo（其中1例略优），另1例Flamingo最佳；MOSS完整test500动作类别F1最高0.6163、全EOS/双窗、整段重复组成员4.4%低于Flamingo18.2%，与当前人评倾向一致。Captioner在两条完整人评排序中末位，case3未提供评价，不说它三例都最差。保留MOSS前后部分文本轴未提升的负证据，不声称所有模型训练都变好。仅3case不能作总体统计显著优胜，整体偏好不等每个视频绝对合格，固定窗不等真实动作起止/音乐同步准确。最终实用推荐存results/music_planner_final_model_recommendation_20261025_v1.json。
+
+目前训练、自动评测、基座对照、LLM文本盲审、实际整体视频偏好和选用综合分析均已完成；没有五轴拆分分数，不伪造。完整GitHub交付仍因本机认证未恢复而待推，最新原有HEAD9952f24只本地，新增人评/综合结果将精准本地提交并保留；不反复失效push/不索取聊天token。
+
 ## 当前结论
 
-三模型正式训练670更新/21426源曝光、首次test500、全部九片同H3视频和三族同条件纯基座对照都已真实完成/exit0/资源safe独立验收，24GPU恢复占卡。正式完整18条训练前后LLM盲审已保存并验证后才解盲；本轮固定3case中Flamingo组织/细节改善、MOSS部分轴不改善、Captioner学会动作目标形式但动态多样偏弱。test500 MOSS动作类别F1最高，CaptionerROUGE微优对MOSS区间跨0，不宣称全面赢家。固定时间窗输出不等精细动作边界准确，仍无独立事件时间或音乐同步真值。匿名九片/完整原WAV内网评审页已按用户授权部署并HTTP核妥，真实用户五轴评分尚未收到；所有自动实验已结束，但最终端到端模型优胜与全目标验收仍待该真实人评及综合结论发布，不用LLM或自动指标代替。GitHub只精确发布本实验code/test和脱敏纯指标/分析，不上传权重、私有音视频或密钥，不改其他会话任务。
+三模型正式训练670更新/21426源曝光、首次test500、全部九片同H3视频和三族同条件纯基座对照都已真实完成/exit0/资源safe独立验收，24GPU恢复占卡。正式完整18条训练前后LLM盲审已保存并验证后才解盲；本轮固定3case中Flamingo组织/细节改善、MOSS部分轴不改善、Captioner学会动作目标形式但动态多样偏弱。test500 MOSS动作类别F1最高，CaptionerROUGE微优对MOSS区间跨0，不宣称全面赢家。固定时间窗输出不等精细动作边界准确，仍无独立事件时间或音乐同步真值。用户已提供真实整体视频偏好，核同匿名包后综合推荐MOSS checkpoint670、Flamingo备选、Captioner不优先；未提供的五轴拆分及case3 Captioner名次不代填。这是当前固定3例的实用选用结论，不是总体统计显著、音乐同步或所有片绝对质量验收。实验与综合分析已经完成，完整目标仍待认证恢复后的GitHub推送及远端SHA核验。GitHub只精确发布本实验code/test和脱敏纯指标/分析，不上传权重、私有音视频或密钥，不改其他会话任务。

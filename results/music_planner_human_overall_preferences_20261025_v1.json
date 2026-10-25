@@ -1,0 +1,53 @@
+{
+  "schema": "music-planner-user-overall-video-preferences-v1",
+  "bundle_id": "b0cfae50578158ca66d1cecccd49aba6",
+  "source": "actual_user_message",
+  "original_user_text": "case1中c最好，a其次，b最后,case2中A最好，c其次，b最后,case3中a和c都还行，c个人感觉略好一些",
+  "assessment_scope": "overall visual preference; not individual five-axis scores",
+  "cases": [
+    {
+      "case": "case1",
+      "ordered_labels": [
+        "C",
+        "A",
+        "B"
+      ],
+      "acceptable_labels": null,
+      "strength": "ordered_preference"
+    },
+    {
+      "case": "case2",
+      "ordered_labels": [
+        "A",
+        "C",
+        "B"
+      ],
+      "acceptable_labels": null,
+      "strength": "ordered_preference"
+    },
+    {
+      "case": "case3",
+      "ordered_labels": [
+        "C",
+        "A"
+      ],
+      "acceptable_labels": [
+        "A",
+        "C"
+      ],
+      "strength": "slight_preference_for_C",
+      "B_assessment": "not_provided"
+    }
+  ],
+  "individual_axis_scores_provided": false,
+  "unprovided_axes": [
+    "clarity",
+    "continuity",
+    "choreography",
+    "amplitude",
+    "music_response"
+  ],
+  "model_identity_decoded_before_recording": false,
+  "missing_preferences_not_imputed": true,
+  "three_case_evidence_not_population_statistical_proof": true
+}

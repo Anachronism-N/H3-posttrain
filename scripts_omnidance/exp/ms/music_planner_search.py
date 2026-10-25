@@ -118,12 +118,18 @@ def validate_isolation(manifest, require_verified=False):
 
 
 def validate_generator(generator):
-    _keys(generator, ('family', 'model_id', 'base_model_id', 'model_sha256', 'version'), 'generator')
+    required = ('family', 'model_id', 'base_model_id', 'model_sha256', 'version')
+    _keys(generator, required + (('artifact_identity',) if 'artifact_identity' in generator else ()), 'generator')
     if generator['family'] not in FAMILIES:
         raise ValueError('Unknown native planner family')
     for key in ('model_id', 'base_model_id', 'version'):
         _text(generator[key], f'generator {key}')
     _sha(generator['model_sha256'], 'generator model identity')
+    if 'artifact_identity' in generator:
+        identity = generator['artifact_identity']
+        if (not isinstance(identity, dict) or identity.get('schema') != 'music_planner_local_artifact_identity_v1'
+                or identity.get('family') != generator['family'] or object_sha(identity) != generator['model_sha256']):
+            raise ValueError('Generator artifact identity is not bound to actual model SHA/family')
 
 
 def validate_sampling(sampling):
@@ -145,21 +151,37 @@ def prepare_sampling_runtime(adapter):
     from scripts_omnidance.exp.ms.music_planner_generation_eos_patch import (
         apply_generation_eos_patch, generation_eos_patch_ref,
     )
+    from scripts_omnidance.exp.ms.music_planner_moss_position_buffer_patch import (
+        position_buffer_patch_ref, restore_moss_position_buffer,
+    )
     source = Path(music_planner_adapters.__file__).resolve()
     moss = apply_moss_generation_patch(adapter) if adapter.family == 'moss' else None
+    position = dict(requested_ref=position_buffer_patch_ref(), applied_ref=None,
+                    status='not_moss' if adapter.family != 'moss' else 'not_present', canonical_tensor_ref=None)
+    native = adapter.model.get_base_model() if hasattr(adapter.model, 'get_base_model') else adapter.model
+    if adapter.family == 'moss' and hasattr(native, 'audio_encoder'):
+        official = getattr(adapter, '_sampling_official_model_path', None)
+        if official is None:
+            raise ValueError('MOSS position-buffer restoration requires the audited official model path')
+        if not hasattr(adapter, '_sampling_position_buffer_receipt'):
+            adapter._sampling_position_buffer_receipt = restore_moss_position_buffer(adapter, official)
+        restored = adapter._sampling_position_buffer_receipt
+        position.update(applied_ref=restored['applied_position_buffer_patch_ref'], status='restored',
+                        canonical_tensor_ref=restored['canonical_tensor_ref'])
     eos = apply_generation_eos_patch(adapter)
-    return dict(schema='music_planner_sampling_runtime_v1',
+    return dict(schema='music_planner_sampling_runtime_v2',
                 adapter_source_ref=dict(path=str(source), sha256=file_sha(source),
                                         size_bytes=source.stat().st_size),
                 moss_cache=dict(requested_ref=generation_patch_ref(), applied_ref=moss,
                                 status='applied' if moss else 'not_moss'),
+                moss_position_buffer=position,
                 eos_bridge=dict(requested_ref=generation_eos_patch_ref(), applied_ref=eos,
                                 status='applied' if eos else 'native_eos_already_valid'))
 
 
 def _runtime_provenance(value):
-    _keys(value, ('schema', 'adapter_source_ref', 'moss_cache', 'eos_bridge'), 'sampling runtime')
-    if value['schema'] != 'music_planner_sampling_runtime_v1':
+    _keys(value, ('schema', 'adapter_source_ref', 'moss_cache', 'moss_position_buffer', 'eos_bridge'), 'sampling runtime')
+    if value['schema'] != 'music_planner_sampling_runtime_v2':
         raise ValueError('Unknown sampling runtime provenance')
     def ref(item):
         _keys(item, ('path', 'sha256', 'size_bytes'), 'runtime source reference')
@@ -168,6 +190,15 @@ def _runtime_provenance(value):
         if type(item['size_bytes']) is not int or item['size_bytes'] <= 0:
             raise ValueError('Runtime source size must be positive')
     ref(value['adapter_source_ref'])
+    position = value['moss_position_buffer']
+    _keys(position, ('requested_ref', 'applied_ref', 'status', 'canonical_tensor_ref'), 'MOSS position receipt')
+    ref(position['requested_ref'])
+    if position['status'] == 'restored':
+        ref(position['applied_ref'])
+        if position['applied_ref'] != position['requested_ref'] or not isinstance(position['canonical_tensor_ref'], dict):
+            raise ValueError('MOSS position restoration lacks canonical buffer identity')
+    elif position['status'] not in ('not_moss', 'not_present') or position['applied_ref'] is not None:
+        raise ValueError('Invalid MOSS position-buffer status')
     for key, skipped in (('moss_cache', 'not_moss'), ('eos_bridge', 'native_eos_already_valid')):
         entry = value[key]
         _keys(entry, ('requested_ref', 'applied_ref', 'status'), 'runtime patch receipt')
@@ -219,8 +250,20 @@ def sample_native(adapter, row, *, seed, temperature=.9, top_p=.95, top_k=50,
             torch.cuda.default_generators[device].manual_seed(seed)
         with torch.autocast(parameter.device.type, dtype=torch.bfloat16,
                             enabled=parameter.dtype == torch.bfloat16):
-            output = adapter.model.generate(**adapter._move(batch), **decoding,
-                                            max_new_tokens=max_new_tokens, use_cache=True)
+            handles, forwards = [], []
+            if adapter.family == 'moss':
+                from scripts_omnidance.exp.ms.music_planner_moss_position_buffer_patch import install_moss_generation_logits_validator
+                handles.append(install_moss_generation_logits_validator(adapter))
+                native = adapter.model.get_base_model() if hasattr(adapter.model, 'get_base_model') else adapter.model
+                handles.append(native.register_forward_hook(lambda *args: forwards.append(True)))
+            try:
+                output = adapter.model.generate(**adapter._move(batch), **decoding,
+                                                max_new_tokens=max_new_tokens, use_cache=True)
+            finally:
+                for handle in handles:
+                    handle.remove()
+            if runtime['moss_position_buffer']['status'] == 'restored' and not forwards:
+                raise ValueError('No actual MOSS generation forward was observed')
     sequence = output.sequences if hasattr(output, 'sequences') else output
     if isinstance(sequence, tuple):
         sequence = sequence[0]
@@ -238,6 +281,7 @@ def sample_native(adapter, row, *, seed, temperature=.9, top_p=.95, top_k=50,
                 new_token_ids=tokens, eos_token_ids=eos, stop_reason=stop,
                 budget_truncated=stop == 'budget_truncation', seed=seed, decoding=decoding,
                 runtime_provenance=runtime,
+                finite_native_logits_forward_count=len(forwards),
                 input_tokens=prefix.shape[1], prefix_sha256=object_sha(prefix.cpu().tolist()),
                 audio_input='full-waveform', silence_applied=False, **adapter._last_audio_info)
 
@@ -306,9 +350,39 @@ def _diagnostics(generation, budget):
     metrics = text_metrics(generation['raw_text'])
     temporal = metrics['temporal']
     eligible = (stop == 'eos' and temporal['matches_fixed_windows'] and temporal['nonempty_window_text']
-                and '<|' not in generation['raw_text'] and '<audio>' not in generation['raw_text'])
+                and '<|' not in generation['raw_text'] and '<audio>' not in generation['raw_text']
+                and not re.search(r'</?(music_evidence|short_plan|caption)\b', generation['raw_text'], re.I))
     return dict(text=metrics, format_eligible=bool(eligible),
                 diagnostic_only_not_music_reward=True)
+
+
+def candidate_seed(seed, source_id, index):
+    return int(object_sha(dict(seed=seed, source=source_id, candidate=index))[:15], 16)
+
+
+def make_candidate(member, audio, index, generator, generation, sampling, seed):
+    expected = dict(do_sample=True, temperature=sampling['temperature'], top_p=sampling['top_p'],
+                    top_k=sampling['top_k'], num_beams=1, repetition_penalty=1.0,
+                    no_repeat_ngram_size=0, encoder_repetition_penalty=1.0)
+    if generation.get('decoding') != expected or generation.get('seed') != seed:
+        raise ValueError('Sampler did not record the requested stochastic decoding/seed')
+    if ((generator['family'] == 'moss') !=
+            (generation.get('runtime_provenance', {}).get('moss_cache', {}).get('status') == 'applied')):
+        raise ValueError('MOSS runtime cache patch application does not match model family')
+    item = dict(source=dict(member, audio_path=audio['audio_path'], audio_window_seconds=[0., 5.0625]),
+                index=index, generator=generator, generation=generation,
+                diagnostics=_diagnostics(generation, sampling['max_new_tokens']))
+    item['candidate_sha256'] = object_sha(item)
+    return item
+
+
+def make_pool(isolation, generator, sampling, count, candidates):
+    pool = dict(schema='music_planner_candidate_pool_v3', isolation=isolation,
+                isolation_sha256=object_sha(isolation), generator=generator, sampling=sampling,
+                candidates_per_source=count, candidates=candidates)
+    pool['run_sha256'] = object_sha(pool)
+    validate_pool(pool)
+    return pool
 
 
 def generate_candidates(rows, isolation, generator, *, count=4, seed=42, sampling=None,
@@ -328,32 +402,17 @@ def generate_candidates(rows, isolation, generator, *, count=4, seed=42, samplin
     for member, audio in selected:
         sid = member['id']
         for index in range(count):
-            derived = int(object_sha(dict(seed=seed, source=sid, candidate=index))[:15], 16)
+            derived = candidate_seed(seed, sid, index)
             generation = sampler(audio, seed=derived, **sampling)
-            expected = dict(do_sample=True, temperature=sampling['temperature'], top_p=sampling['top_p'],
-                            top_k=sampling['top_k'], num_beams=1, repetition_penalty=1.0,
-                            no_repeat_ngram_size=0, encoder_repetition_penalty=1.0)
-            if generation.get('decoding') != expected or generation.get('seed') != derived:
-                raise ValueError('Sampler did not record the requested stochastic decoding/seed')
-            item = dict(source=dict(member, audio_path=audio['audio_path'],
-                                    audio_window_seconds=[0., 5.0625]),
-                        index=index, generator=generator, generation=generation,
-                        diagnostics=_diagnostics(generation, sampling['max_new_tokens']))
-            item['candidate_sha256'] = object_sha(item)
-            candidates.append(item)
-    pool = dict(schema='music_planner_candidate_pool_v2', isolation=isolation,
-                isolation_sha256=object_sha(isolation), generator=generator, sampling=sampling,
-                candidates_per_source=count, candidates=candidates)
-    pool['run_sha256'] = object_sha(pool)
-    validate_pool(pool)
-    return pool
+            candidates.append(make_candidate(member, audio, index, generator, generation, sampling, derived))
+    return make_pool(isolation, generator, sampling, count, candidates)
 
 
 def validate_pool(pool):
     _keys(pool, ('schema', 'isolation', 'isolation_sha256', 'generator', 'sampling',
                  'candidates_per_source', 'candidates', 'run_sha256'), 'candidate pool')
-    if pool['schema'] != 'music_planner_candidate_pool_v2':
-        raise ValueError('Require candidate pool v2 with actual runtime patch provenance; regenerate old pools')
+    if pool['schema'] != 'music_planner_candidate_pool_v3':
+        raise ValueError('Require candidate pool v3 with current runtime provenance; regenerate old pools')
     if pool['run_sha256'] != object_sha({k: v for k, v in pool.items() if k != 'run_sha256'}):
         raise ValueError('Candidate pool run hash differs')
     members = validate_isolation(pool['isolation'])
@@ -588,16 +647,6 @@ def validate_staging(pool, policy, reviews, staging):
                 staging_sha256=staging['staging_sha256'], test_used=False)
 
 
-def _local_artifacts(path, recursive=False):
-    path = Path(path).expanduser().resolve()
-    if not path.is_dir():
-        raise ValueError('Require existing local model/checkpoint artifacts')
-    files = sorted(p for p in (path.rglob('*') if recursive else path.iterdir()) if p.is_file())
-    if not files:
-        raise ValueError('No local model artifacts')
-    return [dict(name=str(p.relative_to(path)).replace('\\', '/'), sha256=file_sha(p)) for p in files]
-
-
 def prepare_fair_inputs(data, split='train', limit=8):
     """Copy existing identities; unknown song/near-duplicate groups stay null."""
     if split not in ('train', 'dev') or type(limit) is not int or limit <= 0:
@@ -651,6 +700,10 @@ def main():
     generate.add_argument('--family', choices=FAMILIES, required=True)
     generate.add_argument('--model', type=Path, required=True)
     generate.add_argument('--checkpoint', type=Path)
+    generate.add_argument('--training-source-dir', type=Path,
+                          help='Exact frozen fair adapter/trainer sources recorded during training')
+    generate.add_argument('--journal-dir', type=Path, help='Immutable per-candidate journal; default OUT_STEM.journal')
+    generate.add_argument('--resume', action='store_true', help='Reuse only validated completed candidates of the identical run')
     generate.add_argument('--model-id', required=True)
     generate.add_argument('--base-model-id', required=True)
     generate.add_argument('--model-version', required=True)
@@ -685,25 +738,32 @@ def main():
         validate_selected_rows(rows, isolation)
         validate_sampling(dict(temperature=args.temperature, top_p=args.top_p, top_k=args.top_k,
                                max_new_tokens=args.max_new_tokens))
-        if args.out.exists():
+        if args.out.exists() and not args.resume:
             raise ValueError('Output already exists; refusing to load a model and overwrite evidence')
-        # Hash actual local weights/config/processor bytes; no size-only identity.
-        artifacts = dict(base=_local_artifacts(args.model))
-        if args.checkpoint:
-            export_path = args.checkpoint / 'adapter'
-            artifacts['checkpoint'] = _local_artifacts(export_path if export_path.is_dir()
-                                                       else args.checkpoint, recursive=True)
+        from scripts_omnidance.exp.ms.music_planner_search_identity import audit_model_artifacts, verify_loaded_portable
+        from scripts_omnidance.exp.ms.music_planner_search_collection import collect_candidates
+        identity = audit_model_artifacts(args.family, args.model, args.checkpoint, args.training_source_dir)
+        if args.checkpoint and args.max_length > identity['checkpoint']['adapter_metadata']['max_length']:
+            raise ValueError('Collection context exceeds the trained native adapter context')
         generator = dict(family=args.family, model_id=args.model_id, base_model_id=args.base_model_id,
-                         version=args.model_version, model_sha256=object_sha(artifacts))
-        from scripts_omnidance.exp.ms.music_planner_adapters import load_planner_adapter
-        adapter = load_planner_adapter(args.family, args.model, checkpoint=args.checkpoint,
-                                       device=args.device, max_length=args.max_length)
+                         version=args.model_version, model_sha256=object_sha(identity), artifact_identity=identity)
+        loaded = {}
+        def sampler(row, **kwargs):
+            if not loaded:
+                from scripts_omnidance.exp.ms.music_planner_adapters import load_planner_adapter
+                adapter = load_planner_adapter(args.family, args.model, checkpoint=args.checkpoint,
+                                               device=args.device, max_length=args.max_length)
+                adapter._sampling_official_model_path = args.model.resolve()
+                loaded['verification'] = verify_loaded_portable(adapter, identity)
+                loaded['adapter'] = adapter
+            return dict(sample_native(loaded['adapter'], row, **kwargs),
+                        loaded_artifact_verification=loaded['verification'])
         sampling = dict(temperature=args.temperature, top_p=args.top_p, top_k=args.top_k,
                         max_new_tokens=args.max_new_tokens)
-        result = generate_candidates(rows, isolation, generator, count=args.count, seed=args.seed,
-                                     sampling=sampling,
-                                     sampler=lambda row, **kw: sample_native(adapter, row, **kw))
-        write_json(args.out, result)
+        journal = args.journal_dir or args.out.with_name(args.out.stem + '.journal')
+        collect_candidates(rows, isolation, generator, journal_dir=journal, out=args.out,
+                           count=args.count, seed=args.seed, sampling=sampling, sampler=sampler,
+                           resume=args.resume, context=dict(max_length=args.max_length, device=args.device))
     else:
         pool, policy = read_json(args.pool), read_json(args.policy)
         request = review_request(pool, policy)

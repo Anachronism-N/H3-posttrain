@@ -15,6 +15,7 @@ from pathlib import Path
 import select
 import signal
 import sys
+import threading
 
 sys.dont_write_bytecode = True
 ROOT = Path('/apdcephfs_gy4/share_302533218/cedricnie')
@@ -204,11 +205,40 @@ def check_stage(out, mode, records, caption_ref, models, audit, h3, cache=None):
     return report
 
 
+def start_owned_lease_heartbeat(entries, manager):
+    stop = threading.Event()
+    errors = []
+    def heartbeat():
+        while not stop.wait(5):
+            try:
+                manager.refresh_leases(entries)
+            except BaseException as error:
+                errors.append(error)
+                break
+    thread = threading.Thread(target=heartbeat, name='owned-h3-lease-heartbeat', daemon=True)
+    thread.start()
+    return stop, errors, thread
+
+
+def stop_owned_lease_heartbeat(watch):
+    if watch is not None:
+        watch[0].set()
+        watch[2].join()  # Stop all FD users before native finish closes the lease descriptors.
+
+
 def manage(cfg, path, digest, own_sha, deps):
     audit, manager, fixed, ev, h3 = deps
+    watch = None
     def check():
+        if watch is not None and watch[1]:
+            raise RuntimeError('H3 owned lease heartbeat failed') from watch[1][0]
         check_sources(cfg, path, digest, own_sha, audit)
-        return prerequisites(cfg, audit, manager, fixed, ev, h3)
+        value = prerequisites(cfg, audit, manager, fixed, ev, h3)
+        if watch is not None:
+            if watch[1]:
+                raise RuntimeError('H3 lease heartbeat failed during source check') from watch[1][0]
+            manager.refresh_leases(entries)
+        return value
     records = check()
     queue, out = Path(cfg['queue']), Path(cfg['out'])
     for p in (queue, out):
@@ -258,6 +288,7 @@ def manage(cfg, path, digest, own_sha, deps):
         if manager.headroom()['headroom'] < manager.required_budget(cfg):
             raise RuntimeError('insufficient fresh memory headroom')
         manager.acquire_lease(e)
+        watch = start_owned_lease_heartbeat(entries, manager)
         check()
         if manager.headroom()['headroom'] < manager.required_budget(cfg):
             raise RuntimeError('fresh headroom changed before holder release')
@@ -297,6 +328,7 @@ def manage(cfg, path, digest, own_sha, deps):
         save('failure.json', dict(error=repr(error), partial_outputs_preserved=True,
                                  worker_started=owned['started'], unknown_jobs_not_signaled=True))
     finally:
+        stop_owned_lease_heartbeat(watch)
         manager.finish_resources(entries, locks, queue, save, holders, owned)
 
 

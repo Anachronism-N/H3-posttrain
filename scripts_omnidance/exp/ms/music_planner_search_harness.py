@@ -33,6 +33,8 @@ def blind_package(pool, policy, *, seed=42, secret=None):
     random.Random(seed).shuffle(items)
     public = dict(schema='music_planner_blind_request_v1', rubric=policy['rubric'],
                   dimensions=list(DIMENSIONS), score_range=[0, 5],
+                  caption_protocol=dict(id='native-direct-action-fixed-two-windows-v1',
+                                        windows_seconds=[[0., 2.], [2., 5.0625]], genre_header_required=False),
                   instructions=request['instructions'], candidates=items)
     public['request_sha256'] = object_sha(public)
     private = dict(schema='music_planner_blind_binding_v1', run_sha256=pool['run_sha256'],
@@ -185,6 +187,8 @@ def search_report(pool, policy, reviews=None, *, audit_policy=None, audit_review
                              independently_audited_pairs=len(paired),
                              independent_audit_source_bootstrap=_bootstrap_mean(paired, bootstrap_seed))
     return dict(schema='music_planner_search_report_v1', run_sha256=pool['run_sha256'],
+                caption_protocol=dict(id='native-direct-action-fixed-two-windows-v1',
+                                      windows_seconds=[[0., 2.], [2., 5.0625]], genre_header_required=False),
                 policy_sha256=object_sha(policy), reviews_sha256=object_sha(reviews) if reviews else None,
                 audit_policy_sha256=object_sha(audit_policy) if audit_policy else None,
                 audit_reviews_sha256=object_sha(audit_reviews) if audit_reviews else None,

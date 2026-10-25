@@ -19,8 +19,10 @@ from scripts_omnidance.exp.ms.music_planner_search import (
 
 def mock_runtime():
     source = dict(path='mock-runtime-fixture.py', sha256='d' * 64, size_bytes=1)
-    return dict(schema='music_planner_sampling_runtime_v1', adapter_source_ref=source,
+    return dict(schema='music_planner_sampling_runtime_v2', adapter_source_ref=source,
                 moss_cache=dict(requested_ref=source, applied_ref=source, status='applied'),
+                moss_position_buffer=dict(requested_ref=source, applied_ref=None, status='not_present',
+                                          canonical_tensor_ref=None),
                 eos_bridge=dict(requested_ref=source, applied_ref=None, status='native_eos_already_valid'))
 
 
@@ -699,3 +701,212 @@ def test_blind_request_import_report_cli_complete_round_trip(tmp_path, pool, pol
     assert report['splits']['train']['selected_sources'] == 1
     assert report['splits']['dev']['same_review_generalization_ci'] is None
     assert read_json(paths['receipt'])['imported_reviews_sha256'] == object_sha(read_json(paths['restored']))
+
+
+def collection_sources():
+    runtime = mock_runtime()
+    return dict(zip(('music_planner_adapters.py', 'music_planner_moss_generation_patch.py',
+                     'music_planner_moss_position_buffer_patch.py', 'music_planner_generation_eos_patch.py'),
+                    (runtime['adapter_source_ref'], runtime['moss_cache']['requested_ref'],
+                     runtime['moss_position_buffer']['requested_ref'], runtime['eos_bridge']['requested_ref'])))
+
+
+def test_interrupted_collection_reuses_completed_raw_and_publishes_only_when_complete(inputs, tmp_path):
+    from scripts_omnidance.exp.ms.music_planner_search_collection import collect_candidates
+    rows, isolation, generator = inputs
+    journal, out = tmp_path / 'journal', tmp_path / 'pool.json'
+    calls = []
+    def interrupted(row, **kwargs):
+        calls.append(kwargs['seed'])
+        if len(calls) == 2:
+            raise KeyboardInterrupt('intentional interrupted CPU collection')
+        return mock_sampler(row, **kwargs)
+    options = dict(journal_dir=journal, out=out, count=3, sources=collection_sources())
+    with pytest.raises(KeyboardInterrupt):
+        collect_candidates(rows[:1], isolation, generator, sampler=interrupted, **options)
+    assert not out.exists() and read_json(journal / 'status.json')['state'] == 'incomplete'
+    completed_file = next((journal / 'candidates').glob('*.json'))
+    original = completed_file.read_bytes()
+    resumed_calls = []
+    def resumed(row, **kwargs):
+        resumed_calls.append(kwargs['seed'])
+        return mock_sampler(row, **kwargs)
+    result = collect_candidates(rows[:1], isolation, generator, sampler=resumed, resume=True, **options)
+    assert calls[0] not in resumed_calls and len(resumed_calls) == 2
+    assert completed_file.read_bytes() == original
+    assert result == read_json(out)
+    assert len(list((journal / 'attempts').glob('*.failed.json'))) == 1
+    before = out.read_bytes()
+    collect_candidates(rows[:1], isolation, generator, sampler=lambda *a, **k: pytest.fail('complete resume must not sample'),
+                       resume=True, **options)
+    assert out.read_bytes() == before
+
+
+def test_resume_promotes_durable_raw_after_crash_before_complete_marker(inputs, tmp_path, monkeypatch):
+    from scripts_omnidance.exp.ms import music_planner_search_collection as collection
+    rows, isolation, generator = inputs
+    journal, out = tmp_path / 'journal', tmp_path / 'pool.json'
+    create = collection.durable_create
+    def crash_after_raw(path, value):
+        if Path(path).parent.name == 'candidates':
+            raise KeyboardInterrupt('crash after raw flush before complete marker')
+        return create(path, value)
+    monkeypatch.setattr(collection, 'durable_create', crash_after_raw)
+    options = dict(journal_dir=journal, out=out, count=2, sources=collection_sources())
+    with pytest.raises(KeyboardInterrupt):
+        collection.collect_candidates(rows[:1], isolation, generator, sampler=mock_sampler, **options)
+    raw = next((journal / 'attempts').glob('*.raw.json'))
+    bytes_before, seed_done = raw.read_bytes(), read_json(raw)['seed']
+    monkeypatch.setattr(collection, 'durable_create', create)
+    calls = []
+    def sampler(row, **kwargs):
+        calls.append(kwargs['seed'])
+        return mock_sampler(row, **kwargs)
+    collection.collect_candidates(rows[:1], isolation, generator, sampler=sampler, resume=True, **options)
+    assert seed_done not in calls and len(calls) == 1
+    assert raw.read_bytes() == bytes_before
+
+
+@pytest.mark.parametrize('change', ('params', 'seed', 'model', 'source', 'runtime', 'completed_raw'))
+def test_resume_rejects_changed_contract_or_completed_evidence_before_new_sampling(inputs, tmp_path, change):
+    from scripts_omnidance.exp.ms.music_planner_search_collection import collect_candidates
+    rows, isolation, generator = inputs
+    options = dict(journal_dir=tmp_path / 'journal', out=tmp_path / 'pool.json', count=2, sources=collection_sources())
+    collect_candidates(rows[:1], isolation, generator, sampler=mock_sampler, **options)
+    if change == 'params':
+        options['sampling'] = dict(temperature=.5, top_p=.95, top_k=50, max_new_tokens=2048)
+    elif change == 'seed':
+        options['seed'] = 17
+    elif change == 'model':
+        generator = dict(generator, model_sha256='f' * 64)
+    elif change == 'source':
+        rows[0]['source_group_id'] = 'another source group'
+    elif change == 'runtime':
+        options['sources'] = copy.deepcopy(options['sources'])
+        options['sources']['music_planner_adapters.py']['sha256'] = 'f' * 64
+    else:
+        path = next((options['journal_dir'] / 'candidates').glob('*.json'))
+        data = read_json(path)
+        data['candidate']['generation']['raw_text'] += 'tampered'
+        path.write_text(json.dumps(data), encoding='utf-8')
+    with pytest.raises(ValueError):
+        collect_candidates(rows[:1], isolation, generator,
+                           sampler=lambda *a, **k: pytest.fail('identity mismatch must precede sampling'),
+                           resume=True, **options)
+
+
+def test_invalid_durable_raw_is_preserved_and_blocks_resampling(inputs, tmp_path, monkeypatch):
+    from scripts_omnidance.exp.ms import music_planner_search_collection as collection
+    rows, isolation, generator = inputs
+    options = dict(journal_dir=tmp_path / 'journal', out=tmp_path / 'pool.json', count=2, sources=collection_sources())
+    def invalid(row, **kwargs):
+        result = mock_sampler(row, **kwargs)
+        result['seed'] += 1
+        return result
+    with pytest.raises(ValueError, match='seed'):
+        collection.collect_candidates(rows[:1], isolation, generator, sampler=invalid, **options)
+    raw = next((options['journal_dir'] / 'attempts').glob('*.raw.json'))
+    original = raw.read_bytes()
+    with pytest.raises(ValueError):
+        collection.collect_candidates(rows[:1], isolation, generator, resume=True,
+            sampler=lambda *a, **k: pytest.fail('must not sample over invalid durable raw'), **options)
+    assert raw.read_bytes() == original and not options['out'].exists()
+
+
+def test_direct_protocol_does_not_accept_short_plan_xml_as_action_caption(inputs):
+    def xml(row, **kwargs):
+        result = mock_sampler(row, **kwargs)
+        result['raw_text'] = '<music_evidence>Music.</music_evidence><caption>' + result['raw_text'] + '</caption>'
+        return result
+    pool = generate_candidates(inputs[0][:1], inputs[1], inputs[2], sampler=xml)
+    assert all(not item['diagnostics']['format_eligible'] for item in pool['candidates'])
+
+
+def test_captioner_real_torch_sampling_resumes_with_native_audio_only_and_eos(inputs, tmp_path):
+    torch = pytest.importorskip('torch')
+    from scripts_omnidance.exp.ms.music_planner_adapters import PlannerAdapter
+    from scripts_omnidance.exp.ms.music_planner_search_collection import collect_candidates
+    class Captioner(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight = torch.nn.Parameter(torch.ones(1))
+            self.generation_config = SimpleNamespace(eos_token_id=None)
+        def generate(self, **kwargs):
+            assert kwargs['do_sample'] is True and kwargs['eos_token_id'] == [2]
+            token = int(torch.randint(10, 10000, (1,)).item())
+            return torch.cat((kwargs['input_ids'], torch.tensor([[token, 2]])), dim=1)
+    rows, isolation, generator = inputs
+    generator = dict(generator, family='omni_captioner')
+    first = PlannerAdapter('omni_captioner', Captioner(), TinyProcessor())
+    calls = []
+    def interrupt(row, **kwargs):
+        calls.append(kwargs['seed'])
+        if len(calls) == 2:
+            raise KeyboardInterrupt('between actual CPU sampled candidates')
+        return sample_native(first, row, **kwargs)
+    options = dict(journal_dir=tmp_path / 'journal', out=tmp_path / 'pool.json', count=3)
+    state = torch.random.get_rng_state().clone()
+    with pytest.raises(KeyboardInterrupt):
+        collect_candidates(rows[:1], isolation, generator, sampler=interrupt, **options)
+    second = PlannerAdapter('omni_captioner', Captioner(), TinyProcessor())
+    resumed = []
+    def sampler(row, **kwargs):
+        resumed.append(kwargs['seed'])
+        return sample_native(second, row, **kwargs)
+    result = collect_candidates(rows[:1], isolation, generator, sampler=sampler, resume=True, **options)
+    assert len(resumed) == 2 and calls[0] not in resumed
+    assert all(c['generation']['new_token_ids'][-1] == 2 for c in result['candidates'])
+    assert second.processor.messages == [{'role': 'user', 'content': [{'type': 'audio', 'audio': 'native-waveform'}]}]
+    assert torch.equal(state, torch.random.get_rng_state())
+
+
+def test_moss_collection_restores_position_buffer_and_checks_real_forward_logits(inputs, tmp_path, monkeypatch):
+    torch = pytest.importorskip('torch')
+    from scripts_omnidance.exp.ms.music_planner_adapters import PlannerAdapter
+    from scripts_omnidance.exp.ms import music_planner_moss_position_buffer_patch as position
+    class Moss(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight = torch.nn.Parameter(torch.ones(1))
+            self.config = SimpleNamespace(model_type='moss_music')
+            self.generation_config = SimpleNamespace(eos_token_id=2)
+            self._planner_native_forward = self.forward
+            self.restored, self.nonfinite, self.draws = False, False, 0
+        def prepare_inputs_for_generation(self, input_ids, **kwargs):
+            return dict(input_ids=input_ids, **kwargs)
+        def forward(self, input_ids):
+            assert self.restored
+            logits = torch.zeros(1, input_ids.shape[1], 8)
+            if self.nonfinite:
+                logits[0, -1, 0] = float('nan')
+            return SimpleNamespace(logits=logits)
+        def generate(self, **kwargs):
+            self(kwargs['input_ids'])
+            self.draws += 1
+            token = int(torch.randint(10, 10000, (1,)).item())
+            return torch.cat((kwargs['input_ids'], torch.tensor([[token, 2]])), dim=1)
+    model = Moss()
+    adapter = PlannerAdapter('moss', model, TinyProcessor())
+    # Attach after constructing the boundary fixture; the native runtime itself
+    # is not replaced or claimed to be a pretrained MOSS model.
+    model.audio_encoder = torch.nn.Identity()
+    with pytest.raises(ValueError, match='audited official model path'):
+        sample_native(adapter, inputs[0][0], seed=1, max_new_tokens=16)
+    adapter._sampling_official_model_path = tmp_path
+    restores = []
+    def restore(current, official):
+        assert current is adapter and official == tmp_path
+        restores.append(True)
+        model.restored = True
+        return dict(applied_position_buffer_patch_ref=position.position_buffer_patch_ref(),
+                    canonical_tensor_ref=dict(shape=[640], dtype='torch.float32', sha256='c' * 64))
+    monkeypatch.setattr(position, 'restore_moss_position_buffer', restore)
+    for seed in (1, 2):
+        result = sample_native(adapter, inputs[0][0], seed=seed, max_new_tokens=16)
+        assert result['runtime_provenance']['moss_position_buffer']['status'] == 'restored'
+        assert result['finite_native_logits_forward_count'] == 1
+    assert len(restores) == 1 and not model._forward_hooks
+    model.nonfinite = True
+    with pytest.raises(FloatingPointError, match='non-finite last-token logits'):
+        sample_native(adapter, inputs[0][0], seed=3, max_new_tokens=16)
+    assert model.draws == 2 and not model._forward_hooks

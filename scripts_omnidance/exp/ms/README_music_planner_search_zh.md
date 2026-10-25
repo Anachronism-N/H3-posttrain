@@ -7,7 +7,7 @@
 ## 已实现的边界
 
 - 三族模型 `moss`、`music_flamingo`、`omni_captioner` 均复用现有 adapter 的原生 `prefix()`、音频 SHA 校验、完整 5.0625 秒波形检查、预处理和上下文长度限制。
-- 实际采样路径应用上游 MOSS KV-cache 兼容补丁，以及缺失原生 EOS 时的 assistant EOS bridge。补丁修改当前模型实例的推理 hook／调用参数；不改训练权重、原生前缀、音频或公平基线源码。每个候选记录实际 requested/applied source ref、SHA 及无需补丁的原因。
+- 实际采样路径应用上游 MOSS KV-cache 兼容补丁、原生 FP32 位置 buffer 恢复和真实 forward 最后 token logits 有限性检查，以及缺失原生 EOS 时的 assistant EOS bridge。使用本地审计的官方模型路径，不依赖其他服务器的硬编码路径。补丁不改训练权重、原生前缀或公平基线源码；记录实际 requested/applied source ref、canonical buffer SHA 及无需补丁的原因。
 - 独立采样函数明确使用 `do_sample=True`、temperature/top-p/top-k；每个源生成 2–32 个候选。没有调用原本的 greedy `generate()` 后仅更换 seed。原公平基线接口及解码设置保持原样。
 - 每个候选保留完整解码文本、包含特殊 token 的解码文本、全部新增 token、EOS、停止原因、预算截断标志、采样参数、seed、原生前缀哈希、音频 SHA 与长度、模型内容身份。
 - 不裁切输入音乐，沿用当前 `[0-2s]`、`[2-5.062s]` 两个文本窗口。采样不会自动改变模型的任务前缀、补训舞种能力或适配新 caption 契约。Captioner 继续使用其原生音频前缀。
@@ -16,7 +16,7 @@
 
 采样允许产生重复方案，工具不伪造差异。完全相同的 chosen/rejected 文本不会导出为偏好对；最高分批准方案并列时保留并列状态，不按 hash 随意选一个。
 
-候选池现使用 `music_planner_candidate_pool_v2`。旧 v1 缺少上述实际推理补丁证据，须重新生成并送审，不能修改 schema 字符串复用旧批准。若生成越过第一个 EOS 后又在预算尾部输出 EOS，原始 token 全保留，标记 `tokens_after_eos` 并阻断准入，不清理文本来伪造自然结束。
+候选池现使用 `music_planner_candidate_pool_v3`，运行补丁证据使用 v2。旧 v1/v2 不具备当前完整身份／推理契约，须重新生成并送审，不能修改 schema 字符串复用旧批准。若生成越过第一个 EOS 后又在预算尾部输出 EOS，原始 token 全保留，标记 `tokens_after_eos` 并阻断准入，不清理文本来伪造自然结束。
 
 ## 从当前 fair 数据开始
 
@@ -41,21 +41,64 @@ python -m scripts_omnidance.exp.ms.music_planner_search prepare \
 python -m scripts_omnidance.exp.ms.music_planner_search generate \
   --rows /path/to/search_input_v1/selected_rows.json \
   --isolation /path/to/search_input_v1/isolation.json \
-  --family moss --model /path/to/MOSS-Music-8B-Instruct \
+  --family omni_captioner --model /path/to/Qwen3-Omni-30B-A3B-Captioner \
   --checkpoint /path/to/completed_planner_checkpoint \
-  --model-id OpenMOSS-Team/MOSS-Music-8B-Instruct \
-  --base-model-id OpenMOSS-Team/MOSS-Music-8B-Instruct \
+  --training-source-dir /path/to/exact_frozen_training_sources \
+  --model-id Qwen/Qwen3-Omni-30B-A3B-Captioner \
+  --base-model-id Qwen/Qwen3-Omni-30B-A3B-Captioner \
   --model-version planner-checkpoint-100 \
   --count 4 --seed 42 --temperature 0.9 --top-p 0.95 --top-k 50 \
   --max-new-tokens 2048 --max-length 8192 --device cuda:0 \
-  --out /path/to/candidate_pool_v2.json
+  --journal-dir /path/to/captioner_candidates_v3.journal \
+  --out /path/to/candidate_pool_v3.json
 ```
 
-没有微调 checkpoint 时省略 `--checkpoint`。另外两族改变 family、模型路径和真实模型身份即可；不要把模型别名用于掩盖相同基座。调用会读取并哈希实际本地模型顶层文件及 checkpoint adapter 文件，可能耗时；`model_sha256` 是该文件内容身份清单的规范哈希，不是模型名称的哈希。
+没有微调 checkpoint 时省略 `--checkpoint` 与 `--training-source-dir`，身份明确记录为 `native_base_only`，不声称已训练出动作格式。原 fair checkpoint 的另两族可改变 family、模型路径和真实身份；不能把模型别名用于掩盖相同基座。调用哈希实际本地文件，`model-id`／`model-version` 只是说明；真正绑定的是完整 artifact identity、训练指纹、原始音频、运行源码与采样参数。
 
 模型加载后还会检查真实波形的单声道、有限值、完整时长及字节身份。已合入上游严格时长检查，不再允许旧的 24 kHz 五帧过长例外。上下文不足则报错，不截断音乐或前缀。`--device` 只选择已有设备，不分配服务器资源。CPU 测试使用微型 mock，不代表实际大模型已经运行。
 
 所有输出默认拒绝覆盖；新一轮使用新路径。
+
+## Captioner portable checkpoint 与输出协议
+
+`--checkpoint` 不再接受任意 PEFT 文件夹，必须指向包含 `trainer_state.json`、`trainable.pt`、`adapter/` 的完整 portable checkpoint，其父目录有原始 `run_config.json`。支持范围明确为：
+
+- 原 fair/direct-action 训练产物。
+- **仅 Captioner** 的 `music-planner-captioner-ablation-v3/direct-caption/weak-caption` 与 `/reviewed-shared`，mode 必须为 direct-caption、分段权重为 `(0,0,正数)`。核对五份原训练源码及 `short_plan_adapter.json` 的 native audio-only、输出模式与指令哈希。
+
+不接受 short-plan、joint-genre，或 MOSS/Music Flamingo 新 direct-caption 提示协议。这些模型即使 family 相同，也不能用当前 native 双窗纯动作加载方式解释。原始输出中的 `<music_evidence>`、`<short_plan>`、`<caption>` 标签也会关闭动作 caption 格式门禁，原文仍保存。
+
+预加载核对 config 的已知协议字段和 canonical fingerprint、完成 marker/cursor、trainable signature、test 未用于训练、base config/processor/weight 成员及大小、原始训练源码、adapter 实际导出文件成员和 SHA。**实际运行的 native adapter 源码必须与训练 adapter SHA 一致**；提供 frozen 目录不会授权当前不同的预处理代码。训练 trainer 可以来自所提供的原 frozen 目录。
+
+加载后还逐项比较实际 learned 参数与 `trainable.pt` 的键、shape、dtype 和数值，并保存验证 receipt。训练模型名称或自己填写的 checkpoint 版本不能替代这些检查。
+
+历史 fair base 身份只记录 config／processor SHA 与权重成员／大小，没有每个原训练 base shard 的内容 SHA。receipt 明确保留这一局限，不能声称已经证明当前 base 权重与原训练逐字节一致；本次实际使用的 base 文件仍完整哈希，变更会阻断同一 journal 的恢复。
+
+## 中断恢复与有限采集
+
+`generate` 默认创建 `OUT_STEM.journal`，也可显式 `--journal-dir`。失败后用**完全相同参数**重发上述命令并添加 `--resume`：
+
+```bash
+python -m scripts_omnidance.exp.ms.music_planner_search generate \
+  --rows /path/to/search_input_v1/selected_rows.json \
+  --isolation /path/to/search_input_v1/isolation.json \
+  --family omni_captioner --model /path/to/Qwen3-Omni-30B-A3B-Captioner \
+  --checkpoint /path/to/completed_planner_checkpoint \
+  --training-source-dir /path/to/exact_frozen_training_sources \
+  --model-id Qwen/Qwen3-Omni-30B-A3B-Captioner \
+  --base-model-id Qwen/Qwen3-Omni-30B-A3B-Captioner \
+  --model-version planner-checkpoint-100 \
+  --count 4 --seed 42 --temperature 0.9 --top-p 0.95 --top-k 50 \
+  --max-new-tokens 2048 --max-length 8192 --device cuda:0 \
+  --journal-dir /path/to/captioner_candidates_v3.journal \
+  --out /path/to/candidate_pool_v3.json --resume
+```
+
+journal 结构：`contract.json` 固定模型／源／参数／源码；`attempts/*.started.json` 和 `*.raw.json` 保留每次尝试；`candidates/*.json` 保存通过结构与身份校验的完成候选；`status.json` 是唯一可更新的进度快照。原始输出、尝试与完成证据均不覆盖。文件先写完并 fsync，再通过排他 hard-link 原子发布；同一 journal 有进程锁，不并发采同一槽位。
+
+恢复先验证**所有**完成候选，再调度缺失项。若原 raw 已落盘、进程在完成标记前退出，会校验同 job／slot／逐候选 seed／参数／模型／音频／runtime 后提升该 raw，不再调用模型。无效 raw 保留并明确阻断，不能重采来筛掉难看的 caption。合法但格式差或未到 EOS 的原始输出也保留为已采集候选，后续准入失败，不自动抽到成功为止。
+
+每次遇到异常即停止，保存 incomplete 状态；不会无限重试。只有全部要求的槽位完整、整池校验通过，才发布最终 pool。全部已完成时 `--resume` 只复核并复用，不重新加载模型或生成；原模型文件仍会重新做身份审计。改变模型／checkpoint、数据、seed、采样预算、上下文、设备、Python／关键依赖版本或源码需要新 journal，不能覆盖旧实验。采集不接受 test，仍只允许 train/dev。
 
 ## 分组清单契约
 
@@ -116,7 +159,7 @@ Path("review_policy_v1.json").write_text(
 
 ```bash
 python -m scripts_omnidance.exp.ms.music_planner_search review-request \
-  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v3.json --policy review_policy_v1.json \
   --out /path/to/review_request_v1.json
 ```
 
@@ -168,12 +211,14 @@ Path("reviews_to_complete.json").write_text(
 
 ```bash
 python -m scripts_omnidance.exp.ms.music_planner_search_harness blind-request \
-  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v3.json --policy review_policy_v1.json \
   --seed 42 --public-out /path/to/blind_public_v1.json \
   --private-out /path/to/blind_private_v1.json
 ```
 
 只把 public 文件给评审者。public 使用随机密钥派生的 opaque ID 和打乱顺序，保留真实音频引用／SHA、完整波形范围、固定 rubric 和动作原文；没有模型／checkpoint 身份、candidate index、源 split、已有分数或格式是否合格。private 保存反查关系、密钥、原 run／policy／request 身份，不能随评审包发送。
+
+public 与 report 显式写入当前双窗纯动作协议：`[0,2]`、`[2,5.0625]`，不要求舞种 header。Captioner 的输入仍是 native audio-only；本轮候选搜索不会擅自附加舞种、音乐分析或规划标签。`genre_compatibility` 评估动作方案与音乐的风格兼容，不能因为缺少舞种标题就判格式失败。
 
 真实 `audio_path` 仍可能含来源名称，故不声称完全遮蔽歌曲来源；工具主要去除模型与排名偏置信息。它不为隐藏文件名而改变音频、伪造 URL 或创建不存在的音频引用。需要更严的来源盲化时，可另做经 SHA 核对的中性音频副本并重新生成候选证据。
 
@@ -196,7 +241,7 @@ python -m scripts_omnidance.exp.ms.music_planner_search_harness blind-request \
 
 ```bash
 python -m scripts_omnidance.exp.ms.music_planner_search_harness import-blind \
-  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v3.json --policy review_policy_v1.json \
   --public /path/to/blind_public_v1.json --private /path/to/blind_private_v1.json \
   --response /path/to/completed_blind_reviews_v1.json \
   --out /path/to/restored_reviews_v1.json --receipt-out /path/to/blind_import_receipt_v1.json
@@ -210,11 +255,11 @@ python -m scripts_omnidance.exp.ms.music_planner_search_harness import-blind \
 
 ```bash
 python -m scripts_omnidance.exp.ms.music_planner_search export \
-  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v3.json --policy review_policy_v1.json \
   --reviews /path/to/completed_reviews_v1.json --out /path/to/reviewed_staging_v1.json
 
 python -m scripts_omnidance.exp.ms.music_planner_search check \
-  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v3.json --policy review_policy_v1.json \
   --reviews /path/to/completed_reviews_v1.json --staging /path/to/reviewed_staging_v1.json
 ```
 
@@ -249,7 +294,7 @@ python -m scripts_omnidance.exp.ms.music_planner_search check \
 
 ```bash
 python -m scripts_omnidance.exp.ms.music_planner_search_harness report \
-  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v3.json --policy review_policy_v1.json \
   --reviews /path/to/restored_reviews_v1.json --out /path/to/search_report_v1.json
 ```
 
@@ -261,7 +306,7 @@ python -m scripts_omnidance.exp.ms.music_planner_search_harness report \
 
 ```bash
 python -m scripts_omnidance.exp.ms.music_planner_search_harness report \
-  --pool /path/to/candidate_pool_v2.json --policy review_policy_v1.json \
+  --pool /path/to/candidate_pool_v3.json --policy review_policy_v1.json \
   --reviews /path/to/restored_reviews_v1.json \
   --audit-policy /path/to/independent_audit_policy_v1.json \
   --audit-reviews /path/to/independent_audit_reviews_v1.json \
@@ -275,7 +320,7 @@ python -m scripts_omnidance.exp.ms.music_planner_search_harness report \
 CPU 验证：
 
 ```bash
-python -m pytest -q tests/test_music_planner_search.py
+python -m pytest -q tests/test_music_planner_search.py tests/test_music_planner_search_identity.py
 ```
 
-测试覆盖实际 torch 随机采样及 RNG 恢复、三族 adapter 前缀路径及完整音频检查（mock processor/model）、实际上游缓存／EOS hook 的调用和 provenance、越过 EOS、音频与评审身份绑定、盲包／回填及篡改拒绝、分 split 的 source 配对报告、独立审计反转选择结果、同模型自评拒绝、平局、不完整评审、截断、heldout 隔离、unknown grouping 阻断训练、确定性导出及 CLI 全流程。没有运行实际预训练大模型或人工音乐质量验收；官方原生模型的真实 HF 解码验证依赖本地模型源码／processor 与 transformers。
+测试覆盖实际 torch 随机采样及 RNG 恢复、Captioner native audio-only／EOS 的中断恢复、崩溃发生于 raw 落盘和完成标记之间的原样提升、身份／参数／源码错拒绝、三族 adapter 前缀及完整音频检查（mock processor/model）、缓存／EOS hook、MOSS buffer 恢复调用与真实 logits 有限性 guard、portable 文件和加载参数数值核对、三个允许的 checkpoint 协议与其他协议拒绝、盲评及配对报告、训练准入隔离。没有运行实际预训练大模型或人工音乐质量验收；checkpoint 测试使用 tiny CPU 字节／张量夹具，官方原生 HF 解码验证仍依赖本地模型源码／processor 与 transformers。

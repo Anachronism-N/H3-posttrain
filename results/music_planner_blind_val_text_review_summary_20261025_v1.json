@@ -1,0 +1,129 @@
+{
+  "schema": "music-planner-independent-blind-val-text-review-summary-v1",
+  "review_status": "actual_completed",
+  "scope": "Independent LLM read all32 original-music val captions per anonymous model; no model identity/NLL/test/audio/video supplied",
+  "captions_read": 96,
+  "captions_per_model": 32,
+  "identity_decoded_after_review": {
+    "A": "music_flamingo",
+    "B": "omni_captioner",
+    "C": "moss"
+  },
+  "axes": [
+    "continuous_action_plan_coherence",
+    "dynamic_choreography_not_static_pose",
+    "semantic_action_diversity",
+    "window_appropriate_specificity"
+  ],
+  "ordinal_scores": {
+    "music_flamingo": [
+      3,
+      3,
+      2,
+      3
+    ],
+    "omni_captioner": [
+      4,
+      3,
+      3,
+      3
+    ],
+    "moss": [
+      3,
+      3,
+      2,
+      3
+    ]
+  },
+  "relative_text_only_opinion": "omni_captioner > music_flamingo approximately moss",
+  "confidence": "medium-low, heuristic on32 matched cases, not ground-truth accuracy",
+  "reasons": {
+    "music_flamingo": "部分跨窗承接省略；通用交叉/举臂/侧伸和小幅重心变化模板较多，第一窗有精确复用组",
+    "omni_captioner": "部分屈膝到起身、举臂到移重等承接更直接；局部下肢动作组织稍有分化，仍存在原地手势和近重复",
+    "moss": "存在整条/窗口精确复用及一个case两窗正文相同；左右手角色交换的跨窗过渡省略，仍有部分动态下肢动作"
+  },
+  "main_independently_verified_exact_duplicate_evidence": {
+    "A": {
+      "full": [],
+      "window1": [
+        [
+          2,
+          28
+        ],
+        [
+          14,
+          18,
+          26
+        ]
+      ],
+      "window2": [],
+      "within_case": []
+    },
+    "B": {
+      "full": [],
+      "window1": [],
+      "window2": [],
+      "within_case": []
+    },
+    "C": {
+      "full": [
+        [
+          6,
+          32
+        ]
+      ],
+      "window1": [
+        [
+          6,
+          28,
+          29,
+          31,
+          32
+        ],
+        [
+          8,
+          13
+        ]
+      ],
+      "window2": [
+        [
+          6,
+          27,
+          32
+        ]
+      ],
+      "within_case": [
+        18
+      ]
+    }
+  },
+  "limits": [
+    "ordinal score is independent LLM opinion, not calibrated accuracy",
+    "audio not heard, music/style synchronization not judged",
+    "independent DanceStyle ground truth unavailable",
+    "no H3 rendering or human visual review",
+    "missing transitions not automatically impossible movements",
+    "weak GT mismatch not automatically wrong choreography",
+    "test500 not used to choose or tune text gate"
+  ],
+  "human_quality_accepted": false,
+  "music_accuracy_accepted": false,
+  "final_winner": null,
+  "payload_refs": {
+    "A": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/text_blind_review_v1/model_A.json",
+      "sha256": "77cc313bbae6fae24425aa5b50eb043db12c5c823ab4378973c7dccc9fedb5aa",
+      "size_bytes": 34238
+    },
+    "B": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/text_blind_review_v1/model_B.json",
+      "sha256": "8ebfce356c60ed5e53c6ab1463bc231c628ebbb2f3481e73e440542c4c2e94a4",
+      "size_bytes": 34903
+    },
+    "C": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/text_blind_review_v1/model_C.json",
+      "sha256": "b1702e5e83e01c2ba9281749bc585fd3f6ee570ef0a8d4b6a488f677183f184b",
+      "size_bytes": 35735
+    }
+  }
+}

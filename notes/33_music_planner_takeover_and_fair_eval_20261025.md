@@ -88,6 +88,18 @@ Captioner旧val第一条2048tokens中im_end在第246号位置已有，随后重�
 
 H3单GPU0安全包装已独立7组CPU验证并冻结；必须真实三族fixed3有效raw交接、same参考图/renderer权重全SHA、50步seed42CFG1flow12/704×1280/124f24fps/noLoRA实际视频完成后，才能让用户盲评。当前尚无三族H3视频完成或赢家结论。所有旧失败记录保留，另七卡空闲时由原占卡程序保持。
 
+## 文本优先门槛及MOSS非persistent频率加载根因
+
+用户最新要求先卡文本，后续H3 GPU派发暂缓。基础val门槛按三条件每个32源固定：96完整采集、接口失败和空输出0，正常assistant EOS和正确双时间窗≥95%，同一规范化句子至少重复3次的caption比例≤5%。原音乐完全重复、4gram/句内复读、动作/身体部位覆盖及逐case错配/静音变化另作诊断，不把变化量当音乐同步分数；静音输入相同的重复输出不作为多样性失败。当前没有独立DanceStyle GT，不虚报舞种准确率。这是用户请求的val工程门槛，不是用test500调阈值，也不冒称语义编舞验收。
+
+text_gate对实际冻结donor映射、native token/stop和早EOS继续生成、MOSS每条真实finite-forward证据校验；状态complete还要求原collector eval.complete、manifest/raw SHA一致、exit0与resources_safe。8组纯JSON回归通过。完整Flamingo与修复后MOSS各96均通过基础文本门槛，Captioner仍在生成，不依据partial判断胜者。
+
+MOSS缓存修复后的旧异常输出全部token0，实际N7 GPU进一步诊断发现audio_encoder.embed_positions.inv_timescales640在普通HF5.18 meta加载后有垃圾/NaN；nonpersistentbuffer被empty_like而未重建，官方checkpoint同key报告UNEXPECTED。真实CPU官方HF FP32/BF16均复现坏频率，而真实HfDeepSpeedConfig zero3加载保留native ctor FP32 canonical，支持训练初始化正确、推理meta路径损坏的区别。独立11CPU测试通过；仅640官方BF16小tensor与native FP32 canonical.round(BF16)逐元素完全等价，分别如实记录dtype和SHA。新补丁只恢复native nonpersistent位置频率，不改任何已训练参数、其他buffer、配置、checkpoint或数据；生成作用域安装只读finite logits验证，NaN在argmax前拒绝。
+
+同完整MOSS670 checkpoint实际GPU恢复后prefix151936 logits全finite，3token正常为[58,15,13]，teacher-forced单源诊断NLL0.7198，未用作选择或质量评分；新的完整96面板均EOS、无接口失败/空输出/截断，全部原频率及finiteforward回执核验。这些证明加载/生成接口纠正，不是重训或额外源曝光，也不证明舞种准确。所有旧失败/异常raw保留且不用于模型排名。
+
+MOSS固定3条原生caption已完成EOS与资源安全；首次最终test500八卡已受控启动，global ID按index%8分片、不重复；加载模型串行、GPU生成并行。并行源码独立24CPU门禁通过（22分片/finite/API安全+2lease心跳线程），在长内容审核时持续刷新已拥有租约，cleanup前停止并join防FD重用竞态，不绕任何检查。Flamingo已开始的单卡首次test保持，不重测；Captioner待本族完整文本前提后再首次八卡test。当前都尚未证明最终500全部完成，H3与人评尚未执行，没有赢家。
+
 ## 当前结论
 
 未完成三模型新版本 GPU 启动验收、670 更新、最终文本评测或 H3 人评，因此没有最强模型结论。只把已执行的 CPU 诊断/回归与真实 v8 失败作为当前证据。后续真实 queue、日志、完整回执优先于本文快照。GitHub 提交仅包含本实验明确源码、测试及分析，不打包其他会话脏工作区、权重、私有音频/图像或凭据。

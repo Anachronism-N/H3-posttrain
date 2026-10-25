@@ -211,6 +211,12 @@ MOSS v1成功基座直接复用，不重新生成。N2旧5cDwY8/c1s2Ts仅未派�
 
 唯一UphFnd等待MOSS v1+两族v3实际全部complete/exit0/safe后才导出prepost_blind_text_review_v3六匿名组18条，并沿同原冻结rubric评审，v1/v2失败不当质量负例。最近H3原队列进展为Flamingo3片、Captioner1片，合计4/9；Captioner基座v3尚未完成，真实前后动作评价和视频人评仍未出。
 
+## Captioner修复后原基座实际三case验收
+
+Captioner基座v3已完整三条原生GPU生成：417/465/385 tokens各正常EOS，1267/1267实际native forwards有限；主会话独立用冻结v3 check_outputs核manifest/raw/真实exit0及单卡resources_safe全部通过，无checkpoint/LoRA，同有效processor prompt/全部前缀audio tensors与训练后导出重放相同，旧full historical prefix tensor未保存的边界保留。v1/v2误拒均未生成caption且旧失败/账本/SHA保留，不用其失败给基座质量负分。N4 GPU0已恢复占卡，不再重复基座生成。
+
+同三个case，原基座0/3正确非空双窗、训练后3/3；只证明当前native audio-only协议下训练学会了目标输出形式，不能把固定格式提高当精细动作时间准确率、舞种/节拍同步或创作编排更好。MOSS原基座已有3/3双窗，更说明“有时间标签”不等训练效果。动作内容前后仍等Flamingo基座齐全后独立18条匿名LLM盲审。技术总结为results/music_planner_captioner_base_fixed3_technical_20261025_v3.json，无raw文本/私有音视频。
+
 ## 当前结论
 
 三模型clean_v11正式训练均已真实完成670更新、2epoch、21426源曝光及完整保存/新进程恢复。完整val32三条件工程门槛均通过；三模型首次test500均已完整、真实exit0、资源安全恢复，最终文本指标已独立重验并汇总。val32匿名文本意见偏Captioner，但test500存在取舍：Captioner词级略优且对MOSS区间跨0，MOSS同窗口动作类别F1最高，不能宣布Captioner整体最强。Captioner2条预算截断原样保留，固定双窗不是动作真实边界。H3 Flamingo三片视频已完整exit0独立验收，Captioner正在视频阶段，MOSS视频待，共九片及用户人评未完。MOSS原基座3case完整safe，Captioner基座已唯一派发、Flamingo基座仍等H3安全；18条前后独立盲评尚待真实材料齐全。GitHub仅精准本实验代码、测试及脱敏纯指标分析，不上传权重/私有音视频/凭据，不改其他会话任务。

@@ -1,0 +1,70 @@
+{
+  "schema": "music-planner-Captioner-pure-base-fixed3-technical-summary-v3",
+  "accepted_attempt": 3,
+  "source_count": 3,
+  "source_ids": [
+    "wJPptuhclZmKAEWs",
+    "wJPrpFsThWAcBQIw",
+    "wJQTclrlOLEYYfTB"
+  ],
+  "no_checkpoint_loaded": true,
+  "no_lora_initialized": true,
+  "current_base_content_full_SHA_verified": true,
+  "actual_exit_code": 0,
+  "resources_safe_fields": {
+    "all_holders_safe": true,
+    "locks_released": true,
+    "leases_restored": true,
+    "managed_parent_wait": true,
+    "unknown_jobs_not_signaled": true,
+    "admitted_gpu_count": 1
+  },
+  "native_finite_forwards": 1267,
+  "EOS_count": 3,
+  "base_fixed_two_window_count": 0,
+  "trained_fixed_two_window_count": 3,
+  "same_effective_prompt_and_all_audio_prefix_tensors_exact_equal": true,
+  "inactive_tokenizer_template_storage_equal": false,
+  "prior_generation_before_gate_failed_attempts_preserved": true,
+  "actual_caption_generation_in_failed_v1_v2": false,
+  "raw_SHA256": "14a71254f0408cc16ab537009785f7bcd2113959c906a57777963bc5c111f174",
+  "trained_raw_SHA256": "05601fc6ff21490a5d84913243e6026303f3ac44416a64ebb1f4e468b1a9b0c8",
+  "per_case": [
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "generated_tokens": 417,
+      "stop_reason": "eos",
+      "actual_forward_count": 417,
+      "finite_native_logits_forward_count": 417,
+      "quality_diagnostics": [
+        "no_exact_dual_window_format"
+      ]
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "generated_tokens": 465,
+      "stop_reason": "eos",
+      "actual_forward_count": 465,
+      "finite_native_logits_forward_count": 465,
+      "quality_diagnostics": [
+        "no_exact_dual_window_format"
+      ]
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "generated_tokens": 385,
+      "stop_reason": "eos",
+      "actual_forward_count": 385,
+      "finite_native_logits_forward_count": 385,
+      "quality_diagnostics": [
+        "no_exact_dual_window_format"
+      ]
+    }
+  ],
+  "evidence_supports_target_output_format_learning_only": true,
+  "format_is_not_real_action_boundary_accuracy": true,
+  "action_quality_prepost_blind_review_status": "pending_all_three_families",
+  "music_alignment_not_assessed": true,
+  "H3_or_human_quality_not_accepted": true,
+  "final_model_winner": null
+}

@@ -238,7 +238,8 @@ def write_rows(path, rows):
     path.write_text(''.join(json.dumps(row) + '\n' for row in rows), encoding='utf-8')
 
 
-def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_path, monkeypatch):
+@pytest.mark.parametrize('mode', cot.MODES)
+def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_path, monkeypatch, mode):
     train = tmp_path / 'train.jsonl'
     val = tmp_path / 'val.jsonl'
     rows = [example(tmp_path, 'a', frequency=220), example(tmp_path, 'b', frequency=330)]
@@ -255,6 +256,7 @@ def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_pa
         model = TinyPlanner()
         if checkpoint:
             cot.base.restore_trainable(model, torch.load(Path(checkpoint) / 'trainable.pt', weights_only=True))
+            model.generation_text = cot.serialize_target(rows[0], mode)[0]
         native = cot.PlannerAdapter(family, model, MockProcessor(), max_length=kwargs.get('max_length', 8192))
         loaded.append(native)
         return native
@@ -262,7 +264,7 @@ def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_pa
     monkeypatch.setattr(cot, 'load_planner_adapter', native_factory)
     shared = ['--family', 'omni_captioner', '--model', str(local_model), '--train', str(train),
               '--val', str(val), '--out', str(tmp_path / 'run'), '--device', 'cpu', '--dtype', 'float32',
-              '--no-gradient-checkpointing', '--epochs', '2', '--verify-reload']
+              '--no-gradient-checkpointing', '--epochs', '2', '--verify-reload', '--mode', mode]
     before = copy.deepcopy(TinyPlanner().state_dict())
     first = cot.main(['train'] + shared + ['--max-updates', '2'])
     assert first['cursor']['update'] == 2 and first['reload_verified'] is True
@@ -271,6 +273,14 @@ def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_pa
     assert not torch.equal(before['audio_projector'], after['audio_projector'])
     assert torch.equal(before['base_embedding'], after['base_embedding'])
     assert first['test_used'] is False and first['quality_accepted'] is False
+    assert first['schema'] == cot.mode_schema(mode) and first['mode'] == mode
+    assert first['invocation_optimizer_updates'] == 2
+    assert first['supervised_tokens_total'] > 0
+    if mode == 'direct-caption':
+        assert first['supervised_segment_tokens']['music_evidence'] == 0
+        assert first['supervised_segment_tokens']['short_plan'] == 0
+    else:
+        assert all(value > 0 for value in first['supervised_segment_tokens'].values())
     config = json.loads((tmp_path / 'run/run_config.json').read_text())
     assert set(config['code_sha256']) == {'music_planner_cot.py', 'music_planner_train.py',
                                         'music_planner_adapters.py', 'music_planner_eval.py'}
@@ -279,28 +289,47 @@ def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_pa
     second = cot.main(['train'] + shared + ['--max-updates', '3', '--resume', first['checkpoint']])
     assert second['cursor']['update'] == 3 and second['cursor']['source_exposures'] == 3
     assert second['cursor']['epoch'] == 1
-    trained = cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'])
+    assert second['invocation_optimizer_updates'] == 1
+    assert second['supervised_tokens_total'] > first['supervised_tokens_total']
+    val_stats = json.loads((Path(first['checkpoint']) / 'validation.json').read_text())
+    if mode == 'direct-caption':
+        assert val_stats['segment_nll']['music_evidence'] is None
+        assert val_stats['segment_nll']['short_plan'] is None
+        assert val_stats['segment_tokens']['music_evidence'] == val_stats['segment_tokens']['short_plan'] == 0
+    trained = cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'], mode=mode)
     assert isinstance(trained, cot.ShortPlanAdapter)
-    trained.model.generation_text = cot.serialize_target(rows[0])[0]
+    trained.model.generation_text = cot.serialize_target(rows[0], mode)[0]
     assert trained.generate_caption(rows[0], max_new_tokens=1024)['caption_valid'] is True
+    other = next(item for item in cot.MODES if item != mode)
+    with pytest.raises(ValueError, match='config/fingerprint'):
+        cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'], mode=other)
+    with pytest.raises(ValueError, match='resume config/data/source'):
+        cot.main(['train'] + shared + ['--mode', other, '--max-updates', '4', '--resume', second['checkpoint']])
+    audio_input = tmp_path / 'audio_only.jsonl'
+    write_rows(audio_input, [{key: validation[key] for key in
+        ('id', 'split', 'audio_path', 'audio_sha256', 'audio_window_seconds')}])
+    generated = cot.main(['generate', '--mode', mode, '--family', 'omni_captioner', '--model', str(local_model),
+        '--checkpoint', second['checkpoint'], '--input', str(audio_input), '--out', str(tmp_path / 'generated.jsonl'),
+        '--device', 'cpu', '--dtype', 'float32', '--max-new-tokens', '1024'])
+    assert generated[0]['caption_valid'] is True and generated[0]['mode'] == mode
     with pytest.raises(ValueError, match='context'):
-        cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'], max_length=4000)
+        cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'], mode=mode, max_length=4000)
     sidecar = Path(second['checkpoint']) / 'adapter/short_plan_adapter.json'
     original = sidecar.read_bytes()
     sidecar.write_text('{}')
     with pytest.raises(ValueError, match='export bytes'):
-        cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'])
+        cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'], mode=mode)
     sidecar.write_bytes(original)
     with monkeypatch.context() as changed_source:
         changed_source.setattr(cot, 'implementation_sources', lambda: {'music_planner_cot.py': 'f' * 64})
         with pytest.raises(ValueError, match='source version differs'):
-            cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'])
+            cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'], mode=mode)
     marker_path = Path(second['checkpoint']) / 'trainer_state.json'
     marker = json.loads(marker_path.read_text())
     marker['complete'] = False
     marker_path.write_text(json.dumps(marker))
     with pytest.raises(ValueError, match='completed portable'):
-        cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'])
+        cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'], mode=mode)
     wrong = dict(rows[0], split='test')
     write_rows(train, [wrong])
     with pytest.raises(ValueError, match='test/mixed'):
@@ -325,3 +354,122 @@ def test_missing_full_checkpoint_marker_refused_before_native_loading(tmp_path, 
     monkeypatch.setattr(cot, 'load_planner_adapter', lambda *a, **k: pytest.fail('Do not load invalid export'))
     with pytest.raises(ValueError, match='full experiment checkpoint'):
         cot.load_short_plan_adapter('moss', tmp_path, checkpoint=tmp_path)
+
+
+@pytest.mark.parametrize('family', cot.FAMILIES)
+def test_direct_caption_has_no_intermediate_tokens_or_loss(tmp_path, family):
+    row = example(tmp_path)
+    adapter = cot.ShortPlanAdapter(family, TinyPlanner(), MockProcessor(), mode='direct-caption')
+    text, _ = cot.serialize_target(row, 'direct-caption')
+    assert text == row['target_text']
+    assert all(tag not in text for tag in cot.SEGMENTS)
+    prompt = adapter._prompt()
+    assert (cot.DIRECT_INSTRUCTION in prompt) is (family != 'omni_captioner')
+    assert cot.INSTRUCTION not in prompt
+    batch = adapter.collate([row])
+    assert set(batch['segment_ids'].flatten().tolist()) == {-1, 2}
+    logits = adapter.model(**{key: value for key, value in batch.items()
+                              if key not in ('labels', 'segment_ids', 'audio_input_mask')}).logits
+    loss, totals, counts = cot.segment_nll(logits, batch['labels'], batch['segment_ids'], mode='direct-caption')
+    assert counts[0] == counts[1] == 0
+    torch.testing.assert_close(loss, totals[2] / counts[2])
+    loss.backward()
+    assert adapter.model.lora_A.grad.norm() > 0
+    adapter.model.generation_text = text
+    generated = adapter.generate_caption(row, max_new_tokens=1024)
+    assert generated['caption_valid'] is True and generated['caption'] == text
+    assert 'music_evidence' not in generated and 'short_plan' not in generated
+    adapter.model.generation_text = cot.serialize_target(row, 'short-plan')[0]
+    assert adapter.generate_caption(row, max_new_tokens=1024)['caption_valid'] is False
+    del row['short_plan']
+    with pytest.raises(ValueError, match='Missing reviewed'):
+        adapter.collate([row])  # Same reviewed data is mandatory in both ablation modes.
+
+
+def test_direct_mode_rejects_inactive_segment_weight_and_membership():
+    with pytest.raises(ValueError, match='requires weights'):
+        cot.effective_weights('direct-caption', (.2, .3, 1.))
+    labels = torch.tensor([[-100, 4, 5, 2]])
+    sections = torch.tensor([[-1, 0, 1, 2]])
+    with pytest.raises(ValueError, match='membership'):
+        cot.segment_nll(torch.randn(1, 4, 8), labels, sections, mode='direct-caption')
+
+
+@pytest.mark.parametrize('mode', cot.MODES)
+@pytest.mark.parametrize('family', ['moss', 'omni_captioner'])
+def test_upstream_native_generation_bridges_execute_and_receipts_are_eval_only(tmp_path, mode, family):
+    class NativeCacheFixture(TinyPlanner):
+        def __init__(self):
+            super().__init__()
+            self.config.model_type = 'moss_music'
+            self._planner_native_forward = self.forward
+            self.generation_config.eos_token_id = None
+            self.cached_calls = 0
+
+        def prepare_inputs_for_generation(self, input_ids, past_key_values=None, cache_position=None, **kwargs):
+            if past_key_values is not None:
+                assert int(cache_position[0]) == past_key_values.get_seq_length()
+                self.cached_calls += 1
+            return dict(input_ids=input_ids, cache_position=cache_position)
+
+        def generate(self, **kwargs):
+            assert kwargs['eos_token_id'] == [2]  # Supplied by the actual upstream EOS wrapper.
+            if family == 'moss':
+                ids = kwargs['input_ids']
+                self.prepare_inputs_for_generation(ids, audio_data=torch.ones(1, 2),
+                    audio_input_mask=ids.eq(3))
+                cache = SimpleNamespace(get_seq_length=lambda: ids.shape[1])
+                self.prepare_inputs_for_generation(torch.cat((ids, torch.ones(1, 1, dtype=torch.long)), 1),
+                    past_key_values=cache, attention_mask=torch.ones(1, ids.shape[1] + 1))
+            return super().generate(**kwargs)
+
+    row = example(tmp_path)
+    model = NativeCacheFixture()
+    adapter = cot.ShortPlanAdapter(family, model, MockProcessor(), mode=mode)
+    model.generation_text = cot.serialize_target(row, mode)[0]
+    before = copy.deepcopy(model.state_dict())
+    sources = cot.implementation_sources()
+    receipt = cot.apply_generation_compatibility(adapter, 'unchanged-training-fingerprint')
+    result = adapter.generate_caption(row, max_new_tokens=1024)
+    assert result['caption_valid'] is True
+    assert result['applied_generation_eos_patch_ref'] == cot.eos_patch.generation_eos_patch_ref()
+    assert receipt['training_fingerprint'] == 'unchanged-training-fingerprint'
+    assert receipt['training_fingerprint_mutated'] is False
+    assert 'music_planner_generation_eos_patch.py' not in sources
+    assert 'music_planner_moss_generation_patch.py' not in sources
+    assert cot.implementation_sources() == sources
+    assert model.generation_config.eos_token_id is None
+    for name, tensor in before.items():
+        torch.testing.assert_close(model.state_dict()[name], tensor, rtol=0, atol=0)
+    if family == 'moss':
+        assert model.cached_calls == 1
+        assert result['applied_generation_patch_ref'] == cot.moss_patch.generation_patch_ref()
+
+
+@pytest.mark.parametrize('was_training', [True, False])
+def test_validation_restores_model_mode_when_annotation_processing_fails(was_training):
+    model = TinyPlanner()
+    model.train(was_training)
+
+    def broken_collate(rows):
+        assert model.training is False
+        raise ValueError('fixture annotation failure')
+
+    adapter = SimpleNamespace(mode='short-plan', collate=broken_collate)
+    cache = SimpleNamespace(verify=lambda row: None)
+    with pytest.raises(ValueError, match='fixture annotation failure'):
+        cot.evaluate(model, adapter, [{}], cache, torch.device('cpu'), torch.float32, (.2, .3, 1.))
+    assert model.training is was_training
+
+
+@pytest.mark.parametrize('mode', cot.MODES)
+@pytest.mark.parametrize('new_ids,budget', [([10, 2, 11, 2], 8), ([10, 11, 12, 2], 3), ([10, 11], 8)])
+def test_generated_raw_token_suffix_and_budget_invalid_without_cleaning(tmp_path, mode, new_ids, budget):
+    row = example(tmp_path)
+    adapter = cot.ShortPlanAdapter('omni_captioner', TinyPlanner(), MockProcessor(), mode=mode)
+    raw = cot.serialize_target(row, mode)[0]
+    adapter.generate = lambda *a, **k: dict(raw_text=raw, new_token_ids=new_ids,
+        eos_token_ids=[2], stop_reason='eos')
+    result = adapter.generate_caption(row, max_new_tokens=budget)
+    assert result['caption_valid'] is False
+    assert result['new_token_ids'] == new_ids and result['raw_text'] == raw

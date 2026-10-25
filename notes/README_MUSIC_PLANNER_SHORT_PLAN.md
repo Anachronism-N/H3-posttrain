@@ -1,6 +1,15 @@
-# 规划器短规划与分段 loss 实验
+# 规划器短规划与直接输出消融实验
 
-这是独立的规划器实验入口，不改变 `music_planner_train.py`、公平比较的标签、原生音频输入或冻结的基线协议。实验仅输入音乐，学习“简短音乐证据 → 简短编舞安排 → 最终动作 caption”。没有加入视频渲染、RL 或自动生成 CoT 真值，也没有为当前数据补造舞种。
+这是独立的规划器实验入口，不改变 `music_planner_train.py`、公平比较的标签、原生音频输入或冻结的基线协议。实验在同一份审核数据上比较“仅最终动作 caption”与“简短音乐证据 → 简短编舞安排 → 最终动作 caption”。没有加入视频渲染、RL 或自动生成 CoT 真值，也没有为当前数据补造舞种。
+
+当前协议为 `music-planner-reviewed-ablation-v2/<mode>`。两个模式的训练、续跑、生成都通过 `--mode` 显式选择：
+
+| mode | assistant 目标 | 有效 loss 段 | 推理结果 |
+| --- | --- | --- | --- |
+| `direct-caption` | 原始两段自然语言 caption＋原生 EOS | 仅 caption，其他段 token 数为 0 | 直接返回自然语言 caption |
+| `short-plan`（默认） | 音乐证据＋短计划＋caption＋原生 EOS | 三段各自归一后加权 | 解析完整三段，提取最终 caption |
+
+两种模式都必须通过同一套新增标注审核，不允许 direct 模式悄悄换成更大或未审核的数据。direct 模式不会把不用的音乐证据或短计划塞进 prompt/target，也不会生成中间段。不同模式的 schema、提示、权重、checkpoint 身份独立，跨模式加载/续跑明确拒绝；旧 v1 checkpoint 需使用旧实验源码，不能在 v2 下静默解释。
 
 当前交付是实现和 CPU 可执行验证，尚未训练真实 MOSS / Music Flamingo / Qwen3-Omni Captioner 权重，不能据此声称编舞质量提高。CPU 测试使用真实 PyTorch 梯度及 mock 音频 processor；不等同于三个真实原生 processor 的验收。
 
@@ -74,7 +83,13 @@ L = (w_music × mean_NLL_music
     / (w_music + w_plan + w_caption)
 ```
 
-默认相对权重为 `0.2 0.3 1.0`，只是可运行的实验起点。每段先按自己的有效 token 数取均值，再按权重归一；这与把所有目标 token 一起取均值不同。`--accum` 内按源样本平均。验证同时记录每段 token NLL、有效 token 数和加权目标，`best_val_nll` 使用最终 caption 段 NLL；这仍只是参考文本似然，不是编舞质量分数，也不能跨 tokenizer 直接比较。
+short-plan 默认相对权重为 `0.2 0.3 1.0`，只是可运行的实验起点。每段先按自己的有效 token 数取均值，再按权重归一；这与把所有目标 token 一起取均值不同。`--accum` 内按源样本平均。direct-caption 默认使用 `0 0 1`，若显式提供参数则只允许前两项为 0、最后一项为正，loss 退化为最终 caption＋EOS 的平均 NLL。未启用的段报告 token 数 0、NLL null，避免除零或把缺失值报成零损失。
+
+验证的 `weighted_segment_nll` 与训练一致，对每个源样本的加权段均值再平均；`segment_nll` 另按各段全部有效 token 汇总，二者聚合方式在记录中明确区分。`best.json` 和 `best_val_nll` 使用最终 caption 段 NLL；这仍只是参考文本似然，不是编舞质量分数，也不能跨 tokenizer 直接比较。
+
+即使使用同一 tokenizer，short-plan 的 caption NLL 以金标音乐证据和短计划作为 teacher-forced 前文，而 direct-caption 没有这些前文，条件不同，不能直接比较两个数来判断 CoT 是否更好。该指标只用于各模式内部选择 checkpoint；跨模式应比较不读金标前段的自由生成与人工偏好。
+
+每个更新会从实际有效 labels 统计 `supervised_segment_tokens`（三个段）和 `supervised_tokens_total`，checkpoint 游标与 outputs.json 也保留累计计数，续跑不清零。相同源样本曝光不等于相同 token 或算力预算；消融必须同时报告这些 token 数、最大生成预算与耗时，不能仅把 epoch 对齐就称为等成本。
 
 ## 检查与训练
 
@@ -82,18 +97,18 @@ L = (w_music × mean_NLL_music
 
 ```bash
 python -X utf8 -m scripts_omnidance.exp.ms.music_planner_cot train \
-  --family moss --model /models/MOSS-Music-8B-Instruct \
+  --mode short-plan --family moss --model /models/MOSS-Music-8B-Instruct \
   --train /data/short-plan/train.jsonl --val /data/short-plan/val.jsonl \
-  --out /runs/moss-short-plan-v1 --check-data-only
+  --out /runs/moss-short-plan-v2 --check-data-only
 ```
 
 检查不创建输出目录，不加载模型；它检查 schema/来源绑定，真正消费音频时才核验文件 SHA 与原生处理后的长度。
 
 ```bash
 python -X utf8 -m scripts_omnidance.exp.ms.music_planner_cot train \
-  --family moss --model /models/MOSS-Music-8B-Instruct \
+  --mode short-plan --family moss --model /models/MOSS-Music-8B-Instruct \
   --train /data/short-plan/train.jsonl --val /data/short-plan/val.jsonl \
-  --out /runs/moss-short-plan-v1 --device cuda:0 --dtype bfloat16 \
+  --out /runs/moss-short-plan-v2 --device cuda:0 --dtype bfloat16 \
   --epochs 1 --accum 4 --rank 32 --alpha 64 \
   --segment-weights 0.2 0.3 1.0 --save-every 100 --max-updates 2 --verify-reload
 ```
@@ -104,15 +119,33 @@ python -X utf8 -m scripts_omnidance.exp.ms.music_planner_cot train \
 
 ```bash
 python -X utf8 -m scripts_omnidance.exp.ms.music_planner_cot train \
-  --family moss --model /models/MOSS-Music-8B-Instruct \
+  --mode short-plan --family moss --model /models/MOSS-Music-8B-Instruct \
   --train /data/short-plan/train.jsonl --val /data/short-plan/val.jsonl \
-  --out /runs/moss-short-plan-v1 --device cuda:0 --dtype bfloat16 \
+  --out /runs/moss-short-plan-v2 --device cuda:0 --dtype bfloat16 \
   --epochs 1 --accum 4 --rank 32 --alpha 64 \
   --segment-weights 0.2 0.3 1.0 --save-every 100 \
-  --resume /runs/moss-short-plan-v1/checkpoint-0000002
+  --resume /runs/moss-short-plan-v2/checkpoint-0000002
 ```
 
 检查点复用现有 train 的 trainable/AdamW/scheduler/RNG/游标保存和严格恢复。新 run fingerprint 包含新增模块、原 train、原 adapters、原 eval 四份源码 SHA、数据 manifest SHA、模型身份、loss 权重和训练配置。数据/来源/权重/关键配置变化后拒绝续跑。模型权重身份默认沿用基线的 stat+config/processor SHA；这不是完整权重内容 SHA 的保证，可通过 `--weights-manifest` 绑定已有权重清单。
+
+同数据 direct 消融使用独立输出目录，训练/续跑都显式保留模式，不复用 short-plan 的 checkpoint：
+
+```bash
+python -X utf8 -m scripts_omnidance.exp.ms.music_planner_cot train \
+  --mode direct-caption --family moss --model /models/MOSS-Music-8B-Instruct \
+  --train /data/short-plan/train.jsonl --val /data/short-plan/val.jsonl \
+  --out /runs/moss-direct-v2 --device cuda:0 --dtype bfloat16 \
+  --epochs 1 --accum 4 --rank 32 --alpha 64 \
+  --segment-weights 0 0 1 --max-updates 2 --verify-reload
+
+python -X utf8 -m scripts_omnidance.exp.ms.music_planner_cot train \
+  --mode direct-caption --family moss --model /models/MOSS-Music-8B-Instruct \
+  --train /data/short-plan/train.jsonl --val /data/short-plan/val.jsonl \
+  --out /runs/moss-direct-v2 --device cuda:0 --dtype bfloat16 \
+  --epochs 1 --accum 4 --rank 32 --alpha 64 --segment-weights 0 0 1 \
+  --resume /runs/moss-direct-v2/checkpoint-0000002
+```
 
 ## 生成与提取最终 caption
 
@@ -124,16 +157,28 @@ python -X utf8 -m scripts_omnidance.exp.ms.music_planner_cot train \
 
 ```bash
 python -X utf8 -m scripts_omnidance.exp.ms.music_planner_cot generate \
-  --family moss --model /models/MOSS-Music-8B-Instruct \
-  --checkpoint /runs/moss-short-plan-v1/checkpoint-0000002 \
+  --mode short-plan --family moss --model /models/MOSS-Music-8B-Instruct \
+  --checkpoint /runs/moss-short-plan-v2/checkpoint-0000002 \
   --input /data/short-plan/val_audio_only.jsonl \
-  --out /runs/moss-short-plan-v1/val_generations.jsonl \
+  --out /runs/moss-short-plan-v2/val_generations.jsonl \
   --device cuda:0 --dtype bfloat16 --max-new-tokens 2048
 ```
 
 必须提供完整实验 checkpoint 目录及其父目录的 run_config，程序核验完成标记、portable trainable SHA、adapter 导出全部文件的 SHA/成员、当前四份实现源码 SHA、实验协议与基座 config/processor/权重成员身份，再恢复 `ShortPlanAdapter`，不会退回原始无 CoT 协议。源码变化后须使用该 checkpoint 对应的原实验代码，不能静默换预处理。`moss` 与 `music_flamingo` 的任务提示在训练/推理一致；`omni_captioner` 始终保留原生 audio-only user prefix，不新增 system 或文本指令，分段输出格式通过 assistant SFT 学习。
 
-生成路径只挑选音频路径/SHA/时间范围作为输入，不读取 target、音乐证据、短计划或舞种。输出保留原始文本、token、EOS/停止原因、独立 `caption` 字段。仅在三段完整、最终两段时间窗正确且原生 EOS 结束时标记 `caption_valid: true`；否则保留 raw 输出、给出错误并使 caption 为 null，不偷偷补全文本或时间窗。输入仍只接受 train/val，test 留给独立终测。
+direct 模式生成把上面命令改为 `--mode direct-caption`、`--checkpoint /runs/moss-direct-v2/checkpoint-0000002`，并使用另一个新输出文件；它直接验证完整自然语言时间窗，不要求或解析三段标签。
+
+生成路径只挑选音频路径/SHA/时间范围作为输入，不读取 target、音乐证据、短计划或舞种。输出保留原始文本、token、EOS/停止原因、独立 `caption` 字段。short-plan 需三段完整，两个模式都需最终两段时间窗正确且原生 EOS 结束，才标记 `caption_valid: true`；否则保留 raw 输出、给出错误并使 caption 为 null，不偷偷补全文本或时间窗。输入仍只接受 train/val，test 留给独立终测。
+
+完成判定同时检查原始 `new_token_ids`：不超过申请的生成 token 预算，首个原生 EOS 必须恰好是最后一个 token。即使停止原因字符串写着 eos，出现 EOS 后缀或预算超限也会判失败；不会先截断或清理 token 再声称成功。
+
+## 上游原生生成兼容补丁与训练身份
+
+本分支以双亲 merge 同步公平分支 `4e22b8ef8016ee3bdfa85670a9d71aba7d277686` 的严格音频检查和原生生成补丁，不修改共享基线源码。当前真实生成加载默认接入上游 `music_planner_moss_generation_patch.py` 和 `music_planner_generation_eos_patch.py`：MOSS 通过原生 KV cache 长度恢复单 token cached decode；仅当模型未声明有效 EOS 时，才向原生 generate 提供已训练的 assistant 终止 token。补丁不改权重、prefix、原始输出或解码惩罚。
+
+`generate_caption` 通过实例 `self.generate` 调用，确保这些 wrapper 实际执行。每条结果的 `generation_compatibility` 保存请求/实际应用的补丁源码路径与 SHA、未修改的训练 fingerprint、EOS 详情；已有有效 EOS 时该项补丁实际应用为 null，仍有请求源码记录。可用 `--no-generation-compatibility` 做明确的原生行为诊断，此时不会偷偷应用补丁。
+
+补丁属于 eval-only 依赖，不加入不可变的训练 `code_sha256`，也不为应用补丁重算或伪造训练 fingerprint。四份训练/预处理核心源码仍须与 checkpoint 完全一致；补丁版本通过每次生成单独的 receipts 记录。旧核心源码 checkpoint 不会因为补丁可用而被当成兼容。CPU 测试确实调用上游两种 wrapper 并验证 cached decode/EOS 参数路径，但没有因此声称真实 MOSS 权重已在本地跑通。
 
 ## CPU 验收
 
@@ -141,6 +186,6 @@ python -X utf8 -m scripts_omnidance.exp.ms.music_planner_cot generate \
 python -X utf8 -m pytest tests/test_music_planner_cot.py -q
 ```
 
-测试包含会在分段边界合并 token 的 tokenizer fixture、因果移位/分段 loss/EOS 的真实梯度、三种 family 的 mock prefix、生成不得读取金标、超长拒绝、错窗/缺窗拒绝、真实训练入口两次更新、checkpoint 读取及第三次恢复更新。它验证实现和状态，不证明底座能力、实际音乐理解或手部细粒度编舞表现。
+测试包含会在分段边界合并 token 的 tokenizer fixture、因果移位/分段 loss/EOS 的真实梯度、三种 family 的 mock prefix、生成不得读取金标、超长拒绝、错窗/缺窗拒绝、两个模式各自真实训练入口两次更新、checkpoint 读取及第三次恢复更新、CLI 生成、跨模式恢复/加载拒绝、direct 目标零中间段、上游原生 MOSS cached decode 与缺失 EOS wrapper 真实调用。它验证实现和状态，不证明底座能力、实际音乐理解或手部细粒度编舞表现。
 
 建议先与同数据的直接 SFT 比较，再考虑增加 RL：使用相同音乐和相近生成预算，评估音乐依据正确性、计划/最终动作一致性、时间完整性、重复/矛盾率及人工偏好。同一音乐允许多份合理编舞；仅因不同于原视频动作不能判错。文字“踩拍”也不能当作实际动作对齐的验证。

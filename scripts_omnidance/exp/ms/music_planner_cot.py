@@ -12,11 +12,14 @@ import torch.nn.functional as F
 
 from scripts_omnidance.exp.ms import music_planner_train as base
 from scripts_omnidance.exp.ms import music_planner_eval as evaluation
+from scripts_omnidance.exp.ms import music_planner_generation_eos_patch as eos_patch
+from scripts_omnidance.exp.ms import music_planner_moss_generation_patch as moss_patch
 from scripts_omnidance.exp.ms.music_planner_adapters import (
     FAMILIES, PlannerAdapter, load_planner_adapter,
 )
 
-SCHEMA = 'music-planner-reviewed-short-plan-v1'
+SCHEMA = 'music-planner-reviewed-ablation-v2'
+MODES = ('short-plan', 'direct-caption')
 SEGMENTS = ('music_evidence', 'short_plan', 'caption')
 MUSIC_SOURCES = ('human_audio_review', 'human_reviewed_audio_teacher', 'human_reviewed_mir')
 PLAN_SOURCES = ('human_choreography_plan', 'human_reviewed_teacher_plan')
@@ -28,6 +31,27 @@ INSTRUCTION = (
     'choices. The final caption must cover [0-2s] and [2-5.062s]. '
     'Do not invent musical observations or infer a unique observed dance from music.'
 )
+DIRECT_INSTRUCTION = (
+    'Listen to the full music and describe dance choreography in two time windows: '
+    '[0-2s] and [2-5.062s]. Output only the final two time-marked natural-language '
+    'choreography descriptions, without music analysis, planning traces or XML tags.'
+)
+
+
+def mode_schema(mode):
+    if mode not in MODES:
+        raise ValueError('Unknown reviewed planner mode: ' + str(mode))
+    return SCHEMA + '/' + mode
+
+
+def effective_weights(mode, values=None):
+    mode_schema(mode)
+    weights = tuple(values if values is not None else ((.2, .3, 1.) if mode == 'short-plan' else (0., 0., 1.)))
+    if len(weights) != 3 or any(not math.isfinite(w) or w < 0 for w in weights) or sum(weights) <= 0:
+        raise ValueError('Three finite nonnegative weights with a positive sum are required')
+    if mode == 'direct-caption' and (weights[0] or weights[1] or not weights[2]):
+        raise ValueError('Direct-caption mode requires weights 0 0 positive-caption-weight')
+    return weights
 
 
 def implementation_sources():
@@ -85,8 +109,12 @@ def check_data(train_path, val_path):
     return train, val, metadata
 
 
-def serialize_target(row):
+def serialize_target(row, mode='short-plan'):
     validate_annotations(row)
+    mode_schema(mode)
+    if mode == 'direct-caption':
+        text = row['target_text'].strip()
+        return text, [(0, len(text))]
     values = (row['music_evidence']['text'], row['short_plan']['text'], row['target_text'])
     text, bounds = '', []
     for name, value in zip(SEGMENTS, values):
@@ -98,13 +126,14 @@ def serialize_target(row):
     return text, bounds
 
 
-def tokenized_target(tokenizer, row, eos_ids):
+def tokenized_target(tokenizer, row, eos_ids, mode='short-plan'):
     """Tokenize once; offsets, not separately encoded substrings, define ownership.
 
     A token crossing a segment boundary belongs to the segment containing its
     final character. This deterministic rule includes tags/whitespace in loss.
     """
-    text, bounds = serialize_target(row)
+    text, bounds = serialize_target(row, mode)
+    active = (0, 1, 2) if mode == 'short-plan' else (2,)
     try:
         encoded = tokenizer(text, add_special_tokens=False, return_offsets_mapping=True)
         ids, offsets = encoded['input_ids'], encoded['offset_mapping']
@@ -116,12 +145,12 @@ def tokenized_target(tokenizer, row, eos_ids):
     for left, right in offsets:
         if not (0 <= left < right <= len(text)):
             raise ValueError('Invalid/empty target token character offsets')
-        segment = next((i for i, (start, end) in enumerate(bounds) if start <= right - 1 < end), None)
-        if segment is None:
+        local = next((i for i, (start, end) in enumerate(bounds) if start <= right - 1 < end), None)
+        if local is None:
             raise ValueError('Target token lies outside all segments')
-        crossing += int(left < bounds[segment][0])
-        ownership.append(segment)
-    if set(ownership) != {0, 1, 2}:
+        crossing += int(left < bounds[local][0])
+        ownership.append(active[local])
+    if set(ownership) != set(active):
         raise ValueError('Every target segment must contain at least one supervised token')
     terminator = tokenizer.encode('<|im_end|>', add_special_tokens=False)
     if len(terminator) != 1 or terminator[0] not in eos_ids or any(i in eos_ids for i in ids):
@@ -129,10 +158,10 @@ def tokenized_target(tokenizer, row, eos_ids):
     return ids + terminator, ownership + [2], dict(text=text, boundary_crossing_tokens=crossing)
 
 
-def segment_nll(logits, labels, segment_ids, weights=(0.2, 0.3, 1.0)):
+def segment_nll(logits, labels, segment_ids, weights=None, mode='short-plan'):
     """Weighted mean of the three segment means, with causal shift and EOS."""
-    if len(weights) != 3 or any(not math.isfinite(w) or w < 0 for w in weights) or sum(weights) <= 0:
-        raise ValueError('Three finite nonnegative weights with a positive sum are required')
+    weights = effective_weights(mode, weights)
+    active_segments = (0, 1, 2) if mode == 'short-plan' else (2,)
     if labels.shape != segment_ids.shape or logits.shape[:2] != labels.shape:
         raise ValueError('Segment labels/logits shape mismatch')
     shifted_labels, shifted_segments = labels[:, 1:], segment_ids[:, 1:]
@@ -147,9 +176,10 @@ def segment_nll(logits, labels, segment_ids, weights=(0.2, 0.3, 1.0)):
         mask = active & shifted_segments.eq(index)
         sums.append((ce * mask).sum())
         counts.append(mask.sum())
-    if any(int(count) == 0 for count in counts):
-        raise ValueError('Each source must supervise all three nonempty segments')
-    loss = sum(weight * total / count for weight, total, count in zip(weights, sums, counts)) / sum(weights)
+    if any(int(counts[index]) == 0 for index in active_segments) or any(
+            int(counts[index]) for index in range(3) if index not in active_segments):
+        raise ValueError('Segment membership differs from the selected ablation protocol')
+    loss = sum(weights[index] * sums[index] / counts[index] for index in active_segments) / sum(weights)
     return loss, torch.stack(sums), torch.stack(counts)
 
 
@@ -164,23 +194,39 @@ def extract_caption(raw):
     return dict(zip(SEGMENTS, values))
 
 
+def validate_completion_tokens(generated, budget):
+    ids, eos = generated.get('new_token_ids'), generated.get('eos_token_ids')
+    if (type(budget) is not int or budget <= 0 or not isinstance(ids, list) or not ids or
+            len(ids) > budget or any(type(value) is not int or value < 0 for value in ids) or
+            not isinstance(eos, list) or not eos or any(type(value) is not int or value < 0 for value in eos)):
+        raise ValueError('Invalid raw generation token IDs or generation budget')
+    if generated.get('stop_reason') != 'eos' or ids[-1] not in eos or any(value in eos for value in ids[:-1]):
+        raise ValueError('Generation must finish at its first native EOS, without a trailing suffix')
+
+
 class ShortPlanAdapter(PlannerAdapter):
+    def __init__(self, *args, mode='short-plan', **kwargs):
+        mode_schema(mode)
+        self.mode = mode
+        super().__init__(*args, **kwargs)
+
     def _prompt(self):
         if self.family == 'omni_captioner':
             # Captioner remains native audio-only; target format is learned via SFT.
             return super()._prompt()
+        instruction = INSTRUCTION if self.mode == 'short-plan' else DIRECT_INSTRUCTION
         if self.family == 'moss':
-            return self.processor._build_default_prompt(INSTRUCTION, has_audio=True)
+            return self.processor._build_default_prompt(instruction, has_audio=True)
         return self.processor.apply_chat_template([{'role': 'user', 'content': [
-            {'type': 'audio', 'audio': 'native-waveform'}, {'type': 'text', 'text': INSTRUCTION}]}],
+            {'type': 'audio', 'audio': 'native-waveform'}, {'type': 'text', 'text': instruction}]}],
             tokenize=False, add_generation_prompt=True)
 
     def collate(self, rows):
         if len(rows) != 1:
             raise ValueError('Short-plan native audio packing requires microbatch=1')
         row = rows[0]
-        ids, segments, metadata = tokenized_target(self.tokenizer, row, self.eos_token_ids())
-        target, _ = serialize_target(row)
+        ids, segments, metadata = tokenized_target(self.tokenizer, row, self.eos_token_ids(), self.mode)
+        target, _ = serialize_target(row, self.mode)
         batch = super().collate([dict(row, target_text=target)])
         prefix_length = batch['input_ids'].shape[1] - len(ids)
         if batch['labels'][0, prefix_length:].tolist() != ids:
@@ -192,18 +238,21 @@ class ShortPlanAdapter(PlannerAdapter):
     def save_pretrained(self, path, state_dict=None):
         super().save_pretrained(path, state_dict=state_dict)
         with (Path(path) / 'short_plan_adapter.json').open('w', encoding='utf-8') as stream:
-            json.dump(dict(schema=SCHEMA, family=self.family, max_length=self.max_length,
-                           instruction_sha256=base.object_sha(INSTRUCTION),
+            json.dump(dict(schema=mode_schema(self.mode), mode=self.mode, family=self.family, max_length=self.max_length,
+                           instruction_sha256=base.object_sha(INSTRUCTION if self.mode == 'short-plan' else DIRECT_INSTRUCTION),
                            captioner_audio_only=True), stream, ensure_ascii=False, indent=2)
 
     def generate_caption(self, row, **kwargs):
         # Deliberately select only audio input keys; no gold evidence/plan/caption.
         audio = {key: row[key] for key in ('audio_path', 'audio_sha256', 'audio_window_seconds')}
-        generated = super().generate(audio, **kwargs)
+        # Use the instance method so upstream eval-only cache/EOS wrappers execute.
+        generated = self.generate(audio, **kwargs)
+        generated['mode'] = self.mode
+        generated['generation_compatibility'] = getattr(self, 'generation_compatibility_provenance', None)
         try:
-            extracted = extract_caption(generated['raw_text'])
-            if generated['stop_reason'] != 'eos':
-                raise ValueError('Generation did not finish at native EOS')
+            validate_completion_tokens(generated, kwargs.get('max_new_tokens', 2048))
+            extracted = (extract_caption(generated['raw_text']) if self.mode == 'short-plan'
+                         else dict(caption=_text(generated['raw_text'], 'caption')))
             timing = evaluation.parse_windows(extracted['caption'])
             if not timing['matches_fixed_windows'] or not timing['nonempty_window_text']:
                 raise ValueError('Final caption does not cover the complete fixed time windows')
@@ -212,7 +261,27 @@ class ShortPlanAdapter(PlannerAdapter):
             return dict(generated, caption=None, caption_valid=False, extraction_error=str(error))
 
 
-def load_short_plan_adapter(family, model_path, checkpoint=None, **kwargs):
+def apply_generation_compatibility(adapter, training_fingerprint=None):
+    """Keep eval-only patch receipts outside the immutable training fingerprint."""
+    requested = dict(eos=eos_patch.generation_eos_patch_ref())
+    applied = dict(eos=None, moss_cache=None)
+    if adapter.family == 'moss':
+        requested['moss_cache'] = moss_patch.generation_patch_ref()
+        applied['moss_cache'] = moss_patch.apply_moss_generation_patch(adapter)
+    applied['eos'] = eos_patch.apply_generation_eos_patch(adapter)
+    receipt = dict(schema='reviewed-planner-eval-compatibility-v1', requested_sources=requested,
+        applied_sources=applied, training_fingerprint=training_fingerprint,
+        training_fingerprint_mutated=False, weights_mutated=False, prefix_mutated=False,
+        raw_output_cleaning=False, scope='eval-only-native-MOSS-cache-and-missing-native-EOS',
+        eos_details=getattr(adapter, 'generation_eos_patch_details', None))
+    adapter.generation_compatibility_provenance = receipt
+    return receipt
+
+
+def load_short_plan_adapter(family, model_path, checkpoint=None, mode='short-plan',
+                            generation_compatibility=True, **kwargs):
+    schema = mode_schema(mode)
+    training_fingerprint = None
     if checkpoint is not None:
         checkpoint = Path(checkpoint).resolve()
         if not (checkpoint / 'trainer_state.json').is_file():
@@ -220,11 +289,12 @@ def load_short_plan_adapter(family, model_path, checkpoint=None, **kwargs):
         identity = evaluation.checkpoint_identity(checkpoint)
         config = json.loads((checkpoint.parent / 'run_config.json').read_text(encoding='utf-8'))
         canonical = {key: value for key, value in config.items() if key != 'fingerprint'}
-        if (config.get('schema') != SCHEMA or config.get('family') != family or
+        if (config.get('schema') != schema or config.get('mode') != mode or config.get('family') != family or
                 config.get('fingerprint') != identity['fingerprint'] or
                 base.object_sha(canonical) != identity['fingerprint'] or
                 config.get('data', {}).get('test_used') is not False):
             raise ValueError('Short-plan checkpoint training config/fingerprint differs')
+        training_fingerprint = identity['fingerprint']
         if config.get('code_sha256') != implementation_sources():
             raise ValueError('Short-plan checkpoint source version differs; use its original experiment code')
         evaluation.verify_base_identity(model_path, config['model'])
@@ -244,13 +314,15 @@ def load_short_plan_adapter(family, model_path, checkpoint=None, **kwargs):
         if not exported or actual != exported:
             raise ValueError('Portable short-plan adapter export bytes/membership changed')
         metadata = json.loads((directory / 'short_plan_adapter.json').read_text(encoding='utf-8'))
-        if (metadata.get('schema') != SCHEMA or metadata.get('family') != family or
-                metadata.get('instruction_sha256') != base.object_sha(INSTRUCTION) or
+        if (metadata.get('schema') != schema or metadata.get('mode') != mode or metadata.get('family') != family or
+                metadata.get('instruction_sha256') != base.object_sha(INSTRUCTION if mode == 'short-plan' else DIRECT_INSTRUCTION) or
                 metadata.get('max_length') != kwargs.get('max_length', 8192)):
             raise ValueError('Short-plan checkpoint format/family/context differs')
     native = load_planner_adapter(family, model_path, checkpoint=checkpoint, **kwargs)
-    adapter = ShortPlanAdapter(family, native.model, native.processor, max_length=native.max_length)
+    adapter = ShortPlanAdapter(family, native.model, native.processor, max_length=native.max_length, mode=mode)
     adapter.trainable_info = native.trainable_info
+    if checkpoint is not None and generation_compatibility:
+        apply_generation_compatibility(adapter, training_fingerprint)
     return adapter
 
 
@@ -263,43 +335,56 @@ def _forward(model, batch, device, dtype):
 
 
 def evaluate(model, adapter, rows, cache, device, dtype, weights):
+    if not rows:
+        raise ValueError('Validation requires at least one reviewed source')
     totals, counts = torch.zeros(3, dtype=torch.float64), torch.zeros(3, dtype=torch.long)
+    source_objective = 0.
+    was_training = model.training
     model.eval()
-    with torch.no_grad():
-        for row in rows:
-            cache.verify(row)
-            batch = adapter.collate([row])
-            logits = _forward(model, batch, device, dtype)
-            _, sums, number = segment_nll(logits, batch['labels'].to(device), batch['segment_ids'].to(device), weights)
-            totals += sums.detach().cpu().double()
-            counts += number.cpu()
-    model.train()
-    means = totals / counts
-    return dict(segment_nll=dict(zip(SEGMENTS, means.tolist())),
+    try:
+        with torch.no_grad():
+            for row in rows:
+                cache.verify(row)
+                batch = adapter.collate([row])
+                logits = _forward(model, batch, device, dtype)
+                objective, sums, number = segment_nll(logits, batch['labels'].to(device),
+                    batch['segment_ids'].to(device), weights, adapter.mode)
+                if not bool(torch.isfinite(objective)) or not bool(torch.isfinite(sums).all()):
+                    raise FloatingPointError('Nonfinite short-plan validation NLL')
+                source_objective += float(objective)
+                totals += sums.detach().cpu().double()
+                counts += number.cpu()
+    finally:
+        model.train(was_training)
+    means = [float(total / count) if int(count) else None for total, count in zip(totals, counts)]
+    return dict(mode=adapter.mode, segment_nll=dict(zip(SEGMENTS, means)),
                 segment_tokens=dict(zip(SEGMENTS, counts.tolist())),
-                weighted_segment_nll=float(sum(w * n for w, n in zip(weights, means)) / sum(weights)),
+                weighted_segment_nll=source_objective / len(rows),
+                objective_aggregation='mean-of-per-source-weighted-segment-means',
                 caption_nll=float(means[2]), sources=len(rows), test_used=False)
 
 
 def train(args):
     if int(os.environ.get('WORLD_SIZE', '1')) != 1:
         raise ValueError('This independent experiment currently supports one device; do not launch torchrun')
+    weights = effective_weights(args.mode, args.segment_weights)
+    if (any(not math.isfinite(value) or value <= 0 for value in
+            (args.lora_lr, args.projector_lr, args.grad_clip)) or args.warmup_updates < 0):
+        raise ValueError('Finite positive learning rates/gradient clip and nonnegative warmup required')
     train_rows, val_rows, data = check_data(args.train, args.val)
     if args.check_data_only:
-        return dict(schema=SCHEMA, data=data, actual_training_started=False, test_used=False)
+        return dict(schema=mode_schema(args.mode), mode=args.mode, segment_weights=weights,
+                    data=data, actual_training_started=False, test_used=False)
     device = torch.device(args.device)
     dtype = torch.float32 if args.dtype == 'float32' else torch.bfloat16
     if device.type == 'cpu' and dtype != torch.float32:
         raise ValueError('CPU experiment uses explicit float32; select --dtype float32')
-    weights = tuple(args.segment_weights)
-    if len(weights) != 3 or any(not math.isfinite(w) or w < 0 for w in weights) or sum(weights) <= 0:
-        raise ValueError('Invalid segment weights')
     if args.out.exists() and not args.resume:
         raise ValueError('Output exists; resume explicitly or choose a new output')
     identity = base.local_model_identity(args.model, args.weights_manifest)
     torch.manual_seed(args.seed)
     adapter = load_short_plan_adapter(args.family, args.model, device=device, dtype=dtype,
-        max_length=args.max_length, lora_rank=args.rank, lora_alpha=args.alpha)
+        max_length=args.max_length, lora_rank=args.rank, lora_alpha=args.alpha, mode=args.mode)
     model = adapter.model
     model.config.use_cache = False
     if args.gradient_checkpointing:
@@ -307,7 +392,7 @@ def train(args):
     groups, names = base.optimizer_groups(model, args.lora_lr, args.projector_lr, base_dtype=dtype)
     optimizer = torch.optim.AdamW(groups, weight_decay=0.)
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda step: min(1., (step + 1) / max(1, args.warmup_updates)))
-    config = dict(schema=SCHEMA, model=identity, family=args.family, data=data, epochs=args.epochs,
+    config = dict(schema=mode_schema(args.mode), mode=args.mode, model=identity, family=args.family, data=data, epochs=args.epochs,
         accum=args.accum, seed=args.seed, rank=args.rank, alpha=args.alpha, dtype=args.dtype,
         lora_lr=args.lora_lr, projector_lr=args.projector_lr, warmup_updates=args.warmup_updates,
         grad_clip=args.grad_clip, max_length=args.max_length, segment_weights=weights,
@@ -324,10 +409,12 @@ def train(args):
             raise ValueError('Short-plan resume config/data/source fingerprint differs')
     else:
         base.atomic_json(config_path, dict(config, fingerprint=fingerprint))
-    state = dict(epoch=0, position=0, update=0, source_exposures=0, best_val_nll=None)
+    state = dict(epoch=0, position=0, update=0, source_exposures=0, best_val_nll=None,
+                 supervised_segment_tokens=[0, 0, 0])
     if args.resume:
         state = base.load_checkpoint(args.resume, model, optimizer, scheduler, fingerprint)
     base.validate_cursor(state, len(train_rows), args.epochs, args.accum)
+    starting_update = state['update']
     cache = base.AudioIdentityCache(args.out / 'audio_identity_cache.json')
     checkpoint = args.resume
     model.train()
@@ -336,12 +423,15 @@ def train(args):
         selected = order[state['position']:state['position'] + args.accum]
         optimizer.zero_grad(set_to_none=True)
         losses = []
+        update_segment_tokens = torch.zeros(3, dtype=torch.long)
         for index in selected:
             row = train_rows[index]
             cache.verify(row)
             batch = adapter.collate([row])
             logits = _forward(model, batch, device, dtype)
-            loss, _, _ = segment_nll(logits, batch['labels'].to(device), batch['segment_ids'].to(device), weights)
+            loss, _, segment_counts = segment_nll(logits, batch['labels'].to(device),
+                batch['segment_ids'].to(device), weights, args.mode)
+            update_segment_tokens += segment_counts.detach().cpu()
             if not bool(torch.isfinite(loss)):
                 raise FloatingPointError('Nonfinite short-plan training loss')
             (loss / len(selected)).backward()
@@ -350,12 +440,14 @@ def train(args):
             gradients = [p.grad for p in parameters if p.grad is not None]
             if not gradients or not all(bool(torch.isfinite(g).all()) for g in gradients):
                 raise ValueError('Absent/nonfinite gradients in ' + kind)
-        grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)
+        grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip, error_if_nonfinite=True)
         optimizer.step()
         scheduler.step()
         state['update'] += 1
         state['position'] += len(selected)
         state['source_exposures'] += len(selected)
+        state['supervised_segment_tokens'] = [old + int(new) for old, new in
+            zip(state['supervised_segment_tokens'], update_segment_tokens)]
         epoch_end = state['position'] == len(train_rows)
         validation = None
         improved = False
@@ -379,7 +471,11 @@ def train(args):
                         selection_metric='val_caption_segment_nll', **validation))
             base.atomic_json(args.out / 'latest.json', dict(checkpoint=str(checkpoint.resolve()), cursor=state))
         print(json.dumps(dict(update=state['update'], loss=sum(losses) / len(losses),
-            gradient_norm=float(grad_norm), source_exposures=state['source_exposures'], test_used=False)), flush=True)
+            gradient_norm=float(grad_norm), source_exposures=state['source_exposures'],
+            supervised_segment_tokens=dict(zip(SEGMENTS, update_segment_tokens.tolist())),
+            supervised_tokens_total=int(update_segment_tokens.sum()),
+            cumulative_supervised_segment_tokens=dict(zip(SEGMENTS, state['supervised_segment_tokens'])),
+            test_used=False)), flush=True)
     if checkpoint is None:
         raise ValueError('No checkpoint produced')
     if args.verify_reload:
@@ -388,8 +484,11 @@ def train(args):
         if restored != state:
             raise ValueError('Reloaded cursor differs')
         base.assert_portable_equal(expected, base.trainable_state(model))
-    result = dict(schema=SCHEMA, fingerprint=fingerprint, cursor=state,
-        checkpoint=str(Path(checkpoint).resolve()), actual_training_started=True,
+    result = dict(schema=mode_schema(args.mode), mode=args.mode, fingerprint=fingerprint, cursor=state,
+        checkpoint=str(Path(checkpoint).resolve()), actual_training_started=state['update'] > starting_update,
+        invocation_optimizer_updates=state['update'] - starting_update,
+        supervised_segment_tokens=dict(zip(SEGMENTS, state['supervised_segment_tokens'])),
+        supervised_tokens_total=sum(state['supervised_segment_tokens']),
         full_budget_completed=state['epoch'] == args.epochs, quality_accepted=False,
         reload_verified=bool(args.verify_reload), test_used=False,
         scope='planner-only single-device experiment; not the frozen fair baseline')
@@ -415,7 +514,7 @@ def parser():
     training.add_argument('--warmup-updates', type=int, default=10)
     training.add_argument('--grad-clip', type=float, default=1.)
     training.add_argument('--seed', type=int, default=42)
-    training.add_argument('--segment-weights', type=float, nargs=3, default=(0.2, 0.3, 1.0),
+    training.add_argument('--segment-weights', type=float, nargs=3, default=None,
                           metavar=('MUSIC', 'PLAN', 'CAPTION'))
     training.add_argument('--resume', type=Path)
     training.add_argument('--weights-manifest', type=Path)
@@ -427,7 +526,10 @@ def parser():
     generation.add_argument('--input', type=Path, required=True, help='Audio-only JSONL; no gold annotations needed')
     generation.add_argument('--out', type=Path, required=True)
     generation.add_argument('--max-new-tokens', type=int, default=2048)
+    generation.add_argument('--generation-compatibility', action=argparse.BooleanOptionalAction, default=True,
+                            help='Eval-only native MOSS cache/missing-EOS bridges, with source receipts')
     for command in (training, generation):
+        command.add_argument('--mode', choices=MODES, default='short-plan')
         command.add_argument('--family', choices=FAMILIES, required=True)
         command.add_argument('--model', type=Path, required=True)
         command.add_argument('--device', default='cuda:0')
@@ -447,7 +549,8 @@ def main(argv=None):
     if args.out.exists():
         raise ValueError('Generation output exists; choose a new output')
     adapter = load_short_plan_adapter(args.family, args.model, checkpoint=args.checkpoint,
-        device=args.device, dtype=getattr(torch, args.dtype), max_length=args.max_length)
+        device=args.device, dtype=getattr(torch, args.dtype), max_length=args.max_length,
+        mode=args.mode, generation_compatibility=args.generation_compatibility)
     records = []
     with args.input.open(encoding='utf-8') as stream:
         for line in stream:
@@ -467,4 +570,6 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-    main()
+    result = main()
+    if isinstance(result, dict):
+        print(json.dumps(result, ensure_ascii=False, allow_nan=False), flush=True)

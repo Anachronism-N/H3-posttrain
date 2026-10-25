@@ -208,9 +208,33 @@ def validate_data(data):
     data = Path(data).resolve()
     summary = json.loads((data / 'summary.json').read_text())
     if (summary['schema'] != 'music_planner_fixed2s_weak_baseline_v1' or
-            summary['split_counts'] != {'train': 10720, 'val': 490, 'test': 500} or
+            summary['split_counts'] != {'train': 10713, 'val': 490, 'test': 500} or
             summary['source_and_exact_audio_split_overlap'] != 0):
-        raise ValueError('Not the fixed music planner baseline')
+        raise ValueError('Not the cleaned fixed music planner baseline')
+    exclusion_ref = summary['training_exclusion_receipt_ref']
+    if file_ref(data / 'exclusion_receipt.json') != exclusion_ref:
+        raise ValueError('Training exclusion receipt changed')
+    exclusions = json.loads((data / 'exclusion_receipt.json').read_text())
+    excluded_ids = {row['id'] for row in exclusions['removed']}
+    if (exclusions['schema'] != 'music_planner_training_exclusion_v1' or
+            len(excluded_ids) != 7 or exclusions['exclusion_count'] != 7 or
+            exclusions['clean_train_count'] != 10713 or
+            exclusions['val_and_test_bytes_unchanged'] is not True):
+        raise ValueError('Clean training exclusion contract differs')
+    parent_ref = exclusions['parent_summary_ref']
+    if file_ref(parent_ref['path']) != parent_ref:
+        raise ValueError('Parent baseline summary changed')
+    parent = json.loads(Path(parent_ref['path']).read_text())
+    parent_train = Path(parent['split_artifacts']['train']['path']).read_bytes()
+    if hashlib.sha256(parent_train).hexdigest() != parent['split_artifacts']['train']['sha256']:
+        raise ValueError('Parent training manifest changed')
+    expected_train = b''.join(line for line in parent_train.splitlines(keepends=True)
+                              if not line.strip() or json.loads(line)['id'] not in excluded_ids)
+    if (data / 'train.jsonl').read_bytes() != expected_train:
+        raise ValueError('Clean training manifest is not the exact ordered exclusion')
+    for split in ('val', 'test'):
+        if summary['split_artifacts'][split]['sha256'] != parent['split_artifacts'][split]['sha256']:
+            raise ValueError('Held-out split changed during training cleanup')
     splits, source_sets, audio_sets = {}, {}, {}
     for split in ('train', 'val', 'test'):
         path = data / f'{split}.jsonl'

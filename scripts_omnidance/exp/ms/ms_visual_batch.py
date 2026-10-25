@@ -126,6 +126,8 @@ def read_manifest(path, shard=0, nshard=1, limit=0):
         if not isinstance(row["source_group"], str) or not row["source_group"].strip():
             raise ValueError(f"manifest line {number}: source_group must be a nonempty string")
         for key in SOURCE_FIELDS:
+            if key == "nlf_path" and row[key] is None:
+                continue
             if not isinstance(row[key], str) or not Path(row[key]).is_absolute():
                 raise ValueError(f"manifest line {number}: {key} must be an explicit absolute path")
         row["input_line"] = number
@@ -140,17 +142,23 @@ def read_manifest(path, shard=0, nshard=1, limit=0):
 def source_identity(row):
     files = {}
     for key in SOURCE_FIELDS:
+        if key == "nlf_path" and row[key] is None:
+            files[key] = None
+            continue
         path = Path(row[key])
         if not path.is_file():
             raise ValueError(f"{key} is missing; no placeholder asset is admitted: {path}")
         files[key] = file_identity(path)
     return {"files": files, "sha256": digest({"row": row, "files": {
-        key: {"path": value["path"], "sha256": value["sha256"]} for key, value in files.items()}}),
+        key: {"path": value["path"], "sha256": value["sha256"]} if value is not None else None
+        for key, value in files.items()}}),
         "audio_and_nlf_are_provenance_only_not_model_inputs": True}
 
 
 def verify_source(source):
     for value in source["files"].values():
+        if value is None:
+            continue
         path = Path(value["path"])
         if snapshot(path) != value["stat"]:
             raise ValueError(f"source asset changed: {path}")
@@ -561,6 +569,8 @@ def main(argv=None):
     rows, manifest_sha = read_manifest(args.manifest, args.shard, args.nshard, args.limit)
     for row in rows:
         for key in SOURCE_FIELDS:
+            if key == "nlf_path" and row[key] is None:
+                continue
             if overlaps(out, Path(row[key]).parent):
                 parser.error(f"--out must be separate from each source asset directory: {row[key]}")
     if out == Path(args.manifest).resolve() or out in Path(args.manifest).resolve().parents:

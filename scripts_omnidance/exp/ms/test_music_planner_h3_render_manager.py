@@ -213,5 +213,30 @@ class CpuTests(unittest.TestCase):
                 m.check_stage(out, 'video_generation', captions, ref, models, audit, h3, cache)
 
 
+class LeaseHeartbeatTests(unittest.TestCase):
+    def test_actual_thread_heartbeat_stops_before_cleanup(self):
+        import time
+        calls = []
+        manager = SimpleNamespace(refresh_leases=lambda entries: calls.append(entries))
+        watch = m.start_owned_lease_heartbeat(['owned'], manager)
+        time.sleep(5.05)
+        m.stop_owned_lease_heartbeat(watch)
+        self.assertGreater(len(calls), 0)
+        self.assertFalse(watch[2].is_alive())
+        count = len(calls)
+        time.sleep(.02)
+        self.assertEqual(len(calls), count)
+    def test_thread_failure_is_kept_for_pre_release_checks(self):
+        import time
+        def fail(entries):
+            raise RuntimeError('owned lease replaced')
+        watch = m.start_owned_lease_heartbeat(['owned'], SimpleNamespace(refresh_leases=fail))
+        time.sleep(5.05)
+        m.stop_owned_lease_heartbeat(watch)
+        self.assertEqual(len(watch[1]), 1)
+        self.assertIn('replaced', str(watch[1][0]))
+        self.assertFalse(watch[2].is_alive())
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

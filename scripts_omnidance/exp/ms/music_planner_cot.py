@@ -14,11 +14,13 @@ from scripts_omnidance.exp.ms import music_planner_train as base
 from scripts_omnidance.exp.ms import music_planner_eval as evaluation
 from scripts_omnidance.exp.ms import music_planner_generation_eos_patch as eos_patch
 from scripts_omnidance.exp.ms import music_planner_moss_generation_patch as moss_patch
+from scripts_omnidance.exp.ms import music_planner_moss_position_buffer_patch as position_patch
+from scripts_omnidance.exp.ms import music_planner_segment_loss as efficient_loss
 from scripts_omnidance.exp.ms.music_planner_adapters import (
     FAMILIES, PlannerAdapter, load_planner_adapter,
 )
 
-SCHEMA = 'music-planner-reviewed-ablation-v2'
+SCHEMA = 'music-planner-captioner-ablation-v3'
 MODES = ('short-plan', 'direct-caption')
 SEGMENTS = ('music_evidence', 'short_plan', 'caption')
 MUSIC_SOURCES = ('human_audio_review', 'human_reviewed_audio_teacher', 'human_reviewed_mir')
@@ -38,10 +40,11 @@ DIRECT_INSTRUCTION = (
 )
 
 
-def mode_schema(mode):
+def mode_schema(mode, require_shared_annotations=False):
     if mode not in MODES:
         raise ValueError('Unknown reviewed planner mode: ' + str(mode))
-    return SCHEMA + '/' + mode
+    policy = 'reviewed-shared' if mode == 'short-plan' or require_shared_annotations else 'weak-caption'
+    return SCHEMA + '/' + mode + '/' + policy
 
 
 def effective_weights(mode, values=None):
@@ -56,7 +59,7 @@ def effective_weights(mode, values=None):
 
 def implementation_sources():
     paths = (__file__, base.__file__, evaluation.__file__,
-             __import__(PlannerAdapter.__module__, fromlist=['']).__file__)
+             __import__(PlannerAdapter.__module__, fromlist=['']).__file__, efficient_loss.__file__)
     return {Path(path).name: base.file_sha(path) for path in paths}
 
 
@@ -69,7 +72,7 @@ def _text(value, name):
     return value.strip()
 
 
-def validate_annotations(row):
+def validate_annotations(row, require_review=True):
     """Validate declared provenance; this does not perform or claim semantic review."""
     try:
         json.dumps(row, allow_nan=False)
@@ -79,6 +82,8 @@ def validate_annotations(row):
     timing = evaluation.parse_windows(caption)
     if not timing['matches_fixed_windows'] or not timing['nonempty_window_text']:
         raise ValueError('Target caption must contain the complete two fixed time windows')
+    if not require_review:
+        return row
     for name, sources in (('music_evidence', MUSIC_SOURCES), ('short_plan', PLAN_SOURCES)):
         annotation = row.get(name)
         if not isinstance(annotation, dict):
@@ -100,17 +105,18 @@ def validate_annotations(row):
     return row
 
 
-def check_data(train_path, val_path):
+def check_data(train_path, val_path, mode='short-plan', require_shared_annotations=False):
     train, val, metadata = base.check_data(train_path, val_path)
+    required = mode == 'short-plan' or require_shared_annotations
     for row in train + val:
-        validate_annotations(row)
-    metadata = dict(metadata, annotation_schema=SCHEMA, test_used=False,
-                    provenance_checked=True, semantic_approval=False)
+        validate_annotations(row, required)
+    metadata = dict(metadata, annotation_schema=mode_schema(mode, required), test_used=False,
+                    provenance_checked=required, semantic_approval=False)
     return train, val, metadata
 
 
-def serialize_target(row, mode='short-plan'):
-    validate_annotations(row)
+def serialize_target(row, mode='short-plan', require_shared_annotations=False):
+    validate_annotations(row, mode == 'short-plan' or require_shared_annotations)
     mode_schema(mode)
     if mode == 'direct-caption':
         text = row['target_text'].strip()
@@ -126,14 +132,21 @@ def serialize_target(row, mode='short-plan'):
     return text, bounds
 
 
-def tokenized_target(tokenizer, row, eos_ids, mode='short-plan'):
+def tokenized_target(tokenizer, row, eos_ids, mode='short-plan', require_shared_annotations=False):
     """Tokenize once; offsets, not separately encoded substrings, define ownership.
 
     A token crossing a segment boundary belongs to the segment containing its
     final character. This deterministic rule includes tags/whitespace in loss.
     """
-    text, bounds = serialize_target(row, mode)
+    text, bounds = serialize_target(row, mode, require_shared_annotations)
     active = (0, 1, 2) if mode == 'short-plan' else (2,)
+    if mode == 'direct-caption':
+        ids = tokenizer.encode(text, add_special_tokens=False)
+        terminator = tokenizer.encode('<|im_end|>', add_special_tokens=False)
+        if (not ids or len(terminator) != 1 or terminator[0] not in eos_ids or
+                any(token in eos_ids for token in ids)):
+            raise ValueError('Require nonempty direct caption and exactly one appended native assistant EOS')
+        return ids + terminator, [2] * (len(ids) + 1), dict(text=text, boundary_crossing_tokens=0)
     try:
         encoded = tokenizer(text, add_special_tokens=False, return_offsets_mapping=True)
         ids, offsets = encoded['input_ids'], encoded['offset_mapping']
@@ -158,7 +171,7 @@ def tokenized_target(tokenizer, row, eos_ids, mode='short-plan'):
     return ids + terminator, ownership + [2], dict(text=text, boundary_crossing_tokens=crossing)
 
 
-def segment_nll(logits, labels, segment_ids, weights=None, mode='short-plan'):
+def segment_nll(logits, labels, segment_ids, weights=None, mode='short-plan', chunk_size=0):
     """Weighted mean of the three segment means, with causal shift and EOS."""
     weights = effective_weights(mode, weights)
     active_segments = (0, 1, 2) if mode == 'short-plan' else (2,)
@@ -168,19 +181,12 @@ def segment_nll(logits, labels, segment_ids, weights=None, mode='short-plan'):
     active = shifted_labels.ne(-100)
     if not torch.equal(active, shifted_segments.ge(0)) or bool((shifted_segments > 2).any()):
         raise ValueError('Assistant labels and segment ownership must match exactly')
-    ce = F.cross_entropy(logits[:, :-1].float().reshape(-1, logits.shape[-1]),
-                         shifted_labels.reshape(-1), ignore_index=-100, reduction='none')
-    ce = ce.reshape_as(shifted_labels)
-    sums, counts = [], []
-    for index in range(3):
-        mask = active & shifted_segments.eq(index)
-        sums.append((ce * mask).sum())
-        counts.append(mask.sum())
+    sums, counts = efficient_loss.assistant_segment_sums(logits, shifted_labels, shifted_segments, chunk_size)
     if any(int(counts[index]) == 0 for index in active_segments) or any(
             int(counts[index]) for index in range(3) if index not in active_segments):
         raise ValueError('Segment membership differs from the selected ablation protocol')
     loss = sum(weights[index] * sums[index] / counts[index] for index in active_segments) / sum(weights)
-    return loss, torch.stack(sums), torch.stack(counts)
+    return loss, sums, counts
 
 
 def extract_caption(raw):
@@ -205,9 +211,10 @@ def validate_completion_tokens(generated, budget):
 
 
 class ShortPlanAdapter(PlannerAdapter):
-    def __init__(self, *args, mode='short-plan', **kwargs):
+    def __init__(self, *args, mode='short-plan', require_shared_annotations=False, **kwargs):
         mode_schema(mode)
         self.mode = mode
+        self.require_shared_annotations = mode == 'short-plan' or require_shared_annotations
         super().__init__(*args, **kwargs)
 
     def _prompt(self):
@@ -225,8 +232,9 @@ class ShortPlanAdapter(PlannerAdapter):
         if len(rows) != 1:
             raise ValueError('Short-plan native audio packing requires microbatch=1')
         row = rows[0]
-        ids, segments, metadata = tokenized_target(self.tokenizer, row, self.eos_token_ids(), self.mode)
-        target, _ = serialize_target(row, self.mode)
+        ids, segments, metadata = tokenized_target(self.tokenizer, row, self.eos_token_ids(),
+            self.mode, self.require_shared_annotations)
+        target, _ = serialize_target(row, self.mode, self.require_shared_annotations)
         batch = super().collate([dict(row, target_text=target)])
         prefix_length = batch['input_ids'].shape[1] - len(ids)
         if batch['labels'][0, prefix_length:].tolist() != ids:
@@ -238,7 +246,9 @@ class ShortPlanAdapter(PlannerAdapter):
     def save_pretrained(self, path, state_dict=None):
         super().save_pretrained(path, state_dict=state_dict)
         with (Path(path) / 'short_plan_adapter.json').open('w', encoding='utf-8') as stream:
-            json.dump(dict(schema=mode_schema(self.mode), mode=self.mode, family=self.family, max_length=self.max_length,
+            json.dump(dict(schema=mode_schema(self.mode, self.require_shared_annotations), mode=self.mode,
+                           require_shared_annotations=self.require_shared_annotations,
+                           family=self.family, max_length=self.max_length,
                            instruction_sha256=base.object_sha(INSTRUCTION if self.mode == 'short-plan' else DIRECT_INSTRUCTION),
                            captioner_audio_only=True), stream, ensure_ascii=False, indent=2)
 
@@ -261,26 +271,34 @@ class ShortPlanAdapter(PlannerAdapter):
             return dict(generated, caption=None, caption_valid=False, extraction_error=str(error))
 
 
-def apply_generation_compatibility(adapter, training_fingerprint=None):
+def apply_generation_compatibility(adapter, training_fingerprint=None, official_model_path=None):
     """Keep eval-only patch receipts outside the immutable training fingerprint."""
     requested = dict(eos=eos_patch.generation_eos_patch_ref())
-    applied = dict(eos=None, moss_cache=None)
+    applied = dict(eos=None, moss_cache=None, moss_position=None)
+    position_receipt = None
     if adapter.family == 'moss':
+        if official_model_path is None:
+            raise ValueError('MOSS generation compatibility requires the official model directory')
+        requested['moss_position'] = position_patch.position_buffer_patch_ref()
+        position_receipt = position_patch.restore_moss_position_buffer(adapter, official_model_path)
+        applied['moss_position'] = position_receipt['applied_position_buffer_patch_ref']
         requested['moss_cache'] = moss_patch.generation_patch_ref()
         applied['moss_cache'] = moss_patch.apply_moss_generation_patch(adapter)
     applied['eos'] = eos_patch.apply_generation_eos_patch(adapter)
     receipt = dict(schema='reviewed-planner-eval-compatibility-v1', requested_sources=requested,
         applied_sources=applied, training_fingerprint=training_fingerprint,
         training_fingerprint_mutated=False, weights_mutated=False, prefix_mutated=False,
-        raw_output_cleaning=False, scope='eval-only-native-MOSS-cache-and-missing-native-EOS',
+        raw_output_cleaning=False, scope='eval-only-native-MOSS-position-cache-and-missing-native-EOS',
+        position_buffer_receipt=position_receipt,
         eos_details=getattr(adapter, 'generation_eos_patch_details', None))
     adapter.generation_compatibility_provenance = receipt
     return receipt
 
 
 def load_short_plan_adapter(family, model_path, checkpoint=None, mode='short-plan',
-                            generation_compatibility=True, **kwargs):
-    schema = mode_schema(mode)
+                            generation_compatibility=True, require_shared_annotations=False, **kwargs):
+    required = mode == 'short-plan' or require_shared_annotations
+    schema = mode_schema(mode, required)
     training_fingerprint = None
     if checkpoint is not None:
         checkpoint = Path(checkpoint).resolve()
@@ -289,7 +307,8 @@ def load_short_plan_adapter(family, model_path, checkpoint=None, mode='short-pla
         identity = evaluation.checkpoint_identity(checkpoint)
         config = json.loads((checkpoint.parent / 'run_config.json').read_text(encoding='utf-8'))
         canonical = {key: value for key, value in config.items() if key != 'fingerprint'}
-        if (config.get('schema') != schema or config.get('mode') != mode or config.get('family') != family or
+        if (config.get('schema') != schema or config.get('mode') != mode or
+                config.get('require_shared_annotations') != required or config.get('family') != family or
                 config.get('fingerprint') != identity['fingerprint'] or
                 base.object_sha(canonical) != identity['fingerprint'] or
                 config.get('data', {}).get('test_used') is not False):
@@ -314,15 +333,17 @@ def load_short_plan_adapter(family, model_path, checkpoint=None, mode='short-pla
         if not exported or actual != exported:
             raise ValueError('Portable short-plan adapter export bytes/membership changed')
         metadata = json.loads((directory / 'short_plan_adapter.json').read_text(encoding='utf-8'))
-        if (metadata.get('schema') != schema or metadata.get('mode') != mode or metadata.get('family') != family or
+        if (metadata.get('schema') != schema or metadata.get('mode') != mode or
+                metadata.get('require_shared_annotations') != required or metadata.get('family') != family or
                 metadata.get('instruction_sha256') != base.object_sha(INSTRUCTION if mode == 'short-plan' else DIRECT_INSTRUCTION) or
                 metadata.get('max_length') != kwargs.get('max_length', 8192)):
             raise ValueError('Short-plan checkpoint format/family/context differs')
     native = load_planner_adapter(family, model_path, checkpoint=checkpoint, **kwargs)
-    adapter = ShortPlanAdapter(family, native.model, native.processor, max_length=native.max_length, mode=mode)
+    adapter = ShortPlanAdapter(family, native.model, native.processor, max_length=native.max_length,
+        mode=mode, require_shared_annotations=required)
     adapter.trainable_info = native.trainable_info
     if checkpoint is not None and generation_compatibility:
-        apply_generation_compatibility(adapter, training_fingerprint)
+        apply_generation_compatibility(adapter, training_fingerprint, model_path)
     return adapter
 
 
@@ -334,7 +355,7 @@ def _forward(model, batch, device, dtype):
         return model(**inputs).logits
 
 
-def evaluate(model, adapter, rows, cache, device, dtype, weights):
+def evaluate(model, adapter, rows, cache, device, dtype, weights, loss_chunk_size=0):
     if not rows:
         raise ValueError('Validation requires at least one reviewed source')
     totals, counts = torch.zeros(3, dtype=torch.float64), torch.zeros(3, dtype=torch.long)
@@ -348,7 +369,7 @@ def evaluate(model, adapter, rows, cache, device, dtype, weights):
                 batch = adapter.collate([row])
                 logits = _forward(model, batch, device, dtype)
                 objective, sums, number = segment_nll(logits, batch['labels'].to(device),
-                    batch['segment_ids'].to(device), weights, adapter.mode)
+                    batch['segment_ids'].to(device), weights, adapter.mode, loss_chunk_size)
                 if not bool(torch.isfinite(objective)) or not bool(torch.isfinite(sums).all()):
                     raise FloatingPointError('Nonfinite short-plan validation NLL')
                 source_objective += float(objective)
@@ -371,9 +392,17 @@ def train(args):
     if (any(not math.isfinite(value) or value <= 0 for value in
             (args.lora_lr, args.projector_lr, args.grad_clip)) or args.warmup_updates < 0):
         raise ValueError('Finite positive learning rates/gradient clip and nonnegative warmup required')
-    train_rows, val_rows, data = check_data(args.train, args.val)
+    required = args.mode == 'short-plan' or args.require_shared_annotations
+    if args.resume:
+        previous_path = args.out / 'run_config.json'
+        if args.resume.parent.resolve() != args.out.resolve() or not previous_path.is_file():
+            raise ValueError('Resume requires the original checkpoint run output directory')
+        previous = json.loads(previous_path.read_text(encoding='utf-8'))
+        if previous.get('schema') != mode_schema(args.mode, required):
+            raise ValueError('Short-plan resume config/data/source fingerprint differs')
+    train_rows, val_rows, data = check_data(args.train, args.val, args.mode, required)
     if args.check_data_only:
-        return dict(schema=mode_schema(args.mode), mode=args.mode, segment_weights=weights,
+        return dict(schema=mode_schema(args.mode, required), mode=args.mode, segment_weights=weights,
                     data=data, actual_training_started=False, test_used=False)
     device = torch.device(args.device)
     dtype = torch.float32 if args.dtype == 'float32' else torch.bfloat16
@@ -384,7 +413,8 @@ def train(args):
     identity = base.local_model_identity(args.model, args.weights_manifest)
     torch.manual_seed(args.seed)
     adapter = load_short_plan_adapter(args.family, args.model, device=device, dtype=dtype,
-        max_length=args.max_length, lora_rank=args.rank, lora_alpha=args.alpha, mode=args.mode)
+        max_length=args.max_length, lora_rank=args.rank, lora_alpha=args.alpha, mode=args.mode,
+        require_shared_annotations=required)
     model = adapter.model
     model.config.use_cache = False
     if args.gradient_checkpointing:
@@ -392,7 +422,9 @@ def train(args):
     groups, names = base.optimizer_groups(model, args.lora_lr, args.projector_lr, base_dtype=dtype)
     optimizer = torch.optim.AdamW(groups, weight_decay=0.)
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda step: min(1., (step + 1) / max(1, args.warmup_updates)))
-    config = dict(schema=mode_schema(args.mode), mode=args.mode, model=identity, family=args.family, data=data, epochs=args.epochs,
+    config = dict(schema=mode_schema(args.mode, required), mode=args.mode,
+        require_shared_annotations=required, loss_chunk_size=args.loss_chunk_size,
+        model=identity, family=args.family, data=data, epochs=args.epochs,
         accum=args.accum, seed=args.seed, rank=args.rank, alpha=args.alpha, dtype=args.dtype,
         lora_lr=args.lora_lr, projector_lr=args.projector_lr, warmup_updates=args.warmup_updates,
         grad_clip=args.grad_clip, max_length=args.max_length, segment_weights=weights,
@@ -430,7 +462,7 @@ def train(args):
             batch = adapter.collate([row])
             logits = _forward(model, batch, device, dtype)
             loss, _, segment_counts = segment_nll(logits, batch['labels'].to(device),
-                batch['segment_ids'].to(device), weights, args.mode)
+                batch['segment_ids'].to(device), weights, args.mode, args.loss_chunk_size)
             update_segment_tokens += segment_counts.detach().cpu()
             if not bool(torch.isfinite(loss)):
                 raise FloatingPointError('Nonfinite short-plan training loss')
@@ -454,7 +486,7 @@ def train(args):
         if epoch_end:
             state['epoch'] += 1
             state['position'] = 0
-            validation = evaluate(model, adapter, val_rows, cache, device, dtype, weights)
+            validation = evaluate(model, adapter, val_rows, cache, device, dtype, weights, args.loss_chunk_size)
             score = validation['caption_nll']
             improved = state['best_val_nll'] is None or score < state['best_val_nll']
             state['best_val_nll'] = score if state['best_val_nll'] is None else min(score, state['best_val_nll'])
@@ -484,7 +516,8 @@ def train(args):
         if restored != state:
             raise ValueError('Reloaded cursor differs')
         base.assert_portable_equal(expected, base.trainable_state(model))
-    result = dict(schema=mode_schema(args.mode), mode=args.mode, fingerprint=fingerprint, cursor=state,
+    result = dict(schema=mode_schema(args.mode, required), mode=args.mode,
+        require_shared_annotations=required, fingerprint=fingerprint, cursor=state,
         checkpoint=str(Path(checkpoint).resolve()), actual_training_started=state['update'] > starting_update,
         invocation_optimizer_updates=state['update'] - starting_update,
         supervised_segment_tokens=dict(zip(SEGMENTS, state['supervised_segment_tokens'])),
@@ -521,6 +554,8 @@ def parser():
     training.add_argument('--gradient-checkpointing', action=argparse.BooleanOptionalAction, default=True)
     training.add_argument('--verify-reload', action='store_true')
     training.add_argument('--check-data-only', action='store_true')
+    training.add_argument('--loss-chunk-size', type=int, default=0,
+                          help='Positive value uses checkpointed assistant-only FP32 CE chunks; 0 uses one assistant CE')
     generation = commands.add_parser('generate')
     generation.add_argument('--checkpoint', type=Path, required=True)
     generation.add_argument('--input', type=Path, required=True, help='Audio-only JSONL; no gold annotations needed')
@@ -530,6 +565,8 @@ def parser():
                             help='Eval-only native MOSS cache/missing-EOS bridges, with source receipts')
     for command in (training, generation):
         command.add_argument('--mode', choices=MODES, default='short-plan')
+        command.add_argument('--require-shared-annotations', action='store_true',
+                             help='Direct mode also requires reviewed music evidence and plan on the same manifests')
         command.add_argument('--family', choices=FAMILIES, required=True)
         command.add_argument('--model', type=Path, required=True)
         command.add_argument('--device', default='cuda:0')
@@ -543,14 +580,15 @@ def main(argv=None):
     if args.max_length < 1:
         raise ValueError('Positive context length required')
     if args.command == 'train':
-        if min(args.epochs, args.accum, args.rank, args.alpha) < 1 or min(args.max_updates, args.save_every) < 0:
+        if min(args.epochs, args.accum, args.rank, args.alpha) < 1 or min(args.max_updates, args.save_every, args.loss_chunk_size) < 0:
             raise ValueError('Positive epochs/accum/rank/alpha and nonnegative update limit required')
         return train(args)
     if args.out.exists():
         raise ValueError('Generation output exists; choose a new output')
     adapter = load_short_plan_adapter(args.family, args.model, checkpoint=args.checkpoint,
         device=args.device, dtype=getattr(torch, args.dtype), max_length=args.max_length,
-        mode=args.mode, generation_compatibility=args.generation_compatibility)
+        mode=args.mode, generation_compatibility=args.generation_compatibility,
+        require_shared_annotations=args.require_shared_annotations)
     records = []
     with args.input.open(encoding='utf-8') as stream:
         for line in stream:

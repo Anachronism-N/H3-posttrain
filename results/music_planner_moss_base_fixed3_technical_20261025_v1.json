@@ -1,0 +1,59 @@
+{
+  "schema": "music-planner-moss-pure-base-fixed3-technical-summary-v1",
+  "source_count": 3,
+  "source_ids": [
+    "wJPptuhclZmKAEWs",
+    "wJPrpFsThWAcBQIw",
+    "wJQTclrlOLEYYfTB"
+  ],
+  "complete_and_resources_safe_verified": true,
+  "actual_worker_exit_code": 0,
+  "safe_fields": {
+    "all_holders_safe": true,
+    "locks_released": true,
+    "leases_restored": true,
+    "managed_parent_wait": true,
+    "unknown_jobs_not_signaled": true,
+    "admitted_gpu_count": 1
+  },
+  "no_checkpoint_loaded": true,
+  "no_lora_initialized": true,
+  "EOS_count": 3,
+  "fixed_two_window_format_count": 3,
+  "native_finite_forward_count": 608,
+  "per_case": [
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "generated_tokens": 219,
+      "actual_forwards": 219,
+      "finite_forwards": 219,
+      "quality_diagnostics": []
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "generated_tokens": 171,
+      "actual_forwards": 171,
+      "finite_forwards": 171,
+      "quality_diagnostics": []
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "generated_tokens": 218,
+      "actual_forwards": 218,
+      "finite_forwards": 218,
+      "quality_diagnostics": []
+    }
+  ],
+  "raw_sha256": "ca2653c21048bb7d021146f5c783c5f0cb6541563a6432227c84ab304f39be26",
+  "processor_replay_exact_equal": true,
+  "historical_trained_full_prefix_tensors_not_recorded": true,
+  "timestamps_are_fixed_buckets_not_true_action_boundary_ground_truth": true,
+  "format_compliance_already_present_in_base_is_not_training_benefit_evidence": true,
+  "action_quality_prepost_review_status": "pending_same_rubric_blind_LLM_review",
+  "human_quality_accepted": false,
+  "full_three_model_comparison_complete": false,
+  "code_sha256": {
+    "producer": "c6cb903616b216dbf537b5af03027744de3262105390a97664aac78e10abd5e6",
+    "manager": "622f05b931c981e77ecc7e1ec1914a43112167c04504780cd25e286c074b62e7"
+  }
+}

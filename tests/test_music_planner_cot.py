@@ -244,6 +244,10 @@ def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_pa
     val = tmp_path / 'val.jsonl'
     rows = [example(tmp_path, 'a', frequency=220), example(tmp_path, 'b', frequency=330)]
     validation = example(tmp_path, 'c', 'val', frequency=440)
+    if mode == 'direct-caption':
+        for row in rows + [validation]:
+            del row['music_evidence']
+            del row['short_plan']
     write_rows(train, rows)
     write_rows(val, [validation])
     local_model = tmp_path / 'model'
@@ -264,7 +268,8 @@ def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_pa
     monkeypatch.setattr(cot, 'load_planner_adapter', native_factory)
     shared = ['--family', 'omni_captioner', '--model', str(local_model), '--train', str(train),
               '--val', str(val), '--out', str(tmp_path / 'run'), '--device', 'cpu', '--dtype', 'float32',
-              '--no-gradient-checkpointing', '--epochs', '2', '--verify-reload', '--mode', mode]
+              '--no-gradient-checkpointing', '--epochs', '2', '--verify-reload', '--mode', mode,
+              '--loss-chunk-size', '32']
     before = copy.deepcopy(TinyPlanner().state_dict())
     first = cot.main(['train'] + shared + ['--max-updates', '2'])
     assert first['cursor']['update'] == 2 and first['reload_verified'] is True
@@ -283,7 +288,8 @@ def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_pa
         assert all(value > 0 for value in first['supervised_segment_tokens'].values())
     config = json.loads((tmp_path / 'run/run_config.json').read_text())
     assert set(config['code_sha256']) == {'music_planner_cot.py', 'music_planner_train.py',
-                                        'music_planner_adapters.py', 'music_planner_eval.py'}
+                                        'music_planner_adapters.py', 'music_planner_eval.py',
+                                        'music_planner_segment_loss.py'}
     assert (Path(first['checkpoint']) / 'adapter/short_plan_adapter.json').is_file()
     assert json.loads((tmp_path / 'run/best.json').read_text())['selection_metric'] == 'val_caption_segment_nll'
     second = cot.main(['train'] + shared + ['--max-updates', '3', '--resume', first['checkpoint']])
@@ -303,6 +309,13 @@ def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_pa
     other = next(item for item in cot.MODES if item != mode)
     with pytest.raises(ValueError, match='config/fingerprint'):
         cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'], mode=other)
+    if mode == 'direct-caption':
+        with pytest.raises(ValueError, match='config/fingerprint'):
+            cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'],
+                                       mode=mode, require_shared_annotations=True)
+        with pytest.raises(ValueError, match='resume config/data/source'):
+            cot.main(['train'] + shared + ['--require-shared-annotations', '--max-updates', '4',
+                                          '--resume', second['checkpoint']])
     with pytest.raises(ValueError, match='resume config/data/source'):
         cot.main(['train'] + shared + ['--mode', other, '--max-updates', '4', '--resume', second['checkpoint']])
     audio_input = tmp_path / 'audio_only.jsonl'
@@ -312,6 +325,12 @@ def test_training_entry_two_updates_checkpoint_reload_resume_and_generate(tmp_pa
         '--checkpoint', second['checkpoint'], '--input', str(audio_input), '--out', str(tmp_path / 'generated.jsonl'),
         '--device', 'cpu', '--dtype', 'float32', '--max-new-tokens', '1024'])
     assert generated[0]['caption_valid'] is True and generated[0]['mode'] == mode
+    from scripts_omnidance.exp.ms import music_planner_cot_audit as audit
+    audited = audit.main(['audit', '--mode', mode, '--model', str(local_model),
+        '--checkpoint', second['checkpoint'], '--input', str(audio_input), '--out', str(tmp_path / 'audit.json'),
+        '--device', 'cpu', '--dtype', 'float32', '--max-new-tokens', '1024'])
+    assert audited['summary']['valid_final_captions'] == 1
+    assert audited['teacher_forced_nll_used'] is False
     with pytest.raises(ValueError, match='context'):
         cot.load_short_plan_adapter('omni_captioner', local_model, checkpoint=second['checkpoint'], mode=mode, max_length=4000)
     sidecar = Path(second['checkpoint']) / 'adapter/short_plan_adapter.json'
@@ -359,7 +378,8 @@ def test_missing_full_checkpoint_marker_refused_before_native_loading(tmp_path, 
 @pytest.mark.parametrize('family', cot.FAMILIES)
 def test_direct_caption_has_no_intermediate_tokens_or_loss(tmp_path, family):
     row = example(tmp_path)
-    adapter = cot.ShortPlanAdapter(family, TinyPlanner(), MockProcessor(), mode='direct-caption')
+    adapter = cot.ShortPlanAdapter(family, TinyPlanner(), MockProcessor(), mode='direct-caption',
+                                   require_shared_annotations=True)
     text, _ = cot.serialize_target(row, 'direct-caption')
     assert text == row['target_text']
     assert all(tag not in text for tag in cot.SEGMENTS)
@@ -397,7 +417,7 @@ def test_direct_mode_rejects_inactive_segment_weight_and_membership():
 
 @pytest.mark.parametrize('mode', cot.MODES)
 @pytest.mark.parametrize('family', ['moss', 'omni_captioner'])
-def test_upstream_native_generation_bridges_execute_and_receipts_are_eval_only(tmp_path, mode, family):
+def test_upstream_native_generation_bridges_execute_and_receipts_are_eval_only(tmp_path, mode, family, monkeypatch):
     class NativeCacheFixture(TinyPlanner):
         def __init__(self):
             super().__init__()
@@ -429,7 +449,12 @@ def test_upstream_native_generation_bridges_execute_and_receipts_are_eval_only(t
     model.generation_text = cot.serialize_target(row, mode)[0]
     before = copy.deepcopy(model.state_dict())
     sources = cot.implementation_sources()
-    receipt = cot.apply_generation_compatibility(adapter, 'unchanged-training-fingerprint')
+    position_calls = []
+    def restore_position(loaded_adapter, model_path):
+        position_calls.append((loaded_adapter, model_path))
+        return dict(applied_position_buffer_patch_ref=cot.position_patch.position_buffer_patch_ref())
+    monkeypatch.setattr(cot.position_patch, 'restore_moss_position_buffer', restore_position)
+    receipt = cot.apply_generation_compatibility(adapter, 'unchanged-training-fingerprint', tmp_path)
     result = adapter.generate_caption(row, max_new_tokens=1024)
     assert result['caption_valid'] is True
     assert result['applied_generation_eos_patch_ref'] == cot.eos_patch.generation_eos_patch_ref()
@@ -442,6 +467,8 @@ def test_upstream_native_generation_bridges_execute_and_receipts_are_eval_only(t
     for name, tensor in before.items():
         torch.testing.assert_close(model.state_dict()[name], tensor, rtol=0, atol=0)
     if family == 'moss':
+        assert position_calls == [(adapter, tmp_path)]
+        assert receipt['applied_sources']['moss_position'] == cot.position_patch.position_buffer_patch_ref()
         assert model.cached_calls == 1
         assert result['applied_generation_patch_ref'] == cot.moss_patch.generation_patch_ref()
 
@@ -473,3 +500,101 @@ def test_generated_raw_token_suffix_and_budget_invalid_without_cleaning(tmp_path
     result = adapter.generate_caption(row, max_new_tokens=budget)
     assert result['caption_valid'] is False
     assert result['new_token_ids'] == new_ids and result['raw_text'] == raw
+
+
+@pytest.mark.parametrize('dtype', [torch.float32, torch.bfloat16])
+@pytest.mark.parametrize('mode', cot.MODES)
+def test_checkpointed_assistant_chunks_match_dense_reference_loss_and_grad(dtype, mode):
+    torch.manual_seed(2)
+    labels = torch.tensor([[-100, -100, 4, 5, 6, 2], [-100, 3, 4, 7, 6, 2]])
+    sections = torch.tensor([[-1, -1, 0, 1, 2, 2], [-1, 0, 0, 1, 2, 2]])
+    if mode == 'direct-caption':
+        sections = torch.where(labels.ne(-100), 2, -1)
+    first = torch.randn(2, 6, 11, dtype=dtype, requires_grad=True)
+    second = first.detach().clone().requires_grad_(True)
+    weights = cot.effective_weights(mode)
+    dense_ce = torch.nn.functional.cross_entropy(first[:, :-1].float().reshape(-1, 11),
+        labels[:, 1:].reshape(-1), ignore_index=-100, reduction='none').reshape(2, 5)
+    active = (0, 1, 2) if mode == 'short-plan' else (2,)
+    expected = sum(weights[index] * dense_ce[sections[:, 1:].eq(index)].mean()
+                   for index in active) / sum(weights)
+    actual, sums, counts = cot.segment_nll(second, labels, sections, mode=mode, chunk_size=2)
+    torch.testing.assert_close(actual, expected, rtol=2e-6, atol=2e-7)
+    expected.backward()
+    actual.backward()
+    torch.testing.assert_close(second.grad, first.grad, rtol=.01 if dtype == torch.bfloat16 else 2e-6,
+                               atol=2e-4 if dtype == torch.bfloat16 else 2e-7)
+    assert second.grad[:, -1].eq(0).all()
+
+
+def test_checkpointed_ce_does_not_save_all_fp32_vocabulary_chunks():
+    labels = torch.tensor([[-100, -100, 4, 5, 6, 2]])
+    sections = torch.tensor([[-1, -1, 0, 1, 2, 2]])
+    def saved_shapes(chunk):
+        saved = []
+        def pack(value):
+            saved.append((value.dtype, tuple(value.shape)))
+            return value
+        logits = torch.randn(1, 6, 101, dtype=torch.bfloat16, requires_grad=True)
+        with torch.autograd.graph.saved_tensors_hooks(pack, lambda value: value):
+            loss, _, _ = cot.segment_nll(logits, labels, sections, chunk_size=chunk)
+        loss.backward()
+        return saved
+    plain, chunked = saved_shapes(0), saved_shapes(2)
+    def fp32_vocabulary(entries):
+        return [shape for dtype, shape in entries if dtype == torch.float32 and len(shape) == 2 and shape[-1] == 101]
+    assert fp32_vocabulary(plain)
+    assert not fp32_vocabulary(chunked)
+
+
+def test_shared_annotation_protocol_remains_explicit(tmp_path):
+    row = example(tmp_path)
+    del row['music_evidence']
+    del row['short_plan']
+    assert cot.serialize_target(row, 'direct-caption')[0] == row['target_text']
+    with pytest.raises(ValueError, match='Missing reviewed'):
+        cot.serialize_target(row, 'direct-caption', require_shared_annotations=True)
+    with pytest.raises(ValueError, match='Missing reviewed'):
+        cot.serialize_target(row, 'short-plan')
+    assert cot.mode_schema('direct-caption') != cot.mode_schema('direct-caption', True)
+
+
+def test_teacher_free_audit_comparison_requires_same_audio_and_budget(tmp_path):
+    from scripts_omnidance.exp.ms import music_planner_cot_audit as audit
+    source = example(tmp_path, split='val')
+    audio = {key: source[key] for key in ('id', 'split', 'audio_path', 'audio_sha256', 'audio_window_seconds')}
+    data = {split: dict(sha256=split + '-fixed-manifest') for split in ('train', 'val')}
+    reports = []
+    for mode in cot.MODES:
+        adapter = cot.ShortPlanAdapter('omni_captioner', TinyPlanner(), MockProcessor(),
+                                      mode=mode, require_shared_annotations=True)
+        adapter.model.generation_text = cot.serialize_target(source, mode, True)[0]
+        reports.append(audit.generate_audit(adapter, [audio], max_new_tokens=1024,
+            checkpoint_identity=dict(fingerprint='fixture-' + mode), training_data=data,
+            input_ref=dict(sha256='fixture-audio-only'), base_identity=dict(model='same-fixture-base'),
+            comparison_contract=dict(settings={key: 1 for key in audit.COMPARISON_KEYS},
+                initialization='fresh-local-base-and-LoRA-no-warm-start'), source_exposures=100))
+    result = audit.compare_audits(*reports, require_shared_annotations=True)
+    assert result['shared_reviewed_training_manifests'] is True
+    assert result['quality_winner'] is None and result['teacher_forced_nll_used'] is False
+    assert result['controlled_ablation'] is True
+    left_path, right_path = tmp_path / 'left.json', tmp_path / 'right.json'
+    left_path.write_text(json.dumps(reports[0]))
+    right_path.write_text(json.dumps(reports[1]))
+    assert audit.main(['compare', '--left', str(left_path), '--right', str(right_path),
+        '--out', str(tmp_path / 'comparison.json'), '--require-shared-annotations']) == result
+    edited = copy.deepcopy(reports[1])
+    edited['max_new_tokens'] = 2048
+    edited['audit_sha256'] = cot.base.object_sha({k: v for k, v in edited.items() if k != 'audit_sha256'})
+    with pytest.raises(ValueError, match='budgets'):
+        audit.compare_audits(reports[0], edited)
+    unmatched = copy.deepcopy(reports[1])
+    unmatched['source_exposures'] = 200
+    unmatched['audit_sha256'] = cot.base.object_sha({k: v for k, v in unmatched.items() if k != 'audit_sha256'})
+    assert audit.compare_audits(reports[0], unmatched)['controlled_ablation'] is False
+    with pytest.raises(ValueError, match='actual source exposures'):
+        audit.compare_audits(reports[0], unmatched, require_shared_annotations=True)
+    tampered = copy.deepcopy(reports[0])
+    tampered['summary']['valid_final_captions'] = 50
+    with pytest.raises(ValueError, match='changed teacher-free'):
+        audit.compare_audits(tampered, reports[1])

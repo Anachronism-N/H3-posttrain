@@ -100,6 +100,18 @@ MOSS缓存修复后的旧异常输出全部token0，实际N7 GPU进一步诊断�
 
 MOSS固定3条原生caption已完成EOS与资源安全；首次最终test500八卡已受控启动，global ID按index%8分片、不重复；加载模型串行、GPU生成并行。并行源码独立24CPU门禁通过（22分片/finite/API安全+2lease心跳线程），在长内容审核时持续刷新已拥有租约，cleanup前停止并join防FD重用竞态，不绕任何检查。Flamingo已开始的单卡首次test保持，不重测；Captioner待本族完整文本前提后再首次八卡test。当前都尚未证明最终500全部完成，H3与人评尚未执行，没有赢家。
 
+## 完整val文本门槛与匿名语义审核（文本优先阶段）
+
+三族val32各原音乐/错配/静音共96真实输出及collector/exit0/resources_safe已全验收；基础EOS、双时间窗三条件均100%，严重同句至少3次caption0%，接口与空输出0。基础门槛全部通过不等语义编排/音乐同步/舞种准确，DanceStyle独立GT仍缺，未用test选择或调门槛。
+
+原音乐句内重复均值：Flamingo2.07%、MOSS3.73%、Captioner6.72%；4gram重复均值12.59%/9.75%/13.59%。原音乐与错配、静音逐case文字全部有变化，证明基本音频依赖而不是正确音乐同步。MOSS val32有一个整条caption精确复用组、第一窗五case共用组及case18两窗正文相同；这些没有被粗基础门槛伪装成语义多样性通过。
+
+独立LLM在不知道模型名、NLL、test/音视频的条件下完整读匿名A/B/C各32原音乐caption，四轴ordinal意见（连续承接/动态动作/语义动作多样性/窗口可执行细节）为A3/3/2/3、B4/3/3/3、C3/3/2/3；审后解码A=Flamingo、B=Captioner、C=MOSS。main独立核实际payload证实所有精确重复组、跨窗同正文case；没有把缺少过渡自动判为物理矛盾，未以弱GT不同扣分。盲审text-only中低置信意见为Captioner优先，Flamingo与MOSS粗评分接近；这不是校准accuracy、音乐或H3人评，也没有最终winner。收到的实际审阅已保存总结与原匿名材料SHA，不伪称保存未提取成功的原长报告。
+
+同一首次最终test500：Flamingo与MOSS均500unique ID/全EOS/双窗100%/接口错误0/实际资源安全；MOSS8卡111281原生forward全部finite且计数一致、global顺序还原。跨case整段完全重复比例Flamingo10.8%、MOSS2.4%；句内重复2.70%与4.64%，不可仅凭一个重复指标判最强。先前偏MOSS是该重复诊断的暂时倾向，更多完整盲审文本证据后暂优先Captioner；Captioner最终test尚未开始，不能宣布三模型最终排名。
+
+Captioner完整val后，唯一受控继续器已派发fixed3文本任务；还在全checkpoint字节审计，实际/proc可见读取第5个optim shard。空stdout/尚无queue不等任务停止，不重复启动。H3权重N2已做CPU完整scope SHA预审，尚未GPU渲染；待实际3族fixed3文本完成后，再按原一致协议做人评。
+
 ## 当前结论
 
 未完成三模型新版本 GPU 启动验收、670 更新、最终文本评测或 H3 人评，因此没有最强模型结论。只把已执行的 CPU 诊断/回归与真实 v8 失败作为当前证据。后续真实 queue、日志、完整回执优先于本文快照。GitHub 提交仅包含本实验明确源码、测试及分析，不打包其他会话脏工作区、权重、私有音频/图像或凭据。

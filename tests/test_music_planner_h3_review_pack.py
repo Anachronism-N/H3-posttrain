@@ -333,12 +333,18 @@ class ReviewPackTests(unittest.TestCase):
         infer_spec = importlib.util.spec_from_file_location('review_cpu_media_verifier', infer_path)
         h3 = importlib.util.module_from_spec(infer_spec); infer_spec.loader.exec_module(h3)
         with patch.object(h3, 'ffmpeg_binary', return_value=ffmpeg):
-            media = m.verify_copy(original, destination, header, ffmpeg, h3, ['PRIVATE PROSE'])
+            media = m.verify_copy(original, destination, header, ffmpeg, h3, ['PRIVATE PROSE', str(self.root)])
         self.assertEqual(media['frames'], 124)
         self.assertEqual((media['width'], media['height']), (704, 1280))
         self.assertEqual(media['video_duration_seconds'], 124 / 24)
         self.assertGreaterEqual(media['audio_decoded_duration_seconds'], 5.0625)
         self.assertEqual(m.source(original), original_ref); self.assertEqual(m.source(audio), audio_ref)
+        leaking = self.root / 'leaking.mp4'
+        command = m.mux_command(ffmpeg, original, audio, leaking)
+        command[-1:-1] = ['-metadata', 'comment=' + str(self.root) + '/PRIVATE PROSE']
+        subprocess.run(command, capture_output=True, check=True)
+        with self.assertRaisesRegex(RuntimeError, 'identity leaked'):
+            m.verify_copy(original, leaking, header, ffmpeg, h3, ['PRIVATE PROSE', str(self.root)])
 
 
 if __name__ == '__main__':

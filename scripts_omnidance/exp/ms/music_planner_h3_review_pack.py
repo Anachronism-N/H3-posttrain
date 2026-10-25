@@ -185,7 +185,10 @@ def verify_copy(original, copy, audio_header, ffmpeg, h3, forbidden):
     if (layout is None or not re.search(r'Audio: aac\b', audios[0])
             or str(audio_header['sample_rate']) + ' Hz, ' + layout not in audios[0]):
         raise RuntimeError('full audio codec/sample rate/channels differ')
-    if any(token in log for token in forbidden):
+    # ffmpeg's public input filename is a diagnostic banner, not media metadata.
+    identity_log = '\n'.join(line.replace(str(copy), '<anonymous-review-input>')
+                             if line.startswith('Input #0,') else line for line in log.splitlines())
+    if any(token in identity_log for token in forbidden):
         raise RuntimeError('identity leaked in copied media metadata')
     before, after = packet_frames(original, ffmpeg), packet_frames(copy, ffmpeg)
     if before != after:

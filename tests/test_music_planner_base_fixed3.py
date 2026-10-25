@@ -179,6 +179,23 @@ class BaseProducerCPU(unittest.TestCase):
         self.assertEqual(len(evidence['records']), 3)
         self.assertFalse(evidence['base_processor_replaced'])
         self.assertFalse(evidence['records'][0]['trained_historical_prefix_ids_available'])
+        serialized_copy = make()
+        serialized_copy.tokenizer.chat_template = None
+        same_effective = p.compare_prefixes(make(), serialized_copy, self.rows, self.old, torch)
+        self.assertFalse(same_effective['tokenizer_chat_template_storage_equal'])
+        self.assertTrue(same_effective['effective_processor_prompt_and_all_tensors_exact_equal'])
+        ordered = make()
+        reordered = make()
+        ordered.tokenizer.all_special_ids = [8, 9, 10]
+        reordered.tokenizer.all_special_ids = [10, 8, 9]
+        p.compare_prefixes(ordered, reordered, self.rows, self.old, torch)
+        reordered.tokenizer.all_special_ids = [10, 8, 11]
+        with self.assertRaises(RuntimeError):
+            p.compare_prefixes(ordered, reordered, self.rows, self.old, torch)
+        changed_prompt = make()
+        changed_prompt._prompt = lambda: 'different rendered user instruction'
+        with self.assertRaises(RuntimeError):
+            p.compare_prefixes(make(), changed_prompt, self.rows, self.old, torch)
         for obj in (make(template='changed'), make(audio=2.)):
             with self.assertRaises(RuntimeError):
                 p.compare_prefixes(make(), obj, self.rows, self.old, torch)

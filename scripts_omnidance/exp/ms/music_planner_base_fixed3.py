@@ -19,7 +19,7 @@ ROOT = Path('/apdcephfs_gy4/share_302533218/cedricnie')
 EXP = ROOT / 'diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1'
 RT = EXP / 'runtime'
 HANDOFF = EXP / 'eval_handoff_clean_v11'
-OUTPUT = HANDOFF / 'base_fixed3_compare_v1'
+OUTPUT = HANDOFF / 'base_fixed3_compare_v3'
 COMPARE = HANDOFF / 'h3_compare_v1/run_config_v3.json'
 IDS = ['wJPptuhclZmKAEWs', 'wJPrpFsThWAcBQIw', 'wJQTclrlOLEYYfTB']
 FAMILIES = ('moss', 'music_flamingo', 'omni_captioner')
@@ -232,10 +232,10 @@ def check_processor_inventory(export, refs):
 
 def tokenizer_identity(adapter):
     tok = adapter.tokenizer
+    # prefix() uses the processor template; save_pretrained also populates an unused tokenizer copy.
     value = dict(vocab=tok.get_vocab(), added_vocab=tok.get_added_vocab(),
-                 model_max_length=tok.model_max_length, all_special_ids=tok.all_special_ids,
+                 model_max_length=tok.model_max_length, all_special_ids=sorted(tok.all_special_ids),
                  special_tokens_map={k: str(v) for k, v in tok.special_tokens_map.items()},
-                 tokenizer_chat_template=getattr(tok, 'chat_template', None),
                  processor_chat_template=getattr(adapter.processor, 'chat_template', None),
                  prompt=adapter._prompt(), assistant_end=tok.encode('<|im_end|>', add_special_tokens=False))
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
@@ -267,6 +267,9 @@ def compare_prefixes(base, reference, rows, trained, torch):
                              trained_historical_prefix_ids_available=False,
                              trained_historical_input_length_equal=True))
     return dict(tokenizer_identity_sha256=tokenizer_identity(base), records=evidence,
+                tokenizer_chat_template_storage_equal=getattr(base.tokenizer, 'chat_template', None) ==
+                    getattr(reference.tokenizer, 'chat_template', None),
+                effective_processor_prompt_and_all_tensors_exact_equal=True,
                 exported_processor_used_for_comparison_only=True, base_processor_replaced=False,
                 verification_scope='replayed-frozen-processor-prefix-not-recorded-historical-prefix',
                 trained_historical_prefix_evidence='Audio binding and length only; historical full prefix tensors were not saved')

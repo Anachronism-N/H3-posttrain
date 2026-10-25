@@ -1,7 +1,7 @@
 """Exclusive once-only GPU0 pure-base fixed3 manager (capture never sends signals).
 
 Config schema music-planner-base-fixed3-manager-v1: node/host/family, gpus=[0],
-release_authorized=true, queue/out exact base_fixed3_compare_v1 family children,
+release_authorized=true, queue/out exact base_fixed3_compare_v3 family children,
 protocol/final_selection/trained_compare frozen {path,sha256}, same-family
 training_launch/full_complete/resources_safe/checkpoint_selection/checkpoint_marker
 and fingerprint from trained_compare, expected_base_audit frozen ref to the actual
@@ -26,7 +26,7 @@ ROOT = Path('/apdcephfs_gy4/share_302533218/cedricnie')
 EXP = ROOT / 'diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1'
 RT = EXP / 'runtime'
 HANDOFF = EXP / 'eval_handoff_clean_v11'
-OUTPUT = HANDOFF / 'base_fixed3_compare_v1'
+OUTPUT = HANDOFF / 'base_fixed3_compare_v3'
 AUDIT_SOURCE = RT / 'planner_eval_manager_v3.py'
 AUDIT_SHA = 'c387edfd246fd25ab3ac73d00bffe2f41d5f1450cba15df9509b53192ac63c9d'
 PRODUCER = Path(__file__).resolve().with_name('music_planner_base_fixed3.py')
@@ -147,7 +147,7 @@ def check_predecessor(cfg, producer):
 
 
 def claim_path(cfg):
-    return HANDOFF / ('base_fixed3_once_' + cfg['family'] + '.json')
+    return HANDOFF / ('base_fixed3_once_v3_' + cfg['family'] + '.json')
 
 
 def claim_once(cfg, producer):

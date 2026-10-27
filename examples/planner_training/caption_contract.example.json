@@ -1,0 +1,9 @@
+{
+  "schema": "music-planner-caption-contract-v1",
+  "caption_version": "REPLACE_WITH_YOUR_APPROVED_CAPTION_VERSION",
+  "task_instruction": "Listen to the music and output the approved natural-language dance caption format learned during training.",
+  "audio_min_seconds": 1.0,
+  "audio_max_seconds": 30.0,
+  "required_markers": [],
+  "require_target_windows": false
+}

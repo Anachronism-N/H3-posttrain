@@ -1,0 +1,39 @@
+{
+  "layout": "split32",
+  "jobs": [
+    {
+      "job_id": "moss-caption-smoke-v1",
+      "family": "moss",
+      "hosts": ["REPLACE-moss-node-0", "REPLACE-moss-node-1", "REPLACE-moss-node-2", "REPLACE-moss-node-3"],
+      "repo_root": "/workspace/H3-posttrain",
+      "python": "/workspace/planner-env/bin/python",
+      "model": "/models/MOSS-Music-8B-Instruct",
+      "train": "/shared/data/planner/train.jsonl",
+      "val": "/shared/data/planner/val.jsonl",
+      "out": "/shared/runs/moss-caption-smoke-v1",
+      "master_port": 29631,
+      "phase": "smoke",
+      "max_updates": 2,
+      "caption_contract": "/shared/data/planner/caption_contract.json",
+      "loss_chunk_size": 64,
+      "audio_last_n": 4
+    },
+    {
+      "job_id": "captioner-caption-smoke-v1",
+      "family": "omni_captioner",
+      "hosts": ["REPLACE-captioner-node-0", "REPLACE-captioner-node-1", "REPLACE-captioner-node-2", "REPLACE-captioner-node-3"],
+      "repo_root": "/workspace/H3-posttrain",
+      "python": "/workspace/planner-env/bin/python",
+      "model": "/models/Qwen3-Omni-30B-A3B-Captioner",
+      "train": "/shared/data/planner/train.jsonl",
+      "val": "/shared/data/planner/val.jsonl",
+      "out": "/shared/runs/captioner-caption-smoke-v1",
+      "master_port": 29632,
+      "phase": "smoke",
+      "max_updates": 2,
+      "caption_contract": "/shared/data/planner/caption_contract.json",
+      "loss_chunk_size": 64,
+      "audio_last_n": 4
+    }
+  ]
+}

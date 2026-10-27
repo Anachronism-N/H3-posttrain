@@ -1,14 +1,20 @@
-"""Source-balanced fixed2s music-planner SFT; test data is never consumed here."""
+"""Source-balanced native-audio planner SFT with optional input-only JEV genre loss.
+
+An explicit contract enables new captions; otherwise historical fixed2s data is
+preserved. Test data is never consumed by this training entry.
+"""
 import argparse
 from contextlib import nullcontext
 import hashlib
 import importlib
+import importlib.metadata
 import json
 import math
 import os
 from pathlib import Path
 import random
 import socket
+import sys
 import tempfile
 import uuid
 
@@ -37,7 +43,7 @@ def object_sha(value):
 
 def atomic_json(path, value):
     path = Path(path)
-    with tempfile.NamedTemporaryFile(mode='w', dir=path.parent, delete=False) as stream:
+    with tempfile.NamedTemporaryFile(mode='w', dir=path.parent, delete=False, encoding='utf-8') as stream:
         json.dump(value, stream, ensure_ascii=False, indent=2, allow_nan=False)
         stream.flush()
         os.fsync(stream.fileno())
@@ -50,7 +56,7 @@ def read_split(path, split):
         raise ValueError('Training entry accepts train/val only; test is final-only')
     path = Path(path).resolve()
     rows, ids, groups, audios = [], set(), set(), set()
-    with path.open() as stream:
+    with path.open(encoding='utf-8') as stream:
         for number, line in enumerate(stream, 1):
             if not line.strip():
                 continue
@@ -106,7 +112,7 @@ class AudioIdentityCache:
     """Hash each consumed file once; reuse only while its stat identity is unchanged."""
     def __init__(self, path):
         self.path = Path(path)
-        self.entries = json.loads(self.path.read_text()) if self.path.is_file() else {}
+        self.entries = json.loads(self.path.read_text(encoding='utf-8')) if self.path.is_file() else {}
         self.dirty = False
 
     def verify(self, row):
@@ -155,14 +161,105 @@ def validate_cursor(state, size, epochs, global_batch):
         raise ValueError('Resume update and exact source exposures disagree')
 
 
-def shifted_nll(logits, labels):
-    labels = labels[:, 1:].contiguous()
-    if logits.shape[:2] != (labels.shape[0], labels.shape[1] + 1):
-        raise ValueError('Adapter logits/labels are not causally aligned')
-    count = labels.ne(-100).sum()
-    loss = F.cross_entropy(logits[:, :-1].float().reshape(-1, logits.shape[-1]),
-                           labels.reshape(-1), ignore_index=-100, reduction='sum')
-    return loss, count
+def planner_module(name):
+    # Direct script execution and package execution resolve the same repository code.
+    root = str(Path(__file__).resolve().parents[3])
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    return importlib.import_module('scripts_omnidance.exp.ms.' + name)
+
+
+def shifted_nll(logits, labels, chunk_size=0):
+    return planner_module('music_planner_token_loss').assistant_token_nll(logits, labels, chunk_size)
+
+
+def cluster_environment(world):
+    plan = os.environ.get('PLANNER_CLUSTER_PLAN_SHA256')
+    if plan is None:
+        return None
+    if len(plan) != 64 or any(c not in '0123456789abcdef' for c in plan):
+        raise ValueError('Invalid cluster plan SHA256')
+    if (int(os.environ.get('PLANNER_EXPECTED_WORLD_SIZE', '0')) != world or
+            int(os.environ.get('LOCAL_WORLD_SIZE', '0')) != 8 or world not in (32, 64) or
+            os.environ.get('PLANNER_EXPECTED_HOSTNAME') != socket.gethostname()):
+        raise ValueError('Cluster plan world/local-world/host differs from this process')
+    inventory = os.environ.get('PLANNER_BASE_MODEL_INVENTORY_SHA256', '')
+    if len(inventory) != 64 or any(c not in '0123456789abcdef' for c in inventory):
+        raise ValueError('Cluster execution requires the content-bound base model inventory SHA256')
+    return dict(plan_sha256=plan, world_size=world, processes_per_node=8,
+                base_model_inventory_sha256=inventory)
+
+
+def canonical_cluster_model_identity(identity, leader_records, expected_sha, expected_nodes):
+    if (len(leader_records) != expected_nodes or any(record.get('error') for record in leader_records) or
+            any(record.get('inventory_sha256') != expected_sha for record in leader_records)):
+        raise ValueError('Node-leader base model content verification failed or differs from cluster plan: ' +
+                         json.dumps(leader_records, ensure_ascii=False))
+    result = dict(identity)
+    result['weights'] = [{key: value for key, value in weight.items() if key != 'mtime_ns'}
+                         for weight in identity['weights']]
+    result.update(identity_method='actual-full-directory-content-inventory-verified-on-every-node-v1',
+                  content_inventory_sha256=expected_sha, content_verified_nodes=expected_nodes)
+    return result
+
+
+def verify_cluster_model_identity(model_path, identity, accelerator, cluster):
+    if cluster is None:
+        return identity
+    record = None
+    if accelerator.local_process_index == 0:
+        try:
+            inventory = planner_module('music_planner_cluster').model_inventory(model_path)
+            record = dict(inventory_sha256=inventory['inventory_sha256'], file_count=len(inventory['files']))
+        except Exception as error:
+            # All ranks reach the collective even if one node cannot read its weights.
+            record = dict(error=type(error).__name__ + ': ' + str(error))
+    records = [None] * accelerator.num_processes
+    torch.distributed.all_gather_object(records, record)
+    leaders = [value for value in records if value is not None]
+    return canonical_cluster_model_identity(identity, leaders, cluster['base_model_inventory_sha256'],
+                                            cluster['world_size'] // cluster['processes_per_node'])
+
+
+def configure_zero3_leaf_modules(model, family, zero3):
+    if not zero3 or family != 'omni_captioner':
+        return []
+    blocks = [(name, module) for name, module in model.named_modules()
+              if type(module).__name__ == 'Qwen3OmniMoeThinkerTextSparseMoeBlock']
+    if not blocks:
+        raise ValueError('Native Captioner MoE blocks not found; cannot verify ZeRO3 leaf policy')
+    from deepspeed.utils import set_z3_leaf_modules
+    set_z3_leaf_modules(model, list({type(module) for _, module in blocks}))
+    if any(not getattr(module, '_z3_leaf', False) for _, module in blocks):
+        raise ValueError('DeepSpeed did not apply the requested MoE leaf policy')
+    return [dict(name=name, class_name=type(module).__name__) for name, module in blocks]
+
+
+def lr_multiplier(step, total_updates, warmup_updates, schedule='constant'):
+    if schedule not in ('constant', 'cosine'):
+        raise ValueError('Unknown learning rate schedule')
+    if step < warmup_updates or schedule == 'constant':
+        return min(1., (step + 1) / max(1, warmup_updates))
+    progress = min(1., max(0., (step - warmup_updates + 1) / max(1, total_updates - warmup_updates)))
+    return .5 * (1. + math.cos(math.pi * progress))
+
+
+def assert_shared_fingerprint(fingerprint):
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        observed = [None] * torch.distributed.get_world_size()
+        torch.distributed.all_gather_object(observed, fingerprint)
+        if len(set(observed)) != 1:
+            raise ValueError('Distributed ranks disagree on model/data/code/training configuration')
+
+
+def software_identity():
+    versions = {}
+    for name in ('torch', 'accelerate', 'deepspeed', 'transformers', 'peft', 'numpy', 'scipy', 'soundfile'):
+        try:
+            versions[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            versions[name] = None
+    return dict(python=sys.version.split()[0], packages=versions)
 
 
 def prepare_training_storage(model, loader, zero3):
@@ -175,9 +272,9 @@ def prepare_training_storage(model, loader, zero3):
     return base_dtype
 
 
-def optimizer_groups(model, lora_lr, projector_lr, base_dtype=torch.bfloat16):
-    groups = {'lora': [], 'projector': []}
-    names = {'lora': [], 'projector': []}
+def optimizer_groups(model, lora_lr, projector_lr, base_dtype=torch.bfloat16, genre_lr=1e-4):
+    groups = {'lora': [], 'projector': [], 'jev': []}
+    names = {'lora': [], 'projector': [], 'jev': []}
     for name, parameter in model.named_parameters():
         expected_dtype = torch.float32 if parameter.requires_grad else base_dtype
         for attribute in ('ds_tensor', 'ds_secondary_tensor'):
@@ -192,7 +289,7 @@ def optimizer_groups(model, lora_lr, projector_lr, base_dtype=torch.bfloat16):
             raise ValueError(f'Trainable parameter must stay FP32: {name}: {parameter.dtype}')
         if any(token in name.lower() for token in ('visual', 'vision_tower', 'talker', 'code2wav', 'lm_head')):
             raise ValueError(f'Forbidden music-only trainable parameter: {name}')
-        kind = 'lora' if 'lora_' in name else 'projector'
+        kind = 'jev' if 'jev_head' in name.split('.') else 'lora' if 'lora_' in name else 'projector'
         if kind == 'projector' and not any(token in name for token in ('projector', 'projection', 'connector', '.proj', '.modules_to_save.')):
             raise ValueError(f'Unexpected unfrozen base parameter: {name}')
         groups[kind].append(parameter)
@@ -200,9 +297,12 @@ def optimizer_groups(model, lora_lr, projector_lr, base_dtype=torch.bfloat16):
     if not groups['lora']:
         raise ValueError('Adapter has no trainable LoRA parameters')
     result = []
-    for kind, lr in (('lora', lora_lr), ('projector', projector_lr)):
+    for kind, lr in (('lora', lora_lr), ('projector', projector_lr), ('jev', genre_lr)):
         if groups[kind]:
             result.append(dict(params=groups[kind], lr=lr, name=kind))
+    if not names['jev']:
+        # Preserve the historical group signature for caption-only checkpoints.
+        names.pop('jev')
     return result, names
 
 
@@ -339,6 +439,11 @@ def save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, rank=
         torch.save(scheduler.state_dict(), path / 'scheduler.pt')
         if adapter is not None:
             adapter.save_pretrained(path / 'adapter', state_dict=portable)
+            if hasattr(unwrapped, 'jev_head'):
+                planner_module('music_planner_jev').export_jev(
+                    adapter, path / 'jev', identity=dict(run_fingerprint=fingerprint,
+                        trainable_sha256=file_sha(path / 'trainable.pt'),
+                        installation=getattr(adapter, 'jev_metadata', None)), state_dict=portable)
     if zero3:
         model.save_checkpoint(str(path / 'distributed'), tag='zero3', exclude_frozen_parameters=True)
     else:
@@ -359,7 +464,7 @@ def save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, rank=
 def load_checkpoint(path, model, optimizer, scheduler, fingerprint, rank=0, world=1,
                     zero3=False, barrier=lambda: None):
     path = Path(path)
-    metadata = json.loads((path / 'trainer_state.json').read_text())
+    metadata = json.loads((path / 'trainer_state.json').read_text(encoding='utf-8'))
     unwrapped = model.module if hasattr(model, 'module') else model
     if (metadata.get('schema') != SCHEMA or metadata.get('complete') is not True or
         metadata.get('fingerprint') != fingerprint or metadata.get('world_size') != world or
@@ -372,7 +477,7 @@ def load_checkpoint(path, model, optimizer, scheduler, fingerprint, rank=0, worl
             if file_sha(ref['path']) != ref['sha256']:
                 raise ValueError(f'Checkpoint file bytes changed: {ref["path"]}')
     barrier()
-    writer = json.loads((path / f'writer-rank{rank}.json').read_text())
+    writer = json.loads((path / f'writer-rank{rank}.json').read_text(encoding='utf-8'))
     if zero3 and writer['nonce'] == PROCESS_IDENTITY['nonce']:
         raise ValueError('ZeRO3 resume requires a fresh process/engine, never same-engine reload')
     saved = torch.load(path / 'trainable.pt', map_location='cpu', weights_only=True)
@@ -412,26 +517,28 @@ def load_checkpoint(path, model, optimizer, scheduler, fingerprint, rank=0, worl
 
 def training_outputs(args, state, data, checkpoint, fingerprint, starting_update, world):
     checkpoint = Path(checkpoint).resolve()
-    marker = json.loads((checkpoint / 'trainer_state.json').read_text())
+    marker = json.loads((checkpoint / 'trainer_state.json').read_text(encoding='utf-8'))
     if marker['fingerprint'] != fingerprint or marker['cursor'] != state or not marker['complete']:
         raise ValueError('Training result checkpoint/cursor identity differs')
     gradient_refs, resume_refs = [], []
     nonzero = dict(language_lora=0, audio_bridge=0)
     for rank in range(world):
         path = args.out / f'backward-evidence-u{starting_update:07d}-rank{rank}.json'
-        evidence = json.loads(path.read_text())
+        evidence = json.loads(path.read_text(encoding='utf-8'))
         if (evidence['starting_update'] != starting_update or not evidence['actual_backward_observed'] or
             not sum(evidence.get('actual_checkpoint_calls', {}).values())):
             raise ValueError('Training result lacks real backward evidence')
         for name, norm in evidence['gradient_norms'].items():
             if not math.isfinite(norm):
                 raise ValueError('Training result nonfinite gradient evidence')
+            if 'jev_head' in name.split('.'):
+                continue
             audio = 'lora_' not in name or any(tag in name.lower() for tag in ('audio', 'acoustic', 'sound'))
             nonzero['audio_bridge' if audio else 'language_lora'] += int(norm > 0)
         gradient_refs.append(file_ref(path))
         if args.resume:
             path = args.out / f'resume-from-{starting_update:07d}-rank{rank}.json'
-            evidence = json.loads(path.read_text())
+            evidence = json.loads(path.read_text(encoding='utf-8'))
             if (not evidence['new_process'] or not evidence['strict_trainable_verified'] or
                 not evidence['rng_restored'] or not evidence['scheduler_restored'] or
                 not all(evidence['optimizer'][key] for key in ('optimizer_state_initialized', 'moments_fp32', 'moments_finite'))):
@@ -444,7 +551,7 @@ def training_outputs(args, state, data, checkpoint, fingerprint, starting_update
     smoke_validation_ref = None
     if args.max_updates:
         path = args.out / f'smoke-validation-u{state["update"]:07d}.json'
-        validation = json.loads(path.read_text())
+        validation = json.loads(path.read_text(encoding='utf-8'))
         if (validation.get('schema') != 'music-planner-smoke-validation-v1' or
             validation.get('family') != args.family or validation.get('fingerprint') != fingerprint or
             validation.get('cursor') != state or validation.get('source_count') != data['val']['sources'] or
@@ -458,7 +565,7 @@ def training_outputs(args, state, data, checkpoint, fingerprint, starting_update
             raise ValueError('Training result lacks matching full-val-before-save smoke evidence')
         smoke_validation_ref = file_ref(path)
     continued = bool(args.resume) and state['update'] > starting_update
-    return dict(schema='music-planner-outputs-v1', family=args.family, mode=mode, world_size=world,
+    result = dict(schema='music-planner-outputs-v1', family=args.family, mode=mode, world_size=world,
         optimizer_updates=state['update'], invocation_optimizer_updates=state['update'] - starting_update,
         starting_update=starting_update, cursor=state, global_batch=args.batch, epoch_budget=args.epochs,
         source_exposure_budget=data['train']['sources'] * args.epochs,
@@ -476,6 +583,13 @@ def training_outputs(args, state, data, checkpoint, fingerprint, starting_update
         initialization='official_base_then_matching_checkpoint' if args.resume else 'official_base',
         full_budget_completed=state['epoch'] == args.epochs, test_selection_performed=False, quality_accepted=False,
         process=PROCESS_IDENTITY)
+    if args.genre_classes is not None:
+        result['jev'] = dict(genre_weight=args.genre_weight,
+            known_label_source_exposures=state.get('genre_labeled_exposures', 0),
+            head_backward_exercised=state.get('jev_head_exercised', False),
+            status='head_backward_exercised' if state.get('jev_head_exercised') else 'head_not_exercised',
+            music_or_choreography_quality_accepted=False)
+    return result
 
 
 def local_model_identity(path, weights_manifest=None):
@@ -513,7 +627,7 @@ def resolve_adapter():
 
 
 def deepspeed_config(args, world):
-    config = json.loads(Path(args.deepspeed).read_text()) if args.deepspeed else {}
+    config = json.loads(Path(args.deepspeed).read_text(encoding='utf-8')) if args.deepspeed else {}
     zero = config.setdefault('zero_optimization', {})
     if zero.get('stage', 3) != 3:
         raise ValueError('Music planner distributed backend requires ZeRO3')
@@ -540,17 +654,33 @@ def prepare_batch(adapter, rows, cache, empty=False):
         raise ValueError('Adapter produced no causal assistant/EOS labels')
     if empty:
         batch['labels'] = torch.full_like(batch['labels'], -100)
+    classes = getattr(adapter, 'jev_classes', None)
+    if classes is not None:
+        targets, mask = planner_module('music_planner_jev').batch_jev_targets(rows, classes)
+        batch['jev_targets'] = torch.zeros_like(targets) if empty else targets
+        batch['jev_label_mask'] = torch.zeros_like(mask) if empty else mask
     return batch
 
 
 def move_batch(batch, device):
     return {key: value.to(device) if isinstance(value, torch.Tensor) else value
-            for key, value in batch.items() if key != 'labels'}
+            for key, value in batch.items() if key not in ('labels', 'jev_targets', 'jev_label_mask')}
 
 
-def evaluate(model, adapter, rows, cache, accelerator, micro, native_autocast=False, zero3=False):
+def genre_batch_loss(output, batch, device):
+    if 'jev_targets' not in batch:
+        return None, torch.zeros((), dtype=torch.long, device=device)
+    jev = planner_module('music_planner_jev')
+    logits = jev.get_jev_logits(output)
+    if logits is None:
+        raise ValueError('Installed JEV did not produce native-prefix genre logits')
+    return jev.jev_loss(logits, batch['jev_targets'].to(device), batch['jev_label_mask'].to(device))
+
+
+def evaluate(model, adapter, rows, cache, accelerator, micro, native_autocast=False, zero3=False,
+             loss_chunk_size=0):
     model.eval()
-    total = torch.zeros(2, dtype=torch.float64, device=accelerator.device)
+    total = torch.zeros(4, dtype=torch.float64, device=accelerator.device)
     world, rank = accelerator.num_processes, accelerator.process_index
     try:
         for start in range(0, len(rows), micro * world):
@@ -559,21 +689,28 @@ def evaluate(model, adapter, rows, cache, accelerator, micro, native_autocast=Fa
             autocast = nullcontext() if native_autocast else torch.autocast(accelerator.device.type, dtype=torch.bfloat16)
             with torch.no_grad(), autocast:
                 output = model(**move_batch(batch, accelerator.device))
-                loss, count = shifted_nll(output.logits, batch['labels'].to(accelerator.device))
-            total += torch.stack((loss.detach().double(), count.double()))
+                loss, count = shifted_nll(output.logits, batch['labels'].to(accelerator.device), loss_chunk_size)
+                genre_sum, genre_count = genre_batch_loss(output, batch, accelerator.device)
+            total += torch.stack((loss.detach().double(), count.double(),
+                                  genre_sum.detach().double() if genre_sum is not None else loss.detach().double() * 0,
+                                  genre_count.double()))
         total = accelerator.reduce(total, reduction='sum')
     finally:
         finish_zero3_forward(model, zero3)
         model.train()
     if total[1].item() <= 0 or not torch.isfinite(total[0]):
         raise ValueError('Invalid within-family validation NLL')
-    return dict(nll=(total[0] / total[1]).item(), assistant_tokens=int(total[1].item()),
-                source_count=len(rows), comparison_scope='within-family-tokenizer-only', test_used=False)
+    result = dict(nll=(total[0] / total[1]).item(), assistant_tokens=int(total[1].item()),
+                  source_count=len(rows), comparison_scope='within-family-tokenizer-only', test_used=False)
+    if getattr(adapter, 'jev_classes', None) is not None:
+        result.update(genre_nll=(total[2] / total[3]).item() if total[3].item() else None,
+                      genre_labeled_sources=int(total[3].item()))
+    return result
 
 
 def validate_smoke_before_save(args, model, adapter, rows, cache, accelerator, state, data, fingerprint, zero3=False):
     validation = evaluate(model, adapter, rows, cache, accelerator, args.micro,
-                          native_autocast=zero3, zero3=zero3)
+                          native_autocast=zero3, zero3=zero3, loss_chunk_size=args.loss_chunk_size)
     path = args.out / f'smoke-validation-u{state["update"]:07d}.json'
     if accelerator.is_main_process:
         atomic_json(path, dict(schema='music-planner-smoke-validation-v1', family=args.family,
@@ -587,7 +724,12 @@ def validate_smoke_before_save(args, model, adapter, rows, cache, accelerator, s
 def train(args):
     os.environ['HF_HUB_OFFLINE'] = '1'
     os.environ['TRANSFORMERS_OFFLINE'] = '1'
-    train_rows, val_rows, data = check_data(args.train, args.val)
+    schema = planner_module('music_planner_schema')
+    # Keep the historical loader directly callable for existing fair fixtures.
+    train_rows, val_rows, data = (schema.read_training_data(args)
+        if args.caption_contract is not None or args.genre_classes is not None or
+           args.train_genre_labels is not None or args.val_genre_labels is not None
+        else check_data(args.train, args.val))
     if args.check_data_only:
         print(json.dumps(dict(data=data, actual_training_started=False), ensure_ascii=False), flush=True)
         return
@@ -601,13 +743,20 @@ def train(args):
     except ImportError as error:
         raise RuntimeError(f'BLOCKED: existing planner environment lacks accelerate/deepspeed: {error}') from error
     world = int(os.environ.get('WORLD_SIZE', '1'))
+    cluster = cluster_environment(world)
+    if args.micro != 1:
+        raise ValueError('Native audio feature packing currently requires --micro 1')
     global_batch = args.micro * args.accum * world
     if args.batch != global_batch:
         raise ValueError(f'Global batch must equal micro*accum*world={global_batch}, not {args.batch}')
-    plugin = DeepSpeedPlugin(hf_ds_config=deepspeed_config(args, world), zero3_init_flag=True) if args.backend == 'deepspeed' else None
+    ds_config = deepspeed_config(args, world) if args.backend == 'deepspeed' else None
+    plugin = DeepSpeedPlugin(hf_ds_config=ds_config, zero3_init_flag=True) if ds_config else None
     accelerator = Accelerator(mixed_precision='no', deepspeed_plugin=plugin,
         gradient_accumulation_plugin=GradientAccumulationPlugin(num_steps=args.accum, sync_with_dataloader=False))
     rank, world = accelerator.process_index, accelerator.num_processes
+    if cluster is not None and world != cluster['world_size']:
+        raise ValueError('Initialized distributed world differs from the launch contract')
+    identity = verify_cluster_model_identity(args.model, identity, accelerator, cluster)
     set_seed(args.seed)
     if accelerator.is_main_process:
         if args.out.exists() and not args.resume:
@@ -616,17 +765,35 @@ def train(args):
     accelerator.wait_for_everyone()
     with plugin.zero3_init_context_manager(enable=True) if plugin else nullcontext():
         adapter = loader(family=args.family, model_path=args.model, lora_rank=args.rank,
-                         lora_alpha=args.alpha, max_length=args.max_length)
+                         lora_alpha=args.alpha, max_length=args.max_length, audio_last_n=args.audio_last_n)
+        adapter = schema.configure_adapter(adapter, args)
+        if args.genre_classes is not None:
+            classes = data['jev']['classes']
+            adapter.jev_metadata = planner_module('music_planner_jev').install_jev(
+                adapter, classes, head_dim=args.genre_head_dim)
+            adapter.jev_classes = classes
     model = adapter.model
     model.config.use_cache = False
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': True})
     if not any(getattr(module, 'gradient_checkpointing', False) for module in model.modules()):
         raise RuntimeError('BLOCKED: architecture did not actually enable gradient checkpointing')
     base_dtype = prepare_training_storage(model, loader, bool(plugin))
-    groups, group_names = optimizer_groups(model, args.lora_lr, args.projector_lr, base_dtype=base_dtype)
+    moe_leaves = configure_zero3_leaf_modules(model, args.family, bool(plugin))
+    groups, group_names = optimizer_groups(model, args.lora_lr, args.projector_lr,
+                                          base_dtype=base_dtype, genre_lr=args.genre_lr)
     optimizer = torch.optim.AdamW(groups, weight_decay=0.)
     total_updates = math.ceil(len(train_rows) / args.batch) * args.epochs
-    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda step: min(1., (step + 1) / max(1, args.warmup_updates)))
+    warmup_updates = (math.ceil(total_updates * args.warmup_ratio)
+                      if args.warmup_ratio is not None else args.warmup_updates)
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer,
+        lambda step: lr_multiplier(step, total_updates, warmup_updates, args.lr_schedule))
+    source_names = ['music_planner_train', 'music_planner_token_loss', 'music_planner_schema']
+    if cluster is not None:
+        source_names.append('music_planner_cluster')
+    if args.genre_classes is not None:
+        source_names.append('music_planner_jev')
+    source_hashes = {name: file_sha(__file__ if name == 'music_planner_train' else planner_module(name).__file__)
+                     for name in source_names}
     config = dict(family=args.family, model=identity, data=data, epochs=args.epochs, total_updates=total_updates,
         source_exposure_budget=len(train_rows) * args.epochs, global_batch=args.batch, micro=args.micro, accum=args.accum,
         world_size=world, seed=args.seed, lora_rank=args.rank, lora_alpha=args.alpha, lora_lr=args.lora_lr,
@@ -637,12 +804,21 @@ def train(args):
         optimizer='AdamW-FP32-full-states', gradient_checkpointing=True, checkpointing_use_reentrant=True, parameter_groups=group_names,
         trainable_signature=parameter_signature(model), trainer_sha256=file_sha(__file__),
         zero3_parameter_lifecycle=ZERO3_PARAMETER_LIFECYCLE if plugin else 'not-applicable',
-        smoke_validation_before_save=True)
+        smoke_validation_before_save=True, source_sha256=source_hashes,
+        resolved_deepspeed_config=ds_config, zero3_moe_leaves=moe_leaves,
+        audio_last_n=args.audio_last_n, loss_chunk_size=args.loss_chunk_size,
+        loss_policy='global-assistant-token-mean-plus-independent-global-labeled-source-genre-mean-v1',
+        genre_weight=args.genre_weight, genre_lr=args.genre_lr, genre_head_dim=args.genre_head_dim,
+        jev=getattr(adapter, 'jev_metadata', None), caption_contract=data.get('contract'),
+        lr_schedule=args.lr_schedule, warmup_ratio=args.warmup_ratio, effective_warmup_updates=warmup_updates,
+        validation_every_updates=args.eval_every, save_every_updates=args.save_every, cluster=cluster,
+        software=software_identity())
     fingerprint = object_sha(config)
+    assert_shared_fingerprint(fingerprint)
     if accelerator.is_main_process:
         config_path = args.out / 'run_config.json'
         if args.resume:
-            existing = json.loads(config_path.read_text())
+            existing = json.loads(config_path.read_text(encoding='utf-8'))
             canonical = {key: value for key, value in existing.items() if key not in ('fingerprint', 'trainable_parameters')}
             if existing.get('fingerprint') != fingerprint or object_sha(canonical) != fingerprint:
                 raise ValueError('Resume run config differs; original run config was not overwritten')
@@ -652,6 +828,8 @@ def train(args):
     model, optimizer = accelerator.prepare(model, optimizer)
     # Scheduler is deliberately not Accelerator-prepared: one scheduler tick per actual optimizer update.
     state = dict(epoch=0, position=0, update=0, source_exposures=0, best_val_nll=None)
+    if args.genre_classes is not None:
+        state.update(genre_labeled_exposures=0, jev_head_exercised=False)
     checkpoint_args = dict(rank=rank, world=world, zero3=bool(plugin), barrier=accelerator.wait_for_everyone)
     if args.resume:
         state = load_checkpoint(args.resume, model, optimizer, scheduler, fingerprint, **checkpoint_args)
@@ -692,7 +870,8 @@ def train(args):
     hook_handles = []
     def observe(name):
         def hook(gradient):
-            if state['update'] < gradient_observe_until:
+            if state['update'] < gradient_observe_until or (
+                    'jev_head' in name.split('.') and not state.get('jev_head_exercised', False)):
                 if not bool(torch.isfinite(gradient).all()):
                     raise FloatingPointError(f'Nonfinite real backward gradient: {name}')
                 observed_gradients[name] = max(observed_gradients.get(name, 0.), float(gradient.float().norm()))
@@ -700,41 +879,53 @@ def train(args):
     unwrapped = model.module if hasattr(model, 'module') else model
     for name, parameter in unwrapped.named_parameters():
         if parameter.requires_grad:
-            hook_handles.append(parameter.register_hook(observe(name)))
+            hook_handles.append((parameter.register_hook(observe(name)), 'jev_head' in name.split('.')))
     optimizer.zero_grad(set_to_none=True)
     while state['epoch'] < args.epochs and (not args.max_updates or state['update'] < args.max_updates):
         order = epoch_order(len(train_rows), args.seed, state['epoch'])
         slices, consumed = update_slices(order, state['position'], args.micro, args.accum, rank, world)
         batches = [prepare_batch(adapter, [train_rows[i] for i in indices] or [train_rows[order[state['position']]]],
                                  cache, empty=not indices) for indices in slices]
-        token_count = torch.tensor(sum(int(batch['labels'][:, 1:].ne(-100).sum()) for batch in batches),
-                                   dtype=torch.float64, device=accelerator.device)
-        global_tokens = accelerator.reduce(token_count, reduction='sum')
+        local_support = torch.tensor([
+            sum(int(batch['labels'][:, 1:].ne(-100).sum()) for batch in batches),
+            sum(int(batch['jev_label_mask'].sum()) for batch in batches if 'jev_label_mask' in batch)],
+            dtype=torch.float64, device=accelerator.device)
+        global_tokens, global_genres = accelerator.reduce(local_support, reduction='sum').unbind()
         if global_tokens.item() <= 0:
             raise ValueError('No valid assistant tokens in optimizer update')
         update_loss = torch.zeros((), device=accelerator.device, dtype=torch.float64)
+        update_genre_loss = torch.zeros_like(update_loss)
         for batch in batches:
             with accelerator.accumulate(model):
                 autocast = nullcontext() if plugin else torch.autocast(accelerator.device.type, dtype=torch.bfloat16)
                 with autocast:
                     output = model(**move_batch(batch, accelerator.device))
-                    nll, _ = shifted_nll(output.logits, batch['labels'].to(accelerator.device))
+                    nll, _ = shifted_nll(output.logits, batch['labels'].to(accelerator.device), args.loss_chunk_size)
+                    genre_sum, _ = genre_batch_loss(output, batch, accelerator.device)
                     if not bool(torch.isfinite(nll)):
                         raise FloatingPointError('Nonfinite assistant-token training NLL')
-                    loss = nll * (world * args.accum / global_tokens)
+                    loss = planner_module('music_planner_token_loss').joint_update_objective(
+                        nll, genre_sum, global_tokens, global_genres, world=world,
+                        accum=args.accum, genre_weight=args.genre_weight)
                 accelerator.backward(loss)
-                if accelerator.sync_gradients:
+                # DeepSpeed clips within its managed optimizer boundary. Accelerate's
+                # DeepSpeed backward already performs engine.step; do not clip twice.
+                if accelerator.sync_gradients and not plugin:
                     accelerator.clip_grad_norm_(model.parameters(), args.grad_clip)
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
             update_loss += nll.detach().double()
+            if genre_sum is not None:
+                update_genre_loss += genre_sum.detach().double()
         scheduler.step()
         if state['update'] < gradient_observe_until:
             categories = sorted(group_names)
             nonzero = torch.tensor([sum(observed_gradients.get(name, 0.) > 0 for name in group_names[kind])
                                     for kind in categories], device=accelerator.device)
             nonzero = accelerator.reduce(nonzero, reduction='sum')
-            if any(count == 0 for kind, count in zip(categories, nonzero.tolist()) if group_names[kind]):
+            required = [kind for kind in categories if group_names[kind] and
+                        (kind != 'jev' or (args.genre_weight > 0 and global_genres.item() > 0))]
+            if any(count == 0 for kind, count in zip(categories, nonzero.tolist()) if kind in required):
                 raise ValueError('Missing nonzero real backward gradient in required trainable group')
             if not sum(checkpoint_calls.values()):
                 raise ValueError('Architecture enabled checkpoint flags but no actual checkpoint call occurred')
@@ -742,35 +933,58 @@ def train(args):
                 dict(starting_update=starting_update, update=state['update'] + 1,
                 gradient_norms=observed_gradients, nonzero_by_group=dict(zip(categories, nonzero.tolist())),
                 gradient_checkpointing_enabled=True, actual_checkpoint_calls=checkpoint_calls, actual_backward_observed=True))
+        if args.genre_classes is not None:
+            state['genre_labeled_exposures'] += int(global_genres)
+            if args.genre_weight > 0 and global_genres.item() > 0 and not state['jev_head_exercised']:
+                local_nonzero = sum(observed_gradients.get(name, 0.) > 0 for name in group_names['jev'])
+                global_nonzero = accelerator.reduce(torch.tensor(local_nonzero, device=accelerator.device), reduction='sum')
+                if global_nonzero.item() <= 0:
+                    raise ValueError('Labeled JEV update produced no real nonzero head gradient')
+                atomic_json(args.out / f'jev-backward-u{state["update"] + 1:07d}-rank{rank}.json',
+                    dict(update=state['update'] + 1, labeled_sources_in_update=int(global_genres),
+                         global_nonzero_head_parameters=int(global_nonzero),
+                         local_head_gradient_norms={name: observed_gradients.get(name, 0.) for name in group_names['jev']},
+                         head_backward_exercised=True, genre_weight=args.genre_weight))
+                state['jev_head_exercised'] = True
+                state['jev_first_exercised_update'] = state['update'] + 1
         state['update'] += 1
         if state['update'] >= gradient_observe_until:
-            for handle in hook_handles:
-                handle.remove()
-            hook_handles.clear()
+            remaining = []
+            for handle, is_head in hook_handles:
+                if is_head and not state.get('jev_head_exercised', False):
+                    remaining.append((handle, is_head))
+                else:
+                    handle.remove()
+            hook_handles = remaining
         state['source_exposures'] += consumed
         state['position'] += consumed
         epoch_finished = state['position'] == len(train_rows)
         if epoch_finished:
             state['epoch'] += 1
             state['position'] = 0
-            if not args.max_updates:
-                validation = evaluate(model, adapter, val_rows, cache, accelerator, args.micro,
-                                      native_autocast=bool(plugin), zero3=bool(plugin))
-                improved = state['best_val_nll'] is None or validation['nll'] < state['best_val_nll']
+        should_validate = not args.max_updates and (epoch_finished or
+                            (args.eval_every and state['update'] % args.eval_every == 0))
+        if should_validate:
+            validation = evaluate(model, adapter, val_rows, cache, accelerator, args.micro,
+                                  native_autocast=bool(plugin), zero3=bool(plugin), loss_chunk_size=args.loss_chunk_size)
+            improved = state['best_val_nll'] is None or validation['nll'] < state['best_val_nll']
+            if improved:
+                state['best_val_nll'] = validation['nll']
+            checkpoint = save()
+            if accelerator.is_main_process:
+                atomic_json(checkpoint / 'validation.json', validation)
                 if improved:
-                    state['best_val_nll'] = validation['nll']
-                checkpoint = save()
-                if accelerator.is_main_process:
-                    atomic_json(checkpoint / 'validation.json', validation)
-                    if improved:
-                        atomic_json(args.out / 'best.json', dict(checkpoint=str(checkpoint), **validation))
+                    atomic_json(args.out / 'best.json', dict(checkpoint=str(checkpoint), **validation))
         elif (args.save_every and state['update'] % args.save_every == 0 and
               not (args.max_updates and state['update'] >= args.max_updates)):
             save()
-        update_loss = accelerator.reduce(update_loss, reduction='sum')
+        update_loss, update_genre_loss = accelerator.reduce(
+            torch.stack((update_loss, update_genre_loss)), reduction='sum').unbind()
         if accelerator.is_main_process:
             print(json.dumps(dict(update=state['update'], epoch=state['epoch'], position=state['position'],
-                source_exposures=state['source_exposures'], train_token_nll=(update_loss / global_tokens).item())), flush=True)
+                source_exposures=state['source_exposures'], train_token_nll=(update_loss / global_tokens).item(),
+                train_genre_nll=(update_genre_loss / global_genres).item() if global_genres.item() else None,
+                global_assistant_tokens=int(global_tokens), global_genre_labeled_sources=int(global_genres))), flush=True)
     if args.max_updates:
         validate_smoke_before_save(args, model, adapter, val_rows, cache, accelerator,
                                    state, data, fingerprint, zero3=bool(plugin))
@@ -827,6 +1041,17 @@ def parser():
     result.add_argument('--seed', type=int, default=42)
     result.add_argument('--warmup-updates', type=int, default=10)
     result.add_argument('--max-length', type=int, default=8192)
+    result.add_argument('--audio-last-n', type=int, default=4, help='Native audio-tower trailing LoRA layers')
+    result.add_argument('--loss-chunk-size', type=int, default=128, help='Assistant CE rows per recomputed vocabulary chunk; 0 disables chunk recompute')
+    result.add_argument('--caption-contract', type=Path, help='Explicit versioned full-audio/text schema; absent keeps historical fixed2s data')
+    result.add_argument('--genre-classes', type=Path, help='Explicit JSON class list; never inferred from captions')
+    result.add_argument('--train-genre-labels', type=Path)
+    result.add_argument('--val-genre-labels', type=Path)
+    result.add_argument('--genre-weight', type=float, default=0., help='Independent global labeled-source genre CE coefficient')
+    result.add_argument('--genre-lr', type=float, default=1e-4)
+    result.add_argument('--genre-head-dim', type=int, default=256)
+    result.add_argument('--lr-schedule', choices=('constant', 'cosine'), default='constant')
+    result.add_argument('--warmup-ratio', type=float, help='Override warmup-updates with ceil(total updates * ratio)')
     result.add_argument('--backend', choices=('deepspeed', 'ddp'), default='deepspeed')
     result.add_argument('--deepspeed', type=Path, help='Optional ZeRO3 config; default built in')
     result.add_argument('--resume', type=Path)
@@ -845,6 +1070,16 @@ def main():
         raise ValueError('Positive epochs/batch/micro/accum/rank/alpha/context required')
     if args.max_updates < 0 or args.save_every < 0 or args.eval_every < 0:
         raise ValueError('Update limits/intervals must not be negative')
+    if min(args.audio_last_n, args.genre_head_dim) < 1 or args.loss_chunk_size < 0:
+        raise ValueError('Positive audio scope/head size and nonnegative loss chunk size required')
+    if (any(not math.isfinite(value) or value <= 0 for value in
+            (args.lora_lr, args.projector_lr, args.genre_lr, args.grad_clip)) or
+            not math.isfinite(args.genre_weight) or args.genre_weight < 0 or args.warmup_updates < 0):
+        raise ValueError('Finite positive learning rates/clip and nonnegative genre weight/warmup required')
+    if args.warmup_ratio is not None and (not math.isfinite(args.warmup_ratio) or not 0 <= args.warmup_ratio < 1):
+        raise ValueError('warmup-ratio must be finite in [0,1)')
+    if args.genre_weight and args.genre_classes is None:
+        raise ValueError('Positive genre loss requires the user-supplied --genre-classes')
     train(args)
 
 

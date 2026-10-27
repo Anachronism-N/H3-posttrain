@@ -19,3 +19,10 @@ guidance loss, Hybrid BF16 base), AR/causal experiments, music-condition injecti
 Paths, node addresses and dataset locations are those of the original cluster and must be adapted.
 Access tokens were removed (`<HF_TOKEN_REDACTED>`); supply your own via environment variables.
 Model weights, caches, data and generated videos are not included.
+
+## Music planner training
+
+MOSS / Qwen Captioner training with configurable natural-language captions, an optional
+input-only JEV-inspired dance-style head, and 32/64-GPU multi-node plans is documented in
+[the training guide](notes/planner_training/MOSS_QWEN_64GPU_JEV_20261027.md).
+Cluster plans and CPU tests do not constitute real A800 training or quality acceptance.

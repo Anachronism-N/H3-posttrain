@@ -336,15 +336,25 @@ def test_zero3_config_preserves_fp32_lora_and_actual_batch():
     assert config['communication_data_type'] == 'fp32'
 
 
+def promote_mock_zero3_manifest(checkpoint):
+    # A tiny stub is sufficient for tests that reject before consuming any real
+    # DS optimizer shard. Keep the actual-file manifest valid at this boundary.
+    distributed = checkpoint / 'distributed'
+    distributed.mkdir()
+    (distributed / 'mock-shard.pt').write_bytes(b'mocked-zero3-boundary-only')
+    marker_path = checkpoint / 'trainer_state.json'
+    marker = json.loads(marker_path.read_text())
+    marker.update(zero3=True, files=[train.file_ref(p) for p in sorted(checkpoint.rglob('*'))
+                                  if p.is_file() and p != marker_path])
+    train.atomic_json(marker_path, marker)
+
+
 def test_ds_same_process_resume_is_explicitly_rejected(tmp_path):
     model = TinyPlanner()
     opt, scheduler = make_optimizer(model)
     checkpoint = train.save_checkpoint(tmp_path / 'ckpt', model, opt, scheduler,
         dict(epoch=0, position=0, update=0, source_exposures=0), 'fixture')
-    marker_path = checkpoint / 'trainer_state.json'
-    marker = json.loads(marker_path.read_text())
-    marker['zero3'] = True
-    marker_path.write_text(json.dumps(marker))
+    promote_mock_zero3_manifest(checkpoint)
     with pytest.raises(ValueError, match='fresh process/engine'):
         train.load_checkpoint(checkpoint, model, opt, scheduler, 'fixture', zero3=True)
 
@@ -360,14 +370,11 @@ def test_ds_loaded_weights_are_compared_not_overwritten(tmp_path, monkeypatch):
     opt, scheduler = make_optimizer(model)
     checkpoint = train.save_checkpoint(tmp_path / 'ckpt', model, opt, scheduler,
         dict(epoch=0, position=0, update=0, source_exposures=0), 'fixture')
-    marker_path = checkpoint / 'trainer_state.json'
-    marker = json.loads(marker_path.read_text())
-    marker.update(zero3=True, files=[])
-    marker_path.write_text(json.dumps(marker))
     writer_path = checkpoint / 'writer-rank0.json'
     writer = json.loads(writer_path.read_text())
     writer['nonce'] = 'different-process-fixture'
     writer_path.write_text(json.dumps(writer))
+    promote_mock_zero3_manifest(checkpoint)
     corrupted = train.trainable_state(model)
     corrupted['lora_A'].add_(1)
     monkeypatch.setattr(train, 'trainable_state', lambda *args: corrupted)

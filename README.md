@@ -26,3 +26,5 @@ MOSS / Qwen Captioner training with configurable natural-language captions, an o
 input-only JEV-inspired dance-style head, and 32/64-GPU multi-node plans is documented in
 [the training guide](notes/planner_training/MOSS_QWEN_64GPU_JEV_20261027.md).
 Cluster plans and CPU tests do not constitute real A800 training or quality acceptance.
+For MOSS with a discrete dance style and timestamped actions, use the
+[v2 protocol and reviewed generation path](notes/planner_training/MOSS_STYLE_TIMED_REVIEW_20261028.md).

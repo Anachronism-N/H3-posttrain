@@ -7,6 +7,7 @@ from datetime import timedelta
 import importlib.util
 import json
 import os
+import shutil
 from pathlib import Path
 import sys
 from types import SimpleNamespace
@@ -424,3 +425,105 @@ def test_sparse_jev_smoke_unknown_then_fresh_resume_known_saves_bound_head(tmp_p
     portable = torch.load(checkpoint / 'trainable.pt', weights_only=True)
     assert any(name.startswith('jev_head.') for name in portable)
     assert all(torch.isfinite(value).all() for value in portable.values())
+
+
+def _saved_resume_fixture(tmp_path):
+    model = nn.Linear(2, 2)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=.01)
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda step: 1.)
+    model(torch.ones(1, 2)).sum().backward()
+    optimizer.step()
+    optimizer.zero_grad()
+    scheduler.step()
+    state = dict(epoch=0, position=1, update=1, source_exposures=1)
+    path = tmp_path / 'original' / 'checkpoint-0000001'
+    train.save_checkpoint(path, model, optimizer, scheduler, state, 'fixture')
+    return path, model, optimizer, scheduler, state
+
+
+def test_relocated_resume_checks_consumed_copy_not_original_paths(tmp_path, monkeypatch):
+    original, model, optimizer, scheduler, state = _saved_resume_fixture(tmp_path)
+    copied = tmp_path / 'copied' / 'renamed-checkpoint'
+    shutil.copytree(original, copied)
+    actual_sha = train.file_sha
+    consumed = []
+
+    def only_copy(path):
+        resolved = Path(path).resolve()
+        assert original.resolve() not in resolved.parents
+        consumed.append(resolved)
+        return actual_sha(path)
+
+    monkeypatch.setattr(train, 'file_sha', only_copy)
+    assert train.load_checkpoint(copied, model, optimizer, scheduler, 'fixture') == state
+    assert (copied / 'scheduler.pt').resolve() in consumed
+    # This was accepted when marker absolute paths checked the untouched original.
+    changed = torch.load(copied / 'scheduler.pt', weights_only=True)
+    changed['last_epoch'] = 999
+    torch.save(changed, copied / 'scheduler.pt')
+    with pytest.raises(ValueError, match='scheduler.pt'):
+        train.load_checkpoint(copied, model, optimizer, scheduler, 'fixture')
+    assert scheduler.last_epoch == 1
+
+
+@pytest.mark.parametrize('member', ['scheduler.pt', 'rng-rank0.pt', 'optimizer-rank0.pt', 'writer-rank0.json'])
+def test_resume_rejects_omitted_consumed_manifest_member(tmp_path, member):
+    path, model, optimizer, scheduler, _ = _saved_resume_fixture(tmp_path)
+    marker = json.loads((path / 'trainer_state.json').read_text(encoding='utf-8'))
+    marker['files'] = [entry for entry in marker['files'] if Path(entry['path']).name != member]
+    train.atomic_json(path / 'trainer_state.json', marker)
+    with pytest.raises(ValueError, match='omits a consumed'):
+        train.load_checkpoint(path, model, optimizer, scheduler, 'fixture')
+
+
+def test_resume_rejects_duplicate_and_outside_recorded_members(tmp_path):
+    path, _, _, _, _ = _saved_resume_fixture(tmp_path)
+    marker = json.loads((path / 'trainer_state.json').read_text(encoding='utf-8'))
+    scheduler = next(entry for entry in marker['files'] if Path(entry['path']).name == 'scheduler.pt')
+    duplicate = dict(marker, files=marker['files'] + [dict(scheduler)])
+    with pytest.raises(ValueError, match='Duplicate'):
+        train.checkpoint_member_refs(path, duplicate)
+    root = next(entry['path'].replace('\\', '/')[:-len('/trainable.pt')]
+                for entry in marker['files'] if entry['path'].replace('\\', '/').endswith('/trainable.pt'))
+    for relative in ('../outside.pt', 'adapter/../../outside.pt', './scheduler.pt'):
+        escaped = dict(marker, files=marker['files'] + [dict(path=root + '/' + relative, sha256='0' * 64)])
+        with pytest.raises(ValueError, match='escapes'):
+            train.checkpoint_member_refs(path, escaped)
+    outside = dict(marker, files=marker['files'] + [dict(path=root + '-foreign/scheduler.pt', sha256='0' * 64)])
+    with pytest.raises(ValueError, match='outside its recorded root'):
+        train.checkpoint_member_refs(path, outside)
+
+
+def test_resume_manifest_windows_paths_resolve_inside_current_checkpoint(tmp_path):
+    path, _, _, _, _ = _saved_resume_fixture(tmp_path)
+    marker = json.loads((path / 'trainer_state.json').read_text(encoding='utf-8'))
+    rewritten = []
+    for entry in marker['files']:
+        relative = Path(entry['path']).relative_to(path.resolve()).as_posix()
+        rewritten.append(dict(entry, path='Z:\\old-machine\\saved-run\\checkpoint-0000001\\' + relative.replace('/', '\\')))
+    refs = train.checkpoint_member_refs(path, dict(marker, files=rewritten))
+    assert Path(refs['scheduler.pt']['consumed_path']) == (path / 'scheduler.pt').resolve()
+
+
+def test_resume_rejects_symlink_escape(tmp_path):
+    path, _, _, _, _ = _saved_resume_fixture(tmp_path)
+    outside = tmp_path / 'outside.bin'
+    outside.write_bytes(b'outside-checkpoint')
+    link = path / 'escape.bin'
+    try:
+        link.symlink_to(outside)
+    except (OSError, NotImplementedError):
+        pytest.skip('This OS/account cannot create a file symlink')
+    marker = json.loads((path / 'trainer_state.json').read_text(encoding='utf-8'))
+    marker['files'].append(dict(path=str(link), sha256=train.file_sha(outside)))
+    with pytest.raises(ValueError, match='symlink escapes'):
+        train.checkpoint_member_refs(path, marker)
+
+
+def test_manifest_failure_is_broadcast_before_rank_barrier(tmp_path, monkeypatch):
+    events = []
+    monkeypatch.setattr(torch.distributed, 'is_initialized', lambda: True)
+    monkeypatch.setattr(torch.distributed, 'broadcast_object_list', lambda values, src: events.append(values[0]))
+    with pytest.raises(ValueError, match='manifest is missing'):
+        train.verify_checkpoint_members(tmp_path, {}, rank=0, world=2)
+    assert len(events) == 1 and 'manifest is missing' in events[0]

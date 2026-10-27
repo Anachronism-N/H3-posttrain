@@ -1,0 +1,23 @@
+{
+  "schema": "music-planner-caption-contract-v2",
+  "caption_version": "dance-style-bars-en-3dp-v1",
+  "task_instruction": "Listen to the music and plan a dance. Output Dance style: followed by one trained label, then one timestamped action description per line in English. Use exactly three decimal places in [start-ends] timestamps. Each timestamp denotes a containing musical-bar window, not the exact onset or offset of every movement. Do not infer that an action is held throughout its window. Output only the style line and action lines. Exclude reasoning, confidence, frame numbers, evidence, provenance and review metadata.",
+  "audio_min_seconds": 1.0,
+  "audio_max_seconds": 30.0,
+  "required_markers": [],
+  "require_target_windows": true,
+  "dance_caption_format": {
+    "schema": "music-planner-dance-caption-v2",
+    "genre_header_template": "Dance style: {genre}\n",
+    "time_tolerance_seconds": 0.001,
+    "require_full_coverage": true,
+    "timestamp_decimal_places": 3,
+    "one_window_per_line": true,
+    "forbid_frame_references": true
+  },
+  "genre_supervision": {
+    "unknown_label": "unknown",
+    "unknown_policy": "mask",
+    "mask_unknown_header": true
+  }
+}

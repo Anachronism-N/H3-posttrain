@@ -16,6 +16,8 @@ import torch
 from .music_planner_adapters import PlannerAdapter
 
 SCHEMA = 'music-planner-caption-contract-v1'
+CONDITIONED_SCHEMA = 'music-planner-caption-contract-v2'
+TOKEN_PROTOCOL = 'header-then-actions-then-native-im-end-v1'
 LENGTH_POLICY = 'one-complete-source-audio-one-verbatim-text-target-v1'
 
 
@@ -36,8 +38,22 @@ def load_contract(path):
     value = json.loads(Path(path).read_text(encoding='utf-8'))
     keys = {'schema', 'caption_version', 'task_instruction', 'audio_min_seconds',
             'audio_max_seconds', 'required_markers', 'require_target_windows'}
-    if not isinstance(value, dict) or set(value) != keys or value.get('schema') != SCHEMA:
-        raise ValueError('Caption contract needs exactly the documented v1 keys')
+    if isinstance(value, dict) and value.get('schema') == CONDITIONED_SCHEMA:
+        keys = keys | {'dance_caption_format'}
+        if 'genre_supervision' in value:
+            keys = keys | {'genre_supervision'}
+    if (not isinstance(value, dict) or set(value) != keys or
+            value.get('schema') not in (SCHEMA, CONDITIONED_SCHEMA)):
+        raise ValueError('Caption contract needs exactly the documented v1 or v2 keys')
+    if value['schema'] == CONDITIONED_SCHEMA:
+        from .music_planner_caption_format import validate_format
+        value['dance_caption_format'] = validate_format(value['dance_caption_format'])
+        if 'genre_supervision' in value:
+            policy = value['genre_supervision']
+            if (not isinstance(policy, dict) or set(policy) != {'unknown_label', 'unknown_policy', 'mask_unknown_header'} or
+                    policy['unknown_label'] != 'unknown' or policy['unknown_policy'] != 'mask' or
+                    policy['mask_unknown_header'] is not True):
+                raise ValueError('genre_supervision must explicitly mask visual unknown labels and their header loss')
     for key in ('caption_version', 'task_instruction'):
         if not isinstance(value[key], str) or not value[key].strip() or _reserved(value[key]):
             raise ValueError('Nonempty plain-text contract field required: ' + key)
@@ -114,7 +130,14 @@ def read_contract_split(path, split, contract):
             for key in ('song_id', 'near_duplicate_group_id'):
                 if key in row and (not isinstance(row[key], str) or not row[key].strip()):
                     raise ValueError('Optional isolation identity must be nonempty: ' + key)
-            _windows(row, duration, contract['require_target_windows'])
+            if contract['schema'] == CONDITIONED_SCHEMA:
+                # The v2 parser checks text/metadata together, with the declared
+                # rounding tolerance. The historical strict checker would reject
+                # a legitimate rounded end such as 5.063 for a 5.0625s source.
+                if contract['require_target_windows'] and not row.get('target_windows'):
+                    raise ValueError('Nonempty target_windows required by contract')
+            else:
+                _windows(row, duration, contract['require_target_windows'])
             audio = Path(row['audio_path']).expanduser()
             if not audio.is_absolute():
                 audio = path.parent / audio
@@ -157,6 +180,8 @@ def _join_genre(args, train, val, data):
     classes_path = getattr(args, 'genre_classes', None)
     label_paths = [getattr(args, key, None) for key in ('train_genre_labels', 'val_genre_labels')]
     if classes_path is None:
+        if data.get('contract', {}).get('schema') == CONDITIONED_SCHEMA:
+            raise ValueError('The v2 dance caption contract requires a formal --genre-classes vocabulary')
         if any(path is not None for path in label_paths):
             raise ValueError('Genre labels require an explicit --genre-classes vocabulary')
         return train, val, data
@@ -166,20 +191,90 @@ def _join_genre(args, train, val, data):
     val, val_labels = join_jev_labels(val, label_paths[1], classes, 'val')
     if train_labels['known_labels'] <= 0:
         raise ValueError('Enabled JEV branch needs at least one independently labelled training source')
+    dance_format = data.get('contract', {}).get('dance_caption_format')
+    policy = data.get('contract', {}).get('genre_supervision')
+    if dance_format is not None:
+        from .music_planner_caption_format import parse_caption
+        for row in train + val:
+            parsed = parse_caption(row['target_text'], classes, dance_format,
+                row['audio_duration_seconds'], target_windows=row.get('target_windows'))
+            target = row.get('jev_target')
+            expected = [float(name == parsed['genre']) for name in classes]
+            if target is not None and any(abs(a - b) > 1e-6 for a, b in zip(target, expected)):
+                raise ValueError('Caption genre and independent discrete genre label disagree: ' + row['id'])
+            row['caption_genre'] = parsed['genre']
+    caption_classes = list(classes)
+    if policy is not None:
+        unknown = policy['unknown_label']
+        if unknown not in caption_classes or len(caption_classes) < 3:
+            raise ValueError('Abstention protocol needs unknown plus at least two real dance classes')
+        classes = [name for name in caption_classes if name != unknown]
+        indices = [caption_classes.index(name) for name in classes]
+        for rows, metadata in ((train, train_labels), (val, val_labels)):
+            missing = sum(row.get('jev_target') is None for row in rows)
+            visual_unknown = 0
+            for row in rows:
+                if row['caption_genre'] == unknown:
+                    visual_unknown += int(row.get('jev_target') is not None)
+                    row['jev_target'] = None
+                    row['genre_supervision_status'] = 'visual-label-abstention'
+                elif row.get('jev_target') is not None:
+                    row['jev_target'] = [row['jev_target'][index] for index in indices]
+                    row['genre_supervision_status'] = 'labelled-real-dance-class'
+                else:
+                    row['genre_supervision_status'] = 'missing-independent-label'
+            metadata.update(source_vocabulary_sha256=metadata['classes_sha256'], classes_sha256=classes_identity(classes),
+                known_labels=sum(row.get('jev_target') is not None for row in rows),
+                unknown_labels=sum(row.get('jev_target') is None for row in rows),
+                missing_independent_labels=missing, masked_visual_unknown_labels=visual_unknown)
+        if train_labels['known_labels'] <= 0:
+            raise ValueError('JEV training requires at least one real dance label after masking visual unknown')
+    counts = {split: {name: sum(row.get('caption_genre') == name for row in rows) for name in caption_classes}
+              for split, rows in (('train', train), ('val', val))} if dance_format is not None else None
     data = dict(data, jev=dict(classes=classes, classes_sha256=classes_identity(classes),
         classes_file_sha256=_file_hash(classes_path), train=train_labels, val=val_labels,
-        task='single-categorical-hard-or-soft-v1', label_inference_from_caption=False))
+        task='single-categorical-hard-v2' if dance_format is not None else 'single-categorical-hard-or-soft-v1',
+        label_inference_from_caption=False))
+    if dance_format is not None:
+        data.update(caption_classes=caption_classes, caption_classes_sha256=classes_identity(caption_classes),
+                    caption_style_counts=counts, style_count_scope='these-manifests-only-not-full-corpus')
+    if policy is not None:
+        data['genre_supervision'] = policy
     return train, val, data
 
 
 class ConfiguredPlannerAdapter(PlannerAdapter):
     """Keep native audio prefixes and learn the target text exactly as supplied."""
-    def __init__(self, native, contract=None, enable_jev=False):
+    def __init__(self, native, contract=None, enable_jev=False, classes=None):
         super().__init__(native.family, native.model, native.processor, native.max_length)
         self.contract = contract
         self.enable_jev = enable_jev
         self.trainable_info = native.trainable_info
         self._audio_identities = native._audio_identities
+        self.dance_format = contract.get('dance_caption_format') if contract is not None else None
+        self.genre_classes = None
+        self.header_token_ids = None
+        self.token_protocol = None
+        self.dance_caption_protocol = None
+        self.genre_supervision = contract.get('genre_supervision') if contract is not None else None
+        if self.dance_format is not None:
+            from .music_planner_jev import validate_classes, classes_identity
+            self.genre_classes = validate_classes(classes)
+            self.header_token_ids = {}
+            for name in self.genre_classes:
+                header = self.dance_format['genre_header_template'].format(genre=name)
+                ids = self.tokenizer.encode(header, add_special_tokens=False)
+                if (not ids or any(type(token) is not int or token < 0 or token in self.eos_token_ids() for token in ids) or
+                        self.tokenizer.decode(ids, skip_special_tokens=False,
+                            clean_up_tokenization_spaces=False) != header):
+                    raise ValueError('Each genre header must round-trip exactly without native EOS')
+                self.header_token_ids[name] = list(ids)
+            self.token_protocol = TOKEN_PROTOCOL
+            self.dance_caption_protocol = dict(schema='music-planner-conditioned-caption-v1',
+                family=self.family, classes=self.genre_classes, classes_sha256=classes_identity(self.genre_classes),
+                dance_format=self.dance_format, header_token_ids=self.header_token_ids, token_protocol=TOKEN_PROTOCOL)
+            if self.genre_supervision is not None:
+                self.dance_caption_protocol['genre_supervision'] = self.genre_supervision
 
     def _prompt(self):
         if self.contract is None or self.family == 'omni_captioner':
@@ -220,20 +315,63 @@ class ConfiguredPlannerAdapter(PlannerAdapter):
         return np.zeros_like(audio) if silence else audio
 
     def collate(self, rows):
-        batch = super().collate(rows)
+        if self.dance_format is None:
+            batch = super().collate(rows)
+        else:
+            from .music_planner_caption_format import parse_caption, encode_target
+            if len(rows) != 1:
+                raise ValueError('Native audio feature packing supports microbatch=1 only')
+            row = rows[0]
+            parsed = parse_caption(row['target_text'], self.genre_classes, self.dance_format,
+                row['audio_duration_seconds'], target_windows=row.get('target_windows'))
+            target = torch.tensor([encode_target(self.tokenizer, parsed, self.eos_token_ids())], dtype=torch.long)
+            batch = self.prefix(row)
+            prefix = batch['input_ids']
+            if prefix.shape[1] + target.shape[1] > self.max_length:
+                raise ValueError('Full prefix plus segmented caption exceeds max_length; truncation forbidden')
+            batch['input_ids'] = torch.cat((prefix, target), dim=1)
+            batch['attention_mask'] = torch.cat((batch['attention_mask'], torch.ones_like(target)), dim=1)
+            for key in ('audio_input_mask', 'token_type_ids', 'mm_token_type_ids'):
+                if key in batch:
+                    batch[key] = torch.cat((batch[key], torch.zeros_like(target, dtype=batch[key].dtype)), dim=1)
+            batch['labels'] = torch.cat((torch.full_like(prefix, -100), target.clone()), dim=1)
+            if self.genre_supervision is not None and parsed['genre'] == self.genre_supervision['unknown_label']:
+                # Unknown is a visual-annotation abstention, not an audio class.
+                # Keep it as an action context, but do not teach music->unknown.
+                header_end = prefix.shape[1] + len(self.header_token_ids[parsed['genre']])
+                batch['labels'][:, prefix.shape[1]:header_end] = -100
         if self.enable_jev:
             # This is an exclusive native prefix length, never an answer token index.
-            first = batch['labels'].ne(-100).long().argmax(dim=1)
+            first = (torch.full((batch['input_ids'].shape[0],), prefix.shape[1], dtype=torch.long)
+                     if self.dance_format is not None else batch['labels'].ne(-100).long().argmax(dim=1))
             if not bool(first.gt(0).all()):
                 raise ValueError('A nonempty native input prefix is required for JEV')
             batch['jev_prefix_end'] = first
         return batch
+
+    @torch.no_grad()
+    def generate(self, row, max_new_tokens=2048, silence=False, seed=0, selected_genre=None, min_style_confidence=None):
+        if self.dance_format is None:
+            if selected_genre is not None or min_style_confidence is not None:
+                raise ValueError('Selected-genre control requires a trained v2 caption protocol')
+            return super().generate(row, max_new_tokens=max_new_tokens, silence=silence, seed=seed)
+        if silence:
+            raise ValueError('Conditioned v2 inference requires an explicit verified audio source')
+        from .music_planner_moss_generate import generate_conditioned
+        options = dict(max_new_tokens=max_new_tokens, selected_genre=selected_genre)
+        if min_style_confidence is not None:
+            options['min_style_confidence'] = min_style_confidence
+        result = generate_conditioned(self, row, **options)
+        return dict(result, seed=seed)
 
     def save_pretrained(self, path, state_dict=None):
         super().save_pretrained(path, state_dict=state_dict)
         if self.contract is not None:
             (Path(path) / 'caption_contract.json').write_text(
                 json.dumps(self.contract, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        if self.dance_caption_protocol is not None:
+            (Path(path) / 'dance_caption_protocol.json').write_text(
+                json.dumps(self.dance_caption_protocol, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
 def configure_adapter(native, args):
@@ -244,7 +382,23 @@ def configure_adapter(native, args):
         return native
     if native.family not in ('moss', 'omni_captioner'):
         raise ValueError('New planner training protocol supports MOSS and Qwen Captioner only')
-    return ConfiguredPlannerAdapter(native, contract=contract, enable_jev=enable_jev)
+    classes = None
+    if contract is not None and contract.get('dance_caption_format') is not None:
+        from .music_planner_jev import read_classes
+        if not enable_jev:
+            raise ValueError('The v2 caption adapter requires a formal --genre-classes vocabulary')
+        classes = read_classes(args.genre_classes)
+    return ConfiguredPlannerAdapter(native, contract=contract, enable_jev=enable_jev, classes=classes)
+
+
+def assert_adapter_data_identity(adapter, data):
+    """Reject contract/class files changed while a large native model was loading."""
+    expected = data.get('contract')
+    if getattr(adapter, 'contract', None) != expected:
+        raise ValueError('Caption contract changed between dataset validation and adapter initialization')
+    if expected is not None and expected.get('schema') == CONDITIONED_SCHEMA:
+        if getattr(adapter, 'genre_classes', None) != data.get('caption_classes', data.get('jev', {}).get('classes')):
+            raise ValueError('Genre vocabulary/order changed between dataset validation and adapter initialization')
 
 
 def restore_adapter_protocol(native, checkpoint):
@@ -266,16 +420,24 @@ def restore_adapter_protocol(native, checkpoint):
             marker.get('trainable_sha256') != _file_hash(checkpoint / 'trainable.pt')):
         raise ValueError('Training checkpoint/config/family/portable identity differs')
     refs = {}
-    anchor = '/' + checkpoint.name + '/'
-    for ref in marker.get('files', []):
-        original = '/' + ref['path'].replace('\\', '/')
-        if anchor not in original:
+    members = marker.get('files', [])
+    portable = [ref for ref in members if isinstance(ref, dict) and isinstance(ref.get('path'), str)
+                and ref['path'].replace('\\', '/').endswith('/trainable.pt')]
+    if len(portable) != 1 or portable[0].get('sha256') != marker['trainable_sha256']:
+        raise ValueError('Checkpoint inventory requires one matching portable state entry')
+    recorded_root = portable[0]['path'].replace('\\', '/')[:-len('/trainable.pt')]
+    for ref in members:
+        original = ref['path'].replace('\\', '/')
+        if not original.startswith(recorded_root + '/'):
             raise ValueError('Checkpoint member is outside the recorded checkpoint directory')
-        relative = original.rsplit(anchor, 1)[1]
-        if '..' in relative.split('/'):
+        relative = original[len(recorded_root) + 1:]
+        if any(part in ('', '.', '..') or ':' in part for part in relative.split('/')):
             raise ValueError('Checkpoint member escapes its directory')
         if relative.startswith(('adapter/', 'jev/')):
-            if relative in refs or _file_hash(checkpoint / relative) != ref['sha256']:
+            target = (checkpoint / relative).resolve()
+            if checkpoint not in target.parents:
+                raise ValueError('Checkpoint adapter/head symlink escapes its directory')
+            if relative in refs or _file_hash(target) != ref['sha256']:
                 raise ValueError('Checkpoint adapter/head member identity differs')
             refs[relative] = ref
     actual = {p.relative_to(checkpoint).as_posix() for folder in ('adapter', 'jev')
@@ -291,8 +453,15 @@ def restore_adapter_protocol(native, checkpoint):
     enabled = config.get('jev') is not None
     if enabled != (checkpoint / 'jev').is_dir():
         raise ValueError('Checkpoint JEV head is missing or unexpected')
-    adapter = (ConfiguredPlannerAdapter(native, contract=contract, enable_jev=enabled)
+    classes = config.get('data', {}).get('caption_classes', config.get('data', {}).get('jev', {}).get('classes'))
+    adapter = (ConfiguredPlannerAdapter(native, contract=contract, enable_jev=enabled, classes=classes)
                if contract is not None or enabled else native)
+    protocol_path = checkpoint / 'adapter' / 'dance_caption_protocol.json'
+    if getattr(adapter, 'dance_caption_protocol', None) is not None:
+        if (not protocol_path.is_file() or json.loads(protocol_path.read_text(encoding='utf-8')) != adapter.dance_caption_protocol):
+            raise ValueError('Exported dance caption token/class protocol differs from the restored model')
+    elif protocol_path.exists():
+        raise ValueError('Unexpected dance caption protocol for a historical checkpoint')
     adapter.max_length = config['max_length']
     if enabled:
         from .music_planner_jev import load_jev
@@ -300,5 +469,7 @@ def restore_adapter_protocol(native, checkpoint):
             run_fingerprint=marker['fingerprint'], trainable_sha256=marker['trainable_sha256'],
             installation=config['jev']))
     adapter.training_protocol_identity = dict(fingerprint=marker['fingerprint'],
+        checkpoint_path=str(checkpoint), marker_sha256=_file_hash(checkpoint / 'trainer_state.json'),
+        cursor=dict(marker.get('cursor', {})), family=native.family, trainable_sha256=marker['trainable_sha256'],
         native_checkpoint_load_required=True, base_weight_content_verified_by_this_helper=False)
     return adapter

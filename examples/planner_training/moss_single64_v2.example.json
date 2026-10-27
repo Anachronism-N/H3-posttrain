@@ -1,0 +1,28 @@
+{
+  "layout": "single64",
+  "jobs": [
+    {
+      "job_id": "moss-style-timed-v2-smoke",
+      "family": "moss",
+      "hosts": ["REPLACE-node-0", "REPLACE-node-1", "REPLACE-node-2", "REPLACE-node-3", "REPLACE-node-4", "REPLACE-node-5", "REPLACE-node-6", "REPLACE-node-7"],
+      "repo_root": "/workspace/H3-posttrain",
+      "python": "/workspace/planner-env/bin/python",
+      "model": "/models/MOSS-Music-8B-Instruct",
+      "train": "/shared/data/planner/train.jsonl",
+      "val": "/shared/data/planner/val.jsonl",
+      "out": "/shared/runs/moss-style-timed-v2-smoke",
+      "master_port": 29633,
+      "phase": "smoke",
+      "max_updates": 2,
+      "caption_contract": "/shared/data/planner/caption_contract_v2.json",
+      "genre_classes": "/shared/data/planner/classes.json",
+      "train_genre_labels": "/shared/data/planner/train-genres.jsonl",
+      "val_genre_labels": "/shared/data/planner/val-genres.jsonl",
+      "genre_weight": 0.1,
+      "genre_lr": 0.0001,
+      "genre_head_dim": 256,
+      "loss_chunk_size": 64,
+      "audio_last_n": 4
+    }
+  ]
+}

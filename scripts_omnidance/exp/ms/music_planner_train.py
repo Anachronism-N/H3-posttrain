@@ -461,6 +461,80 @@ def save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, rank=
     return path
 
 
+def checkpoint_member_refs(path, metadata, world=1, zero3=False):
+    """Verify the files actually consumed, including after a checkpoint is copied.
+
+    Historical markers use absolute writer paths. Derive their common root from
+    the unique portable state entry, then bind every member to this checkpoint.
+    Never read the old writer location to validate a relocated checkpoint.
+    """
+    path = Path(path).resolve()
+    entries = metadata.get('files')
+    if not isinstance(entries, list) or not entries:
+        raise ValueError('Checkpoint file manifest is missing')
+    portable = [entry for entry in entries if isinstance(entry, dict) and
+                isinstance(entry.get('path'), str) and
+                entry['path'].replace('\\', '/').endswith('/trainable.pt')]
+    if len(portable) != 1 or portable[0].get('sha256') != metadata.get('trainable_sha256'):
+        raise ValueError('Checkpoint manifest needs one matching portable state entry')
+    recorded_root = portable[0]['path'].replace('\\', '/')[:-len('/trainable.pt')]
+    refs = {}
+    for entry in entries:
+        if not isinstance(entry, dict) or not isinstance(entry.get('path'), str):
+            raise ValueError('Invalid checkpoint file reference')
+        original = entry['path'].replace('\\', '/')
+        if not original.startswith(recorded_root + '/'):
+            raise ValueError('Checkpoint member is outside its recorded root')
+        relative = original[len(recorded_root) + 1:]
+        parts = relative.split('/')
+        if any(part in ('', '.', '..') or ':' in part for part in parts):
+            raise ValueError('Checkpoint member escapes its directory')
+        target = path.joinpath(*parts).resolve()
+        try:
+            target.relative_to(path)
+        except ValueError as error:
+            raise ValueError('Checkpoint member symlink escapes its directory') from error
+        if relative in refs:
+            raise ValueError('Duplicate checkpoint file reference: ' + relative)
+        expected = entry.get('sha256')
+        if (not isinstance(expected, str) or len(expected) != 64 or
+                any(ch not in '0123456789abcdef' for ch in expected)):
+            raise ValueError('Invalid checkpoint member SHA256')
+        if not target.is_file() or file_sha(target) != expected:
+            raise ValueError('Checkpoint file bytes changed: ' + relative)
+        refs[relative] = dict(entry, consumed_path=str(target))
+    required = {'trainable.pt', 'scheduler.pt'}
+    for rank in range(world):
+        required.update({f'rng-rank{rank}.pt', f'writer-rank{rank}.json'})
+        if not zero3:
+            required.add(f'optimizer-rank{rank}.pt')
+    if not required.issubset(refs):
+        raise ValueError('Checkpoint manifest omits a consumed trainer/optimizer/RNG file')
+    if zero3 and not any(name.startswith('distributed/') for name in refs):
+        raise ValueError('Checkpoint manifest omits distributed optimizer files')
+    # These diagnostic files are intentionally written after checkpoint commit.
+    late = {'trainer_state.json', 'validation.json', 'val_generation_request.json'}
+    actual = {member.relative_to(path).as_posix() for member in path.rglob('*') if member.is_file()}
+    if actual - set(refs) - late:
+        raise ValueError('Checkpoint contains unrecorded files')
+    return refs
+
+
+def verify_checkpoint_members(path, metadata, rank=0, world=1, zero3=False):
+    error = None
+    if rank == 0:
+        try:
+            checkpoint_member_refs(path, metadata, world, zero3)
+        except Exception as failure:
+            error = type(failure).__name__ + ': ' + str(failure)
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        result = [error]
+        torch.distributed.broadcast_object_list(result, src=0)
+        error = result[0]
+    if error is not None:
+        raise ValueError('Checkpoint member verification failed: ' + error)
+
+
 def load_checkpoint(path, model, optimizer, scheduler, fingerprint, rank=0, world=1,
                     zero3=False, barrier=lambda: None):
     path = Path(path)
@@ -472,10 +546,7 @@ def load_checkpoint(path, model, optimizer, scheduler, fingerprint, rank=0, worl
         raise ValueError('Strict checkpoint identity/config/world/trainable signature mismatch')
     if file_sha(path / 'trainable.pt') != metadata['trainable_sha256']:
         raise ValueError('Checkpoint trainable bytes changed')
-    if rank == 0:
-        for ref in metadata.get('files', []):
-            if file_sha(ref['path']) != ref['sha256']:
-                raise ValueError(f'Checkpoint file bytes changed: {ref["path"]}')
+    verify_checkpoint_members(path, metadata, rank, world, zero3)
     barrier()
     writer = json.loads((path / f'writer-rank{rank}.json').read_text(encoding='utf-8'))
     if zero3 and writer['nonce'] == PROCESS_IDENTITY['nonce']:
@@ -767,6 +838,7 @@ def train(args):
         adapter = loader(family=args.family, model_path=args.model, lora_rank=args.rank,
                          lora_alpha=args.alpha, max_length=args.max_length, audio_last_n=args.audio_last_n)
         adapter = schema.configure_adapter(adapter, args)
+        schema.assert_adapter_data_identity(adapter, data)
         if args.genre_classes is not None:
             classes = data['jev']['classes']
             adapter.jev_metadata = planner_module('music_planner_jev').install_jev(
@@ -788,6 +860,8 @@ def train(args):
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer,
         lambda step: lr_multiplier(step, total_updates, warmup_updates, args.lr_schedule))
     source_names = ['music_planner_train', 'music_planner_token_loss', 'music_planner_schema']
+    if data.get('contract', {}).get('schema') == 'music-planner-caption-contract-v2':
+        source_names.append('music_planner_caption_format')
     if cluster is not None:
         source_names.append('music_planner_cluster')
     if args.genre_classes is not None:

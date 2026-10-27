@@ -1,5 +1,7 @@
 # MOSS / Qwen Captioner 多机训练与 JEV 舞种辅助分支
 
+本文件记录 `416bab8` 时的 v1 协议。2026-10-28 已新增 MOSS 的「离散舞种＋时间戳动作」v2协议、受舞种控制的生成入口及恢复校验修复；当前使用请先阅读[后续复核与运行说明](MOSS_STYLE_TIMED_REVIEW_20261028.md)。下文关于JEV并行输出、尚未控制文本生成的描述适用于历史v1。
+
 日期：2026-10-27。上游基线：`7ed6373a0de6cb343967bec194e9ac31454e237d`；开发分支：`codex/planner-moss-captioner-64gpu`。
 
 ## 目标与交付边界

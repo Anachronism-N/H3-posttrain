@@ -53,7 +53,7 @@ APIS = ('native_captioner', 'processor', 'accelerator', 'zero3_plugin', 'zero_in
 CORE = ('music_planner_train.py', 'music_planner_adapters.py',
         'music_planner_cluster.py', 'music_planner_jev.py',
         'music_planner_segment_loss.py', 'music_planner_schema.py',
-        'music_planner_token_loss.py')
+        'music_planner_token_loss.py', 'music_planner_caption_format.py')
 REQUIRED_JOB = {'family', 'hosts', 'model', 'train', 'val', 'out', 'master_port', 'job_id'}
 OPTIONAL_JOB = {'master_addr', 'python', 'repo_root', 'phase', 'max_updates', 'resume',
                 'epochs', 'seed', 'rank', 'alpha', 'lora_lr', 'projector_lr',

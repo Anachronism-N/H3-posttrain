@@ -180,7 +180,7 @@ def cluster_environment(world):
     if len(plan) != 64 or any(c not in '0123456789abcdef' for c in plan):
         raise ValueError('Invalid cluster plan SHA256')
     if (int(os.environ.get('PLANNER_EXPECTED_WORLD_SIZE', '0')) != world or
-            int(os.environ.get('LOCAL_WORLD_SIZE', '0')) != 8 or world not in (32, 64) or
+            int(os.environ.get('LOCAL_WORLD_SIZE', '0')) != 8 or world not in (8, 16, 32, 64) or
             os.environ.get('PLANNER_EXPECTED_HOSTNAME') != socket.gethostname()):
         raise ValueError('Cluster plan world/local-world/host differs from this process')
     inventory = os.environ.get('PLANNER_BASE_MODEL_INVENTORY_SHA256', '')
@@ -272,9 +272,9 @@ def prepare_training_storage(model, loader, zero3):
     return base_dtype
 
 
-def optimizer_groups(model, lora_lr, projector_lr, base_dtype=torch.bfloat16, genre_lr=1e-4):
-    groups = {'lora': [], 'projector': [], 'jev': []}
-    names = {'lora': [], 'projector': [], 'jev': []}
+def optimizer_groups(model, lora_lr, projector_lr, base_dtype=torch.bfloat16, genre_lr=1e-4, fusion_lr=1e-4):
+    groups = {'lora': [], 'projector': [], 'jev': [], 'fusion': []}
+    names = {'lora': [], 'projector': [], 'jev': [], 'fusion': []}
     for name, parameter in model.named_parameters():
         expected_dtype = torch.float32 if parameter.requires_grad else base_dtype
         for attribute in ('ds_tensor', 'ds_secondary_tensor'):
@@ -289,7 +289,8 @@ def optimizer_groups(model, lora_lr, projector_lr, base_dtype=torch.bfloat16, ge
             raise ValueError(f'Trainable parameter must stay FP32: {name}: {parameter.dtype}')
         if any(token in name.lower() for token in ('visual', 'vision_tower', 'talker', 'code2wav', 'lm_head')):
             raise ValueError(f'Forbidden music-only trainable parameter: {name}')
-        kind = 'jev' if 'jev_head' in name.split('.') else 'lora' if 'lora_' in name else 'projector'
+        kind = ('fusion' if 'planner_fusion' in name.split('.') else
+                'jev' if 'jev_head' in name.split('.') else 'lora' if 'lora_' in name else 'projector')
         if kind == 'projector' and not any(token in name for token in ('projector', 'projection', 'connector', '.proj', '.modules_to_save.')):
             raise ValueError(f'Unexpected unfrozen base parameter: {name}')
         groups[kind].append(parameter)
@@ -297,12 +298,14 @@ def optimizer_groups(model, lora_lr, projector_lr, base_dtype=torch.bfloat16, ge
     if not groups['lora']:
         raise ValueError('Adapter has no trainable LoRA parameters')
     result = []
-    for kind, lr in (('lora', lora_lr), ('projector', projector_lr), ('jev', genre_lr)):
+    for kind, lr in (('lora', lora_lr), ('projector', projector_lr), ('jev', genre_lr), ('fusion', fusion_lr)):
         if groups[kind]:
             result.append(dict(params=groups[kind], lr=lr, name=kind))
     if not names['jev']:
         # Preserve the historical group signature for caption-only checkpoints.
         names.pop('jev')
+    if not names['fusion']:
+        names.pop('fusion')
     return result, names
 
 
@@ -444,6 +447,11 @@ def save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, rank=
                     adapter, path / 'jev', identity=dict(run_fingerprint=fingerprint,
                         trainable_sha256=file_sha(path / 'trainable.pt'),
                         installation=getattr(adapter, 'jev_metadata', None)), state_dict=portable)
+            if hasattr(unwrapped, 'planner_fusion'):
+                planner_module('music_planner_encoder_fusion').export_fusion(
+                    adapter, path / 'fusion', identity=dict(run_fingerprint=fingerprint,
+                        trainable_sha256=file_sha(path / 'trainable.pt'),
+                        installation=adapter.fusion_metadata), state_dict=portable)
     if zero3:
         model.save_checkpoint(str(path / 'distributed'), tag='zero3', exclude_frozen_parameters=True)
     else:
@@ -654,7 +662,7 @@ def training_outputs(args, state, data, checkpoint, fingerprint, starting_update
         initialization='official_base_then_matching_checkpoint' if args.resume else 'official_base',
         full_budget_completed=state['epoch'] == args.epochs, test_selection_performed=False, quality_accepted=False,
         process=PROCESS_IDENTITY)
-    if args.genre_classes is not None:
+    if planner_module('music_planner_schema').jev_enabled(args):
         result['jev'] = dict(genre_weight=args.genre_weight,
             known_label_source_exposures=state.get('genre_labeled_exposures', 0),
             head_backward_exercised=state.get('jev_head_exercised', False),
@@ -796,9 +804,12 @@ def train(args):
     os.environ['HF_HUB_OFFLINE'] = '1'
     os.environ['TRANSFORMERS_OFFLINE'] = '1'
     schema = planner_module('music_planner_schema')
+    enabled_jev = schema.jev_enabled(args)
+    if args.genre_weight > 0 and not enabled_jev:
+        raise ValueError('Positive genre loss requires an enabled JEV head')
     # Keep the historical loader directly callable for existing fair fixtures.
     train_rows, val_rows, data = (schema.read_training_data(args)
-        if args.caption_contract is not None or args.genre_classes is not None or
+        if args.caption_contract is not None or args.genre_classes is not None or getattr(args, 'musicfm_cache', None) is not None or
            args.train_genre_labels is not None or args.val_genre_labels is not None
         else check_data(args.train, args.val))
     if args.check_data_only:
@@ -839,11 +850,14 @@ def train(args):
                          lora_alpha=args.alpha, max_length=args.max_length, audio_last_n=args.audio_last_n)
         adapter = schema.configure_adapter(adapter, args)
         schema.assert_adapter_data_identity(adapter, data)
-        if args.genre_classes is not None:
+        if enabled_jev:
             classes = data['jev']['classes']
             adapter.jev_metadata = planner_module('music_planner_jev').install_jev(
                 adapter, classes, head_dim=args.genre_head_dim)
             adapter.jev_classes = classes
+        if getattr(adapter, 'musicfm_store', None) is not None:
+            adapter.fusion_metadata = planner_module('music_planner_encoder_fusion').install_fusion(
+                adapter, feature_dim=adapter.musicfm_store.feature_dim, hidden_dim=args.fusion_hidden_dim)
     model = adapter.model
     model.config.use_cache = False
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': True})
@@ -852,7 +866,8 @@ def train(args):
     base_dtype = prepare_training_storage(model, loader, bool(plugin))
     moe_leaves = configure_zero3_leaf_modules(model, args.family, bool(plugin))
     groups, group_names = optimizer_groups(model, args.lora_lr, args.projector_lr,
-                                          base_dtype=base_dtype, genre_lr=args.genre_lr)
+                                          base_dtype=base_dtype, genre_lr=args.genre_lr,
+                                          fusion_lr=getattr(args, 'fusion_lr', 1e-4))
     optimizer = torch.optim.AdamW(groups, weight_decay=0.)
     total_updates = math.ceil(len(train_rows) / args.batch) * args.epochs
     warmup_updates = (math.ceil(total_updates * args.warmup_ratio)
@@ -866,6 +881,8 @@ def train(args):
         source_names.append('music_planner_cluster')
     if args.genre_classes is not None:
         source_names.append('music_planner_jev')
+    if getattr(adapter, 'musicfm_store', None) is not None:
+        source_names.extend(('music_planner_musicfm', 'music_planner_encoder_fusion'))
     source_hashes = {name: file_sha(__file__ if name == 'music_planner_train' else planner_module(name).__file__)
                      for name in source_names}
     config = dict(family=args.family, model=identity, data=data, epochs=args.epochs, total_updates=total_updates,
@@ -887,6 +904,12 @@ def train(args):
         lr_schedule=args.lr_schedule, warmup_ratio=args.warmup_ratio, effective_warmup_updates=warmup_updates,
         validation_every_updates=args.eval_every, save_every_updates=args.save_every, cluster=cluster,
         software=software_identity())
+    if getattr(args, 'enable_jev', None) is not None:
+        config['enable_jev'] = enabled_jev
+    if getattr(adapter, 'musicfm_store', None) is not None:
+        config['fusion'] = dict(installation=adapter.fusion_metadata,
+            cache_path=str(Path(args.musicfm_cache).resolve()), cache_identity=adapter.musicfm_store.identity,
+            learning_rate=args.fusion_lr)
     fingerprint = object_sha(config)
     assert_shared_fingerprint(fingerprint)
     if accelerator.is_main_process:
@@ -902,7 +925,7 @@ def train(args):
     model, optimizer = accelerator.prepare(model, optimizer)
     # Scheduler is deliberately not Accelerator-prepared: one scheduler tick per actual optimizer update.
     state = dict(epoch=0, position=0, update=0, source_exposures=0, best_val_nll=None)
-    if args.genre_classes is not None:
+    if enabled_jev:
         state.update(genre_labeled_exposures=0, jev_head_exercised=False)
     checkpoint_args = dict(rank=rank, world=world, zero3=bool(plugin), barrier=accelerator.wait_for_everyone)
     if args.resume:
@@ -1007,7 +1030,7 @@ def train(args):
                 dict(starting_update=starting_update, update=state['update'] + 1,
                 gradient_norms=observed_gradients, nonzero_by_group=dict(zip(categories, nonzero.tolist())),
                 gradient_checkpointing_enabled=True, actual_checkpoint_calls=checkpoint_calls, actual_backward_observed=True))
-        if args.genre_classes is not None:
+        if enabled_jev:
             state['genre_labeled_exposures'] += int(global_genres)
             if args.genre_weight > 0 and global_genres.item() > 0 and not state['jev_head_exercised']:
                 local_nonzero = sum(observed_gradients.get(name, 0.) > 0 for name in group_names['jev'])
@@ -1119,11 +1142,16 @@ def parser():
     result.add_argument('--loss-chunk-size', type=int, default=128, help='Assistant CE rows per recomputed vocabulary chunk; 0 disables chunk recompute')
     result.add_argument('--caption-contract', type=Path, help='Explicit versioned full-audio/text schema; absent keeps historical fixed2s data')
     result.add_argument('--genre-classes', type=Path, help='Explicit JSON class list; never inferred from captions')
+    result.add_argument('--enable-jev', action=argparse.BooleanOptionalAction, default=None,
+                        help='Explicit auxiliary-head switch; --no-enable-jev keeps the formal vocabulary for caption-only SFT')
     result.add_argument('--train-genre-labels', type=Path)
     result.add_argument('--val-genre-labels', type=Path)
     result.add_argument('--genre-weight', type=float, default=0., help='Independent global labeled-source genre CE coefficient')
     result.add_argument('--genre-lr', type=float, default=1e-4)
     result.add_argument('--genre-head-dim', type=int, default=256)
+    result.add_argument('--musicfm-cache', type=Path, help='Frozen MusicFM dense feature index.json; absent keeps the native encoder experiment')
+    result.add_argument('--fusion-hidden-dim', type=int, default=256)
+    result.add_argument('--fusion-lr', type=float, default=1e-4)
     result.add_argument('--lr-schedule', choices=('constant', 'cosine'), default='constant')
     result.add_argument('--warmup-ratio', type=float, help='Override warmup-updates with ceil(total updates * ratio)')
     result.add_argument('--backend', choices=('deepspeed', 'ddp'), default='deepspeed')
@@ -1144,16 +1172,20 @@ def main():
         raise ValueError('Positive epochs/batch/micro/accum/rank/alpha/context required')
     if args.max_updates < 0 or args.save_every < 0 or args.eval_every < 0:
         raise ValueError('Update limits/intervals must not be negative')
-    if min(args.audio_last_n, args.genre_head_dim) < 1 or args.loss_chunk_size < 0:
+    if min(args.audio_last_n, args.genre_head_dim, args.fusion_hidden_dim) < 1 or args.loss_chunk_size < 0:
         raise ValueError('Positive audio scope/head size and nonnegative loss chunk size required')
     if (any(not math.isfinite(value) or value <= 0 for value in
-            (args.lora_lr, args.projector_lr, args.genre_lr, args.grad_clip)) or
+            (args.lora_lr, args.projector_lr, args.genre_lr, args.fusion_lr, args.grad_clip)) or
             not math.isfinite(args.genre_weight) or args.genre_weight < 0 or args.warmup_updates < 0):
         raise ValueError('Finite positive learning rates/clip and nonnegative genre weight/warmup required')
     if args.warmup_ratio is not None and (not math.isfinite(args.warmup_ratio) or not 0 <= args.warmup_ratio < 1):
         raise ValueError('warmup-ratio must be finite in [0,1)')
     if args.genre_weight and args.genre_classes is None:
         raise ValueError('Positive genre loss requires the user-supplied --genre-classes')
+    if args.enable_jev is True and args.genre_classes is None:
+        raise ValueError('Enabled JEV requires a formal vocabulary')
+    if args.musicfm_cache is not None and args.family != 'moss':
+        raise ValueError('MusicFM encoder fusion supports MOSS only')
     train(args)
 
 

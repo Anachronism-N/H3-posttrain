@@ -1,10 +1,14 @@
 """Produce and audit fixed-size multi-node planner jobs; never dispatch training.
 
-JSON spec: {"layout":"split32"|"single64", "jobs":[{"family":"moss"|
+JSON spec: {"layout":"flexible"|"split32"|"single64", "jobs":[{"family":"moss"|
 "omni_captioner", "hosts":[canonical host names], "model":"...", "train":"...",
 "val":"...", "out":"...", "master_port":29551, "job_id":"unique-id", ...}]}.
 split32 requires two disjoint four-host jobs, one per family; single64 one eight-host
-job. Each host has eight A800 80GB GPUs, verified only by a real preflight. The
+job. flexible accepts up to eight disjoint jobs using one, two, four or eight
+hosts per job, with at most eight hosts in total. Each host has eight A800 80GB
+GPUs, verified only by a real preflight. Set accum to hold global batch constant
+across topologies (eight ranks * accum=4, sixteen ranks * accum=2 give batch32).
+The
 default micro=accum=1 preserves the old global batch 32 on 32 ranks; 64 ranks use
 global batch 64 and consequently a different update budget. No elastic resizing.
 
@@ -53,7 +57,8 @@ APIS = ('native_captioner', 'processor', 'accelerator', 'zero3_plugin', 'zero_in
 CORE = ('music_planner_train.py', 'music_planner_adapters.py',
         'music_planner_cluster.py', 'music_planner_jev.py',
         'music_planner_segment_loss.py', 'music_planner_schema.py',
-        'music_planner_token_loss.py', 'music_planner_caption_format.py')
+        'music_planner_token_loss.py', 'music_planner_caption_format.py',
+        'music_planner_musicfm.py', 'music_planner_encoder_fusion.py')
 REQUIRED_JOB = {'family', 'hosts', 'model', 'train', 'val', 'out', 'master_port', 'job_id'}
 OPTIONAL_JOB = {'master_addr', 'python', 'repo_root', 'phase', 'max_updates', 'resume',
                 'epochs', 'seed', 'rank', 'alpha', 'lora_lr', 'projector_lr',
@@ -61,14 +66,17 @@ OPTIONAL_JOB = {'master_addr', 'python', 'repo_root', 'phase', 'max_updates', 'r
                 'audio_last_n', 'loss_chunk_size', 'caption_contract', 'genre_classes',
                 'train_genre_labels', 'val_genre_labels', 'genre_weight', 'genre_lr',
                 'genre_head_dim', 'lr_schedule', 'warmup_ratio',
-                'weights_manifest', 'deepspeed', 'expected_versions'}
+                'weights_manifest', 'deepspeed', 'expected_versions', 'accum',
+                'enable_jev', 'musicfm_cache', 'fusion_lr', 'fusion_hidden_dim'}
 FILE_FLAGS = {'caption_contract': '--caption-contract', 'genre_classes': '--genre-classes',
               'train_genre_labels': '--train-genre-labels', 'val_genre_labels': '--val-genre-labels',
-              'weights_manifest': '--weights-manifest', 'deepspeed': '--deepspeed'}
+              'weights_manifest': '--weights-manifest', 'deepspeed': '--deepspeed',
+              'musicfm_cache': '--musicfm-cache'}
 VALUE_FLAGS = {key: '--' + key.replace('_', '-') for key in
                ('epochs', 'seed', 'rank', 'alpha', 'lora_lr', 'projector_lr', 'grad_clip',
                 'warmup_updates', 'max_length', 'save_every', 'eval_every', 'audio_last_n',
-                'loss_chunk_size', 'genre_weight', 'genre_lr', 'genre_head_dim', 'lr_schedule', 'warmup_ratio')}
+                'loss_chunk_size', 'genre_weight', 'genre_lr', 'genre_head_dim', 'lr_schedule', 'warmup_ratio',
+                'fusion_lr', 'fusion_hidden_dim')}
 
 
 def digest(value):
@@ -231,13 +239,20 @@ def _job(spec, nodes, default_repo):
             raise ValueError('Resume smoke max_updates must exceed the actual completed checkpoint update')
     files = {key: file_ref(value) for key, value in spec.items() if key in FILE_FLAGS and value is not None}
     values = {key: value for key, value in spec.items() if key in VALUE_FLAGS}
-    for key in ('epochs', 'rank', 'alpha', 'max_length', 'audio_last_n', 'genre_head_dim'):
+    if 'musicfm_cache' in files:
+        if family != 'moss':
+            raise ValueError('MusicFM encoder fusion is currently supported only for MOSS')
+        for name in ('music_planner_musicfm.py', 'music_planner_encoder_fusion.py'):
+            absolute(str(script_dir / name))
+    elif any(key in values for key in ('fusion_lr', 'fusion_hidden_dim')):
+        raise ValueError('Fusion training values require musicfm_cache')
+    for key in ('epochs', 'rank', 'alpha', 'max_length', 'audio_last_n', 'genre_head_dim', 'fusion_hidden_dim'):
         if key in values:
             _positive_int(values[key], key)
     for key in ('seed', 'warmup_updates', 'save_every', 'eval_every', 'loss_chunk_size'):
         if key in values:
             _positive_int(values[key], key, allow_zero=True)
-    for key in ('lora_lr', 'projector_lr', 'grad_clip', 'genre_lr', 'genre_weight'):
+    for key in ('lora_lr', 'projector_lr', 'grad_clip', 'genre_lr', 'genre_weight', 'fusion_lr'):
         if key in values and (type(values[key]) not in (int, float) or
                               not math.isfinite(values[key]) or values[key] < 0 or
                               (key != 'genre_weight' and values[key] == 0)):
@@ -248,18 +263,27 @@ def _job(spec, nodes, default_repo):
                                     not math.isfinite(values['warmup_ratio']) or
                                     not 0 <= values['warmup_ratio'] < 1):
         raise ValueError('warmup_ratio must be finite and in [0, 1)')
-    genre = values.get('genre_weight', 0) > 0
+    accum = _positive_int(spec.get('accum', 1), 'accum')
+    if 'enable_jev' in spec and type(spec['enable_jev']) is not bool:
+        raise ValueError('enable_jev must be a boolean when supplied')
+    genre = spec.get('enable_jev', values.get('genre_weight', 0) > 0)
+    if genre and values.get('genre_weight', 0) <= 0:
+        raise ValueError('JEV requires positive genre_weight')
     if genre and not {'genre_classes', 'train_genre_labels', 'val_genre_labels'}.issubset(files):
         raise ValueError('JEV requires actual classes plus train and val genre label files')
-    if not genre and any(key in files for key in ('genre_classes', 'train_genre_labels', 'val_genre_labels')):
+    if not genre and any(key in files for key in ('train_genre_labels', 'val_genre_labels')):
+        raise ValueError('Genre label files supplied with JEV disabled')
+    if not genre and 'genre_classes' in files and spec.get('enable_jev') is not False:
         raise ValueError('Genre files supplied but genre_weight is zero; choose the protocol explicitly')
+    if not genre and spec.get('enable_jev') is False and values.get('genre_weight', 0) > 0:
+        raise ValueError('Disabled JEV requires genre_weight zero')
     versions = spec.get('expected_versions', {})
     if not isinstance(versions, dict) or any(key not in DEPENDENCIES or not isinstance(value, str) or
                                            not value for key, value in versions.items()):
         raise ValueError('expected_versions must map known package names to exact version strings')
     job = dict(family=family, job_id=spec['job_id'], hosts=hosts, master_addr=master,
                master_port=port, nodes=nodes, gpus_per_node=8, world_size=nodes * 8,
-               micro=1, accum=1, global_batch=nodes * 8, phase=phase, max_updates=maximum,
+               micro=1, accum=accum, global_batch=nodes * 8 * accum, phase=phase, max_updates=maximum,
                resume=str(resume) if resume else None, python=str(python), repo_root=str(repo),
                trainer=str(script_dir / 'music_planner_train.py'), code=code,
                resume_marker=file_ref(resume / 'trainer_state.json') if resume else None,
@@ -268,6 +292,13 @@ def _job(spec, nodes, default_repo):
                files=files, values=values, expected_versions=versions, genre_enabled=genre,
                genre_vocabulary=classes_identity(files['genre_classes']['path']) if genre else None,
                checkpoint_world_size_changes_supported=False)
+    if 'enable_jev' in spec:
+        job['enable_jev'] = spec['enable_jev']
+        if 'genre_classes' in files:
+            job['genre_vocabulary'] = classes_identity(files['genre_classes']['path'])
+    if 'musicfm_cache' in files:
+        from .music_planner_musicfm import FeatureStore
+        job['musicfm_identity'] = FeatureStore(files['musicfm_cache']['path']).identity
     job['train_argv'] = train_argv(job)
     return job
 
@@ -275,11 +306,14 @@ def _job(spec, nodes, default_repo):
 def train_argv(job):
     result = [job['trainer'], '--family', job['family'], '--model', job['model']['path'],
               '--train', job['train']['path'], '--val', job['val']['path'], '--out', job['out'],
-              '--backend', 'deepspeed', '--micro', '1', '--accum', '1', '--batch', str(job['global_batch'])]
+              '--backend', 'deepspeed', '--micro', '1', '--accum', str(job['accum']),
+              '--batch', str(job['global_batch'])]
     for key in sorted(job['values']):
         result.extend((VALUE_FLAGS[key], str(job['values'][key])))
     for key in sorted(job['files']):
         result.extend((FILE_FLAGS[key], job['files'][key]['path']))
+    if 'enable_jev' in job:
+        result.append('--enable-jev' if job['enable_jev'] else '--no-enable-jev')
     if job['max_updates']:
         result.extend(('--max-updates', str(job['max_updates'])))
     if job['resume']:
@@ -291,12 +325,26 @@ def build_plan(spec, repo_root=None):
     if not isinstance(spec, dict) or set(spec) != {'layout', 'jobs'}:
         raise ValueError('Spec requires exactly layout and jobs')
     layout = spec['layout']
-    if layout not in ('split32', 'single64') or not isinstance(spec['jobs'], list):
+    if layout not in ('flexible', 'split32', 'single64') or not isinstance(spec['jobs'], list):
         raise ValueError('Unknown cluster layout')
-    if len(spec['jobs']) != (2 if layout == 'split32' else 1):
+    if layout == 'flexible' and not 1 <= len(spec['jobs']) <= 8:
+        raise ValueError('flexible requires one to eight jobs')
+    if layout != 'flexible' and len(spec['jobs']) != (2 if layout == 'split32' else 1):
         raise ValueError('split32 requires two jobs; single64 requires one')
     repo_root = repo_root or Path(__file__).resolve().parents[3]
-    jobs = [_job(item, 4 if layout == 'split32' else 8, repo_root) for item in spec['jobs']]
+    jobs = []
+    for item in spec['jobs']:
+        if layout == 'flexible':
+            if not isinstance(item, dict) or not isinstance(item.get('hosts'), list):
+                raise ValueError('flexible jobs require a hosts list')
+            nodes = len(item['hosts'])
+            if nodes not in (1, 2, 4, 8):
+                raise ValueError('flexible job hosts must contain one, two, four or eight nodes')
+        else:
+            nodes = 4 if layout == 'split32' else 8
+        jobs.append(_job(item, nodes, repo_root))
+    if layout == 'flexible' and sum(job['nodes'] for job in jobs) > 8:
+        raise ValueError('flexible layout permits at most eight nodes in total')
     if layout == 'split32' and {job['family'] for job in jobs} != set(FAMILIES):
         raise ValueError('split32 must contain exactly MOSS and Captioner')
     hosts = [host.lower() for job in jobs for host in job['hosts']]
@@ -355,7 +403,7 @@ def command_plan(plan):
     return commands
 
 
-def verify_files(job):
+def verify_files(job, verify_cache_bytes=False):
     if not job['resume'] and Path(job['out']).exists():
         raise ValueError('New training out now exists; create an explicit resume phase plan')
     refs = job['code'] + [job['train'], job['val']] + list(job['files'].values())
@@ -368,6 +416,25 @@ def verify_files(job):
         raise ValueError('Local model bytes/inventory differ from the shared plan')
     if not Path(job['python']).is_file():
         raise ValueError('Declared Python executable missing')
+    if 'musicfm_identity' in job:
+        from .music_planner_musicfm import FeatureStore
+        store = FeatureStore(job['files']['musicfm_cache']['path'])
+        if store.identity != job['musicfm_identity']:
+            raise ValueError('MusicFM cache identity differs from the shared plan')
+        if verify_cache_bytes:
+            # Run once in each host preflight, never in each distributed rank.
+            # A large cache can exceed 100GB; command/receipt verification uses
+            # the pinned index identity instead of repeatedly hashing tensors.
+            rows = []
+            for split in ('train', 'val'):
+                with Path(job[split]['path']).open(encoding='utf-8-sig') as stream:
+                    for line in stream:
+                        if line.strip():
+                            row = json.loads(line)
+                            if 'id' not in row:
+                                row['id'] = row.get('source_id')
+                            rows.append(row)
+            store.validate_rows(rows, verify_bytes=True)
 
 
 def runtime_snapshot():
@@ -438,7 +505,7 @@ def preflight(plan, receipts, dry_run=False, hostname=None, runtime=None, data_c
     receipt_path = Path(receipts) / (expected_host + '.json')
     if receipt_path.exists():
         raise ValueError('Preflight receipt exists; choose a fresh receipts directory and preserve prior evidence')
-    verify_files(job)
+    verify_files(job, verify_cache_bytes=True)
     data = (data_checker or native_data_check)(job)
     snapshot = None if dry_run else (runtime or runtime_snapshot)()
     if not dry_run:

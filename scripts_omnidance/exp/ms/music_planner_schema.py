@@ -157,7 +157,7 @@ def read_training_data(args):
     if path is None:
         from .music_planner_train import check_data
         train, val, data = check_data(args.train, args.val)
-        return _join_genre(args, train, val, data)
+        return _join_encoder(args, *_join_genre(args, train, val, data))
     contract = load_contract(path)
     train, train_id = read_contract_split(args.train, 'train', contract)
     val, val_id = read_contract_split(args.val, 'val', contract)
@@ -173,7 +173,30 @@ def read_training_data(args):
         song_near_duplicate_status='declared-groups-disjoint-content-similarity-not-audited',
         semantic_approval=False, human_review_completed=False,
         review_claims_verified_by_program=False, test_used=False)
-    return _join_genre(args, train, val, data)
+    return _join_encoder(args, *_join_genre(args, train, val, data))
+
+
+def jev_enabled(args):
+    """Explicit opt-out separates the caption vocabulary from an auxiliary head.
+
+    None keeps historical invocations unchanged. New encoder-only experiments
+    use --no-enable-jev with the same formal caption vocabulary.
+    """
+    selected = getattr(args, 'enable_jev', None)
+    return getattr(args, 'genre_classes', None) is not None if selected is None else selected
+
+
+def _join_encoder(args, train, val, data):
+    path = getattr(args, 'musicfm_cache', None)
+    if path is None:
+        return train, val, data
+    if getattr(args, 'family', None) != 'moss':
+        raise ValueError('MusicFM fusion is a MOSS-only experiment')
+    from .music_planner_musicfm import FeatureStore
+    store = FeatureStore(path)
+    store.validate_rows(train + val, verify_bytes=False)
+    data = dict(data, musicfm=store.identity)
+    return train, val, data
 
 
 def _join_genre(args, train, val, data):
@@ -189,7 +212,7 @@ def _join_genre(args, train, val, data):
     classes = read_classes(classes_path)
     train, train_labels = join_jev_labels(train, label_paths[0], classes, 'train')
     val, val_labels = join_jev_labels(val, label_paths[1], classes, 'val')
-    if train_labels['known_labels'] <= 0:
+    if jev_enabled(args) and train_labels['known_labels'] <= 0:
         raise ValueError('Enabled JEV branch needs at least one independently labelled training source')
     dance_format = data.get('contract', {}).get('dance_caption_format')
     policy = data.get('contract', {}).get('genre_supervision')
@@ -227,7 +250,7 @@ def _join_genre(args, train, val, data):
                 known_labels=sum(row.get('jev_target') is not None for row in rows),
                 unknown_labels=sum(row.get('jev_target') is None for row in rows),
                 missing_independent_labels=missing, masked_visual_unknown_labels=visual_unknown)
-        if train_labels['known_labels'] <= 0:
+        if jev_enabled(args) and train_labels['known_labels'] <= 0:
             raise ValueError('JEV training requires at least one real dance label after masking visual unknown')
     counts = {split: {name: sum(row.get('caption_genre') == name for row in rows) for name in caption_classes}
               for split, rows in (('train', train), ('val', val))} if dance_format is not None else None
@@ -282,6 +305,17 @@ class ConfiguredPlannerAdapter(PlannerAdapter):
         if self.family != 'moss':
             raise ValueError('Configurable caption contracts support MOSS and Qwen Captioner only')
         return self.processor._build_default_prompt(self.contract['task_instruction'], has_audio=True)
+
+    def prefix(self, row, silence=False):
+        store = getattr(self, 'musicfm_store', None)
+        if store is not None and silence:
+            raise ValueError('Fusion ablations require matching re-extracted audio features; cached original audio cannot accompany silence')
+        batch = super().prefix(row, silence=silence)
+        if store is not None:
+            batch['musicfm_features'] = store.load(row).unsqueeze(0)
+            batch['musicfm_frame_times_seconds'] = store.frame_times(row).unsqueeze(0)
+            batch['musicfm_duration_seconds'] = torch.tensor([row['audio_duration_seconds']], dtype=torch.float32)
+        return batch
 
     def _audio(self, row, silence=False):
         if self.contract is None:
@@ -357,6 +391,9 @@ class ConfiguredPlannerAdapter(PlannerAdapter):
             return super().generate(row, max_new_tokens=max_new_tokens, silence=silence, seed=seed)
         if silence:
             raise ValueError('Conditioned v2 inference requires an explicit verified audio source')
+        if not self.enable_jev and selected_genre is None and min_style_confidence is None:
+            from .music_planner_encoder_generate import generate_free
+            return dict(generate_free(self, row, max_new_tokens=max_new_tokens), seed=seed)
         from .music_planner_moss_generate import generate_conditioned
         options = dict(max_new_tokens=max_new_tokens, selected_genre=selected_genre)
         if min_style_confidence is not None:
@@ -377,18 +414,23 @@ class ConfiguredPlannerAdapter(PlannerAdapter):
 def configure_adapter(native, args):
     contract_path = getattr(args, 'caption_contract', None)
     contract = load_contract(contract_path) if contract_path is not None else None
-    enable_jev = getattr(args, 'genre_classes', None) is not None
-    if contract is None and not enable_jev:
+    enable_jev = jev_enabled(args)
+    if contract is None and not enable_jev and getattr(args, 'musicfm_cache', None) is None:
         return native
     if native.family not in ('moss', 'omni_captioner'):
         raise ValueError('New planner training protocol supports MOSS and Qwen Captioner only')
     classes = None
     if contract is not None and contract.get('dance_caption_format') is not None:
         from .music_planner_jev import read_classes
-        if not enable_jev:
+        if getattr(args, 'genre_classes', None) is None:
             raise ValueError('The v2 caption adapter requires a formal --genre-classes vocabulary')
         classes = read_classes(args.genre_classes)
-    return ConfiguredPlannerAdapter(native, contract=contract, enable_jev=enable_jev, classes=classes)
+    adapter = ConfiguredPlannerAdapter(native, contract=contract, enable_jev=enable_jev, classes=classes)
+    path = getattr(args, 'musicfm_cache', None)
+    if path is not None:
+        from .music_planner_musicfm import FeatureStore
+        adapter.musicfm_store = FeatureStore(path)
+    return adapter
 
 
 def assert_adapter_data_identity(adapter, data):
@@ -399,9 +441,12 @@ def assert_adapter_data_identity(adapter, data):
     if expected is not None and expected.get('schema') == CONDITIONED_SCHEMA:
         if getattr(adapter, 'genre_classes', None) != data.get('caption_classes', data.get('jev', {}).get('classes')):
             raise ValueError('Genre vocabulary/order changed between dataset validation and adapter initialization')
+    store = getattr(adapter, 'musicfm_store', None)
+    if (store.identity if store is not None else None) != data.get('musicfm'):
+        raise ValueError('MusicFM cache changed between dataset validation and adapter initialization')
 
 
-def restore_adapter_protocol(native, checkpoint):
+def restore_adapter_protocol(native, checkpoint, musicfm_cache=None):
     """Restore contract/head AFTER loading this checkpoint's native PEFT adapter.
 
     This verifies checkpoint/portable-artifact bindings, not the caller's base
@@ -433,14 +478,14 @@ def restore_adapter_protocol(native, checkpoint):
         relative = original[len(recorded_root) + 1:]
         if any(part in ('', '.', '..') or ':' in part for part in relative.split('/')):
             raise ValueError('Checkpoint member escapes its directory')
-        if relative.startswith(('adapter/', 'jev/')):
+        if relative.startswith(('adapter/', 'jev/', 'fusion/')):
             target = (checkpoint / relative).resolve()
             if checkpoint not in target.parents:
                 raise ValueError('Checkpoint adapter/head symlink escapes its directory')
             if relative in refs or _file_hash(target) != ref['sha256']:
                 raise ValueError('Checkpoint adapter/head member identity differs')
             refs[relative] = ref
-    actual = {p.relative_to(checkpoint).as_posix() for folder in ('adapter', 'jev')
+    actual = {p.relative_to(checkpoint).as_posix() for folder in ('adapter', 'jev', 'fusion')
               for p in (checkpoint / folder).rglob('*') if p.is_file()}
     if actual != set(refs) or not any(k.startswith('adapter/') for k in refs):
         raise ValueError('Checkpoint adapter/head file membership differs')
@@ -454,8 +499,13 @@ def restore_adapter_protocol(native, checkpoint):
     if enabled != (checkpoint / 'jev').is_dir():
         raise ValueError('Checkpoint JEV head is missing or unexpected')
     classes = config.get('data', {}).get('caption_classes', config.get('data', {}).get('jev', {}).get('classes'))
+    fusion = config.get('fusion')
+    if (fusion is not None) != (checkpoint / 'fusion').is_dir():
+        raise ValueError('Checkpoint encoder fusion is missing or unexpected')
+    if musicfm_cache is not None and fusion is None:
+        raise ValueError('MusicFM cache cannot be added to a checkpoint trained without fusion')
     adapter = (ConfiguredPlannerAdapter(native, contract=contract, enable_jev=enabled, classes=classes)
-               if contract is not None or enabled else native)
+               if contract is not None or enabled or fusion is not None else native)
     protocol_path = checkpoint / 'adapter' / 'dance_caption_protocol.json'
     if getattr(adapter, 'dance_caption_protocol', None) is not None:
         if (not protocol_path.is_file() or json.loads(protocol_path.read_text(encoding='utf-8')) != adapter.dance_caption_protocol):
@@ -468,6 +518,17 @@ def restore_adapter_protocol(native, checkpoint):
         load_jev(adapter, checkpoint / 'jev', expected_identity=dict(
             run_fingerprint=marker['fingerprint'], trainable_sha256=marker['trainable_sha256'],
             installation=config['jev']))
+    if fusion is not None:
+        from .music_planner_musicfm import FeatureStore
+        from .music_planner_encoder_fusion import load_fusion
+        store = FeatureStore(musicfm_cache if musicfm_cache is not None else fusion['cache_path'])
+        if store.identity['extractor_identity'] != fusion['cache_identity']['extractor_identity']:
+            raise ValueError('Inference MusicFM extractor differs from the trained feature protocol')
+        adapter.musicfm_store = store
+        load_fusion(adapter, checkpoint / 'fusion', expected_identity=dict(
+            run_fingerprint=marker['fingerprint'], trainable_sha256=marker['trainable_sha256'],
+            installation=fusion['installation']))
+        adapter.fusion_metadata = fusion['installation']
     adapter.training_protocol_identity = dict(fingerprint=marker['fingerprint'],
         checkpoint_path=str(checkpoint), marker_sha256=_file_hash(checkpoint / 'trainer_state.json'),
         cursor=dict(marker.get('cursor', {})), family=native.family, trainable_sha256=marker['trainable_sha256'],

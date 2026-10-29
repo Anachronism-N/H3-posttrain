@@ -1,0 +1,40 @@
+{
+  "layout": "flexible",
+  "jobs": [
+    {
+      "job_id": "moss-musicfm-fusion-smoke",
+      "family": "moss",
+      "hosts": ["REPLACE-node-6"],
+      "repo_root": "/workspace/H3-posttrain",
+      "python": "/workspace/planner-env/bin/python",
+      "model": "/models/MOSS-Music-8B-Instruct",
+      "train": "/shared/data/planner/train.jsonl",
+      "val": "/shared/data/planner/val.jsonl",
+      "out": "/shared/runs/moss-musicfm-fusion-smoke",
+      "master_port": 29646,
+      "phase": "smoke",
+      "max_updates": 2,
+      "epochs": 2,
+      "seed": 42,
+      "accum": 4,
+      "rank": 32,
+      "alpha": 64,
+      "lora_lr": 0.00001,
+      "projector_lr": 0.00005,
+      "lr_schedule": "constant",
+      "warmup_updates": 10,
+      "max_length": 8192,
+      "save_every": 100,
+      "eval_every": 100,
+      "caption_contract": "/shared/data/planner/caption_contract_v2.json",
+      "genre_classes": "/shared/data/planner/classes.json",
+      "enable_jev": false,
+      "genre_weight": 0.0,
+      "loss_chunk_size": 64,
+      "audio_last_n": 4,
+      "musicfm_cache": "/shared/musicfm-cache/index.json",
+      "fusion_lr": 0.0001,
+      "fusion_hidden_dim": 256
+    }
+  ]
+}

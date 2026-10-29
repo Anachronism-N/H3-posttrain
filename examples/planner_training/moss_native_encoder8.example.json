@@ -1,0 +1,37 @@
+{
+  "layout": "flexible",
+  "jobs": [
+    {
+      "job_id": "moss-native-encoder8-smoke",
+      "family": "moss",
+      "hosts": ["REPLACE-node-5"],
+      "repo_root": "/workspace/H3-posttrain",
+      "python": "/workspace/planner-env/bin/python",
+      "model": "/models/MOSS-Music-8B-Instruct",
+      "train": "/shared/data/planner/train.jsonl",
+      "val": "/shared/data/planner/val.jsonl",
+      "out": "/shared/runs/moss-native-encoder8-smoke",
+      "master_port": 29645,
+      "phase": "smoke",
+      "max_updates": 2,
+      "epochs": 2,
+      "seed": 42,
+      "accum": 4,
+      "rank": 32,
+      "alpha": 64,
+      "lora_lr": 0.00001,
+      "projector_lr": 0.00005,
+      "lr_schedule": "constant",
+      "warmup_updates": 10,
+      "max_length": 8192,
+      "save_every": 100,
+      "eval_every": 100,
+      "caption_contract": "/shared/data/planner/caption_contract_v2.json",
+      "genre_classes": "/shared/data/planner/classes.json",
+      "enable_jev": false,
+      "genre_weight": 0.0,
+      "loss_chunk_size": 64,
+      "audio_last_n": 8
+    }
+  ]
+}

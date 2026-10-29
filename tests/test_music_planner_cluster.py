@@ -1,8 +1,10 @@
 import json
+import copy
 import os
 from pathlib import Path
 import shlex
 import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -93,6 +95,205 @@ def test_single64_requires_eight_hosts_and_batch64(spec):
     spec['jobs'][0]['hosts'].pop()
     with pytest.raises(ValueError, match='hosts'):
         cluster.build_plan(spec)
+
+
+@pytest.mark.parametrize('nodes,accum,batch', [(1, 4, 32), (2, 2, 32), (4, 1, 32), (8, 1, 64)])
+def test_flexible_node_counts_and_accumulation(spec, nodes, accum, batch):
+    spec['layout'] = 'flexible'
+    spec['jobs'] = spec['jobs'][:1]
+    spec['jobs'][0].update(hosts=['node%d' % index for index in range(nodes)], accum=accum)
+    plan = cluster.build_plan(spec)
+    job = plan['jobs'][0]
+    assert (job['nodes'], job['world_size'], job['accum'], job['global_batch']) == (nodes, nodes * 8, accum, batch)
+    commands = cluster.command_plan(plan)
+    assert len(commands) == nodes
+    for rank, command in enumerate(commands):
+        argv = command['argv']
+        assert argv[argv.index('--nnodes') + 1] == str(nodes)
+        assert argv[argv.index('--batch') + 1] == str(batch)
+        assert argv[argv.index('--accum') + 1] == str(accum)
+        assert command['expected_ranks'] == list(range(rank * 8, rank * 8 + 8))
+
+
+def test_flexible_eight_independent_single_node_experiments(spec):
+    template = spec['jobs'][0]
+    spec['layout'] = 'flexible'
+    spec['jobs'] = []
+    for index in range(8):
+        job = copy.deepcopy(template)
+        job.update(hosts=['node%d' % index], master_port=29551 + index,
+                   job_id='experiment-%d' % index, out=template['out'] + '-%d' % index, accum=4)
+        spec['jobs'].append(job)
+    plan = cluster.build_plan(spec)
+    assert len(plan['jobs']) == 8
+    assert len(cluster.command_plan(plan)) == 8
+    assert {job['global_batch'] for job in plan['jobs']} == {32}
+
+
+def test_flexible_mixed_single_and_dual_node_preflight(spec, tmp_path):
+    spec['layout'] = 'flexible'
+    spec['jobs'][0].update(hosts=['node0'], accum=4)
+    spec['jobs'][1].update(hosts=['node1', 'node2'], accum=2)
+    plan = cluster.build_plan(spec)
+    receipts = tmp_path / 'mixed-receipts'
+    all_receipts(plan, receipts)
+    admission = cluster.verify_receipts(plan, receipts)
+    assert admission['hosts_checked'] == 3
+    assert admission['local_preflight_passed']
+    assert [job['world_size'] for job in plan['jobs']] == [8, 16]
+    assert [job['global_batch'] for job in plan['jobs']] == [32, 32]
+
+
+def test_flexible_resume_requires_original_world_size_even_at_same_batch(spec):
+    spec.update(layout='flexible', jobs=spec['jobs'][:1])
+    target = spec['jobs'][0]
+    target.update(hosts=['node0'], accum=4)
+    initial = cluster.build_plan(spec)
+    checkpoint = Path(target['out']) / 'checkpoint-0000002'
+    dump(checkpoint / 'trainer_state.json', {'complete': True, 'world_size': 8, 'cursor': {'update': 2}})
+    dump(Path(target['out']) / 'run_config.json', {'fixture': True})
+    target.update(resume=str(checkpoint), max_updates=3, job_id='resumed-single-node')
+    resumed = cluster.build_plan(spec)
+    assert initial['training_contract_sha256'] == resumed['training_contract_sha256']
+    target.update(hosts=['node0', 'node1'], accum=2)
+    with pytest.raises(ValueError, match='same world_size'):
+        cluster.build_plan(spec)
+
+
+@pytest.mark.parametrize('hosts,accum,error', [
+    ([], 1, 'hosts'), (['a', 'b', 'c'], 1, 'hosts'), (['a'], 0, 'accum'),
+    (['a'], True, 'accum'), (['a'], 1.5, 'accum'), (None, 1, 'hosts'),
+])
+def test_flexible_invalid_topology_or_accumulation(spec, hosts, accum, error):
+    spec['layout'] = 'flexible'
+    spec['jobs'] = spec['jobs'][:1]
+    spec['jobs'][0].update(hosts=hosts, accum=accum)
+    with pytest.raises(ValueError, match=error):
+        cluster.build_plan(spec)
+
+
+def test_flexible_limits_total_nodes_and_job_count(spec):
+    spec['layout'] = 'flexible'
+    spec['jobs'][0]['hosts'] = ['a%d' % index for index in range(8)]
+    spec['jobs'][1]['hosts'] = ['b0']
+    with pytest.raises(ValueError, match='at most eight nodes'):
+        cluster.build_plan(spec)
+    spec['jobs'] = []
+    with pytest.raises(ValueError, match='one to eight jobs'):
+        cluster.build_plan(spec)
+    spec['jobs'] = [{}] * 9
+    with pytest.raises(ValueError, match='one to eight jobs'):
+        cluster.build_plan(spec)
+
+
+def test_explicit_default_accum_keeps_legacy_contract_identity(spec):
+    initial = cluster.build_plan(spec)
+    for job in spec['jobs']:
+        job['accum'] = 1
+    explicit = cluster.build_plan(spec)
+    assert explicit == initial
+
+
+def test_flexible_accum_changes_training_fingerprint(spec):
+    spec.update(layout='flexible', jobs=spec['jobs'][:1])
+    spec['jobs'][0].update(hosts=['node0'], accum=4)
+    first = cluster.build_plan(spec)
+    spec['jobs'][0]['accum'] = 2
+    assert cluster.build_plan(spec)['training_contract_sha256'] != first['training_contract_sha256']
+
+
+def test_explicit_sft_retains_caption_vocabulary_without_jev_labels(spec, tmp_path):
+    classes = dump(tmp_path / 'classes.json', ['contemporary', 'unknown'])
+    for job in spec['jobs']:
+        job.update(enable_jev=False, genre_classes=classes, genre_weight=0)
+    plan = cluster.build_plan(spec)
+    job = plan['jobs'][0]
+    assert not job['genre_enabled']
+    assert job['genre_vocabulary']['classes'] == ['contemporary', 'unknown']
+    assert '--no-enable-jev' in job['train_argv']
+    assert '--train-genre-labels' not in job['train_argv']
+    spec['jobs'][0]['enable_jev'] = 'false'
+    with pytest.raises(ValueError, match='boolean'):
+        cluster.build_plan(spec)
+
+
+def test_explicit_jev_binds_protocol_flag(spec, tmp_path):
+    classes = dump(tmp_path / 'classes.json', ['contemporary', 'unknown'])
+    labels = dump(tmp_path / 'labels.json', {'fixture': True})
+    for job in spec['jobs']:
+        job.update(enable_jev=True, genre_classes=classes, genre_weight=.1,
+                   train_genre_labels=labels, val_genre_labels=labels)
+    plan = cluster.build_plan(spec)
+    assert '--enable-jev' in plan['jobs'][0]['train_argv']
+    spec['jobs'][0]['genre_weight'] = 0
+    with pytest.raises(ValueError, match='positive genre_weight'):
+        cluster.build_plan(spec)
+
+
+@pytest.mark.parametrize('values,error', [
+    ({'fusion_lr': .0001}, 'require musicfm_cache'),
+    ({'fusion_hidden_dim': 256}, 'require musicfm_cache'),
+    ({'enable_jev': False, 'genre_weight': .1}, 'Disabled JEV'),
+])
+def test_new_encoder_or_jev_configuration_errors(spec, values, error):
+    spec['jobs'][0].update(values)
+    with pytest.raises(ValueError, match=error):
+        cluster.build_plan(spec)
+
+
+def test_musicfm_cache_identity_source_and_values_are_bound(spec, tmp_path, monkeypatch):
+    index = dump(tmp_path / 'musicfm-index.json', {'fixture': True})
+    current = {'cache_sha256': 'a' * 64}
+    fake_module = SimpleNamespace(FeatureStore=lambda path: SimpleNamespace(identity=dict(current)))
+    monkeypatch.setitem(sys.modules, 'scripts_omnidance.exp.ms.music_planner_musicfm', fake_module)
+    spec.update(layout='flexible', jobs=spec['jobs'][:1])
+    target = spec['jobs'][0]
+    script_dir = Path(target['repo_root']) / 'scripts_omnidance' / 'exp' / 'ms'
+    for name in ('music_planner_musicfm.py', 'music_planner_encoder_fusion.py'):
+        (script_dir / name).write_text('# fixture encoder source\n')
+    target.update(hosts=['node0'], accum=4, musicfm_cache=index, fusion_lr=.0001, fusion_hidden_dim=256)
+    plan = cluster.build_plan(spec)
+    job = plan['jobs'][0]
+    assert job['musicfm_identity'] == current
+    for flag in ('--musicfm-cache', '--fusion-lr', '--fusion-hidden-dim'):
+        assert flag in job['train_argv']
+    assert {Path(ref['path']).name for ref in job['code']} >= {
+        'music_planner_musicfm.py', 'music_planner_encoder_fusion.py'}
+    cluster.verify_files(job)
+    current['cache_sha256'] = 'b' * 64
+    with pytest.raises(ValueError, match='cache identity differs'):
+        cluster.verify_files(job)
+    target['family'] = 'omni_captioner'
+    with pytest.raises(ValueError, match='only for MOSS'):
+        cluster.build_plan(spec)
+
+
+def test_musicfm_preflight_hashes_feature_bytes_once_not_on_receipt_verification(spec, tmp_path, monkeypatch):
+    checked = []
+
+    class FakeStore:
+        def __init__(self, path):
+            self.identity = {'cache_sha256': 'a' * 64}
+
+        def validate_rows(self, rows, verify_bytes=False):
+            checked.append((sorted(row['id'] for row in rows), verify_bytes))
+
+    monkeypatch.setitem(sys.modules, 'scripts_omnidance.exp.ms.music_planner_musicfm',
+                        SimpleNamespace(FeatureStore=FakeStore))
+    spec.update(layout='flexible', jobs=spec['jobs'][:1])
+    target = spec['jobs'][0]
+    script_dir = Path(target['repo_root']) / 'scripts_omnidance' / 'exp' / 'ms'
+    for name in ('music_planner_musicfm.py', 'music_planner_encoder_fusion.py'):
+        (script_dir / name).write_text('# fixture encoder source\n')
+    target.update(hosts=['node0'], musicfm_cache=dump(tmp_path / 'index.json', {'fixture': True}))
+    plan = cluster.build_plan(spec)
+    assert checked == []
+    receipts = tmp_path / 'cache-receipts'
+    all_receipts(plan, receipts)
+    assert checked == [(['train-a', 'train-b', 'val-a'], True)]
+    cluster.verify_receipts(plan, receipts)
+    cluster.command_plan(plan)
+    assert len(checked) == 1
 
 
 def test_model_inventory_canonical_relative_paths_and_no_mtime_identity(spec):

@@ -407,7 +407,7 @@ def generate_conditioned(adapter, row, max_new_tokens=1024, selected_genre=None,
     return result
 
 
-def load_conditioned_adapter(model_path, checkpoint, device='cpu', dtype=torch.bfloat16):
+def load_conditioned_adapter(model_path, checkpoint, device='cpu', dtype=torch.bfloat16, musicfm_cache=None):
     """Load portable PEFT, restore the exact v2 protocol/head, then native patches."""
     from .music_planner_adapters import load_planner_adapter
     from .music_planner_schema import restore_adapter_protocol
@@ -438,7 +438,8 @@ def load_conditioned_adapter(model_path, checkpoint, device='cpu', dtype=torch.b
                              limitation='Training recorded no base content inventory; weight bytes are not proven')
     native = load_planner_adapter('moss', model_path, checkpoint=checkpoint, device=device, dtype=dtype,
                                   max_length=config['max_length'])
-    adapter = restore_adapter_protocol(native, checkpoint)
+    adapter = (restore_adapter_protocol(native, checkpoint) if musicfm_cache is None else
+               restore_adapter_protocol(native, checkpoint, musicfm_cache=musicfm_cache))
     adapter.inference_base_identity = base_identity
     _protocol(adapter)
     install_runtime_patches(adapter, model_path)

@@ -28,3 +28,5 @@ input-only JEV-inspired dance-style head, and 32/64-GPU multi-node plans is docu
 Cluster plans and CPU tests do not constitute real A800 training or quality acceptance.
 For MOSS with a discrete dance style and timestamped actions, use the
 [v2 protocol and reviewed generation path](notes/planner_training/MOSS_STYLE_TIMED_REVIEW_20261028.md).
+For single-node MOSS baseline, broader native audio LoRA, and frozen MusicFM fusion,
+see [encoder experiments and launch commands](notes/planner_training/MOSS_ENCODER_EXPERIMENTS_20261029.md).

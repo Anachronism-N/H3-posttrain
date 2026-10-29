@@ -298,7 +298,7 @@ class PlannerAdapter:
     def _move(self, batch):
         parameter = next(self.model.parameters())
         return {key: value.to(device=parameter.device,
-                             dtype=parameter.dtype if value.is_floating_point() else value.dtype)
+                             dtype=parameter.dtype if value.is_floating_point() and not key.startswith('musicfm_') else value.dtype)
                 if isinstance(value, torch.Tensor) else value
                 for key, value in batch.items() if key != 'labels'}
 
@@ -410,23 +410,14 @@ def _isolate_deepspeed_hook_owners(model):
         module.__class__ = _PLANNER_HOOK_OWNER_CLASSES[cls]
 
 
-def attach_lora(model, family, rank=32, alpha=64, audio_last_n=4):
-    from peft import LoraConfig, get_peft_model
-    if family not in FAMILIES or rank <= 0 or alpha <= 0 or audio_last_n <= 0:
-        raise ValueError('Invalid family or LoRA scope')
-    model.requires_grad_(False)
-    if family == 'moss':
-        _prepare_moss_runtime(model)
-        audio_root, lm_root = 'audio_encoder', 'language_model'
-        projectors = ['audio_adapter'] + [f'deepstack_audio_merger_list.{i}'
-                      for i in range(len(model.deepstack_audio_merger_list))]
-    elif family == 'music_flamingo':
-        audio_root, lm_root = 'model.audio_tower', 'model.language_model'
-        projectors = ['model.multi_modal_projector']
-    else:
-        audio_root, lm_root = 'audio_tower', 'model'
-        projectors = ['audio_tower.proj1', 'audio_tower.proj2']
-    _prepare_planner_checkpointing(model, family)
+def select_native_lora_targets(model, audio_root, lm_root, audio_last_n):
+    """Select an exact trailing audio scope without changing decoder targets.
+
+    Kept independent of PEFT/model downloads so scope experiments can audit
+    actual module names before allocating optimizer state.
+    """
+    if type(audio_last_n) is not int or audio_last_n < 1:
+        raise ValueError('Audio LoRA scope must be a positive integer')
     audio_layers = len(model.get_submodule(audio_root).layers)
     if audio_layers < audio_last_n:
         raise ValueError('Native audio tower contains fewer layers than the requested scope')
@@ -446,6 +437,27 @@ def attach_lora(model, family, rank=32, alpha=64, audio_last_n=4):
             experts.append(name)
     if not selected or not any(name.startswith(audio_root + '.') for name in selected):
         raise ValueError('No native language/audio LoRA targets were found')
+    return selected, experts, list(range(audio_layers - audio_last_n, audio_layers))
+
+
+def attach_lora(model, family, rank=32, alpha=64, audio_last_n=4):
+    from peft import LoraConfig, get_peft_model
+    if family not in FAMILIES or rank <= 0 or alpha <= 0 or audio_last_n <= 0:
+        raise ValueError('Invalid family or LoRA scope')
+    model.requires_grad_(False)
+    if family == 'moss':
+        _prepare_moss_runtime(model)
+        audio_root, lm_root = 'audio_encoder', 'language_model'
+        projectors = ['audio_adapter'] + [f'deepstack_audio_merger_list.{i}'
+                      for i in range(len(model.deepstack_audio_merger_list))]
+    elif family == 'music_flamingo':
+        audio_root, lm_root = 'model.audio_tower', 'model.language_model'
+        projectors = ['model.multi_modal_projector']
+    else:
+        audio_root, lm_root = 'audio_tower', 'model'
+        projectors = ['audio_tower.proj1', 'audio_tower.proj2']
+    _prepare_planner_checkpointing(model, family)
+    selected, experts, audio_indices = select_native_lora_targets(model, audio_root, lm_root, audio_last_n)
     for name in projectors:
         model.get_submodule(name)
     config = LoraConfig(r=rank, lora_alpha=alpha, lora_dropout=0., bias='none',
@@ -472,7 +484,7 @@ def attach_lora(model, family, rank=32, alpha=64, audio_last_n=4):
         raise ValueError('Audio LoRA scope is empty after PEFT attachment')
     return model, dict(target_modules=selected, target_parameters=experts,
                        projectors=projectors, audio_root=audio_root, language_root=lm_root,
-                       audio_last_layers=list(range(audio_layers - audio_last_n, audio_layers)),
+                       audio_last_layers=audio_indices,
                        rank=rank, alpha=alpha, trainable=scope)
 
 

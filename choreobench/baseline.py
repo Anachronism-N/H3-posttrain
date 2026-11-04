@@ -39,20 +39,23 @@ def _model_plan(plan, song):
 
 def _config(config):
     allowed = {"mode", "local_provider", "planner_provider", "seed", "max_calls", "max_output_tokens",
-               "planner_max_output_tokens", "window_seconds", "stride_seconds", "candidates_per_window", "splits", "continue_on_model_error"}
+               "planner_max_output_tokens", "window_seconds", "stride_seconds", "candidates_per_window", "splits", "continue_on_model_error", "local_candidates_path"}
     if not isinstance(config, dict) or set(config) - allowed:
         raise ValueError("Unknown baseline config fields")
     finite_json(config)
     cfg = dict(mode="concat", local_provider={"kind": "mock"}, planner_provider={"kind": "mock"},
                seed=42, max_calls=1000, max_output_tokens=2048, window_seconds=5.0625,
                stride_seconds=5.0625, candidates_per_window=1, splits=["train", "dev", "test"],
-               continue_on_model_error=False)
+               continue_on_model_error=False, local_candidates_path=None)
     cfg.update(copy.deepcopy(config))
     cfg.setdefault("planner_max_output_tokens", cfg["max_output_tokens"])
     if cfg["mode"] not in ("concat", "global", "hierarchical"):
         raise ValueError("Unknown baseline mode")
     if type(cfg["continue_on_model_error"]) is not bool:
         raise ValueError("continue_on_model_error must be boolean")
+    if cfg["local_candidates_path"] is not None and (
+            not isinstance(cfg["local_candidates_path"], str) or not cfg["local_candidates_path"].strip()):
+        raise ValueError("local_candidates_path must be a nonempty path or null")
     for key in ("max_calls", "max_output_tokens", "planner_max_output_tokens", "candidates_per_window"):
         if type(cfg[key]) is not int or cfg[key] <= 0:
             raise ValueError("Positive integer " + key + " required")
@@ -136,24 +139,51 @@ class _Journal:
                 contract_sha256=self.contract_sha, started_sha256=start["record_sha256"], completed_unix=time.time()))
             write_json(self.directory / (self._name(call_id) + ".raw.json"), record)
             self.records[call_id] = record
-        record = self.records[call_id]
-        if not record["success"]:
-            raise ValueError("Recorded provider failure; not retried: " + str(record["error"]))
-        result = record["result"]
-        if (not isinstance(result, dict) or not isinstance(result.get("text"), str)
-                or result.get("identity") != provider.identity or type(result.get("synthetic")) is not bool):
-            raise ValueError("Invalid provider result identity")
-        if result.get("stop_reason") in (None, "http_error", "malformed_api_response", "infrastructure_error"):
-            raise ValueError("API/infrastructure response unusable; raw retained: " + str(result.get("stop_reason")))
-        if result.get("stop_reason") not in ("stop", "eos"):
-            raise ModelOutputError("Provider did not finish normally; raw response retained: " + str(result.get("stop_reason")))
-        if not result["text"].strip():
-            raise ModelOutputError("Empty provider output retained; no automatic replacement")
-        reported_tokens = result.get("costs", {}).get("output_tokens")
-        if reported_tokens is not None and (type(reported_tokens) is not int or reported_tokens < 0
-                                            or reported_tokens > request["max_output_tokens"]):
-            raise ModelOutputError("Provider-reported output exceeds or violates the requested token budget; raw retained")
-        return result
+        return _recorded_result(self.records[call_id], provider.identity, request)
+
+
+def _recorded_result(record, identity, request):
+    """Shared interpretation for live journal and immutable expert banks."""
+    if record.get("success") is not True:
+        raise ValueError("Recorded provider failure; not retried: " + str(record.get("error")))
+    result = record.get("result")
+    if (not isinstance(result, dict) or not isinstance(result.get("text"), str)
+            or result.get("identity") != identity or type(result.get("synthetic")) is not bool):
+        raise ValueError("Invalid provider result identity")
+    if result.get("synthetic") != identity.get("synthetic"):
+        raise ValueError("Provider result synthetic declaration differs from its identity")
+    if not isinstance(result.get("costs"), dict):
+        raise ValueError("Provider result lacks cost/unknown-cost metadata")
+    if result.get("stop_reason") in (None, "http_error", "malformed_api_response", "infrastructure_error"):
+        raise ValueError("API/infrastructure response unusable; raw retained: " + str(result.get("stop_reason")))
+    if result.get("stop_reason") not in ("stop", "eos"):
+        raise ModelOutputError("Provider did not finish normally; raw response retained: " + str(result.get("stop_reason")))
+    if not result["text"].strip():
+        raise ModelOutputError("Empty provider output retained; no automatic replacement")
+    reported_tokens = result.get("costs", {}).get("output_tokens")
+    if reported_tokens is not None and (type(reported_tokens) is not int or reported_tokens < 0
+                                        or reported_tokens > request["max_output_tokens"]):
+        raise ModelOutputError("Provider-reported output exceeds or violates the requested token budget; raw retained")
+    return result
+
+
+def _journal_accounting(journal):
+    costs, unknown_outcomes, unknown_usage = [], [], []
+    for call_id in journal.started:
+        record = journal.records.get(call_id)
+        result = record.get("result") if record else None
+        reported = result.get("costs") if isinstance(result, dict) else None
+        item = copy.deepcopy(reported) if isinstance(reported, dict) else {}
+        item.setdefault("input_tokens", None)
+        item.setdefault("output_tokens", None)
+        costs.append(dict(item, call_id=call_id))
+        if any(type(item[key]) is not int or item[key] < 0 for key in ("input_tokens", "output_tokens")):
+            unknown_usage.append(call_id)
+        if (record is None or record.get("success") is not True or not isinstance(result, dict)
+                or result.get("stop_reason") in (None, "http_error", "malformed_api_response", "infrastructure_error")):
+            unknown_outcomes.append(call_id)
+    return dict(costs=costs, unknown_outcomes_count=len(unknown_outcomes), unknown_outcome_call_ids=unknown_outcomes,
+                unknown_usage_count=len(unknown_usage), unknown_usage_call_ids=unknown_usage)
 
 
 def _request(call_id, cfg, *, output_budget=None, **values):
@@ -281,9 +311,11 @@ def _outer_plan(song, public, proposals, draft, provider, journal, cfg):
     plan = _empty_plan(song)
     plan["motifs"] = copy.deepcopy(outline["motifs"])
     for index, section in enumerate(song["music"]["sections"]):
+        from .context import build_boundary_context
         payload = dict(song=public, section=section, outline=outline,
             section_instruction=outline["sections"][index]["instruction"],
             previous_section_tail=plan["events"][-2:], proposals=_public_proposals(proposals, section),
+            boundary_context=build_boundary_context(plan, section["start"]),
             proposed_plan=_section_draft(draft, section, index, outline["motifs"]))
         request = _request(song["song_id"] + "/section/%04d" % index, cfg,
             output_budget=cfg["planner_max_output_tokens"], response_kind="section_plan", **payload,
@@ -306,19 +338,21 @@ def _outer_plan(song, public, proposals, draft, provider, journal, cfg):
     return plan
 
 
-def _plan_for_song(song, source_identity, windows, output, cfg, local, planner, journal, public):
+def _plan_for_song(song, source_identity, windows, output, cfg, local, planner, journal, public, candidate_bank=None):
     sid = song["song_id"]
     proposals = []
     safe = hashlib.sha256(sid.encode()).hexdigest()
     source_audio = inspect_audio(source_identity["path"])
     if {k: v for k, v in source_audio.items() if k != "pcm"} != source_identity:
         raise ValueError("Song bytes changed after preflight")
+    if candidate_bank is not None:
+        candidate_bank.assert_unchanged(full=True)
     for window in windows:
         audio = write_window(source_audio, window, output / "audio" / (safe + "-%04d.wav" % window["index"]))
         for candidate in range(cfg["candidates_per_window"]):
             call_id = sid + "/local/%04d/%02d" % (window["index"], candidate)
             request = _request(call_id, cfg, response_kind="local_caption", audio=audio)
-            response = journal.call(local, request)
+            response = candidate_bank.call(request) if candidate_bank is not None else journal.call(local, request)
             proposals.append(dict(call_id=call_id, candidate_index=candidate, window=window,
                                   text=response["text"], parsed=_local_actions(response["text"])))
     draft = _concat(song, proposals)
@@ -343,20 +377,31 @@ def run_baseline(dataset_path, output_dir, config, resume=False):
             raise ValueError("Actual audio differs from song identity")
         inputs[sid] = {k: v for k, v in audio.items() if k != "pcm"}
         windows[sid] = make_windows(audio["num_samples"], audio["sample_rate"], cfg["window_seconds"], cfg["stride_seconds"])
-    expected_calls = sum(len(windows[s["song_id"]]) * cfg["candidates_per_window"] +
-        (0 if cfg["mode"] == "concat" else 1 if cfg["mode"] == "global" else 1 + len(s["music"]["sections"])) for s in songs)
+    bank = None
+    if cfg["local_candidates_path"] is not None:
+        from .candidates import load_candidates, match_candidates
+        bank_path = Path(cfg["local_candidates_path"])
+        if not bank_path.is_absolute():
+            bank_path = dataset_path.parent / bank_path
+        bank = load_candidates(bank_path)
+        match_candidates(bank, dataset_sha, songs, inputs, cfg)
+    known_failed = {state["song_id"] for state in bank.states if state["status"] != "complete"} if bank else set()
+    expected_local_calls = sum(len(windows[s["song_id"]]) * cfg["candidates_per_window"] for s in songs)
+    expected_outer_calls = sum(0 if s["song_id"] in known_failed or cfg["mode"] == "concat" else
+        1 if cfg["mode"] == "global" else 1 + len(s["music"]["sections"]) for s in songs)
+    expected_calls = (0 if bank else expected_local_calls) + expected_outer_calls
     if expected_calls > cfg["max_calls"]:
         raise ValueError("max_calls is insufficient for the complete run: requires " + str(expected_calls))
     if file_sha(dataset_path) != dataset_sha:
         raise ValueError("Dataset bytes changed after its immutable JSON snapshot")
-    local = create_provider(cfg["local_provider"], role="local", base_dir=dataset_path.parent)
+    local = bank if bank else create_provider(cfg["local_provider"], role="local", base_dir=dataset_path.parent)
     planner = None if cfg["mode"] == "concat" else create_provider(cfg["planner_provider"], role="planner", base_dir=dataset_path.parent)
     sources = {name: file_sha(Path(__file__).with_name(name)) for name in
-               ("audio.py", "providers.py", "baseline.py", "schema.py", "io.py", "dataset.py")}
+               ("audio.py", "providers.py", "baseline.py", "schema.py", "io.py", "dataset.py", "candidates.py", "context.py")}
     parser_source = Path(__file__).resolve().parents[1] / "scripts_omnidance" / "exp" / "ms" / "music_planner_eval.py"
     sources["music_planner_eval.py"] = file_sha(parser_source)
     packages = {}
-    if cfg["local_provider"].get("kind") == "native":
+    if bank is None and cfg["local_provider"].get("kind") == "native":
         for name in ("torch", "transformers", "peft", "accelerate", "deepspeed", "numpy", "scipy", "soundfile", "torchaudio"):
             try:
                 packages[name] = importlib.metadata.version(name)
@@ -367,11 +412,14 @@ def run_baseline(dataset_path, output_dir, config, resume=False):
     contract = dict(schema="choreobench.run_contract.v1", dataset_path=str(dataset_path),
         dataset_sha256=dataset_sha, dataset_snapshot=dataset, dataset_id=dataset["dataset_id"], grouping=dataset["grouping"],
         selected_songs=[s["song_id"] for s in songs], config=cfg,
-        audio_identities=inputs, expected_calls=expected_calls, software=software,
+        audio_identities=inputs, expected_calls=expected_calls, expected_local_calls=expected_local_calls,
+        expected_new_local_calls=0 if bank else expected_local_calls, expected_outer_calls=expected_outer_calls,
+        local_candidates_identity=bank.summary() if bank else None, software=software,
         provider_identities=dict(local=local.identity, planner=planner.identity if planner else None), code_sha256=sources,
         global_provider_input="text proposals and public music metadata; not raw audio",
         native_provider_input="derived full-window audio only; no global context or edits",
-        synthetic=dataset["synthetic"] or local.identity["synthetic"] or bool(planner and planner.identity["synthetic"]))
+        synthetic=dataset["synthetic"] or (bank.data["synthetic"] if bank else local.identity["synthetic"])
+                  or bool(planner and planner.identity["synthetic"]))
     if output.exists() and not resume:
         raise ValueError("Output already exists; use unchanged --resume or a new directory")
     if resume and not (output / "contract.json").is_file():
@@ -390,6 +438,11 @@ def run_baseline(dataset_path, output_dir, config, resume=False):
             if previous.get("contract_sha256") != contract_sha or previous.get("call_records") != {
                     sid: record["record_sha256"] for sid, record in journal.records.items()}:
                 raise ValueError("Completed result/call identity changed")
+            if bank:
+                bank.assert_unchanged(full=True)
+                if any(key not in bank.entries or bank.entries[key]["raw"]["record_sha256"] != value
+                       for key, value in previous.get("reused_call_records", {}).items()):
+                    raise ValueError("Completed result/candidate bank identity changed")
             for ref in previous["plans"]:
                 path = output / ref["path"]
                 if file_sha(path) != ref["sha256"]:
@@ -402,7 +455,7 @@ def run_baseline(dataset_path, output_dir, config, resume=False):
                 sid = song["song_id"]
                 safe = hashlib.sha256(sid.encode()).hexdigest()
                 try:
-                    plan = _plan_for_song(song, inputs[sid], windows[sid], output, cfg, local, planner, journal, public_song(song))
+                    plan = _plan_for_song(song, inputs[sid], windows[sid], output, cfg, local, planner, journal, public_song(song), bank)
                 except ModelOutputError as error:
                     failed_songs.append(dict(song_id=sid, error_type=type(error).__name__, message=str(error),
                                              retained_in_evaluation_denominator=True))
@@ -424,14 +477,21 @@ def run_baseline(dataset_path, output_dir, config, resume=False):
                 else:
                     write_json(destination, plan)
                 plan_refs.append(dict(song_id=sid, path=relative, sha256=file_sha(destination)))
+            if bank:
+                bank.assert_unchanged(full=True)
             result = dict(schema="choreobench.run_result.v1", complete=True, mode=cfg["mode"],
                 synthetic=contract["synthetic"], contract_sha256=contract_sha, plans=plan_refs,
                 selected_count=len(songs), success_count=len(plan_refs), failed_songs=failed_songs,
                 all_songs_succeeded=not failed_songs,
                 calls_used=len(journal.started), max_calls=cfg["max_calls"], max_output_tokens_per_call=cfg["max_output_tokens"],
                 planner_max_output_tokens_per_call=cfg["planner_max_output_tokens"],
+                new_calls_used=len(journal.started), local_candidates_reused=bank is not None,
+                local_calls_reused=len(bank.reused) if bank else 0,
+                original_collection_calls=bank.data["original_collection_calls"] if bank else 0,
+                original_collection_costs=bank.costs if bank else [],
+                reused_call_records=dict(bank.reused) if bank else {},
                 call_records={sid: record["record_sha256"] for sid, record in journal.records.items()},
-                costs=[dict(call_id=sid, **record["result"]["costs"]) for sid, record in journal.records.items()],
+                **_journal_accounting(journal),
                 music_or_physical_quality_verified=False, native_large_model_server_verified=False,
                 remote_model_weight_identity_verified=False)
             result = _sealed(result)
@@ -443,5 +503,11 @@ def run_baseline(dataset_path, output_dir, config, resume=False):
                 selected_count=len(songs), success_count=len(plan_refs), failed_songs=failed_songs,
                 all_songs_succeeded=False,
                 calls_used=len(journal.started), error=dict(type=type(error).__name__, message=str(error)),
+                new_calls_used=len(journal.started), local_candidates_reused=bank is not None,
+                local_calls_reused=len(bank.reused) if bank else 0,
+                original_collection_calls=bank.data["original_collection_calls"] if bank else 0,
+                original_collection_costs=bank.costs if bank else [],
+                reused_call_records=dict(bank.reused) if bank else {},
+                **_journal_accounting(journal),
                 call_records={sid: record["record_sha256"] for sid, record in journal.records.items()})))
             raise

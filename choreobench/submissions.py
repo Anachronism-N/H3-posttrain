@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 
-from .dataset import release_report, verify_dataset_audio
+from .dataset import release_report, resolve_audio, verify_dataset_audio
 from .evaluation import evaluate_plan
 from .io import file_sha, object_sha, read_json, read_json_snapshot, write_json
 from .schema import keys, text, validate_dataset, validate_plan
@@ -33,22 +33,13 @@ def export_submission(run_dir, output, method_id):
     return submission
 
 
-def evaluate_submission(dataset_path, submission_path, split="test", track="full_song"):
-    dataset, dataset_sha = read_json_snapshot(dataset_path)
-    validate_dataset(dataset)
-    verify_dataset_audio(dataset, dataset_path)
-    submission = read_json(submission_path)
+def _references(dataset, dataset_sha, submission):
     keys(submission, ("schema", "method_id", "dataset_sha256", "synthetic", "predictions"), where="submission")
     if submission["schema"] != "choreobench.submission.v1" or type(submission["synthetic"]) is not bool:
         raise ValueError("Invalid submission schema/synthetic declaration")
     text(submission["method_id"], "method_id")
     if submission["dataset_sha256"] != dataset_sha:
         raise ValueError("Submission belongs to a different dataset manifest")
-    if split not in ("train", "dev", "test"):
-        raise ValueError("Unknown split")
-    selected = [song for song in dataset["songs"] if song["split"] == split]
-    if not selected:
-        raise ValueError("No songs in requested evaluation split")
     if not isinstance(submission["predictions"], list):
         raise ValueError("predictions must be a list")
     by_id, all_ids = {}, {song["song_id"] for song in dataset["songs"]}
@@ -58,6 +49,57 @@ def evaluate_submission(dataset_path, submission_path, split="test", track="full
             raise ValueError("Unknown/duplicate prediction song_id")
         text(ref["path"], "prediction.path")
         by_id[ref["song_id"]] = ref
+    return by_id
+
+
+def review_submission_items(dataset_path, submission_path, *, split="test", song_ids=None):
+    """Load independent method plans for the same blinded review protocol.
+
+    Missing or invalid plans abort package creation; submission evaluation is the
+    separate place to report failures in the full requested denominator.
+    """
+    dataset, dataset_sha = read_json_snapshot(dataset_path)
+    validate_dataset(dataset)
+    verify_dataset_audio(dataset, dataset_path)
+    submission, submission_sha = read_json_snapshot(submission_path)
+    refs = _references(dataset, dataset_sha, submission)
+    if split not in ("train", "dev", "test"):
+        raise ValueError("Unknown split")
+    selected = [song for song in dataset["songs"] if song["split"] == split
+                and (song_ids is None or song["song_id"] in song_ids)]
+    if not selected or (song_ids is not None and set(song_ids) != {s["song_id"] for s in selected}):
+        raise ValueError("Missing or out-of-split review songs")
+    items = []
+    for song in selected:
+        if song["song_id"] not in refs:
+            raise ValueError("Missing review plan; report failure in submission evaluation")
+        ref = refs[song["song_id"]]
+        path = Path(ref["path"]).expanduser()
+        if not path.is_absolute():
+            path = Path(submission_path).resolve().parent / path
+        plan, sha = read_json_snapshot(path)
+        if sha != ref["sha256"]:
+            raise ValueError("Review prediction bytes differ from submitted hash")
+        validate_plan(plan, song)
+        song = dict(song, audio=dict(song["audio"], path=str(resolve_audio(song, dataset_path))))
+        items.append({"song": song, "plan": plan, "method_id": submission["method_id"],
+                      "source_binding": {"kind": "submission", "sha256": submission_sha,
+                                         "dataset_sha256": dataset_sha,
+                                         "synthetic": dataset["synthetic"] or submission["synthetic"]}})
+    return items
+
+
+def evaluate_submission(dataset_path, submission_path, split="test", track="full_song"):
+    dataset, dataset_sha = read_json_snapshot(dataset_path)
+    validate_dataset(dataset)
+    verify_dataset_audio(dataset, dataset_path)
+    submission = read_json(submission_path)
+    by_id = _references(dataset, dataset_sha, submission)
+    if split not in ("train", "dev", "test"):
+        raise ValueError("Unknown split")
+    selected = [song for song in dataset["songs"] if song["split"] == split]
+    if not selected:
+        raise ValueError("No songs in requested evaluation split")
     rows = []
     for song in selected:
         sid = song["song_id"]

@@ -54,27 +54,51 @@ def doctor():
 def resources(dataset_path, config_path):
     from .audio import make_windows
     from .baseline import _config
-    data, cfg = load_dataset(dataset_path), _config(read_json(config_path))
+    data, dataset_sha = read_json_snapshot(dataset_path)
+    validate_dataset(data)
+    verify_dataset_audio(data, dataset_path)
+    cfg = _config(read_json(config_path))
+    selected = [song for song in data["songs"] if song["split"] in cfg["splits"]]
+    if not selected:
+        raise ValueError("No songs in selected splits")
+    bank_info = None
+    if cfg.get("local_candidates_path"):
+        from .candidates import load_candidates, match_candidates
+        bank_path = Path(cfg["local_candidates_path"]).expanduser()
+        if not bank_path.is_absolute():
+            bank_path = Path(dataset_path).resolve().parent / bank_path
+        bank = load_candidates(bank_path)
+        bank_info = match_candidates(bank, dataset_sha, selected,
+                                     {song["song_id"]: song["audio"] for song in selected}, cfg)
     rows = []
-    for song in data["songs"]:
-        if song["split"] not in cfg["splits"]:
-            continue
+    known_failures = {row["song_id"]: row for row in bank_info["failed_songs"]} if bank_info else {}
+    for song in selected:
         count = len(make_windows(song["audio"]["num_samples"], song["audio"]["sample_rate"],
                                  cfg["window_seconds"], cfg["stride_seconds"]))
         outer = 0 if cfg["mode"] == "concat" else 1 if cfg["mode"] == "global" else 1 + len(song["music"]["sections"])
+        failure = known_failures.get(song["song_id"])
+        if failure:
+            outer = 0
         rows.append({"song_id": song["song_id"], "seconds": song["audio"]["num_samples"] / song["audio"]["sample_rate"],
-                     "observation_windows": count, "local_calls": count * cfg["candidates_per_window"], "outer_calls": outer})
-    calls = sum(row["local_calls"] + row["outer_calls"] for row in rows)
+                     "observation_windows": count, "local_calls": count * cfg["candidates_per_window"],
+                     "new_local_calls": 0 if bank_info else count * cfg["candidates_per_window"],
+                     "reused_local_calls": failure["recorded_local_calls"] if failure else
+                                           count * cfg["candidates_per_window"] if bank_info else 0,
+                     "known_local_failure": bool(failure),
+                     "outer_calls": outer})
+    calls = sum(row["new_local_calls"] + row["outer_calls"] for row in rows)
     return {"schema": "choreobench.resource_estimate.v1", "songs": rows, "expected_generation_calls": calls,
             "max_calls": cfg["max_calls"], "budget_sufficient_for_declared_work": calls <= cfg["max_calls"],
             "local_output_token_limit_per_call": cfg["max_output_tokens"],
             "planner_output_token_limit_per_call": cfg.get("planner_max_output_tokens", cfg["max_output_tokens"]),
             "output_token_cap_if_each_call_reaches_limit": sum(
-                row["local_calls"] * cfg["max_output_tokens"] +
+                row["new_local_calls"] * cfg["max_output_tokens"] +
                 row["outer_calls"] * cfg.get("planner_max_output_tokens", cfg["max_output_tokens"]) for row in rows),
+            "local_candidates": bank_info,
             "additional_costs_not_in_this_estimate": ["input tokens", "music analysis", "editing", "independent review", "model load"],
             "measured_gpu_memory": None, "measured_runtime": None, "monetary_cost": None,
-            "note": "Compute/API rates and latency must come from the actual provider and a real pilot."}
+            "note": "Declared work upper bound, not a measured bill. Reused collection costs are separate; "
+                    "recorded local failures may prevent planned outer calls. Rates/latency require a real pilot."}
 
 
 def _review_pack(args):
@@ -89,7 +113,9 @@ def _review_pack(args):
     if args.song_id and set(args.song_id) != {s["song_id"] for s in songs}:
         raise ValueError("Requested song outside selected split")
     items, labels = [], set()
-    for value in args.run:
+    if not args.run and not args.submission:
+        raise ValueError("Provide at least one --run or --submission")
+    for value in args.run or []:
         if "=" not in value:
             raise ValueError("--run must be METHOD_ID=RUN_DIRECTORY")
         label, location = value.split("=", 1)
@@ -97,7 +123,8 @@ def _review_pack(args):
             raise ValueError("Review method labels must be nonempty and unique")
         labels.add(label)
         root = Path(location).resolve()
-        result, contract = _verify(read_json(root / "results.json")), read_json(root / "contract.json")
+        result, result_sha = read_json_snapshot(root / "results.json")
+        result, contract = _verify(result), read_json(root / "contract.json")
         if result.get("contract_sha256") != object_sha(contract) or contract["dataset_sha256"] != dataset_sha:
             raise ValueError("Review run/dataset contract differs")
         refs = {row["song_id"]: row for row in result["plans"]}
@@ -110,7 +137,18 @@ def _review_pack(args):
             if plan_sha != ref["sha256"]:
                 raise ValueError("Review plan changed")
             song = dict(song, audio=dict(song["audio"], path=str(resolve_audio(song, args.dataset))))
-            items.append({"song": song, "plan": plan, "method_id": label})
+            items.append({"song": song, "plan": plan, "method_id": label,
+                          "source_binding": {"kind": "run", "sha256": result_sha,
+                                             "dataset_sha256": dataset_sha,
+                                             "synthetic": dataset["synthetic"] or contract["synthetic"]}})
+    for submission_path in args.submission or []:
+        from .submissions import review_submission_items
+        external = review_submission_items(args.dataset, submission_path, split=args.split, song_ids=args.song_id)
+        label = external[0]["method_id"]
+        if label in labels:
+            raise ValueError("Review method labels must be unique across runs and submissions")
+        labels.add(label)
+        items.extend(external)
     result = build_review_pack(items, seed=args.seed)
     output = Path(args.out_dir).resolve()
     output.mkdir(parents=True, exist_ok=False)
@@ -175,6 +213,21 @@ def build_parser():
     estimate = sub.add_parser("resources")
     estimate.add_argument("--dataset", required=True, type=Path)
     estimate.add_argument("--config", required=True, type=Path)
+    candidates = sub.add_parser("export-candidates", help="Export immutable local calls for fair, GPU-free reuse")
+    candidates.add_argument("--run-dir", required=True, type=Path)
+    candidates.add_argument("--out", required=True, type=Path)
+    for name in ("preview-target", "target-edit"):
+        target = sub.add_parser(name, help="Resolve an explicit section/time/body selector; no free-text parsing")
+        for field in ("plan", "dataset", "selector"):
+            target.add_argument("--" + field, required=True, type=Path)
+        if name == "preview-target":
+            target.add_argument("--out", type=Path)
+        else:
+            target.add_argument("--task-id", required=True)
+            target.add_argument("--instruction", required=True)
+            target.add_argument("--constraints", type=Path,
+                                help="Optional private goals, explicit repair IDs and protected fields")
+            target.add_argument("--out-dir", required=True, type=Path)
     for name in ("validate-plan", "evaluate-plan"):
         cmd = sub.add_parser(name)
         cmd.add_argument("--plan", required=True, type=Path)
@@ -203,7 +256,9 @@ def build_parser():
     edit_eval.add_argument("--out", type=Path)
     review = sub.add_parser("review-pack")
     review.add_argument("--dataset", required=True, type=Path)
-    review.add_argument("--run", action="append", required=True, metavar="METHOD=RUN_DIR")
+    review.add_argument("--run", action="append", metavar="METHOD=RUN_DIR")
+    review.add_argument("--submission", action="append", type=Path,
+                        help="Independent method submission JSON, using its declared method_id")
     review.add_argument("--split", choices=("train", "dev", "test"), default="test")
     review.add_argument("--song-id", action="append")
     review.add_argument("--out-dir", required=True, type=Path)
@@ -229,6 +284,16 @@ def build_parser():
     bootstrap.add_argument("--seed", type=int, default=7)
     bootstrap.add_argument("--resamples", type=int, default=2000)
     bootstrap.add_argument("--out", type=Path)
+    compare = sub.add_parser("compare", help="Paired method comparison with source-group cluster bootstrap")
+    compare.add_argument("--rows", required=True, type=Path)
+    compare.add_argument("--method-a", required=True)
+    compare.add_argument("--method-b", required=True)
+    compare.add_argument("--metric", default="value")
+    compare.add_argument("--seed", type=int, default=7)
+    compare.add_argument("--resamples", type=int, default=2000)
+    compare.add_argument("--confidence", type=float, default=.95)
+    compare.add_argument("--allow-incomplete", action="store_true")
+    compare.add_argument("--out", type=Path)
     return parser
 
 
@@ -281,6 +346,34 @@ def dispatch(args):
         _emit(run_baseline(args.dataset, args.out_dir, read_json(args.config), resume=args.resume))
     elif cmd == "resources":
         _emit(resources(args.dataset, args.config))
+    elif cmd == "export-candidates":
+        from .candidates import export_candidates
+        _emit(export_candidates(args.run_dir, args.out))
+    elif cmd in ("preview-target", "target-edit"):
+        from .targeting import resolve_targets, build_edit_task
+        from .editing import public_edit_task
+        plan, dataset = read_json(args.plan), load_dataset(args.dataset)
+        song = _song(dataset, plan["song_id"])
+        selector = read_json(args.selector)
+        if cmd == "preview-target":
+            _emit(resolve_targets(plan, song, selector, strict=False), args.out)
+        else:
+            constraints = read_json(args.constraints) if args.constraints else {}
+            if not isinstance(constraints, dict) or set(constraints) - {
+                    "repair_event_ids", "protected", "goals", "semantic_goals"}:
+                raise ValueError("Unknown edit constraint fields")
+            task = build_edit_task(plan, song, selector, task_id=args.task_id,
+                                   instruction=args.instruction, **constraints)
+            preview = resolve_targets(plan, song, selector)
+            args.out_dir.mkdir(parents=True, exist_ok=False)
+            write_json(args.out_dir / "task.private.json", task)
+            write_json(args.out_dir / "task.public.json", public_edit_task(task))
+            write_json(args.out_dir / "resolution.json", preview)
+            _emit({"task": str(args.out_dir / "task.private.json"),
+                   "public_task": str(args.out_dir / "task.public.json"),
+                   "resolution": str(args.out_dir / "resolution.json"),
+                   "allowed_event_ids": task["allowed_event_ids"],
+                   "note": "Explicit selector resolved; instruction semantics have not been inferred."})
     elif cmd in ("validate-plan", "evaluate-plan"):
         from .evaluation import evaluate_plan
         plan, dataset = read_json(args.plan), load_dataset(args.dataset)
@@ -322,4 +415,9 @@ def dispatch(args):
     elif cmd == "bootstrap":
         from .evaluation import song_bootstrap
         _emit(song_bootstrap(read_json(args.rows), metric=args.metric, n_resamples=args.resamples, seed=args.seed), args.out)
+    elif cmd == "compare":
+        from .comparison import compare_methods
+        _emit(compare_methods(read_json(args.rows), args.method_a, args.method_b, metric=args.metric,
+                              n_resamples=args.resamples, confidence=args.confidence, seed=args.seed,
+                              allow_incomplete=args.allow_incomplete), args.out)
     return 0

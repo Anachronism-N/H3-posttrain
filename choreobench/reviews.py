@@ -46,6 +46,18 @@ def _nonempty(value, label):
     _require(isinstance(value, str) and bool(value.strip()), label + " must be nonempty text")
 
 
+def _validate_source_binding(value):
+    """Check organizer declarations; hashes do not authenticate their source."""
+    _exact(value, {"kind", "sha256", "dataset_sha256", "synthetic"}, "source_binding")
+    _require(isinstance(value["kind"], str) and value["kind"] in {"submission", "run"},
+             "source_binding kind must be submission/run")
+    for field in ("sha256", "dataset_sha256"):
+        _require(isinstance(value[field], str) and re.fullmatch(r"[0-9a-f]{64}", value[field]) is not None,
+                 "source_binding " + field + " must be lowercase SHA256")
+    _require(type(value["synthetic"]) is bool, "source_binding synthetic must be boolean")
+    return value
+
+
 def _item_sha(item):
     return object_sha({key: value for key, value in item.items() if key != "item_sha256"})
 
@@ -86,7 +98,7 @@ def _blind_song(song, alias):
 def build_review_pack(items, seed=0):
     """Return separate public and private JSON objects; this function copies no audio.
 
-    Each input item is {song, plan, method_id, source_plan?, edit_task?}. The caller
+    Each input item is {song, plan, method_id, source_plan?, edit_task?, source_binding?}. The caller
     must retain private bindings separately and provide the hash-bound audio at the
     public asset path or via an asset index. Private goals never enter this pack.
     """
@@ -96,11 +108,13 @@ def build_review_pack(items, seed=0):
     for item in items:
         _require(isinstance(item, dict), "review item must be an object")
         _require({"song", "plan", "method_id"}.issubset(item) and
-                 set(item).issubset({"song", "plan", "method_id", "source_plan", "edit_task"}),
+                 set(item).issubset({"song", "plan", "method_id", "source_plan", "edit_task", "source_binding"}),
                  "review item has missing or unexpected fields")
         validate_song(item["song"])
         validate_plan(item["plan"], item["song"])
         _nonempty(item["method_id"], "method_id")
+        if "source_binding" in item:
+            _validate_source_binding(item["source_binding"])
         methods.add(item["method_id"])
         original_song_id = item["song"]["song_id"]
         if original_song_id in songs:
@@ -167,6 +181,8 @@ def build_review_pack(items, seed=0):
             "event_id_map": event_ids, "motif_id_map": motif_ids,
             "original": copy.deepcopy(original),
         })
+        if "source_binding" in original:
+            private["items"][-1]["source_binding_sha256"] = object_sha(original["source_binding"])
     serialized = json.dumps(public, ensure_ascii=False, sort_keys=True)
     # Reject explicitly named methods instead of silently editing action content to hide them.
     for method in methods:
@@ -235,6 +251,12 @@ def _validate_bindings(pack, bindings):
         original = item.get("original")
         _require(isinstance(original, dict) and {"song", "plan", "method_id"}.issubset(original),
                  "private binding lacks original evidence")
+        if "source_binding" in original:
+            _validate_source_binding(original["source_binding"])
+            _require(item.get("source_binding_sha256") == object_sha(original["source_binding"]),
+                     "private source binding hash mismatch")
+        else:
+            _require("source_binding_sha256" not in item, "source binding hash has no bound original declaration")
         for name in ("song", "plan", "source_plan", "edit_task"):
             expected = object_sha(original[name]) if original.get(name) is not None else None
             _require(item.get(name + "_sha256") == expected, "original {} hash mismatch".format(name))
@@ -339,6 +361,12 @@ def import_reviews(pack, bindings, reviews):
             "review_id": review_id, "song_id": private_items[review_id]["song_id"],
             "method_id": private_items[review_id]["method_id"],
             "plan_sha256": private_items[review_id]["plan_sha256"],
+            "source_binding": copy.deepcopy(private_items[review_id]["original"].get("source_binding")),
+            "scientific_result_status": (
+                "unknown" if "source_binding" not in private_items[review_id]["original"] else
+                "synthetic" if private_items[review_id]["original"]["source_binding"]["synthetic"] else
+                "declared_real_not_audited"
+            ),
             "status": review_status(rows),
             "human_status": review_status([row for row in rows if row["origin"] == "human"]),
             "model_judge_status": review_status([row for row in rows if row["origin"] == "model_judge"]),
@@ -351,5 +379,5 @@ def import_reviews(pack, bindings, reviews):
         "schema": "choreobench.review_report.v1", "pack_sha256": object_sha(pack),
         "bindings_sha256": object_sha(bindings), "reviews_sha256": object_sha(reviews),
         "items": results, "pending_item_count": sum(item["status"] != "reviewed" for item in results),
-        "note": "Origins and audio_seen are declarations, not authenticated identities or proof of listening. Ratings are external judgments, not verified semantic truth or measured motion synchronization.",
+        "note": "Origins, audio_seen and source bindings are declarations, not authenticated identities, source audits or proof of listening. Ratings are external judgments, not verified semantic truth or measured motion synchronization.",
     }

@@ -16,7 +16,7 @@ v1 编辑是 **给定目标范围的受约束编辑**。目标事件/允许修�
 
 - concat：逐窗原生生成，使用候选 index 0，按确定性所有权区间拼接；不声称进行了质量择优。
 - global：外层指令模型一次读取公共结构和同一批局部文本候选，输出整曲计划。它是强全局提示对照。
-- hierarchical：先生成全局段落/主题安排，再按段落读取相关候选及前段状态生成计划。
+- hierarchical：先生成全局段落/主题安排，再按段落读取相关候选及前段状态生成计划。每个身体部位按动作结束时间保留最近事件与声明的退出状态，另保留有界的主题历史，避免只看最后两条文本而遗漏仍重要的身体轨道。未知状态保持未知；时间空隙不意味着姿态持续不变。
 
 外层模型读取的是音乐工具结果和文本候选，不直接听音。Qwen 原生局部模型只接收波形，不接收全局计划、编辑文字或私有答案。分层 baseline 的收益需要通过真实实验测量，mock 仅复制/组织测试数据，不能证明方法有效。
 
@@ -113,6 +113,23 @@ global 对照使用同一配置，只把 mode 改为 global，使用新输出目
 
 输出：contract.json、calls/ 原始请求响应、派生 audio/、plans/、results.json。计划文件名为歌曲 ID 的 hash，通过 results.json 的 plans 列表定位，勿猜文件名。语义与音乐质量不会自动变成成功状态。
 
+### 一次采样，复用同一批局部候选
+
+先运行 concat 收集局部专家输出，再导出候选库：
+
+```bash
+python -m choreobench export-candidates \
+  --run-dir /runs/pilot-concat --out /data/choreobench/local-candidates.json
+```
+
+在 global/hierarchical 的配置中增加 `"local_candidates_path": "/data/choreobench/local-candidates.json"`。保留与采集阶段一致的 local_provider 配置、seed、局部 token 上限、窗口、stride、候选数、歌曲划分和数据清单。然后用原来的 resources/run 命令启动新目录。相对候选库路径以 dataset.json 所在目录解析。
+
+复用模式不创建局部模型 provider，不加载或审计当前本地 Qwen 权重；需要原音频和候选库，以及外层文本模型服务。候选库嵌入原始请求、响应、模型身份和成本，并验证当前派生波形、采样参数与原请求一致。更换机器时，可保留原 local_provider 配置中的历史路径声明，即使这些模型路径在新机器不存在；它们是采集身份，不用于重新加载。不能把不同模型的候选改名后复用。
+
+`max_calls` 约束本轮新增调用；原局部采集成本单独保留，不能按零成本报告整个方法。候选库中的坏输出在后续方法中继续失败，不补采、不挑掉失败歌曲。unknown/pending 请求不能当成有效候选。合成数据与 mock 身份随库保留。哈希提供证据绑定，不证明作者或远程服务身份真实。
+
+旧版本运行目录不会因新代码自动获得可恢复资格；版本变化后用新输出目录。可导出的既有局部调用能在新目录复用，但仍须通过严格来源与请求检查。
+
 ## 4. 文本编辑与撤销
 
 先用 demo 的 source_plan.json、edit_task.private.json 了解结构。私有任务含 goals/semantic_goals；模型只收到白名单导出的公开指令、范围与保护条件。
@@ -146,6 +163,23 @@ python -m choreobench undo-edit \
 ```
 
 撤销要求 after 正好对应这一次修改；后面又改过的版本不能被旧撤销覆盖。多轮任务需为每轮源计划重新绑定 task/source_plan_sha256。
+
+### 生成可审查的编辑目标
+
+现在可用显式选择器编写任务。例如选择器 JSON `{"section_label":"chorus","occurrence":2,"body_scope":"upper"}` 表示第二个 chorus 段落的上半身；也支持 `{"section_id":"s001"}` 或整数采样区间 `{"start":160000,"end":320000,"track":"right_arm"}`。label 精确匹配工具给出的公开标签，occurrence 从1开始；track 精确匹配，body_scope 包含子部位。
+
+```bash
+python -m choreobench preview-target \
+  --plan /data/edit/source_plan.json --dataset /data/choreobench/dataset.with_structure.json \
+  --selector /data/edit/selector.json --out /data/edit/preview.json
+python -m choreobench target-edit \
+  --plan /data/edit/source_plan.json --dataset /data/choreobench/dataset.with_structure.json \
+  --selector /data/edit/selector.json --task-id chorus2-upper \
+  --instruction "Increase upper-body movement in the second chorus; preserve the steps and timing." \
+  --constraints /data/edit/constraints.private.json --out-dir /data/edit/task-001
+```
+
+constraints 可省略，或包含 repair_event_ids/protected/goals/semantic_goals。生成 task.private.json、剔除私有目标的 task.public.json 和 resolution.json。目标定位不能自动理解指令的保护要求：若需保留步法/时间，应在 constraints 显式写保护字段，再人工核对任务。事件跨时间边界、整身事件覆盖了目标之外的身体部位时，preview 给出冲突，target-edit 拒绝扩大权限。当前仍不拆分或增删事件，也不把该工具描述成任意自由指令理解。
 
 ## 5. 方法无关的提交与评测
 
@@ -194,9 +228,23 @@ python -m choreobench review-import \
 
 只把 public/ 交给评审者，private/ 保留方法与原始身份。复制 reviews.template.json，填写真实 reviewer_id、分项评分及是否听取音频。未填写、漏项、模型评审、人工评审分别报告；audio_seen 是评审者声明，不是程序能够证明的事实。缺计划的歌曲先在 submission 评估中记失败，盲评阶段不能静默删除它们。
 
+外部方法无需生成本项目 run 目录：`review-pack --dataset ... --submission /runs/external.submission.json --split dev --out-dir ... --copy-audio`。可重复 --submission，也可与 --run 混用；method_id 不得重复。来源哈希与 synthetic 声明只进入私有绑定，不泄露给评审者；无来源绑定的旧API材料标记 unknown，不自动视为正式结果。
+
 编辑盲评可使用 Python API `build_review_pack()`，item 增加 source_plan/edit_task；公开包自动重映射事件与任务身份，不暴露私有目标。暂未提供编辑任务批量 CLI。
 
 歌曲级区间：准备 JSON 数组，每行包含 song_id 与数值 value，可重复多行评审；`python -m choreobench bootstrap --rows ratings.json --out interval.json` 先在歌内求均值再等权重采样。单歌不给置信区间。该工具不是“显著性保证”，成对方法比较应对每首歌的配对差值重采样。
+
+新增成对比较命令：
+
+```bash
+python -m choreobench compare --rows /runs/ratings.json \
+  --method-a concat --method-b hierarchical --resamples 2000 --seed 7 \
+  --out /runs/paired-comparison.json
+```
+
+每行包含 song_id/group_id/method_id/value，可带 reviewer_id 和 origin（human 或 model_judge）。先在歌曲内对每个方法求均值，再计算 B−A；主估计每歌等权，置信区间以完整来源组为单位重采样，另外报告等组权重诊断。单来源组不给置信区间；不混合人工与模型评分，不把重复 reviewer 或缺失评分自动计成有效样本。
+
+默认任何歌曲缺一个方法即失败；显式 --allow-incomplete 才使用交集，并报告遗漏。完全不在 rows 中的歌曲无法由此工具发现，正式比较仍须与原数据清单核对。分数正差只代表B数值更大，是否更好取决于所选指标；不自动生成p值或领先结论。
 
 ## 7. 资源与实验顺序
 

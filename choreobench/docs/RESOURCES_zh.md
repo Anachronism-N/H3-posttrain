@@ -58,6 +58,8 @@
 
 设每窗候选数K，局部调用约为 `C_local = sum_songs(W*K)`；另计全局规划、逐段协调、候选选择、每轮编辑、语义评审及失败重试：
 
+新增候选库复用路径：concat首次采集后用 export-candidates 保存局部证据，global/hierarchical共享同一批候选，无需再次加载本地Qwen。复用机器仅需音频、候选库和外层服务；必须保留首次采集身份和成本。resources区分计划局部工作量、新增局部调用、复用调用与原采集成本。max_calls仅限制当前运行的新调用，论文需另外报告首次采集成本及所采用的摊销口径。候选库包含原始响应，存储大小以真实pilot测量，不按纯caption文字大小估算。
+
 `C_total = C_local + C_plan + C_edit + C_review + C_attempts_extra`
 
 `GPU_hours = sum(actual_model_seconds * assigned_GPU_count)/3600`

@@ -1,0 +1,13 @@
+{
+  "mode": "index0",
+  "splits": ["dev"],
+  "unit_config": {
+    "bars_per_block": 4,
+    "max_unit_seconds": 20,
+    "fallback_seconds": 10.125,
+    "meter_status": "unverified"
+  },
+  "timing_policy": "strict",
+  "max_calls": 0,
+  "continue_on_model_error": true
+}

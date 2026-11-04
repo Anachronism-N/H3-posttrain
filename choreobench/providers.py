@@ -294,6 +294,9 @@ def create_provider(spec, role="local", base_dir=None):
         return ReplayProvider(spec, role, base_dir)
     if kind == "native":
         return NativeProvider(spec, role, base_dir)
+    if kind == "native_service":
+        from .resident import NativeServiceProvider
+        return NativeServiceProvider(spec, role)
     if kind == "chat_completions":
         return ChatCompletionsProvider(spec, role)
     raise ValueError("Unknown provider kind; no fallback exists")

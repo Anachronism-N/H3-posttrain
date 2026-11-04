@@ -20,7 +20,7 @@ v1 编辑是 **给定目标范围的受约束编辑**。目标事件/允许修�
 
 外层模型读取的是音乐工具结果和文本候选，不直接听音。Qwen 原生局部模型只接收波形，不接收全局计划、编辑文字或私有答案。分层 baseline 的收益需要通过真实实验测量，mock 仅复制/组织测试数据，不能证明方法有效。
 
-当前hierarchical按导入的功能段落生成，尚无乐句检测或四小节规划层；默认unknown整曲段也不会自动细分。后续规划块、受限候选选择与有限修复的逐步实现设计见 [HARNESS_DESIGN_zh.md](docs/HARNESS_DESIGN_zh.md)，其中明确区分现有能力与待实现模块。
+原hierarchical仍按导入的功能段落自由生成。新增run-harness把规划块、整包候选选择与来源编译独立接通；它不会将已有Qwen改成整曲模型。真正乐句检测、自动语义修复循环仍未实现。设计与剩余工作见 [HARNESS_DESIGN_zh.md](docs/HARNESS_DESIGN_zh.md)。
 
 完整协议：[PROTOCOL_zh.md](docs/PROTOCOL_zh.md)。资源：[RESOURCES_zh.md](docs/RESOURCES_zh.md)。相关工作：[RELATED_WORK.md](docs/RELATED_WORK.md)。精确数据合同：[CONTRACT.md](CONTRACT.md)。
 
@@ -258,3 +258,65 @@ python -m choreobench compare --rows /runs/ratings.json \
 现原生入口是单设备完整 BF16 Thinker 加载，不自动量化或多卡分片。可优先寻找单张80GB级GPU、128GB级主机RAM及足够模型/日志存储的服务器进行验收；这是容量规划起点，不是显存可运行保证。完整参数存储就约63.44GB，A3B不能解释为仅需加载3B。外层指令模型可用独立服务，避免与Qwen争用显存。真实内存与速度以pilot测量为准。
 
 尚需用户准备：完整歌曲与分组、训练好的实际 checkpoint 与冻结环境、指令模型服务、编舞/音乐评审人员。当前未包含：正式数据发布、真实GPU结果、自动歌曲分组、完整音乐反事实资产生成、自由指代定位、事件增删、递归自改进训练或H3渲染。相关实验协议已记录，但不把它们写成现有代码能力。
+
+## 8. 冻结模型的推理 harness
+
+本轮实现不启动训练，不创建优化器，不更新权重。已有checkpoint是局部专家的训练成果；新增流程使用它的候选和现有指令模型做推理。运行无需新SFT数据，但真实歌曲、编辑任务、独立评审与开发校准数据仍是benchmark的必要输入。index0只是接口对照，LLM选择和既有偏好分数都不能直接证明编舞质量。
+
+```bash
+# 首先用现有run和export-candidates得到固定候选库。
+python -m choreobench plan-units \
+  --dataset /data/choreobench/dataset.with_structure.json --song-id song01 \
+  --out /runs/song01.units.json
+python -m choreobench run-harness \
+  --dataset /data/choreobench/dataset.with_structure.json \
+  --candidates /data/choreobench/local-candidates.json \
+  --config choreobench/examples/harness_index0.json --out-dir /runs/harness-index0
+python -m choreobench run-harness \
+  --dataset /data/choreobench/dataset.with_structure.json \
+  --candidates /data/choreobench/local-candidates.json \
+  --config choreobench/examples/harness_llm.json --out-dir /runs/harness-llm
+```
+
+候选库、清单与选定歌曲必须严格匹配；新输出目录不可覆盖。run-harness自动沿用候选库的window/stride；独立plan-units使用非默认stride时须显式给 --stride-seconds。修改示例中的服务地址和真实模型名后再运行llm。
+
+unit_config默认meter_status=unverified，按时间回退；审查计量结构后可显式声明reviewed并按重拍合并四小节，受max_unit_seconds约束。reviewed不是工具提供的正确概率，也不等于真正乐句检测。弱起、段落切入和尾部碎片保留。跨块窗口只按ownership中点分配一个选择责任，其他块读其交叠引用，不再做第二次冲突选择。
+
+三种模式：index0固定选候选0，不调用模型；llm对每个有责任窗口的规划块调用一次文本模型，只能返回候选ID；scores读取绑定候选/清单/options的单窗与相邻分数，执行固定目标动态规划，不创建评分模型。合法分数下无完整路径按歌曲弃答，非法评分合同则停止。评分文件schema为choreobench.selection_scores.v1，必须有dataset_sha256、bank_sha256和songs；每歌含options_sha256/unary/transitions/score_provenance。选项对象在options/落盘，object_sha包括其record_sha256字段。分数本身需由经记录的外部来源提供，不能把全零占位当质量评审。
+
+timing_policy默认strict：完整caption不能放入ownership时省略该片段、记录真实缺口，不填“休止”。proposed_crop可发出裁剪后的新排程提案，但明确标为pending语义检查。来源原文保持，入口/出口未知，模型并未预测到真实动作边界。complete仅指队列执行结束；all_songs_succeeded也只表示有结构合法计划，仍需查看compilation的coverage、needs_review及独立评价。
+
+max_calls预检所需选择调用；max_output_tokens限制每次输出；max_request_characters限制实际消息字符数，超过则明确记失败，不截断动作。字符数不是tokenizer上限，服务真实输入上下文仍需另验。暂不自动重试或循环修复。已知输出格式/范围失败保留在歌曲分母，网络/身份/未知结果停止并保留成本。
+
+产物包括contract.json、calls/、units/、options/、selections/、compilation/、plans/和results.json；同一配置加--resume恢复。可继续用export-submission和review-pack接统一benchmark。候选采集、当前文本推理和评分来源的synthetic状态合并传播，原局部采集成本单列。
+
+## 9. 常驻局部专家服务
+
+单次旧run已经复用一个NativeProvider，但不同CLI进程会重新加载。新增serve-local在一个前台服务进程中保持同一个原生adapter，首次有效请求懒加载，之后串行复用；不会重新训练模型。服务使用既有checkpoint校验，不自动把自定义checkpoint切换成任意通用推理引擎。
+
+```bash
+# 修改native_server.json中的绝对模型路径；保留原训练环境。
+mkdir -p /shared/choreobench
+export CHOREOBENCH_NATIVE_TOKEN='YOUR_SERVICE_TOKEN'
+python -m choreobench serve-local \
+  --provider choreobench/examples/native_server.json \
+  --audio-root /shared/choreobench --host 127.0.0.1 --port 8765 \
+  --api-key-env CHOREOBENCH_NATIVE_TOKEN
+```
+
+进程启动打印identity_sha256；将该值填写到native_service_concat.json的expected_identity_sha256，客户端使用同一token环境变量。健康接口是GET /health，生成接口是POST /v1/local-caption。默认只绑定本机；跨机器时显式设置服务地址，并让双方看到同样的绝对共享音频路径。当前不上传音频，根目录包含生成窗口所在run目录。模型配置相对路径以服务启动cwd解释，示例要求使用绝对路径。
+
+```bash
+# 另一个终端运行；--out-dir必须在服务允许的共享根目录内。
+python -m choreobench run \
+  --dataset /data/choreobench/dataset.with_structure.json \
+  --config choreobench/examples/native_service_concat.json \
+  --out-dir /shared/choreobench/collection
+python -m choreobench export-candidates \
+  --run-dir /shared/choreobench/collection \
+  --out /data/choreobench/local-candidates.json
+```
+
+服务健康状态不加载权重，也不保证显存可容纳；第一次真实推理才完成加载验收。身份pin是服务端声明与版本绑定，不是客户端独立检查远端权重。生成失败不重发，加载验证失败后服务要求重启。服务串行处理原生调用，不自动批处理或多GPU分片。常驻显存和空闲租用成本仍在。
+
+外层选择/编辑继续使用独立文本服务，可一直部署；音乐结构结果和候选库可离线缓存，采集后局部专家服务可停止。无需为每次编舞重新启动NLF、MotionScript或H3。真实GPU性能、质量与高并发可靠性未在本地CPU测试中验收。

@@ -1,0 +1,26 @@
+{
+  "mode": "llm",
+  "splits": ["dev"],
+  "unit_config": {
+    "bars_per_block": 4,
+    "max_unit_seconds": 20,
+    "fallback_seconds": 10.125,
+    "meter_status": "unverified"
+  },
+  "selector_provider": {
+    "kind": "chat_completions",
+    "base_url": "http://127.0.0.1:8000/v1",
+    "model": "REPLACE_WITH_ACTUAL_INSTRUCTION_MODEL",
+    "api_key_env": "CHOREOBENCH_API_KEY",
+    "timeout_seconds": 180,
+    "temperature": 0,
+    "json_mode": true,
+    "token_parameter": "max_tokens"
+  },
+  "seed": 7,
+  "max_calls": 1500,
+  "max_output_tokens": 4096,
+  "max_request_characters": 120000,
+  "timing_policy": "strict",
+  "continue_on_model_error": true
+}

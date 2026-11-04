@@ -210,6 +210,22 @@ def build_parser():
     run.add_argument("--config", required=True, type=Path)
     run.add_argument("--out-dir", required=True, type=Path)
     run.add_argument("--resume", action="store_true")
+    harness = sub.add_parser("run-harness", help="Frozen-model whole-response selection over an existing candidate bank")
+    for name in ("dataset", "candidates", "config", "out-dir"):
+        harness.add_argument("--" + name, required=True, type=Path)
+    harness.add_argument("--resume", action="store_true")
+    units = sub.add_parser("plan-units", help="Build planning contexts; not semantic phrase detection")
+    units.add_argument("--dataset", required=True, type=Path)
+    units.add_argument("--song-id", required=True)
+    units.add_argument("--config", type=Path)
+    units.add_argument("--stride-seconds", type=float)
+    units.add_argument("--out", required=True, type=Path)
+    service = sub.add_parser("serve-local", help="Foreground resident native expert on a shared audio filesystem")
+    service.add_argument("--provider", required=True, type=Path)
+    service.add_argument("--audio-root", required=True, type=Path)
+    service.add_argument("--host", default="127.0.0.1")
+    service.add_argument("--port", type=int, default=8765)
+    service.add_argument("--api-key-env", default="")
     estimate = sub.add_parser("resources")
     estimate.add_argument("--dataset", required=True, type=Path)
     estimate.add_argument("--config", required=True, type=Path)
@@ -344,6 +360,20 @@ def dispatch(args):
     elif cmd == "run":
         from .baseline import run_baseline
         _emit(run_baseline(args.dataset, args.out_dir, read_json(args.config), resume=args.resume))
+    elif cmd == "run-harness":
+        from .harness import run_harness
+        _emit(run_harness(args.dataset, args.candidates, args.out_dir, read_json(args.config), resume=args.resume))
+    elif cmd == "plan-units":
+        from .audio import make_windows
+        from .planning_units import build_planning_units
+        dataset = load_dataset(args.dataset)
+        song = _song(dataset, args.song_id)
+        windows = make_windows(song["audio"]["num_samples"], song["audio"]["sample_rate"], stride_seconds=args.stride_seconds)
+        _emit(build_planning_units(song, windows=windows, config=read_json(args.config) if args.config else None), args.out)
+    elif cmd == "serve-local":
+        from .resident import serve_resident
+        serve_resident(read_json(args.provider), args.audio_root, host=args.host,
+                       port=args.port, api_key_env=args.api_key_env)
     elif cmd == "resources":
         _emit(resources(args.dataset, args.config))
     elif cmd == "export-candidates":

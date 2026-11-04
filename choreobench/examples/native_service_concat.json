@@ -1,0 +1,18 @@
+{
+  "mode": "concat",
+  "local_provider": {
+    "kind": "native_service",
+    "base_url": "http://127.0.0.1:8765",
+    "expected_identity_sha256": "REPLACE_WITH_HEALTH_IDENTITY_SHA256",
+    "api_key_env": "CHOREOBENCH_NATIVE_TOKEN",
+    "timeout_seconds": 600
+  },
+  "seed": 7,
+  "max_calls": 1500,
+  "max_output_tokens": 2048,
+  "candidates_per_window": 2,
+  "window_seconds": 5.0625,
+  "stride_seconds": 5.0625,
+  "splits": ["dev"],
+  "continue_on_model_error": true
+}

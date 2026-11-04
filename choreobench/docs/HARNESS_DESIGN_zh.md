@@ -1,10 +1,10 @@
 # 音乐编舞 Harness 的执行设计与迁移方案
 
-目标是把已有5秒音乐编舞专家扩展成可评测的整曲规划与局部编辑系统。第一阶段冻结局部专家，增加可追溯的候选选择和有限修复；global保留为零样本对照。本文以 `20f7cc2` 的实现为基线，规划块、受限选择器和自动修复循环属于待实现设计；本文新增文档不会自动启用这些能力。
+目标是把已有5秒音乐编舞专家扩展成可评测的整曲规划与局部编辑系统。当前已接通规划块、整包候选选择、固定分数动态规划、来源编译和常驻局部专家；这些模块冻结模型，不启动训练。global保留为零样本对照。自动语义修复循环、长期主题搜索和自由指代编辑仍属于设计；运行命令与精确配置见README。
 
 ## 当前划分与三个时间尺度
 
-当前 `audio.make_windows` 只生成完整的5.0625秒观察窗；`baseline._outer_plan` 按导入的 `music.sections` 逐段调用外层模型。代码没有音乐乐句检测，也没有每四小节划分。`prepare-audio` 默认只有一个全曲unknown段，未导入真实结构时，hierarchical仍可能对整曲做一次大的section生成。
+`audio.make_windows` 仍只生成完整的5.0625秒观察窗；原 `baseline._outer_plan` 按导入的 `music.sections` 逐段调用外层模型。新增 `planning_units` 可在计量结构经作者声明reviewed后按小节构造规划块，默认unverified走时间回退。两条路径均未实现真正音乐乐句检测。`prepare-audio` 默认只有一个全曲unknown段，原hierarchical不会自动细分；新run-harness可在该段内建立明确标记的时间块。
 
 | 层 | 含义 | 当前或建议边界 | 是否可当真实动作边界 |
 |---|---|---|---|
@@ -19,23 +19,23 @@
 
 ## 整体执行流程
 
-下图的“新增”节点均为设计。已实现的固定section生成路径仍保留作baseline。
+下图标出当前模块及仍待实现的修复。已实现的固定section生成路径仍保留作baseline。
 
 ```mermaid
 flowchart TD
     A["完整歌曲"] --> B["规范WAV与整数采样时钟：已有"]
     B --> C["All-In-One或Beat This：外部工具"]
     C --> D["段落与重拍证据"]
-    D --> E["构造规划块与交叠索引：新增"]
+    D --> E["构造规划块与交叠索引：已有"]
     B --> F["5.0625秒观察窗：已有"]
     F --> G["已训练Qwen，固定K个候选：已有接口"]
     G --> H["原始候选库与采集成本：已有"]
-    E --> I["任务合同与组织目标：新增"]
-    H --> J["候选整包选择与图搜索：新增"]
+    E --> I["任务合同：已有<br/>长期主题目标优化：待实现"]
+    H --> J["候选整包选择：已有<br/>固定分数DP：已有"]
     I --> J
-    M["已提交历史与主题记忆：已有基础"] --> J
-    J --> K["按候选来源编译计划：新增"]
-    K --> L["结构和编辑硬校验：已有<br/>候选引用和裁剪校验：新增<br/>语义审查：另接"]
+    M["保留片段上下文：已有<br/>长期主题搜索记忆：待接"] --> J
+    J --> K["按候选来源编译计划：已有"]
+    K --> L["结构和编辑硬校验：已有<br/>候选引用和裁剪校验：已有<br/>语义审查：另接"]
     L -->|"通过已定义的检查"| N["版本化提交与状态更新：已有基础"]
     N --> M
     L -->|"候选或局部问题"| R["有限换候选或patch修复：新增控制器"]
@@ -92,11 +92,11 @@ All-In-One代码为MIT；Beat This官方说明代码和发布权重为MIT。音�
 
 例：假设120 BPM、4/4，downbeats为 `0.72,2.72,4.72,6.72,8.72,...`，四小节块为 `[0.72,8.72)`；`[0,0.72)` 是前缀片段。如果功能段落在7.90秒结束，保留该原边界，将剩余部分标为不完整，不能擅自把段落改成8.72秒。四小节在不同速度下时长不同；这也说明它不能替换5.0625秒专家窗口。
 
-规划sidecar的设计示例：
+规划sidecar的字段摘录如下，完整绑定字段由plan-units或run-harness生成：
 
 ```json
 {
-  "schema": "choreobench.planning_units.proposed.v1",
+  "schema": "choreobench.planning_units.v1",
   "audio_sha256": "CANONICAL_WAV_SHA256",
   "units": [
     {
@@ -108,13 +108,16 @@ All-In-One代码为MIT；Beat This官方说明代码和发布权重为MIT。音�
       "bars": 4,
       "boundary_source": "tool_downbeats",
       "semantic_phrase_verified": false,
-      "window_refs": ["w006", "w007"]
+      "window_refs": [
+        {"window_index": 6, "observation_overlap": {"start": 512000, "end": 567000}, "ownership_overlap": {"start": 512000, "end": 567000}},
+        {"window_index": 7, "observation_overlap": {"start": 567000, "end": 640000}, "ownership_overlap": {"start": 567000, "end": 640000}}
+      ]
     }
   ]
 }
 ```
 
-示例假定16kHz、32–40秒。该JSON是拟议接口，不是现有CLI可直接读取的schema；fragment和fallback条目应使用其真实kind及缺失bars值。
+示例假定16kHz、32–40秒，只展示部分字段，不是可替代完整sidecar的手写输入；fragment和fallback条目使用其真实kind和bars=null。
 
 ## 局部候选如何采集
 
@@ -138,21 +141,18 @@ All-In-One代码为MIT；Beat This官方说明代码和发布权重为MIT。音�
 
 先让程序生成每个规划块的合同：可见音乐结构、局部候选ID、前后可用上下文、用户要求、可变范围、受保护字段。主题回归或渐强是 `design_goal`；它们不是音频中已经观测到的事实。重复的chorus标签不能自动证明两段旋律相同；重复组需声学证据或人工核对，保留不确定状态。
 
-第一条新增方法 `select_only` 限制外层输出候选ID、比较理由、证据引用和不确定项。动作文本与名义区间由程序从原候选读取。生成器不能在同一接口中擅自写新动作、改时间、改变身体轨道或抹除来源。
+当前run-harness的llm模式采用select_only原则，外层只返回choices中的window_id与candidate_index；动作文本与名义区间由程序从原候选读取。生成器不能在同一接口中擅自写新动作、改时间、改变身体轨道或抹除来源。比较理由、证据和不确定项可在后续版本加入独立审查合同，不是当前选择响应可附带的字段。
 
 ```json
 {
-  "schema": "choreobench.selection.proposed.v1",
-  "decisions": [
+  "choices": [
     {"window_id": "w006", "candidate_index": 1},
     {"window_id": "w007", "candidate_index": 0}
-  ],
-  "uncertain": [],
-  "reason": "Choose a different arm action while retaining the earlier step theme."
+  ]
 }
 ```
 
-程序验证每个window恰好一个合法candidate；无法选择时允许明确弃答。需要新动作或修改时走单独patch接口，记录 `proposed_by_editor`；改后不再称为原候选逐字支持。
+程序验证每个责任window恰好一个合法candidate，不能借空choices跳过窗口；非法输出记整首选择失败。scores模式合法分数下无完整路径时明确弃答并保留分母。需要新动作或修改时走单独patch接口，改后不再称为原候选逐字支持。
 
 动作事实表可以作为第二阶段模块：从caption中提取部位、方向、动作和显式入口/出口，并附原文span；缺失为null。“抬右腿”不能自动推出“最后右脚支撑”。LLM提取结果仍是解释，不能直接变成硬性人体物理约束。当前concat通常只有body轨道与空entry/exit，生成可靠细粒度编辑前必须先解决事实拆分与审核。
 
@@ -221,20 +221,21 @@ prepared -> analyzed -> candidates_ready -> selection_proposed
 
 项目内也有可复用基础：`music_planner_search.py` 的候选身份、独立音频评审合同与经审查数据导出；`motionscript_v2/selection.py` 的可逆摘要与源事件保留。前者需转换到ChoreoBench候选schema，后者依赖实测姿态事件，只适合离线标注，不可把音乐生成文字伪装成实测动作。两者均不是已有的整曲候选图选择器。
 
-## 待实现模块与验收
+## 模块状态与验收
 
-下列文件名是建议，不是当前目录已有接口；当前可运行命令仍以README与CLI help为准。
+当前可运行命令以README与CLI help为准；表内未实现模块不可当作已有CLI。
 
 | 模块 | 输入 → 输出 | 最低验收 |
 |---|---|---|
-| `music_tools.py` | canonical WAV → 原始结构结果与绑定回执 | 秒/样本一致、真实工具身份、不混不同解码波形 |
-| `planning_units.py` | sections+downbeats → blocks/fragments/fallback与交叠索引 | 变速、弱起、残缺尾、段落非重拍边界、未知拍号均有测试；全曲无缝且不重复 |
-| `selection.py` | 固定候选+公开合同+偏好 → 每window唯一选择 | 整包选择、跨block一致、坏候选/缺评/平分/全失败显式保留 |
-| `compile_selected.py` | 选择+原请求 → plan+来源与部分裁剪回执 | 文本逐字来源、时钟、无默默retiming；次数动作裁剪被标待审 |
-| `controller.py` | 任务状态+工具结果 → 有预算的运行轨迹 | 中断恢复、未知结果、版本重复、预算终止与失败分母 |
-| `edit_grounder.py` | 文本指令+公开结构 → selector候选 | 区分自由定位与给定范围；歧义可弃答；保护范围不由编辑器扩大 |
+| `music_tools.py`（待实现） | canonical WAV → 原始结构结果与绑定回执 | 目前独立运行工具并经已有importer导入 |
+| `planning_units.py`（已有） | sections+downbeats → blocks/fragments/fallback与交叠索引 | 变速、弱起、残缺尾、段落非重拍边界、未审核计量回退；全曲无缝且不重复 |
+| `selection.py`（已有） | 固定候选+公开合同+偏好 → 每window唯一选择 | 整包选择、来源绑定、缺评/平分/无路径；DP与暴力枚举对照 |
+| `compile_selected.py`（已有） | 选择+原请求 → plan+来源与部分裁剪回执 | 文本逐字来源、时钟、不默默retiming；部分裁剪被省略或标待审 |
+| `harness.py`（单次流程已有） | 任务状态+工具结果 → 有预算的运行轨迹 | 跨块唯一选择、输入字符上限、恢复、未知结果、失败分母；尚无自动修复循环 |
+| `resident.py`（已有） | audio-only HTTP → 原生专家结果 | 同实例串行复用、身份pin、真实波形校验、加载验证失败要求重启；真实GPU待验收 |
+| `edit_grounder.py`（待实现） | 文本指令+公开结构 → selector候选 | 当前仍使用显式选择器，不能把自由定位当已实现 |
 
-建议实现顺序：先规划块与窗口映射，再select_only及编译器，再有限修复，最后自由指代编辑。global与原hierarchical保留作比较路径，不因新设计删除弱基线。
+后续顺序：验收真实服务与单曲选择，再增加经校准的有限语义修复，最后自由指代编辑。global与原hierarchical保留作比较路径。DP是固定分数路径搜索；llm模式是按规划块单次选择，不能声称已经合并成自动评分、主题记忆与多轮修复的完整agent。
 
 ## 数据与实验的先后
 
@@ -244,4 +245,4 @@ prepared -> analyzed -> candidates_ready -> selection_proposed
 
 正式评估同时报告缺失/失败、结构有效性、音乐贴合、主题发展、非预期重复、编辑目标与保持性及成本。按原曲/艺人/近重复组隔离数据；独立终评不得进入测试歌曲搜索或策略调参。文本排程的拍点分数不等于生成视频中的实际动作同步，后者需独立渲染和测量协议。
 
-资源优先沿用 [RESOURCES_zh.md](RESOURCES_zh.md)：首次本地专家采集需要真实模型服务器；候选已固定后，选择/控制程序可在CPU运行，外层LLM由独立服务提供。人工编舞与音乐评审、完整音频来源、实际checkpoint和冻结环境是必要输入。本文的新增设计尚未执行真实模型质量实验。
+资源优先沿用 [RESOURCES_zh.md](RESOURCES_zh.md)：首次本地专家采集需要真实模型服务器；候选已固定后，选择/控制程序可在CPU运行，外层LLM由独立服务提供。当前不启动SFT、DPO或RL，不需要新增训练集才能运行；模型缺陷是否需要后续训练由真实实验决定。完整歌曲、编辑任务、独立评审和开发校准数据仍是benchmark输入。常驻服务减少重复加载，但显存、推理和空闲租用仍消耗资源；采集后可停局部服务而继续使用候选。尚未执行真实GPU模型质量实验。

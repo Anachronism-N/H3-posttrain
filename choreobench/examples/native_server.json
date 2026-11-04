@@ -1,0 +1,12 @@
+{
+  "kind": "native",
+  "family": "omni_captioner",
+  "model": "/models/Qwen3-Omni-30B-A3B-Captioner",
+  "checkpoint": "/models/choreography-run/checkpoint-final",
+  "training_source_dir": "/models/choreography-run/frozen_training_sources",
+  "device": "cuda:0",
+  "max_length": 8192,
+  "temperature": 0.9,
+  "top_p": 0.95,
+  "top_k": 50
+}

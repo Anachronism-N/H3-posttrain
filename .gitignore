@@ -4,3 +4,7 @@ __pycache__/
 *.pth
 *.pt
 *.mp4
+
+# Local ChoreoBench data/model outputs; do not publish private review bindings.
+.choreobench-runs/
+.choreobench-data/

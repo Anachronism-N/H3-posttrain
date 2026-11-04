@@ -1,0 +1,5 @@
+# Core benchmark, mocks, validation and WAV slicing use only the standard library.
+# Install these only for explicit preparation of noncanonical audio.
+numpy>=1.24,<3
+scipy>=1.10,<2
+soundfile>=0.12,<1

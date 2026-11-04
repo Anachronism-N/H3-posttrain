@@ -19,3 +19,13 @@ guidance loss, Hybrid BF16 base), AR/causal experiments, music-condition injecti
 Paths, node addresses and dataset locations are those of the original cluster and must be adapted.
 Access tokens were removed (`<HF_TOKEN_REDACTED>`); supply your own via environment variables.
 Model weights, caches, data and generated videos are not included.
+
+## Music-to-text choreography benchmark
+
+[ChoreoBench](choreobench/README.md) provides separate benchmark contracts and reference
+baselines for short-window captions, whole-song choreography scores and constrained
+text edits. It includes CPU smoke fixtures, native planner integration, external
+text-planner interfaces, strict edit checks, method-independent submission evaluation
+and blinded review exchange. Formal datasets and real-model benchmark results are
+not bundled; see its [protocol](choreobench/docs/PROTOCOL_zh.md) and
+[server resource guide](choreobench/docs/RESOURCES_zh.md).

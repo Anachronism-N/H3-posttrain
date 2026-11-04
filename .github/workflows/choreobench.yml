@@ -1,0 +1,34 @@
+name: ChoreoBench CPU contracts
+
+on:
+  push:
+    paths:
+      - 'choreobench/**'
+      - 'tests/test_choreobench_*.py'
+      - 'scripts_omnidance/exp/ms/music_planner_eval.py'
+      - '.github/workflows/choreobench.yml'
+  pull_request:
+    paths:
+      - 'choreobench/**'
+      - 'tests/test_choreobench_*.py'
+      - '.github/workflows/choreobench.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cpu:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.10', '3.12']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -r choreobench/requirements-dev.txt
+      - run: python -m pytest -c choreobench/pytest.ini -q
+      - run: python -m choreobench demo --out-dir .choreobench-runs/ci-smoke --run

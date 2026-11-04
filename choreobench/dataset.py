@@ -42,8 +42,15 @@ def inspect_wav(path):
             digest = hashlib.sha256()
             for block in iter(lambda: raw.read(8 * 1024 * 1024), b""):
                 digest.update(block)
-            if before != identity(os.fstat(raw.fileno())) or before != identity(path.stat()):
+            if before != identity(os.fstat(raw.fileno())):
                 raise ValidationError("WAV changed during validation")
+            # Compare handle metadata with handle metadata. On Windows/Python
+            # 3.12+ path stat can use a different native API from fstat, yielding
+            # different metadata (notably ctime) for the same unchanged file.
+            # Reopening still detects a replacement of the path while raw is held.
+            with path.open("rb") as current:
+                if before != identity(os.fstat(current.fileno())):
+                    raise ValidationError("WAV changed during validation")
     except (wave.Error, EOFError) as error:
         raise ValidationError("Invalid PCM WAV: " + str(path)) from error
     return {"sample_rate": rate, "num_samples": frames, "sha256": digest.hexdigest()}

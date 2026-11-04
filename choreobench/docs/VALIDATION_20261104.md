@@ -11,13 +11,15 @@
 
 ## 已执行
 
-1. `python -m pytest -c choreobench/pytest.ini -q`：**151 passed**。覆盖数据/时钟与分组、跨平台ID、音频身份与准备、三种baseline、预算与恢复、原始响应/请求绑定、模型输出失败、编辑保护/私有目标隔离、盲评绑定、歌曲级统计、方法无关提交及CLI联调。
+1. `python -m pytest -c choreobench/pytest.ini -q`：**154 passed**。覆盖数据/时钟与分组、跨平台ID、音频身份与准备、三种baseline、预算与恢复、原始响应/请求绑定、模型输出失败、编辑保护/私有目标隔离、盲评绑定、歌曲级统计、方法无关提交及CLI联调。
 2. `python -m choreobench demo --out-dir ... --run`：短合成音频端到端通过，包含concat/global/hierarchical和手工patch评估。
 3. `python -m choreobench demo --out-dir ... --seconds 180 --run`：180秒合成音频跑通三种baseline与编辑流程。这里只验证长度、数据流与预算合同。
 4. prepare-audio：180秒PCM输入完成规范化与receipt；另有24kHz双声道→16kHz单声道回归，检查样本数、SHA、来源记录及拒绝覆盖。
 5. CLI集成测试验证盲评音频复制、原始身份隐藏、缺评保持pending、提交缺失预测保留分母和精确版本撤销。
 6. `python -m compileall -q choreobench` 与Git whitespace检查通过。
 7. 原有 `tests/test_music_planner_search.py` 回归：**60 passed, 8 skipped**。8项依赖torch，当前环境跳过。
+
+首次远端CI中Linux/Python 3.10与3.12通过，Windows/Python 3.12暴露了音频元数据误报。Windows路径stat与句柄fstat的ctime语义可能不同（[CPython源码](https://github.com/python/cpython/blob/v3.12.12/Modules/posixmodule.c#L2015)）；现改为同一API的前后句柄比较，并保持原句柄打开、重开路径检查替换。增加了路径元数据差异不误报，以及读取中修改/路径替换仍拒绝的三项回归。修复后的远端矩阵结果以GitHub Actions为准。
 
 ## 未完成的服务器验收
 

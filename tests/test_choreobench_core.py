@@ -137,3 +137,50 @@ def test_prepare_audio_downmix_resample_and_durable_publication(tmp_path):
     assert receipt["source_cropped"] is False
     with pytest.raises(FileExistsError):
         prepare_audio(source, out, manifest, song_id="prepared")
+
+
+def test_wav_validation_accepts_different_path_stat_metadata(tmp_path, monkeypatch):
+    from pathlib import Path
+    from types import SimpleNamespace
+    from choreobench.dataset import inspect_wav
+    from choreobench.io import file_sha
+    audio = tmp_path / "audio.wav"
+    with wave.open(str(audio), "wb") as stream:
+        stream.setparams((1, 2, 16000, 0, "NONE", "not compressed"))
+        stream.writeframes(b"\x00\x00" * 80)
+    original_stat = Path.stat
+    def different_path_identity(path, *args, **kwargs):
+        stat = original_stat(path, *args, **kwargs)
+        if path != audio:
+            return stat
+        return SimpleNamespace(st_dev=stat.st_dev + 1, st_ino=stat.st_ino + 1,
+                               st_size=stat.st_size, st_mtime_ns=stat.st_mtime_ns,
+                               st_ctime_ns=stat.st_ctime_ns + 1)
+    expected_sha = file_sha(audio)
+    monkeypatch.setattr(Path, "stat", different_path_identity)
+    assert inspect_wav(audio) == {"sample_rate": 16000, "num_samples": 80,
+                                  "sha256": expected_sha}
+
+
+@pytest.mark.parametrize("change_call,field", [(2, "st_mtime_ns"), (3, "st_ino")])
+def test_wav_validation_still_rejects_mutation_or_replacement(tmp_path, monkeypatch, change_call, field):
+    from types import SimpleNamespace
+    from choreobench import dataset
+    audio = tmp_path / "audio.wav"
+    with wave.open(str(audio), "wb") as stream:
+        stream.setparams((1, 2, 16000, 0, "NONE", "not compressed"))
+        stream.writeframes(b"\x00\x00" * 80)
+    original_fstat = dataset.os.fstat
+    calls = 0
+    def changing_identity(fd):
+        nonlocal calls
+        calls += 1
+        stat = original_fstat(fd)
+        values = {key: getattr(stat, key) for key in
+                  ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")}
+        if calls == change_call:
+            values[field] += 1
+        return SimpleNamespace(**values)
+    monkeypatch.setattr(dataset.os, "fstat", changing_identity)
+    with pytest.raises(ValidationError, match="changed during validation"):
+        dataset.inspect_wav(audio)

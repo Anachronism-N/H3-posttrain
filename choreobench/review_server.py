@@ -69,7 +69,7 @@ def create_review_server(public_dir, host="127.0.0.1", port=0, proxy_prefix=""):
             if digest.hexdigest() != audio["sha256"] or _signature(before) != _signature(os.fstat(stream.fileno())):
                 raise ValueError("Public audio identity differs from the review pack")
         assets["/" + relative.as_posix()] = (path, _signature(before),
-            mimetypes.guess_type(path.name)[0] or "application/octet-stream")
+            mimetypes.guess_type(path.name)[0] or "application/octet-stream", audio["sha256"])
     identity = dict(schema="choreobench.review_server.health.v1", public_pack_sha256=object_sha(pack),
                     review_items=len(pack["items"]), songs=len({i["song"]["song_id"] for i in pack["items"]}),
                     read_only=True, private_routes=False)
@@ -112,7 +112,7 @@ def create_review_server(public_dir, host="127.0.0.1", port=0, proxy_prefix=""):
             if asset is None:
                 self._error(404)
                 return
-            path, signature, content_type = asset
+            path, signature, content_type, expected_sha = asset
             try:
                 if path.resolve(strict=True) != path:
                     self._error(404)
@@ -120,32 +120,37 @@ def create_review_server(public_dir, host="127.0.0.1", port=0, proxy_prefix=""):
                 with path.open("rb") as stream:
                     observed = os.fstat(stream.fileno())
                     if not stat.S_ISREG(observed.st_mode) or _signature(observed) != signature:
-                        self._error(409)
-                        return
-                    try:
-                        start, end, status = _range(self.headers.get("Range"), observed.st_size)
-                    except ValueError:
-                        self._headers(416, 0, content_type)
-                        self.send_header("Content-Range", "bytes */" + str(observed.st_size))
-                        self.end_headers()
-                        return
-                    self._headers(status, end - start + 1, content_type)
-                    self.send_header("Accept-Ranges", "bytes")
-                    if status == 206:
-                        self.send_header("Content-Range", "bytes %d-%d/%d" % (start, end, observed.st_size))
+                        raise ValueError("Audio metadata changed")
+                    # Metadata is only an early rejection check: equal-sized
+                    # writes with restored mtime may keep the complete signature
+                    # on Windows. Verify the actual immutable bytes we will send,
+                    # including for Range and HEAD, then close the source handle.
+                    payload = stream.read(signature[2] + 1)
+                    if (len(payload) != signature[2]
+                            or _signature(os.fstat(stream.fileno())) != signature
+                            or hashlib.sha256(payload).hexdigest() != expected_sha):
+                        raise ValueError("Audio content changed")
+                try:
+                    start, end, status = _range(self.headers.get("Range"), len(payload))
+                except ValueError:
+                    self._headers(416, 0, content_type)
+                    self.send_header("Content-Range", "bytes */" + str(len(payload)))
                     self.end_headers()
-                    if self.command == "HEAD":
-                        return
-                    stream.seek(start)
-                    remaining = end - start + 1
-                    while remaining:
-                        chunk = stream.read(min(remaining, 256 * 1024))
-                        if not chunk:
-                            break
-                        self.wfile.write(chunk)
-                        remaining -= len(chunk)
+                    return
+                self._headers(status, end - start + 1, content_type)
+                self.send_header("Accept-Ranges", "bytes")
+                if status == 206:
+                    self.send_header("Content-Range", "bytes %d-%d/%d" % (start, end, len(payload)))
+                self.end_headers()
+                if self.command == "HEAD":
+                    return
+                view = memoryview(payload)
+                for offset in range(start, end + 1, 256 * 1024):
+                    self.wfile.write(view[offset:min(offset + 256 * 1024, end + 1)])
             except (BrokenPipeError, ConnectionResetError, TimeoutError):
                 pass
+            except ValueError:
+                self._error(409)
             except OSError:
                 self._error(404)
 

@@ -91,6 +91,7 @@ def evaluate_edit(before, after, task):
         "before_sha256": object_sha(before), "after_sha256": object_sha(after),
         "after_valid": False, "errors": [], "literal_goals": [], "protections": [],
         "literal_goal_satisfaction_rate": None, "protection_preservation_rate": None,
+        "literal_goals_status": "not_requested" if not task["goals"] else "not_evaluated",
         "literal_joint_success": False,
         "semantic_goals": [{"goal": goal, "status": "pending_independent_review"}
                            for goal in task["semantic_goals"]],
@@ -132,18 +133,32 @@ def evaluate_edit(before, after, task):
                               if not literal_equal(before_events[event_id]["evidence"], after_events[event_id]["evidence"]))
     scope_valid = not out_of_scope and old_ids == new_ids and not changed_immutable and not changed_evidence
     literal_pass = scope_valid and all(row["satisfied"] for row in goal_rows) and all(row["preserved"] for row in protection_rows)
+    # Preserving constraints is meaningful even without a target, but all([])
+    # cannot turn a task with no goals into successful editing. A no-op with
+    # explicit goals already satisfied remains a valid literal success.
+    literal_success = literal_pass if goal_rows or not literal_pass else None
+    if not literal_pass:
+        overall_status = "literal_fail"
+    elif task["semantic_goals"]:
+        overall_status = "pending_independent_review"
+    elif goal_rows:
+        overall_status = "literal_pass"
+    else:
+        overall_status = "not_evaluable"
     report.update({
         "literal_goals": goal_rows, "protections": protection_rows,
         "literal_goal_satisfaction_rate": goal_rate, "protection_preservation_rate": protection_rate,
+        "literal_goals_status": "evaluated" if goal_rows else "not_requested",
         "changed_event_ids": changed, "out_of_scope_event_ids": out_of_scope,
         "repair_changed_event_ids": sorted((set(changed) & repair) - allowed),
         "changed_immutable_fields": changed_immutable, "changed_evidence_event_ids": changed_evidence,
         "event_identity_preserved": old_ids == new_ids,
         "scope_valid": scope_valid, "no_op": not changed and not changed_immutable,
-        "literal_joint_success": literal_pass,
-        "overall_status": ("pending_independent_review" if task["semantic_goals"] else "literal_pass")
-        if literal_pass else "literal_fail",
-        "note": "Literal success does not establish action semantics, musicality, executability, or boundary quality.",
+        "literal_joint_success": literal_success,
+        "overall_status": overall_status,
+        "note": ("Literal success does not establish action semantics, musicality, executability, or boundary quality. "
+                 "Without literal goals, joint literal success is NA unless a constraint fails. "
+                 "A no-op alone does not establish successful editing or correct abstention."),
     })
     return report
 

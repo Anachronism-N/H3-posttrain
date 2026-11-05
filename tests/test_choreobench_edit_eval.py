@@ -133,6 +133,80 @@ def test_noop_is_kept_but_does_not_meet_an_unmet_target():
     assert report["overall_status"] == "literal_fail"
 
 
+@pytest.mark.parametrize("change", [False, True])
+@pytest.mark.parametrize("protected", [False, True])
+def test_no_goals_do_not_create_literal_success_from_constraints(change, protected):
+    source, contract = plan(), task()
+    contract["goals"] = []
+    contract["semantic_goals"] = []
+    if not protected:
+        contract["protected"] = []
+    after = copy.deepcopy(source)
+    if change:
+        after["events"][0]["action"] = "A different arm action."
+    report = evaluate_edit(source, after, contract)
+    assert report["no_op"] is (not change)
+    assert report["scope_valid"]
+    assert report["literal_goal_satisfaction_rate"] is None
+    assert report["literal_goals_status"] == "not_requested"
+    assert report["literal_joint_success"] is None
+    assert report["semantic_status"] == "not_requested"
+    assert report["overall_status"] == "not_evaluable"
+    assert report["protection_preservation_rate"] == (1. if protected else None)
+
+
+def test_semantic_only_target_stays_pending_with_literal_success_na():
+    source, contract = plan(), task()
+    contract["goals"] = []
+    report = evaluate_edit(source, source, contract)
+    assert report["literal_joint_success"] is None
+    assert report["literal_goal_satisfaction_rate"] is None
+    assert report["overall_status"] == "pending_independent_review"
+    assert report["semantic_goals"][0]["status"] == "pending_independent_review"
+
+
+def test_na_edit_metric_is_not_coerced_or_silently_dropped_by_numeric_aggregators():
+    from choreobench.comparison import compare_methods
+    source, contract = plan(), task()
+    contract.update(goals=[], semantic_goals=[])
+    value = evaluate_edit(source, source, contract)["literal_joint_success"]
+    with pytest.raises(ValidationError, match="finite"):
+        song_bootstrap([dict(song_id="song1", value=value)])
+    rows = [dict(song_id="song1", group_id="source1", method_id=method, value=value) for method in ("a", "b")]
+    with pytest.raises(ValidationError, match="finite number"):
+        compare_methods(rows, "a", "b")
+
+
+@pytest.mark.parametrize("semantic_goals", [[], ["Independent review of the unchanged action is required."]])
+def test_explicit_already_satisfied_target_allows_valid_noop(semantic_goals):
+    source, contract = plan(), task()
+    contract["goals"][0]["value"] = "right"
+    contract["semantic_goals"] = semantic_goals
+    report = evaluate_edit(source, source, contract)
+    assert report["no_op"]
+    assert report["literal_joint_success"] is True
+    assert report["literal_goal_satisfaction_rate"] == 1.
+    assert report["literal_goals_status"] == "evaluated"
+    assert report["overall_status"] == ("pending_independent_review" if semantic_goals else "literal_pass")
+
+
+@pytest.mark.parametrize("violation", ["invalid", "scope", "protection"])
+def test_empty_targets_do_not_hide_invalidity_or_permission_failure(violation):
+    source, contract = plan(), task()
+    contract["goals"] = []
+    contract["semantic_goals"] = []
+    after = copy.deepcopy(source)
+    if violation == "invalid":
+        after["events"][0]["end"] = 700
+    elif violation == "scope":
+        after["events"][1]["action"] = "Unrequested change."
+    else:
+        after["events"][0]["exit"]["facing"] = "back"
+    report = evaluate_edit(source, after, contract)
+    assert report["literal_joint_success"] is False
+    assert report["overall_status"] == "literal_fail"
+
+
 def test_protected_noop_does_not_raise_and_time_reordering_is_canonical():
     source, proposal = plan(), patch()
     proposal["operations"] = [{"event_id": "event_a", "field": "exit.facing", "value": "front"}]

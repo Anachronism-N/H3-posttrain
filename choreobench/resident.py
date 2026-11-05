@@ -236,10 +236,10 @@ def create_resident_server(provider_spec, audio_root, host="127.0.0.1", port=0, 
                     try:
                         result = provider.generate(request)
                     except Exception as error:
-                        # NativeProvider sets adapter before verifying a loaded
-                        # checkpoint. A failed verification must never be skipped
-                        # on the next call merely because adapter is non-None.
-                        if provider.adapter is not None and getattr(provider, "verification", None) is None:
+                        # Atomic initialization publishes no unverified adapter;
+                        # its poison flag still requires an explicit restart.
+                        if (getattr(provider, "requires_restart", False) or
+                                provider.adapter is not None and getattr(provider, "verification", None) is None):
                             state["requires_restart"] = True
                         # An inference may already have occurred. Never retry it.
                         self._send(500, dict(error="Native generation failed", error_type=type(error).__name__,

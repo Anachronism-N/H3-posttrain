@@ -1,6 +1,7 @@
 """Public-only HTTP regression tests; all audio and plans are synthetic fixtures."""
 from contextlib import contextmanager
 import json
+import os
 from pathlib import Path
 import threading
 import urllib.error
@@ -54,6 +55,7 @@ def running(public):
         server.shutdown()
         server.server_close()
         thread.join(timeout=3)
+        assert not thread.is_alive()
 
 
 def fetch(url, method="GET", headers=None):
@@ -101,6 +103,85 @@ def test_mutated_audio_is_not_served_and_page_is_frozen(public):
         assert fetch(url + "/" + pack["items"][0]["song"]["audio"]["path"])[0] == 409
         (root / "index.html").write_text("private accidental replacement")
         assert b"private accidental" not in fetch(url + "/")[2]
+
+
+@pytest.mark.parametrize("method,headers", [("GET", {}), ("HEAD", {}), ("GET", {"Range": "bytes=0-43"}),
+                                           ("HEAD", {"Range": "bytes=-8"})])
+def test_same_metadata_different_audio_bytes_are_rejected(public, monkeypatch, method, headers):
+    from types import SimpleNamespace
+    import choreobench.review_server as module
+    root, pack, audio = public
+    route = "/" + pack["items"][0]["song"]["audio"]["path"]
+    with audio.open("rb") as stream:
+        original_stat = os.fstat(stream.fileno())
+    original_fstat = os.fstat
+    def stable_metadata(fd):
+        result = original_fstat(fd)
+        # Simulate the Windows equal-size/retained-times case on every CI OS.
+        # Other files' metadata are unaffected.
+        if (result.st_dev, result.st_ino) == (original_stat.st_dev, original_stat.st_ino):
+            return SimpleNamespace(st_dev=result.st_dev, st_ino=result.st_ino, st_size=result.st_size,
+                st_mode=result.st_mode, st_mtime_ns=original_stat.st_mtime_ns,
+                st_ctime_ns=original_stat.st_ctime_ns)
+        return result
+    monkeypatch.setattr(module.os, "fstat", stable_metadata)
+    with running(public) as url:
+        initial = audio.read_bytes()
+        with audio.open("r+b") as stream:
+            stream.seek(-1, 2)
+            stream.write(bytes([initial[-1] ^ 1]))
+        with audio.open("rb") as stream:
+            changed_stat = module.os.fstat(stream.fileno())
+        assert module._signature(changed_stat) == module._signature(original_stat)
+        status, _, body = fetch(url + route, method=method, headers=headers)
+        assert status == 409
+        assert body == (b"" if method == "HEAD" else b"Request not available")
+
+
+@pytest.mark.parametrize("headers", [{}, {"Range": "bytes=-8"}])
+def test_audio_changed_after_verification_cannot_change_served_bytes(public, monkeypatch, headers):
+    from http.server import BaseHTTPRequestHandler
+    root, pack, audio = public
+    route = "/" + pack["items"][0]["song"]["audio"]["path"]
+    original = audio.read_bytes()
+    end_headers = BaseHTTPRequestHandler.end_headers
+    mutations = []
+    def mutate_after_headers(handler):
+        end_headers(handler)
+        if handler.path == route and handler.command == "GET":
+            with audio.open("r+b") as stream:
+                stream.seek(-1, 2)
+                stream.write(bytes([original[-1] ^ 1]))
+            mutations.append(True)
+    monkeypatch.setattr(BaseHTTPRequestHandler, "end_headers", mutate_after_headers)
+    with running(public) as url:
+        status, _, body = fetch(url + route, headers=headers)
+        assert status == (206 if headers else 200)
+        assert body == (original[-8:] if headers else original)
+        assert mutations == [True] and audio.read_bytes() != original
+
+
+def test_audio_handles_are_closed_on_success_failure_and_server_stop(public, monkeypatch):
+    root, pack, audio = public
+    route = "/" + pack["items"][0]["song"]["audio"]["path"]
+    original_open = Path.open
+    handles = []
+    def observed_open(path, *args, **kwargs):
+        stream = original_open(path, *args, **kwargs)
+        if path == audio:
+            handles.append(stream)
+        return stream
+    monkeypatch.setattr(Path, "open", observed_open)
+    with running(public) as url:
+        assert fetch(url + route)[0] == 200
+        assert fetch(url + route, method="HEAD", headers={"Range": "bytes=-8"})[0] == 206
+        assert fetch(url + route, headers={"Range": "bytes=99999-"})[0] == 416
+        audio.write_bytes(audio.read_bytes() + b"changed")
+        assert fetch(url + route)[0] == 409
+        assert handles and all(stream.closed for stream in handles)
+    assert all(stream.closed for stream in handles)
+    # Also exercises Windows deletion semantics: no retained audio handle.
+    audio.unlink()
 
 
 def test_path_and_handle_timestamp_semantics_do_not_cause_false_audio_rejection(public, monkeypatch):

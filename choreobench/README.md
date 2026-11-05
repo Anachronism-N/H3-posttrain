@@ -376,7 +376,8 @@ python -m choreobench.review_server \
 # 在同一 canonical WAV 上得到可追溯的真实 Beat This detections 后运行。
 python -m choreobench.music_structure \
   --dataset /data/choreobench/dataset.json \
-  --detections /data/choreobench/beatthis/detections.jsonl \
+  --detections /data/choreobench/beatthis/detections.v1.jsonl \
+  --split dev \
   --out /data/choreobench/public-structure.json
 python -m choreobench run-harness \
   --dataset /data/choreobench/dataset.json \
@@ -387,7 +388,7 @@ python -m choreobench run-harness \
 
 使用前修改示例的实际服务/model，并可加 `public_structure_path` 指向新sidecar。sidecar 严格绑定原dataset bytes、歌曲和音频SHA/时钟；**不改旧清单或候选身份，不允许私有审计/目标/参考答案进入结构**。index0/llm/scores 可消费相同sidecar，作为同信息条件对照。
 
-`music_structure` 用真实Beat This拍点与canonical音频谱变化构造分段：在预测downbeat处比较前后3秒标准化log频带谱，选择间距至少20秒的高novelty峰。参数为未校准工程初值，全部功能标签 `unknown`、`repeat_group=null`；不称verse/chorus、真正乐句、人工真值或All-In-One复现。保存配置、原novelty与输入/code哈希。独立All-In-One等预测可按严格sidecar字段导入，工具本身仍需运行/验收。
+`music_structure` 消费带版本/来源合同的拍点预测与canonical音频谱变化：在预测downbeat处比较前后3秒标准化log频带谱，选择间距至少20秒的高novelty峰。输入检测格式与旧结果迁移见第12节；不根据文件名推断Beat This身份。参数为未校准工程初值，全部功能标签 `unknown`、`repeat_group=null`；不称verse/chorus、真正乐句、人工真值或All-In-One复现。保存配置、原novelty与输入/code哈希。独立All-In-One等预测可按严格sidecar字段导入，工具本身仍需运行/验收。
 
 计量 `unverified` 时默认10.125秒回退；reviewed声明后才按实际重拍合并四小节，不把它当真正乐句。时间短尾目标 `min_time_block_seconds=2`：同一段内合并短尾，超过容量则平衡最后两块；不跨公开段落、不改变音频/观察窗、不强行合并弱起和本来很短的section。它不是生成动作最短时长保证。
 
@@ -420,4 +421,54 @@ coordinated 新增确定的外部状态、公开音乐证据、全曲设计、�
 
 最后三首真实开发结果、复制退化与修订失败、短动作/缺口和未完成项统一记于 [VALIDATION_20261104.md](docs/VALIDATION_20261104.md)。这三首用于提示/参数开发，不是冻结隐藏测试；先完成独立盲评和结构/时长审查，再讨论pilot扩容和正式实验。
 
-针对 `c1bba3c` 的代码审查、五项已复现问题及checkpoint/正式评估的实施顺序见 [CODE_REVIEW_20261105_zh.md](docs/CODE_REVIEW_20261105_zh.md)。报告中的修复建议尚未修改实现。
+针对 `c1bba3c` 的历史审查及五项复现见 [CODE_REVIEW_20261105_zh.md](docs/CODE_REVIEW_20261105_zh.md)。本轮修复、checkpoint/网格时间验收与实验顺序见 [NEXT_STEPS_20261105_zh.md](docs/NEXT_STEPS_20261105_zh.md)。旧实验结果不自动代表修复后版本。
+
+## 12. 来源修复与下一轮实验
+
+本轮修复空目标编辑的虚假成功、检测合成来源丢失、固定非原文标记、模型校验失败后对象重用，以及Windows音频内容变化的请求检查。原c1bba3c审查保留为历史记录。模型仍冻结，未增加训练；真实已训练checkpoint、音乐效果及新参数需要另做服务器验收。
+
+checkpoint验收支持显式类型，配置参考examples/native_server.json；checkpoint不能附task_prompt覆盖训练前缀。
+
+```bash
+python -m choreobench.acceptance \
+  --provider /data/choreobench/native-checkpoint.json \
+  --artifact-type portable-checkpoint \
+  --audio /data/choreobench/acceptance-5.0625s.wav \
+  --out-dir /runs/checkpoint-acceptance --max-output-tokens 512
+```
+
+base-only与portable-checkpoint分别绑定实际audit和加载验证。无Unix resource/procfs或nvidia-smi时不可用资源值记null并附原因；CLI帮助可在Windows导入。真实验收仍要求CUDA、权重及相容环境；CPU stub通过不代表实际checkpoint已验收。
+
+结构检测JSONL的每行必须符合 `choreobench.beat_detections.v1`：
+
+```text
+schema,id,status="ok",audio_sha256,sample_rate,num_samples,time_unit="seconds",
+synthetic:boolean,detector:{name,version,model_sha256,code_sha256,parameters},beats,downbeats
+```
+
+精确字段、完整歌曲集合、canonical音频SHA/时钟、升序时间和同检测器downbeats属于beats都必须通过。非合成检测需要模型SHA；代码SHA始终需要；synthetic fixture允许model_sha256=null，但合成标记会传播到sidecar和harness。身份声明与哈希不等于独立认证。可选source_binding保留旧文件/原记录/运行回执的hash。
+
+混合train/dev/test清单可在分析时用重复的 `--split dev` 等选项，仅输出harness当前选中split的sidecar；输入检测仍须完整覆盖原dataset且逐条校验，原dataset SHA不变。默认不指定split则分析全量；sidecar歌曲集合必须与该次harness选中集合一致。迁移不接受split筛选。
+
+旧Beat This结果可以封装为新合同，不重跑检测或改写旧文件。detector-identity.json需按真实日志填写上面的detector对象；真实/合成和时间单位必须显式声明，与旧记录已有身份相矛盾时拒绝。
+
+```bash
+python -m choreobench.music_structure --wrap-legacy \
+  --dataset /data/choreobench/dataset.json \
+  --detections /data/choreobench/beatthis/detections.old.jsonl \
+  --out /data/choreobench/beatthis/detections.v1.jsonl \
+  --detector-identity /data/choreobench/beatthis/detector-identity.json \
+  --synthetic false --legacy-time-unit seconds
+```
+
+可加 `--run-receipt` 绑定原输出文件；迁移保留原文件及逐条字节hash。不能通过补填身份把fixture变成真实模型证据。
+
+新 [harness_coordinated_grid.json](examples/harness_coordinated_grid.json) 显式采用0.25秒时间网格和0.5秒事件下限作为开发起点。模型用start_boundary/end_boundary选择公开边界表，控制器编译到精确原采样下标；过短动作拒绝，整块不可满足则在模型调用前记录该歌失败。时间网格不是节拍/动作真值，下限不是物理质量评分。旧global_samples协议保留，不自动修改旧journal。
+
+该下限约束coordinated生成，不自动施加到旧计划或既有编辑patch；修改事件时间的编辑仍需独立时长/语义复核。
+
+编排诊断改为实际 `literal_source_copies`，比较引用原回答和解析片段的逐字相等比例；不再固定声明“非原文”。无目标编辑记NA/not_evaluable，不能记为成功或把NA转0后汇总；已有明确且已满足的目标允许合法no-op。
+
+评审音频请求先对实际有界内容核验SHA并关闭源句柄，再从同一bytes服务GET/Range/HEAD；每请求临时RAM与完整音频大小相关。评分仍只在浏览器填写/导出，由独立导入器处理。
+
+完整服务器步骤、资源、消融和正式数据门槛见 [NEXT_STEPS_20261105_zh.md](docs/NEXT_STEPS_20261105_zh.md)。

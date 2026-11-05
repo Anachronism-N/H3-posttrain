@@ -44,7 +44,7 @@ Schema: {schema:"choreobench.public_structure.v1",dataset_sha256,songs:[{song_id
 - Private goals, audits, references and scoring fields are rejected, not forwarded to a generator.
 - Candidate-bank matching still validates original dataset bytes and Song snapshots; the sidecar creates a separate effective public music view only for planning.
 - public_structure_path is optional for index0/llm/scores/coordinated. Sidecar snapshot/hash is persisted in the run contract; mutations invalidate resume. Synthetic source/sidecar/provider taint propagates.
-- music_structure.py builds sidecars from canonical WAV and audio-SHA-bound Beat This detections. Spectral-novelty boundaries have unknown functional labels, null repeat groups, unreviewed meter and no calibrated accuracy/phrase claim. Raw novelty, source/config/code hashes remain separate analysis evidence.
+- music_structure.py builds sidecars from canonical WAV and versioned, audio-SHA/clock-bound detections (see revision below). Actual detector identity is preserved; spectral-novelty boundaries have unknown functional labels, null repeat groups, unreviewed meter and no calibrated accuracy/phrase claim. Raw novelty, source/config/code hashes remain separate analysis evidence.
 
 ## Coordinated harness
 
@@ -86,4 +86,32 @@ Algorithm section_downbeat_partition.v2 adds min_time_block_seconds(default2). E
 
 review_server.create_review_server(public_dir,host="127.0.0.1",port=0,proxy_prefix="") serves only a fixed public-route allowlist and pack-bound canonical audio. Valid proxy prefixes are /proxy/PORT. GET/HEAD and audio byte ranges are supported; private paths, directories, unlisted files, traversal, symlink escape and POST writes are refused.
 
-Startup hashes audio and snapshots public documents; changed audio identity is rejected at request time. No server-side review-write endpoint is added; ratings are filled/exported in the browser and imported with the existing evaluator. The server does not invent ratings, prove that audio was heard, generate HTML or publish private bindings. Deployment-specific UI/assets remain in the operator's public experiment package, not this repository.
+Startup hashes audio and snapshots public documents. Each audio GET/HEAD/Range reads at most startup_size+1 bytes, checks metadata and actual full SHA, closes the source, then serves the same immutable bytes; metadata alone never certifies content. Per-request memory is O(audio file size). No server-side review-write endpoint is added; ratings are filled/exported in the browser and imported with the existing evaluator. The server does not invent ratings, prove that audio was heard, generate HTML or publish private bindings. Deployment-specific UI/assets remain in the operator's public experiment package, not this repository.
+
+## Correctness and acceptance revision 20261105
+
+- evaluate_edit: literal_goals_status distinguishes not_requested/not_evaluated/evaluated. With no literal goals, literal_joint_success=null if constraints pass, false if they fail. Without either goal kind and with valid constraints, overall_status=not_evaluable. Semantic-only goals remain pending_independent_review. Explicit already-satisfied literal goals may pass with a no-op. NA is not numeric zero/one and cannot be silently included in compare/bootstrap.
+- NativeProvider initialization verifies a temporary adapter before publication. Any initialization failure poisons that instance (requires_restart); direct reuse cannot skip verification. Resident HTTP preserves its restart lock even when no adapter was published.
+- acceptance.run_acceptance(provider_path,audio_path,output_dir,seed=7,max_output_tokens=512,artifact_type=None): explicit base-only/portable-checkpoint expectation, audited mode and loaded tensor receipt must agree. Checkpoint cannot use task_prompt. Real CUDA, exact 5.0625s input, EOS and double-window format are required; no retries/training. The local_acceptance.v1 report adds artifact_type/expected_artifact_type/audited_artifact_mode/loaded verification/stage/training_performed and actual checkpoint receipt. CLI --artifact-type pins expectation. Unsupported resource measurements are null with measurement_status reasons; import/help works without Unix resource.
+
+## Beat detection source contract
+
+music_structure.py accepts JSONL records with exact required fields {schema:"choreobench.beat_detections.v1",id,status:"ok",audio_sha256,sample_rate,num_samples,time_unit:"seconds",synthetic:bool,detector:{name,version,model_sha256,code_sha256,parameters:object},beats,downbeats}. Optional source_binding={artifact_sha256,record_sha256,run_receipt_sha256:null|sha256}. Times are finite seconds, strictly increasing, non-colliding on the canonical sample clock; raw downbeats must be a subset of raw beats. Exact dataset song inventory, audio SHA and clock are mandatory. Unknown/duplicate fields and nonfinite/duplicate-key JSON are rejected.
+
+Non-synthetic detector model_sha256 and all detector code_sha256 values require lowercase SHA256; synthetic fixtures may use null model_sha256. Detector labels are bounded portable labels; actual name/version/identity form the source rather than an assumed BeatThis label. Output synthetic=dataset.synthetic OR detection.synthetic; audit evidence records both inputs, source binding and identity status declared_not_independently_authenticated.
+
+wrap_legacy_detections(dataset_path,detections_path,output,detector=...,synthetic=...,time_unit="seconds",run_receipt_path=None) writes a new exclusive JSONL without model inference or source mutation. CLI --wrap-legacy requires --detector-identity/--synthetic true|false/--legacy-time-unit seconds, with optional --run-receipt. Original file/record hashes persist; a receipt must bind the source output hash, and existing explicit source claims cannot be contradicted. It is an operator declaration, not automatic authentication or permission to relabel fixtures as real.
+
+analyze_structure(...,splits=None) defaults to all songs; repeated CLI --split accepts train/dev/test to output the exact selected subset. Detection inventory/identity validation still covers the complete original dataset, whose SHA remains unchanged. Empty/duplicate/unknown or unmatched split selections fail. The wrapper never filters by split. Sidecar inventory must match the consuming harness splits.
+
+## Proposed event clock and literal source comparison
+
+Coordinated-only config: event_time_format=global_samples(default)|boundary_ids, event_grid_seconds=0.25, min_event_seconds=0. All positive/nonnegative values must be finite numbers (not booleans). The explicit grid example uses boundary_ids and min_event_seconds=0.5 as uncalibrated development parameters.
+
+timing.event_clock(unit,sample_rate,config) creates a public event_clock.v1. Grid steps round nearest sample with half upward, include exact unit.end without padding, and cap at4097 boundaries. Minimum duration rounds upward, with >=1 sample even for min_event_seconds=0. Boundary output is {unit_id,events:[{start_boundary,end_boundary,track,action,motif_id,source_call_ids}]}; indices are integers into the public boundary_samples. Global-sample output retains start/end. Controller compiles then checks duration, order, scopes, sources and unit bounds; JSONschema cannot replace relational checks. A whole unit shorter than the declared minimum marks the song failed before any outline/unit generation; invalid density fails configuration before provider initialization. No stretching, cropping, forced rest or hidden retry.
+
+Requests journal the public clock and optional dynamic decoder schema; contracts hash config/source/units. Stored final plans keep their existing integer global sample schema. Non-coordinated modes reject explicit event-clock options instead of silently ignoring them. Changes require a new output directory.
+
+This minimum applies to coordinated generation, not automatically to legacy plans or later edit patches. Edited timing still requires independent checks.
+
+The unconditional diagnostic new_actions_not_verbatim is removed. literal_source_copies={event_count,exact_match_count,exact_match_fraction,matching_event_ids,comparison,semantic_novelty_verified:false} compares exact Unicode action strings against cited raw responses or parsed fragments only. A match or mismatch is not semantic novelty, motion quality, or musical alignment.

@@ -169,6 +169,7 @@ class NativeProvider:
                 benchmark_provider_sha256=file_sha(Path(__file__)))
         self.adapter = None
         self.verification = None
+        self.requires_restart = False
 
     def _task_template(self):
         return self.adapter.processor.apply_chat_template([dict(role="user", content=[
@@ -176,15 +177,31 @@ class NativeProvider:
             dict(type="text", text=self.task_prompt)])], tokenize=False, add_generation_prompt=True)
 
     def load(self):
-        from scripts_omnidance.exp.ms.music_planner_search_identity import verify_loaded_portable
-        if self.adapter is None:
+        if self.requires_restart:
+            raise RuntimeError("Native initialization failed; restart with a new provider instance")
+        if self.adapter is not None:
+            if self.verification is None:
+                self.requires_restart = True
+                raise RuntimeError("Native adapter lacks loaded verification; restart required")
+            return
+        try:
+            from scripts_omnidance.exp.ms.music_planner_search_identity import verify_loaded_portable
             from scripts_omnidance.exp.ms.music_planner_adapters import load_planner_adapter
-            self.adapter = load_planner_adapter(self.family, self.model, checkpoint=self.checkpoint,
+            adapter = load_planner_adapter(self.family, self.model, checkpoint=self.checkpoint,
                 device=self.spec.get("device", "cpu"), max_length=self.max_length)
-            self.adapter._sampling_official_model_path = self.model
-            self.verification = verify_loaded_portable(self.adapter, self.identity["artifact_identity"])
+            adapter._sampling_official_model_path = self.model
+            verification = verify_loaded_portable(adapter, self.identity["artifact_identity"])
+            if not isinstance(verification, dict) or not verification:
+                raise ValueError("Native initialization did not produce loaded verification")
             if self.task_prompt is not None:
-                self.adapter._prompt = self._task_template
+                adapter._prompt = self._task_template
+        except Exception:
+            # A caller may catch the first error and reuse this object. Never
+            # publish a partly verified adapter or silently try loading again.
+            self.requires_restart = True
+            raise
+        self.verification = verification
+        self.adapter = adapter
 
     def generate(self, request):
         _budget(request)

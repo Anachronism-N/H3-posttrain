@@ -30,17 +30,25 @@ def _config(value):
     allowed = {"mode", "selector_provider", "scores_path", "seed", "max_calls", "max_output_tokens",
                "splits", "unit_config", "timing_policy", "continue_on_model_error", "max_request_characters",
                "public_structure_path", "planner_provider", "outline_max_output_tokens", "structured_unit_output",
-               "max_events_per_unit"}
+               "max_events_per_unit", "event_time_format", "event_grid_seconds", "min_event_seconds"}
     if not isinstance(value, dict) or set(value) - allowed:
         raise ValueError("Unknown inference harness config fields")
     finite_json(value)
     cfg = dict(mode="index0", selector_provider=None, scores_path=None, seed=7, max_calls=1000,
                max_output_tokens=4096, splits=["dev"], unit_config={}, timing_policy="strict",
                continue_on_model_error=True, max_request_characters=120000, public_structure_path=None,
-               planner_provider=None, outline_max_output_tokens=4096, structured_unit_output=False, max_events_per_unit=3)
+               planner_provider=None, outline_max_output_tokens=4096, structured_unit_output=False, max_events_per_unit=3,
+               event_time_format="global_samples", event_grid_seconds=.25, min_event_seconds=0)
     cfg.update(copy.deepcopy(value))
     if cfg["mode"] not in ("index0", "llm", "scores", "coordinated"):
         raise ValueError("Harness mode must be index0/llm/scores/coordinated")
+    if cfg["event_time_format"] not in ("global_samples", "boundary_ids"):
+        raise ValueError("event_time_format must be global_samples/boundary_ids")
+    for name in ("event_grid_seconds", "min_event_seconds"):
+        if type(cfg[name]) not in (int, float) or cfg[name] < 0 or (name == "event_grid_seconds" and cfg[name] == 0):
+            raise ValueError(name + " must be a finite number in its positive/nonnegative range")
+    if cfg["mode"] != "coordinated" and set(value) & {"event_time_format", "event_grid_seconds", "min_event_seconds"}:
+        raise ValueError("Event clock settings are only consumed by coordinated composition")
     if cfg["public_structure_path"] is not None and (not isinstance(cfg["public_structure_path"], str)
             or not cfg["public_structure_path"].strip()):
         raise ValueError("public_structure_path must be a nonempty path or null")
@@ -81,6 +89,9 @@ def _config(value):
             raise ValueError("scores mode requires scores_path")
     elif cfg["scores_path"] is not None:
         raise ValueError("Only scores mode consumes scores_path")
+    if cfg["mode"] != "coordinated":
+        for name in ("event_time_format", "event_grid_seconds", "min_event_seconds"):
+            del cfg[name]
     return cfg
 
 

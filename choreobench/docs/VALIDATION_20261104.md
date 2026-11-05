@@ -260,3 +260,47 @@ v6–v9（包括失败配置）、三首v8编辑和三次schema探针合计**184
 合计74次模拟文本调用；实际模型/API/训练均未执行。全部配置前置来源复核通过，各组实际calls与预期一致。记录位于忽略目录 `.choreobench-runs/outline-history-180s-v1/acceptance.json`，不是GitHub数据资产。覆盖1.0来自fixture及公开完整排程，不证明音乐效果或消融收益。
 
 已有真实v9结果仍归原代码和回执，本轮没有重跑三首真实歌曲。新功能及服务器执行步骤见 [ABLATIONS_20261105_zh.md](ABLATIONS_20261105_zh.md)。下一步可以直接复用现有base-only候选开展真实文本侧对照与独立评审，无需新增训练或先等待checkpoint。
+
+## 14. Linux 真实历史配置对照 v10
+
+2026-11-05在独立worktree快进至658ffe47dc706b1ba0391f9c973583b3da26e851，冻结新版源码和原双窗解析器，实际执行main与no_history三首配对。本轮不训练、不重采音频候选、不渲染视频；仍为原始Omni加任务prompt的base-only候选，不是已训练checkpoint。no_outline及组合组只准备配置，未执行。
+
+两组同候选、dataset bytes、公共结构、VL32B BF16 TP=2纯文本服务、0.25秒网格、0.5秒下限、balanced_full_unit、max_events_per_unit=3、输入上限120,000字符和相同seed/输出预算。实际配置仅use_history不同；每组preflight和run contract绑定冻结来源、源码及Python。准备manifest始终保留executed=false的准备语义，实际执行/核验使用独立结果与回执。
+
+### 整曲与预算
+
+| 歌曲 | main完整计划 | no_history完整计划 | 两组事件数 | 最短事件（两组） | 覆盖（两组） | 每组调用 | 每组满3事件块数 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| fma-1881 | 1/1 | 1/1 | 81 / 81 | 1.25秒 | 1.0 | 28 | 27/27 |
+| fma-3855 | 1/1 | 1/1 | 78 / 78 | 0.75秒 | 1.0 | 27 | 26/26 |
+| fma-4151 | 1/1 | 1/1 | 69 / 69 | 1.5秒 | 1.0 | 24 | 23/23 |
+
+全部6/6合法、失败0/6、无未知请求结果，实际158次文本调用与准备预期一致。两组合计152/152块取上限3事件；每组228事件。三组正文序列均不逐字相同；第一首时间/轨道序列相同，另两首不同。以上不是语义多样性或质量评分，满覆盖仍来自公开排程约束。新诊断独立复算旧v9为75/76块取3事件；没有修改旧v9数据或据此临时调参。
+
+| 组 | 新文本调用 | 实际输入tokens | 实际输出tokens | 最大完整块请求字符数 |
+|---|---:|---:|---:|---:|
+| main | 79 | 558,772 | 35,803 | 34,166 |
+| no_history | 79 | 346,593 | 36,507 | 19,318 |
+| 合计 | 158 | 905,365 | 72,310 | — |
+
+完整内部request的compact Unicode JSON计数包含response_schema；包括纲要在内的全请求最大73,185字符，未超过120,000。实际供应方报告input_tokens加声明输出预算最大29,361，小于服务65,536上限；字符数、token数和后端grammar资源仍为不同口径。本轮实际所有请求/停止原因/预算及原响应逐项核验，不以prepared/health代替实际调用证据。
+
+新增局部音频调用0；原278次/33,806输出tokens只作为共享采集历史计一次，不重复乘两组，也不把全方法记零成本。上表仅v10实际推理tokens，不含此前v6–v9/编辑/探针、加载、hash、排队、空转租用或完整GPU小时。原模型/tokenizer文件在新实验边界加载前核验，与v9相同；health与fingerprint是服务声明，不当作远程已加载tensor独立认证。
+
+### 历史开关与大纲混杂
+
+main实际76块请求包含提交历史；no_history实际76块请求不含boundary_context/recent_committed_events。配对的公共输入、块call_id/seed、文本服务配置和排程菜单身份均核验一致；没有删除交叠观察窗共同候选。
+
+**三组大纲内容均不相同，因此不能仅归因给历史。** 额外只读审计确认两组纲要内部请求与实际HTTP请求逐项相同，包括temperature=0和seed；同reported service fingerprint，输出却不同。第一首motif定义相同、section意图不同，另两首motif定义和section意图均不同。未确定数值、批处理等底层原因，不声称固定seed保证确定性。干净的大纲内容控制配对为0/3；没有换大纲、重采、丢弃这三组配对或用私有评价选更好的纲要。
+
+这轮证明新入口、预算、日志、历史输入隔离和真实六条完整执行可运行，提供配置对照诊断；**不证明历史改善音乐贴合、复读、主题发展或过渡。** 后续严格隔离历史需冻结同一份经绑定的公共大纲并提供给两组，另立新合同/目录；当前接口仍独立生成大纲，不能把相同请求/seed冒充相同中间内容。现有三首均属反复使用的开发录音，不作隐藏测试、显著性或排行榜。
+
+### 回归、评审和资源
+
+最新冻结代码Linux完整回归：**712 passed、148 subtests passed**。无因编排实验修改H3或原生采样/训练adapter。运行准备、CLI的每组preflight、source/code/config一致性、实际请求字符/token预算、152块公开排程及全部发布产物哈希均核验。新评审包每首两个匿名方案，共6条，明确显示原3×2分母；旧v9/v8页面保留。
+
+只读网页的实际音频GET/HEAD/Range字节、私有/非白名单路径拒绝和POST拒绝通过。Chromium实际验证3case各2方案、120秒共同音频seek与活跃行、评分跨case保留、6行JSON导出，无JS错误；浏览器测试评分不提交/导入，所有实际质量评分仍null、audio_seen=false。页面嵌入JSON另用script结束标签反例验证转义与原文精确还原；不把页面播放/HTTP200当质量验收。用户侧网关登录访问未由本机浏览器独立验证。
+
+仅使用同一节点两张holder卡作为文本TP=2，其他任务未终止。本轮结束后只对身份绑定的自有服务发SIGTERM，实际检查两张使用卡恢复每卡唯一holder，该节点8卡均约975MiB；网页只使用CPU保留。资源历史回执不保证以后卡可用，不能从此推断全群空闲。
+
+原始结果在仓库父目录 `choreobench_runs/20261105_history_ablation_v10/`，包括experiments/逐歌manifest/configs/runs、frozen_code、execution-complete.private.json、paired-controls.audit.private.json、handoff.verified.private.json、review-browser-verified.json和resources-final-verified.private.json。公开仓库仅推送本节结果摘要与合同说明，不上传音频/权重/完整私有日志、绑定、凭据或内部地址。下一步先独立听音审查这六条方案，按实际问题准备共享公共大纲的内容控制对照；不因结构满分继续盲目跑完其余配置或启动补训。

@@ -22,12 +22,14 @@
 新配置 [harness_coordinated_grid.json](../examples/harness_coordinated_grid.json) 使用：
 
 ```json
-{"event_time_format":"boundary_ids","event_grid_seconds":0.25,"min_event_seconds":0.5}
+{"event_time_format":"boundary_ids","event_schedule_policy":"balanced_full_unit","event_grid_seconds":0.25,"min_event_seconds":0.5}
 ```
 
 块请求中的event_clock公开精确的boundary_samples。模型返回 `start_boundary/end_boundary` 的整数索引，控制器转换为最终plan的全局start/end采样下标。它不改变原音频、观察窗、公共段落或候选合同。时间网格按最近采样点取整，恰好半采样时向上；真实unit.end始终是最后一个边界，尾部不补零或补到下一格。每块最多4097个边界，避免极密网格失控。
 
-最短时长向上取整到采样点，并在解码后复检。示例0.5秒是待校准的开发规则，不是人体物理阈值：不满足则该歌失败并保留原响应/成本，不自动拉长、补rest、补采或重试。如果某个真实规划块整体短于下限，预处理即记录整曲失败，模型新增调用0。短促accent可能需要不同任务配置，不能在看到测试结果后临时豁免。
+最短时长向上取整到采样点。开启boundary_ids和structured_unit_output时，解码schema按可用起点建立完整anyOf对象分支，每个分支限定起点及满足实际样本时长的终点范围；不会把尾部短格当成完整网格。时间字段位于动作字段前，局部边界索引每块从0重置，不沿用历史的全局采样时间。控制器仍在解码后复检顺序、时长和身体冲突。已测后端对anyOf旁的共享properties可能忽略边界，因此不能仅凭HTTP200判断关系约束生效。示例0.5秒是待校准的开发规则，不是人体物理阈值：不满足则该歌失败并保留原响应/成本，不自动拉长、补rest、补采或重试。如果某个真实规划块整体短于下限，预处理即记录整曲失败，模型新增调用0。短促accent可能需要不同任务配置，不能在看到测试结果后临时豁免。
+
+`event_schedule_policy=balanced_full_unit` 是显式的新实验约束，不是修改旧输出：控制器先公开每个可行动作数对应的近似均分整块排程，模型选择其中一整套时间区间并创作动作。schema以完整数组分支/prefixItems固定该套区间，控制器再次逐项匹配。保留真实unit.end；没有可行多段排程时仍有整块单段可选。它不自动添加休止，也不保留自由并发排程；覆盖1.0是公开合同的设计结果，不能当作音乐贴合、动作完整性或质量改善。默认策略仍为free；比较时需单列这项时间自由度差异。
 
 原 `event_time_format=global_samples` 保留，`min_event_seconds=0` 保留原来的至少1采样点检查。这些默认值支持原协议；新例子显式开启网格和下限。改变时间格式、下限、模型或来源后必须用新目录，不能恢复旧journal。
 

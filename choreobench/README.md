@@ -406,6 +406,8 @@ python -m choreobench run-harness \
 
 - 每首新增调用 = 1次纲要 + 每规划块1次生成；纲要 `outline_max_output_tokens` 与块 `max_output_tokens` 独立，`max_calls` 启动前检查。
 - `structured_unit_output=true` 为服务端公开动态JSONschema：限定root、unit_id、类型/整数范围、当前主题和实际输入call_id；控制器仍检查start<end、顺序、冲突及重复引用。后端拒绝时停止，不自动回退普通JSONmode或重发。
+- `boundary_ids` 自由排程以完整对象分支约束实际样本最短时长，时间字段先于动作；每块索引归零。HTTP200不能证明服务端确实执行关系约束，控制器继续复检。
+- 显式 `event_schedule_policy=balanced_full_unit` 先公开可行整块排程（默认1–3段，最多按事件预算至8段），模型选一整套区间并创作动作，schema固定时间/数组顺序，控制器逐项匹配。它限制自由并发，不事后拉长旧动作或补休止；覆盖1.0是设计约束，非编舞质量证据。推荐的grid示例显式开启，默认策略仍为free。
 - 已验收后端不支持uniqueItems，故不发送该关键字，唯一性由控制器检查。示例开启结构化输出；其他服务必须验收或显式更换配置。
 - 字符预检不是tokenizer上下文上限。真实输入+输出预算应另验；超长不截掉音频、候选或答案。
 - `--resume` 只恢复同输入、代码、模型和配置；未决结果不重发。新结构/提示/预算/代码用新目录。

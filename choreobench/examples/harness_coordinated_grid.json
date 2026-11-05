@@ -27,6 +27,7 @@
   "structured_unit_output": true,
   "max_events_per_unit": 3,
   "event_time_format": "boundary_ids",
+  "event_schedule_policy": "balanced_full_unit",
   "event_grid_seconds": 0.25,
   "min_event_seconds": 0.5
 }

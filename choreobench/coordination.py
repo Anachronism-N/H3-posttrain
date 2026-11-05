@@ -153,15 +153,31 @@ def _unit_request(song, options, units, unit, outline, plan, cfg):
         "No overlapping incompatible scopes; order by start,track and preserve that order. "
         "Keep connections feasible but do not infer known support or facing from unknown prior states. "
         "Do not output entry/exit/attributes or event IDs; the controller leaves states unknown and assigns stable IDs. "
-        "A gap is allowed and will be reported, not filled with invented rest. Before returning check complete JSON and unit bounds."
+        "Under free scheduling a gap is allowed and reported, never filled with invented rest. "
+        "When a public complete-unit schedule is supplied, use exactly one of its permitted interval arrays. "
+        "Before returning check complete JSON and unit bounds."
     )
     if clock["format"] == "boundary_ids":
         instruction += ("Output start_boundary/end_boundary as integer indices into event_clock.boundary_samples. "
-                        "Do NOT output start/end sample values. The controller compiles indices to exact samples. ")
+                        "Do NOT output start/end sample values or seconds. The controller compiles indices to exact samples. "
+                        "Schedule time first, then describe each phrase. For sequential phrases, the next start_boundary "
+                        "must be at least the previous end_boundary; equal boundaries are allowed for half-open intervals. "
+                        "Do not assign the first body event the whole block and then layer more events inside it: "
+                        "body owns every body part over its interval. A whole-block body phrase must be the sole event. "
+                        "Boundary IDs restart from zero in EACH block; never carry an index from previous blocks. "
+                        "History event times are GLOBAL samples, not indices into this block's boundary_samples. ")
     else:
         instruction += "Output start/end as GLOBAL integer sample indices. "
     instruction += ("Every event must last at least event_clock.minimum_duration_samples after compilation. "
                     "The grid is a scheduling device, not proof of musical or action boundaries. ")
+    if clock.get("schedule_policy") == "balanced_full_unit":
+        instruction += ("This request uses a PUBLIC complete-unit scheduling constraint: choose exactly ONE array from "
+                        "event_clock.permitted_schedules and create one connected movement phrase for each of its intervals. "
+                        "Copy the chosen start_boundary/end_boundary pairs exactly, in order. Prefer the number of phrases "
+                        "that fits the public section intent and source proposals; three is not mandatory. "
+                        "Compose movement across the entire chosen schedule, not invented rest to fill holes. "
+                        "The offered durations are engineering design constraints, not verified musical or physical timing. "
+                        "Do not return events outside or missing from the chosen schedule. ")
     request = _guard_request(song["song_id"] + "/coordinate/" + unit["unit_id"], cfg,
                              _messages(payload, instruction), "coordination_unit", cfg["max_output_tokens"])
     if cfg["structured_unit_output"]:
@@ -185,18 +201,44 @@ def unit_response_schema(unit, motif_ids, call_ids, max_events=3, clock=None):
         minimum = clock["minimum_duration_samples"]
         if clock["format"] == "boundary_ids":
             samples = clock["boundary_samples"]
-            del fields["start"], fields["end"]
-            fields.update(start_boundary=dict(type="integer", minimum=0,
+            fields = dict(start_boundary=dict(type="integer", minimum=0,
                 maximum=max(i for i, s in enumerate(samples) if samples[-1] - s >= minimum)),
                 end_boundary=dict(type="integer", minimum=next(i for i, s in enumerate(samples) if s - samples[0] >= minimum),
-                                  maximum=len(samples) - 1))
+                                  maximum=len(samples) - 1),
+                **{name: value for name, value in fields.items() if name not in ("start", "end")})
         else:
             fields["start"]["maximum"] = unit["end"] - minimum
             fields["end"]["minimum"] = unit["start"] + minimum
+    item = dict(type="object", additionalProperties=False, required=list(fields), properties=fields)
+    if (clock is not None and clock["format"] == "boundary_ids"
+            and clock.get("schedule_policy") != "balanced_full_unit"):
+        branches = []
+        for start_index in range(fields["start_boundary"]["maximum"] + 1):
+            end_index = next(i for i, sample in enumerate(samples) if sample - samples[start_index] >= minimum)
+            branch = copy.deepcopy(item)
+            branch["properties"]["start_boundary"] = dict(type="integer", enum=[start_index])
+            branch["properties"]["end_boundary"]["minimum"] = end_index
+            branches.append(branch)
+        # Complete alternatives avoid backends that ignore sibling properties
+        # when anyOf is present. Bounds and field order live in every branch.
+        item = dict(anyOf=branches)
+    events_schema = dict(type="array", minItems=1, maxItems=max_events, items=item)
+    if clock is not None and clock.get("schedule_policy") == "balanced_full_unit":
+        alternatives = []
+        for schedule in clock["permitted_schedules"]:
+            if len(schedule) > max_events:
+                continue
+            slots = []
+            for interval in schedule:
+                slot = copy.deepcopy(item)
+                for name, boundary in interval.items():
+                    slot["properties"][name] = dict(type="integer", enum=[boundary])
+                slots.append(slot)
+            alternatives.append(dict(type="array", minItems=len(slots), maxItems=len(slots),
+                                     prefixItems=slots, items=False))
+        events_schema = dict(anyOf=alternatives)
     return dict(type="object", additionalProperties=False, required=["unit_id", "events"],
-        properties=dict(unit_id=dict(type="string", enum=[unit["unit_id"]]),
-            events=dict(type="array", minItems=1, maxItems=max_events,
-                items=dict(type="object", additionalProperties=False, required=list(fields), properties=fields))))
+        properties=dict(unit_id=dict(type="string", enum=[unit["unit_id"]]), events=events_schema))
 
 
 def _guard_request(call_id, cfg, messages, kind, budget):
@@ -233,6 +275,10 @@ def _read_unit(response, original, unit, outline, options, max_events=3, clock=N
             events.append(dict(event_id=unit["unit_id"] + "-e%02d" % i,
                 start=start, end=end, track=event["track"], action=event["action"],
                 attributes={}, entry={}, exit={}, motif_id=event["motif_id"], evidence=copy.deepcopy(refs)))
+        if clock.get("schedule_policy") == "balanced_full_unit":
+            proposed_schedule = [{name: event[name] for name in time_fields} for event in value["events"]]
+            if proposed_schedule not in clock["permitted_schedules"]:
+                raise ValueError("Events do not match a publicly permitted full-unit schedule; no retiming or gap filling")
         probe = _empty_plan(original)
         probe.update(motifs=copy.deepcopy(outline["motifs"]), events=events)
         validate_plan(probe, original)

@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from choreobench import harness
+from choreobench import coordination, harness
 from choreobench.io import read_json
 from choreobench.timing import TimingInfeasibleError, event_clock, event_interval, literal_source_copies
 from test_choreobench_coordination import config, fake_planner
@@ -26,6 +26,29 @@ def test_boundary_ids_reject_coercion_reversal_and_out_of_range(start, end):
         event_interval(dict(start_boundary=start, end_boundary=end), clock)
 
 
+@pytest.mark.parametrize("start,end,rate,step,minimum", [(100, 110, 10, .25, .31),
+    (324000, 472960, 16000, .25, .5), (0, 16000, 16000, .25, 0)])
+def test_decoder_branches_cover_exactly_feasible_intervals(start, end, rate, step, minimum):
+    unit = dict(unit_id="u", start=start, end=end)
+    clock = event_clock(unit, rate, dict(event_time_format="boundary_ids", event_grid_seconds=step, min_event_seconds=minimum))
+    item = coordination.unit_response_schema(unit, ["m"], ["call"], clock=clock)["properties"]["events"]["items"]
+    samples = clock["boundary_samples"]
+    permitted = set()
+    for branch in item["anyOf"]:
+        assert branch["type"] == "object" and branch["additionalProperties"] is False
+        fields = branch["properties"]
+        assert branch["required"] == list(fields)
+        a = fields["start_boundary"]["enum"][0]
+        assert a not in {pair[0] for pair in permitted}
+        for b in range(fields["end_boundary"]["minimum"], fields["end_boundary"]["maximum"] + 1):
+            permitted.add((a, b))
+    expected = {(a, b) for a, sa in enumerate(samples) for b, sb in enumerate(samples)
+                if sb - sa >= clock["minimum_duration_samples"]}
+    assert permitted == expected
+    assert all(event_interval(dict(start_boundary=a, end_boundary=b), clock) == (samples[a], samples[b])
+               for a, b in permitted)
+
+
 def grid_reply(answer, request, payload):
     if request["response_kind"] == "coordination_unit":
         for event in answer["events"]:
@@ -47,14 +70,111 @@ def test_grid_composition_compiles_to_exact_original_clock_and_resumes(tmp_path,
     assert plan["events"][-1]["end"] == song["audio"]["num_samples"]
     for request in requests[1:]:
         payload = json.loads(request["messages"][-1]["content"])
-        fields = request["response_schema"]["properties"]["events"]["items"]["properties"]
-        assert "start_boundary" in fields and "start" not in fields
+        item = request["response_schema"]["properties"]["events"]["items"]
+        assert set(item) == {"anyOf"}
+        fields = item["anyOf"][0]["properties"]
+        assert all(list(branch["properties"]) == payload["output_contract"]["fields"] for branch in item["anyOf"])
+        assert list(fields) == payload["output_contract"]["fields"]
+        assert list(fields)[:2] == ["start_boundary", "end_boundary"]
+        assert "start" not in fields
+        assert "the next start_boundary" in request["messages"][0]["content"]
+        assert "whole-block body phrase must be the sole event" in request["messages"][0]["content"]
         assert payload["event_clock"]["minimum_duration_samples"] == 8000
         assert not payload["event_clock"]["beat_alignment_verified"]
     assert harness.run_harness(source, bank, tmp_path / "out", cfg, resume=True) == result
     assert len(requests) == result["calls_used"]
     with pytest.raises(ValueError, match="Immutable"):
         harness.run_harness(source, bank, tmp_path / "out", dict(cfg, event_grid_seconds=.5), resume=True)
+
+
+@pytest.mark.parametrize("overlap", [False, True])
+def test_multiple_grid_phrases_accept_adjacent_intervals_but_reject_body_overlay(tmp_path, monkeypatch, overlap):
+    source, _, bank = fixture(tmp_path)
+    requests = []
+    def phrases(answer, request, payload):
+        if request["response_kind"] != "coordination_unit":
+            return
+        event = answer["events"][0]
+        event.pop("start")
+        event.pop("end")
+        last = len(payload["event_clock"]["boundary_samples"]) - 1
+        cuts = [0, last // 3, 2 * last // 3, last]
+        answer["events"] = [dict(event, start_boundary=a, end_boundary=b) for a, b in zip(cuts, cuts[1:])]
+        if overlap:
+            answer["events"][0]["end_boundary"] = last
+    fake_planner(monkeypatch, requests, phrases)
+    result = harness.run_harness(source, bank, tmp_path / "out",
+        dict(config(), event_time_format="boundary_ids", min_event_seconds=.5, structured_unit_output=True))
+    assert result["complete"]
+    if overlap:
+        assert result["success_count"] == 0 and result["calls_used"] == 2
+        assert "Overlapping incompatible body scopes" in result["failed_songs"][0]["message"]
+        assert result["failed_songs"][0]["retained_in_evaluation_denominator"]
+        assert not list((tmp_path / "out").glob("blocks/*/*.json"))
+    else:
+        assert result["all_songs_succeeded"]
+        plan = read_json(tmp_path / "out" / result["plans"][0]["path"])
+        assert len(plan["events"]) == 6
+        assert all(a["end"] == b["start"] for a, b in zip(plan["events"], plan["events"][1:]))
+
+
+@pytest.mark.parametrize("end,rate,step,minimum", [(162000, 16000, .25, .5), (110, 10, .25, .31), (25, 10, 1, .6)])
+def test_balanced_public_schedules_preserve_real_end_and_duration(end, rate, step, minimum):
+    unit = dict(start=0, end=end, unit_id="u")
+    clock = event_clock(unit, rate, dict(event_time_format="boundary_ids", event_grid_seconds=step,
+        min_event_seconds=minimum, event_schedule_policy="balanced_full_unit"))
+    assert clock["permitted_schedules"] and not clock["schedule_is_musical_or_physical_evidence"]
+    schema = coordination.unit_response_schema(unit, [], ["call"], clock=clock)
+    alternatives = schema["properties"]["events"]["anyOf"]
+    assert len(alternatives) == len(clock["permitted_schedules"])
+    for schedule, array in zip(clock["permitted_schedules"], alternatives):
+        assert 1 <= len(schedule) <= 3
+        intervals = [event_interval(event, clock) for event in schedule]
+        assert intervals[0][0] == 0 and intervals[-1][1] == end
+        assert all(a[1] == b[0] for a, b in zip(intervals, intervals[1:]))
+        assert array["minItems"] == array["maxItems"] == len(schedule) and array["items"] is False
+        for pair, slot in zip(schedule, array["prefixItems"]):
+            assert slot["additionalProperties"] is False
+            assert all(slot["properties"][name]["enum"] == [value] for name, value in pair.items())
+
+
+@pytest.mark.parametrize("change_schedule", [False, True])
+def test_complete_public_schedule_compiles_or_rejects_without_filling(tmp_path, monkeypatch, change_schedule):
+    source, song, bank = fixture(tmp_path)
+    requests = []
+    def compose(answer, request, payload):
+        if request["response_kind"] != "coordination_unit":
+            return
+        original = answer["events"][0]
+        original.pop("start"); original.pop("end")
+        answer["events"] = [dict(original, **pair) for pair in payload["event_clock"]["permitted_schedules"][-1]]
+        if change_schedule:
+            answer["events"][0]["start_boundary"] += 1
+    fake_planner(monkeypatch, requests, compose)
+    cfg = dict(config(), event_time_format="boundary_ids", min_event_seconds=.5,
+               event_schedule_policy="balanced_full_unit", structured_unit_output=True)
+    result = harness.run_harness(source, bank, tmp_path / "out", cfg)
+    if change_schedule:
+        assert result["complete"] and not result["all_songs_succeeded"] and result["calls_used"] == 2
+        assert "publicly permitted full-unit schedule" in result["failed_songs"][0]["message"]
+        assert not list((tmp_path / "out").glob("blocks/*/*.json"))
+    else:
+        assert result["all_songs_succeeded"]
+        plan = read_json(tmp_path / "out" / result["plans"][0]["path"])
+        assert sum(e["end"] - e["start"] for e in plan["events"]) == song["audio"]["num_samples"]
+        assert all(not e["entry"] and not e["exit"] for e in plan["events"])
+        assert harness.run_harness(source, bank, tmp_path / "out", cfg, resume=True) == result
+    for request in requests[1:]:
+        assert "PUBLIC complete-unit scheduling constraint" in request["messages"][0]["content"]
+
+
+@pytest.mark.parametrize("change", [dict(event_schedule_policy="unknown"),
+    dict(event_schedule_policy="balanced_full_unit", event_time_format="global_samples")])
+def test_invalid_public_schedule_config(change):
+    with pytest.raises(ValueError):
+        harness._config(dict(config(), **change))
+    with pytest.raises(ValueError, match="only consumed"):
+        harness._config(dict(mode="index0", event_schedule_policy="free"))
 
 
 @pytest.mark.parametrize("mode", ["global_samples", "boundary_ids"])

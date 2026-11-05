@@ -266,7 +266,9 @@ def test_changed_source_process_refuses_before_any_data_or_provider(monkeypatch,
             coordination.run_coordinated("unused-dataset", "unused-bank", "unused-out", config())
 
 
-def test_schema_response_format_is_journalable_not_silent_fallback(monkeypatch):
+@pytest.mark.parametrize("time_format,policy", [("global_samples", "free"), ("boundary_ids", "free"),
+                                                   ("boundary_ids", "balanced_full_unit")])
+def test_schema_response_format_is_journalable_not_silent_fallback(monkeypatch, time_format, policy):
     from choreobench.providers import ChatCompletionsProvider
     captured = []
     class Response:
@@ -280,11 +282,25 @@ def test_schema_response_format_is_journalable_not_silent_fallback(monkeypatch):
     monkeypatch.setattr("urllib.request.urlopen", send)
     provider = ChatCompletionsProvider(dict(kind="chat_completions", base_url="https://example.test/v1", model="test",
                                            api_key_env="", json_mode=True))
-    schema = coordination.unit_response_schema(dict(unit_id="u0", start=0, end=100), ["m1"], ["call1"])
+    from choreobench.timing import event_clock
+    unit = dict(unit_id="u0", start=0, end=100)
+    clock = event_clock(unit, 100, dict(event_time_format=time_format, event_grid_seconds=.25, min_event_seconds=.5,
+                                       event_schedule_policy=policy))
+    schema = coordination.unit_response_schema(unit, ["m1"], ["call1"], clock=clock)
     request = dict(seed=7, max_output_tokens=32, messages=[dict(role="user", content="public")], response_schema=schema)
     response = provider.generate(request)
     assert len(captured) == 1 and captured[0]["response_format"]["type"] == "json_schema"
-    assert captured[0]["response_format"]["json_schema"]["schema"] == schema
+    transported = captured[0]["response_format"]["json_schema"]["schema"]
+    assert transported == schema
+    if policy == "balanced_full_unit":
+        arrays = transported["properties"]["events"]["anyOf"]
+        assert all(array["items"] is False and len(array["prefixItems"]) == array["maxItems"] for array in arrays)
+        assert all(list(slot["properties"])[:2] == ["start_boundary", "end_boundary"]
+                   for array in arrays for slot in array["prefixItems"])
+    elif time_format == "boundary_ids":
+        item = transported["properties"]["events"]["items"]
+        assert set(item) == {"anyOf"}
+        assert all(list(branch["properties"])[:2] == ["start_boundary", "end_boundary"] for branch in item["anyOf"])
     assert response["raw"]["request"] == captured[0]
     request["response_schema"] = {"type": "object"}
     with pytest.raises(ValueError, match="closed JSON"):

@@ -30,6 +30,26 @@ def event_clock(unit, sample_rate, config):
             raise ValueError("Event grid exceeds 4097 boundaries; choose a coarser grid")
         result.update(boundary_samples=list(range(unit["start"], unit["end"], step)) + [unit["end"]],
                       step_samples=step, terminal_interval_may_be_shorter=True)
+        if config.get("event_schedule_policy", "free") == "balanced_full_unit":
+            samples = result["boundary_samples"]
+            duration = samples[-1] - samples[0]
+            schedules = []
+            for phrases in range(1, config.get("max_events_per_unit", 3) + 1):
+                if phrases * minimum > duration:
+                    continue
+                cuts = [0]
+                for part in range(1, phrases):
+                    feasible = [i for i, sample in enumerate(samples)
+                        if sample - samples[cuts[-1]] >= minimum
+                        and samples[-1] - sample >= (phrases - part) * minimum]
+                    if not feasible:
+                        break
+                    cuts.append(min(feasible, key=lambda i: (abs(phrases * (samples[i] - samples[0]) - part * duration), i)))
+                if len(cuts) == phrases and samples[-1] - samples[cuts[-1]] >= minimum:
+                    cuts.append(len(samples) - 1)
+                    schedules.append([dict(start_boundary=a, end_boundary=b) for a, b in zip(cuts, cuts[1:])])
+            result.update(schedule_policy="balanced_full_unit", permitted_schedules=schedules,
+                          schedule_is_musical_or_physical_evidence=False)
     elif mode != "global_samples":
         raise ValueError("Unknown event_time_format")
     return result

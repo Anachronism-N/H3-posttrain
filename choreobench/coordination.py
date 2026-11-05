@@ -24,6 +24,8 @@ from .schema import identifier, keys, text, validate_dataset, validate_plan
 from .selection import candidate_options
 from .evaluation import evaluate_plan
 from .timing import TimingInfeasibleError, event_clock, event_interval, literal_source_copies
+from .request_budget import guard_request
+from .schedule_diagnostics import schedule_diagnostics
 
 
 _IMPORT_SIGNATURE = (Path(__file__).stat().st_ino, Path(__file__).stat().st_mtime_ns, Path(__file__).stat().st_ctime_ns)
@@ -111,13 +113,21 @@ def _outline_request(song, options, units, cfg):
         _messages(payload, instruction), "coordination_outline", cfg["outline_max_output_tokens"])
 
 
+def _neutral_outline(song):
+    """A schema placeholder, not an inferred or generated whole-song design."""
+    return dict(motifs=[], sections=[dict(section_id=s["section_id"], intent="No generated section design provided.",
+                                         motif_ids=[]) for s in song["music"]["sections"]])
+
+
 def _unit_request(song, options, units, unit, outline, plan, cfg):
     clock = event_clock(unit, plan["sample_rate"], cfg)
     time_fields = ["start_boundary", "end_boundary"] if clock["format"] == "boundary_ids" else ["start", "end"]
     section_design = next(s for s in outline["sections"] if s["section_id"] == unit["section_id"])
     siblings = [u for u in units["units"] if u["section_id"] == unit["section_id"]]
-    history = build_boundary_context(plan, unit["start"])
-    history["motif_memory"] = [m for m in history["motif_memory"] if m["motif_id"] in section_design["motif_ids"]]
+    use_history, use_outline = cfg.get("use_history", True), cfg.get("use_outline", True)
+    history = build_boundary_context(plan, unit["start"]) if use_history else None
+    if history is not None:
+        history["motif_memory"] = [m for m in history["motif_memory"] if m["motif_id"] in section_design["motif_ids"]]
     payload = dict(song_id=song["song_id"], sample_rate=plan["sample_rate"], num_samples=plan["num_samples"],
         brief=song["brief"], planning_unit={k: unit[k] for k in ("unit_id", "section_id", "start", "end", "kind")},
         position_in_section=dict(index=siblings.index(unit) + 1, total=len(siblings)),
@@ -135,8 +145,14 @@ def _unit_request(song, options, units, unit, outline, plan, cfg):
         event_clock=clock,
         output_contract=dict(unit_id=unit["unit_id"], fields=time_fields + ["track", "action", "motif_id", "source_call_ids"],
             max_events=cfg["max_events_per_unit"], allowed_motif_ids=section_design["motif_ids"]))
+    payload.update(outline_available=use_outline, history_available=use_history)
+    if not use_outline:
+        for name in ("whole_song_design", "current_section_design", "current_motif_definitions"):
+            del payload[name]
+    if not use_history:
+        del payload["boundary_context"], payload["recent_committed_events"]
     instruction = (
-        "Compose this block under the global design and committed history; do not merely copy the fixed-window captions. "
+        "Compose this block from the inputs explicitly supplied in this request; do not merely copy the fixed-window captions. "
         "You may synthesize a coherent phrase or vary its repetition, body scope and proposed timing WITHIN this unit. "
         "Return exactly {unit_id,events:[event,...]}; each event has exactly output_contract.fields, no extra keys. "
         "Prefer one to three connected movement phrases; eight is a SAFETY CEILING, not a target. "
@@ -178,16 +194,23 @@ def _unit_request(song, options, units, unit, outline, plan, cfg):
                         "Compose movement across the entire chosen schedule, not invented rest to fill holes. "
                         "The offered durations are engineering design constraints, not verified musical or physical timing. "
                         "Do not return events outside or missing from the chosen schedule. ")
+    if not use_outline:
+        instruction += ("No generated whole-song outline or motifs are supplied in this ablation. "
+                        "Compose from the public brief, current music context and local proposals; motif_id must be null. ")
+    if not use_history:
+        instruction += ("Previous committed action text, motif counts and body-state history are deliberately withheld. "
+                        "This does not mean no previous movement happened; do not invent its content or state. ")
     request = _guard_request(song["song_id"] + "/coordinate/" + unit["unit_id"], cfg,
                              _messages(payload, instruction), "coordination_unit", cfg["max_output_tokens"])
     if cfg["structured_unit_output"]:
         request["response_schema"] = unit_response_schema(unit, section_design["motif_ids"],
                                                         [c["call_id"] for c in payload["local_proposals"]],
-                                                        max_events=cfg["max_events_per_unit"], clock=clock)
-    return request
+                                                        max_events=cfg["max_events_per_unit"], clock=clock,
+                                                        max_request_characters=cfg["max_request_characters"])
+    return guard_request(request, cfg)
 
 
-def unit_response_schema(unit, motif_ids, call_ids, max_events=3, clock=None):
+def unit_response_schema(unit, motif_ids, call_ids, max_events=3, clock=None, max_request_characters=None):
     """Public decoder constraints only; original validation still checks relations/order."""
     fields = dict(
         start=dict(type="integer", minimum=unit["start"], maximum=unit["end"] - 1),
@@ -212,6 +235,16 @@ def unit_response_schema(unit, motif_ids, call_ids, max_events=3, clock=None):
     item = dict(type="object", additionalProperties=False, required=list(fields), properties=fields)
     if (clock is not None and clock["format"] == "boundary_ids"
             and clock.get("schedule_policy") != "balanced_full_unit"):
+        if max_request_characters is not None:
+            # Lower bound before copying potentially thousands of complete
+            # branches. Zero indices have the shortest possible numeric width.
+            # Root/message overhead can only increase the final request size.
+            minimal = copy.deepcopy(item)
+            minimal["properties"]["start_boundary"] = dict(type="integer", enum=[0])
+            minimal["properties"]["end_boundary"]["minimum"] = 0
+            lower_bound = len(json.dumps(minimal, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False))
+            if (fields["start_boundary"]["maximum"] + 1) * lower_bound > max_request_characters:
+                raise ModelOutputError("Decoder schema alone exceeds max_request_characters; no branches expanded or request sent")
         branches = []
         for start_index in range(fields["start_boundary"]["maximum"] + 1):
             end_index = next(i for i, sample in enumerate(samples) if sample - samples[start_index] >= minimum)
@@ -244,7 +277,7 @@ def unit_response_schema(unit, motif_ids, call_ids, max_events=3, clock=None):
 def _guard_request(call_id, cfg, messages, kind, budget):
     if sum(len(m["content"]) for m in messages) > cfg["max_request_characters"]:
         raise ModelOutputError("Coordination input exceeds max_request_characters; no text truncated or call sent")
-    return _request(call_id, cfg, response_kind=kind, messages=messages, output_budget=budget)
+    return guard_request(_request(call_id, cfg, response_kind=kind, messages=messages, output_budget=budget), cfg)
 
 
 def _read_unit(response, original, unit, outline, options, max_events=3, clock=None):
@@ -317,11 +350,11 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                 event_clock(unit, song["audio"]["sample_rate"], cfg)
             options = candidate_options(bank, original, units)
             prepared[song["song_id"]] = dict(song=song, units=units, options=options, error=None)
-            expected_calls += 1 + len(units["units"])
+            expected_calls += int(cfg["use_outline"]) + len(units["units"])
         except (ModelOutputError, TimingInfeasibleError) as error:
             prepared[song["song_id"]] = dict(song=song, units=units, error=str(error))
     if expected_calls > cfg["max_calls"]:
-        raise ValueError("max_calls cannot cover outline plus all coordination units: " + str(expected_calls))
+        raise ValueError("max_calls cannot cover enabled outline plus all coordination units: " + str(expected_calls))
     provider = create_provider(cfg["planner_provider"], role="planner", base_dir=dataset_path.parent)
     if provider.identity["kind"] == "mock":
         raise ValueError("Coordinated composition requires a real/replay text provider, never mock")
@@ -335,6 +368,7 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
         code_sha256={p.name: file_sha(p) for p in sorted(Path(__file__).parent.glob("*.py"))},
         software=dict(python=sys.version, platform=platform.platform()), synthetic=synthetic,
         original_local_sampling_unchanged=True, automatic_repair_loop=False, model_weights_updated=False,
+        ablation=dict(use_outline=cfg["use_outline"], use_history=cfg["use_history"]),
         limits=LIMITS, generated_actions_are_new_proposals=True)
     if output.exists() and not resume:
         raise ValueError("Output exists; use unchanged resume or a new directory")
@@ -368,6 +402,7 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                 new_local_model_calls=0, original_collection_calls=bank.data["original_collection_calls"],
                 original_collection_costs=bank.costs, model_weights_updated=False, automatic_repair_loop=False,
                 generated_actions_are_new_proposals=True, music_or_physical_quality_verified=False,
+                ablation=dict(use_outline=cfg["use_outline"], use_history=cfg["use_history"]),
                 semantic_status="pending_independent_review", error=error))
         try:
             for original in songs:
@@ -380,9 +415,15 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                         raise ModelOutputError(data["error"])
                     options, units, song = data["options"], data["units"], data["song"]
                     publish("options/" + prefix + ".json", options)
-                    response = journal.call(provider, _outline_request(song, options, units, cfg))
-                    outline = _read_outline(response["text"], song)
+                    if cfg["use_outline"]:
+                        response = journal.call(provider, _outline_request(song, options, units, cfg))
+                        outline = _read_outline(response["text"], song)
+                    else:
+                        outline = _neutral_outline(song)
                     publish("outlines/" + prefix + ".json", outline)
+                    publish("outline_metadata/" + prefix + ".json", dict(generated_by_model=cfg["use_outline"],
+                        source="model_response" if cfg["use_outline"] else "deterministic_empty_placeholder",
+                        use_outline=cfg["use_outline"], use_history=cfg["use_history"]))
                     plan = _empty_plan(original)
                     plan["motifs"] = copy.deepcopy(outline["motifs"])
                     for unit in units["units"]:
@@ -398,15 +439,20 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                         plan = proposed
                     plan["provenance"] = dict(mode="coordinated", contract_sha256=object_sha(contract),
                         outline_sha256=object_sha(outline), candidate_bank_sha256=bank.bytes_sha,
+                        outline_generated_by_model=cfg["use_outline"],
                         public_structure_sha256=structure_sha, generated_actions_are_new_proposals=True,
+                        ablation=dict(use_outline=cfg["use_outline"], use_history=cfg["use_history"]),
                         citation_semantics="Input inspiration, not verbatim source support or verified action facts",
                         boundaries="New proposed block-local schedule; no observed motion boundaries", synthetic=synthetic)
                     validate_plan(plan, original)
                     report = evaluate_plan(plan, original)
                     report.update(generated_actions_are_new_proposals=True, no_inferred_entry_exit=True,
                                   literal_source_copies=literal_source_copies(plan, options),
-                                  event_timing_policy={k: cfg[k] for k in ("event_time_format", "event_grid_seconds", "min_event_seconds")},
-                                  full_song_design_sha256=object_sha(outline), semantic_goal_verification="pending")
+                                  event_timing_policy={k: cfg[k] for k in ("event_time_format", "event_grid_seconds", "min_event_seconds", "event_schedule_policy")},
+                                  schedule_diagnostics=schedule_diagnostics(plan, units, cfg),
+                                  ablation=dict(use_outline=cfg["use_outline"], use_history=cfg["use_history"]),
+                                  full_song_design_sha256=object_sha(outline) if cfg["use_outline"] else None,
+                                  semantic_goal_verification="pending")
                     publish("diagnostics/" + prefix + ".json", report)
                     relative = "plans/" + prefix + ".json"
                     _publish(output / relative, plan)

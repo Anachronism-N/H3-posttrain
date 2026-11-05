@@ -1,5 +1,7 @@
 {
   "mode": "coordinated",
+  "use_outline": true,
+  "use_history": true,
   "planner_provider": {
     "kind": "chat_completions",
     "base_url": "http://127.0.0.1:8000/v1",

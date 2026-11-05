@@ -241,3 +241,22 @@ v6–v9（包括失败配置）、三首v8编辑和三次schema探针合计**184
 真实v9执行与首轮交付代码对应7f7ebac。随后纯软件检查发现：0.4秒网格、0.39秒下限、3.58秒单位、预算8事件时，贪心菜单可能遗漏一个实际可行的8段方案。修复按内部分段必须占完整网格、最后一段保留实际尾边界的条件预留时长；同时测试可行8段与不可行8段，完整回归为**623 passed、148 subtests passed**。
 
 本次没有新增模型调用或覆盖原v9回执。逐一比对真实三首全部76个单位，新旧公开event_clock和完整解码schema完全一致；等价证据独立保存为edge-clock-equivalence.private.json。原frozen_code/contract仍保持原身份，不把软件边界修复冒称为重跑后的新质量结果，也不因输入等价而绕过跨代码版本resume限制。
+
+## 13. 无训练消融与预算修复的本机验收
+
+基于24c9139新增完整request预算、排程诊断、use_outline/use_history消融及CPU实验准备工具。Windows/Python3.9.18完整回归命令 `python -m pytest -c choreobench/pytest.ini -q -ra`：**711 passed、1 skipped，171.55秒**。唯一跳过项仍为Windows测试符号链接权限。CLI帮助、实验preflight、Python语法与Git whitespace另通过。
+
+反例覆盖schema计入完整请求、密集free网格在分支展开前拒绝、真实菜单与配置上限饱和率区分、四组同块seed/候选/时间一致、no_history不泄漏提交文本/计数/hash、no_outline不调用大纲且主题为空、预算随调用变化、切换flags拒绝resume，以及准备清单的来源/配置/源码/Python身份漂移。
+
+180秒合成音频使用原72次mock采样得到的共享候选，按新准备工具生成四组配置，以stub规划器依次执行：
+
+| 组 | 模拟新文本调用 | 规划块/事件 | 覆盖 | 新局部调用 | resume新调用 |
+|---|---:|---:|---:|---:|---:|
+| main | 19 | 18/18 | 1.0 | 0 | 0 |
+| no_outline | 18 | 18/18 | 1.0 | 0 | 0 |
+| no_history | 19 | 18/18 | 1.0 | 0 | 0 |
+| no_outline_no_history | 18 | 18/18 | 1.0 | 0 | 0 |
+
+合计74次模拟文本调用；实际模型/API/训练均未执行。全部配置前置来源复核通过，各组实际calls与预期一致。记录位于忽略目录 `.choreobench-runs/outline-history-180s-v1/acceptance.json`，不是GitHub数据资产。覆盖1.0来自fixture及公开完整排程，不证明音乐效果或消融收益。
+
+已有真实v9结果仍归原代码和回执，本轮没有重跑三首真实歌曲。新功能及服务器执行步骤见 [ABLATIONS_20261105_zh.md](ABLATIONS_20261105_zh.md)。下一步可以直接复用现有base-only候选开展真实文本侧对照与独立评审，无需新增训练或先等待checkpoint。

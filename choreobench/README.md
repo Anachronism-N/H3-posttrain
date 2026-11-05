@@ -394,7 +394,7 @@ python -m choreobench run-harness \
 
 ### 11.3 全曲设计与逐块创作
 
-1. 全曲大纲读取全部原局部候选和公开结构，没有提供拼接总谱供复制。生成至多8个动作主题，以及每公共section的编舞意图和许可主题。
+1. 默认启用的全曲大纲读取全部原局部候选和公开结构，没有提供拼接总谱供复制。生成至多8个动作主题，以及每公共section的编舞意图和许可主题。
 2. 每块读取相关原候选、整曲section意图、当前段允许的主题定义、逐身体部位最近已提交动作、主题使用历史与最近8条事件。
 3. 模型生成新的动作/排程，而不是只选候选ID。每块默认至多3事件，由 `max_events_per_unit`（1–8）限制，不用多调用自动制造更多动作。
 4. 程序验证单位范围、integer时间、顺序、身体冲突、当前段主题与实际展示的局部call_id。分配稳定ID；attributes/entry/exit 保持未知空对象，禁止补编支撑或朝向。
@@ -404,12 +404,12 @@ python -m choreobench run-harness \
 
 ### 11.4 解码、预算与恢复
 
-- 每首新增调用 = 1次纲要 + 每规划块1次生成；纲要 `outline_max_output_tokens` 与块 `max_output_tokens` 独立，`max_calls` 启动前检查。
+- 每首新增调用 = 启用时1次纲要 + 每规划块1次生成；纲要 `outline_max_output_tokens` 与块 `max_output_tokens` 独立，`max_calls` 启动前检查。
 - `structured_unit_output=true` 为服务端公开动态JSONschema：限定root、unit_id、类型/整数范围、当前主题和实际输入call_id；控制器仍检查start<end、顺序、冲突及重复引用。后端拒绝时停止，不自动回退普通JSONmode或重发。
 - `boundary_ids` 自由排程以完整对象分支约束实际样本最短时长，时间字段先于动作；每块索引归零。HTTP200不能证明服务端确实执行关系约束，控制器继续复检。
 - 显式 `event_schedule_policy=balanced_full_unit` 先公开可行整块排程（默认1–3段，最多按事件预算至8段），模型选一整套区间并创作动作，schema固定时间/数组顺序，控制器逐项匹配。它限制自由并发，不事后拉长旧动作或补休止；覆盖1.0是设计约束，非编舞质量证据。推荐的grid示例显式开启，默认策略仍为free。
 - 已验收后端不支持uniqueItems，故不发送该关键字，唯一性由控制器检查。示例开启结构化输出；其他服务必须验收或显式更换配置。
-- 字符预检不是tokenizer上下文上限。真实输入+输出预算应另验；超长不截掉音频、候选或答案。
+- 字符预检覆盖包含response_schema的完整内部request，不是tokenizer上下文上限或provider实际HTTP体字节数。真实输入+输出预算应另验；超长不截掉音频、候选或答案。
 - `--resume` 只恢复同输入、代码、模型和配置；未决结果不重发。新结构/提示/预算/代码用新目录。
 - 入口发现自身源码身份与导入时不同，调用模型前拒绝，避免等待进程混版本；这不是完整部署安全证明，仍应冻结代码。
 
@@ -476,3 +476,20 @@ python -m choreobench.music_structure --wrap-legacy \
 完整服务器步骤、资源、消融和正式数据门槛见 [NEXT_STEPS_20261105_zh.md](docs/NEXT_STEPS_20261105_zh.md)。
 
 最新b1eb0a1进度判断、v6–v9结果边界及下一轮评审/同排程消融方案见 [PROGRESS_20261105_zh.md](docs/PROGRESS_20261105_zh.md)。本轮进度审查没有修改生成算法。
+
+## 13. 无训练的大纲与历史消融
+
+已实现coordinated配置 `use_outline/use_history`（默认均true）、完整request大小检查、真实排程饱和诊断，以及不调用模型的实验准备入口：
+
+```bash
+python -m choreobench prepare-ablation \
+  --dataset /data/choreobench/dataset.json \
+  --candidates /data/choreobench/local-candidates.json \
+  --config /data/choreobench/coordinated-grid.json \
+  --out-dir /runs/outline-history-v1
+python -m choreobench.experiments --verify /runs/outline-history-v1
+```
+
+产物包括四组配置（main/no_outline/no_history/no_outline_no_history）、独立run路径、来源/源码/Python身份及调用预算清单、argv命令数组；不会自行运行模型或训练。关闭大纲不发起大纲调用且无生成主题，关闭历史不把前块动作/终态/计数/前缀hash交给模型。四组同块seed、候选和排程保持一致；上下文和实际费用会不同。
+
+准备失败或预算不足时保留清单并exit2；ready_to_run不等于模型/服务/质量验收。按需执行某组命令，每组执行前先verify；修改输入、配置或代码须新目录。详见 [ABLATIONS_20261105_zh.md](docs/ABLATIONS_20261105_zh.md)。

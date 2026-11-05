@@ -214,6 +214,9 @@ def build_parser():
     for name in ("dataset", "candidates", "config", "out-dir"):
         harness.add_argument("--" + name, required=True, type=Path)
     harness.add_argument("--resume", action="store_true")
+    ablation = sub.add_parser("prepare-ablation", help="Prepare a source-bound 2x2 outline/history experiment without model calls")
+    for name in ("dataset", "candidates", "config", "out-dir"):
+        ablation.add_argument("--" + name, required=True, type=Path)
     units = sub.add_parser("plan-units", help="Build planning contexts; not semantic phrase detection")
     units.add_argument("--dataset", required=True, type=Path)
     units.add_argument("--song-id", required=True)
@@ -363,6 +366,12 @@ def dispatch(args):
     elif cmd == "run-harness":
         from .harness import run_harness
         _emit(run_harness(args.dataset, args.candidates, args.out_dir, read_json(args.config), resume=args.resume))
+    elif cmd == "prepare-ablation":
+        from .experiments import prepare_ablation_experiment
+        prepared = prepare_ablation_experiment(args.dataset, args.candidates, args.config, args.out_dir)
+        _emit(prepared)
+        if not prepared["ready_to_run"]:
+            return 2
     elif cmd == "plan-units":
         from .audio import make_windows
         from .planning_units import build_planning_units

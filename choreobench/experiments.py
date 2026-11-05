@@ -98,6 +98,8 @@ def prepare_ablation_experiment(dataset_path, candidates_path, base_config_path,
     config = _config(base)
     if config["mode"] != "coordinated":
         raise ValueError("Ablation preparation requires coordinated mode")
+    if config["shared_outline_path"] is not None:
+        raise ValueError("The four-arm ablation generates independent outlines; use prepare-history for a shared outline pair")
     songs = [s for s in dataset["songs"] if s["split"] in config["splits"]]
     if not songs:
         raise ValueError("No songs in selected ablation splits")

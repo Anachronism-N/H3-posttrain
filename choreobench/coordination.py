@@ -340,6 +340,10 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
         if not path.is_absolute():
             path = dataset_path.parent / path
     effective, structure, structure_sha = load_public_structure(path, dataset_sha, songs)
+    shared_path = cfg.get("shared_outline_path")
+    if shared_path is not None:
+        shared_path = Path(shared_path).expanduser()
+        shared_path = shared_path.resolve() if shared_path.is_absolute() else (dataset_path.parent / shared_path).resolve()
     prepared, expected_calls = {}, 0
     for original, song in zip(songs, effective):
         windows = make_windows(song["audio"]["num_samples"], song["audio"]["sample_rate"],
@@ -350,20 +354,32 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                 event_clock(unit, song["audio"]["sample_rate"], cfg)
             options = candidate_options(bank, original, units)
             prepared[song["song_id"]] = dict(song=song, units=units, options=options, error=None)
-            expected_calls += int(cfg["use_outline"]) + len(units["units"])
+            expected_calls += int(cfg["use_outline"] and shared_path is None) + len(units["units"])
         except (ModelOutputError, TimingInfeasibleError) as error:
             prepared[song["song_id"]] = dict(song=song, units=units, error=str(error))
+    shared, shared_sha, shared_rows = None, None, {}
+    if shared_path is not None:
+        from .outlines import load_shared_outlines
+        shared, shared_sha = load_shared_outlines(shared_path, dataset_sha, bank.bytes_sha, effective,
+            {sid: data["units"] for sid, data in prepared.items()}, structure_sha)
+        shared_rows = {row["song_id"]: row for row in shared["songs"]}
+    def assert_shared_unchanged():
+        if shared_path is not None and file_sha(shared_path) != shared_sha:
+            raise ValueError("Shared outline source bytes changed; start a new run")
+    assert_shared_unchanged()
     if expected_calls > cfg["max_calls"]:
         raise ValueError("max_calls cannot cover enabled outline plus all coordination units: " + str(expected_calls))
     provider = create_provider(cfg["planner_provider"], role="planner", base_dir=dataset_path.parent)
     if provider.identity["kind"] == "mock":
         raise ValueError("Coordinated composition requires a real/replay text provider, never mock")
     synthetic = bool(dataset["synthetic"] or bank.data["synthetic"] or provider.identity["synthetic"]
+                     or shared is not None and shared["synthetic"]
                      or structure and any(s["synthetic"] for s in structure["songs"]))
     contract = dict(schema="choreobench.coordination_contract.v1", dataset_sha256=dataset_sha,
         dataset_snapshot=dataset, config=cfg, selected_songs=[s["song_id"] for s in songs],
         local_candidates_identity=bank_identity, planner_identity=provider.identity,
         public_structure_sha256=structure_sha, public_structure_snapshot=structure,
+        shared_outline_sha256=shared_sha, shared_outline_snapshot=shared,
         planning_songs_sha256={s["song_id"]: object_sha(s) for s in effective}, expected_calls=expected_calls,
         code_sha256={p.name: file_sha(p) for p in sorted(Path(__file__).parent.glob("*.py"))},
         software=dict(python=sys.version, platform=platform.platform()), synthetic=synthetic,
@@ -387,6 +403,7 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                     if file_sha(output / ref["path"]) != ref["sha256"]:
                         raise ValueError("Published coordination artifact changed")
                 bank.assert_unchanged(full=True)
+                assert_shared_unchanged()
                 return previous
         plans, artifacts, failures = [], [], []
         def publish(relative, value):
@@ -401,6 +418,8 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                 call_records={k: r["record_sha256"] for k, r in journal.records.items()}, **_journal_accounting(journal),
                 new_local_model_calls=0, original_collection_calls=bank.data["original_collection_calls"],
                 original_collection_costs=bank.costs, model_weights_updated=False, automatic_repair_loop=False,
+                shared_outline_sha256=shared_sha,
+                shared_outline_source_costs=copy.deepcopy(shared["source_costs"]) if shared is not None else None,
                 generated_actions_are_new_proposals=True, music_or_physical_quality_verified=False,
                 ablation=dict(use_outline=cfg["use_outline"], use_history=cfg["use_history"]),
                 semantic_status="pending_independent_review", error=error))
@@ -415,19 +434,25 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                         raise ModelOutputError(data["error"])
                     options, units, song = data["options"], data["units"], data["song"]
                     publish("options/" + prefix + ".json", options)
-                    if cfg["use_outline"]:
+                    assert_shared_unchanged()
+                    if shared is not None:
+                        outline = copy.deepcopy(shared_rows[sid]["outline"])
+                    elif cfg["use_outline"]:
                         response = journal.call(provider, _outline_request(song, options, units, cfg))
                         outline = _read_outline(response["text"], song)
                     else:
                         outline = _neutral_outline(song)
                     publish("outlines/" + prefix + ".json", outline)
                     publish("outline_metadata/" + prefix + ".json", dict(generated_by_model=cfg["use_outline"],
-                        source="model_response" if cfg["use_outline"] else "deterministic_empty_placeholder",
+                        generated_in_this_run=cfg["use_outline"] and shared is None,
+                        source="shared_import" if shared is not None else "model_response" if cfg["use_outline"] else "deterministic_empty_placeholder",
+                        outline_sha256=object_sha(outline), shared_outline_sha256=shared_sha,
                         use_outline=cfg["use_outline"], use_history=cfg["use_history"]))
                     plan = _empty_plan(original)
                     plan["motifs"] = copy.deepcopy(outline["motifs"])
                     for unit in units["units"]:
                         request = _unit_request(song, options, units, unit, outline, plan, cfg)
+                        assert_shared_unchanged()
                         response = journal.call(provider, request)
                         events = _read_unit(response["text"], original, unit, outline, options, cfg["max_events_per_unit"],
                                             clock=event_clock(unit, song["audio"]["sample_rate"], cfg))
@@ -440,6 +465,8 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                     plan["provenance"] = dict(mode="coordinated", contract_sha256=object_sha(contract),
                         outline_sha256=object_sha(outline), candidate_bank_sha256=bank.bytes_sha,
                         outline_generated_by_model=cfg["use_outline"],
+                        outline_generated_in_this_run=cfg["use_outline"] and shared is None,
+                        shared_outline_sha256=shared_sha,
                         public_structure_sha256=structure_sha, generated_actions_are_new_proposals=True,
                         ablation=dict(use_outline=cfg["use_outline"], use_history=cfg["use_history"]),
                         citation_semantics="Input inspiration, not verbatim source support or verified action facts",
@@ -463,6 +490,7 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                     if not cfg["continue_on_model_error"]:
                         raise
             bank.assert_unchanged(full=True)
+            assert_shared_unchanged()
             final = result(True)
             atomic_write(output / "results.json", final)
             return final

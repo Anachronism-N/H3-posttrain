@@ -475,7 +475,7 @@ python -m choreobench.music_structure --wrap-legacy \
 
 完整服务器步骤、资源、消融和正式数据门槛见 [NEXT_STEPS_20261105_zh.md](docs/NEXT_STEPS_20261105_zh.md)。
 
-最新b1eb0a1进度判断、v6–v9结果边界及下一轮评审/同排程消融方案见 [PROGRESS_20261105_zh.md](docs/PROGRESS_20261105_zh.md)。本轮进度审查没有修改生成算法。
+历史b1eb0a1进度判断与后续更新索引见 [PROGRESS_20261105_zh.md](docs/PROGRESS_20261105_zh.md)。最新真实v10与共享大纲推进方案见 [HISTORY_CONTROL_20261106_zh.md](docs/HISTORY_CONTROL_20261106_zh.md)。
 
 ## 13. 无训练的大纲与历史消融
 
@@ -493,3 +493,20 @@ python -m choreobench.experiments --verify /runs/outline-history-v1
 产物包括四组配置（main/no_outline/no_history/no_outline_no_history）、独立run路径、来源/源码/Python身份及调用预算清单、argv命令数组；不会自行运行模型或训练。关闭大纲不发起大纲调用且无生成主题，关闭历史不把前块动作/终态/计数/前缀hash交给模型。四组同块seed、候选和排程保持一致；上下文和实际费用会不同。
 
 准备失败或预算不足时保留清单并exit2；ready_to_run不等于模型/服务/质量验收。按需执行某组命令，每组执行前先verify；修改输入、配置或代码须新目录。详见 [ABLATIONS_20261105_zh.md](docs/ABLATIONS_20261105_zh.md)。
+
+## 14. 固定同一大纲的历史对照与人评汇总
+
+真实v10显示：即使大纲请求与seed相同，两个独立run仍可能产生不同大纲。严格历史对照现在可先从预先指定的完成run导出公共大纲，再由两组共同读取：
+
+```bash
+python -m choreobench export-outlines --run-dir /runs/v10/main --out /data/shared-outlines.json
+python -m choreobench prepare-history \
+  --dataset /data/dataset.json --candidates /data/local-candidates.json \
+  --config /data/coordinated-grid.json --outlines /data/shared-outlines.json \
+  --out-dir /runs/history-fixed-v1
+python -m choreobench verify-history --experiment /runs/history-fixed-v1
+```
+
+按commands.json分别执行两组后，运行 `audit-history --experiment /runs/history-fixed-v1 --out /runs/history-fixed-v1/audit.json` 检查实际大纲与请求，不只检查配置。共享来源变更禁止恢复，原大纲成本单列，新run只调用逐块文本模型。旧prepare-ablation保留四组独立生成大纲的语义，不能用它声称中间内容固定。
+
+`analyze-reviews` 从公开包、私有绑定和原始评分文件验证完整歌曲×方法分母，保留缺计划、空评分、NA；按指定人工或单一模型裁判版本分析。分组未审时只描述，满足完整配对与来源组条件才计算可选比较。所有命令、资源、真实进度和限制见 [共享大纲历史对照与人评汇总](docs/HISTORY_CONTROL_20261106_zh.md)。

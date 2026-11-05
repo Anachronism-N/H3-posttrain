@@ -32,7 +32,7 @@ def _config(value):
                "splits", "unit_config", "timing_policy", "continue_on_model_error", "max_request_characters",
                "public_structure_path", "planner_provider", "outline_max_output_tokens", "structured_unit_output",
                "max_events_per_unit", "event_time_format", "event_grid_seconds", "min_event_seconds",
-               "event_schedule_policy", "use_outline", "use_history"}
+               "event_schedule_policy", "use_outline", "use_history", "shared_outline_path"}
     if not isinstance(value, dict) or set(value) - allowed:
         raise ValueError("Unknown inference harness config fields")
     finite_json(value)
@@ -41,7 +41,7 @@ def _config(value):
                continue_on_model_error=True, max_request_characters=120000, public_structure_path=None,
                planner_provider=None, outline_max_output_tokens=4096, structured_unit_output=False, max_events_per_unit=3,
                event_time_format="global_samples", event_grid_seconds=.25, min_event_seconds=0,
-               event_schedule_policy="free", use_outline=True, use_history=True)
+               event_schedule_policy="free", use_outline=True, use_history=True, shared_outline_path=None)
     cfg.update(copy.deepcopy(value))
     if cfg["mode"] not in ("index0", "llm", "scores", "coordinated"):
         raise ValueError("Harness mode must be index0/llm/scores/coordinated")
@@ -50,6 +50,13 @@ def _config(value):
             raise ValueError(name + " must be a boolean")
         if cfg["mode"] != "coordinated" and name in value:
             raise ValueError("Outline/history ablations are only consumed by coordinated composition")
+    if cfg["mode"] != "coordinated" and "shared_outline_path" in value:
+        raise ValueError("Shared outlines are only consumed by coordinated composition")
+    if cfg["shared_outline_path"] is not None:
+        if not isinstance(cfg["shared_outline_path"], str) or not cfg["shared_outline_path"].strip():
+            raise ValueError("shared_outline_path must be a nonempty path or null")
+        if not cfg["use_outline"]:
+            raise ValueError("shared_outline_path requires use_outline=true")
     if cfg["event_time_format"] not in ("global_samples", "boundary_ids"):
         raise ValueError("event_time_format must be global_samples/boundary_ids")
     if cfg["event_schedule_policy"] not in ("free", "balanced_full_unit"):
@@ -102,7 +109,7 @@ def _config(value):
     elif cfg["scores_path"] is not None:
         raise ValueError("Only scores mode consumes scores_path")
     if cfg["mode"] != "coordinated":
-        for name in ("event_time_format", "event_grid_seconds", "min_event_seconds", "event_schedule_policy", "use_outline", "use_history"):
+        for name in ("event_time_format", "event_grid_seconds", "min_event_seconds", "event_schedule_policy", "use_outline", "use_history", "shared_outline_path"):
             del cfg[name]
     return cfg
 

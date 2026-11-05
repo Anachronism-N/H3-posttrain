@@ -217,6 +217,16 @@ def build_parser():
     ablation = sub.add_parser("prepare-ablation", help="Prepare a source-bound 2x2 outline/history experiment without model calls")
     for name in ("dataset", "candidates", "config", "out-dir"):
         ablation.add_argument("--" + name, required=True, type=Path)
+    shared_outline = sub.add_parser("export-outlines", help="Audit and freeze generated public outlines from a completed coordination run; no model calls")
+    shared_outline.add_argument("--run-dir", required=True, type=Path)
+    shared_outline.add_argument("--out", required=True, type=Path)
+    history_pair = sub.add_parser("prepare-history", help="Prepare two history arms consuming one frozen outline artifact; no model calls")
+    for name in ("dataset", "candidates", "config", "outlines", "out-dir"):
+        history_pair.add_argument("--" + name, required=True, type=Path)
+    for name in ("verify-history", "audit-history"):
+        history_check = sub.add_parser(name, help="Verify preparation inputs" if name == "verify-history" else "Audit actual fixed-outline history runs without inference")
+        history_check.add_argument("--experiment", required=True, type=Path)
+        history_check.add_argument("--out", type=Path)
     units = sub.add_parser("plan-units", help="Build planning contexts; not semantic phrase detection")
     units.add_argument("--dataset", required=True, type=Path)
     units.add_argument("--song-id", required=True)
@@ -287,6 +297,20 @@ def build_parser():
     for name in ("public", "private", "reviews"):
         review_import.add_argument("--" + name, required=True, type=Path)
     review_import.add_argument("--out", required=True, type=Path)
+    review_analysis = sub.add_parser("analyze-reviews", help="Bind original reviews to the declared song denominator; preserve missing ratings")
+    for name in ("dataset", "public", "private"):
+        review_analysis.add_argument("--" + name, required=True, type=Path)
+    review_analysis.add_argument("--reviews", required=True, nargs="+", type=Path)
+    for name in ("method-a", "method-b", "criterion"):
+        review_analysis.add_argument("--" + name, required=True)
+    review_analysis.add_argument("--split", required=True, choices=("train", "dev", "test"))
+    review_analysis.add_argument("--origin", required=True, choices=("human", "model_judge"))
+    review_analysis.add_argument("--judge-model-id")
+    review_analysis.add_argument("--compare", action="store_true")
+    review_analysis.add_argument("--resamples", type=int, default=2000)
+    review_analysis.add_argument("--confidence", type=float, default=.95)
+    review_analysis.add_argument("--seed", type=int, default=7)
+    review_analysis.add_argument("--out", required=True, type=Path)
     export = sub.add_parser("export-submission")
     export.add_argument("--run-dir", required=True, type=Path)
     export.add_argument("--method-id", required=True)
@@ -372,6 +396,21 @@ def dispatch(args):
         _emit(prepared)
         if not prepared["ready_to_run"]:
             return 2
+    elif cmd == "export-outlines":
+        from .outlines import export_shared_outlines
+        _emit(export_shared_outlines(args.run_dir, args.out))
+    elif cmd == "prepare-history":
+        from .history_experiment import prepare_history_experiment
+        prepared = prepare_history_experiment(args.dataset, args.candidates, args.config, args.outlines, args.out_dir)
+        _emit(prepared)
+        if not prepared["ready_to_run"]:
+            return 2
+    elif cmd in ("verify-history", "audit-history"):
+        from .history_experiment import verify_history_experiment, audit_history_experiment
+        report = (verify_history_experiment if cmd == "verify-history" else audit_history_experiment)(args.experiment)
+        _emit(report, args.out)
+        if not report["ready_to_run" if cmd == "verify-history" else "paired_control_verified"]:
+            return 2
     elif cmd == "plan-units":
         from .audio import make_windows
         from .planning_units import build_planning_units
@@ -445,6 +484,12 @@ def dispatch(args):
     elif cmd == "review-import":
         from .reviews import import_reviews
         _emit(import_reviews(read_json(args.public), read_json(args.private), read_json(args.reviews)), args.out)
+    elif cmd == "analyze-reviews":
+        from .review_analysis import analyze_reviews
+        _emit(analyze_reviews(args.dataset, args.public, args.private, args.reviews, method_a=args.method_a,
+            method_b=args.method_b, criterion=args.criterion, split=args.split, origin=args.origin,
+            judge_model_id=args.judge_model_id, compare=args.compare, n_resamples=args.resamples,
+            confidence=args.confidence, seed=args.seed), args.out)
     elif cmd == "export-submission":
         from .submissions import export_submission
         _emit(export_submission(args.run_dir, args.out, args.method_id))

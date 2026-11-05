@@ -304,3 +304,15 @@ main实际76块请求包含提交历史；no_history实际76块请求不含bound
 仅使用同一节点两张holder卡作为文本TP=2，其他任务未终止。本轮结束后只对身份绑定的自有服务发SIGTERM，实际检查两张使用卡恢复每卡唯一holder，该节点8卡均约975MiB；网页只使用CPU保留。资源历史回执不保证以后卡可用，不能从此推断全群空闲。
 
 原始结果在仓库父目录 `choreobench_runs/20261105_history_ablation_v10/`，包括experiments/逐歌manifest/configs/runs、frozen_code、execution-complete.private.json、paired-controls.audit.private.json、handoff.verified.private.json、review-browser-verified.json和resources-final-verified.private.json。公开仓库仅推送本节结果摘要与合同说明，不上传音频/权重/完整私有日志、绑定、凭据或内部地址。下一步先独立听音审查这六条方案，按实际问题准备共享公共大纲的内容控制对照；不因结构满分继续盲目跑完其余配置或启动补训。
+
+## 15. 共享大纲与评审汇总的软件验收
+
+2026-11-06在Windows本地继续复用冻结候选，不训练、不调用真实模型或付费API。新增shared_outlines导出/加载、共享大纲coordinated执行、两组history_experiment准备/verify/实际audit，以及从评审原件到完整歌曲分母的review_analysis；接口与服务器命令见 [HISTORY_CONTROL_20261106_zh.md](HISTORY_CONTROL_20261106_zh.md)。
+
+180秒合成音频验收直接审计并导出前一轮658ffe4代码产生的main大纲，没有重新生成大纲。两组均实际消费该内容，各18个规划块、18次模拟文本调用；合计36次新增模拟调用、0次新增局部采样、0次新增大纲生成。原局部72次采集和共享大纲历史1次调用独立保留；两组resume均新增0调用。
+
+配对审计重建原请求和提交前缀通过：实际大纲相同、公共候选/排程/块seed相同、历史字段分别存在/缺失，时间边界相同，fixture正文按组有意不同。这只验证控制和观测路径，不说明历史提高质量。两组方案形成同一匿名包，空评分导入后的完整分母为2格、评分0格、比较blocked，没有填0或虚构听音。整个链路标为synthetic，真实质量评分和真实服务器固定大纲对照仍未完成。
+
+最终模拟回执保存在忽略目录 `.choreobench-runs/shared-outline-180s-v2/acceptance.json`，不是公开数据资产。另通过旧b48b701冻结生成器的临时fixture兼容探针验证旧outline_metadata格式可导出；原始服务器文件仍必须存在且字节匹配。独立代码审查补齐了home相对公共结构路径的解析，以及实际run的Python声明与准备清单的一致性检查。
+
+最终冻结实现本机Python3.9.18完整回归 **807 passed、1 skipped，234.13秒**；唯一跳过项仍为Windows符号链接权限。CLI端到端、缺失/失败分母、原件篡改、共享输入变更、实际大纲消费、未知调用、恢复无重复调用和评审分组/版本测试通过；compileall、文档UTF8/链接/代码围栏及Git空白检查通过。测试与合成示例不构成真实编舞质量结果。

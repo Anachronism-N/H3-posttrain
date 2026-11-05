@@ -128,13 +128,18 @@ class ReplayProvider:
 class NativeProvider:
     def __init__(self, spec, role, base_dir=None):
         _allowed(spec, ("kind", "family", "model", "checkpoint", "training_source_dir", "device",
-                        "max_length", "temperature", "top_p", "top_k"))
+                        "max_length", "temperature", "top_p", "top_k", "task_prompt"))
         if role != "local":
             raise ValueError("Native audio-only model is a local provider, never a text editor/planner")
         self.spec = copy.deepcopy(spec)
         self.family = spec.get("family", "omni_captioner")
         if self.family not in ("omni_captioner", "moss", "music_flamingo"):
             raise ValueError("Unknown native model family")
+        self.task_prompt = spec.get("task_prompt")
+        if "task_prompt" in spec and (self.family != "omni_captioner" or spec.get("checkpoint")
+                or not isinstance(self.task_prompt, str) or not self.task_prompt.strip()
+                or len(self.task_prompt) > 16384 or "<|" in self.task_prompt or "<audio>" in self.task_prompt):
+            raise ValueError("task_prompt requires a base-only Omni model and bounded plain task text")
         self.model = _path(spec["model"], base_dir)
         self.checkpoint = _path(spec["checkpoint"], base_dir) if spec.get("checkpoint") else None
         self.training_source = _path(spec["training_source_dir"], base_dir) if spec.get("training_source_dir") else None
@@ -158,21 +163,35 @@ class NativeProvider:
                         "music_planner_eval.py", "music_planner_moss_generation_patch.py",
                         "music_planner_moss_position_buffer_patch.py", "music_planner_generation_eos_patch.py")
         self.identity["native_source_sha256"] = {name: file_sha(source_root / name) for name in source_names}
+        if self.task_prompt is not None:
+            self.identity.update(task_prompt=self.task_prompt, task_prompt_sha256=object_sha(self.task_prompt),
+                protocol="choreobench-prompted-omni-base-v1",
+                benchmark_provider_sha256=file_sha(Path(__file__)))
         self.adapter = None
         self.verification = None
 
-    def generate(self, request):
-        _budget(request)
-        from scripts_omnidance.exp.ms.music_planner_search import sample_native
+    def _task_template(self):
+        return self.adapter.processor.apply_chat_template([dict(role="user", content=[
+            dict(type="audio", audio="native-waveform"),
+            dict(type="text", text=self.task_prompt)])], tokenize=False, add_generation_prompt=True)
+
+    def load(self):
         from scripts_omnidance.exp.ms.music_planner_search_identity import verify_loaded_portable
-        if request["response_kind"] != "local_caption":
-            raise ValueError("Native provider cannot consume global plans or edit instructions")
         if self.adapter is None:
             from scripts_omnidance.exp.ms.music_planner_adapters import load_planner_adapter
             self.adapter = load_planner_adapter(self.family, self.model, checkpoint=self.checkpoint,
                 device=self.spec.get("device", "cpu"), max_length=self.max_length)
             self.adapter._sampling_official_model_path = self.model
             self.verification = verify_loaded_portable(self.adapter, self.identity["artifact_identity"])
+            if self.task_prompt is not None:
+                self.adapter._prompt = self._task_template
+
+    def generate(self, request):
+        _budget(request)
+        from scripts_omnidance.exp.ms.music_planner_search import sample_native
+        if request["response_kind"] != "local_caption":
+            raise ValueError("Native provider cannot consume global plans or edit instructions")
+        self.load()
         # Deliberately whitelist audio fields. No song brief, previous plan,
         # transcript, beat table, edit instruction or desired answer reaches it.
         audio = request["audio"]
@@ -181,8 +200,10 @@ class NativeProvider:
         started = time.monotonic()
         generated = sample_native(self.adapter, row, seed=request["seed"],
                                   max_new_tokens=request["max_output_tokens"], **self.sampling)
-        return dict(text=generated["raw_text"], raw=dict(generation=generated,
-                        loaded_artifact_verification=self.verification), identity=self.identity,
+        raw = dict(generation=generated, loaded_artifact_verification=self.verification)
+        if self.task_prompt is not None:
+            raw["formatted_task_prompt"] = self._task_template()
+        return dict(text=generated["raw_text"], raw=raw, identity=self.identity,
                     synthetic=False, stop_reason=generated["stop_reason"],
                     costs=dict(input_tokens=generated.get("input_tokens"),
                                output_tokens=len(generated["new_token_ids"]),
@@ -232,7 +253,15 @@ class ChatCompletionsProvider:
         body = dict(model=self.identity["model"], messages=messages,
                     temperature=self.identity["temperature"], seed=request["seed"])
         body[self.identity["token_parameter"]] = request["max_output_tokens"]
-        if self.identity["json_mode"]:
+        schema = request.get("response_schema")
+        if schema is not None:
+            if (not isinstance(schema, dict) or schema.get("type") != "object"
+                    or schema.get("additionalProperties") is not False):
+                raise ValueError("response_schema must be an explicit closed JSON object schema")
+            finite_json(schema)
+            body["response_format"] = dict(type="json_schema", json_schema=dict(
+                name="choreobench_response", strict=True, schema=copy.deepcopy(schema)))
+        elif self.identity["json_mode"]:
             body["response_format"] = {"type": "json_object"}
         secret = os.environ.get(self.identity["api_key_env"], "") if self.identity["api_key_env"] else ""
         headers = {"Content-Type": "application/json"}

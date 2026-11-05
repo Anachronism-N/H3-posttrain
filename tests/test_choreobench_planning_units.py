@@ -51,6 +51,29 @@ class PlanningUnitTests(unittest.TestCase):
         self.assertEqual(result["provenance"]["meter_status_basis"], "author_declaration_not_confidence")
         self.assert_partition(result, song)
 
+    def test_fifty_millisecond_time_tail_merges_without_crossing_public_section(self):
+        song = song_fixture(40000, cuts=[20300])
+        result = build_planning_units(song)
+        section = [u for u in result["units"] if u["section_id"] == "s000"]
+        self.assertEqual([(u["start"], u["end"]) for u in section], [(0, 10125), (10125, 20300)])
+        self.assertIn("short_time_tail_merged_with_previous", section[-1]["reasons"])
+        self.assertFalse(any(u["start"] < 20300 < u["end"] for u in result["units"]))
+        self.assert_partition(result, song)
+
+    def test_short_tail_balances_when_merging_would_exceed_capacity(self):
+        song = song_fixture(20250)
+        result = build_planning_units(song, config={"fallback_seconds": 20, "max_unit_seconds": 20})
+        self.assertEqual([(u["start"], u["end"]) for u in result["units"]], [(0, 10125), (10125, 20250)])
+        self.assertTrue(all("short_time_tail_balanced_with_previous" in u["reasons"] for u in result["units"]))
+        self.assert_partition(result, song)
+
+    def test_short_source_section_is_preserved_not_merged_across_scope(self):
+        song = song_fixture(12000, cuts=[500])
+        result = build_planning_units(song)
+        self.assertEqual((result["units"][0]["start"], result["units"][0]["end"]), (0, 500))
+        self.assertIn("source_interval_shorter_than_time_target", result["units"][0]["reasons"])
+        self.assert_partition(result, song)
+
     def test_variable_tempo_uses_actual_downbeat_intervals(self):
         song = song_fixture(20000, [0, 1000, 2500, 4500, 7000, 10000, 14000, 17000])
         result = build_planning_units(song, config={"meter_status": "reviewed"})

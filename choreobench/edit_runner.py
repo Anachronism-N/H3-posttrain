@@ -37,7 +37,10 @@ def propose_edit(plan_path, task_path, provider_spec, output_dir, *, seed=7, max
                "response_kind": "patch", "messages": [
                    {"role": "system", "content": (
                        "Edit an existing choreography score according to the user instruction and immutable scope. "
-                       "Return only a JSON patch matching patch_template; change only operations. "
+                       "Return exactly one COMPLETE JSON patch with all seven keys from patch_template: "
+                       "schema,base_plan_sha256,instruction,allowed_event_ids,repair_event_ids,protected,operations. "
+                       "Copy the first six fields exactly from patch_template and replace only its operations array. "
+                       "Do not return an operations-only object, the source plan, or a prose explanation. "
                        "Each operation is {event_id,field,value}. Existing scalar fields only: action,start,end,track,motif_id,"
                        "attributes.KEY,entry.KEY,exit.KEY. No event additions/deletions or attribute additions. "
                        "All times are integer samples; do not change protected fields or events outside allowed/repair IDs. "

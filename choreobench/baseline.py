@@ -245,12 +245,20 @@ def _messages(payload, response_kind):
     common = ("You plan choreography from public musical structure and local audio-model text proposals. "
         "You have not heard the audio directly. All times are integer samples on the supplied global clock, "
         "with half-open intervals. Observation/beat/section boundaries are not measured action boundaries. "
-        "Return only one JSON object, no Markdown. Do not invent audio observations or private references. ")
+        "Return only one JSON object, no Markdown. Do not invent audio observations or private references. "
+        "Unknown attributes and entry/exit states must remain null or empty objects. "
+        "Do not invent support feet, contact or facing states merely to satisfy validation; "
+        "only carry state values explicitly supported by the supplied local text. ")
     if response_kind == "outline":
         instruction = ("Return {motifs:[{motif_id,description}],sections:[{section_id,instruction}]}, "
                        "one instruction for every supplied section in order. No other keys.")
     else:
-        instruction = ("Return a complete choreobench.plan.v1 object using the supplied proposed_plan shape. "
+        instruction = ("Return the COMPLETE choreobench.plan.v1 object ITSELF as the JSON root, "
+            "not a wrapper such as {proposed_plan:...}. The root has exactly these keys: "
+            "schema,song_id,sample_rate,num_samples,motifs,events,provenance. "
+            "Use schema=choreobench.plan.v1; provenance,attributes,entry,exit are objects; motifs,events,evidence are arrays. "
+            "The supplied proposed_plan is a draft. You may consolidate redundant proposals into coherent "
+            "movement phrases rather than copying every draft event; keep actions concise and do not discard the public music evidence. "
             "Every event requires event_id,start,end,track,action,attributes,entry,exit,motif_id,evidence. "
             "Allowed tracks: body,upper,lower,head,torso,left_arm,right_arm,left_leg,right_leg. "
             "No overlapping incompatible scopes: body conflicts with all, upper with torso/head/arms, lower with legs. "

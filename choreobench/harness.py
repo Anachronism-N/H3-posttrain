@@ -18,23 +18,43 @@ from .dataset import public_song, resolve_audio, verify_dataset_audio
 from .io import atomic_write, file_lock, file_sha, finite_json, object_sha, read_json, read_json_snapshot, write_json
 from .planning_units import build_planning_units
 from .providers import create_provider, parse_json_response
+from .public_structure import load_public_structure
 from .schema import validate_dataset, validate_plan
 from .selection import NoFeasibleSelectionError, candidate_options, make_selection, select_with_scores
 from .compile_selected import compile_selection
 
 
+_IMPORT_SIGNATURE = (Path(__file__).stat().st_ino, Path(__file__).stat().st_mtime_ns, Path(__file__).stat().st_ctime_ns)
+
 def _config(value):
     allowed = {"mode", "selector_provider", "scores_path", "seed", "max_calls", "max_output_tokens",
-               "splits", "unit_config", "timing_policy", "continue_on_model_error", "max_request_characters"}
+               "splits", "unit_config", "timing_policy", "continue_on_model_error", "max_request_characters",
+               "public_structure_path", "planner_provider", "outline_max_output_tokens", "structured_unit_output",
+               "max_events_per_unit"}
     if not isinstance(value, dict) or set(value) - allowed:
         raise ValueError("Unknown inference harness config fields")
     finite_json(value)
     cfg = dict(mode="index0", selector_provider=None, scores_path=None, seed=7, max_calls=1000,
                max_output_tokens=4096, splits=["dev"], unit_config={}, timing_policy="strict",
-               continue_on_model_error=True, max_request_characters=120000)
+               continue_on_model_error=True, max_request_characters=120000, public_structure_path=None,
+               planner_provider=None, outline_max_output_tokens=4096, structured_unit_output=False, max_events_per_unit=3)
     cfg.update(copy.deepcopy(value))
-    if cfg["mode"] not in ("index0", "llm", "scores"):
-        raise ValueError("Harness mode must be index0/llm/scores")
+    if cfg["mode"] not in ("index0", "llm", "scores", "coordinated"):
+        raise ValueError("Harness mode must be index0/llm/scores/coordinated")
+    if cfg["public_structure_path"] is not None and (not isinstance(cfg["public_structure_path"], str)
+            or not cfg["public_structure_path"].strip()):
+        raise ValueError("public_structure_path must be a nonempty path or null")
+    if type(cfg["outline_max_output_tokens"]) is not int or cfg["outline_max_output_tokens"] < 1:
+        raise ValueError("outline_max_output_tokens must be positive")
+    if type(cfg["max_events_per_unit"]) is not int or not 1 <= cfg["max_events_per_unit"] <= 8:
+        raise ValueError("max_events_per_unit must be an integer in [1,8]")
+    if type(cfg["structured_unit_output"]) is not bool or (cfg["structured_unit_output"] and cfg["mode"] != "coordinated"):
+        raise ValueError("structured_unit_output is a boolean option for coordinated composition only")
+    if cfg["mode"] == "coordinated":
+        if not isinstance(cfg["planner_provider"], dict):
+            raise ValueError("coordinated mode requires planner_provider")
+    elif cfg["planner_provider"] is not None:
+        raise ValueError("Only coordinated mode consumes planner_provider")
     if cfg["timing_policy"] not in ("strict", "proposed_crop"):
         raise ValueError("timing_policy must be strict/proposed_crop")
     if type(cfg["seed"]) is not int or not 0 <= cfg["seed"] < 2 ** 63:
@@ -160,7 +180,13 @@ def _read_choices(text, expected, options):
 
 
 def run_harness(dataset_path, candidates_path, output_dir, config, resume=False):
+    current = Path(__file__).stat()
+    if (current.st_ino, current.st_mtime_ns, current.st_ctime_ns) != _IMPORT_SIGNATURE:
+        raise ValueError("Harness source changed after process import; start a fresh frozen process before model calls")
     cfg = _config(config)
+    if cfg["mode"] == "coordinated":
+        from .coordination import run_coordinated
+        return run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=resume)
     dataset_path, output = Path(dataset_path).resolve(), Path(output_dir).resolve()
     dataset, dataset_sha = read_json_snapshot(dataset_path)
     validate_dataset(dataset)
@@ -172,11 +198,18 @@ def run_harness(dataset_path, candidates_path, output_dir, config, resume=False)
     source_cfg = copy.deepcopy(bank.data["source"]["contract"]["config"])
     inputs = {s["song_id"]: s["audio"] for s in songs}
     bank_identity = match_candidates(bank, dataset_sha, songs, inputs, source_cfg)
+    structure_path = cfg["public_structure_path"]
+    if structure_path is not None:
+        structure_path = Path(structure_path).expanduser()
+        if not structure_path.is_absolute():
+            structure_path = dataset_path.parent / structure_path
+    planning_songs, structure_snapshot, structure_sha = load_public_structure(structure_path, dataset_sha, songs)
+    planning = {s["song_id"]: s for s in planning_songs}
     prepared, expected_calls = {}, 0
     for song in songs:
         windows = make_windows(song["audio"]["num_samples"], song["audio"]["sample_rate"],
                                source_cfg["window_seconds"], source_cfg["stride_seconds"])
-        units = build_planning_units(song, windows=windows, config=cfg["unit_config"])
+        units = build_planning_units(planning[song["song_id"]], windows=windows, config=cfg["unit_config"])
         try:
             options = candidate_options(bank, song, units)
             owners = _owned_windows(options, units)
@@ -200,7 +233,8 @@ def run_harness(dataset_path, candidates_path, output_dir, config, resume=False)
                 or scores["dataset_sha256"] != dataset_sha or scores["bank_sha256"] != bank.bytes_sha
                 or not isinstance(scores["songs"], dict) or set(scores["songs"]) != {s["song_id"] for s in songs}):
             raise ValueError("Selection scores must bind the exact dataset, bank and selected song inventory")
-    synthetic = bool(dataset["synthetic"] or bank.data["synthetic"] or provider and provider.identity["synthetic"])
+    synthetic = bool(dataset["synthetic"] or bank.data["synthetic"] or provider and provider.identity["synthetic"]
+                     or structure_snapshot and any(s["synthetic"] for s in structure_snapshot["songs"]))
     if scores:
         for item in scores["songs"].values():
             if not isinstance(item, dict) or set(item) != {"options_sha256", "unary", "transitions", "score_provenance"}:
@@ -211,6 +245,8 @@ def run_harness(dataset_path, candidates_path, output_dir, config, resume=False)
             synthetic = synthetic or provenance["synthetic"]
     contract = dict(schema="choreobench.harness_contract.v1", dataset_path=str(dataset_path),
         dataset_sha256=dataset_sha, dataset_snapshot=dataset, config=cfg,
+        public_structure_sha256=structure_sha, public_structure_snapshot=structure_snapshot,
+        planning_songs_sha256={s["song_id"]: object_sha(s) for s in planning_songs},
         selected_songs=[s["song_id"] for s in songs], local_candidates_identity=bank_identity,
         selector_identity=provider.identity if provider else None, scores_sha256=scores_sha, scores_snapshot=scores,
         units_sha256={sid: object_sha(p["units"]) for sid, p in prepared.items()}, expected_calls=expected_calls,
@@ -280,7 +316,7 @@ def run_harness(dataset_path, candidates_path, output_dir, config, resume=False)
                             owned = data["owners"][unit["unit_id"]]
                             if not owned:
                                 continue
-                            request = _unit_request(song, options, data["units"], unit, owned, choices, cfg)
+                            request = _unit_request(planning[sid], options, data["units"], unit, owned, choices, cfg)
                             response = journal.call(provider, request)
                             choices.extend(_read_choices(response["text"], owned, options))
                     selection = make_selection(bank, song, choices, selection_provenance=dict(

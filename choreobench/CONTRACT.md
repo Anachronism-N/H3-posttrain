@@ -15,7 +15,7 @@ Editing API: editing.py apply_patch(plan, patch) -> new validated plan; patch {s
 
 Evaluation API: evaluation.py evaluate_plan(plan,song) -> JSON diagnostics; evaluate_edit(before,after,task) -> JSON. Task {schema:"choreobench.edit_task.v1", task_id,song_id,source_plan_sha256,instruction,allowed_event_ids,repair_event_ids,protected,goals:[{event_id,field,op:"eq"|"contains"|"gte"|"lte",value}], semantic_goals:[str]}. Goals kept private: only instruction, allowed/repair IDs, protected fields, source plan reach model. Structural goal checks labelled literal checks, not semantic truth; semantic_goals remain pending independent review. Core report cannot assign musicality/physical scores automatically. export/import blind reviews and song-level bootstrap are exposed in evaluation.py and reviews.py.
 
-Baseline API: audio.py/providers.py/baseline.py. Expose run_baseline(dataset_path, output_dir, config, resume=False) -> result metadata. Config JSON includes mode concat|global|hierarchical, local_provider {kind:mock|native|replay,...}, planner_provider {kind:mock|chat_completions,...}, seed:int, max_calls:int, max_output_tokens:int, window_seconds:5.0625, stride_seconds:<=window, candidates_per_window:int. Real providers lazy load, preserve raw results and exact identities; no mock fallback. Existing native sample_native adapter strictly audio-only. Use full 5.0625s windows, shift final window left, no silent padding of too-short songs. Output ownership intervals separate from observation windows so tail overlap has no duplicate schedule; normalize windows without claiming true action boundaries. Plan schema validated before publishing. API endpoint errors and malformed model output are failures, saved and not retried to hide bad samples. Run journal has immutable contract and per-call started/raw records; completed cached calls reused; pending outcomes block unless explicit retry policy. Store full prompts/responses and costs without API secrets; source/config/checkpoint identity changes prevent resume. Output root contains contract.json, results.json, plans/<song_id>.json, calls/*; completed JSON should store enough identity to verify on resume. The CLI wraps run_baseline. Provide provider classes/helpers for the edit runner using the same API provider.
+Baseline API: audio.py/providers.py/baseline.py. Expose run_baseline(dataset_path, output_dir, config, resume=False) -> result metadata. Config JSON includes mode concat|global|hierarchical, local_provider {kind:mock|native|replay,...}, planner_provider {kind:mock|chat_completions,...}, seed:int, max_calls:int, max_output_tokens:int, window_seconds:5.0625, stride_seconds:<=window, candidates_per_window:int. Real providers lazy load, preserve raw results and exact identities; no mock fallback. Existing native sample_native adapter strictly audio-only. An optional local_provider.task_prompt supports a separate prompted Omni base-only baseline: bounded plain fixed public task text, no checkpoint, no per-song context or private answers. It overrides only that ChoreoBench adapter instance, leaves original training prefixes unchanged, binds prompt/source hashes and preserves the formatted template. Identity protocol is choreobench-prompted-omni-base-v1; strict fixed-window parsing remains mandatory. Use full 5.0625s windows, shift final window left, no silent padding of too-short songs. Output ownership intervals separate from observation windows so tail overlap has no duplicate schedule; normalize windows without claiming true action boundaries. Plan schema validated before publishing. API endpoint errors and malformed model output are failures, saved and not retried to hide bad samples. Run journal has immutable contract and per-call started/raw records; completed cached calls reused; pending outcomes block unless explicit retry policy. Store full prompts/responses and costs without API secrets; source/config/checkpoint identity changes prevent resume. Output root contains contract.json, results.json, plans/<song_id>.json, calls/*; completed JSON should store enough identity to verify on resume. The CLI wraps run_baseline. Provide provider classes/helpers for the edit runner using the same API provider.
 
 Integrated CLI: see README and python -m choreobench --help. Includes demo, doctor, validate-data, run, validate-plan, apply-edit, undo-edit, propose-edit, evaluate-plan, evaluate-edit, review-pack, review-import, export-submission, evaluate-submission, bootstrap, resources, prepare-audio, assemble-data, import-structure. Demo is synthetic smoke only; never counted as scientific results.
 
@@ -34,3 +34,56 @@ Inference harness: planning_units.py build_planning_units(song,windows=None,conf
 harness.py run_harness(dataset_path,candidates_path,output_dir,config,resume=False) supports index0/llm/scores over an existing matching bank, exact original stride, per-window authoritative unit by ownership midpoint, input character/output token/call limits, immutable journal, failure denominators and uniform submission/review export. Synthetic source/selector/score taint propagates. Prior model context includes only retained scheduled fragments. No optimizer, weight update, new local sampling or automatic semantic repair loop. API modes require real model/service acceptance; CPU fixtures only verify contracts.
 
 Resident native expert: resident.py create_resident_server(provider_spec,audio_root,host="127.0.0.1",port=0,api_key_env="") and serve_resident use one NativeProvider, serial generation and lazy weight loading; GET /health and POST /v1/local-caption only. NativeServiceProvider is selected by kind=native_service; requires expected_identity_sha256, supports timeout_seconds/api_key_env/base_url. Current transport requires matching absolute shared-file paths; no uploads, batching or sharding. Identity is pinned server attestation, not independent remote-weight verification; unknown outcomes are never retried. Failed post-load verification locks service until restart. CLI run-harness/plan-units/serve-local and examples are documented in README.
+
+
+## Public structure sidecar
+
+Schema: {schema:"choreobench.public_structure.v1",dataset_sha256,songs:[{song_id,audio_sha256,sample_rate,num_samples,music,synthetic:bool}]}.
+
+- Exact keys; selected songs exactly match original source dataset. Canonical audio hash/rate/count must match.
+- Private goals, audits, references and scoring fields are rejected, not forwarded to a generator.
+- Candidate-bank matching still validates original dataset bytes and Song snapshots; the sidecar creates a separate effective public music view only for planning.
+- public_structure_path is optional for index0/llm/scores/coordinated. Sidecar snapshot/hash is persisted in the run contract; mutations invalidate resume. Synthetic source/sidecar/provider taint propagates.
+- music_structure.py builds sidecars from canonical WAV and audio-SHA-bound Beat This detections. Spectral-novelty boundaries have unknown functional labels, null repeat groups, unreviewed meter and no calibrated accuracy/phrase claim. Raw novelty, source/config/code hashes remain separate analysis evidence.
+
+## Coordinated harness
+
+Config extends run-harness with mode=coordinated, planner_provider, outline_max_output_tokens, max_events_per_unit and structured_unit_output; selector_provider/scores_path are not accepted for this mode. Defaults: outline budget4096, max_events_per_unit3 (integer1–8), structured_unit_output=false. The example opts in to structured decoding explicitly.
+
+Global outline: {motifs:[{motif_id,description}],sections:[{section_id,intent,motif_ids}]}.
+
+Unit response: {unit_id,events:[{start,end,track,action,motif_id,source_call_ids}]}.
+
+- Every public section exactly once in original order; <=8 declared motifs and section-local motif references.
+- Each unit has1–max_events_per_unit events, integer global times wholly inside the public planning unit, valid compatible tracks and original response ordering.
+- Every event cites one or more actual local call_ids presented for that unit; unavailable/duplicate references fail. A citation is input inspiration, not semantic entailment, measured physical state or verbatim compilation.
+- Controller assigns deterministic event IDs. attributes/entry/exit remain unknown empty objects, not inferred support feet or facing states.
+- Whole-song section intent, current permitted motif definitions, per-body-part latest committed text, bounded motif history and recent events guide each block. Validated commits alone enter future history.
+- New actions/timings are explicitly new proposals; input-local two-caption observation format is unchanged. No post-hoc text repair, event deletion, forced rest, invisible retry or weight update.
+- Budget preflight covers1 outline plus every planned block. Character limits are not tokenizer/context limits; raw responses, stop reasons, costs, failures and immutable resume identities persist.
+- Artifacts: contract/calls/units/options/outlines/blocks/diagnostics/plans/results. coordination_contract.v1 and coordination_result.v1 retain the original candidate/audio/public structure bindings. Generic export-submission/review-pack accepts valid final plans; a valid prefix is not a successful whole-song prediction.
+
+### Structured unit decoding
+
+structured_unit_output=true adds an exact public per-unit response_schema to the journaled request. ChatCompletionsProvider sends response_format.json_schema (strict closed object) instead of json_object. Schema binds unit ID, field types, allowed current motifs/source IDs, integer bounds and events.maxItems.
+
+Controller relational checks still enforce start<end, schedule order, incompatible body overlap, motif scope and duplicate citations. uniqueItems is not sent to the verified backend because it is unsupported there; uniqueness is still mandatory in _read_unit. Unsupported schema/service responses fail with evidence, no automatic downgrade or retry. This is not a music/physical evaluator.
+
+### Process/source drift
+
+run_harness and run_coordinated refuse new runs if their own source inode/mtime/ctime differs from its import-time identity, before loading run data/provider. This guards waiting processes that retain earlier configuration code; it is not a full deployment attestation. New revisions require frozen code and a new output directory, not missing-config compatibility fallbacks.
+
+## Planning unit time-fallback revision
+
+Algorithm section_downbeat_partition.v2 adds min_time_block_seconds(default2). Effective tail target is clamped to >=1 sample and <=half the effective fallback size.
+
+- Short time-fallback tails merge with the previous block in the same source section if max_unit_seconds permits; otherwise the last pair is balanced.
+- Short source sections remain explicit; reviewed pickup/bar fragments are not silently merged across scope.
+- Original integer full-song coverage, public section bounds and audio observation windows remain unchanged. Reasons and algorithm revision are recorded and recomputed by validation.
+- This is an engineering unit target, not a minimum generated-action duration or true phrase detector.
+
+## Public review HTTP service
+
+review_server.create_review_server(public_dir,host="127.0.0.1",port=0,proxy_prefix="") serves only a fixed public-route allowlist and pack-bound canonical audio. Valid proxy prefixes are /proxy/PORT. GET/HEAD and audio byte ranges are supported; private paths, directories, unlisted files, traversal, symlink escape and POST writes are refused.
+
+Startup hashes audio and snapshots public documents; changed audio identity is rejected at request time. No server-side review-write endpoint is added; ratings are filled/exported in the browser and imported with the existing evaluator. The server does not invent ratings, prove that audio was heard, generate HTML or publish private bindings. Deployment-specific UI/assets remain in the operator's public experiment package, not this repository.

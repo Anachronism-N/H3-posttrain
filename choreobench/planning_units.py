@@ -13,7 +13,7 @@ from .schema import ValidationError, integer, keys, validate_song
 
 
 DEFAULT_CONFIG = {"bars_per_block": 4, "max_unit_seconds": 20,
-                  "fallback_seconds": 10.125, "meter_status": "unverified"}
+                  "fallback_seconds": 10.125, "meter_status": "unverified", "min_time_block_seconds": 2}
 
 
 def _json(value, where):
@@ -29,7 +29,7 @@ def _config(config, rate):
     keys(config, (), DEFAULT_CONFIG, "planning config")
     value = dict(DEFAULT_CONFIG, **config)
     integer(value["bars_per_block"], "bars_per_block", 1)
-    for name in ("max_unit_seconds", "fallback_seconds"):
+    for name in ("max_unit_seconds", "fallback_seconds", "min_time_block_seconds"):
         number = value[name]
         if (type(number) not in (int, float) or number <= 0
                 or type(number) is float and not math.isfinite(number)):
@@ -128,10 +128,25 @@ def build_planning_units(song, windows=None, config=None):
     def time_blocks(section, start, end, reasons):
         size = min(fallback, capacity)
         why = list(reasons) + (["fallback_reduced_to_capacity"] if fallback > capacity else [])
-        while start < end:
-            stop = min(start + size, end)
-            emit(section, start, stop, "time_block", why)
-            start = stop
+        minimum = max(1, min(math.floor(cfg["min_time_block_seconds"] * rate), size // 2))
+        intervals = []
+        cursor = start
+        while cursor < end:
+            stop = min(cursor + size, end)
+            intervals.append((cursor, stop, list(why)))
+            cursor = stop
+        if len(intervals) > 1 and intervals[-1][1] - intervals[-1][0] < minimum:
+            left, right = intervals[-2][0], intervals[-1][1]
+            if right - left <= capacity:
+                intervals[-2:] = [(left, right, why + ["short_time_tail_merged_with_previous"])]
+            else:
+                middle = left + (right - left) // 2
+                intervals[-2:] = [(left, middle, why + ["short_time_tail_balanced_with_previous"]),
+                                   (middle, right, why + ["short_time_tail_balanced_with_previous"])]
+        elif len(intervals) == 1 and end - start < minimum:
+            intervals[0][2].append("source_interval_shorter_than_time_target")
+        for left, right, reasons in intervals:
+            emit(section, left, right, "time_block", reasons)
 
     def fragment(section, start, end, reasons, bars=()):
         if end - start > capacity:
@@ -192,7 +207,7 @@ def build_planning_units(song, windows=None, config=None):
         "sample_rate": rate, "num_samples": count, "audio_sha256": song["audio"]["sha256"],
         "song_sha256": object_sha(song), "music_sha256": object_sha(song["music"]),
         "windows_sha256": object_sha(expert_windows), "window_count": len(expert_windows),
-        "config": cfg, "provenance": {"algorithm": "section_downbeat_partition.v1",
+        "config": cfg, "provenance": {"algorithm": "section_downbeat_partition.v2",
             "music_source": song["music"]["source"], "meter_status_basis": "author_declaration_not_confidence",
             "semantic_phrase_detection": False, "boundaries_are_action_boundaries": False,
             "decision_scope": "observation_window", "cross_unit_window_refs": "shared_single_decision",

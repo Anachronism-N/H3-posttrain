@@ -1,6 +1,6 @@
 # ChoreoBench：音乐到文本编舞的 benchmark 框架与参考 baseline
 
-本目录将任务定义、方法实现和评估分开。核心产物是可编辑的自然语言编舞时间线；不要求 H3、3D 姿态或视频生成。名称为工作名称，当前交付是 **benchmark 软件、协议与参考 baseline**，尚不包含正式整曲数据集、真实大模型结果或人工评测结论。
+本目录将任务定义、方法实现和评估分开。核心产物是可编辑的自然语言编舞时间线；不要求 H3、3D 姿态或视频生成。名称为工作名称，当前交付是 **benchmark 软件、协议与参考 baseline**，尚不包含正式整曲数据集、正式大模型benchmark结果或人工评测结论。原始Omni加任务提示的开发期GPU验收与失败诊断另记于验收文档，不等于科学结果。
 
 新增代码独立于原有 H3/5 秒训练器；原训练器与模型输入合同未改变。Python 核心支持 3.9+。真实模型依赖沿用训练 checkpoint 对应环境，另行验收。
 
@@ -20,7 +20,9 @@ v1 编辑是 **给定目标范围的受约束编辑**。目标事件/允许修�
 
 外层模型读取的是音乐工具结果和文本候选，不直接听音。Qwen 原生局部模型只接收波形，不接收全局计划、编辑文字或私有答案。分层 baseline 的收益需要通过真实实验测量，mock 仅复制/组织测试数据，不能证明方法有效。
 
-原hierarchical仍按导入的功能段落自由生成。新增run-harness把规划块、整包候选选择与来源编译独立接通；它不会将已有Qwen改成整曲模型。真正乐句检测、自动语义修复循环仍未实现。设计与剩余工作见 [HARNESS_DESIGN_zh.md](docs/HARNESS_DESIGN_zh.md)。
+hierarchical 按导入的段落生成；run-harness 保留候选选择/来源编译，并新增全曲设计→逐块创作的 coordinated 模式。局部音频观察仍为5.0625秒；两种输出的来源语义不同。真正乐句检测、自动语义修复循环尚未实现。实现与边界见 [第11节](#11-全曲协调生成-harness) 和 [HARNESS_DESIGN_zh.md](docs/HARNESS_DESIGN_zh.md)。
+
+当前状态：已完成CPU合同与真实三首开发推理验收，尚无人评音乐质量结论；精确版本/失败/资源/最后结果见 [VALIDATION_20261104.md](docs/VALIDATION_20261104.md)，不将合成fixture或开发调参结果当正式benchmark成绩。
 
 完整协议：[PROTOCOL_zh.md](docs/PROTOCOL_zh.md)。资源：[RESOURCES_zh.md](docs/RESOURCES_zh.md)。相关工作：[RELATED_WORK.md](docs/RELATED_WORK.md)。精确数据合同：[CONTRACT.md](CONTRACT.md)。
 
@@ -89,6 +91,19 @@ python -m choreobench import-structure \
 先复用已训练 Qwen 的运行环境，准备完整基座、processor/tokenizer、支持的 portable checkpoint、原 run_config 和冻结训练源码。当前 adapter 不接受任意未知 PEFT 目录，不支持隐式迁移输出协议。
 
 修改 [native_concat.json](examples/native_concat.json) 与 [native_hierarchical.json](examples/native_hierarchical.json) 中的绝对路径、实际指令模型名和服务地址。concat 不调用外层模型，其 planner_provider 占位项不执行。若明确测试原始未微调基座，可删除 checkpoint/training_source_dir，并在实验记录中标注 base-only。
+
+原始Omni的零样本编舞对照可在`local_provider`中设置固定公开`task_prompt`，优先使用原始Qwen3-Omni Instruct；必须删除checkpoint，不能改变已训练专家的前缀。该提示仅在ChoreoBench的实例上应用，不改原训练adapter；仍使用完整5.0625秒波形与严格双窗解析，不传入歌曲私有答案、前段计划或编辑指令。提示原文/哈希和实际格式化前缀写入运行证据，身份标记`choreobench-prompted-omni-base-v1`，不称为已训练编舞专家。基座是否遵循指令须真实短窗验收，失败不补写或回退mock。
+
+Linux服务器可先使用独立单窗留证入口（配置必须为base-only native、真实完整5.0625秒canonical WAV、新输出目录）：
+
+```bash
+python -m choreobench.acceptance \
+  --provider /data/choreobench/base_provider.json \
+  --audio /data/choreobench/real-window.wav \
+  --out-dir /runs/native-base-window-acceptance --max-output-tokens 512
+```
+
+保存身份/配置、实际模板与token/EOS、加载前后/峰值显存、主机RSS与分阶段时延；失败写acceptance.json后非零退出，不补采或回退。`accepted=true`仅表示该真实短窗通过格式和EOS验收，不是音乐质量或整个服务器长期容量验收。
 
 外层 API 使用兼容 `/v1/chat/completions` 的文本服务，不自动启动服务。密钥只放在 `CHOREOBENCH_API_KEY` 环境变量中。若服务不支持 JSON mode，改为 false；若其输出预算字段不同，配置 token_parameter。不要把密钥写进配置。远程服务权重身份只能声明/由服务端审计，本客户端不声称已核实。
 
@@ -257,7 +272,7 @@ python -m choreobench compare --rows /runs/ratings.json \
 
 现原生入口是单设备完整 BF16 Thinker 加载，不自动量化或多卡分片。可优先寻找单张80GB级GPU、128GB级主机RAM及足够模型/日志存储的服务器进行验收；这是容量规划起点，不是显存可运行保证。完整参数存储就约63.44GB，A3B不能解释为仅需加载3B。外层指令模型可用独立服务，避免与Qwen争用显存。真实内存与速度以pilot测量为准。
 
-尚需用户准备：完整歌曲与分组、训练好的实际 checkpoint 与冻结环境、指令模型服务、编舞/音乐评审人员。当前未包含：正式数据发布、真实GPU结果、自动歌曲分组、完整音乐反事实资产生成、自由指代定位、事件增删、递归自改进训练或H3渲染。相关实验协议已记录，但不把它们写成现有代码能力。
+尚需用户准备：完整歌曲与分组、训练好的实际 checkpoint 与冻结环境、指令模型服务、编舞/音乐评审人员。当前未包含：正式数据发布、正式GPU benchmark结果、自动歌曲分组、完整音乐反事实资产生成、自由指代定位、事件增删、递归自改进训练或H3渲染。相关实验协议已记录，但不把它们写成现有代码能力。
 
 ## 8. 冻结模型的推理 harness
 
@@ -320,3 +335,87 @@ python -m choreobench export-candidates \
 服务健康状态不加载权重，也不保证显存可容纳；第一次真实推理才完成加载验收。身份pin是服务端声明与版本绑定，不是客户端独立检查远端权重。生成失败不重发，加载验证失败后服务要求重启。服务串行处理原生调用，不自动批处理或多GPU分片。常驻显存和空闲租用成本仍在。
 
 外层选择/编辑继续使用独立文本服务，可一直部署；音乐结构结果和候选库可离线缓存，采集后局部专家服务可停止。无需为每次编舞重新启动NLF、MotionScript或H3。真实GPU性能、质量与高并发可靠性未在本地CPU测试中验收。
+
+
+## 10. 内网公开盲评页面
+
+公开包生成后，可在launcher对应主机启动只读网页服务，不启动模型、不占GPU。服务仅提供index/pack/空评分模板/署名和pack绑定的音频白名单，不列目录，不提供private、任意文件路径或评分写入接口；音频支持HTTP Range拖动。评分在浏览器填写并导出JSON，按既有review-import导入，空评分始终pending。
+
+```bash
+python -m choreobench.review_server \
+  --public-dir /runs/review/public --host 127.0.0.1 --port 8780 \
+  --proxy-prefix /proxy/8780
+```
+
+端口需先确认空闲，不覆盖其他评审页面。通过环境VSCODE_PROXY_URI对应端口访问；页面使用相对音频路径，支持按歌导航`#case-1`、`#case-2`、`#case-3`。公开文件或页面变更需重启以加载新快照；服务启动验收音频哈希，请求期间拒绝被替换的音频。不把服务健康或浏览器播放通过当人工音乐质量结论。
+
+
+## 11. 全曲协调生成 harness
+
+新增 `mode=coordinated`，与原 select-only 的 index0/llm/scores 分开。它不训练新模型、不改变 H3 或局部音频输入合同。
+
+### 11.1 当前 pipeline 与时间语义
+
+```text
+完整 canonical 音频
+  → 5.0625 秒观察窗 → 原始 Omni + 固定公开任务 prompt / 合法已训练专家
+  → 每窗固定 K 候选，冻结原回答、时钟、seed、EOS 与身份
+  → 独立公共音乐结构 sidecar（可选，绑定原 dataset 与音频 SHA）
+  ├─ index0 / llm / scores：选择整包回答 → 来源逐字编译 → strict 缺口诊断
+  └─ coordinated：全曲主题/段落意图 → 逐规划块创作 → 验证 → 提交 → 因果历史
+  → 可编辑 JSON Plan → 受约束 patch → 独立盲评
+```
+
+输入不是2秒音频：每次听完整5.0625秒，输出被要求写 `[0–2s]` 和 `[2–5.0625s]`。它是兼容已有双窗解析器的协议选择，不是模型能力上限、拍点/小节结果或动作真值。原始基座是创造可能的编舞，不是恢复视频中的真实动作。
+
+观察窗、所有权、公共音乐段、规划块和生成事件是不同时间尺度。coordinated 的事件可跨原2秒caption边界，但必须位于当前规划块内；所有时间为原canonical采样时钟下的整数下标。
+
+### 11.2 公共结构与冻结候选
+
+```bash
+# 在同一 canonical WAV 上得到可追溯的真实 Beat This detections 后运行。
+python -m choreobench.music_structure \
+  --dataset /data/choreobench/dataset.json \
+  --detections /data/choreobench/beatthis/detections.jsonl \
+  --out /data/choreobench/public-structure.json
+python -m choreobench run-harness \
+  --dataset /data/choreobench/dataset.json \
+  --candidates /data/choreobench/local-candidates.json \
+  --config choreobench/examples/harness_coordinated.json \
+  --out-dir /runs/coordinated
+```
+
+使用前修改示例的实际服务/model，并可加 `public_structure_path` 指向新sidecar。sidecar 严格绑定原dataset bytes、歌曲和音频SHA/时钟；**不改旧清单或候选身份，不允许私有审计/目标/参考答案进入结构**。index0/llm/scores 可消费相同sidecar，作为同信息条件对照。
+
+`music_structure` 用真实Beat This拍点与canonical音频谱变化构造分段：在预测downbeat处比较前后3秒标准化log频带谱，选择间距至少20秒的高novelty峰。参数为未校准工程初值，全部功能标签 `unknown`、`repeat_group=null`；不称verse/chorus、真正乐句、人工真值或All-In-One复现。保存配置、原novelty与输入/code哈希。独立All-In-One等预测可按严格sidecar字段导入，工具本身仍需运行/验收。
+
+计量 `unverified` 时默认10.125秒回退；reviewed声明后才按实际重拍合并四小节，不把它当真正乐句。时间短尾目标 `min_time_block_seconds=2`：同一段内合并短尾，超过容量则平衡最后两块；不跨公开段落、不改变音频/观察窗、不强行合并弱起和本来很短的section。它不是生成动作最短时长保证。
+
+### 11.3 全曲设计与逐块创作
+
+1. 全曲大纲读取全部原局部候选和公开结构，没有提供拼接总谱供复制。生成至多8个动作主题，以及每公共section的编舞意图和许可主题。
+2. 每块读取相关原候选、整曲section意图、当前段允许的主题定义、逐身体部位最近已提交动作、主题使用历史与最近8条事件。
+3. 模型生成新的动作/排程，而不是只选候选ID。每块默认至多3事件，由 `max_events_per_unit`（1–8）限制，不用多调用自动制造更多动作。
+4. 程序验证单位范围、integer时间、顺序、身体冲突、当前段主题与实际展示的局部call_id。分配稳定ID；attributes/entry/exit 保持未知空对象，禁止补编支撑或朝向。
+5. 只有通过验证并提交的块进入后续记忆。失败保留原响应和前缀、停止该歌，不把前缀当完整总谱，不自动填rest或语义修复。
+
+**来源语义不同：** index0/llm/scores 是整包选择和原文编译；coordinated 是新编舞提案。call_id只绑定创作输入，不证明新动作被音频支持、与原文语义相同、贴拍或可执行。
+
+### 11.4 解码、预算与恢复
+
+- 每首新增调用 = 1次纲要 + 每规划块1次生成；纲要 `outline_max_output_tokens` 与块 `max_output_tokens` 独立，`max_calls` 启动前检查。
+- `structured_unit_output=true` 为服务端公开动态JSONschema：限定root、unit_id、类型/整数范围、当前主题和实际输入call_id；控制器仍检查start<end、顺序、冲突及重复引用。后端拒绝时停止，不自动回退普通JSONmode或重发。
+- 已验收后端不支持uniqueItems，故不发送该关键字，唯一性由控制器检查。示例开启结构化输出；其他服务必须验收或显式更换配置。
+- 字符预检不是tokenizer上下文上限。真实输入+输出预算应另验；超长不截掉音频、候选或答案。
+- `--resume` 只恢复同输入、代码、模型和配置；未决结果不重发。新结构/提示/预算/代码用新目录。
+- 入口发现自身源码身份与导入时不同，调用模型前拒绝，避免等待进程混版本；这不是完整部署安全证明，仍应冻结代码。
+
+产物包括contract/calls/units/options/outlines/blocks/diagnostics/plans/results，可经既有export-submission和review-pack提交/盲评。API费用、原局部采集、失败和额外试验都单列，不按缓存零成本报告整个方法。
+
+### 11.5 与直接生成的区别及当前状态
+
+局部提案本来就是音频模型 + task prompt。global是文本模型一次读局部候选/草稿生成；它不直接听音。本轮没有“音频模型直接听整曲生成总谱”的公平对照，no-audio不能替代它。
+
+coordinated 新增确定的外部状态、公开音乐证据、全曲设计、逐块授权、验证后提交和可审计成本；尚无自动音乐critic、语义修复、长期主题搜索或训练。**工程机制已实现，不代表音乐/动作质量已改善。**
+
+最后三首真实开发结果、复制退化与修订失败、短动作/缺口和未完成项统一记于 [VALIDATION_20261104.md](docs/VALIDATION_20261104.md)。这三首用于提示/参数开发，不是冻结隐藏测试；先完成独立盲评和结构/时长审查，再讨论pilot扩容和正式实验。

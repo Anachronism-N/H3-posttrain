@@ -210,7 +210,7 @@ def build_parser():
     run.add_argument("--config", required=True, type=Path)
     run.add_argument("--out-dir", required=True, type=Path)
     run.add_argument("--resume", action="store_true")
-    harness = sub.add_parser("run-harness", help="Frozen-model whole-response selection over an existing candidate bank")
+    harness = sub.add_parser("run-harness", help="Frozen-model source selection or global-design/block-coordinated composition over an existing candidate bank")
     for name in ("dataset", "candidates", "config", "out-dir"):
         harness.add_argument("--" + name, required=True, type=Path)
     harness.add_argument("--resume", action="store_true")

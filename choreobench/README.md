@@ -474,3 +474,5 @@ python -m choreobench.music_structure --wrap-legacy \
 评审音频请求先对实际有界内容核验SHA并关闭源句柄，再从同一bytes服务GET/Range/HEAD；每请求临时RAM与完整音频大小相关。评分仍只在浏览器填写/导出，由独立导入器处理。
 
 完整服务器步骤、资源、消融和正式数据门槛见 [NEXT_STEPS_20261105_zh.md](docs/NEXT_STEPS_20261105_zh.md)。
+
+最新b1eb0a1进度判断、v6–v9结果边界及下一轮评审/同排程消融方案见 [PROGRESS_20261105_zh.md](docs/PROGRESS_20261105_zh.md)。本轮进度审查没有修改生成算法。

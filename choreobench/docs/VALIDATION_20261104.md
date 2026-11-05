@@ -235,3 +235,9 @@ v6–v9（包括失败配置）、三首v8编辑和三次schema探针合计**184
 交付证据包括各版frozen_code/contract/calls/完整或失败results、v9的handoff.verified.json、review-browser-verified.json、resources-final-verified.json和upgrade-summary.private.json。联合回执绑定所有发布计划/中间产物哈希与独立整曲分母。只推送实现、回归、文档和占位示例，不推送音频、权重、服务身份、私有日志/答案或内部页面。
 
 **本轮完成工程与真实执行验收，不完成编舞质量判优。** 下一步固定这些配置，在已有3case包上独立听音审查动作明确性、音乐贴合、主题发展/非预期重复和过渡；不继续凭同三首的覆盖/格式分自行宣称方法更优，也不提前发布正式benchmark或启动补训。
+
+### 发布后边界回归
+
+真实v9执行与首轮交付代码对应7f7ebac。随后纯软件检查发现：0.4秒网格、0.39秒下限、3.58秒单位、预算8事件时，贪心菜单可能遗漏一个实际可行的8段方案。修复按内部分段必须占完整网格、最后一段保留实际尾边界的条件预留时长；同时测试可行8段与不可行8段，完整回归为**623 passed、148 subtests passed**。
+
+本次没有新增模型调用或覆盖原v9回执。逐一比对真实三首全部76个单位，新旧公开event_clock和完整解码schema完全一致；等价证据独立保存为edge-clock-equivalence.private.json。原frozen_code/contract仍保持原身份，不把软件边界修复冒称为重跑后的新质量结果，也不因输入等价而绕过跨代码版本resume限制。

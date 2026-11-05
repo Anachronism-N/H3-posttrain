@@ -118,6 +118,18 @@ def test_multiple_grid_phrases_accept_adjacent_intervals_but_reject_body_overlay
         assert all(a["end"] == b["start"] for a, b in zip(plan["events"], plan["events"][1:]))
 
 
+@pytest.mark.parametrize("duration,maximum_count", [(358, 8), (318, 7)])
+def test_balanced_schedule_reserves_grid_duration_for_remaining_internal_phrases(duration, maximum_count):
+    clock = event_clock(dict(start=0, end=duration), 100, dict(event_time_format="boundary_ids",
+        event_grid_seconds=.4, min_event_seconds=.39, event_schedule_policy="balanced_full_unit", max_events_per_unit=8))
+    assert [len(s) for s in clock["permitted_schedules"]] == list(range(1, maximum_count + 1))
+    for schedule in clock["permitted_schedules"]:
+        intervals = [event_interval(e, clock) for e in schedule]
+        assert intervals[0][0] == 0 and intervals[-1][1] == duration
+        assert all(b - a >= 39 for a, b in intervals)
+        assert all(a[1] == b[0] for a, b in zip(intervals, intervals[1:]))
+
+
 @pytest.mark.parametrize("end,rate,step,minimum", [(162000, 16000, .25, .5), (110, 10, .25, .31), (25, 10, 1, .6)])
 def test_balanced_public_schedules_preserve_real_end_and_duration(end, rate, step, minimum):
     unit = dict(start=0, end=end, unit_id="u")

@@ -33,15 +33,16 @@ def event_clock(unit, sample_rate, config):
         if config.get("event_schedule_policy", "free") == "balanced_full_unit":
             samples = result["boundary_samples"]
             duration = samples[-1] - samples[0]
+            grid_minimum = (minimum + step - 1) // step * step
             schedules = []
             for phrases in range(1, config.get("max_events_per_unit", 3) + 1):
-                if phrases * minimum > duration:
+                if (phrases - 1) * grid_minimum + minimum > duration:
                     continue
                 cuts = [0]
                 for part in range(1, phrases):
                     feasible = [i for i, sample in enumerate(samples)
                         if sample - samples[cuts[-1]] >= minimum
-                        and samples[-1] - sample >= (phrases - part) * minimum]
+                        and samples[-1] - sample >= (phrases - part - 1) * grid_minimum + minimum]
                     if not feasible:
                         break
                     cuts.append(min(feasible, key=lambda i: (abs(phrases * (samples[i] - samples[0]) - part * duration), i)))

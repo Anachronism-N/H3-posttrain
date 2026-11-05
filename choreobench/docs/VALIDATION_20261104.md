@@ -33,9 +33,9 @@ Windows / Python 3.9.18，NumPy 1.26.4、SciPy 1.13.1、soundfile 0.13.1；没�
 ### Linux 最终回归
 
 - Python 3.11.6；复用已有音乐环境的音频依赖。
-- 完整 ChoreoBench：**487 passed，148 subtests passed**。
+- 协调迭代结束时487 passed；发布前补充公开音频path stat/handle fstat跨平台语义回归后：**488 passed，148 subtests passed**。
 - 原生采样/EOS 与权重身份审计：**85 passed**。
-- 新公开网页 HTTP 专项：17 passed；真实 Chromium 验收另列。
+- 新公开网页 HTTP 专项：初次17 passed，发布前新增时间戳语义回归后18 passed；真实 Chromium 验收另列。
 - Git whitespace 和新增模块语法检查通过。
 - 较早默认环境的 427 passed + 1 skipped 中，跳过原因是缺 soundfile；补齐已有音频环境后重新执行，不把当时跳过项冒称通过。
 
@@ -141,6 +141,7 @@ llm 选择器分别在 40/50、38/46、37/43 个窗口取候选1；文字变化�
 
 最后新盲评包6条，三case每首两个匿名方案（同公共结构 index0 vs coordinated）。旧17条 baseline/编辑/no-audio包和中间页面保留。
 
+- 音频启动哈希及请求身份使用同一fstat API比较，不混用Windows下可能不同的path stat/handle ctime；文件变更拒绝与该差异不误报有独立回归。
 - 真实 Chromium 验证 case 锚点、并排计划、单曲统一音频、120秒 seek、两侧活跃动作定位、字段切换保留、6行 JSON 导出、无 JS 错误。
 - 测试评分只在浏览器验证后丢弃，不提交/导入；实际评分全部 null，audio_seen=false。
 - 白名单 HTTP 服务拒绝私有答案、方法绑定、任意文件/目录和路径穿越；真实音频哈希检查通过。HTTP200不能替代浏览器/质量验收。

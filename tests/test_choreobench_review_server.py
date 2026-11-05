@@ -103,6 +103,23 @@ def test_mutated_audio_is_not_served_and_page_is_frozen(public):
         assert b"private accidental" not in fetch(url + "/")[2]
 
 
+def test_path_and_handle_timestamp_semantics_do_not_cause_false_audio_rejection(public, monkeypatch):
+    from types import SimpleNamespace
+    original = Path.stat
+    audio = public[2]
+    def different_path_ctime(path, *args, **kwargs):
+        result = original(path, *args, **kwargs)
+        if path == audio:
+            return SimpleNamespace(st_dev=result.st_dev, st_ino=result.st_ino, st_size=result.st_size,
+                st_mode=result.st_mode, st_mtime_ns=result.st_mtime_ns, st_ctime_ns=result.st_ctime_ns + 1000)
+        return result
+    monkeypatch.setattr(Path, "stat", different_path_ctime)
+    with running(public) as url:
+        route = "/" + public[1]["items"][0]["song"]["audio"]["path"]
+        assert fetch(url + route)[0] == 200
+        assert fetch(url + route)[2] == audio.read_bytes()
+
+
 def test_symlink_cannot_publish_private_content(public):
     root, _, audio = public
     outside = root.parent / "private-audio.wav"

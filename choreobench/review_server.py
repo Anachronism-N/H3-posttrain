@@ -1,5 +1,6 @@
 """Read-only public review server with allowlisted routes and audio ranges."""
 import argparse
+import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import mimetypes
@@ -9,7 +10,7 @@ import re
 import stat
 from urllib.parse import unquote, urlsplit
 
-from .io import file_sha, object_sha, read_json
+from .io import object_sha, read_json
 from .reviews import validate_review_pack
 
 
@@ -60,9 +61,13 @@ def create_review_server(public_dir, host="127.0.0.1", port=0, proxy_prefix=""):
         path = root.joinpath(*relative.parts)
         if path.resolve(strict=True) != path or not path.is_file():
             raise ValueError("Public assets must not escape through symlinks")
-        before = path.stat()
-        if file_sha(path) != audio["sha256"] or _signature(before) != _signature(path.stat()):
-            raise ValueError("Public audio identity differs from the review pack")
+        with path.open("rb") as stream:
+            before = os.fstat(stream.fileno())
+            digest = hashlib.sha256()
+            for block in iter(lambda: stream.read(256 * 1024), b""):
+                digest.update(block)
+            if digest.hexdigest() != audio["sha256"] or _signature(before) != _signature(os.fstat(stream.fileno())):
+                raise ValueError("Public audio identity differs from the review pack")
         assets["/" + relative.as_posix()] = (path, _signature(before),
             mimetypes.guess_type(path.name)[0] or "application/octet-stream")
     identity = dict(schema="choreobench.review_server.health.v1", public_pack_sha256=object_sha(pack),

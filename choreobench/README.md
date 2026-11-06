@@ -475,7 +475,7 @@ python -m choreobench.music_structure --wrap-legacy \
 
 完整服务器步骤、资源、消融和正式数据门槛见 [NEXT_STEPS_20261105_zh.md](docs/NEXT_STEPS_20261105_zh.md)。
 
-最新v11进度与质量评审、编辑及算法推进决策见 [PROGRESS_20261106_zh.md](docs/PROGRESS_20261106_zh.md)。共享大纲接口与历史验收见 [HISTORY_CONTROL_20261106_zh.md](docs/HISTORY_CONTROL_20261106_zh.md)；早期b1eb0a1审查保留于 [PROGRESS_20261105_zh.md](docs/PROGRESS_20261105_zh.md)。
+最新v11生成结果、v12评审名册及后续质量/编辑推进决策见 [PROGRESS_20261106_zh.md](docs/PROGRESS_20261106_zh.md)。共享大纲接口与历史验收见 [HISTORY_CONTROL_20261106_zh.md](docs/HISTORY_CONTROL_20261106_zh.md)；早期b1eb0a1审查保留于 [PROGRESS_20261105_zh.md](docs/PROGRESS_20261105_zh.md)。
 
 ## 13. 无训练的大纲与历史消融
 

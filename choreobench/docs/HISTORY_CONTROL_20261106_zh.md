@@ -1,6 +1,6 @@
 # 共享大纲历史对照与人评汇总
 
-截至691101b，v11已完成三首歌曲、六条整曲方案的真实共享大纲对照，3/3内容控制通过。下一步是完成现有方案的独立听音评审，再判断历史记忆和全曲组织是否有效。最新进度、具体评审安排与后续算法/编辑方向见 [进度与推进决策](PROGRESS_20261106_zh.md)。本文保留共享大纲的使用说明和v10/v11历史记录。
+截至3c690c6，v11已完成三首歌曲、六条整曲方案的真实共享大纲对照，3/3内容控制通过；v12又增加评审名册完成率核验，实际人工评分仍为0。下一步是登记实际评审者并收回评分原件，再判断历史记忆和全曲组织是否有效。最新进度、具体安排与后续算法/编辑方向见 [进度与推进决策](PROGRESS_20261106_zh.md)。本文保留共享大纲的使用说明和各轮历史记录。
 
 ## v10背景与大纲混杂
 
@@ -109,7 +109,7 @@ python -m choreobench audit-history \
 
 ## 先评现有方案 再做统计
 
-现有v10六条方案已经可以用于发现问题。独立评审需实际听歌，分别评价音乐贴合、长程组织、计划可执行性与边界质量；评论记录具体时间和动作，区分有意主题回归与无意义复读。先由两名独立评审完成开发诊断并复核分歧；这不是正式样本量依据。
+现有v11六条方案已经可以用于发现问题。独立评审需实际听歌，分别评价音乐贴合、长程组织、计划可执行性与边界质量；评论记录具体时间和动作，区分有意主题回归与无意义复读。先由两名独立评审完成开发诊断并复核分歧；这不是正式样本量依据。
 
 新入口直接读取公开包、私有绑定和原始评分JSON，重新调用 `import_reviews` 验证，而不是信任一份手工修改的汇总表：
 
@@ -155,6 +155,8 @@ python -m choreobench analyze-reviews \
 
 pack_sha256使用object_sha(public_pack)，不是文件名或音频哈希。每个reviewer/item仅一行，criteria为非空不重复的适用维度。生成任务不登记两个edit维度。名册声明不能证明真实参与或确在评分前登记，需组织者记录过程并冻结原件。
 
+通用名册允许不同人承担不同任务，不自动保证本轮“两人各评六方案”。本轮需另核12条唯一分配、每人6条、每条4维；按原逐歌dataset分析时，每歌每维expected_assignment_count应为4。覆盖三首的单维CPU反例中，少登记一项而完成其余11项仍会得到11/11完成，不能当12项完成。网页为只读导出，原始评分JSON需由组织者收回。
+
 ~~~bash
 python -m choreobench analyze-reviews   --dataset /data/choreobench/original-song.dataset.json   --public /runs/review/public/pack.json --private /runs/review/private/bindings.json   --reviews /runs/review/reviewer-a.json /runs/review/reviewer-b.json   --reviewer-roster /runs/review/reviewer-roster.json   --method-a shared-history-main-v11 --method-b shared-history-off-v11   --criterion musical_fit --split dev --origin human   --out /runs/review/musical-fit-with-roster.json
 ~~~
@@ -168,6 +170,8 @@ python -m choreobench analyze-reviews   --dataset /data/choreobench/original-son
 - 未登记/未分配当前维度的评分保留排除原因，但不会改变登记群体的均值。有名册且未全部完成时，即使每方案已有一份分数，--compare仍blocked。来源分组门槛继续适用。
 
 两位评审各六方案是12条item-review原件、四维共48项应有评分，不是48个独立样本。暂未提供真实名单时，仅准备匿名材料；本轮真实六方案上的零提交软件探针用了明确标为software-probe-not-human的示例ID，验证48项全部待评，不把这些ID注册为真实评审者。新评审准备页增加1/3/5分锚点和公开事件ID，点击事件只在评论末尾追加原样本半开范围/时间与ID，不自动填评分或生成错误判断；评论格式尚非结构化问题指标。
+
+上述页面交互属于服务器工件。当前仓库的review_server只服务已有index.html，不提供该页面生成器；新环境需复用对应公共页面工件，或待生成器入库后构建。名册分析入口已在仓库中，可独立复用。
 
 代码完整回归、实际网页验收及未取得人工评分的边界见 [验收第17节](VALIDATION_20261104.md#17-质量评审准备与名册完成率核验-v12)。
 

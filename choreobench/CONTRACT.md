@@ -82,6 +82,18 @@ Algorithm section_downbeat_partition.v2 adds min_time_block_seconds(default2). E
 - Original integer full-song coverage, public section bounds and audio observation windows remain unchanged. Reasons and algorithm revision are recorded and recomputed by validation.
 - This is an engineering unit target, not a minimum generated-action duration or true phrase detector.
 
+## Public review page generation
+
+review_page.render_review_page(pack,planning_music=None) returns HTML from only a validated anonymous review_pack.v1, with a fresh blank_review_template embedded. It never reads or incorporates filled grades, reviewer rosters, private bindings, filesystem audio, credentials or model output beyond the supplied public pack. Public Song/Plan clocks are checked; each anonymous song ID must have identical public evidence across its plans, and audio routes must be relative assets/FILENAME paths. Public edit pairs must include both source_plan and public_edit_task.v1 with exact public fields and unknown private goals excluded; source plan provenance/citations must be empty.
+
+Optional planning_music is a complete anonymous song_id -> strict music mapping validated against the same clocks. The map is displayed separately and never mutates pack, ratings or dataset identity; it is caller-declared public material, not authenticated music truth. No extra HTTP route is added. JSON uses escaped '<' inside the application/json script element, and dynamic strings use textContent, never HTML parsing.
+
+review_page.generate_review_page(public_path,out_path,planning_music_path=None) hashes the exact snapshots, rechecks input bytes and durably publishes a new HTML file exclusively. Existing files or symlinks are refused; the caller must use a new output path, not delete review evidence. It writes only the requested HTML, not a template, audio, bindings or grades. Return value review_page.v1 contains public object/file SHA, page-file SHA, optional music-file SHA, songs/items, null initial-rating status and quality_verified=false. CLI review-page and python -m choreobench.review_page expose the same function. The existing review-pack command still creates the separate scoring template/audio asset bundle required by review_server.
+
+UI supports dynamic #case-1..N navigation, one shared audio control per song, half-open active rows, IDs/sample-range comment append, four generation scoring anchors and browser-only reviews.v1 export. Edit cases show public instruction/source and enable edit dimensions; generation edit dimensions are disabled. Musical-fit scores without an audio_seen declaration block export, while the declaration itself is not proof of listening. Any transient browser validation scores are discarded; page generation cannot infer actual reviewers, assign scores or complete a review task.
+
+Optional repository Chromium tests run only when Playwright and a compatible headless browser are installed; no automatic download. Missing browser capability is reported as skipped, separate from real-run browser acceptance.
+
 ## Public review HTTP service
 
 review_server.create_review_server(public_dir,host="127.0.0.1",port=0,proxy_prefix="") serves only a fixed public-route allowlist and pack-bound canonical audio. Valid proxy prefixes are /proxy/PORT. GET/HEAD and audio byte ranges are supported; private paths, directories, unlisted files, traversal, symlink escape and POST writes are refused.

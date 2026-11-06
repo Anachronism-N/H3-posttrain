@@ -342,12 +342,19 @@ python -m choreobench export-candidates \
 公开包生成后，可在launcher对应主机启动只读网页服务，不启动模型、不占GPU。服务仅提供index/pack/空评分模板/署名和pack绑定的音频白名单，不列目录，不提供private、任意文件路径或评分写入接口；音频支持HTTP Range拖动。评分在浏览器填写并导出JSON，按既有review-import导入，空评分始终pending。
 
 ```bash
+# review-pack已生成匿名pack、空评分模板及音频资产后，独占生成新的index.html。
+python -m choreobench review-page \
+  --public /runs/review/public/pack.json --out /runs/review/public/index.html
 python -m choreobench.review_server \
   --public-dir /runs/review/public --host 127.0.0.1 --port 8780 \
   --proxy-prefix /proxy/8780
 ```
 
-端口需先确认空闲，不覆盖其他评审页面。通过环境VSCODE_PROXY_URI对应端口访问；页面使用相对音频路径，支持按歌导航`#case-1`、`#case-2`、`#case-3`。公开文件或页面变更需重启以加载新快照；服务启动验收音频哈希，请求期间拒绝被替换的音频。不把服务健康或浏览器播放通过当人工音乐质量结论。
+`review-page`只读取匿名公开包，可选`--planning-music /data/anonymous-planning-music.json`提供原采样时钟下的匿名song_id→music完整映射，作为独立辅助视图；不改评分包或要求私有绑定。生成器总是嵌入新空评分模板，不读已填写评分/名册/音频，不调用模型或上传。输入字段、计划时钟和音频相对assets路径严格检查，JSON的`<`安全转义；已有HTML拒绝覆盖，使用新输出/目录，不能删除评分工件来重建。生成报告含包/页面/辅助输入SHA与项目数，不是质量或音频身份验收。
+
+页面提供四维评分锚点、公开事件ID/样本范围评论、同歌统一音频及导出；编辑方案显示公开指令/原计划，生成方案两个edit评分禁用。若填音乐分却无本人听音声明，导出被阻止；勾选不证明实际听音。可选仓库浏览器回归需已安装Playwright/Chromium，不自动下载安装或填分。
+
+端口需先确认空闲，不覆盖其他评审页面。通过环境VSCODE_PROXY_URI对应端口访问；页面使用相对音频路径，按匿名歌曲数支持`#case-1`至`#case-N`，非法锚点回到首case。公开文件或页面变更需重启以加载新快照；服务启动验收音频哈希，请求期间拒绝被替换的音频。不把服务健康或浏览器播放通过当人工音乐质量结论。
 
 
 ## 11. 全曲协调生成 harness

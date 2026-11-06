@@ -171,7 +171,7 @@ python -m choreobench analyze-reviews   --dataset /data/choreobench/original-son
 
 两位评审各六方案是12条item-review原件、四维共48项应有评分，不是48个独立样本。暂未提供真实名单时，仅准备匿名材料；本轮真实六方案上的零提交软件探针用了明确标为software-probe-not-human的示例ID，验证48项全部待评，不把这些ID注册为真实评审者。新评审准备页增加1/3/5分锚点和公开事件ID，点击事件只在评论末尾追加原样本半开范围/时间与ID，不自动填评分或生成错误判断；评论格式尚非结构化问题指标。
 
-上述页面交互属于服务器工件。当前仓库的review_server只服务已有index.html，不提供该页面生成器；新环境需复用对应公共页面工件，或待生成器入库后构建。名册分析入口已在仓库中，可独立复用。
+上述交互最初只在服务器工件中提供；后续已将review_page.py与真实Chromium交互回归纳入仓库。新环境可执行`python -m choreobench review-page --public /runs/review/public/pack.json --out /runs/review/public/index.html`，再用review_server服务。可选`--planning-music`接受全量匿名song_id→music映射作为单独公开视图；不读私有绑定/名单/已填写评分，不改原包身份。已有页面拒绝覆盖，请用新的目录，勿删除评分工件。生成器不下载/复制音频；review-pack产生的音频/模板仍需保留。详细安全/运行和验收边界见[README第10节](../README.md#10-内网公开盲评页面)与[验收第18节](VALIDATION_20261104.md#18-仓库公开页面生成器与可复现交互-v13)。
 
 代码完整回归、实际网页验收及未取得人工评分的边界见 [验收第17节](VALIDATION_20261104.md#17-质量评审准备与名册完成率核验-v12)。
 

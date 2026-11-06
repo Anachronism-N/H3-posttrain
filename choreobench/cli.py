@@ -297,6 +297,10 @@ def build_parser():
     for name in ("public", "private", "reviews"):
         review_import.add_argument("--" + name, required=True, type=Path)
     review_import.add_argument("--out", required=True, type=Path)
+    page = sub.add_parser("review-page", help="Build a blank-rating HTML page from an anonymous public pack; no models or uploads")
+    page.add_argument("--public", required=True, type=Path)
+    page.add_argument("--out", required=True, type=Path)
+    page.add_argument("--planning-music", type=Path)
     review_analysis = sub.add_parser("analyze-reviews", help="Bind original reviews to the declared song denominator; preserve missing ratings")
     for name in ("dataset", "public", "private"):
         review_analysis.add_argument("--" + name, required=True, type=Path)
@@ -485,6 +489,9 @@ def dispatch(args):
     elif cmd == "review-import":
         from .reviews import import_reviews
         _emit(import_reviews(read_json(args.public), read_json(args.private), read_json(args.reviews)), args.out)
+    elif cmd == "review-page":
+        from .review_page import generate_review_page
+        _emit(generate_review_page(args.public, args.out, args.planning_music))
     elif cmd == "analyze-reviews":
         from .review_analysis import analyze_reviews
         _emit(analyze_reviews(args.dataset, args.public, args.private, args.reviews, method_a=args.method_a,

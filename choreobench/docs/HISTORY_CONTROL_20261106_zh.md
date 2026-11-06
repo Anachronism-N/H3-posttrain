@@ -130,7 +130,46 @@ python -m choreobench analyze-reviews \
 
 未审查来源分组时仅做歌曲描述。分组已审查、ID完整、跨split无关联泄漏且配对评分完整后，才可请求 `--compare`。关联分组同时考虑歌曲、艺术家、近重复与相同音频身份，不能把同来源的多首歌或同歌多个事件当独立样本。三首反复使用的开发录音仍不足以支撑正式排行榜或稳健的泛化结论。
 
-这里“目标维度评分完整”表示每个歌曲×方法至少有一条所选来源的非空评分。它不表示全部评审者均已填写或所有量表维度均完成；报告保留各格的待填评审者及评审者集合差异。当前没有预登记评审者名册或ICC，不能发现整位未提交者或声称评审一致性已经达标。
+这里“目标维度评分完整”表示每个歌曲×方法至少有一条所选来源的非空评分。它不表示全部评审者均已填写或所有量表维度均完成；报告保留各格的待填评审者及评审者集合差异。原版本没有预登记名册，无法发现整位未提交者；后续已增加显式`--reviewer-roster`和独立完成率核验，使用方法见下节。ICC与真实评审者/听音认证仍未实现，不能声称评审一致性已经达标。
+
+## 预登记评审名册与评分完成率
+
+组织者在收取评分前指定实际参加者的匿名ID，按公开review_id列出任务；不要填写姓名、联系方式或把软件示例评审者当成实际参与者。名册单独保管，不把名单放进模型prompt或匿名评分页面。严格格式如下，示例只有一行，实际需要覆盖全部六方案和全部实际评审者：
+
+
+~~~json
+{
+  "schema": "choreobench.reviewer_roster.v1",
+  "pack_sha256": "REPLACE_WITH_OBJECT_SHA_OF_PUBLIC_PACK",
+  "assignments": [
+    {
+      "review_id": "review_000001",
+      "reviewer_id": "REPLACE_WITH_ACTUAL_ANONYMOUS_REVIEWER_ID",
+      "origin": "human",
+      "model_id": null,
+      "criteria": ["musical_fit", "long_range_structure", "planned_executability", "planned_boundary_quality"]
+    }
+  ]
+}
+~~~
+
+pack_sha256使用object_sha(public_pack)，不是文件名或音频哈希。每个reviewer/item仅一行，criteria为非空不重复的适用维度。生成任务不登记两个edit维度。名册声明不能证明真实参与或确在评分前登记，需组织者记录过程并冻结原件。
+
+~~~bash
+python -m choreobench analyze-reviews   --dataset /data/choreobench/original-song.dataset.json   --public /runs/review/public/pack.json --private /runs/review/private/bindings.json   --reviews /runs/review/reviewer-a.json /runs/review/reviewer-b.json   --reviewer-roster /runs/review/reviewer-roster.json   --method-a shared-history-main-v11 --method-b shared-history-off-v11   --criterion musical_fit --split dev --origin human   --out /runs/review/musical-fit-with-roster.json
+~~~
+
+每个原逐歌dataset分别分析同包，四个criterion分别运行；未覆盖的其他歌曲/维度/裁判来源明确排除。source原件与名册哈希都在分析末尾复核。不删除缺评者、改为已提交者名单或把额外评审者分数补进未登记名额。
+
+- coverage.complete_for_requested_criterion：每个歌曲×方法有至少一份当前维度非空评分，保留旧含义。
+- reviewer_roster.complete_for_roster：所有登记的评审者×方案在当前维度均有非空分数，且完整歌曲×方法都已分配；否则false。
+- reviewer_roster.entirely_unsubmitted_reviewer_ids：在当前分析范围，某评审者一条应有记录都没有提交。
+- missing_review_record、pending_criterion_rating、未分配方案分别报告，不把空评分变0，不把缺整个方案移出歌曲分母。
+- 未登记/未分配当前维度的评分保留排除原因，但不会改变登记群体的均值。有名册且未全部完成时，即使每方案已有一份分数，--compare仍blocked。来源分组门槛继续适用。
+
+两位评审各六方案是12条item-review原件、四维共48项应有评分，不是48个独立样本。暂未提供真实名单时，仅准备匿名材料；本轮真实六方案上的零提交软件探针用了明确标为software-probe-not-human的示例ID，验证48项全部待评，不把这些ID注册为真实评审者。新评审准备页增加1/3/5分锚点和公开事件ID，点击事件只在评论末尾追加原样本半开范围/时间与ID，不自动填评分或生成错误判断；评论格式尚非结构化问题指标。
+
+代码完整回归、实际网页验收及未取得人工评分的边界见 [验收第17节](VALIDATION_20261104.md#17-质量评审准备与名册完成率核验-v12)。
 
 ## 推进次序与资源
 

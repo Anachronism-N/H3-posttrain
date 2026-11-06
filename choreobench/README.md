@@ -509,4 +509,4 @@ python -m choreobench verify-history --experiment /runs/history-fixed-v1
 
 按commands.json分别执行两组后，运行 `audit-history --experiment /runs/history-fixed-v1 --out /runs/history-fixed-v1/audit.json` 检查实际大纲与请求，不只检查配置。共享来源变更禁止恢复，原大纲成本单列，新run只调用逐块文本模型。旧prepare-ablation保留四组独立生成大纲的语义，不能用它声称中间内容固定。
 
-`analyze-reviews` 从公开包、私有绑定和原始评分文件验证完整歌曲×方法分母，保留缺计划、空评分、NA；按指定人工或单一模型裁判版本分析。分组未审时只描述，满足完整配对与来源组条件才计算可选比较。所有命令、资源、真实进度和限制见 [共享大纲历史对照与人评汇总](docs/HISTORY_CONTROL_20261106_zh.md)。
+`analyze-reviews` 从公开包、私有绑定和原始评分文件验证完整歌曲×方法分母，保留缺计划、空评分、NA；按指定人工或单一模型裁判版本分析。可添加`--reviewer-roster /data/reviewer-roster.json`核验预登记评审者×方案×当前维度：整位未提交、空评分和未分配方案单独报告，未登记评分不会替代缺失项或混入均值。每格已有一份分数不代表全部评审者完成；有名册时`--compare`还要求`reviewer_roster.complete_for_roster=true`。名册绑定公开包SHA，字段与使用示例见[执行说明](docs/HISTORY_CONTROL_20261106_zh.md#预登记评审名册与评分完成率)。无名册时不猜人数，不认证真实听音或ICC。分组未审时只描述，满足完整配对与来源组条件才计算可选比较。所有命令、资源、真实进度和限制见 [共享大纲历史对照与人评汇总](docs/HISTORY_CONTROL_20261106_zh.md)。

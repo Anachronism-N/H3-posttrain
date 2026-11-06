@@ -306,6 +306,7 @@ def build_parser():
     review_analysis.add_argument("--split", required=True, choices=("train", "dev", "test"))
     review_analysis.add_argument("--origin", required=True, choices=("human", "model_judge"))
     review_analysis.add_argument("--judge-model-id")
+    review_analysis.add_argument("--reviewer-roster", type=Path)
     review_analysis.add_argument("--compare", action="store_true")
     review_analysis.add_argument("--resamples", type=int, default=2000)
     review_analysis.add_argument("--confidence", type=float, default=.95)
@@ -489,7 +490,7 @@ def dispatch(args):
         _emit(analyze_reviews(args.dataset, args.public, args.private, args.reviews, method_a=args.method_a,
             method_b=args.method_b, criterion=args.criterion, split=args.split, origin=args.origin,
             judge_model_id=args.judge_model_id, compare=args.compare, n_resamples=args.resamples,
-            confidence=args.confidence, seed=args.seed), args.out)
+            confidence=args.confidence, seed=args.seed, reviewer_roster_path=args.reviewer_roster), args.out)
     elif cmd == "export-submission":
         from .submissions import export_submission
         _emit(export_submission(args.run_dir, args.out, args.method_id))

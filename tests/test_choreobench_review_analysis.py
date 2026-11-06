@@ -310,6 +310,186 @@ def test_other_split_and_other_method_items_are_explicitly_excluded(tmp_path):
     assert all(not row["current_dataset_provenance_checked"] for row in report["coverage"]["excluded_items"])
 
 
+def roster(paths, tmp_path, reviewers=('human-one', 'human-two'), criteria=('musical_fit',)):
+    pack = read_json(paths[1])
+    assignments = [dict(review_id=item['review_id'], reviewer_id=rid, origin='human', model_id=None,
+        criteria=list(criteria)) for item in pack['items'] for rid in reviewers]
+    path = tmp_path / 'roster.json'
+    write_json(path, dict(schema='choreobench.reviewer_roster.v1', pack_sha256=object_sha(pack), assignments=assignments))
+    return path
+
+
+def test_roster_detects_entire_unsubmitted_reviewer_even_when_all_song_cells_are_rated(tmp_path, monkeypatch):
+    paths = material(tmp_path)
+    roster_path = roster(paths, tmp_path)
+    monkeypatch.setattr(analysis, 'compare_methods', lambda *a, **k: pytest.fail('Missing registered reviewer must block comparison'))
+    report = run(paths, reviewer_roster_path=roster_path, compare=True)
+    assert report['coverage']['complete_for_requested_criterion']
+    registered = report['reviewer_roster']
+    assert not registered['complete_for_roster']
+    assert registered['expected_assignment_count'] == 12 and registered['rated_assignment_count'] == 6
+    assert registered['entirely_unsubmitted_reviewer_ids'] == ['human-two']
+    assert all(row['status'] == 'missing_review_record' for row in registered['missing_or_unrated_assignments'])
+    assert report['comparison']['status'] == 'blocked' and report['comparison']['result'] is None
+    assert report['sources'][-1]['role'] == 'reviewer_roster'
+
+
+def test_roster_complete_two_reviewers_and_original_review_records(tmp_path):
+    paths = material(tmp_path)
+    roster_path = roster(paths, tmp_path)
+    second = read_json(paths[3])
+    for row in second['reviews']:
+        row['reviewer_id'] = 'human-two'
+    extra = tmp_path / 'second.json';write_json(extra, second)
+    report = run((*paths[:3], [paths[3], extra]), reviewer_roster_path=roster_path, compare=True)
+    registered = report['reviewer_roster']
+    assert registered['complete_for_roster'] and registered['rated_assignment_count'] == 12
+    assert not registered['entirely_unsubmitted_reviewer_ids']
+    assert not registered['reviewer_identity_or_actual_listening_authenticated']
+    assert not registered['preregistration_timing_independently_verified']
+    assert report['comparison']['status'] == 'computed' and len(report['rows']) == 12
+
+
+def test_roster_zero_submission_preserves_every_expected_assignment(tmp_path):
+    paths = material(tmp_path)
+    roster_path = roster(paths, tmp_path)
+    doc = read_json(paths[3]);doc['reviews'] = [];replace(paths[3], doc)
+    report = run(paths, reviewer_roster_path=roster_path)
+    registered = report['reviewer_roster']
+    assert registered['expected_assignment_count'] == 12
+    assert registered['submitted_assignment_count'] == registered['rated_assignment_count'] == 0
+    assert registered['entirely_unsubmitted_reviewer_ids'] == ['human-one', 'human-two']
+    assert len(report['coverage']['cells']) == 6 and not report['rows']
+
+
+def test_roster_null_criterion_is_not_a_missing_submission_or_a_zero(tmp_path):
+    paths = material(tmp_path)
+    roster_path = roster(paths, tmp_path, reviewers=('human-one',), criteria=('musical_fit', 'long_range_structure'))
+    doc = read_json(paths[3]);doc['reviews'][0]['ratings']['musical_fit'] = None;replace(paths[3], doc)
+    report = run(paths, reviewer_roster_path=roster_path, compare=True)
+    registered = report['reviewer_roster']
+    assert registered['submitted_assignment_count'] == 6 and registered['rated_assignment_count'] == 5
+    assert registered['missing_or_unrated_assignments'][0]['status'] == 'pending_criterion_rating'
+    assert not registered['entirely_unsubmitted_reviewer_ids']
+    assert len(report['rows']) == 5 and report['comparison']['result'] is None
+    other = analysis.analyze_reviews(*paths, method_a=A, method_b=B, criterion='long_range_structure',
+        split='dev', origin='human', reviewer_roster_path=roster_path)
+    assert other['reviewer_roster']['rated_assignment_count'] == 0
+
+
+def test_unregistered_scores_are_reported_but_cannot_fill_or_change_roster_means(tmp_path):
+    paths = material(tmp_path)
+    roster_path = roster(paths, tmp_path, reviewers=('human-one',))
+    outsider = read_json(paths[3])
+    for row in outsider['reviews']:
+        row['reviewer_id'] = 'unassigned'
+        row['ratings']['musical_fit'] = 1
+    extra = tmp_path / 'outside.json';write_json(extra, outsider)
+    report = run((*paths[:3], [paths[3], extra]), reviewer_roster_path=roster_path, compare=True)
+    assert report['reviewer_roster']['complete_for_roster']
+    assert len(report['rows']) == 6 and {row['reviewer_id'] for row in report['rows']} == {'human-one'}
+    assert report['comparison']['result']['estimate'] == 2
+    assert len(report['coverage']['excluded_ratings']) == 6
+    assert all(row['reason'] == 'reviewer_not_assigned_for_criterion' for row in report['coverage']['excluded_ratings'])
+
+
+def test_incomplete_roster_cannot_silently_shrink_the_song_method_denominator(tmp_path):
+    paths = material(tmp_path)
+    roster_path = roster(paths, tmp_path, reviewers=('human-one',))
+    doc = read_json(roster_path);doc['assignments'].pop();replace(roster_path, doc)
+    report = run(paths, reviewer_roster_path=roster_path, compare=True)
+    assert len(report['reviewer_roster']['unassigned_song_method_cells']) == 1
+    assert not report['reviewer_roster']['complete_for_roster'] and report['comparison']['result'] is None
+    assert report['coverage']['expected_cells'] == 6
+
+
+@pytest.mark.parametrize('change', ['pack', 'schema', 'unknown_field', 'unknown_item', 'placeholder', 'duplicate',
+    'empty', 'criteria_empty', 'criteria_unknown', 'criteria_duplicate', 'criteria_edit', 'human_model', 'origin', 'model_identity'])
+def test_bad_or_unbound_rosters_are_rejected(tmp_path, change):
+    paths = material(tmp_path);path = roster(paths, tmp_path);doc = read_json(path);row = doc['assignments'][0]
+    if change == 'pack': doc['pack_sha256'] = object_sha('wrong')
+    elif change == 'schema': doc['schema'] = 'other'
+    elif change == 'unknown_field': doc['scores'] = []
+    elif change == 'unknown_item': row['review_id'] = 'unknown'
+    elif change == 'placeholder': row['reviewer_id'] = 'FILL_REVIEWER_ID'
+    elif change == 'duplicate': doc['assignments'].append(copy.deepcopy(row))
+    elif change == 'empty': doc['assignments'] = []
+    elif change == 'criteria_empty': row['criteria'] = []
+    elif change == 'criteria_unknown': row['criteria'] = ['unknown']
+    elif change == 'criteria_duplicate': row['criteria'] *= 2
+    elif change == 'criteria_edit': row['criteria'] = ['edit_preservation']
+    elif change == 'human_model': row['model_id'] = 'model'
+    elif change == 'origin': row['origin'] = 'unknown'
+    else: row.update(origin='model_judge', model_id='v1')
+    replace(path, doc)
+    with pytest.raises(ValueError):
+        run(paths, reviewer_roster_path=path)
+
+
+def test_roster_filters_other_splits_and_origin_without_fake_missing_reviewer(tmp_path):
+    paths = material(tmp_path, mutate_songs=lambda songs: songs[2].update(split='test'))
+    path = roster(paths, tmp_path, reviewers=('human-one',))
+    doc = read_json(path)
+    model_rows = [dict(row, reviewer_id='judge', origin='model_judge', model_id='v1') for row in doc['assignments']]
+    doc['assignments'].extend(model_rows);replace(path, doc)
+    human = run(paths, reviewer_roster_path=path)
+    assert human['reviewer_roster']['expected_assignment_count'] == 4
+    assert len(human['reviewer_roster']['excluded_assignments']) == 8
+    assert human['reviewer_roster']['complete_for_roster']
+    model = run(paths, reviewer_roster_path=path, origin='model_judge', judge_model_id='v1')
+    assert model['reviewer_roster']['expected_assignment_count'] == 4
+    assert model['reviewer_roster']['entirely_unsubmitted_reviewer_ids'] == ['judge']
+    assert not model['rows']
+
+
+def test_roster_keeps_absent_song_in_denominator(tmp_path):
+    include = {(sid, method) for sid in ('song1', 'song2') for method in (A, B)}
+    paths = material(tmp_path, include=include)
+    path = roster(paths, tmp_path)
+    report = run(paths, reviewer_roster_path=path, compare=True)
+    assert report['coverage']['expected_cells'] == 6
+    assert report['reviewer_roster']['expected_assignment_count'] == 8
+    assert len(report['reviewer_roster']['unassigned_song_method_cells']) == 2
+    assert {row['song_id'] for row in report['reviewer_roster']['unassigned_song_method_cells']} == {'song3'}
+    assert not report['reviewer_roster']['complete_for_roster'] and report['comparison']['result'] is None
+
+
+def test_roster_criterion_without_assignments_blocks_comparison(tmp_path):
+    paths = material(tmp_path)
+    path = roster(paths, tmp_path, reviewers=('human-one',), criteria=('long_range_structure',))
+    report = run(paths, reviewer_roster_path=path, compare=True)
+    registered = report['reviewer_roster']
+    assert registered['expected_assignment_count'] == 0 and not registered['complete_for_roster']
+    assert len(registered['unassigned_song_method_cells']) == 6
+    assert not report['rows'] and report['comparison']['result'] is None
+
+
+def test_roster_mutation_during_comparison_is_rejected(tmp_path, monkeypatch):
+    paths = material(tmp_path);path = roster(paths, tmp_path, reviewers=('human-one',))
+    def mutate(*args, **kwargs):
+        path.write_bytes(path.read_bytes() + b' ')
+        return {'status': 'fixture'}
+    monkeypatch.setattr(analysis, 'compare_methods', mutate)
+    with pytest.raises(ValueError, match='source changed'):
+        run(paths, reviewer_roster_path=path, compare=True)
+
+
+@pytest.mark.parametrize('module_cli', [True, False])
+def test_reviewer_roster_cli_keeps_cell_and_registered_completion_separate(tmp_path, module_cli):
+    paths = material(tmp_path);path = roster(paths, tmp_path);output = tmp_path / 'roster-report.json'
+    args = ['--dataset', str(paths[0]), '--public', str(paths[1]), '--private', str(paths[2]),
+        '--reviews', str(paths[3]), '--method-a', A, '--method-b', B, '--criterion', 'musical_fit',
+        '--split', 'dev', '--origin', 'human', '--reviewer-roster', str(path), '--compare', '--out', str(output)]
+    if module_cli:
+        analysis.main(args)
+    else:
+        from choreobench.cli import main
+        assert main(['analyze-reviews'] + args) == 0
+    report = read_json(output)
+    assert report['coverage']['complete_for_requested_criterion'] and not report['reviewer_roster']['complete_for_roster']
+    assert report['comparison']['status'] == 'blocked'
+
+
 def test_module_cli_writes_exclusive_source_bound_report(tmp_path):
     paths = material(tmp_path)
     output = tmp_path / "analysis.json"

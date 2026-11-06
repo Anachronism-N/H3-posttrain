@@ -1,0 +1,261 @@
+{
+  "schema": "captioner-local-weight-verification-v1",
+  "checked_at": "2026-11-01T17:44:01.892599+00:00",
+  "repository": "Qwen/Qwen3-Omni-30B-A3B-Captioner",
+  "revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+  "model_path": "/ssd/2/niezichao.nzc/models/Qwen3-Omni-30B-A3B-Captioner-full",
+  "complete": true,
+  "file_count": 26,
+  "verified_bytes": 63447410804,
+  "shard_count": 16,
+  "tensor_count": 19743,
+  "tensor_data_bytes": 63438410976,
+  "index_total_size": 63438410976,
+  "tensor_dtypes": {
+    "BF16": 19743
+  },
+  "all_download_revisions_identical": true,
+  "download_record_hashes_verified": true,
+  "upstream_inventory_rechecked_online": false,
+  "online_check_note": "Official metadata endpoint was unreachable; hashes verified against existing pinned Hugging Face download records.",
+  "model_loaded": false,
+  "GPU_used": false,
+  "training_started": false,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size_bytes": 1519,
+      "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "a6344aac8c09253b3b630fb776ae94478aa0275b",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 11542,
+      "sha256": "5561afcbfa9eded1e96d86bf6f47062c57faf20e95ab68d2c66ddd9ff6d2b0bc",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "bccfc2b7544f93fb04c80b145097e78e62ea858a",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "chat_template.json",
+      "size_bytes": 5946,
+      "sha256": "3afb9519448b62e252cefeed1c0c1939b01b4e8ed70adbaf3c9f952969aa0ec7",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "baa71fe6882b38fa5a39a6b4863f7ed491490a27",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "config.json",
+      "size_bytes": 8528,
+      "sha256": "e6f8c637528461398ef4e11d48b6112ce73db2458a563dfea548127c2cce253f",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "83c2015515c5d3f936c47e1a30c72490da0d32f6",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "generation_config.json",
+      "size_bytes": 112,
+      "sha256": "399218e58e26b42d0856fb6624fe6f54a01c212682adb6442c06c875a2b200fb",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "995299a04c6369a73c8078ab131e851956b6a28e",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "merges.txt",
+      "size_bytes": 1671839,
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00001-of-00016.safetensors",
+      "size_bytes": 3999958720,
+      "sha256": "7f2e8477f5e8aef9163d7b46ead3e955bf13fec2826092990bc1df434cba67af",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "7f2e8477f5e8aef9163d7b46ead3e955bf13fec2826092990bc1df434cba67af",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00002-of-00016.safetensors",
+      "size_bytes": 3999984304,
+      "sha256": "1eea7a21447ac311636eeb8b2a8f4a10fbe8e1dbb85870432081a0785715c820",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "1eea7a21447ac311636eeb8b2a8f4a10fbe8e1dbb85870432081a0785715c820",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00003-of-00016.safetensors",
+      "size_bytes": 3997370920,
+      "sha256": "95465568b11da26b96dbf873c785baec9b371b07d1eaee7516bf0b97ca4d8b8d",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "95465568b11da26b96dbf873c785baec9b371b07d1eaee7516bf0b97ca4d8b8d",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00004-of-00016.safetensors",
+      "size_bytes": 3999985128,
+      "sha256": "b6b237e045ab59f8038c8b31fb2d311ef3063101adf90656f1ab931f6c082f87",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "b6b237e045ab59f8038c8b31fb2d311ef3063101adf90656f1ab931f6c082f87",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00005-of-00016.safetensors",
+      "size_bytes": 3999985488,
+      "sha256": "ca7c8c1000c27533a7a1142f6249119539e39964056d67f1bbc889c56e7b7365",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "ca7c8c1000c27533a7a1142f6249119539e39964056d67f1bbc889c56e7b7365",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00006-of-00016.safetensors",
+      "size_bytes": 3999985560,
+      "sha256": "9f292ccd339bb83d5282ea8d941a77d7a8a8e12ba721a711b6691a2e9156cdbd",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "9f292ccd339bb83d5282ea8d941a77d7a8a8e12ba721a711b6691a2e9156cdbd",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00007-of-00016.safetensors",
+      "size_bytes": 3999985584,
+      "sha256": "628f156bc9f4bfa57095dd91b21e2fdf16856d67d249eeb722915f40e1821e8d",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "628f156bc9f4bfa57095dd91b21e2fdf16856d67d249eeb722915f40e1821e8d",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00008-of-00016.safetensors",
+      "size_bytes": 3997372144,
+      "sha256": "461eeda21222c8f69c4bc7ebc6e977ad776f7350f92c0b440de9149b1452b27c",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "461eeda21222c8f69c4bc7ebc6e977ad776f7350f92c0b440de9149b1452b27c",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00009-of-00016.safetensors",
+      "size_bytes": 3999985488,
+      "sha256": "40e7baf316bbfbf5ca007847402f9435ce985bb2893e25e33bd9bb7972aee3f3",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "40e7baf316bbfbf5ca007847402f9435ce985bb2893e25e33bd9bb7972aee3f3",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00010-of-00016.safetensors",
+      "size_bytes": 3999985504,
+      "sha256": "9c8bd10a2f8d6c5c504f50ec6a1bfbfb311757ce226e600775ac6511c6589bbb",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "9c8bd10a2f8d6c5c504f50ec6a1bfbfb311757ce226e600775ac6511c6589bbb",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00011-of-00016.safetensors",
+      "size_bytes": 3999985560,
+      "sha256": "b86e1441bdc73585b1e958535aa58a39c96b60ffb1a4af88bdb344df8b678ac8",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "b86e1441bdc73585b1e958535aa58a39c96b60ffb1a4af88bdb344df8b678ac8",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00012-of-00016.safetensors",
+      "size_bytes": 3987402152,
+      "sha256": "39ae0c5e0073778cc6ac487e8056d803696aa9045738e7e9339e1197b37ba0f7",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "39ae0c5e0073778cc6ac487e8056d803696aa9045738e7e9339e1197b37ba0f7",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00013-of-00016.safetensors",
+      "size_bytes": 3997372112,
+      "sha256": "80d775cad42794687b663d5c574b2ec851035e1a8fda81a61f9bec7dfb84cc86",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "80d775cad42794687b663d5c574b2ec851035e1a8fda81a61f9bec7dfb84cc86",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00014-of-00016.safetensors",
+      "size_bytes": 3999985488,
+      "sha256": "c3195c7dda8c4f6033f5f2bc002d06e2f6eb8fad38fe73e92fe798715f42d03e",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "c3195c7dda8c4f6033f5f2bc002d06e2f6eb8fad38fe73e92fe798715f42d03e",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00015-of-00016.safetensors",
+      "size_bytes": 3999985520,
+      "sha256": "4b5049b50cfd5ef272dca6473b2451774a8828a93aeb37beaadbbe6b4c1f2e41",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "4b5049b50cfd5ef272dca6473b2451774a8828a93aeb37beaadbbe6b4c1f2e41",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model-00016-of-00016.safetensors",
+      "size_bytes": 3461668112,
+      "sha256": "1fe9823d6d7edf67788970f1f9336cf88cf908dd62bdc26692795dbb4488bebe",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "1fe9823d6d7edf67788970f1f9336cf88cf908dd62bdc26692795dbb4488bebe",
+      "etag_algorithm": "sha256-lfs",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "model.safetensors.index.json",
+      "size_bytes": 1928754,
+      "sha256": "282a41fa34d22e13753ae868ce12872ed48c14f32bfbe25b627e18844664afc4",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "46e8a54c1054094ee1de98a88d7e994eaed7c904",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "preprocessor_config.json",
+      "size_bytes": 603,
+      "sha256": "b10e27fd4542cf89ec7145942b87f3e65408d4e9f9d031a29acdd293c15fb3fc",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "7df5b45379044a680218cb2b7ed4d01a6633f537",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "tokenizer_config.json",
+      "size_bytes": 7344,
+      "sha256": "dc3c31c3bdaedd5016382bb3cbe07323026775ad51f5a4fb564505992ae4a670",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "6ff9fd60cc623bb54bbd603cbd418c97a11528d7",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    },
+    {
+      "path": "vocab.json",
+      "size_bytes": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "download_revision": "a2bd106cbf527db5676e79662674da22b0545ec0",
+      "download_etag": "4783fe10ac3adce15ac8f358ef5462739852c569",
+      "etag_algorithm": "git-blob-sha1",
+      "content_matches_download_record": true
+    }
+  ],
+  "problems": []
+}

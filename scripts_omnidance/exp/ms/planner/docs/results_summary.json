@@ -1,0 +1,1203 @@
+{
+ "benchmark10": [
+  {
+   "run": "base_zero_shot",
+   "cases": 10,
+   "failures": 0,
+   "mean_windows": 0.0,
+   "mean_chars": 2509.7,
+   "mean_repetition": 0.09620000000000001,
+   "mean_unique_sentence": 0.9493506493506494,
+   "styled": 0,
+   "eos_stops": 3,
+   "pairwise_similarity": 0.1517
+  },
+  {
+   "run": "sft_greedy",
+   "cases": 10,
+   "failures": 0,
+   "mean_windows": 1.0,
+   "mean_chars": 5419.0,
+   "mean_repetition": 0.8985999999999998,
+   "mean_unique_sentence": 0.13333333333333333,
+   "styled": 0,
+   "eos_stops": 0,
+   "pairwise_similarity": 0.6247
+  },
+  {
+   "run": "loss_greedy",
+   "cases": 10,
+   "failures": 0,
+   "mean_windows": 1.0,
+   "mean_chars": 5419.1,
+   "mean_repetition": 0.8985899999999999,
+   "mean_unique_sentence": 0.13666666666666666,
+   "styled": 0,
+   "eos_stops": 0,
+   "pairwise_similarity": 0.6491
+  },
+  {
+   "run": "jev_greedy",
+   "cases": 10,
+   "failures": 0,
+   "mean_windows": 4.7,
+   "mean_chars": 4918.2,
+   "mean_repetition": 0.8909199999999998,
+   "mean_unique_sentence": 0.14134150873281306,
+   "styled": 10,
+   "eos_stops": 0,
+   "pairwise_similarity": 0.3452,
+   "jev_top1_match": 1,
+   "jev_scored": 10,
+   "jev_top1": {
+    "YOGlvhUGaPbczSmU": {
+     "expected": "pop / casual",
+     "predicted": "jazz funk / heels",
+     "probability": 0.274
+    },
+    "aqYvaknUIXLkTJbP": {
+     "expected": "chinese folk",
+     "predicted": "chinese folk",
+     "probability": 0.3599
+    },
+    "CjsPUMwZpnIFyORZ": {
+     "expected": "k-pop",
+     "predicted": "hip-hop",
+     "probability": 0.2545
+    },
+    "NteGZWaCSJYjxohI": {
+     "expected": "contemporary",
+     "predicted": "chinese classical",
+     "probability": 0.4445
+    },
+    "ZBSKKunmxGMDvRIi": {
+     "expected": "hip-hop",
+     "predicted": "k-pop",
+     "probability": 0.3823
+    },
+    "YzvhMtFgxiypCpwC": {
+     "expected": "chinese classical",
+     "predicted": "contemporary",
+     "probability": 0.4741
+    },
+    "ylGlwfIfaZOIcYYQ": {
+     "expected": "other ethnic / folk",
+     "predicted": "pop / casual",
+     "probability": 0.3281
+    },
+    "aZKcufQdyYIHQZuU": {
+     "expected": "ballet",
+     "predicted": "contemporary",
+     "probability": 0.2941
+    },
+    "kuYUqdCceTJuxSkH": {
+     "expected": "jazz funk / heels",
+     "predicted": "pop / casual",
+     "probability": 0.3024
+    },
+    "YMojyeQTTfbRhyZT": {
+     "expected": "belly dance",
+     "predicted": "chinese folk",
+     "probability": 0.3195
+    }
+   }
+  },
+  {
+   "run": "sft_rp1.1",
+   "cases": 10,
+   "failures": 0,
+   "mean_windows": 3.0,
+   "mean_chars": 4128.1,
+   "mean_repetition": 0.7981499999999998,
+   "mean_unique_sentence": 0.7439324284961868,
+   "styled": 0,
+   "eos_stops": 1,
+   "pairwise_similarity": 0.3694
+  }
+ ],
+ "jev_val": {
+  "rows": 240,
+  "top1": 55,
+  "top1_accuracy": 0.22916666666666666,
+  "top3": 135,
+  "top3_accuracy": 0.5625,
+  "per_class": {
+   "chinese classical": {
+    "total": 40,
+    "correct": 12
+   },
+   "contemporary": {
+    "total": 40,
+    "correct": 7
+   },
+   "jazz funk / heels": {
+    "total": 40,
+    "correct": 6
+   },
+   "k-pop": {
+    "total": 40,
+    "correct": 18
+   },
+   "other ethnic / folk": {
+    "total": 40,
+    "correct": 0
+   },
+   "pop / casual": {
+    "total": 40,
+    "correct": 12
+   }
+  }
+ },
+ "holdout_sft": {
+  "generation": {
+   "checkpoint": "ckpt/sft",
+   "jev": null,
+   "validation_nll": null,
+   "cases": 10,
+   "failures": 0,
+   "mean_chars": 2092.4,
+   "mean_windows": 3.2,
+   "mean_ngram8_repetition": 0.0017399999999999998,
+   "styled_cases": 0,
+   "jev_top1_match": 0,
+   "jev_scored": 0
+  },
+  "fidelity": {
+   "cases": 10,
+   "mean_action_jaccard": 0.9245454545454546,
+   "mean_body_jaccard": 0.8333333333333334,
+   "mean_coverage_generated": 0.8785999999999999,
+   "mean_coverage_reference": 1.0,
+   "mean_length_ratio": 0.6908000000000001,
+   "rows": [
+    {
+     "id": "BDrNsKtHdkDtctaR",
+     "genre": "pop / casual",
+     "action_jaccard": 0.9,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.699
+    },
+    {
+     "id": "HCpDQdlvHqSLlJRQ",
+     "genre": "hip-hop",
+     "action_jaccard": 0.9090909090909091,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.305
+    },
+    {
+     "id": "CkNCaiSsYYRxylep",
+     "genre": "jazz funk / heels",
+     "action_jaccard": 1.0,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.377
+    },
+    {
+     "id": "FGWTKONGkKJDVnhN",
+     "genre": "chinese classical",
+     "action_jaccard": 0.9,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.636
+    },
+    {
+     "id": "MNiFjIpiOZIsowVS",
+     "genre": "chinese folk",
+     "action_jaccard": 1.0,
+     "body_jaccard": 1.0,
+     "coverage_generated": 0.79,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.263
+    },
+    {
+     "id": "FhMTfsMBlcEuQxtT",
+     "genre": "contemporary",
+     "action_jaccard": 1.0,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.468
+    },
+    {
+     "id": "JzeuXZdlmwuQfsaL",
+     "genre": "k-pop",
+     "action_jaccard": 0.9,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 0.502,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.543
+    },
+    {
+     "id": "DRoYDrtJwzpTERuR",
+     "genre": "belly dance",
+     "action_jaccard": 0.8181818181818182,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.677
+    },
+    {
+     "id": "HnKlqddBXKogXekO",
+     "genre": "ballet",
+     "action_jaccard": 1.0,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.559
+    },
+    {
+     "id": "CelzUtQvKHgaGzft",
+     "genre": "jazz funk / heels",
+     "action_jaccard": 0.8181818181818182,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 0.494,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.381
+    }
+   ]
+  }
+ },
+ "holdout_jev": {
+  "generation": {
+   "checkpoint": "ckpt/jev",
+   "jev": "ckpt/jev/jev",
+   "validation_nll": null,
+   "cases": 10,
+   "failures": 0,
+   "mean_chars": 2580.5,
+   "mean_windows": 2.7,
+   "mean_ngram8_repetition": 0.020649999999999998,
+   "styled_cases": 10,
+   "jev_top1_match": 2,
+   "jev_scored": 10
+  },
+  "fidelity": {
+   "cases": 10,
+   "mean_action_jaccard": 0.8152913752913753,
+   "mean_body_jaccard": 0.6416666666666667,
+   "mean_coverage_generated": 0.9754999999999999,
+   "mean_coverage_reference": 1.0,
+   "mean_length_ratio": 1.0377999999999998,
+   "rows": [
+    {
+     "id": "BDrNsKtHdkDtctaR",
+     "genre": "pop / casual",
+     "action_jaccard": 0.75,
+     "body_jaccard": 0.4,
+     "coverage_generated": 0.755,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.495
+    },
+    {
+     "id": "HCpDQdlvHqSLlJRQ",
+     "genre": "hip-hop",
+     "action_jaccard": 0.8333333333333334,
+     "body_jaccard": 0.75,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.861
+    },
+    {
+     "id": "CkNCaiSsYYRxylep",
+     "genre": "jazz funk / heels",
+     "action_jaccard": 0.6666666666666666,
+     "body_jaccard": 0.6,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.51
+    },
+    {
+     "id": "FGWTKONGkKJDVnhN",
+     "genre": "chinese classical",
+     "action_jaccard": 0.9,
+     "body_jaccard": 0.5,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.489
+    },
+    {
+     "id": "MNiFjIpiOZIsowVS",
+     "genre": "chinese folk",
+     "action_jaccard": 1.0,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.402
+    },
+    {
+     "id": "FhMTfsMBlcEuQxtT",
+     "genre": "contemporary",
+     "action_jaccard": 0.9090909090909091,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.54
+    },
+    {
+     "id": "JzeuXZdlmwuQfsaL",
+     "genre": "k-pop",
+     "action_jaccard": 0.75,
+     "body_jaccard": 0.5,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.747
+    },
+    {
+     "id": "DRoYDrtJwzpTERuR",
+     "genre": "belly dance",
+     "action_jaccard": 0.6923076923076923,
+     "body_jaccard": 0.4,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.577
+    },
+    {
+     "id": "HnKlqddBXKogXekO",
+     "genre": "ballet",
+     "action_jaccard": 0.8333333333333334,
+     "body_jaccard": 0.6,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.65
+    },
+    {
+     "id": "CelzUtQvKHgaGzft",
+     "genre": "jazz funk / heels",
+     "action_jaccard": 0.8181818181818182,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.107
+    }
+   ]
+  }
+ },
+ "holdout_jev2": {
+  "generation": {
+   "checkpoint": "ckpt/jev2",
+   "jev": "ckpt/jev2/jev",
+   "validation_nll": null,
+   "cases": 10,
+   "failures": 0,
+   "mean_chars": 2881.3,
+   "mean_windows": 2.8,
+   "mean_ngram8_repetition": 0.00688,
+   "styled_cases": 10,
+   "jev_top1_match": 2,
+   "jev_scored": 10
+  },
+  "fidelity": {
+   "cases": 10,
+   "mean_action_jaccard": 0.8284382284382283,
+   "mean_body_jaccard": 0.7233333333333334,
+   "mean_coverage_generated": 1.0,
+   "mean_coverage_reference": 1.0,
+   "mean_length_ratio": 0.9564,
+   "rows": [
+    {
+     "id": "BDrNsKtHdkDtctaR",
+     "genre": "pop / casual",
+     "action_jaccard": 0.75,
+     "body_jaccard": 0.4,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.277
+    },
+    {
+     "id": "HCpDQdlvHqSLlJRQ",
+     "genre": "hip-hop",
+     "action_jaccard": 0.8333333333333334,
+     "body_jaccard": 0.75,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.36
+    },
+    {
+     "id": "CkNCaiSsYYRxylep",
+     "genre": "jazz funk / heels",
+     "action_jaccard": 0.9090909090909091,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.481
+    },
+    {
+     "id": "FGWTKONGkKJDVnhN",
+     "genre": "chinese classical",
+     "action_jaccard": 0.8181818181818182,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.511
+    },
+    {
+     "id": "MNiFjIpiOZIsowVS",
+     "genre": "chinese folk",
+     "action_jaccard": 0.9090909090909091,
+     "body_jaccard": 0.75,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.527
+    },
+    {
+     "id": "FhMTfsMBlcEuQxtT",
+     "genre": "contemporary",
+     "action_jaccard": 0.7692307692307693,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.708
+    },
+    {
+     "id": "JzeuXZdlmwuQfsaL",
+     "genre": "k-pop",
+     "action_jaccard": 0.8181818181818182,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 2.036
+    },
+    {
+     "id": "DRoYDrtJwzpTERuR",
+     "genre": "belly dance",
+     "action_jaccard": 0.75,
+     "body_jaccard": 0.5,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.452
+    },
+    {
+     "id": "HnKlqddBXKogXekO",
+     "genre": "ballet",
+     "action_jaccard": 0.9090909090909091,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.474
+    },
+    {
+     "id": "CelzUtQvKHgaGzft",
+     "genre": "jazz funk / heels",
+     "action_jaccard": 0.8181818181818182,
+     "body_jaccard": 0.5,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.738
+    }
+   ]
+  }
+ },
+ "counterfactual": {
+  "cases": 5,
+  "mean_similarity": 0.20662491812665737,
+  "min_similarity": 0.07279344858962693,
+  "max_similarity": 0.36138079827400216
+ },
+ "full_v4": {
+  "schema": "m2d-full-v4",
+  "input": 220665,
+  "kept": 218206,
+  "rejected": {
+   "over_10k": 2,
+   "geometry": 2459
+  },
+  "split_counts": {
+   "train": 196097,
+   "val": 10990,
+   "test": 11119
+  },
+  "audio_geometry": "24kHz mono 121500",
+  "audio_sha_verified": true,
+  "nostyle": true,
+  "geometry_audit": {
+   "valtest_total": 22352,
+   "valtest_ok": 22110,
+   "valtest_bad": 242,
+   "dominant_bad": "24000Hz mono 121499 frames (off-by-one), 216 cases"
+  },
+  "split_isolation": {
+   "ids": 218206,
+   "duplicate_ids": 0,
+   "cross_split_source_groups": 0,
+   "cross_split_audio_sha": 0
+  }
+ },
+ "rsilite_t08": {
+  "cases": 3,
+  "samples": 3,
+  "note": "junk-penalized rescoring of stored samples",
+  "per_case": {
+   "BDrNsKtHdkDtctaR": {
+    "greedy_score": 3.352,
+    "best_score": 3.213,
+    "samples": [
+     0.219,
+     1.526,
+     3.213
+    ]
+   },
+   "HCpDQdlvHqSLlJRQ": {
+    "greedy_score": 3.242,
+    "best_score": 3.169,
+    "samples": [
+     0.573,
+     1.369,
+     3.169
+    ]
+   },
+   "CkNCaiSsYYRxylep": {
+    "greedy_score": 2.555,
+    "best_score": 0.528,
+    "samples": [
+     -0.448,
+     0.528,
+     0.087
+    ]
+   }
+  }
+ },
+ "jev2_val_accuracy": {
+  "rows": 210,
+  "top1": 70,
+  "top1_accuracy": 0.3333333333333333,
+  "top3": 169,
+  "top3_accuracy": 0.8047619047619048,
+  "per_class": {
+   "chinese classical": {
+    "total": 30,
+    "correct": 10
+   },
+   "chinese folk": {
+    "total": 30,
+    "correct": 20
+   },
+   "contemporary": {
+    "total": 30,
+    "correct": 11
+   },
+   "hip-hop": {
+    "total": 30,
+    "correct": 10
+   },
+   "jazz funk / heels": {
+    "total": 30,
+    "correct": 9
+   },
+   "k-pop": {
+    "total": 30,
+    "correct": 6
+   },
+   "pop / casual": {
+    "total": 30,
+    "correct": 4
+   }
+  }
+ },
+ "holdout_cot": {
+  "generation": {
+   "checkpoint": "ckpt/cot",
+   "jev": null,
+   "validation_nll": null,
+   "cases": 10,
+   "failures": 0,
+   "mean_chars": 2954.4,
+   "mean_windows": 2.9,
+   "mean_ngram8_repetition": 0.01922,
+   "styled_cases": 0,
+   "jev_top1_match": 0,
+   "jev_scored": 0
+  },
+  "fidelity": {
+   "cases": 10,
+   "mean_action_jaccard": 0.826113886113886,
+   "mean_body_jaccard": 0.6933333333333334,
+   "mean_coverage_generated": 0.9593,
+   "mean_coverage_reference": 1.0,
+   "mean_length_ratio": 1.1690999999999998,
+   "rows": [
+    {
+     "id": "BDrNsKtHdkDtctaR",
+     "genre": "pop / casual",
+     "action_jaccard": 0.8181818181818182,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.518
+    },
+    {
+     "id": "HCpDQdlvHqSLlJRQ",
+     "genre": "hip-hop",
+     "action_jaccard": 0.7142857142857143,
+     "body_jaccard": 0.6,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.021
+    },
+    {
+     "id": "CkNCaiSsYYRxylep",
+     "genre": "jazz funk / heels",
+     "action_jaccard": 0.8333333333333334,
+     "body_jaccard": 0.75,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.113
+    },
+    {
+     "id": "FGWTKONGkKJDVnhN",
+     "genre": "chinese classical",
+     "action_jaccard": 0.8181818181818182,
+     "body_jaccard": 0.5,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.938
+    },
+    {
+     "id": "MNiFjIpiOZIsowVS",
+     "genre": "chinese folk",
+     "action_jaccard": 0.8333333333333334,
+     "body_jaccard": 0.75,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.615
+    },
+    {
+     "id": "FhMTfsMBlcEuQxtT",
+     "genre": "contemporary",
+     "action_jaccard": 0.8333333333333334,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.547
+    },
+    {
+     "id": "JzeuXZdlmwuQfsaL",
+     "genre": "k-pop",
+     "action_jaccard": 0.8181818181818182,
+     "body_jaccard": 0.5,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 2.812
+    },
+    {
+     "id": "DRoYDrtJwzpTERuR",
+     "genre": "belly dance",
+     "action_jaccard": 0.6923076923076923,
+     "body_jaccard": 0.5,
+     "coverage_generated": 0.593,
+     "coverage_reference": 1.0,
+     "length_ratio": 1.758
+    },
+    {
+     "id": "HnKlqddBXKogXekO",
+     "genre": "ballet",
+     "action_jaccard": 1.0,
+     "body_jaccard": 1.0,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.604
+    },
+    {
+     "id": "CelzUtQvKHgaGzft",
+     "genre": "jazz funk / heels",
+     "action_jaccard": 0.9,
+     "body_jaccard": 0.6666666666666666,
+     "coverage_generated": 1.0,
+     "coverage_reference": 1.0,
+     "length_ratio": 0.765
+    }
+   ]
+  },
+  "note": "analysis prefix is ungrounded: BPM constant 125 across cases"
+ },
+ "rsilite": {
+  "temperature_0_5": {
+   "cases": 3,
+   "greedy_mean": 3.257,
+   "best_of_3_mean": 3.341,
+   "wins": 3
+  },
+  "temperature_0_8": {
+   "cases": 3,
+   "greedy_mean": 3.257,
+   "best_of_3_mean": 3.302,
+   "wins": 2
+  }
+ },
+ "jev2_test_accuracy": {
+  "rows": 210,
+  "top1": 90,
+  "top1_accuracy": 0.42857142857142855,
+  "top3": 174,
+  "top3_accuracy": 0.8285714285714286,
+  "per_class": {
+   "chinese classical": {
+    "total": 30,
+    "correct": 12
+   },
+   "chinese folk": {
+    "total": 30,
+    "correct": 23
+   },
+   "contemporary": {
+    "total": 30,
+    "correct": 17
+   },
+   "hip-hop": {
+    "total": 30,
+    "correct": 12
+   },
+   "jazz funk / heels": {
+    "total": 30,
+    "correct": 11
+   },
+   "k-pop": {
+    "total": 30,
+    "correct": 9
+   },
+   "pop / casual": {
+    "total": 30,
+    "correct": 6
+   }
+  }
+ },
+ "mace": {
+  "motion": {
+   "run": "mace_motion_20261103_085617",
+   "outputs": "8 motion pkl",
+   "diversity_pred": [
+    6.745,
+    13.732
+   ],
+   "diversity_gt": [
+    7.544,
+    10.315
+   ],
+   "fid": [
+    63.26,
+    116.23
+   ],
+   "pfc_pred": 0.245,
+   "pfc_gt": 0.216
+  },
+  "appearance": {
+   "run": "mace_appearance_20261103_100624",
+   "videos": 7,
+   "contact_sheet": "/ssd/2/niezichao.nzc/artifacts/mace_results/contact_sheet.png"
+  }
+ },
+ "xdancer": {
+  "status": "blocked",
+  "reason": "Google Drive weights unreachable; no HF/ModelScope mirror"
+ },
+ "nll_test": {
+  "jev2": {
+   "rows": 500,
+   "tokens": 190011,
+   "mean_nll": 0.4060420899948515,
+   "split": "test",
+   "checkpoint": "ckpt/jev2"
+  },
+  "sft": {
+   "rows": 500,
+   "tokens": 190011,
+   "mean_nll": 0.33745977987747394,
+   "split": "test",
+   "checkpoint": "ckpt/sft"
+  },
+  "jev1": {
+   "rows": 500,
+   "tokens": 190011,
+   "mean_nll": 0.401998438538694,
+   "split": "test",
+   "checkpoint": "ckpt/jev"
+  },
+  "sft198k": {
+   "rows": 500,
+   "tokens": 190011,
+   "mean_nll": 0.3311281337579736,
+   "split": "test",
+   "checkpoint": "ckpt/sft198k"
+  }
+ },
+ "baselines": {
+  "wan_dancer": {
+   "cases": 10,
+   "resolution": "720x1280",
+   "frames": 38,
+   "fps": 24,
+   "duration": 4.75,
+   "has_audio": false,
+   "results": "/ssd/2/niezichao.nzc/artifacts/wandancer_results/contact_sheet10.png",
+   "outputs_with_audio": "/ssd/2/niezichao.nzc/artifacts/wandancer_results/all_audio"
+  },
+  "omnidance": {
+   "cases": 4,
+   "resolution": "704x1280",
+   "frames": 77,
+   "duration": 4.8,
+   "has_audio": true,
+   "note": "official 4 test cases only; extra 6 require SMPL pose inputs",
+   "results": "/ssd/2/niezichao.nzc/artifacts/omnidance_results/",
+   "audio_verified": "4/4 files"
+  },
+  "mace_dance": {
+   "cases": 7,
+   "resolution": "720x1280",
+   "frames": 77,
+   "fps": 15,
+   "has_audio": false,
+   "motion_metrics": {
+    "diversity_pred": [
+     6.745,
+     13.732
+    ],
+    "diversity_gt": [
+     7.544,
+     10.315
+    ],
+    "fid": [
+     63.26,
+     116.23
+    ],
+    "pfc_pred": 0.245,
+    "pfc_gt": 0.216
+   },
+   "results": "/ssd/2/niezichao.nzc/artifacts/mace_results/contact_sheet.png"
+  },
+  "planner_h3": {
+   "cases": 10,
+   "resolution": "704x1280",
+   "frames": 124,
+   "fps": 24,
+   "has_audio": false,
+   "results": "/ssd/2/niezichao.nzc/artifacts/h3_render_planner/contact_sheet.png",
+   "outputs_with_audio": "/ssd/2/niezichao.nzc/artifacts/h3_render_planner/videos_audio"
+  },
+  "comparison_sheet": "/ssd/2/niezichao.nzc/artifacts/h3_render_planner/compare_wan_planner.png",
+  "audio_audit": {
+   "omnidance": "4/4 with audio",
+   "wandancer": "0/10 with audio",
+   "mace": "0/7",
+   "planner_h3": "0/10"
+  }
+ },
+ "test30_sft": {
+  "generation": {
+   "rows": 30,
+   "mean_coverage": 0.9644378600823045,
+   "mean_reference_coverage": 0.9999012345679013,
+   "mean_action_jaccard": 0.9396969696969697,
+   "mean_body_jaccard": 0.8833333333333333,
+   "mean_length_ratio": 0.5839012990884916
+  },
+  "rouge": {
+   "rows": 30,
+   "mean_rouge_l": 0.4076099917294852,
+   "min_rouge_l": 0.18513689700130379,
+   "max_rouge_l": 0.5966850828729282,
+   "mean_length_ratio": 0.5839012990884914
+  },
+  "decoding": "greedy + repetition_penalty=1.05 + no_repeat_ngram=4",
+  "length_analysis": {
+   "gen_mean_windows": 2.633,
+   "ref_mean_windows": 2.833,
+   "gen_mean_chars": 846.9,
+   "ref_mean_chars": 1796.1,
+   "note": "window counts nearly match; generation is ~half as dense per window"
+  },
+  "density_analysis": {
+   "gen_clauses_per_window": 2.74,
+   "ref_clauses_per_window": 7.62,
+   "gen_windows": 2.57,
+   "ref_windows": 2.83,
+   "note": "reference is 2.8x denser per window; window count is close"
+  }
+ },
+ "decoding_experiments": {
+  "min400": {
+   "status": "terminated",
+   "result": "no effect: first cases byte-identical to baseline; forced extra tokens are junk removed by cleaning"
+  },
+  "eos_until_coverage": {
+   "status": "terminated",
+   "result": "no effect: model emits EOS only after coverage/junk, so blocking EOS before coverage never triggers"
+  },
+  "conclusion": "caption density is a training/data property, not a decoding-length issue"
+ },
+ "encoder_assets": {
+  "root": "/ssd/2/niezichao.nzc/models/musicfm_assets",
+  "oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/musicfm/",
+  "files": [
+   "pretrained_msd.pt",
+   "msd_stats.json",
+   "conformer_config.json",
+   "musicfm-src.tar.gz"
+  ],
+  "verified": "checkpoint has state_dict with 465 model.* tensors; source has model/musicfm_25hz.py and modules/features.py"
+ },
+ "jev_v3_dataset": {
+  "rows": 10920,
+  "counts": {
+   "train": 10500,
+   "val": 210,
+   "test": 210
+  },
+  "classes": 7,
+  "label_source": "Qwen3-VL-30B-A3B-Instruct/vlm-genre-22-v1",
+  "isolation": "0 cross-split source-group or audio-sha conflicts"
+ },
+ "musicfm_cache_dense": {
+  "entries": 10489,
+  "bytes": 5480263680,
+  "oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/musicfm/runs/musicfm_cache_20261103_141434/cache-dense-v1.tar",
+  "protocol": "official MusicFM25Hz, FP32 [T,1024], extractor identity + audio sha verified"
+ },
+ "dense10_comparison": {
+  "cases": 10,
+  "baseline": {
+   "chars": 921.1,
+   "clauses_per_window": 2.73,
+   "rouge_l": 0.422,
+   "length_ratio": 0.771
+  },
+  "dense": {
+   "chars": 2283.6,
+   "clauses_per_window": 7.87,
+   "rouge_l": 0.369,
+   "length_ratio": 1.785
+  },
+  "conclusion": "dense SFT restores per-window density (2.73 -> 7.87) but over-generates (length 1.79) and lowers ROUGE-L (0.422 -> 0.369); a mixed dataset was launched next"
+ },
+ "musicfm_fusion": {
+  "status": "blocked_by_implementation",
+  "error": "MusicFM encoder fusion supports MOSS only",
+  "assets_ready": true,
+  "cache_ready": "cache-dense-v1.tar 5.48GB / 10,489 entries",
+  "next_step": "extend install_fusion to omni_captioner audio adapter if fusion is required"
+ },
+ "jev3_test_accuracy": {
+  "rows": 210,
+  "top1": 101,
+  "top1_accuracy": 0.48095238095238096,
+  "top3": 186,
+  "top3_accuracy": 0.8857142857142857,
+  "per_class": {
+   "chinese classical": {
+    "total": 30,
+    "correct": 14
+   },
+   "chinese folk": {
+    "total": 30,
+    "correct": 27
+   },
+   "contemporary": {
+    "total": 30,
+    "correct": 9
+   },
+   "hip-hop": {
+    "total": 30,
+    "correct": 12
+   },
+   "jazz funk / heels": {
+    "total": 30,
+    "correct": 19
+   },
+   "k-pop": {
+    "total": 30,
+    "correct": 5
+   },
+   "pop / casual": {
+    "total": 30,
+    "correct": 15
+   }
+  }
+ },
+ "dense_seed_check": {
+  "cases": 5,
+  "baseline": {
+   "chars": 979.0,
+   "clauses_per_window": 2.77,
+   "rouge_l": 0.444
+  },
+  "seed42": {
+   "chars": 2546.6,
+   "clauses_per_window": 5.58,
+   "rouge_l": 0.37
+  },
+  "seed43": {
+   "chars": 2165.6,
+   "clauses_per_window": 9.9,
+   "rouge_l": 0.368
+  },
+  "conclusion": "density/ROUGE tradeoff is systematic across seeds"
+ },
+ "cot2_20k": {
+  "cases": 5,
+  "generation": {
+   "rows": 5,
+   "mean_coverage": 0.8867555555555556,
+   "mean_reference_coverage": 0.9999012345679013,
+   "mean_action_jaccard": 0.8939393939393939,
+   "mean_body_jaccard": 0.8400000000000001,
+   "mean_length_ratio": 0.9700706596238409
+  },
+  "baseline_rouge_l": 0.444,
+  "cot2_rouge_l": 0.431,
+  "baseline_chars": 979.0,
+  "cot2_chars": 1299.2,
+  "baseline_length_ratio": 0.789,
+  "cot2_length_ratio": 0.97,
+  "analysis_grounding": "failed: BPM constant 125 BPM across cases, energies near 0.9",
+  "conclusion": "slightly worse ROUGE-L than baseline; length closer to reference; analysis remains ungrounded"
+ },
+ "mix10_comparison": {
+  "cases": 10,
+  "baseline": {
+   "chars": 921.1,
+   "dens": 2.73,
+   "rouge": 0.422,
+   "len_ratio": 0.771
+  },
+  "dense": {
+   "chars": 2283.6,
+   "dens": 7.87,
+   "rouge": 0.369,
+   "len_ratio": 1.785
+  },
+  "mix": {
+   "chars": 743.6,
+   "dens": 3.33,
+   "rouge": 0.383,
+   "len_ratio": 0.674
+  },
+  "conclusion": "50:50 dense/normal mix at 20k/1 epoch is worse than baseline on ROUGE (0.383 vs 0.422) and length (0.674 vs 0.771); density gain is marginal (3.33 vs 2.73). Baseline SFT remains the best caption model; neither dense nor 50:50 mix improves fidelity."
+ },
+ "sft198k_10case": {
+  "generation": {
+   "rows": 10,
+   "mean_coverage": 0.9714172839506172,
+   "mean_reference_coverage": 0.9999012345679013,
+   "mean_action_jaccard": 0.9609090909090909,
+   "mean_body_jaccard": 0.9,
+   "mean_length_ratio": 0.5803497536170791
+  },
+  "rouge_l": 0.0
+ },
+ "pending": {
+  "mid_density": "running (16.9k, 9.97 clauses/window)",
+  "nohard": "running (20k, 7.25 clauses/window)",
+  "full_v4_sft": "running (196k official split)",
+  "labeling": "queued, 96,830 unique labels done",
+  "xdancer": "blocked (Google Drive unreachable)",
+  "fusion": "blocked (implementation MOSS-only)"
+ },
+ "strat_v1_program": {
+  "dataset": "strat-v1: full-v4 filtered to window-count bins 1/2/3/4/5+, 117,280 train / 800 val, mean 2,030 chars",
+  "motivation": "mid2-series collapsed to exactly 2 windows for every sample (KL 0.644); sft198k/fullv4 already matched the window distribution (KL 0.063-0.068) but wrote only 1.45-1.48 clauses per window against 1.92 in the reference",
+  "completed": {
+   "strat_baseline": {
+    "updates": 3665,
+    "val_nll": 0.3033486858471062,
+    "compare": {
+     "sft198k": 0.3254,
+     "fullv4": 0.3223,
+     "mid2count": 0.309,
+     "struct": 0.3093
+    }
+   }
+  },
+  "running": [
+   "stratinc (1ep, w1.0, 100-step saves)",
+   "stratdense (w2.0)",
+   "stratdense3 (w3.0)",
+   "stratft (2ep, w1.5)",
+   "stratft3 (3ep, w1.5)",
+   "stratjev (strat + JEV, group-isolated val)"
+  ],
+  "evaluations_pending": [
+   "strat@3665 vs sft198k_5515 on 60 NLL / 40 generation",
+   "stratinc@200 for early trend"
+  ],
+  "note": "NLL improved 0.6-2.2 points; generation-side verdict still pending",
+  "generation_verdict": {
+   "eval_run": "planner_eval_20261106_141014",
+   "rows": 40,
+   "strat_3665": {
+    "window_kl": 0.515,
+    "window_duration_s": 2.3,
+    "clauses_per_window": 2.6,
+    "length_ratio": 0.709,
+    "distinct_openers": 12,
+    "recall": 0.673,
+    "coverage": 0.985,
+    "action_jaccard": 0.929,
+    "body_jaccard": 0.881
+   },
+   "strat_2000": {
+    "window_kl": 0.515,
+    "window_duration_s": 2.29,
+    "clauses_per_window": 3.03,
+    "length_ratio": 0.76,
+    "distinct_openers": 11,
+    "recall": 0.678
+   },
+   "sft198k_5515": {
+    "window_kl": 0.068,
+    "window_duration_s": 1.75,
+    "clauses_per_window": 1.48,
+    "length_ratio": 0.579,
+    "distinct_openers": 28,
+    "recall": 0.677
+   },
+   "finding": "strat is the first family to clear the clauses-per-window gate (1.48 -> 2.60, reference 1.92), but it trades window count (2.15 vs 2.65) and opener diversity (12 vs 28) and window duration (2.30s).",
+   "next": "pair stratified data (density) with the window-count head so count is restored while density holds"
+  }
+ },
+ "planner_final_state_20261106": {
+  "best_checkpoint": "sft198k_5515 (sft_full_20261102_232838/checkpoint-0005515)",
+  "best_metrics": {
+   "window_kl": 0.068,
+   "window_duration_s": 1.75,
+   "clauses_per_window": 1.48,
+   "distinct_openers": 28,
+   "reference_3gram_recall": 0.677,
+   "length_ratio": 0.579,
+   "proximity": 0.985,
+   "fails_only": "clauses_per_window (needs >=1.6)"
+  },
+  "best_dense": "strat@3665 (strat_full_20261106_022254/checkpoint-0003665)",
+  "best_dense_metrics": {
+   "window_kl": 0.515,
+   "window_duration_s": 2.3,
+   "clauses_per_window": 2.6,
+   "distinct_openers": 12,
+   "recall": 0.673,
+   "length_ratio": 0.709,
+   "proximity": 0.742
+  },
+  "diagnosis": "window count already matches the reference (KL 0.04-0.07) for full-v4/198k data; the single unmet gate is per-window content density (1.45-1.54 vs 1.92 reference). Window-count-stratified data lifts density to 2.60 but degrades KL, window duration and opener diversity.",
+  "tools_delivered": {
+   "audit": "eval/audit_generations.py (KL, density, openers, recall, proximity, verdict)",
+   "collector": "eval/collect_results.py (all OSS eval runs in one table)",
+   "entry_checker": "tools/check_entry.py (train_command/data_config return shapes + mode.txt whitelist)",
+   "perwindow_data": "data/build_perwindow.py -> perwin-v1 (293,045 single-window samples)",
+   "token_weight_loss": "trainer/music_planner_token_loss.py + tests/test_token_weight_loss.py (2 passed)"
+  },
+  "in_flight": [
+   "fullmild (full-v4 + token weight 1.3)",
+   "stratcount (strat + window-count head)",
+   "perwin (1 epoch, per-window supervision)",
+   "stratjev-v7 (strat + JEV)"
+  ],
+  "stopped_low_value": [
+   "stratft3 3-epoch",
+   "perwin 2-epoch"
+  ]
+ }
+}

@@ -1,0 +1,174 @@
+# M2D planner training: complete record
+
+Everything needed to reproduce, audit or continue the audio-to-caption planner work:
+data lineage, every training run, evaluation protocol and measured results.
+
+---
+
+## 1. Data lineage
+
+### 1.1 Upstream delivery
+
+| item | location |
+| --- | --- |
+| Captions (Qwen-polished, 220,667) | `https://huggingface.co/datasets/avagelion/dance-data` → `qwen35_captions/` |
+| Same data on OSS (SG) | `oss://futurelab-cognwm-sg/niezichao.nzc/m2d_output/` |
+| Dance-genre labels (198,315) | `avagelion/dance-data` → `qwen35_captions/genres/` |
+
+Delivered caption shape: `Dance style: <genre>` header followed by
+`[start-end s] ...` windows. Mean 1,838 chars, 2.83 windows. Style header present
+on 100% of rows; 56% of labels are `unknown`, 37% `contemporary`.
+
+### 1.2 Training sets built from the delivery
+
+All builders live in `data/`; every set validates 24 kHz mono 121,500-frame audio
+and its SHA-256 before the row is admitted.
+
+| set | builder | rows (train/val) | What it changes |
+| --- | --- | --- | --- |
+| `full-v3` | `build_full_v3.py` | 176,480 / 10,990 | first 82k+ delivery, style header stripped |
+| `full-v4` | `build_full_v4.py` | 196,097 / 10,990 (test 11,119) | final 220,667 delivery, style header stripped, source-group + audio-SHA isolated splits, 2,459 geometry rejects dropped |
+| `dense-v1` | `build_dense_subset.py` | 10,000 / 500 | longest 10k rows (mean 3,443 chars) |
+| `mid-v1` | (mid builder) | 16,904 / 500 | 1.8–2.6k chars, 8–12 clauses/window |
+| `mid2-v1` | inline builder | 49,431 / 500 | 1.2–2.8k chars, 2–4 windows, 8–20 clauses/window |
+| `nohard-v1` | inline builder | 20,000 / 500 | excludes len>3000 & density>15 |
+| `mix-v1` | inline builder | 20,000 / 500 | 50:50 dense + random |
+| `cot-lite` / `cot-v2` | `build_cot_subset.py` | 5k / 20k | deterministic librosa analysis prefix |
+| `strat-v1` | `build_strat.sh` | 117,280 / 800 | full-v4 stratified by window count (bins 1/2/3/4/5+) |
+| `perwin-v1` | `build_perwindow.py` | 293,045 / 2,443 | each window becomes its own sample, `Window k/n: [a-b s] ...` |
+| `strat-jev` | inline builder | 116,251 / 1,029 | strat-v1 + genre labels, val split by `source_group_id` (0 group overlap) |
+| `vlm-jev-v2` | `build_vlm_jev.py` | 4,200 / 210 | 600/class balanced |
+| `vlm-jev-v3` | `build_vlm_jev.py` | 10,500 / 210 | 1,500/class balanced |
+
+Archives: `oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/data/<name>.tar`.
+
+---
+
+## 2. Training
+
+Base model: Qwen3-Omni-30B-A3B-Captioner (Thinker only). LoRA r=32, α=64 on the
+last 4 audio-tower layers plus the projector; BF16 base, FP32 trainables; DeepSpeed
+ZeRO-3, micro 1, accum 4, global batch 32 on 8×L20Z; cosine schedule, warmup 20;
+`loss-chunk-size 128`; max length 8192.
+
+Every run below is a directory under `jobs/` with its `entry.py` (Nebula entry),
+`mode.txt` and cluster spec. All entries pass `tools/check_entry.py`.
+
+### 2.1 Main runs and outcomes
+
+| run | data | epochs | extra objective | steps | best val NLL |
+| --- | --- | --- | --- | --- | --- |
+| sft (82k) | full-v3 early | 1 | – | ~2,000 | 0.3375 (test) |
+| sft198k | full-v3 | 1 | – | 5,515 | 0.3254 |
+| full-v4 SFT | full-v4 | 1 | – | 6,129 | 0.3223 |
+| **strat** | strat-v1 | 1 | – | 3,665 | **0.3033** |
+| stratinc | strat-v1 | 1 | 100-step saves | in progress | – |
+| stratdense | strat-v1 | 1 | token weight 2.0 | in progress | – |
+| stratdense3 | strat-v1 | 1 | token weight 3.0 | in progress | – |
+| stratft | strat-v1 | 2 | token weight 1.5 | in progress | – |
+| fullmild | full-v4 | 1 | token weight 1.3 | in progress | – |
+| dens | full-v3 | 1 | token weight 1.3 | in progress | – |
+| stratcount | strat-v1 | 1 | window-count head 0.05 | in progress | – |
+| stratjev | strat-v1 + labels | 1 | JEV genre CE 0.1 | in progress | – |
+| perwin | perwin-v1 | 1 | – | in progress | – |
+| dense-sft | dense-v1 | 1 | – | 412 | 0.3168 (val) |
+| mid-sft | mid-v1 | 1 | – | 529 | 0.3168 (val) |
+| mid2count | mid2-v1 | 1 | count head 0.05 | 1,545 | 0.3090 |
+| mid2jev | mid2-v1 | 1 | count + JEV | 1,530 | 0.3090 |
+| struct | mid2-v1 | 1 | count + last-window end | 1,545 | 0.3093 |
+| nohard | nohard-v1 | 1 | – | 625 | 0.3435 (val) |
+| mix | mix-v1 | 1 | – | – | ~0.34 |
+| cot / cot2 | cot-lite / cot-v2 | 1 | analysis prefix | – | ~0.34 |
+| full4count | full-v4 | 1 | count head 0.05 | 6,129 | 0.3228 |
+
+Key observation: **NLL ranks data sets, not generation quality.** full-v4 at step
+6129 has the lowest NLL of its family but the worst captions; step 2000 is better.
+
+### 2.2 Loss variants implemented
+
+| variant | flag | module |
+| --- | --- | --- |
+| JEV genre classifier on the native audio prefix | `--genre-*`, `--enable-jev` | `trainer/music_planner_jev.py` |
+| Window-count regression (`log1p` count + last-window end) | `--count-weight`, `--count-head-dim` | `trainer/music_planner_count.py` |
+| Token density weighting of assistant CE | `PLANNER_TOKEN_WEIGHT` env | `trainer/music_planner_token_loss.py` |
+| MusicFM encoder fusion | `--musicfm-cache`, `--fusion-*` | MOSS only, blocked for this family |
+
+`tests/test_token_weight_loss.py` pins the weighting contract (weighted CE equals
+unweighted CE times the weight, identical token counts, finite gradients).
+
+---
+
+## 3. Evaluation
+
+Protocol: `docs/M2D_PLANNER_SELECTION_PROTOCOL.md`. Fixed 80 official test rows,
+greedy decode with `repetition_penalty=1.05, no_repeat_ngram_size=4`.
+
+| gate | threshold |
+| --- | --- |
+| window-count KL vs reference | ≤ 0.10 |
+| clauses per window | ≥ 1.6 (reference 1.92) |
+| mean window duration | ≤ 2.1 s |
+| distinct openings | ≥ 20 of 80 |
+| timestamp overruns | 0 |
+
+`eval/audit_generations.py` computes all metrics plus a continuous **proximity**
+score (mean of per-gate closeness) so partially passing checkpoints can be ranked.
+`eval/collect_results.py` re-scores every evaluation run directly from OSS.
+
+### 3.1 Measured standings (2026-11-06)
+
+| checkpoint | KL | dur | clauses/win | len ratio | openers | recall | prox |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **sft198k_5515** | 0.068 | 1.75 | 1.48 | 0.58 | 28 | 0.677 | **0.985** |
+| fullv4_4000 | 0.042 | 1.81 | 1.47 | 0.54 | 29 | 0.660 | 0.984 |
+| fullv4_6129 | 0.095 | 1.90 | 1.54 | 0.52 | 36 | 0.652 | – |
+| strat@3665 | 0.515 | 2.30 | **2.60** | 0.71 | 12 | 0.673 | 0.742 |
+| mid2count | 0.644 | 2.52 | 3.39 | 0.98 | 8 | 0.712 | 0.678 |
+| struct | 0.644 | 2.52 | 3.44 | 0.94 | 4 | 0.696 | 0.676 |
+
+Contradiction resolution: the caption of every checkpoint before `strat` writes
+1.45–1.54 clauses per window while the reference has 1.92. Window **count** already
+matches (KL 0.04–0.07); only per-window content lags. `strat` data fixes density but
+collapses window count and opener diversity, so it trades three gates for one.
+
+### 3.2 Auxiliary results
+
+| item | value |
+| --- | --- |
+| JEV v3 genre head (1500/class) | test top-1 48.1%, top-3 88.6% |
+| JEV v2 (600/class) | test top-1 42.9%, top-3 82.9% |
+| counterfactual audio swap | caption similarity 0.207 (model follows audio) |
+| RSI-lite best-of-3 | +2.6% over greedy on 3 cases |
+| timestamp syntax | monotonic, starts at 0, mean last end 4.87–5.07 s |
+
+---
+
+## 4. Operational lessons (encode these in any new job)
+
+1. A Nebula task in `RUNNING` proves nothing; the platform restarts crashes. Grep
+   logs for `Traceback`, `Unknown mode`, `trainer exited`, `Size does not match`.
+2. `run_config.json` in the run directory is the authoritative "training started"
+   signal; it records `token_weight`, `epochs`, `save_every_updates` and module SHAs.
+3. Plain jobs upload at the end, so an empty run directory mid-training is normal.
+   Jobs that need mid-run visibility must sync `out/` every few minutes.
+4. Whole-file rewrites only: slice-and-replace patches once truncated
+   `music_planner_token_loss.py` and silently broke six jobs.
+5. `check_entry.py` before every submission (return contracts and `mode.txt`
+   whitelist). It has caught three silent-failure configurations.
+6. Verify the deployed code, not the local file: a best-of-N job burned 3h23m
+   because the task had been submitted before the `ACTION.findall` fix landed.
+
+---
+
+## 5. Where things live
+
+| artifact | path |
+| --- | --- |
+| Trainer, adapters, loss modules | `trainer/` |
+| Data builders | `data/` |
+| Evaluation scripts | `eval/` |
+| Nebula job entries (31) | `jobs/` |
+| Static checker | `tools/check_entry.py` |
+| Unit tests | `tests/` |
+| Consolidated metrics | `docs/results_summary.json` |
+| Protocol / audit / handoff | `docs/M2D_PLANNER_*.md` |

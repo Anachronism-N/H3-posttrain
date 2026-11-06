@@ -1,0 +1,51 @@
+{
+  "schema": "m2d-balanced-training-v1",
+  "classes": [
+    "contemporary",
+    "k-pop",
+    "jazz funk / heels",
+    "chinese classical",
+    "pop / casual",
+    "other ethnic / folk"
+  ],
+  "per_class": 400,
+  "split_fractions": {
+    "train": 0.8,
+    "val": 0.1
+  },
+  "split_counts": {
+    "train": 1920,
+    "val": 240,
+    "test": 240
+  },
+  "records": {
+    "train": {
+      "rows": 1920,
+      "manifest_sha256": "9b69964755575793ba0c66c70dee75a61c0d394459a228f0bb40329045895073",
+      "labels": 1920,
+      "labels_sha256": "8a14a7a283d513a304811964d566cf9408d89946c8a9fde336407cecec0fe7f1"
+    },
+    "val": {
+      "rows": 240,
+      "manifest_sha256": "92fd8984334958a93a06aac293f56322225b45645e539c987454f18ed7be0c7d",
+      "labels": 240,
+      "labels_sha256": "0648e56aa556d75eb73988bba1e5012aaacfa2b7135646ca8fe4fe3ad9037e1b"
+    },
+    "test": {
+      "rows": 240,
+      "manifest_sha256": "897a7c5f318f85ea2bcec92cb86338586362527c5d719d5ecb4615916d18c507",
+      "labels": 240,
+      "labels_sha256": "7ac19750ce6c29c6979c602b447fc73d74beedd3c8c0b547291b4e23ca7f7afb"
+    }
+  },
+  "audio_files": 2400,
+  "audio_bytes": 583499490,
+  "audio_hash_verified": true,
+  "source_group_and_audio_isolation": true,
+  "target_text_source": "OSS _merged_captions.jsonl verbatim",
+  "genre_label_source": "original planner style_metadata_not_in_target",
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "contract_sha256": "ddd62221b21721c7dae5cd34da5a91dfaac8203c6d8cb5e8fa1f7dd3dc2d23d8",
+  "classes_sha256": "25e4a921c15d02ee2af51e27e50cbc1064487b322e4aee80fba6629ca9d0afc5"
+}

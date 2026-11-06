@@ -1,0 +1,9 @@
+{
+  "worker": {
+    "cpu": 96,
+    "disk": 1500000,
+    "gpu": 800,
+    "instance_num": 1,
+    "memory": 900000
+  }
+}

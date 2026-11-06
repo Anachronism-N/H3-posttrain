@@ -1,0 +1,32 @@
+{
+  "source": "Qwen3-VL-30B-A3B-Instruct",
+  "prompt_version": "vlm-genre-22-v1",
+  "rows": 198315,
+  "train": 198315,
+  "valtest": 0,
+  "unmatched_to_delivery": 0,
+  "genre_distribution": {
+    "pop / casual": 90054,
+    "k-pop": 43016,
+    "hip-hop": 29645,
+    "chinese classical": 17501,
+    "chinese folk": 6022,
+    "jazz funk / heels": 4118,
+    "contemporary": 3961,
+    "ballet": 3701,
+    "belly dance": 173,
+    "lyrical": 61,
+    "street jazz": 22,
+    "other ethnic / folk": 21,
+    "breaking": 7,
+    "popping": 4,
+    "indian / bollywood": 4,
+    "locking": 3,
+    "waacking": 2
+  },
+  "confidence_distribution": {
+    "high": 139432,
+    "medium": 58883
+  },
+  "parse_ok": 198315
+}

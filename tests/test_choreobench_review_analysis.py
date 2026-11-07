@@ -490,6 +490,178 @@ def test_reviewer_roster_cli_keeps_cell_and_registered_completion_separate(tmp_p
     assert report['comparison']['status'] == 'blocked'
 
 
+def review_design(paths, tmp_path, reviewers=('human-one', 'human-two'), criteria=('musical_fit',)):
+    path = tmp_path / 'design.json'
+    write_json(path, dict(schema='choreobench.review_design.v1', pack_sha256=object_sha(read_json(paths[1])),
+        reviewers=[dict(reviewer_id=r, origin='human', model_id=None) for r in reviewers], criteria=list(criteria)))
+    return path
+
+
+def two_reviews(paths, tmp_path):
+    second = read_json(paths[3])
+    for row in second['reviews']: row['reviewer_id'] = 'human-two'
+    path = tmp_path / 'second-design-review.json';write_json(path, second)
+    return (*paths[:3], [paths[3], path])
+
+
+def test_independent_design_blocks_eleven_of_eleven_roster_completion(tmp_path, monkeypatch):
+    paths = material(tmp_path);registration = roster(paths, tmp_path);design = review_design(paths,tmp_path)
+    doc = read_json(registration);removed = doc['assignments'].pop();replace(registration, doc)
+    scoring = two_reviews(paths,tmp_path)
+    monkeypatch.setattr(analysis,'compare_methods',lambda *a, **k:pytest.fail('Shrunken design must block CI'))
+    report = run(scoring, reviewer_roster_path=registration, review_design_path=design, compare=True)
+    assert report['reviewer_roster']['complete_for_roster']
+    assert report['reviewer_roster']['rated_assignment_count']==11
+    declared = report['review_design']
+    assert declared['expected_assignment_criteria_cells']==12
+    assert declared['actual_assignment_criteria_cells']==11 and not declared['complete_for_design']
+    assert declared['missing_assignment_criteria_cells'][0]['review_id']==removed['review_id']
+    assert report['comparison']['status']=='blocked' and report['comparison']['result'] is None
+    assert report['sources'][-1]['role']=='review_design'
+
+
+def test_independent_design_identifies_entire_omitted_reviewer(tmp_path):
+    paths = material(tmp_path);registration=roster(paths,tmp_path,reviewers=('human-one',));design=review_design(paths,tmp_path)
+    report=run(paths,reviewer_roster_path=registration,review_design_path=design,compare=True)
+    assert report['reviewer_roster']['complete_for_roster']
+    assert len(report['review_design']['missing_assignment_criteria_cells'])==6
+    assert {r['reviewer_id'] for r in report['review_design']['missing_assignment_criteria_cells']}=={'human-two'}
+    assert report['comparison']['result'] is None
+
+
+def test_design_incomplete_other_dimension_blocks_current_dimension_comparison(tmp_path):
+    paths=material(tmp_path);registration=roster(paths,tmp_path,reviewers=('human-one',),criteria=('musical_fit','long_range_structure'))
+    design=review_design(paths,tmp_path,reviewers=('human-one',),criteria=('musical_fit','long_range_structure'))
+    doc=read_json(registration);doc['assignments'][0]['criteria'].remove('long_range_structure');replace(registration,doc)
+    report=run(paths,reviewer_roster_path=registration,review_design_path=design,compare=True)
+    assert report['coverage']['complete_for_requested_criterion'] and report['reviewer_roster']['complete_for_roster']
+    assert report['review_design']['missing_assignment_criteria_cells'][0]['criterion']=='long_range_structure'
+    assert report['comparison']['status']=='blocked'
+
+
+def test_complete_design_does_not_mean_all_grades_complete(tmp_path):
+    paths=material(tmp_path);registration=roster(paths,tmp_path);design=review_design(paths,tmp_path)
+    report=run(paths,reviewer_roster_path=registration,review_design_path=design,compare=True)
+    assert report['review_design']['complete_for_design']
+    assert not report['reviewer_roster']['complete_for_roster'] and report['comparison']['result'] is None
+    assert not report['review_design']['actual_participation_or_preregistration_authenticated']
+
+
+def test_complete_design_and_scores_allow_existing_group_comparison(tmp_path):
+    paths=material(tmp_path);registration=roster(paths,tmp_path);design=review_design(paths,tmp_path)
+    report=run(two_reviews(paths,tmp_path),reviewer_roster_path=registration,review_design_path=design,compare=True)
+    assert report['review_design']['complete_for_design'] and report['reviewer_roster']['complete_for_roster']
+    assert report['comparison']['status']=='computed'
+
+
+def test_whole_pack_design_is_not_shrunk_to_selected_split(tmp_path):
+    paths=material(tmp_path,mutate_songs=lambda rows:rows[2].update(split='test'))
+    registration=roster(paths,tmp_path,reviewers=('human-one',));design=review_design(paths,tmp_path,reviewers=('human-one',))
+    outside=next(item['review_id'] for item in read_json(paths[2])['items'] if item['song_id']=='song3')
+    doc=read_json(registration);doc['assignments']=[r for r in doc['assignments'] if r['review_id']!=outside];replace(registration,doc)
+    report=run(paths,reviewer_roster_path=registration,review_design_path=design,compare=True)
+    assert report['coverage']['expected_cells']==4 and report['reviewer_roster']['complete_for_roster']
+    assert report['review_design']['expected_assignment_criteria_cells']==6
+    assert not report['review_design']['complete_for_design'] and report['comparison']['result'] is None
+
+
+def test_extra_design_assignments_are_visible_and_block_comparison(tmp_path):
+    paths=material(tmp_path);registration=roster(paths,tmp_path);design=review_design(paths,tmp_path,reviewers=('human-one',))
+    report=run(paths,reviewer_roster_path=registration,review_design_path=design,compare=True)
+    assert len(report['review_design']['unexpected_assignment_criteria_cells'])==6
+    assert not report['review_design']['complete_for_design'] and report['comparison']['result'] is None
+
+
+def test_design_requires_explicit_roster_and_current_dimension(tmp_path):
+    paths=material(tmp_path);design=review_design(paths,tmp_path,reviewers=('human-one',),criteria=('long_range_structure',))
+    with pytest.raises(ValueError,match='explicit reviewer roster'):run(paths,review_design_path=design)
+    registration=roster(paths,tmp_path,reviewers=('human-one',),criteria=('long_range_structure',))
+    report=run(paths,reviewer_roster_path=registration,review_design_path=design,compare=True)
+    assert report['review_design']['complete_for_design'] and report['comparison']['status']=='blocked'
+    assert any('not in the review design' in reason for reason in report['comparison']['blockers'])
+
+
+@pytest.mark.parametrize('change',['schema','pack','extra','reviewers_empty','reviewer_duplicate','placeholder','origin','human_model',
+    'model_empty','reviewer_extra','criteria_empty','criteria_duplicate','criteria_unknown','criteria_not_applicable'])
+def test_invalid_review_design_rejected(tmp_path,change):
+    paths=material(tmp_path);registration=roster(paths,tmp_path);design=review_design(paths,tmp_path);doc=read_json(design)
+    row=doc['reviewers'][0]
+    if change=='schema':doc['schema']='wrong'
+    elif change=='pack':doc['pack_sha256']=object_sha('wrong')
+    elif change=='extra':doc['scores']=[]
+    elif change=='reviewers_empty':doc['reviewers']=[]
+    elif change=='reviewer_duplicate':doc['reviewers'].append(copy.deepcopy(row))
+    elif change=='placeholder':row['reviewer_id']='FILL_REVIEWER_ID'
+    elif change=='origin':row['origin']='other'
+    elif change=='human_model':row['model_id']='v1'
+    elif change=='model_empty':row.update(origin='model_judge',model_id='')
+    elif change=='reviewer_extra':row['contact']='secret'
+    elif change=='criteria_empty':doc['criteria']=[]
+    elif change=='criteria_duplicate':doc['criteria']*=2
+    elif change=='criteria_unknown':doc['criteria']=['unknown']
+    else:doc['criteria']=['edit_preservation']
+    replace(design,doc)
+    with pytest.raises(ValueError):run(paths,reviewer_roster_path=registration,review_design_path=design)
+
+
+def test_design_model_origin_and_version_are_not_interchangeable(tmp_path):
+    paths=material(tmp_path);registration=roster(paths,tmp_path,reviewers=('judge',));design=review_design(paths,tmp_path,reviewers=('judge',))
+    doc=read_json(registration)
+    for row in doc['assignments']:row.update(origin='model_judge',model_id='v1')
+    replace(registration,doc)
+    spec=read_json(design);spec['reviewers'][0].update(origin='model_judge',model_id='v2');replace(design,spec)
+    report=run(paths,reviewer_roster_path=registration,review_design_path=design,origin='model_judge',judge_model_id='v1',compare=True)
+    assert len(report['review_design']['missing_assignment_criteria_cells'])==6
+    assert len(report['review_design']['unexpected_assignment_criteria_cells'])==6
+    assert report['comparison']['status']=='blocked'
+    spec['reviewers'][0]['model_id']='v1';replace(design,spec)
+    report=run(paths,reviewer_roster_path=registration,review_design_path=design,origin='model_judge',judge_model_id='v1',compare=True)
+    assert report['review_design']['complete_for_design']
+    assert not report['reviewer_roster']['complete_for_roster'] and not report['rows']
+
+
+def test_design_applies_edit_dimensions_only_to_edit_items(tmp_path):
+    def edit_items(items):
+        for item in items[:2]:
+            source=copy.deepcopy(item['plan'])
+            item.update(source_plan=source,edit_task=dict(schema='choreobench.edit_task.v1',task_id='edit',
+                song_id=source['song_id'],source_plan_sha256=object_sha(source),instruction='Fixture edit.',
+                allowed_event_ids=['e1'],repair_event_ids=[],protected=[],goals=[],semantic_goals=[]))
+    paths=material(tmp_path,mutate_items=edit_items)
+    registration=roster(paths,tmp_path,reviewers=('human-one',));design=review_design(paths,tmp_path,reviewers=('human-one',),criteria=('musical_fit','edit_preservation'))
+    pack=read_json(paths[1]);doc=read_json(registration)
+    edit_ids={item['review_id'] for item in pack['items'] if item['edit_task'] is not None}
+    for row in doc['assignments']:
+        if row['review_id'] in edit_ids:row['criteria'].append('edit_preservation')
+    replace(registration,doc)
+    report=run(paths,reviewer_roster_path=registration,review_design_path=design)
+    assert report['review_design']['complete_for_design'] and report['review_design']['expected_assignment_criteria_cells']==8
+
+
+def test_review_design_rechecks_source_bytes_after_comparison(tmp_path,monkeypatch):
+    paths=material(tmp_path);registration=roster(paths,tmp_path,reviewers=('human-one',));design=review_design(paths,tmp_path,reviewers=('human-one',))
+    def drift(*a,**k):
+        design.write_bytes(design.read_bytes()+b' ');return {'status':'fixture'}
+    monkeypatch.setattr(analysis,'compare_methods',drift)
+    with pytest.raises(ValueError,match='source changed'):
+        run(paths,reviewer_roster_path=registration,review_design_path=design,compare=True)
+
+
+@pytest.mark.parametrize('module',[True,False])
+def test_review_design_both_cli_entry_points(tmp_path,module):
+    paths=material(tmp_path);registration=roster(paths,tmp_path,reviewers=('human-one',));design=review_design(paths,tmp_path);out=tmp_path/'design-report.json'
+    argv=['--dataset',str(paths[0]),'--public',str(paths[1]),'--private',str(paths[2]),'--reviews',str(paths[3]),
+        '--method-a',A,'--method-b',B,'--criterion','musical_fit','--split','dev','--origin','human',
+        '--reviewer-roster',str(registration),'--review-design',str(design),'--compare','--out',str(out)]
+    if module:analysis.main(argv)
+    else:
+        from choreobench.cli import main
+        assert main(['analyze-reviews']+argv)==0
+    report=read_json(out)
+    assert report['reviewer_roster']['complete_for_roster'] and not report['review_design']['complete_for_design']
+    assert report['comparison']['status']=='blocked'
+
+
 def test_module_cli_writes_exclusive_source_bound_report(tmp_path):
     paths = material(tmp_path)
     output = tmp_path / "analysis.json"

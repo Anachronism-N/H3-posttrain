@@ -175,6 +175,44 @@ python -m choreobench analyze-reviews   --dataset /data/choreobench/original-son
 
 代码完整回归、实际网页验收及未取得人工评分的边界见 [验收第17节](VALIDATION_20261104.md#17-质量评审准备与名册完成率核验-v12)。
 
+## 完整评审设计与名册独立核验
+
+通用名册允许不均匀任务分配，不能从现有名册反推本轮预期是“两人各六方案”。在收取评分前另行冻结完整设计，列出组织者已确认参与者的匿名ID、来源及所有需要的维度，并绑定同一公开包object_sha；不要从评分已经返回的人数或缩水后的名册自动生成设计。
+
+~~~json
+{
+  "schema": "choreobench.review_design.v1",
+  "pack_sha256": "REPLACE_WITH_OBJECT_SHA_OF_PUBLIC_PACK",
+  "reviewers": [
+    {"reviewer_id": "REPLACE_WITH_ACTUAL_ANONYMOUS_ID_A", "origin": "human", "model_id": null},
+    {"reviewer_id": "REPLACE_WITH_ACTUAL_ANONYMOUS_ID_B", "origin": "human", "model_id": null}
+  ],
+  "criteria": ["musical_fit", "long_range_structure", "planned_executability", "planned_boundary_quality"]
+}
+~~~
+
+该文件定义“所有已声明参加者×绑定包的所有项目×适用维度”完整分配。六方案、两人、四维为48格；混合编辑/生成包的edit维度只适用于编辑项目，每个项目至少有一项适用维度。各人的来源和模型版本须与名册相同，不能用另一个模型版本或额外参加者补缺人。
+
+~~~bash
+python -m choreobench analyze-reviews \
+  --dataset /data/choreobench/original-song.dataset.json \
+  --public /runs/review/public/pack.json --private /runs/review/private/bindings.json \
+  --reviews /runs/review/original-reviews.json \
+  --reviewer-roster /runs/review/reviewer-roster.json \
+  --review-design /runs/review/review-design.json \
+  --method-a shared-history-main-v11 --method-b shared-history-off-v11 \
+  --criterion musical_fit --split dev --origin human \
+  --out /runs/review/musical-fit-with-design.json
+~~~
+
+对每个原逐歌dataset、每个criterion分别分析，仍用同一全包设计。review_design列出全包应有、实际、匹配、缺失和额外的分配维度格；complete_for_design仅在完全匹配时true。它不因选中单歌或musical_fit就忽略另歌或另维度的分配缺失。每份分析都报告同一48格设计，不可把12份分析中的48格累加为独立样本。
+
+如果名册只分配11项，已收到的11项全有分数，reviewer_roster仍可准确报告11/11完成；设计为12项时review_design会报告缺1项，比较blocked。整位未列入名册的设计参加者也保留全部缺项。名册多列参加者、维度或来源/版本不一致同样列为额外项并阻断。当前分析的维度和来源必须出现在设计中。
+
+**分配设计完成不等于评分完成。** 即使48格全部已分配，有人尚未提交或当前维度为空仍由名册/评分完成率阻断比较；分组未审继续阻断。设计不验证名单真实、事前登记或听音，不能通过事后删设计参加者/项目/维度“完成”评审。无design时保留通用接口，complete_for_design为null，不自动猜预期人数。
+
+本轮在原六方案上只用明确标为软件探针的匿名ID及零提交原件检查48格完整分配与缺一维47/48；不是注册实际人员或产生人评。原评分、绑定、计划和页面均未改，详细回归与限制见[第20节](VALIDATION_20261104.md#20-完整评审设计核验-v15)。
+
 ## 结构化时间观察与独立原件
 
 页面的“结构化时间观察”用于记录具体时间问题，不替代四维评分。每次点击事件会填入其原音频整数采样起止点和公开event_id；评论仍保留。由评审者独立填写观察类型、程度、依据和理由，再点击保存，不预填问题或默认严重程度。可用逗号加入多个输出事件ID，但各事件必须与填写的非空半开样本区间相交。时间以当前公开Plan.sample_rate解释，不使用秒数或块内边界索引；不同方案的相同ID不能相互替换。

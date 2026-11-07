@@ -130,6 +130,57 @@ def _reviewer_roster(path, pack):
     return document, reference
 
 
+def _review_design(path, pack, roster):
+    document, reference = _read(path, 'review_design')
+    keys(document, ('schema', 'pack_sha256', 'reviewers', 'criteria'), where='review design')
+    if document['schema'] != 'choreobench.review_design.v1' or document['pack_sha256'] != object_sha(pack):
+        raise ValueError('Review design schema or public pack binding differs')
+    criteria = document['criteria']
+    known = {c['criterion_id'] for c in CRITERIA}
+    if (not isinstance(criteria, list) or not criteria
+            or any(not isinstance(c, str) or c not in known for c in criteria)
+            or len(set(criteria)) != len(criteria)):
+        raise ValueError('Design criteria must be nonempty unique known criteria')
+    reviewers = document['reviewers']
+    if not isinstance(reviewers, list) or not reviewers:
+        raise ValueError('Review design requires a nonempty declared reviewer list')
+    identities = {}
+    for reviewer in reviewers:
+        keys(reviewer, ('reviewer_id', 'origin', 'model_id'), where='design reviewer')
+        _text(reviewer['reviewer_id'], 'design.reviewer_id')
+        rid = reviewer['reviewer_id']
+        if rid == 'FILL_REVIEWER_ID' or rid in identities:
+            raise ValueError('Duplicate or placeholder design reviewer')
+        if reviewer['origin'] == 'human':
+            if reviewer['model_id'] is not None:
+                raise ValueError('Human design reviewer cannot declare model_id')
+        elif reviewer['origin'] == 'model_judge':
+            _text(reviewer['model_id'], 'design.model_id')
+        else:
+            raise ValueError('Design reviewer origin must be human/model_judge')
+        identities[rid] = (reviewer['origin'], reviewer['model_id'])
+    expected = set()
+    for item in pack['items']:
+        applicable = [c for c in criteria if not c.startswith('edit_') or item['edit_task'] is not None]
+        if not applicable:
+            raise ValueError('Design has no applicable criteria for a public item')
+        for rid, (origin, model) in identities.items():
+            expected.update((item['review_id'], rid, origin, model, c) for c in applicable)
+    actual = {(row['review_id'], row['reviewer_id'], row['origin'], row['model_id'], c)
+              for row in roster['assignments'] for c in row['criteria']}
+    def describe(cells):
+        return [dict(review_id=i, reviewer_id=r, origin=o, model_id=m, criterion=c)
+                for i, r, o, m, c in sorted(cells, key=lambda v: tuple('' if x is None else x for x in v))]
+    missing, unexpected = describe(expected - actual), describe(actual - expected)
+    return document, reference, dict(provided=True, policy='all_declared_reviewers_x_all_public_items_x_applicable_declared_criteria',
+        expected_assignment_criteria_cells=len(expected), actual_assignment_criteria_cells=len(actual),
+        matched_assignment_criteria_cells=len(expected & actual), missing_assignment_criteria_cells=missing,
+        unexpected_assignment_criteria_cells=unexpected, complete_for_design=not missing and not unexpected,
+        declared_reviewers=copy.deepcopy(reviewers), criteria=copy.deepcopy(criteria), public_items=len(pack['items']),
+        scope='Whole bound public pack inventory, independent of per-song analysis scope; checks allocation, not grades',
+        actual_participation_or_preregistration_authenticated=False)
+
+
 def _roster_coverage(assignments, relevant, cells, criterion, origin, judge_model_id):
     by_id = {item['review_id']: key for key, item in relevant.items()}
     expected, excluded, assigned_cells = [], [], set()
@@ -170,7 +221,7 @@ def _roster_coverage(assignments, relevant, cells, criterion, origin, judge_mode
 
 def analyze_reviews(dataset_path, public_path, bindings_path, reviews_paths, *, method_a, method_b,
                     criterion, split, origin, judge_model_id=None, compare=False,
-                    n_resamples=2000, confidence=.95, seed=7, reviewer_roster_path=None):
+                    n_resamples=2000, confidence=.95, seed=7, reviewer_roster_path=None, review_design_path=None):
     """Return source-bound rows, complete coverage and optional group comparison.
 
     A larger pack may be analyzed against each ORIGINAL per-song dataset. Every
@@ -243,6 +294,13 @@ def analyze_reviews(dataset_path, public_path, bindings_path, reviews_paths, *, 
         roster, roster_ref = _reviewer_roster(reviewer_roster_path, pack)
         assigned = {(row['review_id'], row['reviewer_id'], row['origin'], row['model_id'])
                     for row in roster['assignments'] if criterion in row['criteria']}
+    design, design_ref = None, None
+    design_report = dict(provided=False, complete_for_design=None,
+        note='No independent complete reviewer/item/criterion design supplied; roster completion is not design completion')
+    if review_design_path is not None:
+        if roster is None:
+            raise ValueError('Review design requires an explicit reviewer roster')
+        design, design_ref, design_report = _review_design(review_design_path, pack, roster)
     group_ids, grouping = _groups(dataset, selected)
     rows, cells, excluded_ratings, reviewer_versions = [], [], [], {}
     for song in selected:
@@ -301,6 +359,12 @@ def analyze_reviews(dataset_path, public_path, bindings_path, reviews_paths, *, 
                      if roster is not None else dict(provided=False, complete_for_roster=None,
                          note='No preregistered roster supplied; complete_for_requested_criterion does not verify every expected reviewer'))
     blockers = []
+    if design is not None:
+        if not design_report['complete_for_design']:
+            blockers.append('Roster differs from the independently declared whole-pack review design')
+        if criterion not in design['criteria'] or not any(
+                r['origin'] == origin and r['model_id'] == judge_model_id for r in design['reviewers']):
+            blockers.append('Requested criterion or observer origin/model is not in the review design')
     if roster is not None and not roster_report['complete_for_roster']:
         blockers.append('Incomplete registered reviewer x item x criterion assignments; no roster-complete comparison')
     if not complete:
@@ -314,6 +378,8 @@ def analyze_reviews(dataset_path, public_path, bindings_path, reviews_paths, *, 
             confidence=confidence, seed=seed, value_bounds=[1, 5])
         comparison["status"] = comparison["result"]["status"]
     sources = [data_ref, pack_ref, bindings_ref] + refs + ([roster_ref] if roster_ref is not None else [])
+    if design_ref is not None:
+        sources.append(design_ref)
     for ref in sources:
         if file_sha(ref["path"]) != ref["sha256"]:
             raise ValueError("Review analysis source changed while reading")
@@ -322,7 +388,7 @@ def analyze_reviews(dataset_path, public_path, bindings_path, reviews_paths, *, 
         imported_originals_sha256=object_sha(merged), validated_import_sha256=object_sha(imported),
         split=split, method_a=method_a, method_b=method_b, criterion=criterion, origin=origin,
         judge_model_id=judge_model_id, rows=rows, grouping=grouping, songs=descriptions,
-        reviewer_roster=roster_report,
+        reviewer_roster=roster_report, review_design=design_report,
         coverage=dict(selected_song_ids=[s["song_id"] for s in selected], expected_cells=len(cells),
             observed_plan_cells=len(relevant), rated_cells=sum(c["status"] == "rated" for c in cells),
             complete_for_requested_criterion=complete, rating_rows=len(rows), cells=cells,
@@ -359,6 +425,7 @@ def main(argv=None):
     parser.add_argument("--origin", required=True, choices=("human", "model_judge"))
     parser.add_argument("--judge-model-id")
     parser.add_argument("--reviewer-roster", type=Path)
+    parser.add_argument("--review-design", type=Path)
     parser.add_argument("--compare", action="store_true")
     parser.add_argument("--resamples", type=int, default=2000)
     parser.add_argument("--confidence", type=float, default=.95)
@@ -367,7 +434,7 @@ def main(argv=None):
     report = analyze_reviews(args.dataset, args.public, args.private, args.reviews,
         method_a=args.method_a, method_b=args.method_b, criterion=args.criterion, split=args.split,
         origin=args.origin, judge_model_id=args.judge_model_id, compare=args.compare,
-        n_resamples=args.resamples, confidence=args.confidence, seed=args.seed, reviewer_roster_path=args.reviewer_roster)
+        n_resamples=args.resamples, confidence=args.confidence, seed=args.seed, reviewer_roster_path=args.reviewer_roster, review_design_path=args.review_design)
     write_json(args.out, report)
     print(json.dumps(dict(out=str(args.out), rating_rows=len(report["rows"]),
         complete=report["coverage"]["complete_for_requested_criterion"], comparison=report["comparison"]["status"])))

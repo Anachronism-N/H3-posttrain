@@ -82,6 +82,14 @@ Algorithm section_downbeat_partition.v2 adds min_time_block_seconds(default2). E
 - Original integer full-song coverage, public section bounds and audio observation windows remain unchanged. Reasons and algorithm revision are recorded and recomputed by validation.
 - This is an engineering unit target, not a minimum generated-action duration or true phrase detector.
 
+## Independent complete review design
+
+analyze_reviews(...,review_design_path=None) optionally binds review_design.v1: {schema:"choreobench.review_design.v1",pack_sha256,reviewers:[{reviewer_id,origin,model_id}],criteria:[criterion_id,...]}. An explicit reviewer roster is required. Reviewer IDs are nonempty, unique and non-placeholder; human model_id is null, model judges declare a nonempty version. Criteria are unique known IDs. Every public item must have at least one applicable declared criterion; edit dimensions apply only to edit items.
+
+The design defines the Cartesian product of every declared reviewer, every item in the WHOLE bound public pack, and its applicable declared criteria. report.review_design compares this independently declared inventory with all roster cells, listing missing and unexpected cells; complete_for_design requires exact equality. It is not shrunk to the current dataset song, method pair, split or criterion. A multi-song pack can still be analyzed against original per-song datasets; the same complete pack-wide design is checked each time and must not be added across those reports as independent samples.
+
+A roster may correctly report 11/11 registered assignments rated even when the intended design has 12. With --review-design, that missing cell blocks --compare. The current criterion and observer origin/model must also be declared. Existing per-criterion score completion and reviewed-source-group gates continue to apply. complete_for_design means allocation matches, NOT grades complete, participation confirmed, all dimensions scored or preregistration authenticated. Without design, complete_for_design is null and the generic roster remains valid for uneven assignments. The design snapshot SHA is recorded and rechecked at the end with all originals. Modifying the design after scores does not prove an independently frozen preregistration.
+
 ## Structured time observations
 
 review_issues.v1 is a separate sidecar, not an extension to strict reviews.v1: {schema,pack_sha256,records:[{review_id,item_sha256,reviewer_id,origin,model_id,audio_seen,issues:[{issue_id,type,severity,start,end,event_ids,evidence,reason}]}]}. Public pack object SHA and item hashes must match. Exact keys, non-placeholder observer identity, human/model_judge origin and stable model identity are validated. Duplicate observer/item records or issue IDs within a record are rejected.

@@ -121,6 +121,65 @@ class ReviewPageBrowserTests(unittest.TestCase):
             finally:
                 browser.close()
 
+    def test_structured_observations_are_manual_separate_and_public_time_bound(self):
+        from playwright.sync_api import sync_playwright
+        from choreobench.review_issues import validate_review_issues
+        with running(count=1) as (url, pack, template, expected), sync_playwright() as engine:
+            browser = self.chromium(engine)
+            try:
+                page = browser.new_page(accept_downloads=True); errors = []; dialogs = []
+                page.on('pageerror', lambda error: errors.append(str(error)))
+                page.on('dialog', lambda dialog: (dialogs.append(dialog.message), dialog.dismiss()))
+                page.goto(url, wait_until='networkidle')
+                observation = page.locator('#case-1 .observations')
+                observation.locator('summary').click()
+                self.assertEqual(observation.locator('.issue-type').input_value(), '')
+                self.assertEqual(observation.locator('.issue-severity').input_value(), '')
+                page.locator('#case-1 tr[data-start]').first.click()
+                self.assertEqual(observation.locator('.issue-start').input_value(), '0')
+                self.assertEqual(observation.locator('.issue-end').input_value(), '81000')
+                self.assertEqual(observation.locator('.issue-events').input_value(), 'event_0001')
+                observation.locator('.issue-type').select_option('reasonable_recurrence')
+                observation.locator('.issue-severity').select_option('major')
+                evidence = '</script><img src=x onerror=alert(1)>'
+                observation.locator('.issue-evidence').fill(evidence)
+                observation.locator('.issue-reason').fill('Synthetic browser counterexample, not real listening.')
+                observation.locator('.add-issue').click()
+                self.assertTrue(any('合理主题回归' in message for message in dialogs))
+                self.assertEqual(observation.locator('.issue-list pre').count(), 0)
+                observation.locator('.issue-severity').select_option('not_applicable')
+                observation.locator('.add-issue').click()
+                self.assertEqual(observation.locator('.issue-list pre').count(), 1)
+                self.assertIn(evidence, observation.locator('.issue-list').inner_text())
+                self.assertEqual(page.locator('img').count(), 0)
+                self.assertTrue(all(value == '' for value in page.locator('#case-1 .card > label select').evaluate_all('(els)=>els.map(e=>e.value)')))
+                observation.locator('.issue-type').select_option('music_mismatch')
+                observation.locator('.issue-severity').select_option('major')
+                observation.locator('.issue-evidence').fill('Music observation fixture')
+                observation.locator('.issue-reason').fill('Not listened; export must not pretend otherwise')
+                observation.locator('.add-issue').click()
+                self.assertTrue(any('听音声明' in message for message in dialogs))
+                self.assertEqual(observation.locator('.issue-list pre').count(), 1)
+                page.locator('#reviewer').fill('browser-probe-not-human')
+                with page.expect_download() as download:
+                    page.locator('#export-issues').click()
+                exported = json.loads(Path(download.value.path()).read_text())
+                validate_review_issues(pack, exported)
+                entry = exported['records'][0]['issues'][0]
+                self.assertEqual((entry['start'], entry['end']), (0, 81000))
+                self.assertEqual(entry['type'], 'reasonable_recurrence')
+                self.assertEqual(entry['severity'], 'not_applicable')
+                self.assertFalse(exported['records'][0]['audio_seen'])
+                with page.expect_download() as grade_download:
+                    page.locator('#export').click()
+                grades = json.loads(Path(grade_download.value.path()).read_text())
+                self.assertNotIn('issues', grades['reviews'][0])
+                self.assertTrue(all(v is None for v in grades['reviews'][0]['ratings'].values()))
+                self.assertEqual(template.read_bytes(), expected)
+                self.assertFalse(errors, errors)
+            finally:
+                browser.close()
+
     def test_edit_instruction_source_and_edit_scores_available(self):
         from playwright.sync_api import sync_playwright
         with running(count=1, edit=True) as (url, pack, template, expected), sync_playwright() as engine:

@@ -10,6 +10,7 @@ import tempfile
 from .editing import validate_edit_task
 from .io import file_sha, object_sha, read_json_snapshot
 from .reviews import blank_review_template, validate_review_pack
+from .review_issues import ISSUE_TYPES, blank_issue_template
 from .schema import keys, validate_plan, validate_song
 
 
@@ -37,13 +38,13 @@ pre{white-space:pre-wrap}@media(max-width:900px){.columns{grid-template-columns:
 type=unintended_repeat; severity=major;
 evidence=引用原动作并说明听到的音乐变化;
 reason=为什么不是合理回归（或明确记录合理回归作为反例）。</pre>
-<p>评论格式仅是人工记录约定，不是已实现的结构化错误评分。点击动作行可把当前事件范围加到评论草稿；不会自动写入错误判断。听音勾选只代表本人声明，不证明真实播放完成。</p>
+<p>评论继续保留原格式；下方可另行手动记录并导出结构化时间观察。点击动作行只填时间/事件ID，不自动判断质量。合理主题回归与无法判断分别保留；空记录不代表无问题。听音勾选只代表本人声明，不证明真实播放完成。</p>
 </details>
 <nav id="cases"></nav><label>评审标识<input id="reviewer" placeholder="填写预登记匿名ID"></label>
-<button id="export">导出评审JSON</button><main id="content"></main>
+<button id="export">导出评审JSON</button><button id="export-issues">另存时间问题JSON</button><main id="content"></main>
 <script id="data" type="application/json">DATA</script>
 <script>
-const {pack,template,planningMusic}=JSON.parse(document.getElementById('data').textContent);
+const {pack,template,planningMusic,issueTemplate,issueTypes}=JSON.parse(document.getElementById('data').textContent);
 const limitations=document.createElement('p');limitations.className='warn';
 limitations.textContent=pack.limitations.join(' ');document.querySelector('nav').before(limitations);
 const groups=new Map(),ids=[...new Set(pack.items.map(i=>i.song.song_id))].sort();
@@ -70,13 +71,44 @@ ids.forEach((id,index)=>{
     const checkbox=E('input');checkbox.type='checkbox';checkbox.onchange=()=>review.audio_seen=checkbox.checked;
     const heard=E('label','我已实际听取该方案对应音频');heard.prepend(checkbox);card.append(heard);
     const comment=E('textarea');comment.placeholder='原音频时间、公开事件ID、原文依据、问题或无法判断原因';comment.oninput=()=>review.comments=comment.value;
+    const issueRecord=issueTemplate.records.find(r=>r.review_id===item.review_id);
+    const observations=E('details');observations.className='observations';observations.append(E('summary','结构化时间观察（单独导出，不计质量分）'));
+    const issueType=E('select');issueType.className='issue-type';issueType.append(new Option('选择观察类型',''));
+    Object.entries(issueTypes).forEach(([key,label])=>issueType.append(new Option(label,key)));
+    const severity=E('select');severity.className='issue-severity';severity.append(new Option('选择程度',''));
+    [['minor','轻微'],['major','严重'],['not_applicable','非问题/合理回归'],['uncertain','无法判断']].forEach(([key,label])=>severity.append(new Option(label,key)));
+    const start=E('input'),end=E('input'),events=E('input'),evidence=E('textarea'),reason=E('textarea');
+    start.className='issue-start';end.className='issue-end';events.className='issue-events';
+    start.placeholder='起点（整数采样点）';end.placeholder='终点（整数采样点）';events.placeholder='公开事件ID，逗号分隔';
+    evidence.className='issue-evidence';reason.className='issue-reason';evidence.placeholder='引用实际动作与音乐观察依据';reason.placeholder='判断理由；复读须区分合理主题回归';
+    observations.append(E('p','时间使用本计划的原音频采样时钟，半开[start,end)。不填默认类型或程度；每个引用事件须与所填时间相交。'),issueType,severity,start,end,events,evidence,reason);
+    const addIssue=E('button','保存本条观察'),issueList=E('div');addIssue.className='add-issue';issueList.className='issue-list';let issueCounter=0;
+    function redrawIssues(){
+      issueList.replaceChildren();issueRecord.issues.forEach(issue=>{
+        const entry=E('div'),remove=E('button','移除此条草稿');entry.append(E('pre',JSON.stringify(issue,null,2)));
+        remove.onclick=()=>{issueRecord.issues=issueRecord.issues.filter(x=>x!==issue);redrawIssues()};entry.append(remove);issueList.append(entry);
+      });
+    }
+    addIssue.onclick=()=>{
+      const a=Number(start.value),b=Number(end.value),ids=events.value.split(',').map(v=>v.trim());
+      const byId=new Map(item.plan.events.map(e=>[e.event_id,e]));
+      if(!/^(0|[1-9][0-9]*)$/.test(start.value)||!/^(0|[1-9][0-9]*)$/.test(end.value)||!Number.isSafeInteger(a)||!Number.isSafeInteger(b)||a>=b||b>item.plan.num_samples){alert('需要音频范围内的非空整数采样点区间');return}
+      if(!ids.length||new Set(ids).size!==ids.length||ids.some(id=>!byId.has(id)||byId.get(id).start>=b||a>=byId.get(id).end)){alert('每个公开事件ID必须已存在、唯一且与观察时间相交');return}
+      if(!issueType.value||!severity.value||!evidence.value.trim()||!reason.value.trim()){alert('请独立填写类型、程度、依据和理由');return}
+      const permitted=issueType.value==='reasonable_recurrence'?['not_applicable']:issueType.value==='uncertain'?['uncertain']:['minor','major'];
+      if(!permitted.includes(severity.value)){alert('合理主题回归使用非问题程度，无法判断使用无法判断程度');return}
+      if(issueType.value==='music_mismatch'&&!checkbox.checked){alert('音乐错配观察需要本人听音声明');return}
+      issueRecord.issues.push({issue_id:'issue_'+(++issueCounter),type:issueType.value,severity:severity.value,start:a,end:b,event_ids:ids,evidence:evidence.value,reason:reason.value});
+      evidence.value='';reason.value='';issueType.value='';severity.value='';redrawIssues();
+    };
+    observations.append(addIssue,issueList);
     const timeline=E('div');timeline.className='timeline';const table=E('table'),header=E('tr');
     ['事件ID','时间（秒）','轨道','动作'].forEach(t=>header.append(E('th',t)));table.append(header);
     item.plan.events.forEach(e=>{
       const row=E('tr');row.dataset.start=e.start/item.plan.sample_rate;row.dataset.end=e.end/item.plan.sample_rate;
       row.append(E('td',e.event_id),E('td',Number(row.dataset.start).toFixed(4)+'–'+Number(row.dataset.end).toFixed(4)),E('td',e.track),E('td',e.action));
       row.title='添加本事件的时间与ID到评论（不自动判断质量）';
-      row.onclick=()=>{comment.value+=(comment.value?' | ':'')+'time='+row.dataset.start+'–'+row.dataset.end+'s; samples=['+e.start+','+e.end+'); events='+e.event_id+'; evidence=';review.comments=comment.value};
+      row.onclick=()=>{start.value=e.start;end.value=e.end;events.value=e.event_id;comment.value+=(comment.value?' | ':'')+'time='+row.dataset.start+'–'+row.dataset.end+'s; samples=['+e.start+','+e.end+'); events='+e.event_id+'; evidence=';review.comments=comment.value};
       table.append(row);
     });
     timeline.append(table);card.append(timeline);
@@ -87,7 +119,7 @@ ids.forEach((id,index)=>{
       select.disabled=key.startsWith('edit_')&&!item.edit_task;
       select.onchange=()=>review.ratings[key]=select.value?Number(select.value):null;field.append(select);card.append(field);
     }
-    card.append(comment);columns.append(card);
+    card.append(comment,observations);columns.append(card);
   });
   function highlight(){
     columns.querySelectorAll('tr[data-start]').forEach(row=>row.classList.toggle('active',Number(row.dataset.start)<=audio.currentTime&&audio.currentTime<Number(row.dataset.end)));
@@ -110,6 +142,13 @@ document.getElementById('export').onclick=()=>{
   template.reviews.forEach(r=>r.reviewer_id=id);
   const blob=new Blob([JSON.stringify(template,null,2)],{type:'application/json'}),link=E('a');
   link.href=URL.createObjectURL(blob);link.download='reviews.completed.json';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);
+};
+document.getElementById('export-issues').onclick=()=>{
+  const id=document.getElementById('reviewer').value.trim();if(!id||id==='FILL_REVIEWER_ID'){alert('请填写实际预登记的匿名评审标识');return}
+  if(issueTemplate.records.some(r=>r.issues.some(i=>i.type==='music_mismatch')&&!template.reviews.find(v=>v.review_id===r.review_id).audio_seen)){alert('音乐错配观察需要本人听音声明');return}
+  issueTemplate.records.forEach(r=>{r.reviewer_id=id;r.audio_seen=template.reviews.find(v=>v.review_id===r.review_id).audio_seen});
+  const blob=new Blob([JSON.stringify(issueTemplate,null,2)],{type:'application/json'}),link=E('a');
+  link.href=URL.createObjectURL(blob);link.download='review-issues.json';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);
 };
 </script></html>'''
 
@@ -163,7 +202,8 @@ def render_review_page(pack, planning_music=None):
             probe = dict(copy.deepcopy(songs[sid]), music=value, split='dev', song_group_id=None,
                          artist_group_id=None, near_duplicate_group_id=None)
             validate_song(probe)
-    payload = dict(pack=pack, template=blank_review_template(pack), planningMusic=music)
+    payload = dict(pack=pack, template=blank_review_template(pack), planningMusic=music,
+                   issueTemplate=blank_issue_template(pack), issueTypes=ISSUE_TYPES)
     encoded = json.dumps(payload, ensure_ascii=False, allow_nan=False).replace('<', chr(92) + 'u003c')
     return _HTML.replace('DATA', encoded, 1)
 

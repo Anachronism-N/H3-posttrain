@@ -175,6 +175,35 @@ python -m choreobench analyze-reviews   --dataset /data/choreobench/original-son
 
 代码完整回归、实际网页验收及未取得人工评分的边界见 [验收第17节](VALIDATION_20261104.md#17-质量评审准备与名册完成率核验-v12)。
 
+## 结构化时间观察与独立原件
+
+页面的“结构化时间观察”用于记录具体时间问题，不替代四维评分。每次点击事件会填入其原音频整数采样起止点和公开event_id；评论仍保留。由评审者独立填写观察类型、程度、依据和理由，再点击保存，不预填问题或默认严重程度。可用逗号加入多个输出事件ID，但各事件必须与填写的非空半开样本区间相交。时间以当前公开Plan.sample_rate解释，不使用秒数或块内边界索引；不同方案的相同ID不能相互替换。
+
+类型与程度须匹配：
+
+| type | 用途 | severity |
+|---|---|---|
+| unintended_repeat | 非预期复读，须说明为什么不是合理回归 | minor / major |
+| reasonable_recurrence | 合理主题回归的正向反例 | not_applicable |
+| ambiguous_action / overdense_action / abrupt_transition | 动作含糊、过密或衔接突然 | minor / major |
+| music_mismatch | 听取音频后的具体错配观察 | minor / major，需audio_seen声明 |
+| uncertain | 无法据现有文字/音乐判断 | uncertain |
+
+“另存时间问题JSON”只导出choreobench.review_issues.v1单独原件，评分按钮继续导出reviews.v1，不在严格评分记录中增加issue字段。记录绑定pack_sha256与item_sha256，包含匿名评审者声明、origin/model_id/audio_seen及issue_id/type/severity/start/end/event_ids/evidence/reason。所有字符串按文字显示，不作为HTML解析。原件由组织者另行收回并保留，服务器不接收POST或自动注册评审者。
+
+~~~bash
+python -m choreobench check-review-issues \
+  --public /runs/review/public/pack.json \
+  --issues /runs/review/review-issues.json \
+  --out /runs/review/issues.checked.json
+~~~
+
+校验入口严格检查哈希、字段、整数时钟、事件引用相交、重复记录、类型/程度及人/模型来源身份，分析结束复核原文件字节；输出是新的独占证据文件，不覆盖原件。只核验公开引用与声明，**不验证依据是否真实、不计算分数/共识、也不将原件映射到私有方法标签**。本版仅支持引用当前输出Plan事件，源编辑计划引用或无事件的空白区间需后续明确任务，不做自动指代。
+
+没有记录、空issues列表或uncertain均不表示质量合格。check报告的items_without_observer_record仅表示该公开项目没有原件记录，不检查所有预登记参加者；完整名册与四维评分仍由analyze-reviews单独核验。保留正向回归反例，不能把所有重复统一算坏，更不能以问题数量生成未经校准的质量指标。
+
+v14复用原六方案验证新页面导出与原件校验，新增模型调用0、实际观察/评分提交0。浏览器中的问题示例明确标为软件探针并丢弃，不作人评或质量数据；两位实际匿名ID仍按用户选择稍后提供。验收见[第19节](VALIDATION_20261104.md#19-结构化时间观察与独立原件-v14)。
+
 ## 推进次序与资源
 
 1. 用已有v11六方案完成听音与评分导入。共享大纲导出与两组真实内容控制已经完成，不必原样重跑。CPU、原工件和评审者即可，不占推理GPU。

@@ -1,0 +1,224 @@
+# From Music to Editable Scores: A Constraint-Aware Harness for Long-Form Choreography Planning
+
+**Working manuscript — 2026-11-09.** This is a submission-oriented draft, not a completed empirical paper. Numerical results below are limited to verified engineering/development experiments. No quality improvement, statistical significance, human-study result or first-of-its-kind claim is asserted. Authors, venue and final manuscript format remain unset. Square-bracketed experiment placeholders are not results.
+
+## Abstract
+
+Music-conditioned dance systems often deliver motion or video, while an author may first need an interpretable score that specifies what to do, when to do it, and which parts can be revised. We investigate long-form music-conditioned choreography planning as the generation of an editable, open-vocabulary event score rather than a measured motion sequence. Our harness separates local audio-conditioned movement proposals, whole-song motif design, causal block composition, and deterministic constraint execution. The representation uses a canonical audio clock, explicit body scopes, motif references, and scoped field edits; private evaluation targets are not exposed to generators. We distinguish mechanically verifiable validity from musical and choreographic quality. In a three-song development study, six complete scores pass structural checks, and a frozen-outline history comparison verifies identical shared conditioning while retaining all requests and costs. An additional independent-block baseline and scoped-edit pilot are specified to test whether planning contributes beyond decoder constraints. The current experiments establish executable, auditable workflows, but do not yet establish perceptual quality gains. We identify a concrete limitation of near-equal scheduling menus and outline a held-out evaluation of musical relevance, long-range organization, edit satisfaction and preservation. This draft treats a successful system trace as necessary evidence of execution, not sufficient evidence of effective choreography.
+
+**Final abstract action:** replace development-only wording with the actual supported main-study findings after frozen-baseline evaluation and independent review; retain negative/neutral results and do not claim professional physical execution from text scores.
+
+## 1. Introduction
+
+A choreography workflow is not only the production of a sequence of poses. Authors organize phrases across musical changes, reuse and vary motifs, and revise selected parts while preserving the rest of a score. Music-to-motion generation, however, can make the intermediate authoring decisions difficult to inspect independently of rendering quality. We study a complementary output: a timed, open-vocabulary choreography score that is itself an editable artifact.
+
+A natural-language list is not sufficient for this purpose. A usable planning interface must state the audio clock, expose the affected body scope, preserve stable identities during edits, and distinguish a proposed transition from an observed physical state. Conversely, a well-formed score need not be musically useful: a decoder can enforce coverage without understanding a song, and a rich movement paragraph can be too dense or unsupported by the provided music. These observations motivate both a constrained planning harness and an evaluation that keeps validity separate from creative quality.
+
+Our study asks: **What does explicit whole-song planning and causal composition contribute beyond a frozen local proposal model and a shared constrained output interface?** A second question examines whether a localized text instruction can change an existing score without changing protected fields. The goal is not to reproduce one reference dance exactly, generate verified human motion, or replace expert evaluation with schema checks.
+
+### Proposed contributions and their evidence status
+
+1. **Task and representation:** an auditable music-conditioned, long-form score with explicit event timing, body scopes and local edit permissions. This representation is implemented. Its practical value relative to existing authoring representations still needs evaluation.
+2. **Constraint-aware execution:** separation of local musical proposals, whole-song design, causal composition and mechanical validation, with immutable traces and explicit failure accounting. Real development executions are available.
+3. **Controlled analysis:** a frozen-outline comparison that removes generated-outline variation from the history intervention, plus matched scheduling controls and scoped-edit/no-op calibration. History execution is verified; independent-block and edit pilot outcomes are reported below when complete. No perceptual advantage is assumed.
+
+The final paper should retain only contributions supported by experiments and related-work distinctions. Logging, JSON syntax and the number of unit tests are reproducibility mechanisms, not standalone claims of scientific novelty.
+
+## 2. Related Work and Positioning
+
+### Music-to-motion and structure-aware planning
+
+Music-to-motion research already addresses rhythm, motion diversity and long-sequence organization. In *Music-to-Dance Generation via Atomic Movements* (arXiv:2607.13978), interpretable atomic movements are planned with types, duration and placement, followed by motion completion. This is closely related high-level structural planning; our paper cannot claim that symbolic dance allocation or hierarchical music-conditioned planning is new in general. The distinction to test is an open-vocabulary textual score as the independently delivered and editable artifact, with explicit execution and evaluation contracts, rather than an atomic vocabulary feeding a motion generator.
+
+### Interactive choreography and editing
+
+*CustomDance: Customized 3D Dance Generation with Coarse-to-Fine Human-Centered Interactive Control* (arXiv:2608.06722) uses multimodal music analysis, JSON anchors/creative cues, phrase authoring slots, motion retrieval and local editing to deliver 3D motion. It overlaps strongly with music-conditioned motif planning and authoring. Our draft differs in studying automatically composed text-event scores and permission-bounded edits without claiming a rendered-motion result. This difference is not sufficient by itself: the evaluation must demonstrate a reason to inspect and edit the intermediate score.
+
+*DanceEditor: Towards Iterative Editable Music-driven Dance Generation with Open-Vocabulary Descriptions* (arXiv:2508.17342) studies iterative music/text-conditioned motion editing and introduces paired editing data. Our scoped-edit task concerns existing score fields and exact preservation boundaries, not motion-space reconstruction. We do not claim arbitrary open-vocabulary motion editing, nor directly compare text-score validity with motion FID or beat-alignment scores.
+
+### Language-model planning and constrained execution
+
+The general separation of proposal generation and symbolic validation is established in language-model planning. The camera-ready version needs a systematic related-work review of constrained decoding, program/plan repair, and music or motion authoring interfaces. **Pending bibliography expansion:** primary sources, evaluation scopes and strong planning baselines. No priority claim should be made from a limited search.
+
+| Family | Deliverable | Planning/editing already present | Our evaluated distinction |
+|---|---|---|---|
+| Atomic-movement planning | Symbolic allocation and completed motion | Music-conditioned movement placement | Open-vocabulary score delivered independently; no motion equivalence claimed |
+| CustomDance | Interactive 3D dance | Music anchors, motif cues, slots and local edits | Automatic text-score composition and auditable field-preservation contract |
+| DanceEditor | Edited dance motion | Iterative music/text-conditioned edits | Explicit existing-event text edits; target satisfaction separated from exact preservation |
+| Direct language-model scoring | Timed text/JSON | Prompt-based generation | Added whole-song/history mechanisms must be measured under shared constraints and costs |
+
+## 3. Task Definition
+
+Let a canonical mono waveform be x with sample rate r and duration N samples. The input consists of public musical observations, an optional author brief, and task-specific permissions. A score P contains motifs M and events E. Each event is
+
+    e = (id, start, end, body_scope, action_text, motif_id, attributes, entry, exit),
+
+where start/end are integer canonical samples with 0 <= start < end <= N. Intervals are half-open. Actions are open-vocabulary text; body scopes come from a declared track vocabulary. Within overlapping intervals, identical tracks or incompatible hierarchical scopes cannot conflict. For example, a whole-body event occupies the body parts represented by narrower tracks.
+
+Unknown attributes or physical boundary states remain empty or unknown. A null support foot is not replaced by a guessed state. Event-level validity refers to declared text scheduling and scope, not verified biomechanical feasibility.
+
+We keep three distinct evaluation tracks:
+
+- **Local proposal:** a short music window maps to movement text. Existing observations use complete 5.0625-second inputs; a two-part output protocol is not a two-second audio crop.
+- **Full-song planning:** the original complete audio duration maps to a coherent score. Failed songs remain in the declared inventory even if a valid prefix exists.
+- **Scoped editing:** a fixed source score and instruction map to permitted replacements of existing fields. The instruction, source binding, allowed/repair event IDs and protections are fixed before execution. No event addition/deletion or implicit global retiming is allowed in the current task.
+
+The dataset and published score need not contain a single uniquely correct choreography. Quality is evaluated through musical relevance, organization, clarity and editable control, not by requiring exact caption reproduction. Machine-generated captions are fallible proposals, not expert reference truth.
+
+## 4. Harness
+
+### 4.1 Public local proposals
+
+A frozen audio-language model produces K=2 local proposals per observation window. The original development collection uses a base instruction model with a task prompt, not a task-trained choreography expert. Proposals and their parsing identities are frozen and reused across planner variants. A citation denotes which proposal was available to the generator; it does not certify that newly composed movements are semantically entailed or musically correct.
+
+### 4.2 Whole-song design and causal composition
+
+A text planner creates motif definitions and section-level intent from the public observations. The controller then visits immutable planning units in order. A block request contains the shared musical information, eligible proposals and, when enabled, the committed-prefix context. Only a validated block is added to the prefix. The no-history intervention withholds committed action text/state summaries, not overlapping observations already shared across variants.
+
+For history-only analysis, both arms load the exact same externally bound whole-song outline. A seed alone is insufficient to fix intermediate content: the earlier independent-outline pilot returned different outlines for identical requests. We therefore validate actual loaded outlines and reconstruct shared block inputs.
+
+    freeze observations and optionally import a bound outline
+    for unit u in the complete immutable partition:
+        construct public music/proposal/design input
+        include validated committed-prefix context only when enabled
+        request a candidate score under the declared decoder contract
+        validate time, scope, theme permission and source references
+        commit only on success; otherwise retain the failure and full cost
+    publish a complete score only if the song finishes successfully
+
+### 4.3 Scheduling and constraints
+
+The current development configuration supplies a finite set of complete-unit schedules: one near-equal contiguous partition for each feasible event count up to three. A boundary grid and minimum event duration constrain this menu. Structured decoder alternatives fix the selected partition; the controller independently checks it. Complete coverage is therefore a public engineering constraint, not a measured creative improvement.
+
+This choice reduces invalid timing but restricts expression. Once the event count is chosen, the internal cuts are determined without reading beats. A future beat-informed intervention must change the menu before generation and keep other conditions fixed; snapping a finished score after the fact would conflate planning with postprocessing.
+
+### 4.4 Scoped text editing
+
+The editor receives a public source score and a fixed permission-bearing instruction, not private evaluation goals. It proposes replacements of existing event fields. The controller rejects unauthorized targets, duplicate operations, changes to protected fields or invalid resulting scores. An empty patch is an explicit abstention; it is not automatically target success. Provenance records the applied patch, and undo checks exact recovery of the source object.
+
+Mechanical preservation can be checked exactly. Whether a replacement actually reduces energy or improves a transition is a separate semantic judgment. The no-op control calibrates this distinction: it preserves everything while generally failing an unmet change request.
+
+### 4.5 Reproducibility and privacy
+
+Input bytes, code versions, model/configuration declarations and request/response journals are bound to independent runs. New code/configuration uses new directories; unknown outcomes are not silently retried. Public review packs omit private method mappings, goals and citations. Original review files, a declared allocation design and optional issue sidecars are kept separate. These controls constrain evaluation leakage, but they do not independently authenticate remote model tensors, reviewer identities or listening.
+
+## 5. Experimental Protocol
+
+### 5.1 Development data and models
+
+The pilot uses three complete recordings of 252.9698125, 230.0343125 and 217.2081875 seconds. Source licenses and canonical audio preparation are recorded; the group/near-duplicate audit is unverified. These songs have been used repeatedly during development and must not be called a held-out test set.
+
+The shared local collection contains 278 base audio-model calls. Whole-song composition uses a frozen 32B instruction model in text-only BF16 inference. The complete planning partitions contain 27, 26 and 23 units. The current menu has a 0.25-second grid, a 0.5-second minimum and a three-event maximum per unit. No task-specific model training or video rendering is performed in these harness pilots.
+
+### 5.2 Baselines and intervention matrix
+
+| Variant | Local music proposals | Whole-song outline | Committed history | Same menu family | Current evidence |
+|---|---|---|---|---|---|
+| Main | Shared | Frozen/imported | Yes | Yes | Verified historical v11 |
+| No-history | Shared | Same frozen content | No | Yes | Verified v11 controlled pair |
+| Independent constrained blocks | Shared | No | No | Yes | v17 selected real execution; results pending below |
+| Direct full-song prompt | Same permitted observations to be specified | Native prompt behavior | Not causal blocks | Must specify equivalent permissions | Earlier prototype exists; matched main-study comparison pending |
+| Scoped editor / no-op | Same source score and task | Source motifs unchanged | Source score | Original event times protected | v17 three-task pilot; semantic review pending |
+
+The independent-block baseline tests the joint contribution of global design and committed history, not a pure history intervention. It also removes motif definitions and associated IDs. We will not rank motif-count differences as quality. Its v17 execution is compared descriptively with immutable v11 scores; service sessions differ and model stochasticity is not eliminated. A final main study needs contemporaneous repeated runs, explicit input equality where applicable and cost-aware reporting.
+
+### 5.3 Evaluation
+
+- **Validity/coverage:** complete valid-song fraction over the full declared inventory, scope conflicts and timing-contract satisfaction. Show that a baseline with the same decoder can also satisfy these constraints.
+- **Score quality:** blinded musical fit, long-range organization, planned executability and boundary clarity. These are judgments about textual scores, not measured bodies or synchronized video.
+- **Editing:** semantic instruction satisfaction, exact preservation of protected/non-target fields, new local problems and abstention. No-op is a calibration control, not a claim of strong editing quality.
+- **Diagnostics:** retain localized unintended-repeat/ambiguity/music-mismatch observations, positive motif recurrence counterexamples and uncertainty. Counted declarations are not calibrated quality metrics.
+- **Efficiency:** actual input/output tokens, model calls and failed/unknown outcomes; shared collection and historical outlines counted once. Tokens do not capture loading, idle rental or complete GPU-hours.
+
+Actual reviewers have not yet been provided, and there are no submitted quality scores. Reviewer roster/design checks only verify declared allocation and completeness. Model judging may support exploratory analysis if separately labeled and calibrated; it cannot be reported as an expert human study. Missing ratings remain missing, never zero or implicit success.
+
+### 5.4 Held-out study required for the final paper
+
+Before adding test songs, freeze the selected hypothesis, prompts, menu, rubric, model settings and edit-task coverage. Audit source/artist/near-duplicate/audio relationships and licensing; retain the existing three songs as development. Determine scope from a pilot's variability and rating disagreement rather than declaring a sample size guarantees significance. Use repeated decoding to measure session/output variability, and group-level rather than event-level comparisons. We do not claim population generalization from the current three songs.
+
+## 6. Results Available for the Draft
+
+### 6.1 Frozen-outline history pilot (verified v11)
+
+| Recording | Main events | No-history events | Calls per arm | Minimum event duration | Complete validity per pair |
+|---|---:|---:|---:|---:|---:|
+| Development song 1 | 81 | 81 | 27 | 1.25 s | 2/2 |
+| Development song 2 | 78 | 78 | 26 | 0.75 s | 2/2 |
+| Development song 3 | 68 | 69 | 23 | 1.5 s | 2/2 |
+
+All three pairs satisfy actual shared-outline/common-input control. Main selects the maximum three events in 75/76 units; no-history does so in 76/76. All complete scores cover the canonical duration under the supplied schedule constraint. Action and track sequences differ in all pairs, while pure time boundaries differ only for song 3. This is evidence that an input intervention changes outputs under verified conditioning, not that history improves quality.
+
+| Arm | New calls | Input tokens | Output tokens |
+|---|---:|---:|---:|
+| Main | 76 | 490,835 | 33,953 |
+| No-history | 76 | 272,351 | 33,724 |
+
+The history input incurs additional context. A cheaper no-history variant may be preferable if independent ratings show no meaningful benefit. The original three imported outline calls and audio collection are historical shared costs, not additional per-arm calls.
+
+### 6.2 Independent-block baseline (v17)
+
+**PENDING REAL EXECUTION:** replace the table after verification, including all three predeclared songs and any failures. Do not copy fixture values or infer perceptual quality from validity.
+
+| Recording | Complete valid baseline | Events | Calls | Coverage | Independent quality |
+|---|---|---|---|---|---|
+| Development song 1 | [PENDING] | [PENDING] | [PENDING] | [PENDING] | Not submitted |
+| Development song 2 | [PENDING] | [PENDING] | [PENDING] | [PENDING] | Not submitted |
+| Development song 3 | [PENDING] | [PENDING] | [PENDING] | [PENDING] | Not submitted |
+
+**Comparison caveat:** immutable v11 main was executed in a previous service session. The baseline is matched in observations, planning units, schedule family and declared decoding caps, but is not a concurrent repeated causal comparison. Relevant planner implementation bytes and inputs are audited explicitly.
+
+### 6.3 Scoped-edit/no-op pilot (v17)
+
+**PENDING REAL EXECUTION:** one first-event low-energy instruction per development song, selected before generation without inspecting new outputs. Protect timing, track, motif/state fields and all other events. No-op keeps events unchanged; an unchanged unmet instruction is not semantic success. The editor's lower-energy content still needs independent review even when a different action string is emitted.
+
+| Task | Editor returns valid patch | Non-target fields preserved | Exact undo | Semantic satisfaction | No-op target satisfaction |
+|---|---|---|---|---|---|
+| Song 1, first event | [PENDING] | [PENDING] | [PENDING] | Not reviewed | Not reviewed; not presumed successful |
+| Song 2, first event | [PENDING] | [PENDING] | [PENDING] | Not reviewed | Not reviewed; not presumed successful |
+| Song 3, first event | [PENDING] | [PENDING] | [PENDING] | Not reviewed | Not reviewed; not presumed successful |
+
+### 6.4 Scheduling expressivity diagnostic (v16)
+
+| Recording | Main internal cuts | Median distance to nearest predicted beat | Within 50 ms | Same-count beat-cut feasible units |
+|---|---:|---:|---:|---:|
+| Development song 1 | 54 | 170 ms | 18/54 | 27/27 |
+| Development song 2 | 52 | 82.5 ms | 13/52 | 25/26 |
+| Development song 3 | 45 | 165 ms | 6/45 | 22/23 |
+
+These are representability/nearest-distance diagnostics, not a beat-synchrony score. Predicted beats are not audited ground truth, and text event cuts do not measure movement accents. With fixed unit endpoints, actual event count and minimum duration, 74/76 main units admit a different predicted-beat partition. The two infeasible units are retained. This identifies a testable limitation of the scheduling interface, not an evaluated replacement method.
+
+### 6.5 Failure analysis
+
+Early whole-song global variants reproduced concatenated content and hierarchical variants mainly changed motif labels. A later free-boundary grid pilot failed on body-scope overlap, and a time-first pilot failed on sub-minimum events. Full relational decoding solved those specific violations but produced low coverage; complete-unit menus restored contractual coverage while restricting timing freedom. These failures motivate decomposition and clearer control, but are not themselves evidence of semantic gains. Changed prompts/contracts are development revisions, not clean single-variable quality ablations.
+
+## 7. Discussion and Limitations
+
+A text score allows controlled editing without requiring motion reconstruction, but usefulness must be measured rather than asserted. Open-vocabulary action paragraphs may compress several movements into a short event. Physical feasibility, contact, facing and support cannot be verified from empty states or text alone. Music-language proposals and structural detectors can be wrong; an apparently musically descriptive phrase may simply repeat a generic rhythmic template.
+
+The schedule menu trades valid execution for expressive freedom and currently lacks verified beat-aware or phrase-aware timing. Whole-body context may be redundant, and history can increase cost without improving perceived coherence. The small, repeatedly used development collection does not support generalization, and one decode per arm cannot distinguish stable intervention effects from service variability. Scope-preserving edits are simpler than arbitrary authoring requests. The current text task excludes event addition/deletion, open-ended retiming and uncontrolled references.
+
+Our evaluation separates mechanical validity, score quality and editing preservation. A blinded review is necessary for claims about music or usability; optional rating infrastructure is not a substitute for participation. Public evidence omits sensitive private bindings and evaluation goals. Data licenses and participant consent must be resolved before releasing a benchmark or study materials. A final manuscript should make the development/held-out boundary explicit and avoid invalid cross-modal comparisons.
+
+## 8. Conclusion (Development-Only Version)
+
+We formulate music-conditioned choreography planning as an editable, auditable text-event score and implement a harness that separates proposal generation, whole-song design, causal composition and constrained execution. The current development evidence verifies complete executions and controlled history inputs, while exposing limitations of temporal menus and unresolved perceptual evaluation. The intended submission contribution is the supported planning/control trade-off under matched baselines, not a blanket claim of professional choreography quality. Final conclusions must follow the completed independent evaluation, including neutral or negative module effects.
+
+## Submission Checklist — Not Additional Claimed Results
+
+- [x] Implemented task/representation, run contracts, explicit validity and edit boundaries.
+- [x] Real full-song execution and actual frozen-outline history control.
+- [x] Manuscript skeleton with methods, primary neighboring work and supported development numbers.
+- [ ] Verified v17 baseline and edit tables; retain failures/session caveats.
+- [ ] Matched direct-generation baseline and cost/permission description.
+- [ ] Actual independent quality/semantic reviews with calibration and disagreements.
+- [ ] Frozen, source-isolated test collection and decoding-variability analysis.
+- [ ] Related-work expansion and a final supported novelty statement.
+- [ ] Final venue format, author information, consent/release policy and claim audit.
+
+## Primary Sources Checked for Positioning
+
+1. *Music-to-Dance Generation via Atomic Movements*, arXiv:2607.13978. Abstract/primary HTML checked for symbolic atomic movement planning and completion.
+2. *CustomDance: Customized 3D Dance Generation with Coarse-to-Fine Human-Centered Interactive Control*, arXiv:2608.06722. Primary HTML checked for multimodal music analysis, JSON anchor/cue planning, phrase authoring and local motion editing.
+3. *DanceEditor: Towards Iterative Editable Music-driven Dance Generation with Open-Vocabulary Descriptions*, arXiv:2508.17342. Primary paper excerpt checked for iterative music/text-conditioned dance editing.
+
+This list is an initial positioning set, not an exhaustive survey. Populate full bibliographic metadata from original records during manuscript formatting; do not invent author lists or publication venues.

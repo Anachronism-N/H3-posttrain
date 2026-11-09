@@ -285,6 +285,46 @@ python -m choreobench check-review-issues \
 
 v14复用原六方案验证新页面导出与原件校验，新增模型调用0、实际观察/评分提交0。浏览器中的问题示例明确标为软件探针并丢弃，不作人评或质量数据；两位实际匿名ID仍按用户选择稍后提供。验收见[第19节](VALIDATION_20261104.md#19-结构化时间观察与独立原件-v14)。
 
+## 已审阅范围与问题并集
+
+独立review_ranges.v1原件与观察文件配合使用，不在reviews.v1或review_issues.v1中加入未知字段。结构如下（仅为格式草稿，不是已登记人员或已审阅原件）：
+
+~~~json
+{
+  "schema": "choreobench.review_ranges.v1",
+  "pack_sha256": "REPLACE_WITH_OBJECT_SHA_OF_PUBLIC_PACK",
+  "issues_file_sha256": "REPLACE_WITH_BYTE_SHA_OF_ORIGINAL_ISSUES_JSON",
+  "records": [{
+    "review_id": "REPLACE_WITH_PUBLIC_REVIEW_ID",
+    "item_sha256": "REPLACE_WITH_ITEM_SHA",
+    "reviewer_id": "REPLACE_WITH_ACTUAL_ANONYMOUS_OBSERVER_ID",
+    "origin": "human",
+    "model_id": null,
+    "audio_seen": false,
+    "checked_types": ["unintended_repeat", "reasonable_recurrence", "ambiguous_action", "overdense_action", "abrupt_transition", "uncertain"],
+    "ranges": []
+  }]
+}
+~~~
+
+ranges必须由评审者实际查看后填写原音频整数采样半开区间，不自动预填全曲。明确声明检查过哪些类型；加入music_mismatch必须听取音频并在范围/观察原件中保持相同audio_seen声明。该声明不认证观看或听音。原问题文件的字节SHA发生变化需另立新绑定，不能将另一版观察原件静默合入已有审阅范围。
+
+~~~bash
+python -m choreobench analyze-review-ranges \
+  --public /runs/review/public/pack.json \
+  --issues /runs/review/original-issues.json \
+  --ranges /runs/review/observer-a-ranges.json /runs/review/observer-b-ranges.json \
+  --out /runs/review/range-diagnostics.json
+~~~
+
+一份问题原件可含多位独立观察者；范围文件可多个，但同observer/item不得重复，origin/model版本不能变化。多个问题原件需各自分析保留来源，不自动混成共识。缺整位参加者仍要由预登记名册核对，范围接口不能自己猜应有人数。
+
+逐观察者统计A为已审区间并集，U为某类型问题区间并集，诊断为|A∩U|/|A|。保留原问题文本和范围，不将相隔两个相似动作之间的整段填成问题；超出审阅范围的片段计入outside_reviewed_samples说明，统计只取实际交集。缺范围记录、缺问题记录或|A|=0为null；未勾选checked_types的维度仍null。显式空issues加正的已审范围可给出零“声明问题”比例，不证明该方案没有问题。
+
+合理主题回归和uncertain分别报告，不算病理重复或major。每种major各算并集；只有全部问题类型被声明检查时才给all_major_problem_union，类型之间重叠不重复计时。未知范围不自动当正确，不同评审范围不合并，不生成总体分数/排名或置信区间。短暂严重问题仍应阅读原件，不能仅按受影响时长判优。
+
+原九计划与六编辑包本轮仍为零实际审阅/观察提交；软件合成校准使用预选事件的虚拟区间，只检验算术和格式，不是对真实动作的质量判断。实际三首计划、页面和评分不变，验收见[第25节](VALIDATION_20261104.md#25-已审阅范围与问题区间诊断-v20)。
+
 ## 推进次序与资源
 
 1. 用已有v11六方案完成听音与评分导入。共享大纲导出与两组真实内容控制已经完成，不必原样重跑。CPU、原工件和评审者即可，不占推理GPU。

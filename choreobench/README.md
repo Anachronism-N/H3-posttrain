@@ -371,7 +371,7 @@ python -m choreobench.review_server \
 
 `review-page`只读取匿名公开包，可选`--planning-music /data/anonymous-planning-music.json`提供原采样时钟下的匿名song_id→music完整映射，作为独立辅助视图；不改评分包或要求私有绑定。生成器总是嵌入新空评分模板，不读已填写评分/名册/音频，不调用模型或上传。输入字段、计划时钟和音频相对assets路径严格检查，JSON的`<`安全转义；已有HTML拒绝覆盖，使用新输出/目录，不能删除评分工件来重建。生成报告含包/页面/辅助输入SHA与项目数，不是质量或音频身份验收。
 
-页面另有手动“结构化时间观察”与独立`review-issues.json`导出，原`reviews.v1`不增加字段。点击事件只填整数采样点/公开ID，不自动判错；合理主题回归及无法判断分别记录，空列表不表示无问题。组织者可运行`python -m choreobench check-review-issues --public /runs/review/public/pack.json --issues /runs/review/review-issues.json --out /runs/review/issues.checked.json`检查包/项目SHA、原样本半开范围、每个事件相交和声明来源；它不认证音乐判断、名册完成或产生分数。详见[执行说明](docs/HISTORY_CONTROL_20261106_zh.md#结构化时间观察与独立原件)。
+页面另有手动“结构化时间观察”与独立`review-issues.json`导出，原`reviews.v1`不增加字段。点击事件只填整数采样点/公开ID，不自动判错；合理主题回归及无法判断分别记录，空列表不表示无问题。组织者可运行`python -m choreobench check-review-issues --public /runs/review/public/pack.json --issues /runs/review/review-issues.json --out /runs/review/issues.checked.json`检查包/项目SHA、原样本半开范围、每个事件相交和声明来源；它不认证音乐判断、名册完成或产生分数。详见[执行说明](docs/HISTORY_CONTROL_20261106_zh.md#结构化时间观察与独立原件)。另有`analyze-review-ranges --public PACK --issues ISSUES --ranges RANGES --out REPORT`，从单独审阅原件统计已审范围内问题区间并集；原件绑定issues文件字节SHA并列明checked_types。未审/缺记录/未检查类型为NA，合理回归与未知单列，不把空列表或零比例判为质量合格。完整字段见[合同](CONTRACT.md#reviewed-time-interval-diagnostics)。
 
 页面提供四维评分锚点、公开事件ID/样本范围评论、同歌统一音频及导出；编辑方案显示公开指令/原计划，生成方案两个edit评分禁用。若填音乐分却无本人听音声明，导出被阻止；勾选不证明实际听音。可选仓库浏览器回归需已安装Playwright/Chromium，不自动下载安装或填分。
 

@@ -313,6 +313,11 @@ def build_parser():
     issues.add_argument("--public", required=True, type=Path)
     issues.add_argument("--issues", required=True, type=Path)
     issues.add_argument("--out", required=True, type=Path)
+    ranges = sub.add_parser("analyze-review-ranges", help="Report declared problem interval unions within explicitly reviewed scope; no quality scoring")
+    ranges.add_argument("--public", required=True, type=Path)
+    ranges.add_argument("--issues", required=True, type=Path)
+    ranges.add_argument("--ranges", required=True, nargs="+", type=Path)
+    ranges.add_argument("--out", required=True, type=Path)
     page = sub.add_parser("review-page", help="Build a blank-rating HTML page from an anonymous public pack; no models or uploads")
     page.add_argument("--public", required=True, type=Path)
     page.add_argument("--out", required=True, type=Path)
@@ -518,6 +523,9 @@ def dispatch(args):
     elif cmd == "check-review-issues":
         from .review_issues import check_review_issues
         _emit(check_review_issues(args.public, args.issues), args.out)
+    elif cmd == "analyze-review-ranges":
+        from .review_ranges import analyze_review_ranges
+        _emit(analyze_review_ranges(args.public, args.issues, args.ranges), args.out)
     elif cmd == "review-page":
         from .review_page import generate_review_page
         _emit(generate_review_page(args.public, args.out, args.planning_music))

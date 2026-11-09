@@ -41,6 +41,39 @@ def material(tmp_path, semantic=True):
 def save(path,value):write_json(path,value,overwrite=True)
 
 
+def bind_second_dataset(tmp_path, paths, grouping, reverse=False):
+    declaration=read_json(paths[0]);dataset=read_json(tmp_path/'dataset.json')
+    dataset['dataset_id']='second-dataset';dataset['grouping']=copy.deepcopy(grouping)
+    second=tmp_path/'second.dataset.json';write_json(second,dataset)
+    declaration['tasks'][1]['dataset']=dict(path=second.name,sha256=file_sha(second))
+    if reverse:declaration['tasks'].reverse()
+    save(paths[0],declaration)
+    attempts=read_json(paths[1]);attempts['inventory_sha256']=file_sha(paths[0]);save(paths[1],attempts)
+
+
+@pytest.mark.parametrize('reverse',[False,True])
+@pytest.mark.parametrize('grouping',[
+    dict(status='reviewed',evidence='Declared source grouping audit'),
+    dict(status='unverified',evidence='Different grouping evidence declaration'),
+])
+def test_same_song_conflicting_dataset_grouping_rejected_in_either_task_order(tmp_path,reverse,grouping):
+    paths=material(tmp_path)
+    bind_second_dataset(tmp_path,paths,grouping,reverse)
+    with pytest.raises(ValueError,match='inconsistent dataset grouping declarations'):
+        inventory.audit_edit_inventory(*paths)
+
+
+@pytest.mark.parametrize('reverse',[False,True])
+def test_same_song_multiple_datasets_with_equal_grouping_accepted(tmp_path,reverse):
+    paths=material(tmp_path);grouping=read_json(tmp_path/'dataset.json')['grouping']
+    bind_second_dataset(tmp_path,paths,grouping,reverse)
+    report=inventory.audit_edit_inventory(*paths)
+    assert report['song_count']==1 and report['task_count']==2 and report['expected_cells']==8
+    assert report['songs'][0]['grouping']==grouping
+    assert len({c['dataset_sha256'] for c in report['cells']})==2
+    assert sum(c['status']=='missing_attempt' for c in report['cells'])==4
+
+
 def test_multi_task_same_song_methods_and_seeds_preserve_missing_and_noop_pending(tmp_path):
     paths=material(tmp_path);report=inventory.audit_edit_inventory(*paths)
     assert report['task_count']==2 and report['song_count']==1 and report['expected_cells']==8 and report['recorded_attempts']==4

@@ -53,7 +53,7 @@ def audit_edit_inventory(inventory_path, attempts_path):
         raise ValueError('Inventory requires unique integer seeds')
     if not isinstance(inventory['tasks'], list) or not inventory['tasks']:
         raise ValueError('Inventory requires independent tasks')
-    tasks, songs = {}, {}
+    tasks, songs, song_groupings = {}, {}, {}
     for entry in inventory['tasks']:
         keys(entry, ('task_id', 'dataset', 'source_plan', 'task'), where='inventory task')
         text(entry['task_id'], 'task_id')
@@ -74,7 +74,11 @@ def audit_edit_inventory(inventory_path, attempts_path):
         signature = object_sha(song)
         if song['song_id'] in songs and songs[song['song_id']] != signature:
             raise ValueError('Same song ID has inconsistent original evidence')
+        grouping_signature = object_sha(dataset['grouping'])
+        if song['song_id'] in song_groupings and song_groupings[song['song_id']] != grouping_signature:
+            raise ValueError('Same song ID has inconsistent dataset grouping declarations')
         songs[song['song_id']] = signature
+        song_groupings[song['song_id']] = grouping_signature
         tasks[tid] = dict(task=task, before=before, song=song, dataset_sha256=entry['dataset']['sha256'],
             source_plan_sha256=object_sha(before), task_sha256=object_sha(task),
             grouping=copy.deepcopy(dataset['grouping']), synthetic=dataset['synthetic'])

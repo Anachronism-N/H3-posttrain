@@ -46,3 +46,7 @@ for execution order, resources, and remaining original-checkpoint integration.
 The [parallel harness / Captioner experiment decisions](notes/36_harness_captioner_parallel_experiments_20261109_zh.md)
 separate whole-song planning evaluation from local expert training, with independent
 acceptance criteria and a later controlled integration experiment.
+
+The [Captioner comparison and harness progress report](notes/37_captioner_comparison_and_harness_progress_20261110_zh.md)
+summarizes the evidence as of `c350213`, explains the running pipeline, and separates
+implemented controls from unverified model-quality claims.

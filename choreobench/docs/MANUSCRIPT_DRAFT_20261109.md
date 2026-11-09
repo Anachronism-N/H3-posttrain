@@ -146,7 +146,7 @@ Before adding test songs, freeze the selected hypothesis, prompts, menu, rubric,
 | Development song 2 | 78 | 78 | 26 | 0.75 s | 2/2 |
 | Development song 3 | 68 | 69 | 23 | 1.5 s | 2/2 |
 
-All three pairs satisfy actual shared-outline/common-input control. Main selects the maximum three events in 75/76 units; no-history does so in 76/76. All complete scores cover the canonical duration under the supplied schedule constraint. Action and track sequences differ in all pairs, while pure time boundaries differ only for song 3. This is evidence that an input intervention changes outputs under verified conditioning, not that history improves quality.
+All three pairs satisfy actual shared-outline/common-input control. Main selects the maximum three events in 75/76 units; no-history does so in 76/76. All complete scores cover the canonical duration under the supplied schedule constraint. Action and track sequences differ in all pairs, while pure time boundaries differ only for song 3. Outputs differ between the verified intervention arms; these single-run observations do not establish a stable causal effect or a quality benefit from history.
 
 | Arm | New calls | Input tokens | Output tokens |
 |---|---:|---:|---:|

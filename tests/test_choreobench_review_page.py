@@ -193,4 +193,4 @@ def test_page_cli_accepts_only_public_pack_and_optional_planning_music(tmp_path,
         from choreobench.cli import main
         assert main(['review-page'] + args) == 0
         assert main(['review-page'] + args) == 2
-    assert embedded(out.read_text())['pack'] == document
+    assert embedded(out.read_text(encoding='utf-8'))['pack'] == document

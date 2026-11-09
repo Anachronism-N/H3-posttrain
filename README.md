@@ -29,3 +29,11 @@ text-planner interfaces, strict edit checks, method-independent submission evalu
 and blinded review exchange. Formal datasets and real-model benchmark results are
 not bundled; see its [protocol](choreobench/docs/PROTOCOL_zh.md) and
 [server resource guide](choreobench/docs/RESOURCES_zh.md).
+
+## Music-to-caption training analysis (separate from ChoreoBench)
+
+[2026-11-09 中文训练复盘与下一阶段计划](notes/34_music_caption_analysis_20261109_zh.md)
+records the completed Qwen Captioner SFT experiments, closed-vocabulary action evaluation,
+JEV classification, measured training capacity/throughput, and proposed timestamp-free
+and short-audio mapping experiments. Its trainer references refer to `main@02f478a`;
+this documentation does not modify the ChoreoBench protocol, candidates or frozen results.

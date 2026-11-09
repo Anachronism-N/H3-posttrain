@@ -1,7 +1,8 @@
 """Fixed-source numeric snapshots; no generation, training, or acceptance by fiat."""
 import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
+import unicodedata
 import torch
 
 
@@ -12,9 +13,30 @@ def digest_tensor(value):
     return h.hexdigest()
 
 
+def _numeric_filename_id(value):
+    """Keep the original Unicode ID, but require one portable path component."""
+    if not isinstance(value,str) or not value or not value.strip():
+        raise ValueError('Numeric source id must be nonempty text for a portable filename component')
+    if value in ('.','..') or value.endswith('.') or value[-1].isspace():
+        raise ValueError('Numeric source id cannot be . or .. or end in a dot or whitespace')
+    if any(c in '<>:"/\\|?*' or unicodedata.category(c)=='Cc' for c in value):
+        raise ValueError('Numeric source id contains a path separator, reserved filename character or control character')
+    try:value.encode('utf-8')
+    except UnicodeError as error:raise ValueError('Numeric source id must be valid Unicode text') from error
+    if PureWindowsPath(value).is_reserved() or value.split('.')[0].rstrip(' ').upper()=='CLOCK$':
+        raise ValueError('Numeric source id is a reserved Windows device name')
+    return value
+
+
 def rows_from_manifest(path):
-    m=json.loads(Path(path).read_text())
+    m=json.loads(Path(path).read_text(encoding='utf-8'))
     if len(m['cases'])!=3:raise ValueError('Exactly three fixed source cases required')
+    seen=set()
+    for case in m['cases']:
+        identifier=_numeric_filename_id(case['target_source']['id'])
+        if identifier.casefold() in seen:
+            raise ValueError('Duplicate numeric source id under case-insensitive filename comparison')
+        seen.add(identifier.casefold())
     rows=[]
     for case in m['cases']:
         s=case['target_source'];audio=s['audio'];duration=audio['num_samples']/audio['sample_rate']

@@ -42,3 +42,7 @@ this documentation does not modify the ChoreoBench protocol, candidates or froze
 diagnostics and reversible target preparation for that analysis. See the
 [8a833c9 review and next experiments](notes/35_captionlab_experiments_20261109_zh.md)
 for execution order, resources, and remaining original-checkpoint integration.
+
+The [parallel harness / Captioner experiment decisions](notes/36_harness_captioner_parallel_experiments_20261109_zh.md)
+separate whole-song planning evaluation from local expert training, with independent
+acceptance criteria and a later controlled integration experiment.

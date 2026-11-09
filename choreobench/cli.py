@@ -297,6 +297,10 @@ def build_parser():
     for name in ("public", "private", "reviews"):
         review_import.add_argument("--" + name, required=True, type=Path)
     review_import.add_argument("--out", required=True, type=Path)
+    edit_inventory = sub.add_parser("audit-edit-inventory", help="Audit independent task/method/seed outcomes with missing cells retained")
+    edit_inventory.add_argument("--inventory", required=True, type=Path)
+    edit_inventory.add_argument("--attempts", required=True, type=Path)
+    edit_inventory.add_argument("--out", required=True, type=Path)
     issues = sub.add_parser("check-review-issues", help="Validate declared time observations against an unchanged public pack; no scoring")
     issues.add_argument("--public", required=True, type=Path)
     issues.add_argument("--issues", required=True, type=Path)
@@ -494,6 +498,9 @@ def dispatch(args):
     elif cmd == "review-import":
         from .reviews import import_reviews
         _emit(import_reviews(read_json(args.public), read_json(args.private), read_json(args.reviews)), args.out)
+    elif cmd == "audit-edit-inventory":
+        from .edit_inventory import audit_edit_inventory
+        _emit(audit_edit_inventory(args.inventory, args.attempts), args.out)
     elif cmd == "check-review-issues":
         from .review_issues import check_review_issues
         _emit(check_review_issues(args.public, args.issues), args.out)

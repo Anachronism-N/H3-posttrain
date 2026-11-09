@@ -1,6 +1,6 @@
 # From Music to Editable Scores: A Constraint-Aware Harness for Long-Form Choreography Planning
 
-**Working manuscript — 2026-11-09.** This is a submission-oriented draft, not a completed empirical paper. Numerical results below are limited to verified engineering/development experiments. No quality improvement, statistical significance, human-study result or first-of-its-kind claim is asserted. Authors, venue and final manuscript format remain unset. Square-bracketed experiment placeholders are not results.
+**Working manuscript — 2026-11-09.** Latest research direction is benchmark-first: task definitions, source-isolated task/annotation data, calibrated evaluation and baseline comparisons; the harness is a baseline, not the entire contribution. The present draft is still a method-oriented starting point. New nine-plan review material and task inventories do not constitute completed benchmark data or quality results. Refer to PROGRESS_20261109_zh.md for the current evidence boundary. This is a submission-oriented draft, not a completed empirical paper. Numerical results below are limited to verified engineering/development experiments. No quality improvement, statistical significance, human-study result or first-of-its-kind claim is asserted. Authors, venue and final manuscript format remain unset. Square-bracketed experiment placeholders are not results.
 
 ## Abstract
 

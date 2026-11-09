@@ -2,6 +2,20 @@
 
 2026-11-09审查起点为 `codex/music-choreo-benchmark` 的 `a6c761f`。本轮fetch与fast-forward核对确认该分支没有比上一轮更多的远端提交；工作重点是核实已有证据、修复遗漏的Windows测试问题，以及收束后续实验。以下服务器结果来自 [验收记录](VALIDATION_20261104.md) 第16、21、22节；本机未持有原v16/v17工件，因此核对的是代码、记录与汇总算术，不替代服务器原始日志复核。
 
+## 2026-11-09 服务器执行更新：H0材料与H2任务分母
+
+安全快进到9859c49。第一次fetch遇到并发更新远端引用，检查本地状态与已取得的新HEAD后ff-only合并，没有删除锁、强推或覆盖原工作区。实际阅读本文件、BENCHMARK_METRICS及notes/36后，执行顺序保持两条线独立：harness先评价已有输出，Captioner训练不在本轮范围；不能把新增CPU诊断模块当成权重恢复或已训练结果。
+
+本轮没有重跑原v17的79次模型调用，也未在缺H0质量信号时启动18次timing probe。已有v11 O+H、O无H与v17无O无H的三首共9份Plan，逐个核验原run contract/results/Plan SHA与dataset字节绑定，构造全新三case×三匿名方案包；实际公共音频、预测结构和源计划保持一致。旧两套六方案包与原评分未改，已有计划多次展示不算新增模型结果或独立样本。
+
+H0两种比较已按每个原逐歌dataset走零提交原件核验：O+H对O无H、O无H对无O无H，每次选两种条件、另七项目明确不在该分析范围。实际评分仍为0，不生成CI/赢家；同大纲历史对照与跨session的大纲/主题权限比较的因果限制继续保留。页面支持一次同歌展示三条件，评审原件应按新包SHA单独返回，不合并旧包ID或重复算同一计划的评分。
+
+H2第一项新增独立edit_inventory.v1/edit_attempts.v1与audit-edit-inventory：原dataset、私有任务和source Plan精确绑定，方法与seed来自独立库存，按task/method/seed而非song/method定位。保留所有缺失、已声明失败、非法返回、空patch/no-op、字面失败与语义待评格，结果嵌套在歌内。旧review_analysis仍保持原接口，不通过把任务改成新歌/新方法绕过检查。实际复用v17三任务×editor/no-op六格全为机械有效但语义待评，no-op未预设语义失败；新增库存是事后审计，不冒称原试验之前已预登记。
+
+代码完整回归和实际九计划HTTP/Chromium及三编辑库存证据见[验收第23节](VALIDATION_20261104.md#23-最新规划执行九计划h0与多任务库存h2-v18)。本轮只核验/重新打包旧原件，没有生成新评分、动作或Captioner训练；任务级逐目标独立语义裁定文件、已审范围问题并集与正式来源隔离数据仍待实现/提供。
+
+**当前研究主线按benchmark定位收束：任务定义、独立数据/标注、评价校准和baseline比较为主，harness作为可复核baseline。** 稿件仍是早期方法草稿，新的任务分母工具/九计划页面不意味着benchmark已形成。接下来首先收实际听音/编辑语义评价，不为了填满矩阵追加旧三首推理；有具体时间问题后再决定预选9块/18调用的冻结前缀对照。
+
 ## 1 当前阶段与可以成立的结论
 
 | 工作 | 当前进度 | 可以成立的结论 |
@@ -52,11 +66,11 @@ python -X utf8=0 -m pytest -c choreobench/pytest.ini -q --tb=short tests/test_ch
 
 | 次序 | 最小交付 | 验收条件 |
 |---|---|---|
-| 1 | 独立冻结任务清单与多任务汇总 | 明确dataset/task/源计划/方法/seed身份；未入包、失败、无效、弃权、待评均保留；任务内配对后歌内汇总，旧dataset哈希约束不放宽 |
+| 1，v18已接通 | 独立冻结任务清单与多任务汇总 | audit-edit-inventory保留task/method/seed全分母、返回/失败/no-op/语义待评，按歌嵌套；原三任务审计通过，多任务多seed由软件反例验证，非真实扩大任务集 |
 | 2 | 独立语义裁定文件与联合编辑状态 | 绑定任务和before/after SHA，逐目标保存满足/部分/失败/未知及证据；已知失败优先，全部必要条件满足才成功；不能把整体4分自动当所有语义目标通过 |
 | 3 | 已审阅范围与校准统计 | 在明确审阅范围内逐评审算问题区间并集；空issues不当零错误，合理回归不当机械重复 |
 
-目前 [review_analysis.py](../review_analysis.py)以song+method唯一定位计划，同歌同方法的不同task/seed会被拒绝；review-design只检查已进入包的分配，不是独立任务库存。[evaluation.py](../evaluation.py)把语义目标保持pending是正确行为，需有实际独立判断才能接通新的联合成功，而不是改默认值使其通过。
+目前 [review_analysis.py](../review_analysis.py)以song+method唯一定位计划，同歌同方法的不同task/seed会被拒绝；review-design只检查已进入包的分配，不是独立任务库存；v18另增edit_inventory，旧review_analysis不放宽同歌多版本约束。[evaluation.py](../evaluation.py)把语义目标保持pending是正确行为，需有实际独立判断才能接通新的联合成功，而不是改默认值使其通过。
 
 这些扩展应采用新版本文件和汇总接口，兼容旧报告。已有评审无需等待它们；第一轮手工冻结任务库存并逐项核对即可。
 

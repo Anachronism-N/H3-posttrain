@@ -343,6 +343,19 @@ python -m choreobench export-candidates \
 外层选择/编辑继续使用独立文本服务，可一直部署；音乐结构结果和候选库可离线缓存，采集后局部专家服务可停止。无需为每次编舞重新启动NLF、MotionScript或H3。真实GPU性能、质量与高并发可靠性未在本地CPU测试中验收。
 
 
+## 多任务编辑库存（独立于评分包）
+
+同歌多编辑任务/多seed使用独立库存与尝试文件，不能通过换song_id或method_id规避评分接口。新入口不调用模型：
+
+~~~bash
+python -m choreobench audit-edit-inventory \
+  --inventory /runs/edit-study/inventory.json \
+  --attempts /runs/edit-study/attempts.json \
+  --out /runs/edit-study/audit.json
+~~~
+
+库存预先列出methods、seeds与任务的dataset/source_plan/task JSON文件及字节SHA；尝试按task_id/method_id/seed定位，returned绑定after/patch，failed保留错误，未提供的格仍missing。实际patch按原权限执行并与after精确比较，不将合法/空patch当目标语义通过。原任务、数据与源plan哈希和完整分母复核；task/seed结果保留在原歌内，无自动质量总分或CI。完整格式见[合同](CONTRACT.md#independent-multi-task-edit-inventory)。逐目标独立语义裁定与已审范围统计尚未接通，当前报告语义目标继续pending。
+
 ## 10. 内网公开盲评页面
 
 公开包生成后，可在launcher对应主机启动只读网页服务，不启动模型、不占GPU。服务仅提供index/pack/空评分模板/署名和pack绑定的音频白名单，不列目录，不提供private、任意文件路径或评分写入接口；音频支持HTTP Range拖动。评分在浏览器填写并导出JSON，按既有review-import导入，空评分始终pending。

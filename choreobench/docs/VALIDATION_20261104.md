@@ -554,3 +554,39 @@ no-op通过空operations在同source/task执行，保留事件与主题，但不
 原证据在仓库父目录choreobench_runs/20261109_submission_pilot_v17/：frozen_code/源快照、逐歌experiments预登记/运行contract/calls/results、三个冻结source/task/editor/noop原件、共同输入审计、成本汇总、两套review packs、page与实际Chromium回执、handoff.verified.private.json及资源停服证明。提交仅英文稿件与公开汇总，不上传音频、权重、实际私有名单/评分、内部地址或完整调用日志。
 
 **本轮交付英文方法初稿和两项真实pilot表，不交付未验证的质量判优。** 论文已有任务/表示/方法、相邻工作、历史对照/独立受约束基线、显式编辑保护与成本分析。下一步是独立听音和编辑目标评价、同权限直接全曲基线、量表/提示冻结后的来源隔离与重复解码，不以更多格式工具或原三首百分比制造发表结论。
+
+## 23. 最新规划执行：九计划H0与多任务库存H2 v18
+
+2026-11-09安全同步9859c4913889c0a9adba1e60d1713250178b80a1。该版本新增benchmark指标、harness/Captioner分工及CaptionLab冻结诊断工具。实际阅读PROGRESS_20261109_zh.md、BENCHMARK_METRICS_20261109_zh.md与notes/36后，按H0先评已有结果、H2先任务分母的顺序执行；不把CaptionLab软件跑通当成训练/权重恢复，也不重跑原三首79次调用填实验矩阵。
+
+### H0原件复用与新三条件页面
+
+逐个核对v11 O+H与O无H、v17无O无H的原run contract/results/Plan SHA以及原逐歌dataset字节，三首共9份原计划全部读取并重新构造一个独立匿名包。同一歌三个条件共用音频和公开预测音乐信息；旧Plan、两套v17评分包与实际评分原件不改。包重新匿名后review_id/pack SHA变化，原评分不能静默迁移；重复展示原计划不增加生成数或独立歌曲样本。
+
+新页每case三个方案，实际Chromium验收3case×3卡片、120秒共享音频seek与3条精确活动行、评分/原时间样本与事件ID评论跨case保留、9行JSON导出，无JS错误。临时浏览器评分丢弃未提交/导入；磁盘空模板仍null/audio_seen=false。实际HTTP原音频GET/HEAD/Range字节与SHA、private/非白名单404、POST405通过，没有新增评分写入路由。
+
+对每个原逐歌dataset分别检查O+H对O无H、O无H对无O无H，共6份分析：每份应有与存在Plan都是2格，实际评分0格，另七项目不属本次选择，比较not_requested且无结果/CI。3首×3条件×2人×4维将是72项维度评分，但尚未登记实际参与者，这个预算不是完成的人评。O+H/O无H为原同大纲输入对照，O无H/无O无H同时变化全局主题权限且跨session，仍不判稳定模块收益。
+
+### H2独立任务身份与完整分母
+
+新增edit_inventory.py及audit-edit-inventory主/模块CLI。库存原件独立定义methods、seeds及tasks，每个task绑定原dataset、source Plan及私有edit task JSON的字节SHA；任务必须匹配源Plan object SHA与原歌采样时钟。尝试原件以inventory字节SHA绑定，并用task_id/method_id/seed唯一定位returned或declared failed结果，returned绑定after和patch，缺失不从分母消失。未生成新任务来扩大真实样本，旧review_analysis保持原song/method接口，不通过伪造新song/method容纳多任务。
+
+returned patch按原权限实际执行并与after逐对象哈希比对；非法返回保留invalid_output、已声明失败保留declared_failed，未提交保留missing_attempt。空operations/no-op显式标记，不预设合理弃权或目标失败/成功；已知字面/约束失败优先为false，必要语义目标没有独立裁定仍null/pending。仅字面目标的pass不证明编舞质量，无任何目标时not_evaluable。源文件哈希漂移中止完整性审计，而不是伪称新模型失败。
+
+结果保留task/seed在原歌内的完整格和方法状态计数，不新增质量总分/CI；来源分组保持原声明，模型执行/失败真实性与事前登记未独立认证。实际复用v17三项低幅度任务、editor/no-op、seed7的6格，全部机械有效，3格无修改、6格语义待评，所有joint_success均null。库存在原实验后创建只作原件审计，不冒称原运行前已有独立预登记。
+
+### 软件与实际验收
+
+新库存31个软件回归，覆盖同歌两任务×两方法×两seed的8格（缺失4格仍保留）、已声明失败、非法patch/after、来源/时钟/身份/额外字段、哈希与执行中漂移、no-op已满足字面目标、不含目标、字面失败优先与双CLI独占报告。所有生成/评分fixture均合成，不是真实人评。
+
+已有编辑/评审/页面专项186 passed；新库存及旧编辑专项初版110 passed，后续两个反例纳入最终完整回归。最终CUDA_VISIBLE_DEVICES为空的CPU验收为 **ChoreoBench 965 passed、3 skipped、148 subtests passed**，3项跳过是该环境未装Playwright。九计划的实际独立浏览器验收另行执行，不能把跳过混为一次通过。
+
+最新独立CaptionLab CPU回归 **162 passed、35 subtests passed**，仅确认其已有软件没有被harness修改影响；未调用真实factory、恢复30B权重、做音频条件诊断或训练。首轮未屏蔽CUDA的CaptionLab软件测试提示fork_rng可能初始化可见CUDA设备，日志保留；最终显式屏蔽CUDA重验，不将这次软件测试说成GPU推理性能验收。未部署新推理模型或训练任务，当前该节点8卡每卡约975MiB holder。
+
+首个旧回归命令误引用不存在的test_choreobench_edit_runner.py而没有运行测试，原错误保留；改用实际edit_eval后186项通过，不把文件名失败算模型实验失败。新增源码、原9计划/3任务/6编辑格、原样本音频、包/HTML/空模板及两种比较的来源联合核验通过，实际质量分数仍0。
+
+### 交付和未完成项
+
+原工件在仓库父目录choreobench_runs/20261109_harness_evaluation_v18/：不可变旧源SHA清单、九计划新公开包及私有绑定、六份零评分分析、三任务独立库存/尝试原件、原/最终库存报告、实际浏览器回执、handoff.verified.private.json、隔离CPU回归及初次失败日志。公开仓库只上传模块/回归与执行说明，不上传原音频、私有任务/名单/裁定或内部地址。新增音乐/大纲/规划模型调用0；没有修改/恢复原v11/v17生成。
+
+H0实际听音/质量评价仍需组织者提交原件。H2这里只接通第一项库存身份与分母；独立逐目标语义裁定与联合编辑状态、明确已审范围的错误区间统计仍待后续，不将所有4分转成语义通过。H1 timing最多18次局部探针需H0时间问题信号与冻结前缀/外部排程入口，本轮没有实现或上卡。Captioner按C0/C1独立推进，不以harness回归替代训练判断；当前论文主线为benchmark任务/数据/校准与baseline证据，九计划页面和多任务工具不是正式benchmark完成证明。

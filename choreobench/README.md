@@ -26,6 +26,8 @@ hierarchical 按导入的段落生成；run-harness 保留候选选择/来源编
 
 完整协议：[PROTOCOL_zh.md](docs/PROTOCOL_zh.md)。资源：[RESOURCES_zh.md](docs/RESOURCES_zh.md)。相关工作：[RELATED_WORK.md](docs/RELATED_WORK.md)。精确数据合同：[CONTRACT.md](CONTRACT.md)。
 
+整曲编舞与局部编辑的主指标、重复/变奏评价、指标校准集、标注规模与实现次序见 [评价指标与Benchmark方案](docs/BENCHMARK_METRICS_20261109_zh.md)。这是评价设计，不代表已完成标注、指标校准或正式排行榜。
+
 ## 1. CPU 上先验收软件
 
 以下命令均在仓库根目录执行。核心 smoke 不需要 torch、CUDA、API 密钥或模型权重；输出目录必须是新目录。

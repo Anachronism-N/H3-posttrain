@@ -4,7 +4,7 @@
 
 ## Abstract
 
-Music-conditioned dance systems often deliver motion or video, while an author may first need an interpretable score that specifies what to do, when to do it, and which parts can be revised. We investigate long-form music-conditioned choreography planning as the generation of an editable, open-vocabulary event score rather than a measured motion sequence. Our harness separates local audio-conditioned movement proposals, whole-song motif design, causal block composition, and deterministic constraint execution. The representation uses a canonical audio clock, explicit body scopes, motif references, and scoped field edits; private evaluation targets are not exposed to generators. We distinguish mechanically verifiable validity from musical and choreographic quality. In a three-song development study, six complete scores pass structural checks, and a frozen-outline history comparison verifies identical shared conditioning while retaining all requests and costs. An additional independent-block baseline and scoped-edit pilot are specified to test whether planning contributes beyond decoder constraints. The current experiments establish executable, auditable workflows, but do not yet establish perceptual quality gains. We identify a concrete limitation of near-equal scheduling menus and outline a held-out evaluation of musical relevance, long-range organization, edit satisfaction and preservation. This draft treats a successful system trace as necessary evidence of execution, not sufficient evidence of effective choreography.
+Music-conditioned dance systems often deliver motion or video, while an author may first need an interpretable score that specifies what to do, when to do it, and which parts can be revised. We investigate long-form music-conditioned choreography planning as the generation of an editable, open-vocabulary event score rather than a measured motion sequence. Our harness separates local audio-conditioned movement proposals, whole-song motif design, causal block composition, and deterministic constraint execution. The representation uses a canonical audio clock, explicit body scopes, motif references, and scoped field edits; private evaluation targets are not exposed to generators. We distinguish mechanically verifiable validity from musical and choreographic quality. In a three-song development study, six complete scores pass structural checks, and a frozen-outline history comparison verifies identical shared conditioning while retaining all requests and costs. A matched-schedule independent-block baseline also completes all three songs, showing that validity and coverage alone do not isolate a planning benefit. A three-task scoped-edit pilot changes each selected action while preserving all other event fields and exactly recovering the source through undo. The current experiments establish executable, auditable workflows, but do not yet establish perceptual quality gains. We identify a concrete limitation of near-equal scheduling menus and outline a held-out evaluation of musical relevance, long-range organization, edit satisfaction and preservation. This draft treats a successful system trace as necessary evidence of execution, not sufficient evidence of effective choreography.
 
 **Final abstract action:** replace development-only wording with the actual supported main-study findings after frozen-baseline evaluation and independent review; retain negative/neutral results and do not claim professional physical execution from text scores.
 
@@ -20,7 +20,7 @@ Our study asks: **What does explicit whole-song planning and causal composition 
 
 1. **Task and representation:** an auditable music-conditioned, long-form score with explicit event timing, body scopes and local edit permissions. This representation is implemented. Its practical value relative to existing authoring representations still needs evaluation.
 2. **Constraint-aware execution:** separation of local musical proposals, whole-song design, causal composition and mechanical validation, with immutable traces and explicit failure accounting. Real development executions are available.
-3. **Controlled analysis:** a frozen-outline comparison that removes generated-outline variation from the history intervention, plus matched scheduling controls and scoped-edit/no-op calibration. History execution is verified; independent-block and edit pilot outcomes are reported below when complete. No perceptual advantage is assumed.
+3. **Controlled analysis:** a frozen-outline comparison that removes generated-outline variation from the history intervention, plus matched scheduling controls and scoped-edit/no-op calibration. History execution and all three new independent-block/scoped-edit pilots are verified. No perceptual advantage is assumed.
 
 The final paper should retain only contributions supported by experiments and related-work distinctions. Logging, JSON syntax and the number of unit tests are reproducibility mechanisms, not standalone claims of scientific novelty.
 
@@ -116,9 +116,9 @@ The shared local collection contains 278 base audio-model calls. Whole-song comp
 |---|---|---|---|---|---|
 | Main | Shared | Frozen/imported | Yes | Yes | Verified historical v11 |
 | No-history | Shared | Same frozen content | No | Yes | Verified v11 controlled pair |
-| Independent constrained blocks | Shared | No | No | Yes | v17 selected real execution; results pending below |
+| Independent constrained blocks | Shared | No | No | Yes | Verified v17 three-song development pilot |
 | Direct full-song prompt | Same permitted observations to be specified | Native prompt behavior | Not causal blocks | Must specify equivalent permissions | Earlier prototype exists; matched main-study comparison pending |
-| Scoped editor / no-op | Same source score and task | Source motifs unchanged | Source score | Original event times protected | v17 three-task pilot; semantic review pending |
+| Scoped editor / no-op | Same source score and task | Source motifs unchanged | Source score | Original event times protected | Verified v17 patch/preservation/undo; semantic review pending |
 
 The independent-block baseline tests the joint contribution of global design and committed history, not a pure history intervention. It also removes motif definitions and associated IDs. We will not rank motif-count differences as quality. Its v17 execution is compared descriptively with immutable v11 scores; service sessions differ and model stochasticity is not eliminated. A final main study needs contemporaneous repeated runs, explicit input equality where applicable and cost-aware reporting.
 
@@ -157,25 +157,33 @@ The history input incurs additional context. A cheaper no-history variant may be
 
 ### 6.2 Independent-block baseline (v17)
 
-**PENDING REAL EXECUTION:** replace the table after verification, including all three predeclared songs and any failures. Do not copy fixture values or infer perceptual quality from validity.
+The selected independent-block arm completes all three predeclared songs, with no recorded model failures or unknown outcomes. Every actual request omits generated whole-song design and committed history. The reused v11 main and the new arm have identical candidate/music observations, unit menus, block seeds/output caps and nine audited generation-core module hashes. No baseline outline call is made.
 
 | Recording | Complete valid baseline | Events | Calls | Coverage | Independent quality |
 |---|---|---|---|---|---|
-| Development song 1 | [PENDING] | [PENDING] | [PENDING] | [PENDING] | Not submitted |
-| Development song 2 | [PENDING] | [PENDING] | [PENDING] | [PENDING] | Not submitted |
-| Development song 3 | [PENDING] | [PENDING] | [PENDING] | [PENDING] | Not submitted |
+| Development song 1 | 1/1 | 81 | 27 | 1.0 | Not submitted |
+| Development song 2 | 1/1 | 78 | 26 | 1.0 | Not submitted |
+| Development song 3 | 1/1 | 69 | 23 | 1.0 | Not submitted |
+
+The independent baseline chooses three events in all 76 units, emits no motif definitions and uses only null motif references. It consumes 226,520 input and 34,741 output tokens across 76 new calls. This valid baseline is a useful control: complete coverage and validity cannot establish that the global/causal machinery improves choreography. Its lower input burden is a cost observation, not a quality preference.
 
 **Comparison caveat:** immutable v11 main was executed in a previous service session. The baseline is matched in observations, planning units, schedule family and declared decoding caps, but is not a concurrent repeated causal comparison. Relevant planner implementation bytes and inputs are audited explicitly.
 
 ### 6.3 Scoped-edit/no-op pilot (v17)
 
-**PENDING REAL EXECUTION:** one first-event low-energy instruction per development song, selected before generation without inspecting new outputs. Protect timing, track, motif/state fields and all other events. No-op keeps events unchanged; an unchanged unmet instruction is not semantic success. The editor's lower-energy content still needs independent review even when a different action string is emitted.
+One first-event low-energy instruction per development song is frozen before generation without inspecting new outputs. Protect timing, track, motif/state fields and all other events. All three editor attempts return a valid, non-abstaining action replacement; checks verify preservation of every other event field and exact undo. No-op keeps events unchanged; an unchanged unmet instruction is not semantic success. The replacement content still needs independent review even when a different action string is emitted.
 
 | Task | Editor returns valid patch | Non-target fields preserved | Exact undo | Semantic satisfaction | No-op target satisfaction |
 |---|---|---|---|---|---|
-| Song 1, first event | [PENDING] | [PENDING] | [PENDING] | Not reviewed | Not reviewed; not presumed successful |
-| Song 2, first event | [PENDING] | [PENDING] | [PENDING] | Not reviewed | Not reviewed; not presumed successful |
-| Song 3, first event | [PENDING] | [PENDING] | [PENDING] | Not reviewed | Not reviewed; not presumed successful |
+| Song 1, first event | Yes | Exact | Exact | Not reviewed | Not reviewed; not presumed successful |
+| Song 2, first event | Yes | Exact | Exact | Not reviewed | Not reviewed; not presumed successful |
+| Song 3, first event | Yes | Exact | Exact | Not reviewed | Not reviewed; not presumed successful |
+
+The editor uses three new requests, 38,053 input tokens and 1,207 output tokens; the no-op control uses no model call. Overall v17 costs are 79 calls, 264,573 input and 35,948 output tokens, with zero new audio/outline calls. Historical main, outline and audio collection costs remain separate.
+
+Selected first-event examples retain the source duration: song 1 changes wording from sharp/staccato lifts and hip drops toward “small, in-place steps” and “gentle, relaxed arm movements”; song 3 replaces percussive stomps/downward strikes with small steps, gentle arms and a soft torso sway. These are inspectable text differences, not independent judgments that the target, musical relevance or physical feasibility is satisfied. The second replacement still includes a low crouch/subtle knee lifts, illustrating why string change or soft-energy vocabulary cannot replace semantic review.
+
+Separate blinded three-case packages contain six main/baseline plans and six editor/no-op plans, with the public source and instruction shown for edits. HTTP/audio ranges and actual browser interactions are verified; temporary browser test grades are discarded and all submitted human ratings remain absent.
 
 ### 6.4 Scheduling expressivity diagnostic (v16)
 
@@ -208,7 +216,7 @@ We formulate music-conditioned choreography planning as an editable, auditable t
 - [x] Implemented task/representation, run contracts, explicit validity and edit boundaries.
 - [x] Real full-song execution and actual frozen-outline history control.
 - [x] Manuscript skeleton with methods, primary neighboring work and supported development numbers.
-- [ ] Verified v17 baseline and edit tables; retain failures/session caveats.
+- [x] Verified v17 baseline and edit tables; session caveats retained; semantic ratings still absent.
 - [ ] Matched direct-generation baseline and cost/permission description.
 - [ ] Actual independent quality/semantic reviews with calibration and disagreements.
 - [ ] Frozen, source-isolated test collection and decoding-variability analysis.

@@ -582,3 +582,38 @@ def test_real_review_pack_cli_binds_original_and_revision_including_retained_fai
         pending = import_reviews(public, bindings, dict(schema="choreobench.reviews.v1",
             pack_sha256=object_sha(public), reviews=[]))
         assert pending["pending_item_count"] == 2
+
+
+
+def test_diagnosis_decoder_bound_and_sample_clock_instruction(world,tmp_path):
+    world.diagnosis(tmp_path/'bounded')
+    request=next(q for _,q in world.calls if q['response_kind']=='revision_diagnosis')
+    schema=request['response_schema']
+    assert schema['properties']['issues']['maxItems']==min(8,len(world.plan['events']))
+    assert schema['properties']['issues']['items']['properties']['reason']['maxLength']==400
+    assert 'seconds = samples / sample_rate' in request['messages'][0]['content']
+    assert 'Equal adjacent end/start is a valid' in request['messages'][0]['content']
+
+
+def test_collector_rejects_excessive_diagnosis_even_if_backend_ignores_schema(world,tmp_path):
+    world.issues[0]['reason']='x'*401
+    with pytest.raises(ValueError,match='400-character'):
+        world.diagnosis(tmp_path/'too-long')
+    result=read_json(tmp_path/'too-long/results.json')
+    assert not result['complete'] and result['calls_used']==1
+
+
+@pytest.mark.parametrize('claim',['at 640ms','at 640 milliseconds','at 0.04 seconds','at 2s','on the downbeat at 54400','at 37440 samples'])
+def test_new_numeric_prose_onsets_rejected_without_retiming(world,claim):
+    before=copy.deepcopy(world.plan);after=copy.deepcopy(before);eid=before['events'][0]['event_id']
+    after['events'][0]['action']+=' '+claim
+    with pytest.raises(ValueError,match='precise timing literal'):
+        revision._no_new_timing_literals(before,after,eid)
+
+
+def test_existing_literal_and_non_temporal_counts_are_not_new_retiming(world):
+    before=copy.deepcopy(world.plan);eid=before['events'][0]['event_id'];before['events'][0]['action']+=' over 2 seconds'
+    after=copy.deepcopy(before);after['events'][0]['action']+=' with 3 small steps'
+    revision._no_new_timing_literals(before,after,eid)
+    after['events'][0]['action']+=' over 2 seconds'
+    revision._no_new_timing_literals(before,after,eid)

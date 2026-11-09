@@ -1,10 +1,12 @@
-# From Music to Editable Scores: A Constraint-Aware Harness for Long-Form Choreography Planning
+# ChoreoBench: Auditable Music-to-Text Choreography Planning and Bounded Revision
+
+*Preliminary task-and-baseline manuscript. Empirical benchmark quality calibration and held-out evaluation remain incomplete.*
 
 **Working manuscript — 2026-11-09.** Latest research direction is benchmark-first: task definitions, source-isolated task/annotation data, calibrated evaluation and baseline comparisons; the harness is a baseline, not the entire contribution. The present draft is still a method-oriented starting point. New nine-plan review material and task inventories do not constitute completed benchmark data or quality results. Refer to PROGRESS_20261109_zh.md for the current evidence boundary. This is a submission-oriented draft, not a completed empirical paper. Numerical results below are limited to verified engineering/development experiments. No quality improvement, statistical significance, human-study result or first-of-its-kind claim is asserted. Authors, venue and final manuscript format remain unset. Square-bracketed experiment placeholders are not results.
 
 ## Abstract
 
-Music-conditioned dance systems often deliver motion or video, while an author may first need an interpretable score that specifies what to do, when to do it, and which parts can be revised. We investigate long-form music-conditioned choreography planning as the generation of an editable, open-vocabulary event score rather than a measured motion sequence. Our harness separates local audio-conditioned movement proposals, whole-song motif design, causal block composition, and deterministic constraint execution. The representation uses a canonical audio clock, explicit body scopes, motif references, and scoped field edits; private evaluation targets are not exposed to generators. We distinguish mechanically verifiable validity from musical and choreographic quality. In a three-song development study, six complete scores pass structural checks, and a frozen-outline history comparison verifies identical shared conditioning while retaining all requests and costs. A matched-schedule independent-block baseline also completes all three songs, showing that validity and coverage alone do not isolate a planning benefit. A three-task scoped-edit pilot changes each selected action while preserving all other event fields and exactly recovering the source through undo. The current experiments establish executable, auditable workflows, but do not yet establish perceptual quality gains. We identify a concrete limitation of near-equal scheduling menus and outline a held-out evaluation of musical relevance, long-range organization, edit satisfaction and preservation. This draft treats a successful system trace as necessary evidence of execution, not sufficient evidence of effective choreography.
+Music-conditioned dance systems often deliver motion or video, while an author may first need an interpretable score that specifies what to do, when to do it, and which parts can be revised. We investigate long-form music-conditioned choreography planning as the generation of an editable, open-vocabulary event score rather than a measured motion sequence. Our harness separates local audio-conditioned movement proposals, whole-song motif design, causal block composition, and deterministic constraint execution. The representation uses a canonical audio clock, explicit body scopes, motif references, and scoped field edits; private evaluation targets are not exposed to generators. We distinguish mechanically verifiable validity from musical and choreographic quality. In a three-song development study, six complete scores pass structural checks, and a frozen-outline history comparison verifies identical shared conditioning while retaining all requests and costs. A matched-schedule independent-block baseline also completes all three songs, showing that validity and coverage alone do not isolate a planning benefit. A three-task scoped-edit pilot changes each selected action while preserving all other event fields and exactly recovering the source through undo. Real bounded-revision pilots further expose a truncated diagnostic and internally accepted timing claims that conflict with the fixed-time contract. The current experiments establish executable, auditable workflows and inspectable failure controls, but do not yet establish perceptual quality gains. We identify a concrete limitation of near-equal scheduling menus and outline a held-out evaluation of musical relevance, long-range organization, edit satisfaction and preservation. This draft treats a successful system trace as necessary evidence of execution, not sufficient evidence of effective choreography.
 
 **Final abstract action:** replace development-only wording with the actual supported main-study findings after frozen-baseline evaluation and independent review; retain negative/neutral results and do not claim professional physical execution from text scores.
 
@@ -98,7 +100,17 @@ The editor receives a public source score and a fixed permission-bearing instruc
 
 Mechanical preservation can be checked exactly. Whether a replacement actually reduces energy or improves a transition is a separate semantic judgment. The no-op control calibrates this distinction: it preserves everything while generally failing an unmet change request.
 
-### 4.5 Reproducibility and privacy
+### 4.5 Bounded music reinspection and revision
+
+We add a frozen-draft revision baseline without changing the initial generator or model weights. A text-only diagnostic pass proposes suspected event-level issues from the full score and public music predictions. Its output is shared by three conditions: targeted selection with music reinspection, matched-count random selection with reinspection, and targeted text-only revision. Selected event sets are fixed before revision and processed in original event order; no repaired output from one arm becomes another arm's input.
+
+For music reinspection, the base Omni observer receives only a complete 5.0625-second PCM excerpt and a fixed music-observation prompt. The window centers on the event midpoint and shifts at song edges without padding. It receives no choreography, diagnostic reason or private evaluation goal. Its response is fallible musical evidence, not a verified beat annotation. The text editor can change only one existing action field; event timing, body scope, motif, state objects and every other action stay fixed. A seeded anonymous A/B comparison by the same text model may accept the candidate, keep the source or return uncertainty. This is an internal selection policy, not an independent benchmark judge.
+
+For m selected events, listening arms allow up to 3m calls (listen, edit, compare); the text-only arm permits at most 2m. A no-op skips comparison, so equal caps need not mean equal actual cost. Empty diagnoses, no-ops, rejected candidates, truncated calls and unattempted events are all retained. Completion and acceptance are reported separately; weights are never updated and no RSI claim is made.
+
+The first real revision pilot exposed both a lengthy diagnostic that exhausted its output budget and a time-unit hallucination accepted by the internal judge. A new revision version limits the diagnosis to at most eight suspected events and 400 characters per reason in both decoder schema and controller. Prompts state that event/beat timestamps are samples and equal adjacent half-open boundaries are valid. An action-only candidate is rejected if it introduces a new recognized numeric seconds/millisecond literal absent from the source action. This narrow mechanical guard protects a fixed-time contract; it does not verify all language-level timing statements or certify existing source claims.
+
+### 4.6 Reproducibility and privacy
 
 Input bytes, code versions, model/configuration declarations and request/response journals are bound to independent runs. New code/configuration uses new directories; unknown outcomes are not silently retried. Public review packs omit private method mappings, goals and citations. Original review files, a declared allocation design and optional issue sidecars are kept separate. These controls constrain evaluation leakage, but they do not independently authenticate remote model tensors, reviewer identities or listening.
 
@@ -195,7 +207,47 @@ Separate blinded three-case packages contain six main/baseline plans and six edi
 
 These are representability/nearest-distance diagnostics, not a beat-synchrony score. Predicted beats are not audited ground truth, and text event cuts do not measure movement accents. With fixed unit endpoints, actual event count and minimum duration, 74/76 main units admit a different predicted-beat partition. The two infeasible units are retained. This identifies a testable limitation of the scheduling interface, not an evaluated replacement method.
 
-### 6.5 Failure analysis
+### 6.5 Real revision pilot and retained failures (v21)
+
+The pilot preselects the same three original main scores and m=1 per song. A single diagnosis is frozen per song, with no resampling after failure. Targeted/random have a listening cap of three calls and text-only two. All arms share the initial score, public music evidence and diagnosis; targeted/text-only share the event, while random samples from the complete source event inventory. The additional music channel has a different cost and is not an equal-cost treatment.
+
+| Development song | Diagnostic outcome | Targeted/listen | Random/listen | Targeted/text-only |
+|---|---|---|---|---|
+| 1 | Completed, 49 suspected items | Candidate internally accepted; 3 calls | No-op, 2 calls | Candidate internally accepted; 2 calls |
+| 2 | 4096-token truncation | Not attempted | Not attempted | Not attempted |
+| 3 | Completed, 18 suspected items | Internal uncertainty; source kept; 3 calls | No-op, 2 calls | Internal uncertainty; source kept; 2 calls |
+
+Actual v21 cost is 17 calls (three diagnoses, four audio observations and ten edit/comparison calls), 311,024 input and 12,767 output tokens. The failed diagnostic is included; the three unattempted song-2 conditions are not replaced by new targets or silently shown as successful original outputs. The package contains nine legal displayed plans from twelve predeclared slots, and the failure remains in the experiment inventory.
+
+A source timestamp of 640 samples at 16 kHz equals 40 ms. The song-1 accepted revision nevertheless appended a statement about 640 ms. Its text-only counterpart made the same unit error. In another selected issue, equal end/start boundaries were treated as evidence of an abrupt cut, although adjacency alone violates no score rule. These inspectable inconsistencies demonstrate that internal acceptance does not certify an improvement. The source score, suspect diagnostics, candidate texts and choice reasons remain available as separate traces. We neither report accepted_count as repair accuracy nor claim music reinspection outperforms random or text-only revision.
+
+Version v22 is an explicitly separate bounded-diagnosis/clock-guard deployment, not a hidden retry of the v21 failed song. All three songs are preselected again with the same one-event budget. Its actual execution results are recorded below only after verification, with v21 failures retained and costs not pooled as one successful run.
+
+### 6.6 Bounded-diagnosis revision deployment (v22)
+
+The separately frozen v22 pilot limits diagnoses to eight items/400-character reasons, explains sample units and valid adjacency, and guards recognized numeric seconds/millisecond additions to action prose. The original three songs are all preselected before its outputs. All three diagnoses finish with eight suspected items (940, 916 and 893 output tokens), and all nine revision-arm inventories are processed without a recorded model failure or additional repair sampling. Exact same-condition resumes add no new model calls.
+
+| Development song | Targeted/listen | Random/listen | Targeted/text-only | New calls including one shared diagnosis |
+|---|---|---|---|---:|
+| 1 | Internal uncertainty, original kept | No-op | Internal uncertainty, original kept | 8 |
+| 2 | Candidate internally accepted | No-op | Candidate internally accepted | 8 |
+| 3 | Internal uncertainty, original kept | No-op | Internal uncertainty, original kept | 8 |
+
+The full twelve-slot review package is present: one original plus three strategy outputs per song. Repeated originals are policy outcomes, not additional independent choreographies or successful repairs. All event times, body scopes, motifs, state fields and nonselected action/evidence fields remain unchanged. The observer receives complete 81,000-sample PCM windows; their bytes match the corresponding original slices. Six real music observations and eighteen text-model calls (including three shared diagnoses) constitute the 24-call v22 total.
+
+| v22 stage | Calls | Input tokens | Output tokens |
+|---|---:|---:|---:|
+| Shared diagnoses | 3 | 58,563 | 2,749 |
+| Targeted/listen | 9 | 158,759 | 2,403 |
+| Random/listen | 6 | 64,265 | 1,420 |
+| Targeted/text-only | 6 | 157,360 | 2,147 |
+| Total | 24 | 438,947 | 8,719 |
+
+The internal decisions do not establish a reinspection benefit: targeted/listen and text-only each accept one candidate, while the three random attempts are no-ops. More importantly, inspection of the accepted song-2 action reveals a remaining loophole. The listening candidate adds a bare numeric downbeat reference, and the text-only candidate adds a downbeat at sample 54,400 although the event ends at 52,000. The first guard recognized seconds/millisecond units, not unqualified beat timestamps. We therefore extend the narrow literal guard to explicit samples and bare numeric beat/onset/timestamp phrases. An offline replay of these two original candidates rejects both; this is deterministic guard validation, not a newly executed quality-improved model. The v22 result files and internal acceptance counts remain immutable.
+
+Across v21 and v22, 41 model calls consume 749,971 input and 21,486 output tokens, including ten new music observations. These are new revision costs, not a replacement for or repeated accounting of the historical local collection/main generation. No original full-song candidate collection or model training is repeated. We preserve the failed v21 diagnosis and unattempted arms, and do not pool the two protocol versions as one favorable effect estimate. Both revision packages pass actual browser/HTTP range checks and retain null human ratings.
+
+### 6.7 Failure analysis
 
 Early whole-song global variants reproduced concatenated content and hierarchical variants mainly changed motif labels. A later free-boundary grid pilot failed on body-scope overlap, and a time-first pilot failed on sub-minimum events. Full relational decoding solved those specific violations but produced low coverage; complete-unit menus restored contractual coverage while restricting timing freedom. These failures motivate decomposition and clearer control, but are not themselves evidence of semantic gains. Changed prompts/contracts are development revisions, not clean single-variable quality ablations.
 
@@ -217,6 +269,8 @@ We formulate music-conditioned choreography planning as an editable, auditable t
 - [x] Real full-song execution and actual frozen-outline history control.
 - [x] Manuscript skeleton with methods, primary neighboring work and supported development numbers.
 - [x] Verified v17 baseline and edit tables; session caveats retained; semantic ratings still absent.
+- [x] Real v21/v22 revision comparisons with targeted/random/text-only controls, retained failures, immutable internal decisions and an offline timing-guard recheck.
+- [x] Initial-writing evidence: task/representation, runnable baselines, original-vs-edit controls, bounded revision trace, costs and explicit limitations. This is not submission-ready evidence of benchmark quality or method superiority.
 - [ ] Matched direct-generation baseline and cost/permission description.
 - [ ] Actual independent quality/semantic reviews with calibration and disagreements.
 - [ ] Frozen, source-isolated test collection and decoding-variability analysis.

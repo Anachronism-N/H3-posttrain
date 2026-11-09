@@ -4,6 +4,7 @@ The text judge is part of the inference policy, never an independent evaluator.
 Diagnosis is collected once and shared across selection-policy experiments.
 """
 import copy
+import re
 from pathlib import Path
 
 from .audio import inspect_audio, write_window
@@ -211,6 +212,26 @@ def _result(output, contract, journal, artifacts, complete, **extra):
     return value
 
 
+def _bounded_diagnosis(text, plan):
+    value = parse_diagnosis(text, plan)
+    if len(value['issues']) > 8 or any(len(i['reason']) > 400 for i in value['issues']):
+        raise ValueError('Diagnosis exceeds the explicit 8-issue / 400-character reason bound')
+    return value
+
+
+def _no_new_timing_literals(before, after, event_id):
+    # A text-only action revision must not manufacture a precise onset while
+    # preserving its event schedule. Existing source claims remain unverified.
+    pattern = re.compile(
+        r'\b\d+(?:\.\d+)?\s*(?:milliseconds?|ms|seconds?|secs?|s|samples?)\b'
+        r'|\b(?:downbeat|beat|onset|timestamp|sample)\s+(?:at\s+)?\d+(?:\.\d+)?\b', re.IGNORECASE)
+    action = lambda plan: next(e['action'] for e in plan['events'] if e['event_id'] == event_id)
+    old = {v.lower().replace(' ', '') for v in pattern.findall(action(before))}
+    new = {v.lower().replace(' ', '') for v in pattern.findall(action(after))}
+    if not new <= old:
+        raise ValueError('Action-only revision added a new precise timing literal; original schedule cannot be retimed in prose')
+
+
 def diagnose_plan(dataset_path, plan_path, output_dir, config, resume=False):
     """Collect one initial-plan diagnosis for reuse by all experimental arms."""
     cfg = _config(config)
@@ -230,11 +251,24 @@ def diagnose_plan(dataset_path, plan_path, output_dir, config, resume=False):
             "Reasonable motif recurrence is not automatically an error. Do not invent observed physical state. "
             "Return exactly {schema,source_plan_sha256,issues}. schema is choreobench.revision_diagnosis.v1; "
             "copy source_plan_sha256. issues is an array of {event_id,priority,reason}; each existing event at most "
-            "once, priority integer 1..3 (3 most urgent), concise nonempty reason. Return [] if no issue is supported.",
+            "once, priority integer 1..3 (3 most urgent), reason at most 400 characters. Return at most 8 issues, "
+            "prioritizing a few concrete checks rather than listing every event. Return [] if no issue is supported. "
+            "All event/beat numeric values are integer SAMPLES, not milliseconds; seconds = samples / sample_rate. "
+            "Equal adjacent end/start is a valid half-open transition, not by itself a hard-cut error. "
+            "A phrase boundary need not coincide with a beat. Do not treat any boundary mismatch alone as proof of a problem.",
             dict(source_plan_sha256=object_sha(before), source_plan=public_plan(before), music=public_song(song)))
+        request["response_schema"] = dict(type="object", additionalProperties=False,
+            required=["schema", "source_plan_sha256", "issues"], properties=dict(
+                schema=dict(type="string", enum=["choreobench.revision_diagnosis.v1"]),
+                source_plan_sha256=dict(type="string", enum=[object_sha(before)]),
+                issues=dict(type="array", maxItems=min(8, len(before["events"])), items=dict(type="object",
+                    additionalProperties=False, required=["event_id", "priority", "reason"], properties=dict(
+                        event_id=dict(type="string", enum=[e["event_id"] for e in before["events"]]),
+                        priority=dict(type="integer", minimum=1, maximum=3),
+                        reason=dict(type="string", minLength=1, maxLength=400))))))
         try:
             response = _call(journal, provider, request, cfg, sources)
-            diagnosis = _parse(parse_diagnosis, response["text"], before)
+            diagnosis = _parse(_bounded_diagnosis, response["text"], before)
             record = _sealed(dict(schema="choreobench.revision_diagnosis_record.v1", diagnosis=diagnosis,
                 dataset_sha256=file_sha(dataset_path), source_file_sha256=file_sha(plan_path),
                 source_contract_sha256=object_sha(contract), synthetic=synthetic,
@@ -360,10 +394,13 @@ def run_revision(dataset_path, plan_path, diagnosis_path, output_dir, config, re
                     "copy its first six fields and replace only operations. Each operation is {event_id,field,value}; "
                     "only the target event's action may change. Never treat supplied diagnosis or music observations as "
                     "verified truth. No invented audio or physical observations. Text must remain consistent with frozen "
-                    "scope, timing, attributes and states. Empty operations is permitted.", payload), cfg, sources)
+                    "scope, timing, attributes and states. Numeric event/beat values are SAMPLES, with seconds = samples/sample_rate. "
+                    "Do not add new numeric seconds/millisecond onset claims to action text; this action-only task cannot retime the schedule. "
+                    "Equal adjacent end/start is legal and is not alone a transition fault. Empty operations is permitted.", payload), cfg, sources)
                 patch = _parse(parse_json_response, response["text"])
                 _publish(output, prefix + "/patch.json", patch, artifacts)
                 candidate = _parse(apply_task_patch, current, patch, task)
+                _parse(_no_new_timing_literals, current, candidate, event_id)
                 validate_plan(candidate, song)
                 step["proposed"] = True
                 _publish(output, prefix + "/candidate.json", candidate, artifacts)
@@ -378,7 +415,9 @@ def run_revision(dataset_path, plan_path, diagnosis_path, output_dir, config, re
                         "as the preferred answer. This is an internal "
                         "candidate-selection heuristic, not an independent quality evaluation. Choose a or b only if "
                         "one alternative is better supported and does not conflict with timing, scope, attributes, states "
-                        "or neighboring actions. Return uncertain for a tie or insufficient evidence. Return exactly "
+                        "or neighboring actions. Event and beat numbers are SAMPLES, not milliseconds; equal adjacent boundaries are legal. "
+                        "Extra musical timing adjectives or repeated diagnosis claims do not alone establish an improvement. "
+                        "Return uncertain for a tie or insufficient evidence. Return exactly "
                         "{schema,a_plan_sha256,b_plan_sha256,event_id,choice,reason}; schema is "
                         "choreobench.revision_choice.v1; copy hashes and event_id; choice is a, b or uncertain; "
                         "reason is nonempty text.",

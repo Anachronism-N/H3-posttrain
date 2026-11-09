@@ -356,6 +356,8 @@ python -m choreobench audit-edit-inventory \
 
 库存预先列出methods、seeds与任务的dataset/source_plan/task JSON文件及字节SHA；尝试按task_id/method_id/seed定位，returned绑定after/patch，failed保留错误，未提供的格仍missing。实际patch按原权限执行并与after精确比较，不将合法/空patch当目标语义通过。原任务、数据与源plan哈希和完整分母复核；task/seed结果保留在原歌内，无自动质量总分或CI。完整格式见[合同](CONTRACT.md#independent-multi-task-edit-inventory)。后续已接通`prepare-edit-semantics`/`analyze-edit-semantics`：显式匿名包到task/method/seed桥、逐目标pass/partial/fail/unknown、完整上下文审阅范围和硬失败优先。实际裁定未提交时仍pending；已审时间上的问题率统计尚未接通。格式与命令见[独立编辑语义合同](CONTRACT.md#independent-per-goal-edit-semantics)和[执行说明](docs/HISTORY_CONTROL_20261106_zh.md#独立编辑语义裁定)。
 
+初步论文草稿已加入真实有界修订实验：三策略共享原稿/诊断，回听是固定音乐观察，不是已训练Captioner或专家真值。新collector限制8项诊断/400字符理由，保护动作文字不增添可识别精确时间声明。原v21/v22失败和内部接受决定分别保留；accepted不是质量提升，详见[最新修订记录](../notes/39_bounded_music_reinspection_and_revision_20261110_zh.md)。
+
 ## 10. 内网公开盲评页面
 
 公开包生成后，可在launcher对应主机启动只读网页服务，不启动模型、不占GPU。服务仅提供index/pack/空评分模板/署名和pack绑定的音频白名单，不列目录，不提供private、任意文件路径或评分写入接口；音频支持HTTP Range拖动。评分在浏览器填写并导出JSON，按既有review-import导入，空评分始终pending。

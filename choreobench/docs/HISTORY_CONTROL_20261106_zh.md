@@ -213,6 +213,49 @@ python -m choreobench analyze-reviews \
 
 本轮在原六方案上只用明确标为软件探针的匿名ID及零提交原件检查48格完整分配与缺一维47/48；不是注册实际人员或产生人评。原评分、绑定、计划和页面均未改，详细回归与限制见[第20节](VALIDATION_20261104.md#20-完整评审设计核验-v15)。
 
+## 独立编辑语义裁定
+
+旧1–5分评分保留；一个整体4分不能转成多个编辑目标均通过。先将独立任务库存的task/method/seed格与现有匿名编辑包明确绑定，再让评审者逐目标记录。此接口不重跑编辑器、不改写任务或旧评分，也不向生成模型提供私有目标。
+
+组织者准备一个私有mapping文件：schema为choreobench.edit_semantic_mapping.v1，inventory_sha256和attempts_sha256分别为原库存/尝试文件字节SHA，pack_sha256为object_sha(public pack)。cells每行含review_id、task_id、method_id、seed；必须一对一覆盖所选编辑包全部项目。原包method标签可能与库存不同，需明确指定，程序不从名字猜对应关系。私有任务、source/after与dataset身份不一致直接拒绝。
+
+~~~bash
+python -m choreobench prepare-edit-semantics \
+  --inventory /runs/edit-study/inventory.json --attempts /runs/edit-study/attempts.json \
+  --public /runs/edit-review/public/pack.json --private /runs/edit-review/private/bindings.json \
+  --mapping /runs/edit-study/mapping.private.json --out-dir /runs/edit-semantic-review
+~~~
+
+输出requirements.json（匿名评价要求）、bridge.private.json（私有任务/方法/seed来源桥）、verdicts.template.json（空状态填写草稿）和verdicts.none-submitted.json（合法零提交原件）。已有输出目录拒绝覆盖。requirements保留原目标字符串、goal_index和目标object SHA；复合目标仍是原复合目标，不自动拆成多项或降低要求。原v17目标含机器标识式文字，评审需同时查看公开instruction中的具体要求；新任务由独立作者写清原目标，不能在评分后重写旧目标SHA。
+
+每项要求绑定匿名review_id/item/source_plan/after_plan SHA。评审按原音乐sample_rate填写整数半开[start,end)已审范围，并检查编辑范围与邻近动作；所需范围保守覆盖before/after的允许事件及最近前后相邻事件，不依据结果好坏缩短。空范围不等于已审，区间重叠按并集计算覆盖。这里仅检查评价范围充分性，不计算问题发生率。
+
+裁定原件schema为choreobench.edit_semantic_verdicts.v1，requirements_sha256是object_sha(requirements)，records每行包含：
+
+- review_id、item_sha256、source_plan_sha256、after_plan_sha256：从对应requirement精确复制；不能拿同名event的另一方案代替。
+- reviewer_id、origin、model_id：真实参与者的匿名声明；human的model_id必须null。模型裁判单独版本，不能冒充人评。
+- reviewed_ranges：评审声明已查看的整数样本范围列表，不是程序推定的观看记录。
+- goals：每行goal_index、goal_sha256、status、evidence；status必须pass/partial/fail/unknown，证据非空，无法判断也说明理由。
+- boundary：status、evidence，明确相邻动作/编辑边界判断；不是生物力学验证。
+- comments：原始文本说明。
+
+草稿默认status=null、证据空、身份占位，必须经实际评价填写后才能分析，不能将它直接导入假装人评。无人提交时使用独立records=[]原件，保留所有缺评项目。
+
+~~~bash
+python -m choreobench analyze-edit-semantics \
+  --inventory /runs/edit-study/inventory.json --attempts /runs/edit-study/attempts.json \
+  --requirements /runs/edit-semantic-review/requirements.json \
+  --bridge /runs/edit-semantic-review/bridge.private.json \
+  --verdicts /runs/edit-semantic-review/reviewer-a.json /runs/edit-semantic-review/reviewer-b.json \
+  --out /runs/edit-semantic-review/analysis.json
+~~~
+
+来源/目标/范围变化和重复记录被拒绝，原件SHA在分析结束复核。已知机械或字面失败优先；任意目标或boundary的fail/partial使该评审者联合状态为false。缺目标、unknown或已审范围不足保持null。全部必要目标和boundary明确pass、完整范围、无已知失败才是declared_joint_pass；没有目标不能靠boundary一项通过。结果是外部声明，不认证内容真伪或实际听音；多个评审意见分开保留，无自动多数票，也不把未登记额外分数填进缺评人名额。真实评审人数与完成率另按原名册设计检查。
+
+失败/未入包的任务格仍保留在库存，语义报告列出未表示格，不由合法编辑包反推实验分母。同一个评审者/项目在多文件重复会被拒绝；第三人仲裁另存原件单独分析，不覆盖原两位独立记录。初版只裁定原semantic_goals与局部boundary，独立保持事实目标的扩展、新来源任务和已审范围问题率仍需后续设计。
+
+本轮原三编辑×editor/no-op六项的匿名要求和空原件已实际准备/核验；没有生成真实判断或登记参与者。详见[验收第24节](VALIDATION_20261104.md#24-独立逐目标编辑裁定与匿名绑定-v19)。
+
 ## 结构化时间观察与独立原件
 
 页面的“结构化时间观察”用于记录具体时间问题，不替代四维评分。每次点击事件会填入其原音频整数采样起止点和公开event_id；评论仍保留。由评审者独立填写观察类型、程度、依据和理由，再点击保存，不预填问题或默认严重程度。可用逗号加入多个输出事件ID，但各事件必须与填写的非空半开样本区间相交。时间以当前公开Plan.sample_rate解释，不使用秒数或块内边界索引；不同方案的相同ID不能相互替换。

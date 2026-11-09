@@ -354,7 +354,7 @@ python -m choreobench audit-edit-inventory \
   --out /runs/edit-study/audit.json
 ~~~
 
-库存预先列出methods、seeds与任务的dataset/source_plan/task JSON文件及字节SHA；尝试按task_id/method_id/seed定位，returned绑定after/patch，failed保留错误，未提供的格仍missing。实际patch按原权限执行并与after精确比较，不将合法/空patch当目标语义通过。原任务、数据与源plan哈希和完整分母复核；task/seed结果保留在原歌内，无自动质量总分或CI。完整格式见[合同](CONTRACT.md#independent-multi-task-edit-inventory)。逐目标独立语义裁定与已审范围统计尚未接通，当前报告语义目标继续pending。
+库存预先列出methods、seeds与任务的dataset/source_plan/task JSON文件及字节SHA；尝试按task_id/method_id/seed定位，returned绑定after/patch，failed保留错误，未提供的格仍missing。实际patch按原权限执行并与after精确比较，不将合法/空patch当目标语义通过。原任务、数据与源plan哈希和完整分母复核；task/seed结果保留在原歌内，无自动质量总分或CI。完整格式见[合同](CONTRACT.md#independent-multi-task-edit-inventory)。后续已接通`prepare-edit-semantics`/`analyze-edit-semantics`：显式匿名包到task/method/seed桥、逐目标pass/partial/fail/unknown、完整上下文审阅范围和硬失败优先。实际裁定未提交时仍pending；已审时间上的问题率统计尚未接通。格式与命令见[独立编辑语义合同](CONTRACT.md#independent-per-goal-edit-semantics)和[执行说明](docs/HISTORY_CONTROL_20261106_zh.md#独立编辑语义裁定)。
 
 ## 10. 内网公开盲评页面
 

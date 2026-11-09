@@ -590,3 +590,35 @@ returned patch按原权限实际执行并与after逐对象哈希比对；非法�
 原工件在仓库父目录choreobench_runs/20261109_harness_evaluation_v18/：不可变旧源SHA清单、九计划新公开包及私有绑定、六份零评分分析、三任务独立库存/尝试原件、原/最终库存报告、实际浏览器回执、handoff.verified.private.json、隔离CPU回归及初次失败日志。公开仓库只上传模块/回归与执行说明，不上传原音频、私有任务/名单/裁定或内部地址。新增音乐/大纲/规划模型调用0；没有修改/恢复原v11/v17生成。
 
 H0实际听音/质量评价仍需组织者提交原件。H2这里只接通第一项库存身份与分母；独立逐目标语义裁定与联合编辑状态、明确已审范围的错误区间统计仍待后续，不将所有4分转成语义通过。H1 timing最多18次局部探针需H0时间问题信号与冻结前缀/外部排程入口，本轮没有实现或上卡。Captioner按C0/C1独立推进，不以harness回归替代训练判断；当前论文主线为benchmark任务/数据/校准与baseline证据，九计划页面和多任务工具不是正式benchmark完成证明。
+
+## 24. 独立逐目标编辑裁定与匿名绑定 v19
+
+2026-11-10从c350213安全快进到fe83e49，实际阅读notes/37与原库存分组补丁，按更新后的H2顺序推进语义裁定接口，不再重复建设库存或生成旧三首。最新修复要求同歌跨dataset grouping声明一致，原分组/编辑专项118项通过；这不是训练Captioner恢复或质量实验。
+
+### 独立语义原件与身份桥
+
+新增edit_semantics.py与prepare-edit-semantics/analyze-edit-semantics主CLI、模块prepare/analyze。组织者提供显式review_id→task/method/seed映射；输入绑定原inventory/attempts字节、匿名编辑包object/file SHA及私有来源。原task、dataset、before/after必须匹配独立库存已验证的返回格，不能从method名称猜对应，不把失败或未入包格移出实验分母。
+
+准备输出匿名评价要求requirements.json、私有bridge和两种裁定原件：status=null/证据空的填写草稿，以及records=[]的合法零提交文件。原semantic_goals保留原字符串，使用goal_index与object_sha(目标文本)标识，不自动重写复合目标。给评审者显示instruction与原目标作为评价要求，不向生成模型加入目标答案。原v17目标是机器标识式复合字符串，不能因为不易读就把它改成更容易满足的目标；新任务应在评价前由独立作者写清事实。
+
+要求范围为before/after允许/修复事件及最近前后相邻事件的保守包络，使用原音频整数采样半开区间。审阅原件声明实际看过的范围，计算区间并集只用于核验上下文是否覆盖，不表示真实观看/听音已被认证，也不是问题区间比率。源编辑计划与改后计划的匿名object SHA均在原件中绑定。
+
+裁定逐目标与boundary独立记录pass/partial/fail/unknown及非空依据；当前整体1–5分不参与推导。已知机械/字面失败优先，任何目标或boundary的fail/partial不判联合成功；缺目标、unknown或范围不足保持null。全部必要目标和boundary通过、范围完整且无已知失败才是该评审者的declared_joint_pass；无目标时不能只靠boundary通过。结果仍是外部声明，不证明真实动作可执行、音乐贴合、评审者身份或评价真伪。
+
+不同评审者结果独立保留，不生成共识/多数票；同人同项目跨文件重复拒绝，第三人仲裁另存/另析不覆盖原独立记录。既有完整名册与评分分母继续单独核验，不以任意一位提交裁定当所有人完成。问题率统计、新来源任务/独立保持事实扩展及自动修复未由该接口实现。
+
+### 原三条编辑实际准备与零提交核验
+
+复用v18独立库存、v17的原三条低幅度任务与editor/no-op六项目编辑包。逐个原dataset/task/before/after/匿名item SHA核验，6项全部绑定、6个原复合语义目标保留。当前原评分、原计划/patch与旧页面字节未改；原编辑页仍为只读、三case六方案。
+
+生成的草稿身份占位、每个goal和boundary为null、reviewed_ranges为空；直接导入被正确拒绝，不能伪造真实参加者补身份。records=[]原件通过来源分析，报告应有库存6格、映射项目6项、缺裁定6项、无独立决定/无共识，所有旧joint_success继续null。此轮没有真实裁定，也不根据soft/small字词或原机械保持通过赋予语义成功。
+
+### 回归、失败与交付
+
+新增语义模块44个软件测试，涵盖匿名显式桥、目标SHA/索引、部分/失败/未知/缺失、所有目标必要、硬失败优先、上下文覆盖/相邻范围/区间并集、无目标、原件漂移、重哈希改目标、跨文件重复、模型身份、双CLI独占发布及空草稿拒绝。初次范围测试按JSON键顺序读取end/start造成失败，已改为显式字段读取；原失败日志保留，没有放宽范围或忽略错误。
+
+语义与库存专项中间版本80 passed；最终全ChoreoBench CPU回归 **1015 passed、3 skipped、148 subtests passed**，3项为该环境缺可选Playwright。此次生产网页/服务器未改变，不假称又做新的浏览器质量评价；原6项目编辑页来源/数量与只读health实测存活。Captioner权重、训练协议和既有生成核心均未改，本轮新增模型/音频/大纲调用0、推理GPU0。
+
+原证据在仓库父目录choreobench_runs/20261110_edit_semantics_v19/：原件hash核验脚本、显式私有mapping、匿名评价requirements、bridge、null草稿与零提交裁定、analysis.none-submitted.private.json、占位拒绝回执、handoff.verified.private.json、完整回归和初次失败日志。GitHub只上传实现/回归/执行说明，不上传私有目标原件、名单/映射、音频、评分或内部地址。准备目录及分析报告均拒绝覆盖，不在新源码下resume原v17。
+
+**本轮接通实际可收原件的逐目标编辑语义接口，不产生质量优势结论。** H0真实音乐/编辑评价仍待原件，H1预选9块最多18调用timing probe尚未满足实际时间问题信号、不自动运行；后续按notes/37先收独立判断，再选单项模型对照。

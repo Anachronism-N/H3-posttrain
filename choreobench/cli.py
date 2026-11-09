@@ -297,6 +297,14 @@ def build_parser():
     for name in ("public", "private", "reviews"):
         review_import.add_argument("--" + name, required=True, type=Path)
     review_import.add_argument("--out", required=True, type=Path)
+    semantic_prepare = sub.add_parser("prepare-edit-semantics", help="Bind anonymous edit items to independent task/method/seed inventory")
+    for name in ("inventory", "attempts", "public", "private", "mapping"):
+        semantic_prepare.add_argument("--" + name, required=True, type=Path)
+    semantic_prepare.add_argument("--out-dir", required=True, type=Path)
+    semantic_analyze = sub.add_parser("analyze-edit-semantics", help="Validate independent goal verdicts and reviewed context; no automatic consensus")
+    for name in ("inventory", "attempts", "requirements", "bridge", "out"):
+        semantic_analyze.add_argument("--" + name, required=True, type=Path)
+    semantic_analyze.add_argument("--verdicts", required=True, nargs="+", type=Path)
     edit_inventory = sub.add_parser("audit-edit-inventory", help="Audit independent task/method/seed outcomes with missing cells retained")
     edit_inventory.add_argument("--inventory", required=True, type=Path)
     edit_inventory.add_argument("--attempts", required=True, type=Path)
@@ -498,6 +506,12 @@ def dispatch(args):
     elif cmd == "review-import":
         from .reviews import import_reviews
         _emit(import_reviews(read_json(args.public), read_json(args.private), read_json(args.reviews)), args.out)
+    elif cmd == "prepare-edit-semantics":
+        from .edit_semantics import prepare_edit_semantics
+        _emit(prepare_edit_semantics(args.inventory, args.attempts, args.public, args.private, args.mapping, args.out_dir))
+    elif cmd == "analyze-edit-semantics":
+        from .edit_semantics import analyze_edit_semantics
+        _emit(analyze_edit_semantics(args.inventory, args.attempts, args.requirements, args.bridge, args.verdicts), args.out)
     elif cmd == "audit-edit-inventory":
         from .edit_inventory import audit_edit_inventory
         _emit(audit_edit_inventory(args.inventory, args.attempts), args.out)

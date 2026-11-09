@@ -143,3 +143,24 @@ python -m captionlab targets --sources /data/sources.json --out /data/actions-un
 舞种按显式模板移入JEV标签，unknown或词表外不作为多数类监督；标签本身仍是来源声明。去时间戳仅移除行首marker，正文、顺序、空白和重复不改；原件与char/UTF-8 byte spans可回溯，`restore_raw`核验。
 
 短窗只取原标注完整1–3秒窗，输出采样索引（nearest、半值向上）、原/绝对时间、历史补零交集、上下文依赖、继承split与原音频身份；**只生成清单，没有裁剪音频，没有接通新的短窗训练器/JEV头**。crop样本仍需实际裁剪/核验、上下文依赖处理、曝光预算冻结。新目标不是当前检查点原合同，不能直接将其teacher forcing解释为重新训练后效果。
+
+## 6. Cache数值校准与原ZeRO/portable一致性
+
+参见[实测报告38](../notes/38_captioner_numeric_parity_20261109_zh.md)及[脱敏数值结果](numeric_calibration_results.json)。本轮同输入、同FP32参数存储下，原三例30个所选位置logits和1715个监督目标token概率在ZeRO/portable间逐位一致；当前单卡BF16存储及cache/full的任意形状比较不能据此宣称普遍逐位等价。
+
+新增工具独立于现有 `prepare/run/summarize`，不更改其评分合同，不修改原模型库或训练器：
+
+- `cache_calibrate`：重复full、短前缀full、重复cache、输入精度控制。
+- `zero_parity`：原8-rank完整ZeRO checkpoint副本恢复、前向及优化器状态不变检查；可增加FP32参考。
+- `portable_storage_parity`：多卡同FP32存储、BF16/FP32计算与固定目标cache控制。
+- `portable_frozen_inputs`：冻结原feature重放、单卡轻量dtype干预；这些候选在本轮未通过，不能当部署修复。
+- `moe_route_calibrate`：观测near-tie路由切换与参考expert IDs诊断干预；干预不可用于实际生成。
+- `numeric_report`：从本轮完整私有证据目录汇总限定范围结论；GitHub脱敏JSON不能替代那些tensor。
+
+```bash
+python -m captionlab.cache_calibrate --help
+python -m captionlab.zero_parity --help
+python -m pytest -c captionlab/pytest.ini tests/test_captionlab_numeric.py -q
+```
+
+上述GPU入口需要匹配原训练的CUDA环境、完整官方模型、原代码快照和已审核factory/工件清单；本仓库不下载模型、不提供未经鉴权的第三方runtime。不自动分配GPU、释放holder或修改原checkpoint。执行前由操作员提供独立输出/checkpoint副本并核查资源；不要在共享训练环境安装CPU Torch覆盖CUDA依赖。

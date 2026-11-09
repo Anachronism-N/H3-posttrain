@@ -37,3 +37,8 @@ records the completed Qwen Captioner SFT experiments, closed-vocabulary action e
 JEV classification, measured training capacity/throughput, and proposed timestamp-free
 and short-audio mapping experiments. Its trainer references refer to `main@02f478a`;
 this documentation does not modify the ChoreoBench protocol, candidates or frozen results.
+
+[CaptionLab](captionlab/README.md) implements separate, inference-only paired-audio
+diagnostics and reversible target preparation for that analysis. See the
+[8a833c9 review and next experiments](notes/35_captionlab_experiments_20261109_zh.md)
+for execution order, resources, and remaining original-checkpoint integration.

@@ -1,0 +1,5 @@
+numpy>=1.24
+soundfile>=0.12
+pytest>=7
+# Inference also requires the original checkpoint runtime and its Torch stack.
+# CPU unit-test Torch is installed separately by the dedicated CI workflow.

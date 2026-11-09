@@ -8,3 +8,5 @@ __pycache__/
 # Local ChoreoBench data/model outputs; do not publish private review bindings.
 .choreobench-runs/
 .choreobench-data/
+.captionlab-runs/
+.captionlab-data/

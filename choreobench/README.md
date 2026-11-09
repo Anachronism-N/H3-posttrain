@@ -30,6 +30,8 @@ hierarchical 按导入的段落生成；run-harness 保留候选选择/来源编
 
 最新进度核对、Windows页面测试修复及利用已有三种规划条件推进的安排见 [2026-11-09进度与执行次序](docs/PROGRESS_20261109_zh.md)。
 
+指定提交9eb7d3b、main新增训练成果及其他分支的接入边界见 [分支审查与接入建议](docs/BRANCH_REVIEW_20261109_zh.md)。
+
 ## 1. CPU 上先验收软件
 
 以下命令均在仓库根目录执行。核心 smoke 不需要 torch、CUDA、API 密钥或模型权重；输出目录必须是新目录。

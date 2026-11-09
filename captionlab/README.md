@@ -164,3 +164,5 @@ python -m pytest -c captionlab/pytest.ini tests/test_captionlab_numeric.py -q
 ```
 
 上述GPU入口需要匹配原训练的CUDA环境、完整官方模型、原代码快照和已审核factory/工件清单；本仓库不下载模型、不提供未经鉴权的第三方runtime。不自动分配GPU、释放holder或修改原checkpoint。执行前由操作员提供独立输出/checkpoint副本并核查资源；不要在共享训练环境安装CPU Torch覆盖CUDA依赖。
+
+数值工具现会在ID派生文件读写前拒绝路径分隔、Windows保留名称和大小写冲突，合法Unicode ID保持原样。`numeric_report`要求实际三个源快照及三案例×两精度的唯一完整记录，核验非空支持、布尔声明与有限差值；重复控制由指标导出。汇总器未直接核验的恢复、资源及操作行为保留为声明或null，不能当独立认证。已发布数值JSON保留原记录，不由新汇总器改写；实现说明见[最新审查与推进文档](../notes/39_bounded_music_reinspection_and_revision_20261110_zh.md#7-最新代码审阅发现的校准工具问题)。

@@ -1,0 +1,30 @@
+{
+  "seed": 7,
+  "selection_policy": "targeted",
+  "max_repairs": 2,
+  "listen": true,
+  "max_calls": 6,
+  "max_output_tokens": 4096,
+  "max_request_characters": 160000,
+  "source_plan_synthetic": false,
+  "planner_provider": {
+    "kind": "chat_completions",
+    "base_url": "http://127.0.0.1:8000/v1",
+    "model": "REPLACE_WITH_ACTUAL_INSTRUCTION_MODEL",
+    "api_key_env": "CHOREOBENCH_API_KEY",
+    "timeout_seconds": 180,
+    "temperature": 0,
+    "json_mode": true,
+    "token_parameter": "max_tokens"
+  },
+  "observer_provider": {
+    "kind": "native",
+    "family": "omni_captioner",
+    "model": "REPLACE_WITH_OFFICIAL_OMNI_INSTRUCT_MODEL_DIRECTORY",
+    "device": "cuda:0",
+    "max_length": 8192,
+    "temperature": 0.9,
+    "top_p": 0.95,
+    "top_k": 50
+  }
+}

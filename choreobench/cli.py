@@ -364,6 +364,20 @@ def build_parser():
     compare.add_argument("--confidence", type=float, default=.95)
     compare.add_argument("--allow-incomplete", action="store_true")
     compare.add_argument("--out", type=Path)
+    prepare_revision = sub.add_parser("prepare-revision", help="Prepare matched frozen-draft revision experiments without model calls")
+    prepare_revision.add_argument("--dataset", required=True, type=Path)
+    prepare_revision.add_argument("--plan", required=True, type=Path)
+    prepare_revision.add_argument("--config", required=True, type=Path)
+    prepare_revision.add_argument("--out-dir", required=True, type=Path)
+    for name in ("diagnose-plan", "revise-plan"):
+        revision = sub.add_parser(name, help="Bounded diagnosis or evidence-guided action-only revision; no training")
+        revision.add_argument("--dataset", required=True, type=Path)
+        revision.add_argument("--plan", required=True, type=Path)
+        revision.add_argument("--config", required=True, type=Path)
+        revision.add_argument("--out-dir", required=True, type=Path)
+        revision.add_argument("--resume", action="store_true")
+        if name == "revise-plan":
+            revision.add_argument("--diagnosis", required=True, type=Path)
     return parser
 
 
@@ -496,6 +510,19 @@ def dispatch(args):
             _emit(before, args.out)
         else:
             _emit(after, args.out)
+    elif cmd == "prepare-revision":
+        from .revision_experiment import prepare_revision_experiment
+        _emit(prepare_revision_experiment(args.dataset, args.plan, args.config, args.out_dir))
+    elif cmd in ("diagnose-plan", "revise-plan"):
+        from .revision import diagnose_plan, run_revision
+        config = read_json(args.config)
+        if cmd == "diagnose-plan":
+            _emit(diagnose_plan(args.dataset, args.plan, args.out_dir, config, resume=args.resume))
+        else:
+            result = run_revision(args.dataset, args.plan, args.diagnosis, args.out_dir, config, resume=args.resume)
+            _emit(result)
+            if not result["all_selected_attempts_usable"]:
+                return 2
     elif cmd == "propose-edit":
         from .edit_runner import propose_edit
         _emit(propose_edit(args.plan, args.task, read_json(args.provider), args.out_dir,

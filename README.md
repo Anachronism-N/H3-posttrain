@@ -50,3 +50,7 @@ acceptance criteria and a later controlled integration experiment.
 The [Captioner comparison and harness progress report](notes/37_captioner_comparison_and_harness_progress_20261110_zh.md)
 summarizes the evidence as of `c350213`, explains the running pipeline, and separates
 implemented controls from unverified model-quality claims.
+
+The [bounded music reinspection and revision guide](notes/39_bounded_music_reinspection_and_revision_20261110_zh.md)
+documents the shared-diagnosis experiment, audio reinspection, action-only repairs,
+matched selection controls, deployment requirements, and remaining quality evaluation.

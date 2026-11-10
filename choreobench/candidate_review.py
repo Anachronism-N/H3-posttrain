@@ -12,15 +12,18 @@ from pathlib import Path
 import random
 import shutil
 
-from .baseline import _sealed, _verify
-from .dataset import resolve_audio
-from .editing import apply_task_patch
+from .audio import inspect_audio
+from .baseline import _recorded_result, _sealed, _verify
+from .dataset import public_song, resolve_audio
+from .editing import apply_task_patch, public_edit_task
 from .evaluation import evaluate_edit
 from .io import file_sha, json_text, object_sha, read_json_snapshot, write_json
 from .review_page import render_review_page
 from .reviews import _validate_bindings, blank_review_template, build_review_pack, validate_review_pack
-from .revision import _no_new_timing_literals
-from .revision_protocol import parse_diagnosis, parse_verdict, select_events
+from .music_recheck import make_observation_window
+from .providers import parse_json_response
+from .revision import _choice_verdict, _comparison, _no_new_timing_literals
+from .revision_protocol import parse_diagnosis, parse_verdict, public_plan, select_events
 from .schema import integer, keys, text, validate_dataset, validate_plan
 
 
@@ -72,12 +75,78 @@ def _required_range(plan, event_id, context_seconds):
     return dict(start=start, end=end)
 
 
-def _read_run(root, sources, song, original, diagnosis):
+def _prepared_inputs(manifest, sources, roles):
+    """Bind the prepared argv/config products without executing their commands."""
+    order = ["diagnosis", *ARMS]
+    if not isinstance(manifest.get("configs"), dict) or set(manifest["configs"]) != set(order):
+        raise ValueError("Prepared configuration inventory mismatch")
+    configs = {}
+    for stage in order:
+        ref = manifest["configs"][stage]
+        keys(ref, ("path", "sha256"), where="prepared configuration reference")
+        configs[stage] = _snapshot(ref["path"], sources, ref["sha256"])
+    ref = manifest["commands"]
+    keys(ref, ("path", "sha256"), where="prepared commands reference")
+    commands = _snapshot(ref["path"], sources, ref["sha256"])
+    if (commands.get("schema") != "choreobench.revision_commands.v1"
+            or commands.get("execution_order") != order or not isinstance(commands.get("steps"), list)
+            or len(commands["steps"]) != len(order)):
+        raise ValueError("Prepared command inventory mismatch")
+    for stage, step in zip(order, commands["steps"]):
+        keys(step, ("stage", "argv"), where="prepared command step")
+        argv = step["argv"]
+        if (step["stage"] != stage or not isinstance(argv, list)
+                or not argv or any(not isinstance(arg, str) or not arg for arg in argv)):
+            raise ValueError("Invalid prepared command argv")
+        expected = ["-m", "choreobench", "diagnose-plan" if stage == "diagnosis" else "revise-plan",
+                    "--dataset", roles["dataset"]["path"], "--plan", roles["plan"]["path"],
+                    "--config", manifest["configs"][stage]["path"], "--out-dir", manifest["run_directories"][stage]]
+        if stage != "diagnosis":
+            expected.extend(["--diagnosis", manifest["shared_diagnosis_path"]])
+        if argv[1:] != expected:
+            raise ValueError("Prepared command does not bind the declared inputs/config/run")
+    return configs
+
+
+def _bound_sources(contract, references):
+    actual = {str(Path(path).resolve()): sha for path, sha in contract["sources"].items()}
+    for path, sha in references.items():
+        if actual.get(str(Path(path).resolve())) != sha:
+            raise ValueError("Run contract does not bind the prepared source")
+
+
+def _synthetic_status(values):
+    def tainted(value):
+        if isinstance(value, dict):
+            return value.get("synthetic") is True or any(tainted(v) for v in value.values())
+        return isinstance(value, list) and any(tainted(v) for v in value)
+    if any(tainted(value) for value in values):
+        return True
+    return False if values and all(type(value.get("synthetic")) is bool for value in values) else None
+
+
+def _scientific_status(receipt):
+    value = receipt.get("synthetic")
+    value = value if type(value) is bool else None
+    return dict(synthetic=value, scientific_result_status=("synthetic" if value is True else
+                "declared_real_not_independently_audited" if value is False else "unknown"))
+
+
+def _reviewer_identity(identities, row):
+    identity = (row["origin"], row["model_id"])
+    previous = identities.setdefault(row["reviewer_id"], identity)
+    if previous != identity:
+        raise ValueError("Reviewer origin/model identity changed across items or files")
+
+
+def _read_run(root, sources, song, original, diagnosis, expected_config, audio):
     contract = _snapshot(root / "contract.json", sources)
     result = _verify(_snapshot(root / "results.json", sources))
     if (contract.get("stage") != "revision" or result.get("stage") != "revision"
             or result.get("contract_sha256") != object_sha(contract)):
         raise ValueError("Revision result/contract mismatch")
+    if contract.get("config") != expected_config:
+        raise ValueError("Actual run config differs from the prepared configuration")
     for path, sha in contract["sources"].items():
         resolved = str(Path(path).resolve())
         if resolved in sources and sources[resolved] != sha:
@@ -92,13 +161,16 @@ def _read_run(root, sources, song, original, diagnosis):
             raise ValueError("Historical revision artifact changed: " + relative)
         sources[str(path)] = sha
         artifacts[relative] = path
+    starts, responses, used_calls = {}, {}, set()
     started_files = sorted((root / "calls").glob("*.started.json"))
     for path in started_files:
         started = _verify(_snapshot(path, sources))
         if (started["contract_sha256"] != result["contract_sha256"]
                 or started["request_sha256"] != object_sha(started["request"])
+                or started["request"].get("call_id") != started["call_id"]
                 or path.name != hashlib.sha256(started["call_id"].encode()).hexdigest() + ".started.json"):
             raise ValueError("Historical started-call identity mismatch")
+        starts[started["call_id"]] = started
     raw_files = sorted((root / "calls").glob("*.raw.json"))
     if len(started_files) != result["calls_used"] or len(raw_files) != len(result["call_records"]):
         raise ValueError("Historical call inventory differs from result")
@@ -111,6 +183,7 @@ def _read_run(root, sources, song, original, diagnosis):
                 or start["contract_sha256"] != result["contract_sha256"]
                 or raw["call_id"] != call_id or start["call_id"] != call_id):
             raise ValueError("Historical call hash/identity mismatch")
+        responses[call_id] = raw
     before = _snapshot(artifacts["before.json"], sources)
     if before != original or contract["source_plan_sha256"] != object_sha(original):
         raise ValueError("Arm does not start from the frozen original")
@@ -121,11 +194,42 @@ def _read_run(root, sources, song, original, diagnosis):
     if result["selected_count"] != len(selected):
         raise ValueError("Historical selected count mismatch")
     current, rows = copy.deepcopy(original), []
+    initial_events = {event["event_id"]: event for event in original["events"]}
     for index, (selection, step) in enumerate(zip(selected, result["steps"])):
         event_id = selection["event_id"]
         if step["event_id"] != event_id or step["before_plan_sha256"] != object_sha(current):
             raise ValueError("Revision step order/base mismatch")
         prefix = "steps/%02d/" % index
+        call_prefix = song["song_id"] + "/revision/" + object_sha(event_id)[:20]
+        calls = {}
+        for suffix, kind in (("listen", "local_caption"), ("edit", "patch"), ("judge", "revision_verdict")):
+            call_id = call_prefix + "/" + suffix
+            start = starts.get(call_id)
+            if start is not None:
+                used_calls.add(call_id)
+                identity = contract.get("observer_identity") if suffix == "listen" else contract["provider_identity"]
+                if (start["request"].get("response_kind") != kind or start["provider_identity"] != identity
+                        or (suffix == "listen" and not cfg["listen"])):
+                    raise ValueError("Historical request kind/provider differs from its revision role")
+                calls[suffix] = (start, responses.get(call_id))
+        if step["status"] == "not_attempted_after_error" and calls:
+            raise ValueError("Unattempted step contains dispatched calls")
+
+        def response(suffix):
+            if suffix not in calls or calls[suffix][1] is None:
+                raise ValueError("Published artifact lacks its recorded model response")
+            start, raw = calls[suffix]
+            try:
+                return _recorded_result(raw, start["provider_identity"], start["request"])
+            except (ValueError, TypeError, KeyError) as error:
+                raise ValueError("Published artifact has an unusable model response") from error
+
+        def payload(suffix):
+            try:
+                return parse_json_response(calls[suffix][0]["request"]["messages"][-1]["content"])
+            except (ValueError, TypeError, KeyError, IndexError) as error:
+                raise ValueError("Historical model request has no usable JSON payload") from error
+
         row = dict(event_id=event_id, status=step["status"], internal_accepted=step["accepted"],
                    candidate_available=False, nonempty_candidate=False, latest_timing_guard=None,
                    hard_scope_valid=None, before=current, candidate=None, task=None,
@@ -135,10 +239,44 @@ def _read_run(root, sources, song, original, diagnosis):
                 raise ValueError("Step decision differs from historical result")
         elif step["status"] != "not_attempted_after_error":
             raise ValueError("Executed step lacks a bound decision")
+        observation = None
+        if prefix + "observation.json" in artifacts:
+            observation = _snapshot(artifacts[prefix + "observation.json"], sources)
+            observed = response("listen")
+            derived = calls["listen"][0]["request"]["audio"]
+            window = make_observation_window(song["audio"], initial_events[event_id])
+            start, end = window["observation_start"], window["observation_end"]
+            clip = inspect_audio(artifacts[prefix + "observation.wav"])
+            if (derived["path"] != str(artifacts[prefix + "observation.wav"])
+                    or any(derived[k] != clip[k] for k in ("sha256", "sample_rate", "num_samples"))
+                    or derived["parent_audio_sha256"] != audio["sha256"]
+                    or derived["parent_start"] != start or derived["parent_end"] != end
+                    or clip["pcm"] != audio["pcm"][2 * start:2 * end]):
+                raise ValueError("Observation request is not the frozen source PCM window")
+            event = initial_events[event_id]
+            expected = dict(schema="choreobench.music_observation.v1", audio=derived, text=observed["text"],
+                observed_start=start, observed_end=end, target_overlap_start=max(event["start"], start),
+                target_overlap_end=min(event["end"], end), covers_entire_event=start <= event["start"] and end >= event["end"],
+                synthetic=observed["synthetic"], musical_facts_verified=False)
+            if observation != expected:
+                raise ValueError("Observation artifact differs from its recorded model response/window")
+        observation_view = None if observation is None else {k: v for k, v in observation.items() if k not in ("audio", "synthetic")}
+        patch = None
+        if prefix + "patch.json" in artifacts:
+            patch = _snapshot(artifacts[prefix + "patch.json"], sources)
+            if parse_json_response(response("edit")["text"]) != patch:
+                raise ValueError("Saved patch differs from the recorded model output")
+        if "edit" in calls:
+            view = payload("edit")
+            if (view.get("source_plan") != public_plan(current) or view.get("target_event_id") != event_id
+                    or view.get("initial_plan_diagnosis") != diagnosis or view.get("music") != public_song(song)
+                    or view.get("music_observation") != observation_view):
+                raise ValueError("Edit request does not bind the original inputs and recorded observation")
         if prefix + "candidate.json" in artifacts:
             candidate = _snapshot(artifacts[prefix + "candidate.json"], sources)
             task = _snapshot(artifacts[prefix + "task.json"], sources)
-            patch = _snapshot(artifacts[prefix + "patch.json"], sources)
+            if patch is None or payload("edit").get("task") != public_edit_task(task):
+                raise ValueError("Candidate task differs from the recorded edit request")
             if _snapshot(artifacts[prefix + "before.json"], sources) != current:
                 raise ValueError("Step before does not match committed state")
             if apply_task_patch(current, patch, task) != candidate:
@@ -164,9 +302,19 @@ def _read_run(root, sources, song, original, diagnosis):
                 guard = dict(passed=False, reason=str(error))
             row.update(candidate_available=True, nonempty_candidate=nonempty, latest_timing_guard=guard,
                        hard_scope_valid=True, candidate=candidate, task=task)
+            if "judge" in calls or step["judged"]:
+                comparison = _snapshot(artifacts[prefix + "comparison.json"], sources)
+                expected_comparison, pair = _comparison(current, candidate, event_id, cfg["seed"])
+                view = payload("judge")
+                if (comparison != expected_comparison or view.get("pair") != pair
+                        or any(view.get(k) != comparison[k] for k in ("a_plan_sha256", "b_plan_sha256", "event_id"))
+                        or view.get("music") != public_song(song) or view.get("music_observation") != observation_view):
+                    raise ValueError("Judge request/comparison differs from the saved candidate pair")
             if step["judged"]:
                 verdict = _snapshot(artifacts[prefix + "verdict.json"], sources)
                 parse_verdict(json_text(verdict), current, candidate, event_id)
+                if _choice_verdict(response("judge")["text"], comparison, current, candidate) != verdict:
+                    raise ValueError("Saved verdict differs from the recorded model choice")
                 if verdict["decision"] != step["status"]:
                     raise ValueError("Internal verdict and historical decision mismatch")
             if step["accepted"]:
@@ -183,6 +331,8 @@ def _read_run(root, sources, song, original, diagnosis):
         raise ValueError("Final plan differs from historical commits")
     if result["accepted_count"] != sum(r["internal_accepted"] for r in rows):
         raise ValueError("Historical accepted count mismatch")
+    if used_calls != set(starts):
+        raise ValueError("Historical calls exist outside the selected step inventory")
     return rows, result, contract
 
 
@@ -201,7 +351,7 @@ def prepare_candidate_review(inventory_path, output_dir, seed=7, context_seconds
     if inventory["schema"] != INVENTORY_SCHEMA or not isinstance(inventory["experiments"], list) or not inventory["experiments"]:
         raise ValueError("Invalid candidate review experiment inventory")
     pairs, audit_rows, targets, songs, manifests = [], [], {}, {}, set()
-    historical_calls = 0
+    historical_calls, synthetic_sources = 0, []
     for entry in inventory["experiments"]:
         keys(entry, ("experiment_dir", "manifest_sha256"), where="experiment reference")
         root = Path(entry["experiment_dir"])
@@ -218,9 +368,12 @@ def prepare_candidate_review(inventory_path, output_dir, seed=7, context_seconds
         if len(roles) != len(manifest["sources"]) or set(roles) != {"dataset", "plan", "base_config", "audio"}:
             raise ValueError("Invalid experiment source inventory")
         _snapshot(roles["base_config"]["path"], sources, roles["base_config"]["sha256"])
+        configs = _prepared_inputs(manifest, sources, roles)
         dataset = _snapshot(roles["dataset"]["path"], sources, roles["dataset"]["sha256"])
         validate_dataset(dataset)
+        synthetic_sources.append(dataset)
         original = _snapshot(roles["plan"]["path"], sources, roles["plan"]["sha256"])
+        synthetic_sources.append(dict(synthetic=manifest.get("source_plan_synthetic_declaration"), original_plan=original))
         song = next(s for s in dataset["songs"] if s["song_id"] == manifest["song_id"])
         validate_plan(original, song)
         if manifest["source_plan_sha256"] != object_sha(original):
@@ -232,15 +385,34 @@ def prepare_candidate_review(inventory_path, output_dir, seed=7, context_seconds
         if file_sha(audio) != song["audio"]["sha256"] or roles["audio"]["sha256"] != song["audio"]["sha256"]:
             raise ValueError("Canonical audio identity mismatch")
         sources[str(Path(audio).resolve())] = song["audio"]["sha256"]
+        parent_audio = inspect_audio(audio)
+        if any(parent_audio[k] != song["audio"][k] for k in ("sha256", "sample_rate", "num_samples")):
+            raise ValueError("Canonical audio clock differs from the prepared source")
         diagnosis_path = Path(manifest["shared_diagnosis_path"]).resolve()
+        diagnosis_run = Path(manifest["run_directories"]["diagnosis"]).resolve()
+        if diagnosis_path != diagnosis_run / "diagnosis.json":
+            raise ValueError("Shared diagnosis path differs from its prepared command")
         record = _verify(_snapshot(diagnosis_path, sources))
+        synthetic_sources.append(record)
         if (record["dataset_sha256"] != roles["dataset"]["sha256"]
                 or record["source_file_sha256"] != roles["plan"]["sha256"]):
             raise ValueError("Shared diagnosis source mismatch")
+        diagnosis_contract = _snapshot(diagnosis_run / "contract.json", sources)
+        synthetic_sources.append(diagnosis_contract)
+        if (diagnosis_contract.get("stage") != "diagnosis"
+                or diagnosis_contract.get("config") != configs["diagnosis"]
+                or record["source_contract_sha256"] != object_sha(diagnosis_contract)):
+            raise ValueError("Diagnosis contract differs from the prepared configuration")
+        required_sources = {roles[k]["path"]: roles[k]["sha256"] for k in ("dataset", "plan", "audio")}
+        _bound_sources(diagnosis_contract, required_sources)
         diagnosis = parse_diagnosis(json_text(record["diagnosis"]), original)
         for arm in ARMS:
             run = Path(manifest["run_directories"][arm]).resolve(strict=True)
-            rows, result, contract = _read_run(run, sources, song, original, diagnosis)
+            rows, result, contract = _read_run(run, sources, song, original, diagnosis, configs[arm], parent_audio)
+            synthetic_sources.extend([contract, result])
+            _bound_sources(contract, dict(required_sources, **{str(diagnosis_path): sources[str(diagnosis_path)]}))
+            if contract.get("dataset_sha256") != roles["dataset"]["sha256"]:
+                raise ValueError("Run dataset identity differs from its prepared source")
             if str(diagnosis_path) not in {str(Path(p).resolve()) for p in contract["sources"]}:
                 raise ValueError("Arm does not bind the shared diagnosis")
             expected_policy, expected_listen = ("random" if arm == "random" else "targeted"), arm != "text_only"
@@ -259,14 +431,17 @@ def prepare_candidate_review(inventory_path, output_dir, seed=7, context_seconds
                                                   required_range=row["required_range"], source_arms=[]))
                 targets[identity]["source_arms"].append(arm)
                 if row["nonempty_candidate"]:
-                    row["pair_id"] = "pair_%04d" % (len(pairs) + 1)
                     row["action_pair_sha256"] = object_sha([song["song_id"], row["before"]["events"], row["candidate"]["events"]])
                     pairs.append(row)
                 audit_rows.append(row)
     if not pairs:
         raise ValueError("No nonempty candidates; retain the failed/no-op source inventory separately")
     rng, items = random.Random(seed), []
-    for pair in pairs:
+    # Public numbering must not encode the historical arm iteration order.
+    # audit_rows retain the original execution order and the private mapping.
+    rng.shuffle(pairs)
+    for number, pair in enumerate(pairs, 1):
+        pair["pair_id"] = "pair_%04d" % number
         pair["candidate_label"] = rng.choice(("a", "b"))
         for label in ("a", "b"):
             plan = pair["candidate"] if label == pair["candidate_label"] else pair["before"]
@@ -327,8 +502,9 @@ def prepare_candidate_review(inventory_path, output_dir, seed=7, context_seconds
     private_rows = [{k: v for k, v in row.items() if k not in ("before", "candidate", "task")} for row in audit_rows]
     receipt = _sealed(dict(schema="choreobench.candidate_review_receipt.v1", sources=sources,
         code_sha256={name: file_sha(Path(__file__).with_name(name)) for name in
-                     ("candidate_review.py", "revision.py", "revision_protocol.py", "reviews.py", "review_page.py", "editing.py", "io.py")},
-        seed=seed, context_seconds=context_seconds,
+                     ("candidate_review.py", "revision.py", "revision_protocol.py", "reviews.py", "review_page.py",
+                      "editing.py", "io.py", "audio.py", "music_recheck.py", "providers.py", "dataset.py", "evaluation.py", "schema.py")},
+        seed=seed, context_seconds=context_seconds, **_scientific_status(dict(synthetic=_synthetic_status(synthetic_sources))),
         pairs_sha256=object_sha(focus), public_pack_sha256=object_sha(public),
         target_pack_sha256=object_sha(target_public), target_focus_sha256=object_sha(target_focus),
         targets=target_bindings, rows=private_rows,
@@ -433,7 +609,7 @@ def analyze_candidate_preferences(review_dir, reviews_paths):
                 raise ValueError("Private preference direction does not match original evidence")
     by_pair = {p["pair_id"]: p for p in focus["pairs"]}
     template_rows = {r["pair_id"]: r for r in blank_preferences(pack, focus)["reviews"]}
-    imported, seen = [], set()
+    imported, seen, identities = [], set(), {}
     for path in reviews_paths:
         document = _snapshot(path, sources)
         keys(document, ("schema", "pack_sha256", "focus_sha256", "reviews"), where="candidate preferences")
@@ -453,6 +629,7 @@ def analyze_candidate_preferences(review_dir, reviews_paths):
                 raise ValueError("Invalid reviewer origin/model identity")
             if row["origin"] == "model_judge":
                 text(row["model_id"], "model_id")
+            _reviewer_identity(identities, row)
             if type(row["audio_seen"]) is not bool or row["choice"] not in (None, "a", "b", "tie", "unknown"):
                 raise ValueError("Invalid preference choice or audio declaration")
             if not isinstance(row["reason"], str) or not isinstance(row["reviewed_ranges"], list):
@@ -477,7 +654,8 @@ def analyze_candidate_preferences(review_dir, reviews_paths):
                 possible_internal_missed_improvement=eligible and not source["internal_accepted"] and preferred == "candidate"))
     _unchanged(sources)
     return _sealed(dict(schema="choreobench.candidate_preference_analysis.v1", sources=sources,
-        pair_count=len(by_pair), independent_song_count=receipt["song_count"], rows=imported,
+        pair_count=len(by_pair), song_id_count=receipt["song_count"], independent_song_count=None,
+        source_group_independence_verified=False, **_scientific_status(receipt), rows=imported,
         eligible_human_judgments=sum(r["eligible_human_judgment"] for r in imported),
         pair_status={pid: "reviewed" if any(r["pair_id"] == pid and r["eligible_human_judgment"] for r in imported) else "pending"
                      for pid in by_pair}, expected_reviewer_roster_supplied=False, full_design_complete=None,
@@ -540,7 +718,7 @@ def analyze_target_judgments(review_dir, reviews_paths):
     expected = {r["review_id"]: r for r in blank_target_judgments(pack, focus)["reviews"]}
     targets = {r["review_id"]: r for r in focus["targets"]}
     private_targets = {r["review_id"]: r for r in receipt["targets"]}
-    rows, seen = [], set()
+    rows, seen, identities = [], set(), {}
     for path in reviews_paths:
         document = _snapshot(path, sources)
         keys(document, ("schema", "pack_sha256", "focus_sha256", "reviews"), where="target judgments")
@@ -560,6 +738,7 @@ def analyze_target_judgments(review_dir, reviews_paths):
                 raise ValueError("Invalid target reviewer origin/model identity")
             if row["origin"] == "model_judge":
                 text(row["model_id"], "model_id")
+            _reviewer_identity(identities, row)
             if type(row["audio_seen"]) is not bool or row["needs_revision"] not in (None, "yes", "no", "unknown"):
                 raise ValueError("Invalid target judgment or audio declaration")
             if not isinstance(row["reason"], str) or not isinstance(row["reviewed_ranges"], list):
@@ -578,6 +757,8 @@ def analyze_target_judgments(review_dir, reviews_paths):
                 eligible_human_judgment=row["origin"] == "human" and row["audio_seen"] and sufficient and row["needs_revision"] is not None))
     _unchanged(sources)
     return _sealed(dict(schema="choreobench.target_judgment_analysis.v1", sources=sources, target_count=len(targets), rows=rows,
+        song_id_count=receipt["song_count"], independent_song_count=None, source_group_independence_verified=False,
+        **_scientific_status(receipt),
         eligible_human_judgments=sum(r["eligible_human_judgment"] for r in rows),
         target_status={rid: "reviewed" if any(r["review_id"] == rid and r["eligible_human_judgment"] for r in rows) else "pending" for rid in targets},
         expected_reviewer_roster_supplied=False, full_design_complete=None, diagnosis_recall=None, new_model_calls=0,

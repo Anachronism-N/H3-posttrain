@@ -592,3 +592,7 @@ python -m choreobench.candidate_review analyze-targets --review-dir /data/review
 ```
 
 缺少听音或共同范围覆盖时判断保持 pending；model_judge 与 human 分开，重复 reviewer×pair/target 不累计。逐评审映射为 candidate/before/tie/unknown，仅记录可能误接受/漏选好候选，不自动形成共识、显著性或质量赢家。尚未提供真实名单时 full_design_complete=null，不将一份评分冒充两名评审完成；原稿选点抽查不估计全曲诊断召回率。当前 guard 是字面检查，不是语义校验，历史 accepted 不回写。
+
+后续审查补齐了派生配置/命令到实际run合同的对应，以及raw模型返回到patch、观察和内部判定的语义链；同一reviewer ID在一次导入中不能跨条目/文件改变origin或model身份。分析中的`song_id_count`只是歌曲ID数，`independent_song_count=null`，不由ID不同推断来源独立。合成/回放声明会继续传播；旧receipt缺少声明时保持unknown，声明为真实也不等于独立认证。
+
+新prepare先随机排列非空pairs再编号，避免编号固定暴露策略遍历顺序。示例seed=7仅用于开发；正式评审私下冻结整数seed，评审期间不分发seed、private映射或guard结果。重复正文仍可能使角色被猜出，不能保证内容不可推断。新包的SHA和匿名映射会变化，使用新目录并保留旧包，不混导旧评分。实际人评安排和审阅边界见[最新审计与实验方案43](../notes/43_candidate_review_audit_and_next_experiments_20261110_zh.md)。

@@ -11,17 +11,26 @@ from choreobench.baseline import _sealed
 from choreobench.io import file_sha, object_sha, read_json, write_json
 from choreobench.revision_experiment import prepare_revision_experiment
 from choreobench.reviews import _validate_bindings
-from test_choreobench_revision import World
+from test_choreobench_revision import World, _nine_event_bounded_source
 
 
 @pytest.fixture
-def experiment(tmp_path, monkeypatch):
+def experiment(tmp_path, monkeypatch, request):
     world = World(tmp_path)
+    scenario = getattr(request, "param", None)
+    if scenario == "legacy_diagnosis":
+        _nine_event_bounded_source(world)
+        monkeypatch.setattr(revision, "_bounded_diagnosis", revision.parse_diagnosis)
     world.issues = [dict(event_id=world.events[0], priority=3, reason="Synthetic issue only.")]
+    if scenario == "legacy_diagnosis":
+        world.issues = [dict(event_id=eid, priority=3, reason="x" * 401) for eid in world.events]
+    if scenario == "fatal_edit":
+        world.issues.append(dict(event_id=world.events[1], priority=2, reason="A second synthetic issue."))
     world.verdicts[world.events[0]] = "uncertain"
     monkeypatch.setattr(revision, "create_provider", lambda *a, **kw: world.text)
     monkeypatch.setattr(revision, "create_music_observer", lambda *a, **kw: world.audio)
-    config = world.config(listen=True, max_repairs=1, max_calls=3)
+    repairs = 2 if scenario == "fatal_edit" else 1
+    config = world.config(listen=True, max_repairs=repairs, max_calls=3 * repairs)
     config_path = tmp_path / "config.json"
     write_json(config_path, config)
     root = tmp_path / "experiment"
@@ -30,12 +39,19 @@ def experiment(tmp_path, monkeypatch):
     for arm in candidate_review.ARMS:
         arm_config = read_json(root / "configs" / (arm + ".json"))
         selection = revision.select_events(world.plan, dict(schema="choreobench.revision_diagnosis.v1",
-            source_plan_sha256=object_sha(world.plan), issues=world.issues), arm_config["selection_policy"], 1, arm_config["seed"])
+            source_plan_sha256=object_sha(world.plan), issues=world.issues), arm_config["selection_policy"], repairs, arm_config["seed"])
         if arm == "random":
             world.edit_behavior[selection[0]["event_id"]] = "no_op"
         else:
             world.edit_behavior[selection[0]["event_id"]] = "edit"
+        if arm == "targeted":
+            eid = selection[0]["event_id"]
+            if scenario == "malformed_edit": world.malformed.add(("patch", eid))
+            elif scenario == "forbidden_edit": world.edit_behavior[eid] = "forbidden"
+            elif scenario == "failed_judge": world.malformed.add(("revision_verdict", eid))
+            elif scenario == "fatal_edit": world.raise_on.add(("patch", eid))
         revision.run_revision(world.dataset, world.plan_path, root / "diagnosis/diagnosis.json", root / "runs" / arm, arm_config)
+        world.malformed.clear(); world.raise_on.clear()
     inventory = tmp_path / "inventory.json"
     write_json(inventory, dict(schema=candidate_review.INVENTORY_SCHEMA, experiments=[
         dict(experiment_dir=str(root), manifest_sha256=file_sha(root / "manifest.json"))]))
@@ -292,3 +308,172 @@ def test_browser_pair_and_target_exports_are_blank_until_explicit_input(experime
                     page.close(); server.shutdown(); worker.join(); server.server_close()
         finally:
             browser.close()
+
+
+def reseal(path, value):
+    value.pop("record_sha256", None)
+    write_json(path, _sealed(value), overwrite=True)
+
+
+def change_trace(experiment, kind, change):
+    run = experiment["root"] / "runs/targeted"
+    for path in (run / "calls").glob("*.started.json"):
+        start = read_json(path)
+        if start["request"]["response_kind"] != kind:
+            continue
+        raw_path = path.with_name(path.name.replace(".started.json", ".raw.json"))
+        raw = read_json(raw_path)
+        change(start, raw)
+        start["request_sha256"] = object_sha(start["request"])
+        reseal(path, start)
+        raw["started_sha256"] = read_json(path)["record_sha256"]
+        reseal(raw_path, raw)
+        result = read_json(run / "results.json")
+        result["call_records"][start["call_id"]] = read_json(raw_path)["record_sha256"]
+        reseal(run / "results.json", result)
+        return
+    raise AssertionError("Fixture lacks requested call")
+
+
+@pytest.mark.parametrize("product", ["targeted", "diagnosis", "commands"])
+def test_prepared_products_are_bound_before_output(experiment, tmp_path, product):
+    path = experiment["root"] / ("commands.json" if product == "commands" else "configs/%s.json" % product)
+    path.write_text(path.read_text() + " ")
+    with pytest.raises(ValueError, match="Source bytes differ"):
+        prepare(experiment, tmp_path)
+    assert not (tmp_path / "review").exists()
+
+
+def test_correctly_rehashed_command_cannot_reference_another_configuration(experiment, tmp_path):
+    root = experiment["root"]
+    commands = read_json(root / "commands.json")
+    commands["steps"][1]["argv"][9] = str(root / "configs/random.json")
+    write_json(root / "commands.json", commands, overwrite=True)
+    manifest = read_json(root / "manifest.json")
+    manifest["commands"]["sha256"] = file_sha(root / "commands.json")
+    reseal(root / "manifest.json", manifest)
+    inventory = read_json(experiment["inventory"])
+    inventory["experiments"][0]["manifest_sha256"] = file_sha(root / "manifest.json")
+    write_json(experiment["inventory"], inventory, overwrite=True)
+    with pytest.raises(ValueError, match="Prepared command does not bind"):
+        prepare(experiment, tmp_path)
+
+
+def test_rehashed_run_cannot_change_the_prepared_config(experiment, tmp_path):
+    run = experiment["root"] / "runs/targeted"
+    contract = read_json(run / "contract.json")
+    contract["config"]["seed"] += 100
+    write_json(run / "contract.json", contract, overwrite=True)
+    contract_sha = object_sha(contract)
+    result = read_json(run / "results.json")
+    result["contract_sha256"] = contract_sha
+    for path in (run / "calls").glob("*.started.json"):
+        start = read_json(path); start["contract_sha256"] = contract_sha
+        reseal(path, start)
+        raw_path = path.with_name(path.name.replace(".started.json", ".raw.json"))
+        raw = read_json(raw_path)
+        raw.update(contract_sha256=contract_sha, started_sha256=read_json(path)["record_sha256"])
+        reseal(raw_path, raw)
+        result["call_records"][start["call_id"]] = read_json(raw_path)["record_sha256"]
+    reseal(run / "results.json", result)
+    with pytest.raises(ValueError, match="Actual run config differs"):
+        prepare(experiment, tmp_path)
+
+
+@pytest.mark.parametrize("contradiction", ["patch_output", "choice_output", "observation_output", "edit_input", "judge_input", "observation_window", "provider_identity", "failed_response"])
+def test_rehashed_raw_trace_must_agree_with_saved_artifacts(experiment, tmp_path, contradiction):
+    kind = ("local_caption" if contradiction.startswith("observation") else
+            "revision_verdict" if contradiction in ("choice_output", "judge_input") else "patch")
+    def change(start, raw):
+        if contradiction == "patch_output": raw["result"]["text"] = '{"not_a_patch":true}'
+        elif contradiction == "choice_output":
+            value = json.loads(raw["result"]["text"]); value["choice"] = "a"
+            raw["result"]["text"] = json.dumps(value)
+        elif contradiction == "observation_output": raw["result"]["text"] = "A different recorded observation."
+        elif contradiction == "observation_window": start["request"]["audio"]["parent_end"] -= 1
+        elif contradiction == "provider_identity": raw["result"]["identity"]["unexpected"] = "different source"
+        elif contradiction == "failed_response": raw.update(success=False, result=None, error={"type": "fixture", "message": "failed"})
+        else:
+            view = json.loads(start["request"]["messages"][-1]["content"])
+            if contradiction == "edit_input": view["source_plan"]["events"][0]["action"] += " Different input."
+            else: view["pair"]["a"]["events"][0]["action"] += " Different alternative."
+            start["request"]["messages"][-1]["content"] = json.dumps(view)
+    change_trace(experiment, kind, change)
+    with pytest.raises(ValueError):
+        prepare(experiment, tmp_path)
+    assert not (tmp_path / "review").exists()
+
+
+@pytest.mark.parametrize("experiment", ["malformed_edit", "forbidden_edit", "failed_judge", "fatal_edit", "legacy_diagnosis"], indirect=True)
+def test_historical_failures_and_legacy_diagnoses_remain_auditable(experiment, tmp_path):
+    _, receipt = prepare(experiment, tmp_path)
+    targeted = [row for row in receipt["rows"] if row["arm"] == "targeted"]
+    original = read_json(experiment["root"] / "runs/targeted/results.json")
+    assert [row["status"] for row in targeted] == [step["status"] for step in original["steps"]]
+    assert receipt["selected_step_count"] == sum(len(read_json(experiment["root"] / "runs" / arm / "results.json")["steps"])
+                                                 for arm in candidate_review.ARMS)
+    assert file_sha(experiment["root"] / "runs/targeted/results.json") == receipt["sources"][str(experiment["root"] / "runs/targeted/results.json")]
+
+
+@pytest.mark.parametrize("target_mode", [False, True])
+@pytest.mark.parametrize("identity_change", ["origin", "model"])
+def test_reviewer_identity_cannot_drift_between_items_or_files(experiment, tmp_path, target_mode, identity_change):
+    output, _ = prepare(experiment, tmp_path)
+    document = read_json(output / ("targets/private/judgments.template.json" if target_mode else "private/preferences.template.json"))
+    for row in document["reviews"]:
+        row.update(reviewer_id="same-reviewer", origin="model_judge", model_id="one-model")
+    changed = document["reviews"][1]
+    if identity_change == "origin": changed.update(origin="human", model_id=None)
+    else: changed["model_id"] = "another-model"
+    first, second = copy.deepcopy(document), copy.deepcopy(document)
+    first["reviews"], second["reviews"] = document["reviews"][:1], document["reviews"][1:]
+    one, two = tmp_path / "one.json", tmp_path / "two.json"
+    write_json(one, first); write_json(two, second)
+    analyze = candidate_review.analyze_target_judgments if target_mode else candidate_review.analyze_candidate_preferences
+    with pytest.raises(ValueError, match="Reviewer origin/model identity changed"):
+        analyze(output, [one, two])
+    second["reviews"][0]["reviewer_id"] = "different-reviewer"
+    write_json(two, second, overwrite=True)
+    assert len(analyze(output, [one, two])["rows"]) == len(document["reviews"])
+
+
+def test_synthetic_status_and_unverified_independence_survive_analysis(experiment, tmp_path):
+    output, receipt = prepare(experiment, tmp_path)
+    assert receipt["synthetic"] is True and receipt["scientific_result_status"] == "synthetic"
+    preferences = filled(output)
+    path = tmp_path / "preferences.json"; write_json(path, preferences)
+    result = candidate_review.analyze_candidate_preferences(output, [path])
+    assert result["synthetic"] is True and result["eligible_human_judgments"] == receipt["candidate_pair_count"]
+    for analyze in (candidate_review.analyze_candidate_preferences, candidate_review.analyze_target_judgments):
+        report = analyze(output, [])
+        assert report["song_id_count"] == receipt["song_count"] and report["independent_song_count"] is None
+        assert report["source_group_independence_verified"] is False
+    # Legacy private receipts remain readable, with absent provenance unknown.
+    path = output / "private/audit.json"
+    legacy = read_json(path); legacy.pop("synthetic"); legacy.pop("scientific_result_status")
+    reseal(path, legacy)
+    for analyze in (candidate_review.analyze_candidate_preferences, candidate_review.analyze_target_judgments):
+        report = analyze(output, [])
+        assert report["synthetic"] is None and report["scientific_result_status"] == "unknown"
+
+
+def test_pair_ids_are_assigned_after_seeded_shuffle_without_reordering_audit(experiment, tmp_path):
+    roots = [tmp_path / "review-one", tmp_path / "review-again", tmp_path / "review-other"]
+    receipts = [candidate_review.prepare_candidate_review(experiment["inventory"], root, seed=seed)
+                for root, seed in zip(roots, (1, 1, 0))]
+    def pair_order(receipt):
+        return [(row["pair_id"], row["arm"], row["candidate_label"])
+                for row in sorted((r for r in receipt["rows"] if "pair_id" in r), key=lambda r: r["pair_id"])]
+    assert pair_order(receipts[0]) == pair_order(receipts[1])
+    assert [row[1] for row in pair_order(receipts[0])] != [row[1] for row in pair_order(receipts[2])]
+    assert all([row["arm"] for row in receipt["rows"]] == list(candidate_review.ARMS) for receipt in receipts)
+    first, again = (read_json(root / "public/pack.json") for root in roots[:2])
+    assert first == again
+
+
+def test_synthetic_declarations_preserve_nested_taint_and_missing_provenance():
+    status = candidate_review._synthetic_status
+    assert status([{"synthetic": False, "original_plan": {"provenance": {"synthetic": True}}}]) is True
+    assert status([{"synthetic": True}, {}]) is True
+    assert status([{"synthetic": False}, {}]) is None
+    assert status([{"synthetic": False}, {"synthetic": False}]) is False

@@ -69,3 +69,7 @@ The [671fc25 review and revised experiment plan](notes/42_latest_review_and_expe
 incorporates the completed five-recipe Captioner pilot, prioritizes reuse of existing
 paired scores and independent harness review, and defines a 40-output generation
 pilot plus a bounded next-token prefix diagnostic before further training.
+
+The [v23 candidate-review audit and next experiments](notes/43_candidate_review_audit_and_next_experiments_20261110_zh.md)
+updates the completed review tooling, separates timing-policy rejection from dance
+quality, and specifies the two-reviewer target/candidate workflow before new model calls.

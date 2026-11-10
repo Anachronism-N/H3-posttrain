@@ -80,12 +80,13 @@ minimal revision gains. Model review is not human or direct-audio evaluation; ob
 content issues no longer wait for a complete human roster before development proceeds.
 
 The [CVPR experiment matrix](notes/44_cvpr_experiment_matrix_20261110_zh.md)
-is the consolidated experiment-only protocol: one development probe and seven
-formal experiments covering local experts, whole-song planning, a complete memory
-strategy by duration-rule factorial, local music evidence, instruction editing,
-evaluation reliability, and fixed visual execution. It fixes controls, source-grouped
-samples, metrics, budgets and execution order; all models remain frozen.
-Automatic revision and other claim-dependent extensions have separate budgets.
+specifies five required experiments: dataset/pipeline quality, the SFT model against
+open audio-instruction models, whole-song agent comparison, instruction editing,
+and metric validity. Seven optional experiments cover agent mechanisms, music
+cross-evaluation, pipeline ablations, expert-by-agent comparisons, robustness,
+fixed visual execution, and controlled label-training comparisons. Required
+experiments use existing weights; controls, samples, evaluation, resources and
+execution order are specified separately from optional extensions.
 The historical [v25 execution record](notes/47_memory_replay_v25_execution_record_20261110_zh.md)
 is preserved separately from this forward-looking protocol.
 

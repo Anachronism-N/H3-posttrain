@@ -85,6 +85,9 @@ data quality, local experts, whole-song planning, instruction editing, memory an
 action-budget ablations, automatic revision, evaluation validity, scaling/cost,
 and visual grounding. It distinguishes existing tools from proposed mechanisms,
 sets source-grouped evaluation and resource budgets, and requires no new training.
+Section 14 records the executed v25 fixed-prefix full/metadata-only probe: six real
+text calls with unchanged candidates/design/timing, reduced literal copying, remaining
+short-slot overload, complete costs and restored GPU holders—not a whole-song win.
 
 The [latest main caption review and next experiments](notes/45_latest_main_caption_audit_and_next_experiments_20261110_zh.md)
 reviews `ce4fc96`, reproduces failure cases in its lexical tier heuristic, separates

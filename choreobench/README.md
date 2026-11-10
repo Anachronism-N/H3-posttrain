@@ -598,3 +598,32 @@ python -m choreobench.candidate_review analyze-targets --review-dir /data/review
 新prepare先随机排列非空pairs再编号，避免编号固定暴露策略遍历顺序。示例seed=7仅用于开发；正式评审私下冻结整数seed，评审期间不分发seed、private映射或guard结果。重复正文仍可能使角色被猜出，不能保证内容不可推断。新包的SHA和匿名映射会变化，使用新目录并保留旧包，不混导旧评分。实际人评安排和审阅边界见[最新审计与实验方案43](../notes/43_candidate_review_audit_and_next_experiments_20261110_zh.md)。
 
 服务器v24已对原三首v22产物用新绑定规则重审通过（0模型调用/0GPU），新版先评选点 `/proxy/8799/`、后评候选 `/proxy/8798/`；这是原内网代理下的相对入口，不是完整访问地址。旧v23包与页面保留，旧导出不混入新pack；两位评审24条主判断尚待实际提交。详见方案43第8节。
+
+
+## 16. 固定原前缀的历史内容重放（有界开发探针）
+
+`python -m choreobench.memory_replay` 对最多三首、每首一个预先选定的非首块，比较full与metadata_only。只重放该块，不重生成全曲、不更新后续历史、不修改原Plan或候选，不调用音频、大纲、critic或训练。
+
+metadata_only只从三处历史event移除action：recent_committed_events、boundary_context.body_parts.latest_event、motif_memory.recent_examples。保留时间/轨道/ID、已声明exit状态、gap、主题计数、大纲意图/主题description和原局部候选；因此不是“完全没有动作语义”。不额外添加反复制prompt，不截断正文；系统提示、JSON序列化规则、源seed、schema/排程与输出token cap共用。source_prefix_sha256仍绑定完整原前缀，不冒称投影后前缀SHA。
+
+输入库存为如下格式（SHA是原文件字节哈希，路径为示例）：
+
+```json
+{
+  "schema": "choreobench.memory_replay_inventory.v1",
+  "cases": [
+    {"run_dir": "/data/coordination/song01/main", "contract_sha256": "ORIGINAL_CONTRACT_FILE_SHA256",
+     "results_sha256": "ORIGINAL_RESULT_FILE_SHA256", "song_id": "song01", "unit_id": "pu0018"}
+  ]
+}
+```
+
+```bash
+python -m choreobench.memory_replay --inventory /data/replay/inventory.private.json \
+  --provider /data/replay/text-provider.private.json --out-dir /data/replay/runs
+# 只有输入/provider/代码全部不变时，才在同一命令上加 --resume
+```
+
+provider沿现有chat_completions/replay合同。加载前验证原contract/result、上一个已提交块、目标块、原始started/raw、原请求的历史/候选/主题/时钟，以及原响应确实编译为保存目标块；派发上限为case数×2。原模型服务名称可以不同，本次两臂使用同一实际服务/权重/环境；full重放不承诺与旧版本推理逐位一致。
+
+输出保留started/raw、各臂原prefix、新events与prefix＋该块plan、完整失败和tokens/延迟；非法或截断不重抽，基础设施/未知结果阻止后续派发，原件不覆盖。相同条件恢复复用已落盘请求，不新增模型调用。逐字历史复制数、字符数和区间仅用于诊断；动作质量需另外读内容，整曲质量及误差累积尚未被本局部探针验证。它是独立开发入口，不是run-harness新增全曲metadata_only模式；boundary_compact/动作复杂度预算/oracle内容修订仍另行开发。

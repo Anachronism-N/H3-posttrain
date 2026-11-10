@@ -73,5 +73,8 @@ pilot plus a bounded next-token prefix diagnostic before further training.
 The [v23/v24 candidate-review audit and next experiments](notes/43_candidate_review_audit_and_next_experiments_20261110_zh.md)
 updates the completed review tooling, separates timing-policy rejection from dance
 quality, and specifies the two-reviewer target/candidate workflow before new model calls.
-Its final section records the real v24 source-trace re-audit, randomized review-package
-deployment and pending human judgments; no historical outputs or scores are rewritten.
+Section 8 records the real v24 source-trace re-audit and randomized review-package
+deployment. Section 9 adds the assistant’s substantive review of all 227 original
+events and six candidates: history-associated copying, overloaded short events and
+minimal revision gains. Model review is not human or direct-audio evaluation; obvious
+content issues no longer wait for a complete human roster before development proceeds.

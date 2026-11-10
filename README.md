@@ -30,6 +30,11 @@ and blinded review exchange. Formal datasets and real-model benchmark results ar
 not bundled; see its [protocol](choreobench/docs/PROTOCOL_zh.md) and
 [server resource guide](choreobench/docs/RESOURCES_zh.md).
 
+The [current harness implementation guide (中文, final section)](choreobench/docs/HARNESS_DESIGN_zh.md)
+explains frozen audio proposals, whole-song design, causal block composition, public
+scheduling constraints, bounded reinspection/revision, recovery and independent
+evaluation boundaries, with the actual v11/v22 settings separated from defaults.
+
 ## Music-to-caption training analysis (separate from ChoreoBench)
 
 [2026-11-09 中文训练复盘与下一阶段计划](notes/34_music_caption_analysis_20261109_zh.md)

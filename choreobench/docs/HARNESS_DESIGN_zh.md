@@ -1,6 +1,8 @@
 # 音乐编舞 Harness 的执行设计与迁移方案
 
-目标是把局部音频动作提案扩展成可评测的整曲计划与受约束编辑。已接通规划块、整包选择、固定分数DP、来源编译、常驻局部服务，以及全曲设计→逐块创作→验证后提交的coordinated模式。局部提案可来自合法已训练专家，也可来自明确标记的原始Omni＋固定任务提示。模型冻结，不启动训练；global保留一次性生成对照。自动语义修复、长期搜索和自由指代仍待实现。本文前半记录设计/参考迁移，末节为当前实际实现；验收结果统一见VALIDATION_20261104.md。
+目标是把局部音频动作提案扩展成可评测的整曲计划与受约束编辑。已接通规划块、整包选择、固定分数DP、来源编译、常驻局部服务、全曲设计→逐块创作→验证后提交的coordinated模式，以及独立的有预算诊断/重听/action-only修订。局部提案可来自合法已训练专家，也可来自明确标记的原始Omni＋固定任务提示。模型冻结，不启动训练；global保留一次性生成对照。经独立校准的语义修复、长期搜索和自由指代仍待实现。
+
+**阅读当前实现请直接看末节“当前实现详解（2026-11-10）”。** 前半保留首版设计/参考迁移，其资源与模块状态不是今天的完成情况；末节核对实际源码、v11初稿及v21/v22修订。验收结果统一见VALIDATION_20261104.md。
 
 ## 当前划分与三个时间尺度
 
@@ -221,7 +223,7 @@ prepared -> analyzed -> candidates_ready -> selection_proposed
 
 项目内也有可复用基础：`music_planner_search.py` 的候选身份、独立音频评审合同与经审查数据导出；`motionscript_v2/selection.py` 的可逆摘要与源事件保留。前者需转换到ChoreoBench候选schema，后者依赖实测姿态事件，只适合离线标注，不可把音乐生成文字伪装成实测动作。两者均不是已有的整曲候选图选择器。
 
-## 模块状态与验收
+## 首版模块状态与验收（历史）
 
 当前可运行命令以README与CLI help为准；表内未实现模块不可当作已有CLI。
 
@@ -245,56 +247,176 @@ prepared -> analyzed -> candidates_ready -> selection_proposed
 
 正式评估同时报告缺失/失败、结构有效性、音乐贴合、主题发展、非预期重复、编辑目标与保持性及成本。按原曲/艺人/近重复组隔离数据；独立终评不得进入测试歌曲搜索或策略调参。文本排程的拍点分数不等于生成视频中的实际动作同步，后者需独立渲染和测量协议。
 
-资源优先沿用 [RESOURCES_zh.md](RESOURCES_zh.md)：首次本地专家采集需要真实模型服务器；候选已固定后，选择/控制程序可在CPU运行，外层LLM由独立服务提供。当前不启动SFT、DPO或RL，不需要新增训练集才能运行；模型缺陷是否需要后续训练由真实实验决定。完整歌曲、编辑任务、独立评审和开发校准数据仍是benchmark输入。常驻服务减少重复加载，但显存、推理和空闲租用仍消耗资源；采集后可停局部服务而继续使用候选。尚未执行真实GPU模型质量实验。
+资源优先沿用 [RESOURCES_zh.md](RESOURCES_zh.md)：首次本地专家采集需要真实模型服务器；候选已固定后，选择/控制程序可在CPU运行，外层LLM由独立服务提供。当前不启动SFT、DPO或RL，不需要新增训练集才能运行；模型缺陷是否需要后续训练由真实实验决定。完整歌曲、编辑任务、独立评审和开发校准数据仍是benchmark输入。常驻服务减少重复加载，但显存、推理和空闲租用仍消耗资源；采集后可停局部服务而继续使用候选。这是首版资源假设；后续真实GPU执行已完成，当前实现、成本及仍缺独立质量评价的边界见末节。
 
 
-## 当前实现：coordinated 不等于 select-only
+## 当前实现详解（2026-11-10）
 
-### 全曲状态机
+本节依据代码 `609c27e` 及安全快进后的 `9d919c1` 核对，说明**实际实现**而非未来方案。历史执行对应 v11 全曲初稿、v21/v22 修订；最新诊断读取与时间文字检查不能倒算成旧实验的新成绩。前文的设计、迁移和待办按其历史阶段理解，当前状态以本节为准。
 
+### 1. Harness 的定位与两段执行流程
 
-当前流程保留以下已实现路径：
+Harness 是冻结模型之外的任务执行系统，负责输入隔离、结构与时间合同、状态、权限、预算、版本、恢复和证据。模型提出内容，程序决定它能否提交。没有更新模型权重，没有修改 H3 或原局部 5.0625 秒合同；输出是文字 JSON 计划，不是已渲染的视频或 3D 运动。
 
+全曲初稿与后续修订是两个独立入口，当前不是无限 critic–repair，也不是自动改代码、更新权重或跨任务自我提升。
 
-dataset/audio身份检查 → 固定局部候选库 → 独立公开结构绑定 → 规划单位
+```text
+完整音乐 → canonical WAV / 整数采样时钟 / 音频身份
+  ├─ 音乐工具 → 公共 beats / downbeats / sections sidecar
+  └─ 完整 5.0625 秒观察窗 → 原始 Omni + 固定动作任务 prompt
+                              → 冻结局部候选库
+公共结构 + 候选 → 全曲大纲 → 因果逐块创作 → 硬校验 → 提交前缀 → 下一块
+                                                      → 全曲 JSON 初稿
+冻结初稿 → 一次文字诊断 → 冻结有限选点 → 可选重新听局部音乐
+         → 单事件 action-only patch → 硬校验 → 内部匿名 A/B 选择
+         → 保留原稿或接受候选 → 独立盲评（不进入本次搜索）
+```
 
-- index0/llm/scores：每观察窗整包选择一次 → 原文来源编译 → 缺口与部分片段诊断。
-- coordinated：全曲主题/section意图 → 每块读取相关候选及已提交历史 → 新动作/时间提案 → 严格校验 → 提交前缀 → 下一块。
-
-coordinated是单次有预算生成，不是自动critic—repair循环。Plan/patch、公共输入和隐藏评估仍分离；新模式不改变benchmark定义或H3合同。
-
-### 具体模块与责任
-
-| 模块 | 当前责任 | 证据边界 |
+| 角色 | 实际输入与职责 | 不能混淆的边界 |
 |---|---|---|
-| providers.NativeProvider | 原始Omni固定task_prompt或原专家；完整5.0625秒波形 | 双窗文本是提案，不是恢复的真实动作边界 |
-| public_structure.py | 严格独立sidecar匹配dataset bytes、selected songs、音频SHA/时钟 | 不放宽候选原Song匹配，不接收私有答案 |
-| music_structure.py | canonical音频谱变化 + 已有Beat This预测重拍处novelty | 功能标签unknown、repeat_group=null；未校准非真乐句 |
-| planning_units.py | reviewed计量/时间回退，短尾合并或容量内平衡 | 公开段落、样本覆盖与观察窗不变；非人体最短时长 |
-| coordination.py | 全曲主题、大纲、逐块创作、已提交身体/主题历史 | 引用局部call_id是输入启发，不是逐字/语义事实支持 |
-| providers.ChatCompletionsProvider | 显式动态schema服务端解码，原响应/usage保留 | 后端不支持停止，不降级；格式约束非质量评价 |
-| schema/context/journal | 整数范围、顺序、冲突、权限、验证后提交、恢复成本 | 不静默修复动作语义或编造身体状态 |
-| review_server.py | 已绑定public页面/音频白名单，HTTP Range | 不提供private路径/目录/评分写入API，评分浏览器导出 |
+| 局部动作提案模型 | 完整 5.0625 秒波形和固定任务 prompt，提出可能的动作文字 | 当前用原始 Omni 暂替专家，未证明其动作提案可靠 |
+| 文本规划模型 | 候选文字、公共音乐结构、brief、大纲和历史，组织并创作动作 | 没有直接听音频；文字与结构证据均可出错 |
+| 音乐重听模型 | 另取的完整 5.0625 秒波形和音乐观察 prompt | 只描述音乐，不接收待改动作或私有目标 |
+| 文本修订/选择模型 | 计划、诊断、可选音乐观察、冻结编辑合同 | 内部候选选择不是独立质量评价 |
+| 确定性控制器 | 输入绑定、解码合同、合法性、权限、状态和成本 | 不具备完整音乐或人体语义验证能力 |
 
-### 全局设计与因果历史
+实际 v22 用 Qwen3-VL-32B 文本服务与原始 Omni-Instruct 观察服务；音频观察器和动作提案器的 prompt/身份不同，不能把“描述音乐”的输出当成编舞强基线。服务适配见 `choreobench/providers.py:128`、`choreobench/providers.py:230`。
 
-大纲读取全部原候选和公共结构，没有现成拼接Plan作为答案模板。输出至多8个动作主题，逐section给出意图和许可主题。未知音乐结构只允许编舞设计目标，不发明chorus/verse检测。
+### 2. 规范音频、采样时钟与局部候选
 
-每块保留全曲section意图，但只展示当前许可主题定义/相关主题历史。最近动作按身体部位追溯验证后的prefix；最近8条事件与主题计数用于组织，不作为观测到的人体姿态或优质主题证明。前缀hash绑定具体历史。失败块不会进入后段上下文。
+**音频身份。** 执行阶段要求单声道 PCM16 WAV，绑定 SHA256、sample_rate 与 num_samples。候选、音乐工具和重听消费同一 canonical 音频；执行中不偷偷重采样、混音或补零。转换走显式 prepare-audio。见 `choreobench/audio.py:18`、`choreobench/dataset.py:121`。
 
-### 动作、解码与时间预算
+**时间合同。** 存储时间为全曲整数采样点，区间为 [start,end)。16kHz 下 32000 samples 为 2 秒，81000 为 5.0625 秒；相邻 end=start 合法。它是建议排程，不是观测动作起止，也不是实际运动同步测量。
 
-模型只返回 unit_id 与事件start/end/track/action/motif_id/source_call_ids；控制器分配稳定事件ID，unknown状态对象保持为空。每块默认最多3事件（许可1–8），预算同时进入公开请求、schema.maxItems和后验验证，不能靠删改原输出过关。块输出token与纲要token独立记账。
+**原模型观察窗。** 每次输入完整 5.0625 秒，返回固定双窗动作文字：
 
-结构化解码限制单位/主题/来源ID、整数范围和类型，但无法代替start<end、事件顺序、身体scope冲突或动作语义校验。已验证服务不支持uniqueItems，重复引用仍由控制器拒绝；不自动回退JSONmode或重试。
+```text
+[0-2s] movement description
+[2-5.0625s] movement description
+```
 
-时间回退的短尾目标2秒，只在同一公共段内合并/平衡，无法提高音频理解，也不保证模型不会在较长单位里生成过短动作。弱起/部分小节不自动当成四小节。最后真实生成仍有短动作与缺口，应进入独立审查，不补造rest或物理总分。
+2 秒只是回答格式的名义分界，不是音频输入长度，也不强制后续动作按 2 秒切分。当前历史候选库 K=2，保留原响应、两段解析文字、window、请求、seed、模型/提示身份、停止原因和真实成本。坏输出不以新随机采样偷偷替换。
 
-### 对照、成本与下一步
+**观察与 ownership 分开。** observation 是实际听到的范围；ownership 是拼接/选择路径中负责的非重复排程范围。最后一个完整窗整体左移到曲尾，由 ownership 避免交叠观察重复输出。见 `choreobench/audio.py:37`。
 
-- 原concat/global/hierarchical保留；select-only与coordinated不混称同一方法。
-- 相同局部候选可复用，但结构sidecar、提示、token和事件预算必须冻结、绑定和披露。
-- 每首调用预算为1大纲+单位数；原局部采集、失败配置与额外开发请求不能隐去。
-- 新代码/结构/配置必须新输出目录，原响应与源码快照保留。入口拒绝自身导入后发生的文件身份变化；这不是完整部署认证。
-- 本轮三首开发歌反复用于软件诊断，不当最终隐藏测试。直接音频模型整曲生成的公平对照仍未做。
-- 已实现且CPU/真实验收的细节见README第11节、CONTRACT和VALIDATION；音乐质量仍pending。先做用户独立盲评、短动作/边界/主题事实审查，不能只靠“更少事件/更多主题/不同正文”扩实验或判优。
+**输入白名单。** 局部 provider 不接收前文动作、大纲、用户编辑指令、期望答案、歌词或私有评测目标；固定动作任务 prompt 不随外层答案变化。见 `choreobench/providers.py:206`。候选冻结后，外层对照复用同一库并检查 dataset/歌曲/音频/采集配置身份；采集成本与规划新调用分开。
+
+### 3. 公共音乐结构与规划块
+
+音乐结构、规划块、动作事件是三个不同层次。独立 public_structure sidecar 绑定原 dataset 字节、selected songs 和每首音频 SHA/时钟，不悄悄修改候选原 Song，也不接收私有答案。
+
+当前真实实验用 Beat This 的节拍/重拍预测及 canonical 音频谱变化证据；功能标签 unknown、repeat_group=null 保留不确定。谱变化不是已验证的副歌或真乐句。代码为 `choreobench/public_structure.py`、`choreobench/music_structure.py`。
+
+计量被作者声明 reviewed 后，分块支持按实际相邻 downbeat 构造闭合预测小节、最多四小节合并、不跨公共 section、保留弱起/部分小节/未封闭尾部，并处理容量上限。reviewed 不是自动认证或校准置信度。
+
+**当前冻结 v11 初稿实际配置：**
+
+| 参数 | 实际值与含义 |
+|---|---|
+| meter_status | unverified，因此走时间回退，不是已核实四小节块 |
+| fallback_seconds | 10.125 秒，在每个公共 section 内分块 |
+| max_unit_seconds | 20 秒容量 |
+| min_time_block_seconds | 2 秒短尾目标，不是人体最短动作时长 |
+
+短尾在同段内可合并到前块；超过容量时平衡最后两块。规划单位形成完整、不重复分割，并索引观察/ownership 交叠，不改变原模型输入。见 `choreobench/planning_units.py:92`。
+
+### 4. 全曲大纲、块请求与因果记忆
+
+**独立大纲。** 大纲读取全曲候选、公共音乐结构、brief 和规划单位，**没有现成拼接 Plan 作为答案模板**。仅返回 motifs 与 sections：最多 8 个动作主题，每个公共 section 按原顺序给 intent 和许可 motif_ids。不能改 section ID、漏段或发明 chorus/verse 检测。主题回归是设计意图，不是已验证的音乐重复。见 `choreobench/coordination.py:99`。
+
+**每块输入。** 包含当前单位范围/长度、section 中的位置、全曲 section 意图、当前许可主题、块内 beats/downbeats、相交观察窗候选、最近 8 个已提交事件、身体/主题记忆和输出时钟合同。可读取跨块观察，但新事件只能写入当前块。见 `choreobench/coordination.py:122`。
+
+**确定性历史。** build_boundary_context 从校验后的完整前缀构造各身体部位最近事件、间隔、是否接触当前边界，以及主题次数和近期例子；前缀 SHA 绑定来源。它不推断支撑脚/朝向/接触，不假设空档维持姿态，也不把 motif 次数当质量分。当前无来源的 attributes/entry/exit 为空对象。见 `choreobench/context.py:33`。
+
+**创作而非逐字选择。** coordinated 可合并局部候选、变化重复和身体 scope、形成跨数秒的动作短语。source_call_ids/evidence 仅证明这些输入被展示为启发，不证明新 action 的语义、音乐贴合或可执行性。控制器分配稳定事件 ID，模型不自行声明状态或 ID。
+
+**控制对照。** use_history=false 真正移除已提交动作和边界记忆；use_outline=false 移除生成大纲/主题，并令 motif_id=null。共享大纲通过独立源绑定让有/无历史读取完全相同的大纲，避免两次大纲采样差异被误归因于历史。
+
+### 5. 公开时间菜单、解码与硬校验
+
+以下是当前冻结初稿的实际参数，**不是 CLI 的通用默认值**：
+
+| 参数 | 实际值 |
+|---|---|
+| event_time_format | boundary_ids |
+| event_grid_seconds | 0.25 |
+| min_event_seconds | 0.5 |
+| max_events_per_unit | 3（通用允许 1–8） |
+| event_schedule_policy | balanced_full_unit |
+| structured_unit_output | true |
+| max_output_tokens / outline_max_output_tokens | 块 1024 / 大纲 4096 |
+
+程序建立样本网格，模型只输出 start_boundary/end_boundary 索引，再编译到原全曲样本。真实尾点始终纳入，不补长音乐。最短时长向上取整到样本；网格和时长是工程合同，不是音乐/人体事实。见 `choreobench/timing.py:9`。
+
+balanced_full_unit 为可容纳的 1、2、3 个短语分别提供一种近似均分完整排程。模型选短语数并写内容，不能留下缺口或添加别的区间。因此**覆盖 1.0 主要来自公开设计约束，不是质量成果**；当前也不是完全自由的音乐驱动动作定时。
+
+动态 JSON Schema 约束单位、字段、轨道枚举、许可 motif/call ID、action 长度、事件数与完整区间数组；完整对象 alternatives/数组 prefixItems 避免后端忽略共享条件。不支持时不静默回退或重试。见 `choreobench/coordination.py:213`。
+
+后验程序还检查 start<end、块内范围、最短时长、菜单精确匹配、来源唯一、当前主题权限、排序与身体 scope 冲突。九轨道为 body/upper/lower/head/torso/left_arm/right_arm/left_leg/right_leg，映射到六个叶部位检查共同占用；body 与所有轨道冲突，upper/lower 可并发。见 `choreobench/schema.py:12`、`choreobench/schema.py:163`。
+
+这是 JSON 字段层的 scope 检查，不是 action 的完整语义解析：upper 正文偷写脚步并不会仅凭轨道合法而获得证明。
+
+**提交规则：** 响应 → 解析事件 → 构造 proposed prefix → 校验完整前缀 → 保存块快照 → 更新 plan → 下一块。失败块不会进入后段历史；不通过裁剪、拉伸、补造 rest 或删事件隐藏失败。见 `choreobench/coordination.py:323`。
+
+### 6. 有预算的诊断、重听与 action-only 修订
+
+诊断与修订入口分别为 diagnose_plan 和 run_revision，见 `choreobench/revision.py`。
+
+**一次共享诊断。** 文本模型只看冻结初稿和公共音乐元数据，输出最多 8 个唯一既有事件、priority=1..3、每理由最多 400 字符，绑定源计划 SHA；允许空列表。它未听音乐，问题仅是疑点。新生成和读取复用诊断均执行当前上限；9d919c1 修复旧读取路径漏检，历史超限记录不会被截断后冒充同一运行。
+
+| 对照臂 | 选点 | 新音乐观察 |
+|---|---|---|
+| targeted/listen | 按优先级与原事件顺序选点 | 有 |
+| random/listen | 从全部原事件按固定 seed 选同等数量 | 有 |
+| targeted/text_only | 与 targeted 相同 | 无 |
+
+共享同一初稿、诊断；targeted/random 按原事件顺序执行，编辑输入不附策略标签或优先级衍生指令。空诊断两策略均零选点。当前 v22 每臂 max_repairs=1，这是选定事件数，不是反复修同一事件的轮数。见 `choreobench/revision_protocol.py:65`。
+
+**重新听音乐。** 以目标事件中点为中心取完整 5.0625 秒，曲首/尾整体平移；不补零、不缩窗。记录与目标交叠以及是否覆盖整个事件。观察器只描述节奏、脉冲、相对能量和局部变化，不读取计划/编辑指令，不编舞、不声称精确拍点。长事件可能仅部分被观察，必须保留此限制。见 `choreobench/music_recheck.py:16`、`choreobench/music_recheck.py:34`。
+
+**冻结 patch 权限。** 仅选中一个事件的 action 可改，start/end/track/motif_id/attributes/entry/exit 全保护，其他 action 越权；不增删事件、不改 ID/evidence 或扩大任务范围。patch 绑定准确源版本，必须保留 instruction、allowed_event_ids、repair_event_ids、protected，允许 operations=[]。见 `choreobench/revision_protocol.py:93`、`choreobench/editing.py:278`。
+
+**候选选择。** 合法非空候选与当前稿按 seed 匿名放入 A/B，内部文本模型选 a/b/uncertain；只有偏好修订才更新 current。每选中事件一次尝试，no-op 不调用 judge；失败/不确定保留当前稿，不重新抽样直到“成功”。内部选择不是独立质量评价。
+
+**时间文字 guard。** action-only 不得用 prose 偷改排程；当前正则检查新增明确时间字面是否属于原 action 已有集合。但 at 640-ms、downbeat #54400、时间戳或同字面不同时间角色仍可能绕过，不是完整时钟语义证明。v22 两个历史内部接受候选均被最新 guard 离线拒绝；没有覆盖原 accepted 数，也未跑第三轮模型实验。详见[最新审阅](../../notes/40_609c27e_review_and_next_experiments_20261110_zh.md)。
+
+### 7. 运行合同、调用账本、恢复和失败分母
+
+contract 冻结 dataset/audio/candidates/structure/outline、配置、provider、代码 SHA 和预算。改变输入/代码/提示要新输出目录；入口的源码导入身份检查不是完整部署认证。
+
+journal 在派发前写 .started.json（请求、身份、预算、开始时间），完成后写 .raw.json（原响应、停止原因、usage/错误），并绑定哈希。已完成且身份一致可复用；只有 started、没有可确认 raw 时不自动重发。截断、空输出、API/基础设施故障保留并区分。见 `choreobench/baseline.py:87`。
+
+预算先覆盖启用的大纲与全部单位；共享大纲零新增大纲调用但历史成本另列。修订每事件 listen 最多 3 调用（观察/edit/judge），text_only 最多 2；no-op 可省 judge。当前 v22 三首共享诊断 3 次、九臂上限 24 次，整轮上限 27，实际 24；历史候选/初稿不重采、不重复计为新调用，也不称免费。
+
+结果分别记录 complete、selected/proposed/judged/accepted、failed/not_attempted/no_op/uncertain、未知 usage/outcome；proposed_count 可含 no-op，不等于动作确实变化。complete 只表示处理了清单，不表示修订成功；失败留在分母。
+
+| 真实开发结果 | v21 | v22 |
+|---|---:|---:|
+| 实际新调用 | 17 | 24 |
+| 输入 / 输出 tokens | 311,024 / 12,767 | 438,947 / 8,719 |
+| 新音乐观察 | 4 | 6 |
+| 展示项 | 9/预登记12；一首诊断截断，三臂未尝试 | 12＝3原稿＋9臂输出 |
+| 独立质量结论 | 无 | 无 |
+
+v22 targeted/listen 与 targeted/text_only 各内部接受 1 项；random 三次 no-op。九输出七个保留原稿、两个改正文，不是九个独立改善；独立歌仍只有三首。v21/v22 同时改变多项协议，不能当单变量消融。实绩与失败详见[报告39](../../notes/39_bounded_music_reinspection_and_revision_20261110_zh.md)和[验收记录](VALIDATION_20261104.md)。
+
+### 8. 独立评价与当前能力边界
+
+自动评价只测 schema/时钟、scope、覆盖/缺口、事件/主题计数、文字重复及编辑保护；music_alignment/physical_quality 仍可为 not_measured。正文不同、主题更多、覆盖完整不能替代语义质量。见 `choreobench/evaluation.py:36`。
+
+评审包隐藏方法元数据、原 ID、provenance/evidence，私有映射/目标不提供给生成器。六维是 musical_fit、long_range_structure、planned_executability、edit_target_satisfaction、edit_preservation、planned_boundary_quality；书面可执行性/边界判断不是实测生物力学或视频连续性。见 `choreobench/reviews.py:18`。
+
+网页提供音乐、时间事件、空初始评分和时间评论；CPU server 只公开绑定页面/音频白名单，支持 HTTP Range，不公开私有目录或评分写入 API。review_ranges 单独保存已审半开区间，防止部分审阅冒充全曲无问题；reasonable_recurrence/uncertain 不直接算错误。review_analysis 检查 reviewer×item×criterion 分母及完整设计，缺评为 NA；edit_semantics 绑定 before/after/目标/审阅范围，硬失败优先，范围不足待评。统计以歌曲/来源组组织，不把同歌事件/seed 当独立歌曲。
+
+截至本说明的 v22 交付，真实独立人工评分仍为 0；临时浏览器验收评分不是外评。内部接受与新 guard 通过都不证明质量优势，来源隔离、校准、强基线仍缺。
+
+| 已实现 | 尚不能声称 |
+|---|---|
+| 独立大纲、因果逐块创作与历史摘要 | 正确识别真乐句或真实人体状态 |
+| 公开排程菜单、动态 schema、硬校验 | 完整覆盖意味着音乐贴合或可执行 |
+| 有预算的重听和单事件修订 | 已完成长期 beam/search 或自动递归改进 |
+| 显式 selector 定位、受限既有字段 patch | 任意自由指代定位、事件增删/自动分轨 |
+| 匿名评审、失败/缺评/成本/范围记录 | 内部 judge 接受就是独立成功 |
+| 文字 JSON 计划 | 已渲染且验证视频/3D 的真实动作同步 |
+
+concat/global/旧 hierarchical 保留对照；run-harness 的 index0/llm/scores 是整包候选选择与来源编译，scores 为给定分数 DP。**它们不全部串在 coordinated 主线中**，固定分数 DP 不自动获得音乐理解能力。coordinated 本身仍单次逐块生成，后续 bounded revision 是显式独立阶段。下一步先评价已有原稿、全部非空候选和疑似选点，再根据证据决定时间视图改进与新来源实验；不以追加调用或内部 accepted 代替评价。

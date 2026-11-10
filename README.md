@@ -96,7 +96,10 @@ reported template prevalence from visual correctness, and prioritizes source/lab
 audits before bounded rewriting experiments. Harness memory development remains a
 parallel track with its existing candidate bank frozen.
 
-The [fixed-prefix replay review and duration experiment plan](notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md)
-reviews `891e0f5`: reduced literal prefix matching in three development blocks,
-remaining short-slot overload, replay integrity fixes, and a six-call brevity versus
-duration-aware content probe with fixed event intervals before whole-song expansion.
+The [fixed-prefix replay review and content experiments](notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md)
+reviews `891e0f5` and records v26–v29: 21 real bounded calls for brief/duration
+controls, adaptive slots and compact boundary memory, untimed base-Omni observation
+anchors, and explicit oracle edits. Failures, costs and residual content problems
+remain visible; the future task-trained untimed captioner is not yet loaded.
+The manuscript draft includes these methods, negative results and oracle examples,
+without claiming held-out quality, human ratings or a validated novelty advantage.

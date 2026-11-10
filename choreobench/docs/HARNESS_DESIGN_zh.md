@@ -425,3 +425,5 @@ concat/global/旧 hierarchical 保留对照；run-harness 的 index0/llm/scores 
 
 
 2026-11-10 v23 已补齐全部非空修订候选的匿名A/B组织、独立偏好导入、原稿选点必要性审查与全候选时间字面离线审计；不是新增生成或真实评分。命令/合同见 [README第15节](../README.md#15-已有修订候选的独立审查零模型调用)，三首实际执行/失败/重复内容边界见 [最新实验记录第8节](../../notes/42_latest_review_and_experiment_plan_20261110_zh.md)。
+
+2026-11-11：已执行B/D固定三槽、adaptive槽位/boundary_compact、原始Omni无时间戳重拍锚定观察、oracle单阶段编辑，共21新增请求。新Captioner尚未提供，当前观察仍完整5.0625秒；失败与负结果不覆盖。实现命令见 [README第17–18节](../README.md)，完整成本/实质内容初审/资源恢复见 [报告46第9节](../../notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md)。

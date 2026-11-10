@@ -641,3 +641,46 @@ python -m choreobench.memory_replay --audit-only --out-dir /data/replay/runs
 `--audit-only`不接受provider/inventory/resume，不创建provider或写入run目录。它按保存合同寻找原来源，核验完整结果、原请求、调用记录、四份派生JSON和统计；保留历史code哈希，不以当前code哈希冒充旧执行代码。只支持已完成结果，缺来源、缺调用或原件变化会报错；原绝对来源路径需仍可访问，不自动迁移或改写绑定。输出`new_model_calls=0`与`quality_verified=false`；一致性审核不是部署权重认证或编舞质量评价。
 
 本轮发现、修复范围和下一项6/9调用的固定时段动作预算方案见[报告46](../notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md)。
+
+
+## 17. 固定长度与时长组织、自适应边界探针
+
+先用最新版只读入口审核旧v25，再生成新的B/D实验目录：
+
+
+```bash
+python -m choreobench.memory_replay --audit-only --out-dir /data/v25/runs
+python -m choreobench.duration_content --inventory /data/v25/inventory.private.json \
+  --source-run /data/v25/runs --provider /data/probe/text-provider.private.json --out-dir /data/v26/runs
+```
+
+B（brief）与D（duration）均读取metadata_only、相同原前缀/候选/大纲和原seed，显式固定v25的实际区间与数量；共同目标12–24个空白分词英文词、硬上限32词/240 Unicode字符。只有D增加时长组织规则：短槽优先主动作/阶段，保留并发修饰，减少完整顺序状态转换。低于1秒规则是工程假设，不是生理定律。新schema限制字符上限，程序复核词数、具体排程和数字时间字面；违规保留raw并记失败，不截短或重采。目标词数偏差如实报告，不称实际等长度比较；旧v25不是同轮未改写控制U。
+
+独立自适应阶段可加占位参数 `--adaptive-boundary`：重新构造最低2秒槽位菜单，确定性选择最大可容纳事件数，再固定两臂同一排程。三首旧问题块实际为1/1/3槽。这是另一个工程条件，不与B/D混算单因素时长提示收益。
+
+
+```bash
+python -m choreobench.duration_content --inventory /data/v25/inventory.private.json \
+  --source-run /data/v25/runs --provider /data/probe/text-provider.private.json \
+  --out-dir /data/v28/runs --adaptive-boundary
+```
+
+自适应两臂为metadata_only与boundary_compact，系统提示/长度预算/排程/seed一致；compact只增加实际end=当前块start的历史事件动作，每个稳定ID一次，不在六身体部位重复，也不提供LLM摘要。entry/exit未知继续为空，不宣称真实姿态连接已验证。新完成结果可只读审核；恢复仍需原代码/输入/provider不变。
+
+## 18. 无时间戳captioner的音乐感知观察分段
+
+未来captioner提供约5秒音频的整窗编舞正文，不直接给动作时间。新 `music_segments` sidecar区分音乐观察窗与排程ownership：当前完整输入固定5.0625秒（16kHz为81000样本），预测downbeat只锚定观察窗起点，终点不保证也是downbeat，不称真乐句/完整小节分割。按实际重拍序列处理变速；无附近重拍时回退原时钟，不用全局BPM外推，不改音频、不补零或拉伸。
+
+全曲准备沿前窗末点向后至多1.5秒选重拍锚点，保留完整尾窗；ownership以相邻观察起点形成精确全曲分割。额外上下文与窗交叠不是可删除caption中的动作事实，ownership并非已测动作时长。无时间戳正文不能人为一分为二装成原固定双窗候选。未来模型输入长度/上下文协议到位后再研究真正约5秒的小节组合，不偷偷放宽已训练native合同。
+
+
+```bash
+python -m choreobench.music_segments --dataset /data/songs/dataset.json --song-id song01 \
+  --mode predicted_downbeat --out /data/probe/song01.observations.json
+python -m choreobench.music_segments --probe-inventory /data/probe/inventory.private.json \
+  --provider /data/probe/native-provider.private.json --out-dir /data/probe/untimed-runs
+```
+
+局部probe库存为 `choreobench.untimed_segment_probe.v1`，包括seed与cases列表；每项含dataset_path/dataset_sha256/song_id/target_sample。最多三case，每case固定时钟窗与最近预测重拍窗，共六次完整波形调用，同seed/提示/解码；观测窗仅起点变化（最大1.5秒）。新原始Omni基座固定UNTIMED_PROMPT只要求整窗单段编舞，不传目标、歌词、历史计划或评测答案；身份明确placeholder_base_omni=true、trained_untimed_captioner_loaded=false。它是未来接口的替代模型实验，不是未提供的新captioner成绩。
+
+输出保留原始响应、完整PCM切片/原音频父范围和身份、词数、时间格式违规与失败成本；不重采。同样的词数/无时间戳不代表动作正确、没有幻觉或音乐贴合。全曲窗口manifest只作CPU准备，局部六次生成不能证明已生成新的全曲计划；起点变化引起的不同正文也不等于锚定更可靠。

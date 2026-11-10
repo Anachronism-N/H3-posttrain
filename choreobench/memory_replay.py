@@ -170,6 +170,9 @@ def _prepare_requests(inventory_path, sources):
 
 
 def _valid_row(case, mode, events):
+    if case.get("content_limits") is not None:
+        from .duration_content import validate_content
+        validate_content(case, events)
     plan = copy.deepcopy(case["before"])
     plan["events"].extend(events)
     validate_plan(plan, case["original"])
@@ -179,6 +182,9 @@ def _valid_row(case, mode, events):
         exact_prior_action_copies=sum(event["action"] in history_actions for event in events),
         action_characters=sum(len(event["action"]) for event in events),
         actual_intervals=[dict(start=event["start"], end=event["end"]) for event in events], semantic_quality_verified=False)
+    if case.get("content_limits") is not None:
+        from .duration_content import content_statistics
+        row["content_lengths"] = content_statistics(events, case["content_limits"])
     return row, {"prefix.json": case["before"], "historical_events.json": case["historical_events"],
                  "events.json": events, "plan.json": plan}
 
@@ -212,7 +218,8 @@ def _check_completed(output, contract, journal, requests):
             or previous.get("call_records") != {key: value["record_sha256"] for key, value in journal.records.items()}
             or not isinstance(previous.get("rows"), list) or len(previous["rows"]) != len(requests)
             or contract.get("request_sha256") != {request["call_id"]: object_sha(request) for _, _, request in requests}
-            or contract.get("max_calls") != len(requests) or contract.get("modes") != list(MODES)):
+            or contract.get("max_calls") != len(requests)
+            or contract.get("modes") != list(dict.fromkeys(mode for _, mode, _ in requests))):
         raise ValueError("Completed replay journal/request inventory changed")
     for (case, mode, request), stored_row in zip(requests, previous["rows"]):
         call_id = request["call_id"]
@@ -271,7 +278,7 @@ def audit_completed_replay(output_dir):
             inventories.append(Path(path))
     if len(inventories) != 1:
         raise ValueError("Replay contract must bind exactly one source inventory")
-    _, requests = _prepare_requests(inventories[0], sources)
+    _, requests = _probe_requests(inventories[0], sources, contract.get("duration_source_run"), contract.get("adaptive_boundary", False))
     if sources != contract["sources"]:
         raise ValueError("Rebuilt replay sources differ from the saved contract")
     journal = _Journal(output, object_sha(contract), contract["max_calls"])
@@ -306,10 +313,17 @@ def _dispatch(journal, provider, request, contract):
             raise _ReplayInfrastructureError("On-disk replay contract changed during dispatch")
 
 
-def run_memory_replay(inventory_path, provider_spec, output_dir, resume=False):
+def _probe_requests(inventory_path, sources, duration_source_run=None, adaptive_boundary=False):
+    if duration_source_run is None:
+        return _prepare_requests(inventory_path, sources)
+    from .duration_content import prepare_duration_requests
+    return prepare_duration_requests(inventory_path, sources, duration_source_run, adaptive_boundary)
+
+
+def run_memory_replay(inventory_path, provider_spec, output_dir, resume=False, *, duration_source_run=None, adaptive_boundary=False):
     inventory_path, output = Path(inventory_path).resolve(), Path(output_dir).resolve()
     sources = {}
-    cases, requests = _prepare_requests(inventory_path, sources)
+    cases, requests = _probe_requests(inventory_path, sources, duration_source_run, adaptive_boundary)
     _unchanged(sources)
     provider = create_provider(provider_spec, role="planner", base_dir=inventory_path.parent)
     if provider.identity["kind"] not in ("chat_completions", "replay"):
@@ -318,10 +332,17 @@ def run_memory_replay(inventory_path, provider_spec, output_dir, resume=False):
         code_sha256={p.name: file_sha(p) for p in sorted(Path(__file__).parent.glob("*.py"))},
         provider_identity=copy.deepcopy(provider.identity), max_calls=len(requests),
         request_sha256={r["call_id"]: object_sha(r) for _, _, r in requests},
-        modes=list(MODES), fixed_original_prefix=True, same_request_seed_and_token_cap=True,
-        full_prompt_unchanged=True, metadata_only_removes_historical_action_fields=True,
+        modes=list(dict.fromkeys(mode for _, mode, _ in requests)), fixed_original_prefix=True, same_request_seed_and_token_cap=True,
+        full_prompt_unchanged=duration_source_run is None, metadata_only_removes_historical_action_fields=True,
         new_audio_calls=0, new_outline_calls=0, model_weights_updated=False,
         whole_song_quality_verified=False, synthetic=any(c["synthetic"] for c in cases) or provider.identity["synthetic"])
+    if duration_source_run is not None:
+        contract["duration_source_run"] = str(Path(duration_source_run).resolve())
+        contract["fixed_schedule_content_probe"] = True
+        contract["common_content_limits"] = cases[0]["content_limits"]
+        if adaptive_boundary:
+            contract["adaptive_boundary"] = True
+            contract["adaptive_slot_minimum_seconds"] = 2
     if output.exists() and not resume:
         raise FileExistsError(str(output))
     if resume and not (output / "contract.json").is_file():

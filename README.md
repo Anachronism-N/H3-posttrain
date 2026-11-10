@@ -70,6 +70,8 @@ incorporates the completed five-recipe Captioner pilot, prioritizes reuse of exi
 paired scores and independent harness review, and defines a 40-output generation
 pilot plus a bounded next-token prefix diagnostic before further training.
 
-The [v23 candidate-review audit and next experiments](notes/43_candidate_review_audit_and_next_experiments_20261110_zh.md)
+The [v23/v24 candidate-review audit and next experiments](notes/43_candidate_review_audit_and_next_experiments_20261110_zh.md)
 updates the completed review tooling, separates timing-policy rejection from dance
 quality, and specifies the two-reviewer target/candidate workflow before new model calls.
+Its final section records the real v24 source-trace re-audit, randomized review-package
+deployment and pending human judgments; no historical outputs or scores are rewritten.

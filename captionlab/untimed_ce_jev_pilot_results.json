@@ -1,0 +1,300 @@
+{
+  "schema": "captionlab-published-untimed-CE-JEV-pilot-v1",
+  "recorded_date": "2026-11-10",
+  "base": "Qwen3-Omni-30B-A3B-Captioner-Thinker-only",
+  "latest_analysis_code_baseline": "e8edb0e",
+  "actual_training_runtime": "main@02f478a_deployed_snapshot",
+  "input_audio_seconds": 5.0625,
+  "train_sources": 2000,
+  "val_sources": 256,
+  "epochs_per_recipe": 4,
+  "optimizer_updates_per_recipe": 252,
+  "source_exposures_per_recipe": 8000,
+  "training_global_batch": 32,
+  "LoRA_rank": 32,
+  "LoRA_alpha": 64,
+  "LoRA_lr": 0.00001,
+  "projector_lr": 0.00005,
+  "JEV_loss_weight_enabled": 0.1,
+  "training_compute": "BF16",
+  "parameter_storage_for_Zero_and_evaluation": "FP32",
+  "evaluation": {
+    "seed": 42,
+    "sampling": true,
+    "temperature": 0.6,
+    "top_k": 20,
+    "top_p": 0.95,
+    "max_new_tokens": 2048,
+    "repetition_penalty": 1,
+    "no_repeat_ngram_size": 0,
+    "free_generation_cases": 3,
+    "teacher_forced_conditions": "same_y_true_vs_unreviewed_random_audio",
+    "hard_negative_reviewed": false,
+    "source_group_equal_NLL_difference_is_not_quality_accuracy": true
+  },
+  "completed_recipes": [
+    {
+      "recipe": "timed_a4",
+      "checkpoint_update": 252,
+      "EOS_count": 2,
+      "case_count": 3,
+      "generated_tokens_case_A_B_C": [
+        2048,
+        1752,
+        665
+      ],
+      "random_minus_true_group_equal": 0.0015870679063883107,
+      "scored_val_cases": 256,
+      "JEV": {
+        "enabled": true,
+        "known_label_count": 125,
+        "top1": 0.856,
+        "macro_F1_supported_classes": 0.15373563218390804,
+        "balanced_accuracy_supported_classes": 0.16666666666666666,
+        "per_class": [
+          {
+            "label": "chinese classical",
+            "support": 3,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "contemporary",
+            "support": 107,
+            "F1": 0.9224137931034483,
+            "recall": 1
+          },
+          {
+            "label": "jazz funk / heels",
+            "support": 3,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "k-pop",
+            "support": 9,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "lyrical",
+            "support": 1,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "other ethnic / folk",
+            "support": 2,
+            "F1": 0,
+            "recall": 0
+          }
+        ],
+        "unknown_masked": true,
+        "majority_val_class": "contemporary",
+        "majority_val_baseline": 0.856
+      },
+      "trainable_parameters": 34483471,
+      "audio_LoRA_last_layers": 4,
+      "target_has_numeric_timestamps": true
+    },
+    {
+      "recipe": "untimed_a16",
+      "checkpoint_update": 252,
+      "EOS_count": 0,
+      "case_count": 3,
+      "generated_tokens_case_A_B_C": [
+        2048,
+        2048,
+        2048
+      ],
+      "random_minus_true_group_equal": 0.00014222002463944582,
+      "scored_val_cases": 256,
+      "JEV": {
+        "enabled": true,
+        "known_label_count": 125,
+        "top1": 0.856,
+        "macro_F1_supported_classes": 0.15373563218390804,
+        "balanced_accuracy_supported_classes": 0.16666666666666666,
+        "per_class": [
+          {
+            "label": "chinese classical",
+            "support": 3,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "contemporary",
+            "support": 107,
+            "F1": 0.9224137931034483,
+            "recall": 1
+          },
+          {
+            "label": "jazz funk / heels",
+            "support": 3,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "k-pop",
+            "support": 9,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "lyrical",
+            "support": 1,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "other ethnic / folk",
+            "support": 2,
+            "F1": 0,
+            "recall": 0
+          }
+        ],
+        "unknown_masked": true,
+        "majority_val_class": "contemporary",
+        "majority_val_baseline": 0.856
+      },
+      "trainable_parameters": 43330831,
+      "audio_LoRA_last_layers": 16,
+      "target_has_numeric_timestamps": false
+    },
+    {
+      "recipe": "untimed_a16_nojev",
+      "checkpoint_update": 252,
+      "EOS_count": 0,
+      "case_count": 3,
+      "generated_tokens_case_A_B_C": [
+        2048,
+        2048,
+        2048
+      ],
+      "random_minus_true_group_equal": 0.0010363505143334971,
+      "scored_val_cases": 256,
+      "JEV": {
+        "enabled": false,
+        "classification_metrics": null
+      },
+      "trainable_parameters": 42798336,
+      "audio_LoRA_last_layers": 16,
+      "target_has_numeric_timestamps": false
+    },
+    {
+      "recipe": "untimed_a4",
+      "checkpoint_update": 252,
+      "EOS_count": 0,
+      "case_count": 3,
+      "generated_tokens_case_A_B_C": [
+        2048,
+        2048,
+        2048
+      ],
+      "random_minus_true_group_equal": 0.0005911117247678266,
+      "scored_val_cases": 256,
+      "JEV": {
+        "enabled": true,
+        "known_label_count": 125,
+        "top1": 0.856,
+        "macro_F1_supported_classes": 0.15373563218390804,
+        "balanced_accuracy_supported_classes": 0.16666666666666666,
+        "per_class": [
+          {
+            "label": "chinese classical",
+            "support": 3,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "contemporary",
+            "support": 107,
+            "F1": 0.9224137931034483,
+            "recall": 1
+          },
+          {
+            "label": "jazz funk / heels",
+            "support": 3,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "k-pop",
+            "support": 9,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "lyrical",
+            "support": 1,
+            "F1": 0,
+            "recall": 0
+          },
+          {
+            "label": "other ethnic / folk",
+            "support": 2,
+            "F1": 0,
+            "recall": 0
+          }
+        ],
+        "unknown_masked": true,
+        "majority_val_class": "contemporary",
+        "majority_val_baseline": 0.856
+      },
+      "trainable_parameters": 34483471,
+      "audio_LoRA_last_layers": 4,
+      "target_has_numeric_timestamps": false
+    },
+    {
+      "recipe": "untimed_a4_nojev",
+      "checkpoint_update": 252,
+      "EOS_count": 1,
+      "case_count": 3,
+      "generated_tokens_case_A_B_C": [
+        2048,
+        2048,
+        594
+      ],
+      "random_minus_true_group_equal": 0.0005008244176265643,
+      "scored_val_cases": 256,
+      "JEV": {
+        "enabled": false,
+        "classification_metrics": null
+      },
+      "trainable_parameters": 33950976,
+      "audio_LoRA_last_layers": 4,
+      "target_has_numeric_timestamps": false
+    }
+  ],
+  "all_training_budgets_completed": true,
+  "final_checkpoints_backed_up": true,
+  "training_and_evaluation_holder_restore_verified": true,
+  "original_captions_and_action_order_preserved": true,
+  "style_header_removed_from_decoder_target_JEV_separate": true,
+  "raw_time_metadata_retained": true,
+  "training_audio_not_cropped": true,
+  "training_labels_kind": "HF_model_annotations_not_human_expert_truth",
+  "majority_training_label_counts": {
+    "known": 880,
+    "contemporary": 741,
+    "contemporary_fraction": 0.8420454545454545
+  },
+  "majority_validation_label_counts": {
+    "known": 125,
+    "contemporary": 107,
+    "contemporary_fraction": 0.856
+  },
+  "evaluation_failure_kept": true,
+  "evaluation_repair": "original_template_worktree_loaded_old_module_requiring_JEV; v2_binds_worktree_to_selected_code_and_keeps_failed_v1",
+  "new_training_for_repair": false,
+  "findings_zh": [
+    "去掉JEV后，末4层三例EOS由0/3变为1/3；末16层仍0/3，不能认定JEV是循环的唯一原因。",
+    "无时间戳和扩大音频LoRA到16层在该固定2k小预算实验中尚未展示稳定编舞改善。",
+    "随机候选未经过语义错配审核，组等权NLL差不能当作编舞质量准确率或已验证音乐适配。",
+    "病理循环由实际长循环、token上限及句中截断确认；闭集动作词重复本身不判错。"
+  ],
+  "quality_accepted": false,
+  "comparison_scope": "same_fixed_2k_train_and256_val; generation_only3cases_no_population_quality_claim",
+  "private_source_IDs_audio_captions_tensors_checkpoint_paths_not_published": true,
+  "unsupervised_baseline_returns_audio_descriptions_not_choreography": true
+}

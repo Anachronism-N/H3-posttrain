@@ -166,3 +166,9 @@ python -m pytest -c captionlab/pytest.ini tests/test_captionlab_numeric.py -q
 上述GPU入口需要匹配原训练的CUDA环境、完整官方模型、原代码快照和已审核factory/工件清单；本仓库不下载模型、不提供未经鉴权的第三方runtime。不自动分配GPU、释放holder或修改原checkpoint。执行前由操作员提供独立输出/checkpoint副本并核查资源；不要在共享训练环境安装CPU Torch覆盖CUDA依赖。
 
 数值工具现会在ID派生文件读写前拒绝路径分隔、Windows保留名称和大小写冲突，合法Unicode ID保持原样。`numeric_report`要求实际三个源快照及三案例×两精度的唯一完整记录，核验非空支持、布尔声明与有限差值；重复控制由指标导出。汇总器未直接核验的恢复、资源及操作行为保留为声明或null，不能当独立认证。已发布数值JSON保留原记录，不由新汇总器改写；实现说明见[最新审查与推进文档](../notes/39_bounded_music_reinspection_and_revision_20261110_zh.md#7-最新代码审阅发现的校准工具问题)。
+
+## 7. 已完成无时间戳CE/JEV训练对照
+
+[服务器训练报告41](../notes/41_captioner_untimed_ce_jev_pilot_20261110_zh.md)记录五组2k训练/256验证、各4 epoch/252步的完整结果，附[脱敏预算和指标JSON](untimed_ce_jev_pilot_results.json)。两组纯动作CE去掉JEV后，末4层三例EOS为1/3、末16层0/3；去JEV没有消除病理循环，JEV分类本轮等于多数类基线，模型质量未通过。
+
+该结果不是本目录CLI自动启动了训练：实际运行复用了main@02f478a的已验证独立训练快照和私有运行桥。此次提交只更新结果/文档，不包含原始模型、音频、caption、tensor或未提交训练实现，不修改harness。动作闭集词复用和真实重复不判错；未知标签和未审随机候选的评价边界保留。

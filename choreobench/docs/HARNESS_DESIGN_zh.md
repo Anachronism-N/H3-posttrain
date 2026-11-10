@@ -356,6 +356,8 @@ balanced_full_unit 为可容纳的 1、2、3 个短语分别提供一种近似�
 
 这是 JSON 字段层的 scope 检查，不是 action 的完整语义解析：upper 正文偷写脚步并不会仅凭轨道合法而获得证明。
 
+通用 scope 校验允许的并发，不等于当前真实排程菜单已使用该能力：`balanced_full_unit` 的 1/2/3 事件方案是顺序完整分割，不提供重叠分轨事件。一个 action 可以描述身体部位同时运动，但 v11 尚不能据此声称具备并发多轨的独立定时控制。
+
 **提交规则：** 响应 → 解析事件 → 构造 proposed prefix → 校验完整前缀 → 保存块快照 → 更新 plan → 下一块。失败块不会进入后段历史；不通过裁剪、拉伸、补造 rest 或删事件隐藏失败。见 `choreobench/coordination.py:323`。
 
 ### 6. 有预算的诊断、重听与 action-only 修订

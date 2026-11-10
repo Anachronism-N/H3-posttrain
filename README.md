@@ -64,3 +64,8 @@ The [609c27e review and next experiments](notes/40_609c27e_review_and_next_exper
 separates the real v21/v22 execution evidence from unmeasured quality, records the
 reused-diagnosis bound fix, and specifies independent candidate review, time-view
 controls, new-source evaluation, and parallel inference-only Captioner comparisons.
+
+The [671fc25 review and revised experiment plan](notes/42_latest_review_and_experiment_plan_20261110_zh.md)
+incorporates the completed five-recipe Captioner pilot, prioritizes reuse of existing
+paired scores and independent harness review, and defines a 40-output generation
+pilot plus a bounded next-token prefix diagnostic before further training.

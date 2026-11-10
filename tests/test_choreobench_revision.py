@@ -617,3 +617,58 @@ def test_existing_literal_and_non_temporal_counts_are_not_new_retiming(world):
     revision._no_new_timing_literals(before,after,eid)
     after['events'][0]['action']+=' over 2 seconds'
     revision._no_new_timing_literals(before,after,eid)
+
+
+def _nine_event_bounded_source(world):
+    plan = copy.deepcopy(world.plan)
+    template = plan["events"][0]
+    plan["events"] = []
+    for index in range(9):
+        event = copy.deepcopy(template)
+        event.update(event_id="bounded%d" % index,
+                     start=index * plan["num_samples"] // 9,
+                     end=(index + 1) * plan["num_samples"] // 9)
+        plan["events"].append(event)
+    validate_plan(plan, read_json(world.dataset)["songs"][0])
+    write_json(world.plan_path, plan, overwrite=True)
+    world.plan = plan
+    world.events = [event["event_id"] for event in plan["events"]]
+    world.issues = [dict(event_id=event_id, priority=3, reason="x" * 400)
+                    for event_id in world.events[:8]]
+
+
+@pytest.mark.parametrize("oversized", ["reason", "issues"])
+def test_reused_diagnosis_rechecks_current_bounds_before_any_provider(world, tmp_path, oversized):
+    _nine_event_bounded_source(world)
+    diagnosis, _ = world.diagnosis(tmp_path / "bounded-source")
+    record = read_json(diagnosis)
+    if oversized == "reason":
+        record["diagnosis"]["issues"][0]["reason"] = "x" * 401
+    else:
+        record["diagnosis"]["issues"].append(dict(
+            event_id=world.events[8], priority=3, reason="A ninth historically legal issue."))
+    # The generic protocol remains compatible; the bounded runner is stricter.
+    revision.parse_diagnosis(json.dumps(record["diagnosis"]), world.plan)
+    del record["record_sha256"]
+    write_json(diagnosis, revision._sealed(record), overwrite=True)
+    original_sha = file_sha(diagnosis)
+    calls, providers, observers = len(world.calls), len(world.factories), len(world.observer_factories)
+    output = tmp_path / "refused-revision"
+    with pytest.raises(ValueError, match="8-issue / 400-character"):
+        revision.run_revision(world.dataset, world.plan_path, diagnosis, output, world.config())
+    assert (len(world.calls), len(world.factories), len(world.observer_factories)) == (calls, providers, observers)
+    assert not output.exists()
+    assert file_sha(diagnosis) == original_sha
+
+
+def test_reused_v22_diagnosis_accepts_eight_issues_at_400_character_limit(world, tmp_path):
+    _nine_event_bounded_source(world)
+    diagnosis, _ = world.diagnosis(tmp_path / "valid-bounded-source")
+    original_sha = file_sha(diagnosis)
+    world.edit_behavior[world.events[0]] = "no_op"
+    result = revision.run_revision(world.dataset, world.plan_path, diagnosis,
+                                   tmp_path / "valid-bounded-revision", world.config(max_repairs=1))
+    assert result["complete"] and result["all_selected_attempts_usable"]
+    assert result["selected_count"] == 1 and result["calls_used"] == 1
+    assert result["steps"][0]["status"] == "no_op"
+    assert file_sha(diagnosis) == original_sha

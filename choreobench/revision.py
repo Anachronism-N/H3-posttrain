@@ -289,7 +289,9 @@ def _diagnosis_record(path, dataset_path, plan_path, before):
     if (record["schema"] != "choreobench.revision_diagnosis_record.v1" or type(record["synthetic"]) is not bool
             or record["dataset_sha256"] != file_sha(dataset_path) or record["source_file_sha256"] != file_sha(plan_path)):
         raise ValueError("Diagnosis belongs to different original input bytes")
-    parse_diagnosis(json_text(record["diagnosis"]), before)
+    # Reused records must satisfy the same current bounds as newly collected
+    # diagnoses. Historical oversized records remain unchanged and are refused.
+    _bounded_diagnosis(json_text(record["diagnosis"]), before)
     return record, sha
 
 

@@ -54,3 +54,8 @@ implemented controls from unverified model-quality claims.
 The [bounded music reinspection and revision guide](notes/39_bounded_music_reinspection_and_revision_20261110_zh.md)
 documents the shared-diagnosis experiment, audio reinspection, action-only repairs,
 matched selection controls, deployment requirements, and remaining quality evaluation.
+
+The [609c27e review and next experiments](notes/40_609c27e_review_and_next_experiments_20261110_zh.md)
+separates the real v21/v22 execution evidence from unmeasured quality, records the
+reused-diagnosis bound fix, and specifies independent candidate review, time-view
+controls, new-source evaluation, and parallel inference-only Captioner comparisons.

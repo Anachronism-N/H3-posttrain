@@ -627,3 +627,15 @@ python -m choreobench.memory_replay --inventory /data/replay/inventory.private.j
 provider沿现有chat_completions/replay合同。加载前验证原contract/result、上一个已提交块、目标块、原始started/raw、原请求的历史/候选/主题/时钟，以及原响应确实编译为保存目标块；派发上限为case数×2。原模型服务名称可以不同，本次两臂使用同一实际服务/权重/环境；full重放不承诺与旧版本推理逐位一致。
 
 输出保留started/raw、各臂原prefix、新events与prefix＋该块plan、完整失败和tokens/延迟；非法或截断不重抽，基础设施/未知结果阻止后续派发，原件不覆盖。相同条件恢复复用已落盘请求，不新增模型调用。逐字历史复制数、字符数和区间仅用于诊断；动作质量需另外读内容，整曲质量及误差累积尚未被本局部探针验证。它是独立开发入口，不是run-harness新增全曲metadata_only模式；boundary_compact/动作复杂度预算/oracle内容修订仍另行开发。
+
+完成结果的恢复会先核对全部调用库存、请求/响应、导出原件和统计，缺件或变化时拒绝，不能通过补发调用修复历史。provider身份在合同中深拷贝，每次调用前后核验，漂移停止后续请求；源请求对照冻结的公共输入重建payload，拒绝未知字段/私有评价目标，原system正文保持原件。
+
+用新代码只读审核旧v25结果时，使用独立入口，不使用`--resume`：
+
+```bash
+python -m choreobench.memory_replay --audit-only --out-dir /data/replay/runs
+```
+
+`--audit-only`不接受provider/inventory/resume，不创建provider或写入run目录。它按保存合同寻找原来源，核验完整结果、原请求、调用记录、四份派生JSON和统计；保留历史code哈希，不以当前code哈希冒充旧执行代码。只支持已完成结果，缺来源、缺调用或原件变化会报错；原绝对来源路径需仍可访问，不自动迁移或改写绑定。输出`new_model_calls=0`与`quality_verified=false`；一致性审核不是部署权重认证或编舞质量评价。
+
+本轮发现、修复范围和下一项6/9调用的固定时段动作预算方案见[报告46](../notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md)。

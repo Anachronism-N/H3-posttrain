@@ -94,3 +94,8 @@ reviews `ce4fc96`, reproduces failure cases in its lexical tier heuristic, separ
 reported template prevalence from visual correctness, and prioritizes source/label
 audits before bounded rewriting experiments. Harness memory development remains a
 parallel track with its existing candidate bank frozen.
+
+The [fixed-prefix replay review and duration experiment plan](notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md)
+reviews `891e0f5`: reduced literal prefix matching in three development blocks,
+remaining short-slot overload, replay integrity fixes, and a six-call brevity versus
+duration-aware content probe with fixed event intervals before whole-song expansion.

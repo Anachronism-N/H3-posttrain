@@ -80,14 +80,14 @@ minimal revision gains. Model review is not human or direct-audio evaluation; ob
 content issues no longer wait for a complete human roster before development proceeds.
 
 The [CVPR experiment matrix](notes/44_cvpr_experiment_matrix_20261110_zh.md)
-specifies nine experiment packages for the music-to-text choreography benchmark:
-data quality, local experts, whole-song planning, instruction editing, memory and
-action-budget ablations, automatic revision, evaluation validity, scaling/cost,
-and visual grounding. It distinguishes existing tools from proposed mechanisms,
-sets source-grouped evaluation and resource budgets, and requires no new training.
-Section 14 records the executed v25 fixed-prefix full/metadata-only probe: six real
-text calls with unchanged candidates/design/timing, reduced literal copying, remaining
-short-slot overload, complete costs and restored GPU holders—not a whole-song win.
+is the consolidated experiment-only protocol: one development probe and seven
+formal experiments covering local experts, whole-song planning, a complete memory
+strategy by duration-rule factorial, local music evidence, instruction editing,
+evaluation reliability, and fixed visual execution. It fixes controls, source-grouped
+samples, metrics, budgets and execution order; all models remain frozen.
+Automatic revision and other claim-dependent extensions have separate budgets.
+The historical [v25 execution record](notes/47_memory_replay_v25_execution_record_20261110_zh.md)
+is preserved separately from this forward-looking protocol.
 
 The [latest main caption review and next experiments](notes/45_latest_main_caption_audit_and_next_experiments_20261110_zh.md)
 reviews `ce4fc96`, reproduces failure cases in its lexical tier heuristic, separates

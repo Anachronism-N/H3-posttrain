@@ -78,3 +78,10 @@ deployment. Section 9 adds the assistant’s substantive review of all 227 origi
 events and six candidates: history-associated copying, overloaded short events and
 minimal revision gains. Model review is not human or direct-audio evaluation; obvious
 content issues no longer wait for a complete human roster before development proceeds.
+
+The [CVPR experiment matrix](notes/44_cvpr_experiment_matrix_20261110_zh.md)
+specifies nine experiment packages for the music-to-text choreography benchmark:
+data quality, local experts, whole-song planning, instruction editing, memory and
+action-budget ablations, automatic revision, evaluation validity, scaling/cost,
+and visual grounding. It distinguishes existing tools from proposed mechanisms,
+sets source-grouped evaluation and resource budgets, and requires no new training.

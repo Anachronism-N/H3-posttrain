@@ -85,3 +85,9 @@ data quality, local experts, whole-song planning, instruction editing, memory an
 action-budget ablations, automatic revision, evaluation validity, scaling/cost,
 and visual grounding. It distinguishes existing tools from proposed mechanisms,
 sets source-grouped evaluation and resource budgets, and requires no new training.
+
+The [latest main caption review and next experiments](notes/45_latest_main_caption_audit_and_next_experiments_20261110_zh.md)
+reviews `ce4fc96`, reproduces failure cases in its lexical tier heuristic, separates
+reported template prevalence from visual correctness, and prioritizes source/label
+audits before bounded rewriting experiments. Harness memory development remains a
+parallel track with its existing candidate bank frozen.

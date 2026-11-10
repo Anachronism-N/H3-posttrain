@@ -172,3 +172,23 @@ python -m pytest -c captionlab/pytest.ini tests/test_captionlab_numeric.py -q
 [服务器训练报告41](../notes/41_captioner_untimed_ce_jev_pilot_20261110_zh.md)记录五组2k训练/256验证、各4 epoch/252步的完整结果，附[脱敏预算和指标JSON](untimed_ce_jev_pilot_results.json)。两组纯动作CE去掉JEV后，末4层三例EOS为1/3、末16层0/3；去JEV没有消除病理循环，JEV分类本轮等于多数类基线，模型质量未通过。
 
 该结果不是本目录CLI自动启动了训练：实际运行复用了main@02f478a的已验证独立训练快照和私有运行桥。此次提交只更新结果/文档，不包含原始模型、音频、caption、tensor或未提交训练实现，不修改harness。动作闭集词复用和真实重复不判错；未知标签和未审随机候选的评价边界保留。
+
+## 8. 标注 JSONL 的 CPU 审计
+
+`label_audit` 对本地原交付文件做流式统计，帮助核对分母和来源字段。对应[最新 main 标注审查与实验方案45](../notes/45_latest_main_caption_audit_and_next_experiments_20261110_zh.md)。不加载模型，不修改标签或划分，不按词汇指标选择训练样本。
+
+```bash
+python -m captionlab.label_audit \
+  --input /data/qwen35_captions/train_captions.jsonl \
+  --input /data/qwen35_captions/valtest_captions.jsonl \
+  --out /data/audits/qwen35_labels_v1.json
+python -m pytest -c captionlab/pytest.ini tests/test_captionlab_label_audit.py -q
+```
+
+输入为每行一个JSON对象，预期字段 `id`、`split`、`source_group_id`、`caption_version`、`motion_caption`，可选 `windows[*].caption`。缺失和坏字段逐项统计，不推测别名；split作为原始非空字符串保留，不把`valtest`静默改成`val`或`test`。每条物理行均进入总行数，包括空行、坏JSON、非法UTF-8和非对象；正文与窗口特征各自给出可用分母。所有输入只读，输出必须是新文件。
+
+报告包含输入SHA256/字节数/行数、唯一及重复ID、跨声明split的ID/来源组冲突、原caption版本计数、正文字符范围、全文和逐窗口精确句重复、跨窗口重复、8-gram与正确归一化的动作词命中密度。逐字节扫描前后检查文件身份，不一次加载整份多GB标注；内存随单条记录和ID/来源索引增长。句切分、大小写和分母定义写入报告；这些数值不与旧 `caption_tier.py` 的指标混称。
+
+`audit_complete=true`只代表扫描完成，`quality_verified=false`、`training_approved=null`始终保留。字符范围不是语言鉴定，英文词正则不覆盖全部语言；缺乏英语词不等于差标签。重复动作可能合理。工具不核验视频事实、源事件保真、窗口时钟/覆盖、兜底来源、真实歌曲隔离或实际训练消费关系，也不输出A/B/C质量等级。source_group声明相同/不同均需结合外部音视频证据解释。
+
+服务器回传摘要可用于继续分析；完整报告含输入本地路径，保持在实验目录。不要为跑工具下载或覆盖共享模型依赖。

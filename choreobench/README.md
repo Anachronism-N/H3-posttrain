@@ -540,3 +540,55 @@ python -m choreobench verify-history --experiment /runs/history-fixed-v1
 按commands.json分别执行两组后，运行 `audit-history --experiment /runs/history-fixed-v1 --out /runs/history-fixed-v1/audit.json` 检查实际大纲与请求，不只检查配置。共享来源变更禁止恢复，原大纲成本单列，新run只调用逐块文本模型。旧prepare-ablation保留四组独立生成大纲的语义，不能用它声称中间内容固定。
 
 `analyze-reviews` 从公开包、私有绑定和原始评分文件验证完整歌曲×方法分母，保留缺计划、空评分、NA；按指定人工或单一模型裁判版本分析。可添加`--reviewer-roster /data/reviewer-roster.json`核验预登记评审者×方案×当前维度：整位未提交、空评分和未分配方案单独报告，未登记评分不会替代缺失项或混入均值。每格已有一份分数不代表全部评审者完成；有名册时`--compare`还要求`reviewer_roster.complete_for_roster=true`。可同时添加`--review-design /data/review-design.json`绑定完整参加者×全包项目×适用维度设计，防止名册少登记一项后“11/11完成”冒充“12/12完成”。设计缺项/多项时比较阻断；`review_design.complete_for_design`只说明任务分配匹配，不表示已有质量评分。名册及独立设计均绑定公开包SHA，字段与使用示例见[执行说明](docs/HISTORY_CONTROL_20261106_zh.md#预登记评审名册与评分完成率)。无名册时不猜人数，不认证真实听音或ICC。分组未审时只描述，满足完整配对与来源组条件才计算可选比较。所有命令、资源、真实进度和限制见 [共享大纲历史对照与人评汇总](docs/HISTORY_CONTROL_20261106_zh.md)。
+
+
+## 15. 已有修订候选的独立审查（零模型调用）
+
+`python -m choreobench.candidate_review` 从预登记的完整 revision experiment manifest 读取三臂/全部步骤，验证原稿、patch、candidate、task、decision、内部 verdict、最终提交与调用账本的哈希和身份；不构造 provider，不更新权重，不重采样。
+
+输入库存为 `choreobench.candidate_review_inventory.v1`：
+
+```json
+{
+  "schema": "choreobench.candidate_review_inventory.v1",
+  "experiments": [
+    {"experiment_dir": "/data/revision/song01", "manifest_sha256": "REPLACE_WITH_ORIGINAL_MANIFEST_FILE_SHA256"}
+  ]
+}
+```
+
+```bash
+python -m choreobench.candidate_review prepare \
+  --inventory /data/review/inventory.private.json --out-dir /data/review/candidates-v1 \
+  --seed 7 --context-seconds 5
+python -m choreobench.candidate_review analyze \
+  --review-dir /data/review/candidates-v1 --out /data/review/preferences.pending.private.json
+python -m choreobench.candidate_review analyze-targets \
+  --review-dir /data/review/candidates-v1 --out /data/review/targets.pending.private.json
+```
+
+输出根的 `public/` 是所有非空候选与各自 before 的匿名 A/B 配对，包括内部 uncertain/rejected 以及当前时间 guard 拒绝的候选；不暴露哪一侧是 before、策略、诊断或内部接受标签。`targets/public/` 是全部三臂选定位置去重后的原稿必要性审查，不显示模型诊断。两页都保留完整歌曲与时间线、突出目标和共同上下文；局部模式不评分长期结构，整曲组织另到原评审包测。
+
+只分发两处 public 目录。private 保存原件映射、当前 guard 离线结果、全体步骤/失败/no-op 分母和重复内容计数；它们不经 review_server 公开。公共页面和 blank forms 不是评分，audio_seen 与实际已审区间初始均空/false。重复 before 或相同 candidate 保留方法分母，不算新增独立歌曲。
+
+用已有只读服务分别部署（端口只是示例，先确认空闲）：
+
+```bash
+python -m choreobench.review_server --public-dir /data/review/candidates-v1/public \
+  --host 0.0.0.0 --port 8795 --proxy-prefix /proxy/8795
+python -m choreobench.review_server --public-dir /data/review/candidates-v1/targets/public \
+  --host 0.0.0.0 --port 8796 --proxy-prefix /proxy/8796
+```
+
+评审者分别导出既有分维 reviews/time issues、独立候选偏好 `candidate-preferences.json` 和原稿必要性 `target-judgments.json`。新增格式绑定 pack、focus、每个 item SHA 和真实匿名 reviewer ID；choice 为 a/b/tie/unknown/null，必要性为 yes/no/unknown/null，须另填理由与实际已审半开采样区间。导入示例：
+
+```bash
+python -m choreobench.candidate_review analyze --review-dir /data/review/candidates-v1 \
+  --reviews /data/review/r1/candidate-preferences.json /data/review/r2/candidate-preferences.json \
+  --out /data/review/preferences.analysis.private.json
+python -m choreobench.candidate_review analyze-targets --review-dir /data/review/candidates-v1 \
+  --reviews /data/review/r1/target-judgments.json /data/review/r2/target-judgments.json \
+  --out /data/review/targets.analysis.private.json
+```
+
+缺少听音或共同范围覆盖时判断保持 pending；model_judge 与 human 分开，重复 reviewer×pair/target 不累计。逐评审映射为 candidate/before/tie/unknown，仅记录可能误接受/漏选好候选，不自动形成共识、显著性或质量赢家。尚未提供真实名单时 full_design_complete=null，不将一份评分冒充两名评审完成；原稿选点抽查不估计全曲诊断召回率。当前 guard 是字面检查，不是语义校验，历史 accepted 不回写。

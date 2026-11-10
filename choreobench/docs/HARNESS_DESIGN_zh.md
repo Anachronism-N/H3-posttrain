@@ -422,3 +422,6 @@ v22 targeted/listen 与 targeted/text_only 各内部接受 1 项；random 三次
 | 文字 JSON 计划 | 已渲染且验证视频/3D 的真实动作同步 |
 
 concat/global/旧 hierarchical 保留对照；run-harness 的 index0/llm/scores 是整包候选选择与来源编译，scores 为给定分数 DP。**它们不全部串在 coordinated 主线中**，固定分数 DP 不自动获得音乐理解能力。coordinated 本身仍单次逐块生成，后续 bounded revision 是显式独立阶段。下一步先评价已有原稿、全部非空候选和疑似选点，再根据证据决定时间视图改进与新来源实验；不以追加调用或内部 accepted 代替评价。
+
+
+2026-11-10 v23 已补齐全部非空修订候选的匿名A/B组织、独立偏好导入、原稿选点必要性审查与全候选时间字面离线审计；不是新增生成或真实评分。命令/合同见 [README第15节](../README.md#15-已有修订候选的独立审查零模型调用)，三首实际执行/失败/重复内容边界见 [最新实验记录第8节](../../notes/42_latest_review_and_experiment_plan_20261110_zh.md)。

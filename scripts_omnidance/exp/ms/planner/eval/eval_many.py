@@ -55,6 +55,7 @@ def main():
     parser.add_argument('--eos-until-coverage', action='store_true')
     parser.add_argument('--shard-index', type=int, default=0)
     parser.add_argument('--shard-count', type=int, default=1)
+    parser.add_argument('--max-new-tokens', type=int, default=1024)
     args = parser.parse_args()
 
     import torch
@@ -78,7 +79,8 @@ def main():
             if not audio.is_absolute():
                 audio = (args.data / audio).resolve()
             source = dict(id=row['id'], source_group_id=row['source_group_id'], audio_path=str(audio),
-                          audio_sha256=row['audio_sha256'], audio_window_seconds=[0.0, 5.0625])
+                          audio_sha256=row['audio_sha256'],
+                          audio_window_seconds=row.get('audio_window_seconds') or [0.0, 5.0625])
             batch = adapter.prefix(source)
             adapter.model.eval()
             parameter = next(adapter.model.parameters())
@@ -110,7 +112,7 @@ def main():
                                                 repetition_penalty=1.05, no_repeat_ngram_size=4,
                                                 logits_processor=processors,
                                                 min_new_tokens=(args.min_new_tokens or None),
-                                                max_new_tokens=1024, use_cache=True)
+                                                max_new_tokens=args.max_new_tokens, use_cache=True)
             sequences = output.sequences if hasattr(output, 'sequences') else output
             ids = sequences[0, batch['input_ids'].shape[1]:].cpu().tolist()
             text = clean(adapter.tokenizer.decode(ids, skip_special_tokens=True,

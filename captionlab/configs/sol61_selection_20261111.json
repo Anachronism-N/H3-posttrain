@@ -1,0 +1,55 @@
+{
+  "schema": "captionlab.sol61_selection_receipt.v1",
+  "repo_id": "avagelion/dance-data",
+  "revision": "1ca58b4ebc7f9457fb7dc7db587c05f3e79b767a",
+  "subdir": "sol61_captions",
+  "source_files": {
+    "train": {
+      "path": "sol61_captions/train_captions.jsonl",
+      "sha256": "3c37397021ef64cd8ce6ccd5439c6ff812e88dc1df2f8bb6488f6afefb6fc77e",
+      "bytes": 295489717
+    },
+    "val": {
+      "path": "sol61_captions/val_captions.jsonl",
+      "sha256": "224806881d50c74ebea0574fa5520aad42a1c488420e78507c7bdc613d13f4ec",
+      "bytes": 17212835
+    },
+    "test": {
+      "path": "sol61_captions/test_captions.jsonl",
+      "sha256": "4d0afe66bed3df72a740cb7847076574098bb79cc717920500e6fd815f99af04",
+      "bytes": 16745980
+    }
+  },
+  "selections": {
+    "val": {
+      "cases": 12,
+      "unique_source_groups": 12,
+      "selection": {
+        "split": "val",
+        "seed": 42,
+        "gate_policy": "all",
+        "limit": 12,
+        "eligible_records": 11098,
+        "policy": "sha256 order; one per declared video group; cross-split groups excluded"
+      },
+      "ordered_case_ids_sha256": "630c2d69aad8aae0fe090453e95e93501ad87f52e49393b55b6ddbd1ffc4d4b1",
+      "media_bound": false
+    },
+    "test": {
+      "cases": 96,
+      "unique_source_groups": 96,
+      "selection": {
+        "split": "test",
+        "seed": 42,
+        "gate_policy": "all",
+        "limit": 96,
+        "eligible_records": 11254,
+        "policy": "sha256 order; one per declared video group; cross-split groups excluded"
+      },
+      "ordered_case_ids_sha256": "c565bba821d6842742f0087d76d90d9ec34cf92029627f799c4f04482ff4a18a",
+      "media_bound": false
+    }
+  },
+  "model_calls": 0,
+  "note": "Real-source metadata selection only. No audio or model result is asserted; case-ID digests are checksums, not confidential source identifiers."
+}

@@ -1,0 +1,11 @@
+{
+  "kind": "native",
+  "family": "omni_captioner",
+  "model": "/models/Qwen3-Omni-30B-A3B-Instruct",
+  "device": "cuda:0",
+  "max_length": 8192,
+  "temperature": 0.9,
+  "top_p": 0.95,
+  "top_k": 50,
+  "task_prompt": "Listen to this music excerpt and propose one coherent possible solo choreography phrase. Describe only human movements, their sequence and simultaneous coordination, relative energy and a natural transition. Match the audible music without claiming unique correct choreography. Use concise connected movement text, not a list of isolated poses. Do not mention clothing, appearance, scenery, dance genre labels, numeric times or timestamps. Do not treat the excerpt cutoff as evidence that the full song ends. Return a single English paragraph without headers."
+}

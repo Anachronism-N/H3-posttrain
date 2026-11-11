@@ -1,5 +1,19 @@
 # CaptionLab：冻结模型的音乐→动作文本诊断
 
+## sol61 自由生成 baseline 与质量评价
+
+训练中的 captioner 尚不可用时，可先用 `sol61_captions` 冻结评测集、运行开源音频模型、导出听音盲评包并校准评价指标。完整命令、指标定义与集群资源见 [执行方案](../notes/48_sol61_baseline_evaluation_20261111_zh.md)。新增入口：
+
+- `python -m captionlab.sol61`：固定 HF 版本下载、全划分审计、抽样、按原 SHA 绑定 WAV；GT 与生成输入分开。
+- `python -m captionlab.baseline_eval`：音频＋固定任务 prompt 的自由生成；保留失败、截断、未知调用及原始响应。
+- `python -m captionlab.review_bundle`：匿名音频/文字评审包及解除盲法；参考一致性另开阶段。
+- `python -m captionlab.quality_judge`：文字 judge 与证据校验；不对未听过的音乐打分。
+- `python -m captionlab.choreo_quality`、`python -m captionlab.metric_validation`：量表、质量分项与配对差异、人评一致性及自动指标相关性。
+
+这些入口接受 sol61 无时间戳正文，**不经过下方旧 teacher-forcing 的双时间窗合同**。首版指标需要独立人评验证，CPU 测试不等于模型或指标质量结果。
+
+## 原检查点 teacher-forcing 诊断
+
 独立于 ChoreoBench 的推理/数据准备工具，对应 [8a833c9 训练复盘](../notes/34_music_caption_analysis_20261109_zh.md) 与 [下一轮执行方案](../notes/35_captionlab_experiments_20261109_zh.md)。没有训练入口，不修改冻结候选、整曲规划协议或 v11/v17 结果。
 
 已实现：固定验证集的真音乐/随机候选/显式困难候选/同长度静音清单、来源排除、原始目标保留、逐 token 因果 NLL、来源组 bootstrap、失败分母，以及舞种/时间戳的可回溯目标转换。**这些是测量工具，不是新的模型质量结果。** 当前 `run` 不自动识别动作 token，`explicit_action` 为 NA；汇总器可读取另行核验的 `action_mask`，不能把整段动作正文都冒称为信息 token。

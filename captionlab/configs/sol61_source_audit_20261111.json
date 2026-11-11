@@ -1,0 +1,111 @@
+{
+  "schema": "captionlab.sol61_audit.v1",
+  "splits": {
+    "train": {
+      "records": 198315,
+      "source_groups": 197677,
+      "gate": {
+        "true": 197578,
+        "false": 737
+      },
+      "styles": {
+        "contemporary": 72658,
+        "unknown": 111332,
+        "chinese classical": 1648,
+        "other ethnic / folk": 975,
+        "chinese folk": 297,
+        "hip-hop": 737,
+        "indian / bollywood": 33,
+        "pop / casual": 1432,
+        "k-pop": 6101,
+        "jazz funk / heels": 2363,
+        "lyrical": 212,
+        "freestyle / other": 154,
+        "modern jazz": 253,
+        "street jazz": 20,
+        "belly dance": 65,
+        "ballet": 31,
+        "krump": 3,
+        "latin": 1
+      },
+      "versions": {
+        "sol61_choreo_text_v2": 198315
+      }
+    },
+    "val": {
+      "records": 11098,
+      "source_groups": 11097,
+      "gate": {
+        "true": 11044,
+        "false": 54
+      },
+      "styles": {
+        "unknown": 6569,
+        "contemporary": 4298,
+        "chinese classical": 33,
+        "k-pop": 107,
+        "indian / bollywood": 1,
+        "other ethnic / folk": 62,
+        "pop / casual": 12,
+        "hip-hop": 8,
+        "belly dance": 3,
+        "freestyle / other": 3,
+        "lyrical": 1,
+        "ballet": 1
+      },
+      "versions": {
+        "sol61_choreo_text_v2": 11098
+      }
+    },
+    "test": {
+      "records": 11254,
+      "source_groups": 11253,
+      "gate": {
+        "true": 11203,
+        "false": 51
+      },
+      "styles": {
+        "unknown": 6743,
+        "contemporary": 4314,
+        "k-pop": 95,
+        "belly dance": 6,
+        "pop / casual": 9,
+        "freestyle / other": 4,
+        "chinese classical": 27,
+        "other ethnic / folk": 45,
+        "hip-hop": 10,
+        "indian / bollywood": 1
+      },
+      "versions": {
+        "sol61_choreo_text_v2": 11254
+      }
+    }
+  },
+  "source_files": {
+    "train": {
+      "path": "sol61_captions/train_captions.jsonl",
+      "sha256": "3c37397021ef64cd8ce6ccd5439c6ff812e88dc1df2f8bb6488f6afefb6fc77e",
+      "bytes": 295489717
+    },
+    "val": {
+      "path": "sol61_captions/val_captions.jsonl",
+      "sha256": "224806881d50c74ebea0574fa5520aad42a1c488420e78507c7bdc613d13f4ec",
+      "bytes": 17212835
+    },
+    "test": {
+      "path": "sol61_captions/test_captions.jsonl",
+      "sha256": "4d0afe66bed3df72a740cb7847076574098bb79cc717920500e6fd815f99af04",
+      "bytes": 16745980
+    }
+  },
+  "cross_split_id_count": 0,
+  "cross_split_group_count": 0,
+  "group_semantics": "declared source_group_id; published original records use video_sha256",
+  "song_or_near_duplicate_isolation_verified": false,
+  "actual_training_membership_verified": false,
+  "reference_scope": "text-only rewrite; image-space wrists/elbows/knees; no action timestamps",
+  "automatic_gate_is_human_quality": false,
+  "dataset_repo": "avagelion/dance-data",
+  "declared_revision": "1ca58b4ebc7f9457fb7dc7db587c05f3e79b767a",
+  "snapshot_status": "Downloaded at the stated immutable revision; local files audited by SHA256. Actual training manifest not supplied."
+}

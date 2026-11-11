@@ -22,6 +22,12 @@ Model weights, caches, data and generated videos are not included.
 
 ## Music-to-text choreography benchmark
 
+[Sol61 baseline evaluation (中文)](notes/48_sol61_baseline_evaluation_20261111_zh.md)
+provides pinned caption-data auditing, audio-bound open-model generation, blinded
+listening review, text-only judges and metric agreement analysis while the trained
+captioner is unavailable. GPU generation and independent human validation run on
+the evaluation cluster; CPU checks do not establish model quality.
+
 [ChoreoBench](choreobench/README.md) provides separate benchmark contracts and reference
 baselines for short-window captions, whole-song choreography scores and constrained
 text edits. It includes CPU smoke fixtures, native planner integration, external

@@ -1,0 +1,7 @@
+{
+  "kind": "native_service",
+  "base_url": "http://127.0.0.1:8765",
+  "expected_identity_sha256": "REPLACE_WITH_HEALTH_IDENTITY_SHA256",
+  "api_key_env": "CHOREOBENCH_NATIVE_TOKEN",
+  "timeout_seconds": 600
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "chat_completions",
+  "base_url": "http://127.0.0.1:8000/v1",
+  "model": "REPLACE_WITH_DEPLOYED_TEXT_MODEL_ID",
+  "api_key_env": "CHOREOBENCH_JUDGE_TOKEN",
+  "timeout_seconds": 120,
+  "temperature": 0,
+  "json_mode": true,
+  "token_parameter": "max_tokens"
+}

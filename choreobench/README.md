@@ -723,3 +723,29 @@ python -m choreobench.edit_agent --plan /data/edit/source.json --task /data/edit
 每臂保留contract、started/raw、所有tool decision/observation、final Plan、literal evaluation与tokens/失败/停止。原样resume先核对完成库存与导出hash，再从既有raw重构完整轨迹，不新增调用；缺件拒绝，输入/代码/provider变化需新目录。结构合法或abstain本身不算语义目标/联合成功，结果semantic_joint_success保持null，人工来源不得伪填。
 
 当前开发预登记使用三首旧开发歌、每歌4任务（预登记9个拟需修改＋3控制；任务必要性未独立核验）、两策略24格；最大72模型调用，实际按早停记账。任务涵盖密度、目标内部保腿改上身、动作替换或结尾、已满足/冲突。它不是最新E4正式48任务完成证明：测试来源隔离、新captioner/完整通用agent主表及真实外评仍需各自完成。
+
+
+## 21. 源文本跨度保护与不见方法的事实评价
+
+`span_edit`将作者明确指定的action内跨度作为权限：whole_action输出完整动作字符串，source_spans只输出span_id/text，程序保留跨度外原文。双方同一source Plan/授权跨度/指令/seed/字数上限，只输出格式与schema不同。whole_action也必须逐字保留未授权原文；不是给基线更多可改范围再把失败归因于它。
+
+跨度由task作者提供并绑定source_action、源字符[start,end)与文本，不是自动发现的人体事实或自由指代定位。最终仍是既有action-only补丁，其他字段/evidence不变，邻接语义或新文本中的矛盾不能仅凭字面保留而认证。跨度子轨比通用E4更严格；跨度外的等义改写不允许，不将这种授权拒绝称为语义质量错误。
+
+```bash
+python -m choreobench.span_edit --inventory /data/span/inventory.private.json \
+  --provider /data/span/provider.private.json --out-dir /data/span/runs
+# 完成恢复必须使用相同输入/provider/代码；缺件拒绝，不重新生成
+```
+
+输入schema为choreobench.span_pair_inventory.v1，含seed和cases：plan_path/plan_sha256/task_path/task_sha256。task为choreobench.span_edit_task.v1，含原edit_task、event_id、source_action、spans（span_id/start/end/source_text）。每case一个既有event，最多三case/六请求；替换≤24词/180字符。保留两格式raw、确定性重建的patch/Plan、字面保护、失败/成本和恢复，质量标记不自动改成true。
+
+`fact_review`使用单独文字模型查看source_action/candidate_action、公开指令和带原文引用的protected_facts，逐项区分retained/omitted/contradicted/unknown；等义改写可以保留事实，无事实正文的“保留whatever existed”不能凭承诺通过。引用必须是candidate原文子串，避免模型为评价编造证据。goal/new_textual_conflict独立判断，缺事实或unknown不强行算成功。
+
+```bash
+python -m choreobench.fact_review --inventory /data/review/inventory.private.json \
+  --provider /data/review/provider.private.json --out-dir /data/review/runs
+```
+
+inventory是choreobench.fact_review_inventory.v1，含seed/items。每item含item_id/source_action/candidate_action/instruction/protected_facts及private_expected/private_source；后两字段不进模型请求。protected_facts每项fact_id/description/source_evidence绑定源原文。最多24项，每项一次1200-output-token请求；结果origin=model_judge、audio_seen=false、human_reviews=0，程序不把text_joint_success当生物力学/音乐或人类联合成功。
+
+控制样例可预先含保留、遗漏、显式否定和等义改写，以作者构造标签检查规则误罚/漏检；真实输出期望保持unknown，不从同一judge的意见反写为gold。即使使用不同checkpoint，仍须披露模型家族与来源重叠，不能把这种模型校准等同正式E5的人类一致性/隐藏测试验证。formal_metric_validity_verified保持false，缺正式工件不得升级为已完成主表。

@@ -115,3 +115,12 @@ It retains within-target semantic preservation failures and does not establish
 choreography-policy superiority or complete the held-out E4 study. Formal model
 and source-isolated evaluation artifacts remain unavailable; the manuscript
 records this blocker rather than promoting old development cases to test data.
+
+
+The [source-span preservation and factual review controls](notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md)
+(section 12, v32/v33) compare two output formats under identical explicit source
+permissions and test a different Qwen text checkpoint on retention, omission,
+negation and paraphrase. All six edits preserve the uneditable source text;
+model review still fabricates evidence for preservation promises and misses a
+contradiction. The 25 new calls and all failed records are retained; these
+controlled development results do not complete the formal E4/E5 studies.

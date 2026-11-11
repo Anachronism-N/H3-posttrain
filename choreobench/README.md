@@ -749,3 +749,39 @@ python -m choreobench.fact_review --inventory /data/review/inventory.private.jso
 inventory是choreobench.fact_review_inventory.v1，含seed/items。每item含item_id/source_action/candidate_action/instruction/protected_facts及private_expected/private_source；后两字段不进模型请求。protected_facts每项fact_id/description/source_evidence绑定源原文。最多24项，每项一次1200-output-token请求；结果origin=model_judge、audio_seen=false、human_reviews=0，程序不把text_joint_success当生物力学/音乐或人类联合成功。
 
 控制样例可预先含保留、遗漏、显式否定和等义改写，以作者构造标签检查规则误罚/漏检；真实输出期望保持unknown，不从同一judge的意见反写为gold。即使使用不同checkpoint，仍须披露模型家族与来源重叠，不能把这种模型校准等同正式E5的人类一致性/隐藏测试验证。formal_metric_validity_verified保持false，缺正式工件不得升级为已完成主表。
+
+
+## 22. 从空前缀开始的整曲共享工具 agent
+
+song_agent 复用协调运行中已经绑定的原歌曲、预测音乐结构、完整候选目录、规划块和共享大纲，**不读取原事件块或原总谱作为生成前缀**。两种策略独立从空 Plan 开始，只允许读取自己已经提交的事件；不能借用另一臂的好前缀。这是整曲因果工具策略的开发对照，不是 E3 的隔离24歌/A0–A2正式主表。
+
+双方相同工具为 inspect_context / check_block / commit_block / finish，相同模型、seed、候选、outline、时钟、事件预算和模型调用上限。generic 使用通用任务规划 policy；choreography 在相同输入上增加主动作持续、并发修饰、实际时长负担、主题发展与收束 policy。通用基线同样获得完整已提交总谱和编舞任务要求，不能用缺上下文制造专用策略优势。
+
+- inspect 返回完整候选目录、规划单位和共享大纲，不改变当前块或已有历史；默认请求已经含当前块候选。
+- check 对当前单位的 proposal={unit_id,events} 做相同 schema/时钟/身体scope/主题/真实call_id校验，不提交；结果不含语义质量分。
+- commit 通过同样校验后原子追加当前单位，下一次调用才看到新的前缀；check或拒绝输出不会进入历史。
+- finish 只有全部单位提交时为完整成功；提前结束/预算耗尽均保留partial-plan.not-success.json，不冒充完整总谱。
+- 仅保存最近两条完整tool observation进入模型请求，同时完整已经提交的计划持续可见。所有历史tool decision/observation仍单独保存在steps中，不因窗口丢弃原件。
+
+当前权限不包含自主改变规划块、回头修改已提交事件、新增听音或搜索候选；这几项没有给任一策略。复用历史大纲是控制变量而非重新证明全曲观察/大纲质量。局部候选仍来自原始Omni与固定任务prompt，不冒称已提供的新SFT专家。
+
+
+最低预算必须覆盖每个单位一次提交及finish；额外inspect/check和被拒绝提案共同消耗同一硬上限。 三首开发运行每臂采用 2×单位数+1 上限，不要求每块调用check、不要求用满预算。
+
+
+```sh
+python -m choreobench run-song-agent \
+  --source-run /runs/frozen-coordination --song-id song01 \
+  --provider /data/text-provider.private.json --out-dir /runs/song-agent/generic \
+  --policy generic --seed 7 --max-calls 100 --max-output-tokens 2048
+python -m choreobench run-song-agent \
+  --source-run /runs/frozen-coordination --song-id song01 \
+  --provider /data/text-provider.private.json --out-dir /runs/song-agent/choreography \
+  --policy choreography --seed 7 --max-calls 100 --max-output-tokens 2048
+```
+
+模块入口 python -m choreobench.song_agent 也可执行。原件包含source identity、code/provider/config、started/raw、steps、已提交prefixes、final或partial Plan、描述性diagnostics、完整失败及成本。完整resume先核对原inventory/产物，逐调用从raw重建原请求及真实前缀；缺raw、篡改输出、未知基础设施结果或重建将派发新请求时拒绝，不补采。新提示/代码/来源/预算使用新目录；复用历史运行时应运行它保存的frozen_code，而不是用已改动的新源码覆盖其合同。
+
+新增 --history-mode metadata_only 是单独的历史正文消融：从完整已提交计划、recent事件、身体部位latest_event与motif recent_examples四处全部移除action，但时间/scope/主题计数、当前候选、共享大纲与模型外完整权威Plan保留。它不提供被隐藏动作的语义连续性、支撑状态或朝向，不从计数补造姿态；与full的信息差是实验干预，不称双方信息完全相同。模式写入合同/结果，不能改模式resume。此前v25是借用固定原前缀的局部重放，这里是从空计划用各自历史推进整曲；新增软件入口不代表真实metadata整曲实验已完成。当前full可离线逐字重建v35首歌56条原请求，新模式应另冻结代码/来源/调用预算并用新目录执行。
+
+当前v35的固定三首真实实验与内容结论在报告46的后续章节记录；软件测试、满覆盖、较少词数或策略自己的选择理由都不等于音乐质量、可执行性或正式人类评分。来源隔离与独立评价继续是单独的必要条件。

@@ -429,3 +429,6 @@ concat/global/旧 hierarchical 保留对照；run-harness 的 index0/llm/scores 
 2026-11-11：已执行B/D固定三槽、adaptive槽位/boundary_compact、原始Omni无时间戳重拍锚定观察、oracle单阶段编辑，共21新增请求。新Captioner尚未提供，当前观察仍完整5.0625秒；失败与负结果不覆盖。实现命令见 [README第17–18节](../README.md)，完整成本/实质内容初审/资源恢复见 [报告46第9节](../../notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md)。
 
 2026-11-11 v34：已补完整 E4 的独立 protection、作者有效性与双人一致/未决合同，复用全部 v31 的24格（18提交、6明确弃权），0新模型或音频调用。显式弃权绑定原稿，不用会写provenance的空patch伪造其输出；旧v1目标/边界判断、字面目标通过均不能替代缺失的人类保护/目标维度。48份双人原件、144目标、48保护和48边界判定仍全部缺失，12任务均未经人工作者核验，不声称正式成功率。v33空引用边界修复的19项离线复核仍15合法/4失败，不能声称judge准确率变好。合同见 [HISTORY_CONTROL的E4小节](HISTORY_CONTROL_20261106_zh.md)，全部缺项与执行限制见 [报告46第13节](../../notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md)。
+
+
+2026-11-11 v35：整曲共享工具agent已完成三首六格、158次文字调用，真实raw/请求/工具/前缀全部重建。双方拥有同一模型、候选、大纲、时钟/工具权限，从空前缀用自己的真实历史；全部只commit+finish，没有主动inspect/check，不能据此证明自适应工具策略优势。直接助手审查全部370事件仍发现长链复制与短槽动作过载，没有质量赢家。按用户要求已完成v31的24格逐目标模型评价，明确model_judge/非盲/未听音，不冒充双人独立人评。新增history_mode=metadata_only从四条输入路径去掉历史action，但模型外权威总谱保存；v36三首机制控制已启动，复用原full三份79条响应作对照，不重新生成full。当前完整回归1477通过、4跳过、148 subtests；完整结果/评审限制见报告46第14节，复现命令见ChoreoBench README第22节。

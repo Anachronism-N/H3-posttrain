@@ -441,3 +441,78 @@ retained/contradicted 现在必须提供**非空白、candidate中的真实原�
 专项初轮129项通过，新增更严格未决、CLI与空语义目标库存用例后专项为136项。中间版本本模块完整回归1455 passed、4 skipped、148 subtests passed；发布版最终为 **1456 passed、4 skipped、148 subtests passed**，与发布代码快照绑定，不将两次测试相加。首次直接全仓pytest被六项收集错误阻断：不属于本改动的分布式脚本未初始化进程组、外部既有hold_gpu helper SHA不一致、以及缺失av依赖。保留失败日志；不修改外部helper、不跳过冻结校验，也不声称全仓通过。随后运行全部 test_choreobench*.py，与历史本模块测试范围一致。
 
 本轮补齐可执行评价合同和完整缺评证据，不证明harness质量提高。正式E1–E5仍需要真实SFT/强基线工件、隔离音频/视频manifest、任务作者核验与两人独立评价/指标校准；这些缺失不能靠增加旧三首调用或填假名册解决。完整论文实验目标继续保持未完成。
+
+
+## 14. 整曲共享工具策略对照（v35，执行启动记录）
+
+本轮不再仅补审计：新增 song_agent，从空计划开始独立完成整曲逐块创作。双方相同原歌曲/预测结构、冻结候选、共享历史大纲、模型、工具、完整自己的已提交计划和时钟权限；系统policy分别为generic与choreography。工具 inspect_context/check_block/commit_block/finish 允许读取、校验、原子提交及早停，不强制每块检查，也不把check当语义评分。
+
+固定原三首开发歌，各27/26/23规划块；每臂最多55/53/47调用，两策略合计上限310。每请求上限2048输出tokens、完整request字符200000；seed7、T0、JSONschema，相同原始Omni候选。只复用大纲/候选，不读取原事件块或其他方法的好前缀作为创作历史。现有current-unit权限不含回头改已提交块、重划分全曲或新增听音，故这是整曲工具策略开发子轨，不是正式E3的24歌三系统端到端比较。
+
+当前节点GPU1/2已逐项核验原holder的cmdline/start_ticks/CUDA身份及无活动租约，然后精确让卡。相同已核验Qwen3-VL-32B-Instruct权重stat与先前indexed hash回执一致；vLLM0.31、BF16 TP2、65536上下文、max_num_seqs2、text-only/eager。其他节点和GPU不占用，没有训练或重写任务。真实服务与每首两臂运行均使用托管后台任务；原始started/raw/工具选择/已提交prefixes/失败和成本实时保存，不以“已启动”填为六格完成。
+
+新工具18项专项通过，当前ChoreoBench全套 **1474 passed、4 skipped、148 subtests passed**；这是软件验证，不是模型质量。新增CLI与测试在执行快照之外单独验证，冻结运行器继续使用自己的frozen_code，不混用代码版本。每首完成后执行同条件resume与原始raw→请求→工具→前缀→最终计划的重建；六格全部处理后才汇总真实调用数、完整/失败、成本和内容审查。
+
+早期已提交前缀能看到通用策略逐字沿用过去长句；编舞policy也仍会在不足2秒的槽写出“转身—落地—前冲”动作链。它们是具体待处理问题，不因结构合法或policy写着主动作而认为已解决；最终结论须等待完整三首输出。所有历史失败、人评缺失与正式工件门槛继续保留。
+
+
+### 14.1 第一首完成与实质内容审查（不是六格完成）
+
+第一首fma-1881两臂各27次commit+1次finish，实际各28调用，没有inspect/check，也没有隐式额外修订。两份总谱分别62/67事件，时钟/轨道排程不同，无同位置逐字相同action。原raw→请求→工具→全部已提交prefix→final重建通过，同条件resume0新调用；原6格分母仍保留，当前只审计2格。
+
+| 首歌观察 | generic | choreography |
+|---|---:|---:|
+| 完整规划块 / 新模型调用 | 27 / 28 | 27 / 28 |
+| 事件数 | 62 | 67 |
+| action正文总词数 / 每事件均值 | 3219 / 51.92 | 3135 / 46.79 |
+| 与过去已提交完整action逐字相同 | 23 | 11 |
+| 上述完整复制句在当前局部raw出现 | 0 | 0 |
+
+这里的少逐字复制不自动表示更好：generic在多个连续块反复使用同一“提膝—左右换重心—弓步”和“贴地滑动—转身—弓步”长句；choreography仍经常把freeze/hold之后的新动作链拼入同一个事件。1.8秒pu0018-e01，generic写slide/shoulder waves/arm thrusts/turn/lunge；choreography写bounce/isolation/hip rotation→freeze→body roll→isolations→low hold，主动作持续policy并未落实。
+
+两臂最后都写了收束，但局部中段反复“music cuts/final beat”仍只是来源文字被复用，不是已核验音乐结构。全曲真实音乐适配、人体执行及独立偏好均未评价，quality_preference=null。第一首的新成本合计**56请求、702,914输入/27,925输出tokens**；它不是三首完成总账。
+
+第一首已审材料在audits/fma-1881与first-song-content-review.private.json，origin=assistant_text_review、非盲评、audio_seen=false；不变成真人评分。后两首正在同原登记预算执行，下一步补齐完整六格审计/内容结论与唯一holder恢复；正式E1–E5保持未完成。
+
+### 14.2 下一项机制控制已接入，尚未把准备当成绩
+
+首歌的长句吸引子问题不是多写一句policy就能消除。新增整曲history_mode=metadata_only：移除四处历史action正文，模型只看到已提交时间/scope/主题计数；当前局部候选/大纲/时钟不变，完整权威Plan在模型外保持。历史动作内容被隐去时姿态、支撑及语义连续性保持unknown，不从metadata虚构。不同模式不可resume到同一个目录。21项专项通过，并用新full路径逐字重建首歌56条旧请求，证明控制前的输入没有偷偷变化。
+
+这是**自己从空历史生成整曲**的机制控制，不是重复v25借用同一原前缀的一块重放。但新增模式尚未执行真实模型，metadata_quality_verified=false；待v35完整三首审查后再冻结运行，不能预写为降低复制、音乐改善或正式E3完成。正在运行的v35继续使用原frozen_code，不受源码后加模式影响。托管wait_and_audit与两卡holder恢复器已经部署，完成事件须有真实六格原件和资源回执才验收。
+
+
+### 14.3 v35六格完成、完整审计与直接模型评价
+
+三首两臂全部完成；每份都是单位数次直接commit＋一次finish，**没有模型主动使用inspect/check**。总计158次新文字模型调用、2,022,028输入/83,393输出tokens，0新音频/训练。六格的每条原始请求/响应、工具选择、真实前缀及final均重建；同条件resume0调用。v35服务正常退出，两张卡唯一holder恢复，最终八卡各一个holder；后续v36只再精确让出这两张holder，143退出为主动让卡而非模型失败。
+
+| 开发歌 | generic事件 / 历史整句复制 | choreography事件 / 历史整句复制 | 每臂新调用 |
+|---|---:|---:|---:|
+| 电子fma-1881 | 62 / 23 | 67 / 11 | 28 |
+| 摇滚fma-3855 | 65 / 25 | 69 / 20 | 27 |
+| 原声fma-4151 | 52 / 9 | 55 / 10 | 24 |
+
+原声generic九处复制中一处也出现在当前局部raw；其他复制句没有当前raw逐字交集。历史可见与当前raw缺句不证明唯一因果来源，也不将所有主题复现判错。具体问题是反复复用同一长动作链、给不同长度槽塞相同全文，并将收束之后的新动作拼在同事件。
+
+按用户“直接由你来评价”，已逐一审查全部370个实际事件及固定时长，不等待人类名册。意见明确origin=model_judge、model_id=gpt-6.1-sol，audio_seen=false、actual_motion_seen=false、非盲评；实际音乐适配/生物力学为unknown，不伪造听音或第二位人评。六份当前均不建议作为最终编舞稿：
+
+- 电子：少逐字复制仍不解决1.8秒freeze→body-roll/isolation/low-hold，主动作持续未落实。
+- 摇滚：generic在1.25秒写stomp/arm-sweep/pivot/step-touch/glide，在1.035秒写leap/kick/crouch/roll/pop；专用policy也在1.035秒half-turn/freeze后继续sway/steps/pivot/kneel。尾部已经宣称final stillness，却继续起身/floor-roll。
+- 原声：两臂仍围绕spin/crouch/arm arcs/steps循环；专用policy每事件67.45词，高于generic64.02词。2.31秒有three-pivots/tuck-leap/lunge，5.59秒static-pose后又spin/crouch，专用提示不等于时长组织。
+
+评价原件assistant-full-content-review.private.json绑定plan SHA、引文/秒数、历史复制与raw交集。没有音乐赢家；结构成功6/6与内容不推荐同时保留。历史模式回归最终 **1477 passed、4 skipped、148 subtests passed**，软件通过与内容评价分列。
+
+### 14.4 v31全24格直接逐目标模型裁定
+
+用户明确让助手评价，不再请求两位人类。逐题重新读source/final、指令、目标及邻接，再输出v2逐目标/protection/boundary原件，不把整体文字评语转换成逐目标通过。
+
+三项density两策略都只partial：移除部分跳转却仍有多主阶段；原声choreography的body-preservation遗漏stomps/torso事实，只写preserving承诺，保护fail。其余明确替换/保事实及原声结束编辑有可见文字达成。三项控制两策略均弃权且保持完整原稿。摇滚ending源本来已以hold结束，必要性继续unknown，不改名成已满足控制。
+
+模型事后确认的8项需修改任务中，generic模型声明联合pass为5、partial/fail为3；choreography为4与4。各另有3控制及1作者unknown。**这是单模型、非盲、纯文字的5/8与4/8，不是正式人类S/N、置信区间或强证据名次。**两人缺评原件与12项未人工核验状态不改，未伪造人员。新原件在v34的model-verdicts.direct.v2.json、model-analysis.direct.private.json与model-review-summary.private.json，事后model作者身份另存。
+
+### 14.5 v36已启动：因果整曲历史正文移除，不重复full
+
+固定三首和choreography policy，metadata_only只移除四处已提交action正文，权威总谱在模型外保留；候选、大纲、时钟、seed7/T0、BF16同权重TP2、工具/预算不变。原v35三份full对照79条请求在新full下逐字重建，**不重新派发full**。新条件最多155调用，三首从空Plan用自己的history推进，最大两请求并行，0音频/训练/重写。
+
+v36两个holder等待器因service-launch尚未创建的竞态退出，未接触GPU或模型结果；回执出现后仅重启等待器，失败log保留，模型未补采。三首运行、完结审计、模型退出与两卡holder恢复全部托管，当前不预写metadata质量或论文完成。
+
+正式工件/来源隔离仍缺；原E1–E5双人条款不因模型意见自动完成。论文可以透明记录开发机制、真实负结果与模型评审限制，不冒充人类正式验证。

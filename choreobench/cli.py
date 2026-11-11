@@ -380,6 +380,16 @@ def build_parser():
         revision.add_argument("--resume", action="store_true")
         if name == "revise-plan":
             revision.add_argument("--diagnosis", required=True, type=Path)
+    song_agent = sub.add_parser("run-song-agent", help="Shared-tool causal whole-song policy comparison; no borrowed event prefix")
+    for name in ("source-run", "song-id", "provider", "out-dir"):
+        song_agent.add_argument("--" + name, required=True)
+    song_agent.add_argument("--policy", choices=("generic", "choreography"), default="generic")
+    song_agent.add_argument("--seed", type=int, default=7)
+    song_agent.add_argument("--history-mode", choices=("full", "metadata_only"), default="full")
+    song_agent.add_argument("--max-calls", type=int, default=100)
+    song_agent.add_argument("--max-output-tokens", type=int, default=2048)
+    song_agent.add_argument("--max-request-characters", type=int, default=200000)
+    song_agent.add_argument("--resume", action="store_true")
     return parser
 
 
@@ -394,7 +404,13 @@ def main(argv=None):
 
 def dispatch(args):
     cmd = args.command
-    if cmd == "doctor":
+    if cmd == "run-song-agent":
+        from .song_agent import run_song_agent
+        _emit(run_song_agent(args.source_run, args.song_id, read_json(args.provider), args.out_dir,
+            policy=args.policy, seed=args.seed, max_calls=args.max_calls,
+            max_output_tokens=args.max_output_tokens, max_request_characters=args.max_request_characters,
+            history_mode=args.history_mode, resume=args.resume))
+    elif cmd == "doctor":
         _emit(doctor())
     elif cmd == "demo":
         from .fixtures import create_demo

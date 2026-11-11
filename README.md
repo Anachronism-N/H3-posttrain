@@ -138,3 +138,13 @@ records and shared-denominator success bounds are now explicit. All 48 human
 records and 12 human task-author validations remain pending; no formal success
 rate is inferred. Re-parsing v33 with the stricter evidence contract leaves its
 15/19 protocol-valid count unchanged.
+
+
+The whole-song shared-tool runner (v35, report 46 section 14) completes all six
+three-song development states with 158 calls. Both policies compose from empty
+prefixes under identical tools and budgets; every raw trajectory is reconstructed.
+Direct model review still finds repeated overloaded movement chains and no clear
+policy-quality winner. The history-text mechanism control (v36) reuses all three
+original full-history outputs without resampling them; new metadata-only runs
+remain separately recorded. These studies do not replace held-out model/source
+artifacts or authenticated human evaluation.

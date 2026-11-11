@@ -684,3 +684,20 @@ python -m choreobench.music_segments --probe-inventory /data/probe/inventory.pri
 局部probe库存为 `choreobench.untimed_segment_probe.v1`，包括seed与cases列表；每项含dataset_path/dataset_sha256/song_id/target_sample。最多三case，每case固定时钟窗与最近预测重拍窗，共六次完整波形调用，同seed/提示/解码；观测窗仅起点变化（最大1.5秒）。新原始Omni基座固定UNTIMED_PROMPT只要求整窗单段编舞，不传目标、歌词、历史计划或评测答案；身份明确placeholder_base_omni=true、trained_untimed_captioner_loaded=false。它是未来接口的替代模型实验，不是未提供的新captioner成绩。
 
 输出保留原始响应、完整PCM切片/原音频父范围和身份、词数、时间格式违规与失败成本；不重采。同样的词数/无时间戳不代表动作正确、没有幻觉或音乐贴合。全曲窗口manifest只作CPU准备，局部六次生成不能证明已生成新的全曲计划；起点变化引起的不同正文也不等于锚定更可靠。
+
+
+## 19. 主动作阶段、并发修饰与收束的类型化内容探针
+
+`motion_phases`在同一固定原前缀/候选/大纲/时间/源seed下比较text_control与phase_structured，最多三case六调用。两臂均获得同一phase budget（槽≤1.5秒为1个主阶段，否则最多2个）及相同32词/240字符总上限；同一提示要求每个main最多8词、最多两个并发修饰各4词、finish最多6词。阶段数是工程假设，不是已测生理能力。
+
+text_control保留自由action字符串；phase_structured用phases数组替代action，每项闭合对象为main/concurrent/finish。控制器按“main while modifier and modifier; finish”原文拼接，仅在两个主阶段间加Then，不补动作事实、入口/出口或支撑状态。typed response通过schema限制数组/字段/字符串长度，再后验核对component词数、总action上限和原时间/身体scope/引用。类型化可暴露并发/顺序意图，却不能阻止一句main内部暗藏多个动作；实际语义仍单独审查。
+
+两臂的输出表示/schema与类型化编译不同，这正是机制干预；不声称其解码空间完全相同或额外结构只改变prompt。不把复制率、较短文字、合法字段或少阶段当质量成功。
+
+```bash
+python -m choreobench.motion_phases --inventory /data/v25/inventory.private.json \
+  --source-run /data/v25/runs --provider /data/text-provider.private.json --out-dir /data/v30/runs
+python -m choreobench.memory_replay --audit-only --out-dir /data/v30/runs
+```
+
+原raw保留typed phases；events/plan中的action为确定性编译后的原文表达，原prefix与非当前块事件不变。完成审核会从raw重建typed phases→action→events/plan，缺件或统计变化拒绝，不补采。正常resume要求输入/provider/代码身份不变，复用原始调用。新结构仅用于可能编舞，不适用于随意删减视频标注中实际发生的动作事实。

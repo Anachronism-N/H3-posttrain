@@ -103,3 +103,6 @@ anchors, and explicit oracle edits. Failures, costs and residual content problem
 remain visible; the future task-trained untimed captioner is not yet loaded.
 The manuscript draft includes these methods, negative results and oracle examples,
 without claiming held-out quality, human ratings or a validated novelty advantage.
+Section 10 additionally records v30: a typed primary/concurrent/finish representation
+versus same-budget free text, six real calls, retained word-budget failures and
+residual sequential overload—not a validated representation improvement.

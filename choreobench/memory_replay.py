@@ -169,6 +169,14 @@ def _prepare_requests(inventory_path, sources):
     return cases, requests
 
 
+def _decode_probe(case, response):
+    if case.get("phase_representation"):
+        from .motion_phases import decode_phases
+        response = decode_phases(case, response)
+    return _read_unit(response, case["original"], case["unit"], case["outline"], case["options"],
+                      case["config"]["max_events_per_unit"], case["clock"])
+
+
 def _valid_row(case, mode, events):
     if case.get("content_limits") is not None:
         from .duration_content import validate_content
@@ -231,8 +239,7 @@ def _check_completed(output, contract, journal, requests):
         _canonical_artifact(output / "calls" / (name + ".raw.json"), raw)
         try:
             response = _recorded_result(raw, contract["provider_identity"], request)
-            events = _read_unit(response["text"], case["original"], case["unit"], case["outline"], case["options"],
-                                case["config"]["max_events_per_unit"], case["clock"])
+            events = _decode_probe(case, response["text"])
             expected_row, artifacts = _valid_row(case, mode, events)
         except (ValueError, TypeError, KeyError):
             # An actual invalid/truncated response can be a completed, failed
@@ -278,7 +285,7 @@ def audit_completed_replay(output_dir):
             inventories.append(Path(path))
     if len(inventories) != 1:
         raise ValueError("Replay contract must bind exactly one source inventory")
-    _, requests = _probe_requests(inventories[0], sources, contract.get("duration_source_run"), contract.get("adaptive_boundary", False))
+    _, requests = _probe_requests(inventories[0], sources, contract.get("duration_source_run"), contract.get("adaptive_boundary", False), contract.get("motion_phase_probe", False))
     if sources != contract["sources"]:
         raise ValueError("Rebuilt replay sources differ from the saved contract")
     journal = _Journal(output, object_sha(contract), contract["max_calls"])
@@ -313,17 +320,20 @@ def _dispatch(journal, provider, request, contract):
             raise _ReplayInfrastructureError("On-disk replay contract changed during dispatch")
 
 
-def _probe_requests(inventory_path, sources, duration_source_run=None, adaptive_boundary=False):
+def _probe_requests(inventory_path, sources, duration_source_run=None, adaptive_boundary=False, motion_phase_probe=False):
+    if motion_phase_probe:
+        from .motion_phases import prepare_phase_requests
+        return prepare_phase_requests(inventory_path, sources, duration_source_run)
     if duration_source_run is None:
         return _prepare_requests(inventory_path, sources)
     from .duration_content import prepare_duration_requests
     return prepare_duration_requests(inventory_path, sources, duration_source_run, adaptive_boundary)
 
 
-def run_memory_replay(inventory_path, provider_spec, output_dir, resume=False, *, duration_source_run=None, adaptive_boundary=False):
+def run_memory_replay(inventory_path, provider_spec, output_dir, resume=False, *, duration_source_run=None, adaptive_boundary=False, motion_phase_probe=False):
     inventory_path, output = Path(inventory_path).resolve(), Path(output_dir).resolve()
     sources = {}
-    cases, requests = _probe_requests(inventory_path, sources, duration_source_run, adaptive_boundary)
+    cases, requests = _probe_requests(inventory_path, sources, duration_source_run, adaptive_boundary, motion_phase_probe)
     _unchanged(sources)
     provider = create_provider(provider_spec, role="planner", base_dir=inventory_path.parent)
     if provider.identity["kind"] not in ("chat_completions", "replay"):
@@ -336,6 +346,9 @@ def run_memory_replay(inventory_path, provider_spec, output_dir, resume=False, *
         full_prompt_unchanged=duration_source_run is None, metadata_only_removes_historical_action_fields=True,
         new_audio_calls=0, new_outline_calls=0, model_weights_updated=False,
         whole_song_quality_verified=False, synthetic=any(c["synthetic"] for c in cases) or provider.identity["synthetic"])
+    if motion_phase_probe:
+        contract["motion_phase_probe"] = True
+        contract["structured_actions_are_proposals"] = True
     if duration_source_run is not None:
         contract["duration_source_run"] = str(Path(duration_source_run).resolve())
         contract["fixed_schedule_content_probe"] = True
@@ -368,8 +381,7 @@ def run_memory_replay(inventory_path, provider_spec, output_dir, resume=False, *
             try:
                 _unchanged(sources)
                 response = _dispatch(journal, provider, request, contract)
-                events = _read_unit(response["text"], case["original"], case["unit"], case["outline"], case["options"],
-                                    case["config"]["max_events_per_unit"], case["clock"])
+                events = _decode_probe(case, response["text"])
                 row, artifacts = _valid_row(case, mode, events)
                 for name, value in artifacts.items():
                     path = directory / name

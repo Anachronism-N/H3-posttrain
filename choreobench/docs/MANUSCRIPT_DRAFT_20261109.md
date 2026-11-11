@@ -128,6 +128,14 @@ A planned untimed captioner is expected to consume roughly five seconds of music
 
 A predicted-downbeat observation policy shifts a complete 5.0625-second waveform to a nearby predicted downbeat without padding, time stretching or global-BPM extrapolation. The endpoint is not guaranteed to be a downbeat: this is start anchoring, not verified bar/phrase segmentation. For coverage manifests, backward anchoring keeps consecutive full observations connected; their ownership intervals partition the recording. Untimed prose is not split into invented action timestamps, and ownership is not evidence that all source actions fit after cropping. A three-recording local probe holds prompt/seed/decoding fixed and changes only the observation interval; prepared full-song manifests do not imply full-song generation was executed.
 
+### 4.9 Typed primary phases, concurrency and closure
+
+We test a more explicit action representation after oracle edits show that an instruction targeting the primary motion can change substantive content. A phase has a primary ongoing motion (main), zero to two simultaneous modifiers (concurrent), and an optional endpoint/hold (finish). Fixed slots of at most 1.5 seconds admit one primary phase; longer slots admit up to two. This capacity rule is an engineering hypothesis, not a biomechanical limit.
+
+A text-control arm receives the same phase-budget instructions but emits a free action string. The typed arm emits closed phase objects, with field/count/character decoding constraints and post-generation component-word checks. Both use the same historical prefix, local proposals, outline, actual slot intervals, seed and total action budget. The decoder spaces and compilation step necessarily differ; this is the intended representation intervention, not a claim of identical decoding schemas.
+
+The deterministic compiler joins main and concurrent text with while/and and appends finish, adding Then only between primary phases. It invents no support/contact state or extra motion facts. Typed raw responses remain available separately from their compiled score actions. A short field can still contain multiple hidden operations, and a finish can describe an implausible new maneuver; field validity alone therefore cannot certify semantic stage separation, musical fit or physical feasibility. Completed artifacts are audited by recompiling recorded raw responses, not by resampling missing calls.
+
 ## 5. Experimental Protocol
 
 ### 5.1 Development data and models
@@ -296,6 +304,14 @@ Oracle targets are supplied by development review, not an automatic critic. The 
 All six base-Omni calls stop normally and return prose without recognized timestamp formatting. Both sides consume the same 81,000-sample waveform length with the same untimed task prompt and sampling seed, but different source intervals. The acoustic anchored prose uses a more continuous torso/arm movement than its fixed-window counterpart, while both electronic outputs retain a similar knee/arm inventory. This is exploratory text inspection, not direct listening or evidence that anchoring improves musical fit. The prepared coverage manifests require more overlapping observations, exposing a cost trade-off; only six local captions were actually generated, not a new full-song score.
 
 Actual provider-reported cost is 1,038 input and 804 output tokens; the native input-token count is not a measure of full audio-encoder computation. The task-trained untimed captioner has not been supplied or loaded. Across v26–v29, the new bounded experiments total 21 calls, 88,566 input and 5,817 output tokens. Historical local-proposal/outline/v25 costs remain separate, and no failed condition is resampled. All model services are stopped and used GPUs restored to unique holders. These experiments add executable methods, matched content controls and explicit negative/oracle findings to the writing evidence, not held-out benchmark quality or a human-study result.
+
+### 6.11 Typed movement-phase probe (v30)
+
+The typed-phase and same-budget text-control arms use the same three fixed blocks/prefixes/proposals/design/seed, with a one-phase cap for slots of at most 1.5 seconds and at most two phases otherwise. Each primary string targets at most eight words, concurrent modifiers four words each, and closure six words, while total compiled action remains capped at 32 words/240 characters. Schema constraints enforce fields/counts/characters; word limits are checked afterward.
+
+All six calls stop normally. Two text-control blocks pass the overall mechanical checks, while all three typed blocks violate component-word budgets; the acoustic text-control block violates total word count. The electronic typed response also contains a mixed-language fragment. None is resampled or truncated. Different typed/free schemas impose different detectable constraints, so these validity fractions are not a semantic winner comparison. Text inspection still finds full spin-and-landing in a 0.75-second typed phase, and additional rise/glide operations placed inside closure fields. Merely naming a field primary or concurrent does not certify that it contains one stage or truly simultaneous motion.
+
+v30 consumes 32,015 input and 2,427 output tokens across six calls. Completed raw/artifact inventories are reconstructed by a read-only audit, and same-condition resume issues zero new calls. Across v26–v30, the development probes total 27 new requests, 120,581 input and 8,244 output tokens; historical shared audio/design/v25 costs remain separate. All associated services are stopped and GPUs restored to unique holders. The current evidence supports an inspectable failure analysis and conditional oracle-editor capability, not a typed-representation quality gain or completion of the required held-out studies.
 
 ## 7. Discussion and Limitations
 

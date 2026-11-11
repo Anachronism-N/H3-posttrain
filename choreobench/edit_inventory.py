@@ -104,8 +104,11 @@ def audit_edit_inventory(inventory_path, attempts_path):
         elif row['status'] == 'returned':
             if row['error'] is not None or row['after'] is None or row['patch'] is None:
                 raise ValueError('Returned attempt requires exact after/patch references and no error')
+        elif row['status'] == 'abstained':
+            if row['error'] is not None or row['after'] is None or row['patch'] is not None:
+                raise ValueError('Abstention requires exact unchanged after reference, no patch and no error')
         else:
-            raise ValueError('Attempt status must be returned/failed; omitted attempts stay missing')
+            raise ValueError('Attempt status must be returned/abstained/failed; omitted attempts stay missing')
         by_key[key] = row
     cells = []
     for tid, bound in tasks.items():
@@ -114,24 +117,25 @@ def audit_edit_inventory(inventory_path, attempts_path):
                 row = by_key.get((tid, method, seed))
                 cell = dict(task_id=tid, song_id=bound['song']['song_id'], method_id=method, seed=seed,
                     dataset_sha256=bound['dataset_sha256'], source_plan_sha256=bound['source_plan_sha256'],
-                    task_sha256=bound['task_sha256'], status='missing_attempt', mechanical_valid=None,
+                    task_sha256=bound['task_sha256'], status='missing_attempt',
+                    attempt_status=None if row is None else row['status'], mechanical_valid=None,
                     empty_operations=None, no_op=None, literal_joint_success=None,
                     semantic_status='not_evaluated', joint_success=None, errors=[])
                 if row is not None and row['status'] == 'failed':
                     cell.update(status='declared_failed', mechanical_valid=False, joint_success=False, errors=[row['error']])
                 elif row is not None:
                     after = _reference(row['after'], attempts_path.parent, sources, tid + ':' + method + ':' + str(seed) + ':after')
-                    patch = _reference(row['patch'], attempts_path.parent, sources, tid + ':' + method + ':' + str(seed) + ':patch')
+                    patch = None if row['status']=='abstained' else _reference(row['patch'], attempts_path.parent, sources, tid + ':' + method + ':' + str(seed) + ':patch')
                     cell['after_plan_sha256'] = object_sha(after)
                     try:
-                        expected = apply_task_patch(bound['before'], patch, bound['task'])
+                        expected = bound['before'] if row['status']=='abstained' else apply_task_patch(bound['before'], patch, bound['task'])
                         if object_sha(expected) != object_sha(after):
                             raise ValueError('Returned plan differs from exact execution of its bound patch')
                     except (ValueError, TypeError, KeyError) as error:
                         cell.update(status='invalid_output', mechanical_valid=False, joint_success=False, errors=[str(error)])
                     else:
                         evaluation = evaluate_edit(bound['before'], after, bound['task'])
-                        cell.update(mechanical_valid=True, empty_operations=not patch['operations'],
+                        cell.update(mechanical_valid=True, empty_operations=None if patch is None else not patch['operations'],
                             no_op=evaluation['no_op'], literal_joint_success=evaluation['literal_joint_success'],
                             semantic_status=evaluation['semantic_status'], evaluation=evaluation)
                         if evaluation['literal_joint_success'] is False:

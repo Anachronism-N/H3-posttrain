@@ -124,3 +124,11 @@ negation and paraphrase. All six edits preserve the uneditable source text;
 model review still fabricates evidence for preservation promises and misses a
 contradiction. The 25 new calls and all failed records are retained; these
 controlled development results do not complete the formal E4/E5 studies.
+
+The zero-call joint-edit audit (v34, report 46 section 13) binds all 24 v31 states,
+including six explicit unchanged-source abstentions, to per-goal, protection and
+boundary requirements. Author validity, two-human disagreement/unknown/missing
+records and shared-denominator success bounds are now explicit. All 48 human
+records and 12 human task-author validations remain pending; no formal success
+rate is inferred. Re-parsing v33 with the stricter evidence contract leaves its
+15/19 protocol-valid count unchanged.

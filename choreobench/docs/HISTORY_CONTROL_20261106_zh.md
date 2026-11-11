@@ -252,9 +252,40 @@ python -m choreobench analyze-edit-semantics \
 
 来源/目标/范围变化和重复记录被拒绝，原件SHA在分析结束复核。已知机械或字面失败优先；任意目标或boundary的fail/partial使该评审者联合状态为false。缺目标、unknown或已审范围不足保持null。全部必要目标和boundary明确pass、完整范围、无已知失败才是declared_joint_pass；没有目标不能靠boundary一项通过。结果是外部声明，不认证内容真伪或实际听音；多个评审意见分开保留，无自动多数票，也不把未登记额外分数填进缺评人名额。真实评审人数与完成率另按原名册设计检查。
 
-失败/未入包的任务格仍保留在库存，语义报告列出未表示格，不由合法编辑包反推实验分母。同一个评审者/项目在多文件重复会被拒绝；第三人仲裁另存原件单独分析，不覆盖原两位独立记录。初版只裁定原semantic_goals与局部boundary，独立保持事实目标的扩展、新来源任务和已审范围问题率仍需后续设计。
+失败/未入包的任务格仍保留在库存，语义报告列出未表示格，不由合法编辑包反推实验分母。同一个评审者/项目在多文件重复会被拒绝；第三人仲裁另存原件单独分析，不覆盖原两位独立记录。初版 v1 只裁定原 semantic_goals 与局部 boundary，不能单独成为完整 E4 成功。2026-11-11 新增下面的独立 protection、任务作者审核与双人联合合同；新来源正式任务及真实评分仍缺。
 
 本轮原三编辑×editor/no-op六项的匿名要求和空原件已实际准备/核验；没有生成真实判断或登记参与者。详见[验收第24节](VALIDATION_20261104.md#24-独立逐目标编辑裁定与匿名绑定-v19)。
+
+### E4 完整联合合同（v2，零模型调用）
+
+prepare 另输出 joint-verdicts.template.json 和 task-authoring.template.private.json；模板为空/null，不是已提交评分。v2 裁定在 v1 的原件字段上增加 protection={status,evidence}，status 同样为 pass/partial/fail/unknown，证据不得空白。所有原目标、边界和必要邻接审阅范围均保留。目标库存为空时，即使字面规则通过，也不能替代人类语义目标判断；完整 E4 仍未决。旧 v1 原件可继续分析，但缺少独立 protection 时 e4_joint_success 不会因目标/边界通过而变成 true。
+
+任务作者文档 schema=choreobench.edit_task_authoring.v1，绑定 inventory 字节 SHA，声明 author_id、human/model_judge、model_id 和 frozen_before_execution；tasks 必须覆盖全部注册 task_id，不得删掉难题。每项绑定 task/source-plan 内容 SHA，记录 category、validity、private_requirements_within_instruction 和非空 evidence：
+
+- category：change_required / already_satisfied / ambiguous_or_conflicting / source_unavailable / unknown；
+- validity：valid / invalid / unknown；只有明确类别且确认私有要求没有超出公开指令，才可声明 valid；
+- 审核者声明与冻结时间不是程序认证。事后助手审核必须标记 model_judge、冻结 false，不伪造人工作者。
+
+指定恰好两个 human reviewer_id，模型评审不能填人类槽位。每个方法/seed 使用**同一批作者确认 valid 的 change_required 任务**作为 N，按来源歌曲保留嵌套记录；两人一致完整通过为 S，机械/字面失败为 F，未知、缺项、审阅不足和未解决分歧为 U。两人均判失败但仍有维度分歧/unknown 时也保留 U，不能取多数票。输出 S/N、U/N 和 [S/N,(S+U)/N]；N=0 时率与界限为 null。作者 unknown/无效/原稿不可用槽位另列，不将其偷偷改名控制题或移出注册覆盖。
+
+控制题与需修改任务分开；no_op 是可核对的文字事实，不自动代表合理保持。库存现支持 status=abstained：after 必须绑定**完全相同的原稿**，patch=null、error=null。它与 returned/空操作 patch 分开，因为执行空 patch 会写入编辑 provenance，而明确弃权不应篡改原稿以迁就审计。
+
+
+默认分析命令不要求完整合同；明确需要 E4 汇总时增加两个参数：
+
+```sh
+python -m choreobench analyze-edit-semantics \
+  --inventory /runs/edit-study/inventory.private.json \
+  --attempts /runs/edit-study/attempts.private.json \
+  --requirements /runs/edit-semantic-review/requirements.json \
+  --bridge /runs/edit-semantic-review/bridge.private.json \
+  --verdicts /runs/edit-semantic-review/reviewer-a.v2.json /runs/edit-semantic-review/reviewer-b.v2.json \
+  --task-authoring /runs/edit-study/task-authoring.private.json \
+  --reviewer-pair reviewer-a reviewer-b \
+  --out /runs/edit-semantic-review/joint-analysis.json
+```
+
+若没有评分，继续提供 records=[] 的原件，不提交未填写模板。e4_joint_evaluation 记录联合合同和缺项；consensus 仍为空，formal_e4_completed/quality_verified 不由声明或机械通过自动开启。音乐适配下降和成本仍单独报告。
 
 ## 结构化时间观察与独立原件
 

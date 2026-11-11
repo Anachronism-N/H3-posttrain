@@ -305,6 +305,8 @@ def build_parser():
     for name in ("inventory", "attempts", "requirements", "bridge", "out"):
         semantic_analyze.add_argument("--" + name, required=True, type=Path)
     semantic_analyze.add_argument("--verdicts", required=True, nargs="+", type=Path)
+    semantic_analyze.add_argument("--task-authoring", type=Path)
+    semantic_analyze.add_argument("--reviewer-pair", nargs=2)
     edit_inventory = sub.add_parser("audit-edit-inventory", help="Audit independent task/method/seed outcomes with missing cells retained")
     edit_inventory.add_argument("--inventory", required=True, type=Path)
     edit_inventory.add_argument("--attempts", required=True, type=Path)
@@ -543,7 +545,8 @@ def dispatch(args):
         _emit(prepare_edit_semantics(args.inventory, args.attempts, args.public, args.private, args.mapping, args.out_dir))
     elif cmd == "analyze-edit-semantics":
         from .edit_semantics import analyze_edit_semantics
-        _emit(analyze_edit_semantics(args.inventory, args.attempts, args.requirements, args.bridge, args.verdicts), args.out)
+        _emit(analyze_edit_semantics(args.inventory, args.attempts, args.requirements, args.bridge, args.verdicts,
+            task_authoring_path=args.task_authoring, reviewer_pair=args.reviewer_pair), args.out)
     elif cmd == "audit-edit-inventory":
         from .edit_inventory import audit_edit_inventory
         _emit(audit_edit_inventory(args.inventory, args.attempts), args.out)

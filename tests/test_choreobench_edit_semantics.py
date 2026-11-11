@@ -8,13 +8,14 @@ from choreobench.reviews import build_review_pack
 from test_choreobench_edit_inventory import material as inventory_material
 
 
-def material(tmp_path, prepare=True, literal_failure=False, multiple_goals=False, no_goals=False):
+def material(tmp_path, prepare=True, literal_failure=False, multiple_goals=False, no_goals=False, literal_success=False):
     inventory,attempts=inventory_material(tmp_path)
     inv=read_json(inventory);runs=read_json(attempts);items=[]
-    if literal_failure or multiple_goals or no_goals:
+    if literal_failure or multiple_goals or no_goals or literal_success:
         for entry in inv['tasks']:
             task_path=tmp_path/entry['task']['path'];task=read_json(task_path)
             if literal_failure:task['goals']=[dict(event_id='e',field='action',op='contains',value='unmet-extra-goal')]
+            if literal_success:task['goals']=[dict(event_id='e',field='action',op='contains',value='soft')]
             if multiple_goals:task['semantic_goals'].append('Keep shoulders relaxed')
             if no_goals:task['semantic_goals']=[]
             write_json(task_path,task,overwrite=True);entry['task']['sha256']=file_sha(task_path)
@@ -219,6 +220,177 @@ def test_required_context_covers_neighbors_from_before_and_after():
     before=dict(events=events,num_samples=30);after=copy.deepcopy(before)
     after['events'][1].update(start=12,end=25)
     assert semantics._required_range(before,after,dict(allowed_event_ids=['b'],repair_event_ids=[]))==[dict(start=0,end=30)]
+
+
+def joint_verdict(req, reviewer='observer-a', goal='pass', protection='pass'):
+    row=verdict(req,reviewer,goal)
+    row['protection']=dict(status=protection,evidence='Synthetic protected-fact fixture only')
+    return row
+
+
+def analyze_joint(args,rows=None,author_change=None,reviewer_pair=('observer-a','observer-b'),version='v2'):
+    inventory,attempts,_,_,_,out=args
+    req=read_json(out/'requirements.json')
+    author=read_json(out/'task-authoring.template.private.json')
+    author.update(author_id='software-author-not-human',frozen_before_execution=False)
+    for task in author['tasks']:
+        task.update(category='change_required',validity='valid',private_requirements_within_instruction=True,
+                    evidence='Software fixture: source does not yet meet the instruction')
+    if author_change:author_change(author)
+    author_path=out/'task-authoring.private.json';write_json(author_path,author,overwrite=True)
+    path=out/'joint-verdicts.json'
+    write_json(path,dict(schema='choreobench.edit_semantic_verdicts.'+version,requirements_sha256=object_sha(req),records=rows or []),overwrite=True)
+    return semantics.analyze_edit_semantics(inventory,attempts,out/'requirements.json',out/'bridge.private.json',[path],
+        task_authoring_path=author_path,reviewer_pair=reviewer_pair)
+
+
+def test_e4_uses_same_full_task_denominator_per_method_and_seed(tmp_path):
+    args=material(tmp_path);req=read_json(args[-1]/'requirements.json')['items'][0]
+    report=analyze_joint(args,[joint_verdict(req,'observer-a'),joint_verdict(req,'observer-b')])
+    e4=report['e4_joint_evaluation']
+    assert e4['registered_tasks']==2 and e4['registered_cells']==8
+    assert all(s['N']==2 for s in e4['change_required_summaries'])
+    assert sum(s['S'] for s in e4['change_required_summaries'])==1
+    assert sum(s['U'] for s in e4['change_required_summaries'])==7
+    assert all(s['N']==s['S']+s['U']+s['F'] for s in e4['change_required_summaries'])
+    assert [s['success_rate_bounds'] for s in e4['change_required_summaries'] if s['S']]==[[0.5,1.0]]
+    assert len(e4['cells'])==8 and sum(bool(r['missing_reviewers']) for r in e4['cells'])==7
+    assert not e4['formal_e4_completed'] and not e4['human_authoring_and_preexecution_freeze_declared']
+    assert report['consensus'] is None
+
+
+@pytest.mark.parametrize('protection,expected',[('pass',True),('partial',False),('fail',False),('unknown',None)])
+def test_e4_explicit_protection_required_besides_goals_and_boundary(tmp_path,protection,expected):
+    args=material(tmp_path);req=read_json(args[-1]/'requirements.json')['items'][0]
+    report=analyze_joint(args,[joint_verdict(req,'observer-a',protection=protection)])
+    d=report['observer_decisions'][0]
+    assert d['joint_success'] is True and d['e4_joint_success'] is expected
+    row=next(c for c in report['e4_joint_evaluation']['cells'] if c['review_id']==req['review_id'])
+    assert row['pair_status']=='unresolved'
+    if protection=='unknown':assert row['unknown_verdict_reviewers']==['observer-a']
+
+
+def test_v1_goal_boundary_pass_never_becomes_full_e4_pass(tmp_path):
+    args=material(tmp_path);req=read_json(args[-1]/'requirements.json')['items'][0]
+    report=analyze_joint(args,[verdict(req,'observer-a'),verdict(req,'observer-b')],version='v1')
+    assert all(d['e4_joint_success'] is None for d in report['observer_decisions'])
+    row=next(c for c in report['e4_joint_evaluation']['cells'] if c['review_id']==req['review_id'])
+    assert row['pair_status']=='unresolved' and row['insufficient_reviewers']==['observer-a','observer-b']
+
+
+def test_literal_goal_pass_cannot_replace_missing_human_target_verdict(tmp_path):
+    args=material(tmp_path,no_goals=True,literal_success=True)
+    bridge=read_json(args[-1]/'bridge.private.json');reqs=read_json(args[-1]/'requirements.json')['items']
+    rid=next(c['review_id'] for c in bridge['cells'] if c['method_id']=='editor')
+    req=next(r for r in reqs if r['review_id']==rid)
+    report=analyze_joint(args,[joint_verdict(req,'observer-a'),joint_verdict(req,'observer-b')])
+    assert all(d['joint_success'] is True and d['e4_joint_success'] is None for d in report['observer_decisions'])
+    cell=next(c for c in report['e4_joint_evaluation']['cells'] if c['review_id']==rid)
+    assert cell['pair_status']=='unresolved' and len(cell['insufficient_reviewers'])==2
+
+
+def test_two_humans_disagreement_and_missing_remain_unresolved_without_majority(tmp_path):
+    args=material(tmp_path);req=read_json(args[-1]/'requirements.json')['items'][0]
+    rows=[joint_verdict(req,'observer-a'),joint_verdict(req,'observer-b',goal='fail'),joint_verdict(req,'observer-c')]
+    report=analyze_joint(args,rows);cell=next(c for c in report['e4_joint_evaluation']['cells'] if c['review_id']==req['review_id'])
+    assert cell['pair_status']=='unresolved' and cell['pair_joint_success']==[True,False]
+    assert cell['disagreements']==['e4_joint_success','goal:0']
+    rows[0]['goals'][0]['status']='fail'
+    report=analyze_joint(args,rows)
+    assert next(c for c in report['e4_joint_evaluation']['cells'] if c['review_id']==req['review_id'])['pair_status']=='failure'
+    assert report['consensus'] is None
+
+
+@pytest.mark.parametrize('issue',['unknown','missing_goal','missing_range','dimension_disagreement'])
+def test_e4_incomplete_or_disagreeing_dimensions_remain_u_even_with_known_failure(tmp_path,issue):
+    args=material(tmp_path,multiple_goals=True);req=read_json(args[-1]/'requirements.json')['items'][0]
+    rows=[joint_verdict(req,'observer-a',goal='fail'),joint_verdict(req,'observer-b',goal='fail')]
+    if issue=='unknown':rows[0]['protection']['status']='unknown'
+    elif issue=='missing_goal':rows[0]['goals'].pop()
+    elif issue=='missing_range':rows[0]['reviewed_ranges']=[]
+    else:rows[0]['goals'][1]['status']='pass'
+    report=analyze_joint(args,rows)
+    assert all(d['e4_joint_success'] is False for d in report['observer_decisions'])
+    cell=next(c for c in report['e4_joint_evaluation']['cells'] if c['review_id']==req['review_id'])
+    assert cell['pair_status']=='unresolved'
+
+
+@pytest.mark.parametrize('module',[True,False])
+def test_joint_cli_options_emit_bound_denominator(tmp_path,module):
+    args=material(tmp_path);report=analyze_joint(args);out=args[-1];target=out/'cli-joint.json'
+    cli=['--inventory',str(args[0]),'--attempts',str(args[1]),'--requirements',str(out/'requirements.json'),
+        '--bridge',str(out/'bridge.private.json'),'--verdicts',str(out/'joint-verdicts.json'),
+        '--task-authoring',str(out/'task-authoring.private.json'),'--reviewer-pair','observer-a','observer-b','--out',str(target)]
+    if module:semantics.main(['analyze']+cli)
+    else:
+        from choreobench.cli import main
+        assert main(['analyze-edit-semantics']+cli)==0
+    assert read_json(target)['e4_joint_evaluation']==report['e4_joint_evaluation']
+
+
+def test_author_unknown_and_controls_separate_not_relabelled_as_change_success(tmp_path):
+    args=material(tmp_path)
+    def change(author):
+        author['tasks'][0].update(category='unknown',validity='unknown',private_requirements_within_instruction=None)
+        author['tasks'][1]['category']='already_satisfied'
+    e4=analyze_joint(args,author_change=change)['e4_joint_evaluation']
+    assert len(e4['controls'])==4 and len(e4['excluded_or_unresolved_authoring'])==1
+    assert all(s['N']==0 and s['success_rate_bounds'] is None for s in e4['change_required_summaries'])
+    assert e4['authored_category_counts']=={'already_satisfied':1,'unknown':1}
+
+
+@pytest.mark.parametrize('change',['duplicate_task','missing_task','task_hash','source_hash','scope_false','scope_bool','valid_unknown',
+    'author_placeholder','human_model','bad_category','bad_validity','empty_evidence','freeze_int'])
+def test_authoring_identity_validity_scope_and_all_registered_slots_checked(tmp_path,change):
+    args=material(tmp_path)
+    def mutate(author):
+        row=author['tasks'][0]
+        if change=='duplicate_task':author['tasks'].append(copy.deepcopy(row))
+        elif change=='missing_task':author['tasks'].pop()
+        elif change=='task_hash':row['task_sha256']=object_sha('wrong')
+        elif change=='source_hash':row['source_plan_sha256']=object_sha('wrong')
+        elif change=='scope_false':row['private_requirements_within_instruction']=False
+        elif change=='scope_bool':row['private_requirements_within_instruction']=1
+        elif change=='valid_unknown':row['category']='unknown'
+        elif change=='author_placeholder':author['author_id']='FILL_AUTHOR_ID'
+        elif change=='human_model':author['model_id']='v1'
+        elif change=='bad_category':row['category']='looks-fine'
+        elif change=='bad_validity':row['validity']='pass'
+        elif change=='empty_evidence':row['evidence']=' '
+        else:author['frozen_before_execution']=1
+    with pytest.raises(ValueError):analyze_joint(args,author_change=mutate)
+
+
+def test_model_cannot_fill_human_pair_and_duplicate_roster_rejected(tmp_path):
+    args=material(tmp_path);req=read_json(args[-1]/'requirements.json')['items'][0]
+    row=joint_verdict(req);row.update(origin='model_judge',model_id='synthetic-v1')
+    with pytest.raises(ValueError,match='model judge'):analyze_joint(args,[row])
+    with pytest.raises(ValueError,match='distinct'):analyze_joint(args,reviewer_pair=('observer-a','observer-a'))
+
+
+@pytest.mark.parametrize('change',['missing','null','empty','status','extra'])
+def test_v2_protection_must_be_explicit_valid_and_nonempty(tmp_path,change):
+    args=material(tmp_path);req=read_json(args[-1]/'requirements.json')['items'][0];row=joint_verdict(req)
+    if change=='missing':row.pop('protection')
+    elif change=='null':row['protection']=None
+    elif change=='empty':row['protection']['evidence']=' '
+    elif change=='status':row['protection']['status']='retained'
+    else:row['protection']['rating']=5
+    with pytest.raises(ValueError):analyze_joint(args,[row])
+
+
+def test_known_mechanical_failure_is_f_without_reviews_and_stays_in_n(tmp_path):
+    args=material(tmp_path,prepare=False);inv,attempts,public,private,mapping,out=args
+    runs=read_json(attempts);task=runs['attempts'][0]['task_id'];method=runs['attempts'][0]['method_id']
+    runs['attempts'].append(dict(task_id=task,method_id=method,seed=11,status='failed',after=None,patch=None,error='Synthetic failed run'))
+    write_json(attempts,runs,overwrite=True)
+    maps=read_json(mapping);maps['attempts_sha256']=file_sha(attempts);write_json(mapping,maps,overwrite=True)
+    semantics.prepare_edit_semantics(*args)
+    e4=analyze_joint(args)['e4_joint_evaluation']
+    failed=[r for r in e4['cells'] if r['mechanical_valid'] is False]
+    assert len(failed)==1 and failed[0]['pair_status']=='failure' and failed[0]['in_change_denominator']
+    assert sum(s['F'] for s in e4['change_required_summaries'])==1
+    assert all(s['N']==2 for s in e4['change_required_summaries'])
 
 
 @pytest.mark.parametrize('module',[True,False])

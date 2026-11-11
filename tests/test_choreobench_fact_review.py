@@ -24,7 +24,7 @@ def test_fact_retention_and_unknown_have_different_joint_status(item):
  r=fact_review.parse_review(item,json.dumps(verdict(item)))
  assert r['protected_fact_preservation'] is True and r['text_joint_success']
  for status in ('omitted','contradicted','unknown'):
-  r=fact_review.parse_review(item,json.dumps(verdict(item,status,'')))
+  r=fact_review.parse_review(item,json.dumps(verdict(item,status,'Stomp sharply' if status=='contradicted' else '')))
   assert not r['text_joint_success']
   assert (r['protected_fact_preservation'] is None)==(status=='unknown')
 
@@ -34,6 +34,31 @@ def test_invented_quote_or_unknown_fact_cannot_bind(item):
  with pytest.raises(ValueError,match='exact span'):fact_review.parse_review(item,json.dumps(v))
  v=verdict(item);v['facts'][0]['fact_id']='private'
  with pytest.raises(ValueError):fact_review.parse_review(item,json.dumps(v))
+
+
+@pytest.mark.parametrize('status',['retained','contradicted'])
+@pytest.mark.parametrize('evidence',['',' ',' '])
+def test_retained_or_contradicted_cannot_pass_without_candidate_quote(item,status,evidence):
+ with pytest.raises(ValueError,match='nonempty candidate evidence'):
+  fact_review.parse_review(item,json.dumps(verdict(item,status,evidence)))
+
+
+def test_unknown_does_not_hide_a_known_omission(item):
+ item['protected_facts'].append(dict(fact_id='hands',description='Hand strikes',source_evidence='hands strike downward'))
+ v=verdict(item,'omitted','')
+ v['facts'].append(dict(fact_id='hands',status='unknown',evidence=''))
+ r=fact_review.parse_review(item,json.dumps(v))
+ assert r['protected_fact_preservation'] is False and r['text_joint_success'] is False
+
+
+def test_structured_schema_matches_conditional_evidence_contract(item):
+ import re
+ schema=fact_review._schema(item)['properties']['facts']['prefixItems'][0]
+ condition=schema['allOf'][0]
+ assert condition['if']['properties']['status']['enum']==['retained','contradicted']
+ evidence=condition['then']['properties']['evidence']
+ assert evidence['minLength']==1 and not re.search(evidence['pattern'],' ')
+ assert re.search(evidence['pattern'],'Stomp sharply')
 
 
 def test_control_labels_never_sent_and_resume_no_new_calls(item,tmp_path,monkeypatch):

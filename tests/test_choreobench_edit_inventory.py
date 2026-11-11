@@ -74,6 +74,32 @@ def test_same_song_multiple_datasets_with_equal_grouping_accepted(tmp_path,rever
     assert sum(c['status']=='missing_attempt' for c in report['cells'])==4
 
 
+def test_explicit_abstention_preserves_exact_original_without_patch_provenance(tmp_path):
+    paths=material(tmp_path);runs=read_json(paths[1]);row=runs['attempts'][0]
+    row.update(status='abstained',after=dict(path='before.json',sha256=file_sha(tmp_path/'before.json')),patch=None)
+    save(paths[1],runs)
+    cell=inventory.audit_edit_inventory(*paths)['cells'][0]
+    assert cell['attempt_status']=='abstained' and cell['mechanical_valid'] is True and cell['no_op'] is True
+    assert cell['empty_operations'] is None and cell['joint_success'] is None
+    assert cell['after_plan_sha256']==cell['source_plan_sha256']
+
+
+@pytest.mark.parametrize('change',['changed_output','patch','missing_after','error'])
+def test_abstention_cannot_publish_changed_plan_or_patch(tmp_path,change):
+    paths=material(tmp_path);runs=read_json(paths[1]);row=runs['attempts'][0];original_after=row['after'];original_patch=row['patch']
+    row.update(status='abstained',after=dict(path='before.json',sha256=file_sha(tmp_path/'before.json')),patch=None)
+    if change=='changed_output':row['after']=original_after
+    elif change=='patch':row['patch']=original_patch
+    elif change=='missing_after':row['after']=None
+    else:row['error']='Unexpected error'
+    save(paths[1],runs)
+    if change=='changed_output':
+        cell=inventory.audit_edit_inventory(*paths)['cells'][0]
+        assert cell['mechanical_valid'] is False and cell['joint_success'] is False and cell['status']=='invalid_output'
+    else:
+        with pytest.raises(ValueError,match='Abstention'):inventory.audit_edit_inventory(*paths)
+
+
 def test_multi_task_same_song_methods_and_seeds_preserve_missing_and_noop_pending(tmp_path):
     paths=material(tmp_path);report=inventory.audit_edit_inventory(*paths)
     assert report['task_count']==2 and report['song_count']==1 and report['expected_cells']==8 and report['recorded_attempts']==4

@@ -28,7 +28,8 @@ PROMPT=(
  "Judge only clear textual relations; unknown physical support/contact states remain unknown. "
  "Return a JSON object {item_id,goal,facts,new_textual_conflict,reason}. Goal is pass/partial/fail/unknown. "
  "For each supplied protected fact return {fact_id,status,evidence}; status is retained/omitted/contradicted/unknown. "
- "new_textual_conflict is yes/no/unknown. Quote short exact output text as evidence, or empty text if omitted. "
+ "new_textual_conflict is yes/no/unknown. Retained and contradicted require a nonempty exact candidate quote; "
+ "for omitted or unknown, use an exact candidate quote or empty text. "
  "Do not use method identities, predicted scores, word length or unknown output source as a preference cue."
 )
 
@@ -36,7 +37,10 @@ PROMPT=(
 def _schema(item):
  facts=[dict(type='object',additionalProperties=False,required=['fact_id','status','evidence'],properties=dict(
   fact_id=dict(type='string',enum=[f['fact_id']]),status=dict(type='string',enum=['retained','omitted','contradicted','unknown']),
-  evidence=dict(type='string',maxLength=300))) for f in item['protected_facts']]
+  evidence=dict(type='string',maxLength=300)),allOf=[{
+  'if':dict(properties=dict(status=dict(enum=['retained','contradicted']))),
+  'then':dict(properties=dict(evidence=dict(minLength=1,pattern=r'\S')))
+ }]) for f in item['protected_facts']]
  return dict(type='object',additionalProperties=False,required=['item_id','goal','facts','new_textual_conflict','reason'],properties=dict(
   item_id=dict(type='string',enum=[item['item_id']]),goal=dict(type='string',enum=['pass','partial','fail','unknown']),
   facts=dict(type='array',minItems=len(facts),maxItems=len(facts),prefixItems=facts,items=False),
@@ -57,10 +61,13 @@ def parse_review(item,response):
    raise ValueError('Review fact identity/status invalid')
   if not isinstance(fact['evidence'],str) or len(fact['evidence'])>300:
    raise ValueError('Fact evidence invalid')
+  if fact['status'] in ('retained','contradicted') and not fact['evidence'].strip():
+   raise ValueError('Retained/contradicted facts require nonempty candidate evidence')
   if fact['evidence'] and fact['evidence'] not in item['candidate_action']:
    raise ValueError('Review evidence is not an exact span of the candidate')
- value['protected_fact_preservation']=(None if any(f['status']=='unknown' for f in value['facts']) else
-   all(f['status']=='retained' for f in value['facts']))
+ statuses=[f['status'] for f in value['facts']]
+ value['protected_fact_preservation']=(False if any(s in ('omitted','contradicted') for s in statuses) else
+   None if 'unknown' in statuses else True)
  value['text_joint_success']=(value['goal']=='pass' and value['protected_fact_preservation'] is True and value['new_textual_conflict']=='no')
  return value
 

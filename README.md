@@ -106,3 +106,12 @@ without claiming held-out quality, human ratings or a validated novelty advantag
 Section 10 additionally records v30: a typed primary/concurrent/finish representation
 versus same-budget free text, six real calls, retained word-budget failures and
 residual sequential overload—not a validated representation improvement.
+
+
+The same-tool instruction-editing policy comparison (v31), documented in
+[report 46, section 11](notes/46_memory_replay_review_and_duration_experiment_20261110_zh.md),
+completes 24 development task-policy runs with matched sources/tools/budgets.
+It retains within-target semantic preservation failures and does not establish
+choreography-policy superiority or complete the held-out E4 study. Formal model
+and source-isolated evaluation artifacts remain unavailable; the manuscript
+records this blocker rather than promoting old development cases to test data.

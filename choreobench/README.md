@@ -701,3 +701,25 @@ python -m choreobench.memory_replay --audit-only --out-dir /data/v30/runs
 ```
 
 原raw保留typed phases；events/plan中的action为确定性编译后的原文表达，原prefix与非当前块事件不变。完成审核会从raw重建typed phases→action→events/plan，缺件或统计变化拒绝，不补采。正常resume要求输入/provider/代码身份不变，复用原始调用。新结构仅用于可能编舞，不适用于随意删减视频标注中实际发生的动作事实。
+
+
+## 20. 同工具、同源稿的通用agent／编舞策略编辑对照
+
+`choreobench.edit_agent`是一套共享的有限动作—观察执行器，两策略仅系统policy不同：generic用通用任务/工具选择循环，choreography增加目标动作事实、并发/先后、时长与语义保持的编舞决策提示。两者都获得完整同一源Plan、公开task、相同目标邻接上下文、相同工具说明/权限、seed和调用上限。该对照检验policy，不宣称新完整整曲agent已上线，或给基线少工具/少上下文。
+
+工具为inspect_context、check_patch、submit_patch、abstain。模型返回tool/operations/reason，操作仅可替换allowed事件的action；模板由共享程序冻结。check不提交，submit通过相同时间/字段/来源/权限检查后终止，abstain保留原稿。每次check/submit始终从原初稿累计比较，不基于上一候选rebase掩盖漂移。达到模型调用上限而未提交保留原稿并单列budget_exhausted，不作为编辑成功；未知结果/模型协议失败停止不重采。
+
+check_patch只反馈机械错误/保护状态，不返回private goals、semantic_goals或秘密答案；真正的语义评价只在final固定后另做。即使非目标字段逐字保持，目标内部“保留脚步”仍要检查动作事实，而不是因为写着unchanged就通过。
+
+```bash
+python -m choreobench.edit_agent --plan /data/edit/source.json --task /data/edit/task.private.json \
+  --provider /data/edit/provider.private.json --out-dir /data/edit/generic --policy generic \
+  --max-calls 3 --max-output-tokens 2048 --seed 7
+python -m choreobench.edit_agent --plan /data/edit/source.json --task /data/edit/task.private.json \
+  --provider /data/edit/provider.private.json --out-dir /data/edit/choreography --policy choreography \
+  --max-calls 3 --max-output-tokens 2048 --seed 7
+```
+
+每臂保留contract、started/raw、所有tool decision/observation、final Plan、literal evaluation与tokens/失败/停止。原样resume先核对完成库存与导出hash，再从既有raw重构完整轨迹，不新增调用；缺件拒绝，输入/代码/provider变化需新目录。结构合法或abstain本身不算语义目标/联合成功，结果semantic_joint_success保持null，人工来源不得伪填。
+
+当前开发预登记使用三首旧开发歌、每歌4任务（预登记9个拟需修改＋3控制；任务必要性未独立核验）、两策略24格；最大72模型调用，实际按早停记账。任务涵盖密度、目标内部保腿改上身、动作替换或结尾、已满足/冲突。它不是最新E4正式48任务完成证明：测试来源隔离、新captioner/完整通用agent主表及真实外评仍需各自完成。

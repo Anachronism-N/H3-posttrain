@@ -269,3 +269,72 @@ v30与v26都显示，单纯加“阶段少/动作短”的提示或JSON字段不
 本次阶段结果及此前四组开发实验已纳入论文的方法、负结果、oracle条件实例与明确限制。自v26起合计**27新增调用、120,581输入tokens、8,244输出tokens**，与历史v25/局部候选/大纲成本分开。这满足开发方法与失败分析的写作材料需求，不代表五组必做主实验或成熟benchmark完成；新SFT captioner、来源隔离和独立校准仍是正式效果部分缺项。
 
 v30最终完整CPU回归**1381 passed、4 optional browser skipped、148 subtests passed**，阶段相关专项57项通过。全部本次模型服务已停止，八卡最终各唯一holder；自动恢复已检测，未重复启动占卡。私有目录保存原始请求/typed响应、固定前缀、编译结果或失败解释、恢复审计、成本和资源回执，不上传凭据或私有原件。
+
+
+## 11. 同工具编辑策略对照与正式数据阻断（v31）
+
+按最新必做E4协议，新增同源稿、同公开指令、同权限/工具预算的编辑比较入口 `choreobench.edit_agent`。generic是通用动作—观察policy，choreography是强调动作事实分解、先后/并发、时长负担和目标内部语义保护的policy。两者共用一个执行器，获得同一完整源Plan、task、目标邻接上下文与工具说明；不同的只有系统policy提示。它不冒称已复现某个外部通用agent框架，也不将公共控制器能力独占算为harness优势。
+
+工具包括inspect_context、check_patch、submit_patch、abstain；check不提交，submit必须通过相同机械检查，abstain保留原稿。所有patch从同一初稿累计比较，不rebase至上一候选，模型不接触private goals。只有action可改，真实JSON时间/轨道/状态/evidence/其他事件不变；新增精确时间字面被共同检查拒绝。检查反馈是机械合法性，不是偷偷提供语义评分答案。
+
+预登记三首旧歌各4任务，9个拟需修改＋3控制；这些是作者预设类别，非经独立核实的任务真值，其中涵盖密度、目标内保腿改上身、动作替换/结尾、已满足与矛盾指令。两policy共24格，每格最多3模型调用/每次2048输出tokens、相同seed7；总上限72调用，实际可以早停。同一case/policy的未知结果/协议错误不补采；达到上限仍未提交须保留budget_exhausted与原稿，不能称编辑成功。相同条件resume先审完成库存/导出hash，再从旧raw重建轨迹，绝不为缺调用重采。
+
+本轮新专项11项通过；完整CPU回归在冻结代码上 **1392 passed、4 optional browser skipped、148 subtests passed**。source→final字面保护可机械核对，但目标内明确“保脚步”的语义仍需实质内容评价，不因加一句“脚步不变”便通过。用户允许助手初审，真实人评与盲审不伪填。
+
+### 11.1 正式主表的真实输入状态
+
+已检查三首原dataset及可见数据入口：三首仍为dev、grouping.status=unverified，near_duplicate_group_id缺失。它们反复用于提示/机制开发，不能改名test后填正式E4来源数。当前新untimed SFT checkpoint、排除已知训练/开发交集的新测试manifest、E1视频事实/来源清单尚未提供；用户明确选择“现阶段没有正式工件”。
+
+因此本轮继续验证编辑引擎与内容对照，但**正式E1–E5未完成**，不将软件1392项、24个开发格或模型初审当隔离测试/独立质量校准。真正未提供的数据不能靠扩大旧三歌、假设来源独立或用模型自评填两位人类来替代。源码、运行、原件与评价模板均继续保留，正式工件到位后可沿同合同一次性冻结主表。
+
+### 11.2 评价范围
+
+分别核对target满足、请求保护的动作事实、non-target字段、邻接矛盾、no-op/弃权和成本。需修改任务的联合成功不可仅由scope_valid推出；助手文本初审标为model_review、audio_seen=false，音乐适配、真实人体可执行性、独立人类共识仍pending。unknown/partial保留，控制任务与9个未满足请求不混为成功分母。
+
+源码契约、命令与恢复边界见ChoreoBench README第20节。实际调用、完整轨迹与原/新action会在任务完成后另列，不在运行中预先宣称成功或策略胜出。
+
+
+任务必要性初审另发现：摇滚ending原稿已经以stillness结束，final kick发生在hold之前，而公开指令主要禁止hold之后再动作。它不能无条件算作已确认未满足的任务。原库存/输出保留，单独记task-authoring caveat；正式任务作者仍应先核验需改/控制条件，不后验换任务或补采制造效果。
+
+### 11.3 已发现的目标内部语义保持失败
+
+原声body_preservation任务的原动作是“Sharp, percussive stomps paired with downward hand strikes ... torso snaps forward and back”；请求只改上身为small circular wrists/relaxed arms，明确保留实际脚步，不新增没有的腿部动作。
+
+- generic最终正文保留“Sharp, percussive stomps”，替换手部，并继续写torso snaps；能直接看到原下肢内容。
+- choreography最终写“Small circular wrist motions ... while preserving all described knee lifts, hip drops, crouches, foot motions ... from the original, ... when present”。它没有直接描述原stomps，而是复述一个通用保护清单。
+
+两者均通过相同机械scope/metadata检查，但后一份“承诺保持”不是明确保留动作事实的充分证据；独立发布的最终Plan必须可读，不依赖未随动作提供的历史正文才知道脚步。本轮助手文本初审将该目标内部语义保持标为失败/未证实，不因为policy称为harness就给高分，也不把程序保护率当语义保护率。
+
+其他已提交的密度任务也多是删一部分pivot/hop后继续保留body roll→isolation→lunge/arm变化，并用“continuous/uninterrupted”把多个阶段命名为一个，仍需检查请求的单主阶段是否真正落实。当前证据不支持编舞policy全面优于通用工具policy，下一步应针对明确目标事实约束，而不是扩大自评或选择“harness”标签当赢家。
+
+
+### 11.4 v31完整结果：24格完成，未建立编舞policy优势
+
+12个任务×2policy共24格完成，18份submitted修改、6份abstain保持原稿。所有最终输出通过共同机械范围/字段保护，九个拟需修改任务每臂均提交，三个预登记控制每臂均保留原稿；但任务必要性未独立核验，不能把9/9提交称为9/9语义成功。
+
+| policy | 任务格 | 提交修改 | 控制原稿保留 | 实际调用 | 输入/输出tokens |
+|---|---:|---:|---:|---:|---:|
+| generic | 12 | 9 | 3 | 29 | 546,225 / 5,289 |
+| choreography | 12 | 9 | 3 | 28 | 535,432 / 5,456 |
+| 本轮合计 | 24 | 18 | 6 | 57 | 1,081,657 / 10,745 |
+
+同一任务初次payload、response schema、源稿、权限、seed与输出上限逐项相同；policy prompt不同，后续tool history可以因实际决策不同而分叉。每次proposal都从原稿累计核验，没有将另一臂结果作为输入。全部24格同条件resume零新调用；从raw重建tool decision/observation/patch/final与成本吻合，无未知结果/usage或隐蔽重采。原始音频/训练/额外judge调用均为0。
+
+12对中6对最终event内容完全相同（其中3个控制）；其余差别未显示稳定实质收益。助手逐项文本初审按目标、目标内保护、非目标字面保持、邻接矛盾和控制分别记录，不写成human/直接听音/正式盲评：
+
+- 三首density两臂均删掉一部分旧turn/hop，但继续body roll/isolation/lunge、pivot/knee-lift/lunge或shoulder-roll/weight-shift/arm-lift/freeze链。“continuous/uninterrupted”不足以保证单主阶段；目标满足仅partial。
+- 电子body-preservation和action-replacement两臂正文相同，能明确看见保留knee lifts/hip drops，或用grounded lateral steps/low arm sweeps替换stomp-kick/jumps，不支持policy标签本身的增益。
+- 摇滚body-preservation两臂相同，保留rise/crouch/alternating knee lifts，替换arms/wrists；结尾两臂只是相近的末段收束措辞，且原稿已持有hold，任务必要性unknown。
+- 原声body-preservation出现第11.3节的choreography语义保护失败；generic保留明确stomps，而choreography用通用“preserving all described ...”清单代替实际脚步。程序的100%非目标字段保持不代表目标内语义保持成功。
+- 原声ending两臂都去掉原stillness之后的foot tap/upward thrust，实质收束目标可见；主题措辞/姿态清楚度仍有未知，不声称音乐贴合提升。
+- 三个控制两臂都合理abstain；这是控制行为，不扩大九个拟需修改任务的成功分母。
+
+**结论：实现了可执行的同工具编辑主比较框架与完整开发对照，但未证实choreography policy优于generic。** 一项更少调用不能当质量/效率稳定优势；完整原稿每轮重发导致较高输入成本，具体pipeline贡献须与语义目标/校准分开验证。
+
+### 11.5 论文/资源/正式门槛
+
+本轮完整CPU回归 **1392 passed、4 optional browser skipped、148 subtests passed**；新编辑专项11项通过。执行代码与冻结快照一致。模型已按完整argv/CUDA/starttime核验后停服，八卡最终各一个holder，其他六卡任务未动；CPU旧评审服务保留，无模型闲置驻留。
+
+论文增加共享工具agent方法和本轮开发结果/失败案例；没有将“57calls/24格/9submitted”当正式E4联合成功。原/新Plan、public输入/私有目标、全部轨迹、逐项model_review、来源状态与资源回执保存在对应v31私有目录，代码与可公开汇总提交GitHub，音频/凭据/匿名映射不发布。
+
+正式E1–E5仍缺新模型工件、隔离测试/视频manifest及独立评价校准。用户已确认当前没有正式工件；这是无法从现有代码或旧三歌安全补出的外部输入，不再反复索要或将其假装具备。当前成果可支持方法/开发结果/失败分析撰写，**完整论文实验目标保持未完成**，不能自动勾选required_main_studies_complete。材料到位后沿本接口冻结E4任务与公私评价再执行，不用重复旧歌代替正式主表。

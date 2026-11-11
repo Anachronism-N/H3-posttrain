@@ -136,6 +136,12 @@ A text-control arm receives the same phase-budget instructions but emits a free 
 
 The deterministic compiler joins main and concurrent text with while/and and appends finish, adding Then only between primary phases. It invents no support/contact state or extra motion facts. Typed raw responses remain available separately from their compiled score actions. A short field can still contain multiple hidden operations, and a finish can describe an implausible new maneuver; field validity alone therefore cannot certify semantic stage separation, musical fit or physical feasibility. Completed artifacts are audited by recompiling recorded raw responses, not by resampling missing calls.
 
+### 4.10 Shared-tool instruction-editing policy comparison
+
+A bounded action-observation editor compares a generic tool-use policy with a choreography-specific decision policy using the same frozen source score, public instruction, target/neighbors, model, seed and tool permissions. Both can inspect context, check a cumulative patch, submit a patch or abstain. Checks do not commit; every proposal is evaluated against the original score, preventing cumulative scope drift through rebasing. Only allowed action fields may change. The execution code, timing/metadata protection and tool-result interface are shared; the intervention is the system policy, not an external agent framework or a privileged executor.
+
+The choreography policy emphasizes requested motion facts, within-target semantic preservation, successive versus concurrent movement, duration burden and local closure. The generic policy receives the same complete evidence and tools and may stop early. Each task/policy allows at most three model calls of 2,048 output tokens. A structurally valid patch is not semantic success, and budget exhaustion without submission is separately retained. Private evaluation goals are excluded from all prompts and tool feedback, and completed trajectories are reconstructed from recorded raw responses without resampling. This interface permits a matched editing study, but the small repeatedly seen development set cannot establish the final held-out editing result.
+
 ## 5. Experimental Protocol
 
 ### 5.1 Development data and models
@@ -312,6 +318,21 @@ The typed-phase and same-budget text-control arms use the same three fixed block
 All six calls stop normally. Two text-control blocks pass the overall mechanical checks, while all three typed blocks violate component-word budgets; the acoustic text-control block violates total word count. The electronic typed response also contains a mixed-language fragment. None is resampled or truncated. Different typed/free schemas impose different detectable constraints, so these validity fractions are not a semantic winner comparison. Text inspection still finds full spin-and-landing in a 0.75-second typed phase, and additional rise/glide operations placed inside closure fields. Merely naming a field primary or concurrent does not certify that it contains one stage or truly simultaneous motion.
 
 v30 consumes 32,015 input and 2,427 output tokens across six calls. Completed raw/artifact inventories are reconstructed by a read-only audit, and same-condition resume issues zero new calls. Across v26–v30, the development probes total 27 new requests, 120,581 input and 8,244 output tokens; historical shared audio/design/v25 costs remain separate. All associated services are stopped and GPUs restored to unique holders. The current evidence supports an inspectable failure analysis and conditional oracle-editor capability, not a typed-representation quality gain or completion of the required held-out studies.
+
+### 6.12 Same-tool instruction-editing comparison (v31)
+
+We predeclare four tasks per previously seen development recording: density reduction, within-target lower-body preservation while changing upper-body coordination, action replacement or ending, and an already-satisfied/conflicting control. Both generic and choreography policies receive the same complete source/task/target context, tools, initial seed and three-call ceiling. All 24 task-policy runs complete; each policy submits nine modifications and abstains on all three controls. Exact non-target fields and original event identities are preserved throughout. Same-condition resume and recorded tool-action reconstruction issue no new calls.
+
+| Policy | Task runs | Submitted edits | Unchanged controls | Model calls | Input / output tokens |
+|---|---:|---:|---:|---:|---:|
+| Generic | 12 | 9 | 3 | 29 | 546,225 / 5,289 |
+| Choreography-specific | 12 | 9 | 3 | 28 | 535,432 / 5,456 |
+
+Six of twelve pairs have identical final event content, including the controls. Source/task/payload/schema/permissions equality is verified at the initial request; only policy differs, with subsequent histories allowed to diverge. This is a shared-executor policy comparison, not a verified implementation of a specific external general-agent framework. Its high input burden includes repeatedly transmitting the entire original score and must not be hidden by quoting only action tokens.
+
+Assistant text inspection identifies partial density changes that still retain several successive operations despite calling them continuous. In the acoustic upper-body task, the generic edit explicitly retains the original percussive stomps, whereas the choreography policy replaces that fact with a generic promise to preserve whatever lower-body actions existed. Mechanical scope checks accept both; within-target semantic preservation is not certified by field equality. Ending changes in the acoustic recording visibly remove tap/thrust restarts after stillness. The rock ending task, however, already ended in a hold; its planned unmet classification is not independently validated and is separately flagged without changing the preregistered inventory.
+
+No stable quality advantage of the choreography policy is established. The nine submitted edits are not nine joint successes; controls, partial/unknown judgments and task-authoring ambiguity remain separate. These are non-blinded assistant text reviews, not direct music listening or human consensus. The current three recordings remain unverified-grouping development data, and the user confirms that formal model/test artifacts are not yet available. The framework and development comparison therefore do not complete the required held-out E4 study, pipeline/data evaluation, SFT baseline or metric calibration. All services are stopped and used GPUs restored; the complete 57-call trace and its 1,081,657 input/10,745 output tokens are retained.
 
 ## 7. Discussion and Limitations
 

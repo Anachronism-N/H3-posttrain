@@ -2,7 +2,7 @@
 
 ## sol61 自由生成 baseline 与质量评价
 
-训练中的 captioner 尚不可用时，可先用 `sol61_captions` 冻结评测集、运行开源音频模型、导出听音盲评包并校准评价指标。完整命令、指标定义与集群资源见 [执行方案](../notes/48_sol61_baseline_evaluation_20261111_zh.md)。新增入口：
+训练中的 captioner 尚不可用时，可先用 `sol61_captions` 冻结评测集、运行开源音频模型、导出听音盲评包并校准评价指标。完整命令、指标定义与集群资源见 [执行方案](../notes/48_sol61_baseline_evaluation_20261111_zh.md)；六模型比较、agent 对照、统一预算及空白结果表见 [扩展实验表](../notes/49_expanded_baselines_and_agent_experiments_20261111_zh.md)。后者包含待接入能力，不能直接用替换现有配置模型路径来运行全部基线。新增入口：
 
 - `python -m captionlab.sol61`：固定 HF 版本下载、全划分审计、抽样、按原 SHA 绑定 WAV；GT 与生成输入分开。
 - `python -m captionlab.baseline_eval`：音频＋固定任务 prompt 的自由生成；保留失败、截断、未知调用及原始响应。

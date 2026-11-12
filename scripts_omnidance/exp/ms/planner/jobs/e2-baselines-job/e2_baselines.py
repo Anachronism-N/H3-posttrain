@@ -105,7 +105,8 @@ def generate(model, processor, wav_path, kind):
                                            dict(type='text', text=PROMPT)])]
     text = processor.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
     batch = processor(text=text, audio=audio, sampling_rate=sr, return_tensors='pt')
-    batch = {k: (v.to('cuda') if hasattr(v, 'to') else v) for k, v in batch.items()}
+    device = next(model.parameters()).device
+    batch = {k: (v.to(device) if hasattr(v, 'to') else v) for k, v in batch.items()}
     batch = {k: (v.bfloat16() if torch.is_tensor(v) and v.is_floating_point() else v)
              for k, v in batch.items()}
     with torch.no_grad():

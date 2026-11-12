@@ -64,3 +64,21 @@ ratio vs. reference, length ratio, distinct openings, self-repetition,
 hallucinated-part rate, selection score) followed by the full JSON including
 pass/fail verdict and disqualifiers. Input rows only need
 `{"id", "text", "reference"}`.
+
+## Launching sol61 training across nodes
+
+`scripts_omnidance/exp/ms/planner/jobs/captioner-sol61-job` (plain SFT) and
+`captioner-sol61trick-job` (token weight 1.3) run `--worker_count N --worker_gpu 8`.
+Constraints learned from the first multi-node attempts:
+
+- `WORLD_SIZE` is the node count and `NODE_RANK` the node index; `RANK` can differ
+  from `NODE_RANK`, so it is only a fallback.
+- Nodes start up to minutes apart, so they elect one run id through a marker file
+  under `<oss>/runs/.launcher_run_id_<mode>` instead of timestamps.
+- Data tarballs may carry a single top-level directory and model mirrors may be
+  flattened; the entry accepts both layouts.
+- `/checkpoint` is node-local on multi-node jobs, so checkpoints and the trainer log
+  are mirrored to `<oss>/runs/<run>/attempts/<run>-attempt<HHMMSS>/` every three
+  minutes, and the log tail every minute.
+- Do not gate startup on a pre-existing output directory: restarts reuse the node
+  scratch path.

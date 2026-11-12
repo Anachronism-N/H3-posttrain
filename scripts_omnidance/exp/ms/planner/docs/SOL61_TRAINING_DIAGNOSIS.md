@@ -131,6 +131,32 @@ Working selection rule from the evidence: keep action recall and density inside
 their bands, then prefer the checkpoint with the most distinct openings, and use
 leg coverage (body recall) as the tie-breaker that penalises over-training.
 
+## 5.2 Five-checkpoint comparison on 80 fixed cases
+
+| checkpoint | action recall | body recall | density | opener entropy | top opener | distinct openings | BLEU-4 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| run-A @200 | 0.793 | 0.908 | 1.07 | 1.27 | 0.762 | 10 | 0.051 |
+| run-A @500 | 0.804 | 0.899 | 1.05 | 1.52 | 0.725 | 8 | 0.071 |
+| run-A @1000 | 0.802 | 0.904 | 1.07 | 2.81 | 0.412 | 16 | 0.054 |
+| run-A @1500 | 0.814 | 0.853 | 1.06 | 2.93 | 0.362 | 15 | 0.074 |
+| **run-B @1000** | **0.837** | **0.913** | 1.05 | **3.04** | **0.275** | 16 | 0.069 |
+| reference | — | — | — | **5.57** | **0.062** | — | — |
+
+Selection outcome:
+
+1. **The optimum sits near 1,000 updates.** Two independent runs both peak
+   there relative to their own 500- and 1,500-step checkpoints, so this is not
+   sampling noise.
+2. **Past 1,000 updates the model degrades**: body recall falls 0.913 → 0.853
+   while action recall rises slightly, i.e. it concentrates on arm vocabulary and
+   drops legs.
+3. **Diversity plateaus around 3.0 bits against the reference's 5.57.** Under
+   `lora_lr=1e-5` this ceiling is not reachable by adding updates.
+
+Current best deliverable: `sol61_full_20261112_161243/checkpoint-0001000`
+(run-B @1000), not the 1,527-step weight that the earlier NLL-only reading
+suggested.
+
 ## 6. In flight
 
 - `sol61-2ep-64gpu` (`sol61_full_20261113_010434`): 2 epochs, 8 nodes × 8 GPUs,

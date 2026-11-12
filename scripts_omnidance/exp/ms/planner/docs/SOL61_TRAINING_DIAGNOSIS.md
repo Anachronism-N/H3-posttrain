@@ -157,6 +157,28 @@ Current best deliverable: `sol61_full_20261112_161243/checkpoint-0001000`
 (run-B @1000), not the 1,527-step weight that the earlier NLL-only reading
 suggested.
 
+## 5.3 Learning rate is the dominant bottleneck (measured)
+
+Two runs with identical data, batch and steps, differing only in `lora_lr`
+(and warmup 20 → 100):
+
+| step | `lora_lr=1e-5` val NLL | `lora_lr=1e-4` val NLL |
+| --- | --- | --- |
+| 100 | 1.9007 | **1.6527** |
+| 200 | 1.7171 | **1.5218** |
+| 300 | 1.6456 | — |
+| 1,527 | 1.5223 | — |
+
+The high-rate run reaches the low-rate run's *final* validation NLL after 200
+updates, i.e. roughly one seventh of the training. The gap also narrows
+(−0.248 → −0.195), so both are heading toward the same floor; the open question
+is whether the higher rate settles below it. Training is stable at 1e-4: no
+spikes, no divergence over 200 updates.
+
+Practical consequence: any future sol61 run should start at `lora_lr=1e-4`, and
+`1e-5` results should be treated as undertrained rather than as a converged
+reference.
+
 ## 6. In flight
 
 - `sol61-2ep-64gpu` (`sol61_full_20261113_010434`): 2 epochs, 8 nodes × 8 GPUs,

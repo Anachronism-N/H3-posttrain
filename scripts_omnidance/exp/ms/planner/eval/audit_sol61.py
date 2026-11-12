@@ -11,6 +11,7 @@ Usage:
 """
 import collections
 import json
+import math
 import re
 import statistics
 import sys
@@ -74,6 +75,78 @@ def repetition(text):
     return sum(c for c in counts.values() if c > 1) / len(shingles)
 
 
+def _tok(text):
+    return re.findall(r"[a-z']+", text.lower())
+
+
+def _ngrams(words, n):
+    return [tuple(words[i:i + n]) for i in range(len(words) - n + 1)]
+
+
+def bleu(gen, ref, n=4):
+    """Corpus-free sentence BLEU with add-epsilon smoothing and brevity penalty."""
+    g, r = _tok(gen), _tok(ref)
+    if len(g) < n or not r:
+        return 0.0
+    logs = []
+    for k in range(1, n + 1):
+        gc, rc = collections.Counter(_ngrams(g, k)), collections.Counter(_ngrams(r, k))
+        hit = sum(min(c, rc[x]) for x, c in gc.items())
+        logs.append(math.log((hit or 1e-9) / max(sum(gc.values()), 1)))
+    penalty = min(0.0, 1 - len(r) / max(len(g), 1))
+    return math.exp(sum(logs) / n + penalty)
+
+
+def _lcs(a, b):
+    prev = [0] * (len(b) + 1)
+    for x in a:
+        cur = [0]
+        for j, y in enumerate(b, 1):
+            cur.append(prev[j - 1] + 1 if x == y else max(cur[j - 1], prev[j]))
+        prev = cur
+    return prev[-1]
+
+
+def rouge_l(gen, ref):
+    g, r = _tok(gen), _tok(ref)
+    if not g or not r:
+        return 0.0
+    common = _lcs(g, r)
+    p, rec_ = common / len(g), common / len(r)
+    return 0.0 if p + rec_ == 0 else 2 * p * rec_ / (p + rec_)
+
+
+def token_f1(gen, ref):
+    g, r = collections.Counter(_tok(gen)), collections.Counter(_tok(ref))
+    hit = sum((g & r).values())
+    if not hit:
+        return 0.0
+    p, rec_ = hit / sum(g.values()), hit / sum(r.values())
+    return 2 * p * rec_ / (p + rec_)
+
+
+def distinct_n(texts, n):
+    """Type/token ratio of n-grams over the whole sample; low values mean templating."""
+    grams, total = set(), 0
+    for text in texts:
+        for gram in _ngrams(_tok(text), n):
+            grams.add(gram)
+            total += 1
+    return len(grams) / max(total, 1)
+
+
+def opener_entropy(texts, k=3):
+    """Shannon entropy over the first-k words of each caption, in bits."""
+    heads = collections.Counter(' '.join(_tok(t)[:k]) for t in texts)
+    total = sum(heads.values())
+    return -sum((c / total) * math.log2(c / total) for c in heads.values())
+
+
+def top_opener_share(texts, k=3):
+    heads = collections.Counter(' '.join(_tok(t)[:k]) for t in texts)
+    return max(heads.values()) / max(sum(heads.values()), 1)
+
+
 def rec(xs):
     return statistics.mean(xs) if xs else 0.0
 
@@ -85,6 +158,8 @@ def audit(path):
     action_hits, action_tot, body_hits, body_tot = 0, 0, 0, 0
     density_g, density_r, char_ratio = [], [], []
     openers, reps, halluc = set(), [], 0
+    gen_texts, ref_texts = [], []
+    b1, b4, rl, tf = [], [], [], []
     sentence_lengths = []
     for row in rows:
         gen = row.get('text') or row.get('generated') or ''
@@ -105,6 +180,12 @@ def audit(path):
         if first:
             openers.add(' '.join(first[0].lower().split()[:4]))
         reps.append(repetition(gen))
+        gen_texts.append(gen)
+        ref_texts.append(ref)
+        b1.append(bleu(gen, ref, 1))
+        b4.append(bleu(gen, ref, 4))
+        rl.append(rouge_l(gen, ref))
+        tf.append(token_f1(gen, ref))
         sentence_lengths.extend(len(s.split()) for s in first)
     mean_dg, mean_dr = rec(density_g), rec(density_r)
     m = dict(
@@ -120,6 +201,14 @@ def audit(path):
         distinct_opening_rate=round(len(openers) / len(rows), 3),
         self_repetition=round(rec(reps), 4),
         hallucinated_part_rate=round(halluc / len(rows), 4),
+        distinct_1=round(distinct_n(gen_texts, 1), 4),
+        distinct_2=round(distinct_n(gen_texts, 2), 4),
+        opener_entropy=round(opener_entropy(gen_texts), 3),
+        top_opener_share=round(top_opener_share(gen_texts), 4),
+        bleu1=round(rec(b1), 4),
+        bleu4=round(rec(b4), 4),
+        rouge_l=round(rec(rl), 4),
+        token_f1=round(rec(tf), 4),
     )
     return m
 
@@ -170,18 +259,19 @@ def selection_score(m):
 def main():
     if len(sys.argv) < 2:
         raise SystemExit(__doc__)
-    print('%-28s %5s %7s %6s %7s %6s %8s %6s %6s %6s' % (
-        'name', 'rows', 'actRec', 'bodyR', 'densRat', 'lenRat', 'openings', 'selfRp', 'halluc', 'score'))
+    print('%-28s %5s %7s %6s %7s %6s %8s %6s %6s %6s %6s %6s' % (
+        'name', 'rows', 'actRec', 'bodyR', 'densRat', 'lenRat', 'openings', 'selfRp', 'halluc',
+        'B1', 'B4', 'RGL'))
     for path in sys.argv[1:]:
         name = Path(path).name.replace('_gen.jsonl', '')
         m = audit(path)
         if not m.get('rows'):
             print('%-28s EMPTY (%s)' % (name, m.get('error')))
             continue
-        print('%-28s %5d %7.3f %6.3f %7.2f %6.2f %8d %6.3f %6.3f %6.3f' % (
+        print('%-28s %5d %7.3f %6.3f %7.2f %6.2f %8d %6.3f %6.3f %6.3f %6.3f %6.3f' % (
             name, m['rows'], m['action_recall'], m['body_recall'], m['density_ratio'],
             m['mean_char_ratio'], m['distinct_openings'], m['self_repetition'],
-            m['hallucinated_part_rate'], selection_score(m)))
+            m['hallucinated_part_rate'], m['bleu1'], m['bleu4'], m['rouge_l']))
         print('    ' + json.dumps(dict(m, verdict=verdict(m), score=selection_score(m)), ensure_ascii=False))
 
 

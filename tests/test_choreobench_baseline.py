@@ -282,8 +282,11 @@ def test_chat_records_exact_response_and_token_budget_without_secret(monkeypatch
     assert not result["identity"]["remote_weight_identity_verified"]
 
 
-@pytest.mark.parametrize("task_prompt", [None, "Compose two timed dance descriptions."])
-def test_native_audits_portable_then_consumes_only_audio(monkeypatch, tmp_path, task_prompt):
+@pytest.mark.parametrize("family,task_prompt", [("omni_captioner", None),
+    ("omni_captioner", "Compose two timed dance descriptions."),
+    ("moss", "Compose one untimed dance phrase."),
+    ("music_flamingo", "Compose one untimed dance phrase.")])
+def test_native_audits_portable_then_consumes_only_audio(monkeypatch, tmp_path, family, task_prompt):
     audit_calls, loaded, verification, seen_rows = [], [], [], []
     artifact = {"checkpoint": {"adapter_metadata": {"max_length": 8192}}}
     identity_module = types.ModuleType("native_identity_fixture")
@@ -308,13 +311,14 @@ def test_native_audits_portable_then_consumes_only_audio(monkeypatch, tmp_path, 
     def load(*args, **kwargs):
         loaded.append((args, kwargs))
         return types.SimpleNamespace(processor=types.SimpleNamespace(
-            apply_chat_template=lambda messages, **kwargs: json.dumps(messages)))
+            apply_chat_template=lambda messages, **kwargs: json.dumps(messages),
+            _build_default_prompt=lambda prompt, **kwargs: json.dumps(dict(prompt=prompt, has_audio=kwargs["has_audio"]))))
     adapters.load_planner_adapter = load
     prefix = "scripts_omnidance.exp.ms."
     monkeypatch.setitem(sys.modules, prefix + "music_planner_search_identity", identity_module)
     monkeypatch.setitem(sys.modules, prefix + "music_planner_search", search)
     monkeypatch.setitem(sys.modules, prefix + "music_planner_adapters", adapters)
-    spec = dict(kind="native", model=str(tmp_path / "model"))
+    spec = dict(kind="native", family=family, model=str(tmp_path / "model"))
     if task_prompt is None:
         spec["checkpoint"] = str(tmp_path / "checkpoint")
     else:
@@ -329,10 +333,12 @@ def test_native_audits_portable_then_consumes_only_audio(monkeypatch, tmp_path, 
     assert seen_rows[0]["audio_window_seconds"] == [0., 5.0625]
     assert result["raw"]["loaded_artifact_verification"]["verified"]
     if task_prompt is not None:
-        assert provider.identity["protocol"] == "choreobench-prompted-omni-base-v1"
+        assert provider.identity["protocol"] == "choreobench-prompted-" + ("omni" if family=="omni_captioner" else family) + "-base-v1"
         assert provider.identity["task_prompt_sha256"] == object_sha(task_prompt)
         template = provider.adapter._prompt()
-        assert task_prompt in template and "native-waveform" in template
+        assert task_prompt in template
+        if family=="moss":assert json.loads(template)["has_audio"] is True
+        else:assert "native-waveform" in template
         assert "forbidden editing instruction" not in template and "private" not in template
         assert result["raw"]["formatted_task_prompt"] == template
     else:
@@ -344,9 +350,10 @@ def test_native_audits_portable_then_consumes_only_audio(monkeypatch, tmp_path, 
     {"task_prompt": ""}, {"task_prompt": None}, {"task_prompt": "<|im_start|>"},
     {"task_prompt": "x" * 16385}, {"task_prompt": "<audio>"},
     {"task_prompt": "Dance.", "checkpoint": "checkpoint"},
-    {"task_prompt": "Dance.", "family": "moss"}])
+    {"task_prompt": "Dance.", "family": "moss", "checkpoint": "checkpoint"},
+    {"task_prompt": "Dance.", "family": "music_flamingo", "checkpoint": "checkpoint"}])
 def test_prompted_native_rejects_contract_changes_before_loading(changes):
-    with pytest.raises(ValueError, match="base-only Omni"):
+    with pytest.raises(ValueError, match="base-only native"):
         NativeProvider(dict(kind="native", model="unused", **changes), "local")
 
 

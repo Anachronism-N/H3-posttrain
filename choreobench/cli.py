@@ -390,6 +390,15 @@ def build_parser():
     song_agent.add_argument("--max-output-tokens", type=int, default=2048)
     song_agent.add_argument("--max-request-characters", type=int, default=200000)
     song_agent.add_argument("--resume", action="store_true")
+    four = sub.add_parser("run-composition", help="Four matched whole-song workflow/tool adaptations")
+    for name in ("source", "song-id", "provider", "out-dir"):
+        four.add_argument("--" + name, required=True)
+    four.add_argument("--method", choices=("workflow", "self_refine", "react", "choreography"), default="workflow")
+    four.add_argument("--seed", type=int, default=42)
+    four.add_argument("--max-input-tokens", type=int, default=2000000)
+    four.add_argument("--max-total-output-tokens", type=int, default=150000)
+    four.add_argument("--resume", action="store_true")
+    four.add_argument("--outline-reuse-run")
     return parser
 
 
@@ -404,7 +413,13 @@ def main(argv=None):
 
 def dispatch(args):
     cmd = args.command
-    if cmd == "run-song-agent":
+    if cmd == "run-composition":
+        from .composition_workflows import run_composition
+        _emit(run_composition(args.source, args.song_id, read_json(args.provider), args.out_dir,
+            method=args.method, seed=args.seed, max_input_tokens=args.max_input_tokens,
+            max_total_output_tokens=args.max_total_output_tokens, resume=args.resume,
+            outline_reuse_run=args.outline_reuse_run))
+    elif cmd == "run-song-agent":
         from .song_agent import run_song_agent
         _emit(run_song_agent(args.source_run, args.song_id, read_json(args.provider), args.out_dir,
             policy=args.policy, seed=args.seed, max_calls=args.max_calls,

@@ -785,3 +785,32 @@ python -m choreobench run-song-agent \
 新增 --history-mode metadata_only 是单独的历史正文消融：从完整已提交计划、recent事件、身体部位latest_event与motif recent_examples四处全部移除action，但时间/scope/主题计数、当前候选、共享大纲与模型外完整权威Plan保留。它不提供被隐藏动作的语义连续性、支撑状态或朝向，不从计数补造姿态；与full的信息差是实验干预，不称双方信息完全相同。模式写入合同/结果，不能改模式resume。此前v25是借用固定原前缀的局部重放，这里是从空计划用各自历史推进整曲；新增软件入口不代表真实metadata整曲实验已完成。当前full可离线逐字重建v35首歌56条原请求，新模式应另冻结代码/来源/调用预算并用新目录执行。
 
 当前v35的固定三首真实实验与内容结论在报告46的后续章节记录；软件测试、满覆盖、较少词数或策略自己的选择理由都不等于音乐质量、可执行性或正式人类评分。来源隔离与独立评价继续是单独的必要条件。
+
+
+首批音频基线自由task_prompt现支持base-only omni_captioner/moss/music_flamingo，通过各自原生audio/chat wrapper；MOSS走_build_default_prompt。保留processor/EOS和Music-Flamingo音频padding，源音频仍5.0625秒。trained checkpoint禁止覆盖任务；MOSS-Audio/Qwen2.5-Omni/Audio-Flamingo3不在该入口支持范围，不能改family冒充兼容。旧无prompt协议保持，旧result用其冻结代码恢复。
+
+
+## 23. 独立原生音频基线与实际音乐评分
+
+Qwen2.5-Omni、Audio-Flamingo3、MOSS-Audio新增独立family为qwen25_omni/audio_flamingo3/moss_audio。必须匹配实际model_type/architecture和原生processor，trained adapter不在该入口支持。MOSS-Audio固定官方三份源码SHA与单一import绑定，缓存/Whisper版本兼容与非持久位置buffer来源写入回执；不能以MOSS-Music alias替代。未知/缺权重/视觉输入/改变生成prefix皆拒绝。
+
+音乐评分使用captionlab.audio_quality_judge.run_audio_judge，items文件必须为{items,audio_by_case}，每个item使用choreo_quality.make_review_item绑定text、原音频SHA与5.0625秒时钟；audio_by_case提供原path/sha256/sample_rate/num_samples。generation_status不是ok的输出仍留槽、不派发质量评分。配置是base-only native omni_captioner，不带task_prompt和checkpoint；使用独立Thinking模型，不能默认使用参加生成的Instruct作为无偏judge。
+
+实际judge输入只包含完整原音乐、匿名候选和固定音乐量表，不包含method/source/GT/reference。Native processor消费完整波形，candidate中的原生role token转义。解析完整JSON与原candidate quote，保留原raw思考与最终答复；invalid/unknown/截断不补成功，不补采。音乐分需要原音频observations，文字维度和参考一致性为NA；模型观测不认证音乐真值、人体执行或人评相关性。
+
+模块API输出完整expected-items分母、valid/invalid/unknown及所有调用成本；完成resume从原始raw重建、不构造模型，缺raw/改变源件/丢已发布review会拒绝。修改提示/预算/代码使用新冻结目录，历史评分只能用其原代码恢复。开发三例和错配控制是接口/敏感性验收，不是已完成的E5音乐校准。
+
+
+## 24. 完整四方法当前草案工具对照
+
+run-composition支持workflow/self_refine/react/choreography。source为绑定过的完整coordinated运行目录，或untimed_catalog的results.json。历史最终Plan不作为生成初稿；每法空Plan、独立全曲大纲、自己的真实提交前缀推进。无时间戳候选按原全观察窗K2绑定raw文字，不重新拆成动作时间标签。
+
+相同工具为read_evidence/read_history/propose_block/check_block/revise_block/commit_block/finish。propose/revise只替换当前未提交draft；check/commit使用相同原时钟、单元、身体scope、真实call引用和主题权限；read不改变历史，finish要求完整提交。workflow固定生成→结构提交，self_refine固定生成→反馈→修订→提交；两个agent自己选择同工具循环，没有把ReAct降为单条弱提示。内部checker不输出独立语义质量或私有评分。额外原音乐重听尚未开通给任何方法，不能把这个子轨称完整全部H1工具能力。
+
+公共预算1+4U模型调用（U为实际单元数），大纲4096/其余1024输出tokens、相同context服务，默认总输入200万/总输出15万上限。派发前使用保守UTF8上下文字节余量；实际usage另查，总成本包含反馈、tool决策和被拒提案。未知usage/基础设施响应中止，不无尽循环同一call_id。无效draft可见供修复但不进入committed Plan。固定workflow的结构失败留分母，不编造兜底动作或挑选更好输出。
+
+python -m choreobench run-composition --source /runs/untimed-catalog/results.json --song-id song01 --provider /data/planner.json --out-dir /runs/react --method react
+
+完整resume从raw重建，不新抽；源件/代码/预算漂移使用新目录。--outline-reuse-run仅在当前新大纲请求与原调用逐字段完全一致、方法及provider identity一致时复用原响应，原raw与SHA/历史费用继续绑定；不借用另一方法的大纲或最终前缀。结果区分original_outline_reused/new_model_calls，重放的历史call计入总预算、不重复计费。该接口用于校验器公共结构版本错误等可复核恢复，不允许后验挑最好大纲。
+
+v51开发试验用原三首候选，12个原大纲实际与公共分段一致却被原metadata分段校验误拒；全部raw保留。v52改用实际公共分段并严格复用这12个原响应，0重抽outline，当前正文生成进行中。25项四方法专项通过；这些不证明24歌×4系统正式实验、语义质量优势或音乐评分已完成。

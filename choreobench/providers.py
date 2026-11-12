@@ -136,10 +136,10 @@ class NativeProvider:
         if self.family not in ("omni_captioner", "moss", "music_flamingo"):
             raise ValueError("Unknown native model family")
         self.task_prompt = spec.get("task_prompt")
-        if "task_prompt" in spec and (self.family != "omni_captioner" or spec.get("checkpoint")
+        if "task_prompt" in spec and (spec.get("checkpoint")
                 or not isinstance(self.task_prompt, str) or not self.task_prompt.strip()
                 or len(self.task_prompt) > 16384 or "<|" in self.task_prompt or "<audio>" in self.task_prompt):
-            raise ValueError("task_prompt requires a base-only Omni model and bounded plain task text")
+            raise ValueError("task_prompt requires a base-only native model and bounded plain task text")
         self.model = _path(spec["model"], base_dir)
         self.checkpoint = _path(spec["checkpoint"], base_dir) if spec.get("checkpoint") else None
         self.training_source = _path(spec["training_source_dir"], base_dir) if spec.get("training_source_dir") else None
@@ -165,13 +165,15 @@ class NativeProvider:
         self.identity["native_source_sha256"] = {name: file_sha(source_root / name) for name in source_names}
         if self.task_prompt is not None:
             self.identity.update(task_prompt=self.task_prompt, task_prompt_sha256=object_sha(self.task_prompt),
-                protocol="choreobench-prompted-omni-base-v1",
+                protocol="choreobench-prompted-" + ("omni" if self.family == "omni_captioner" else self.family) + "-base-v1",
                 benchmark_provider_sha256=file_sha(Path(__file__)))
         self.adapter = None
         self.verification = None
         self.requires_restart = False
 
     def _task_template(self):
+        if self.family == "moss":
+            return self.adapter.processor._build_default_prompt(self.task_prompt, has_audio=True)
         return self.adapter.processor.apply_chat_template([dict(role="user", content=[
             dict(type="audio", audio="native-waveform"),
             dict(type="text", text=self.task_prompt)])], tokenize=False, add_generation_prompt=True)
@@ -339,6 +341,9 @@ def create_provider(spec, role="local", base_dir=None):
     if kind == "replay":
         return ReplayProvider(spec, role, base_dir)
     if kind == "native":
+        if spec.get("family") in ("qwen25_omni", "audio_flamingo3", "moss_audio"):
+            from captionlab.native_baselines import NativeBaselineProvider
+            return NativeBaselineProvider(spec, role, base_dir)
         return NativeProvider(spec, role, base_dir)
     if kind == "native_service":
         from .resident import NativeServiceProvider

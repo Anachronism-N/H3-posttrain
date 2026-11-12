@@ -516,3 +516,125 @@ retained/contradicted 现在必须提供**非空白、candidate中的真实原�
 v36两个holder等待器因service-launch尚未创建的竞态退出，未接触GPU或模型结果；回执出现后仅重启等待器，失败log保留，模型未补采。三首运行、完结审计、模型退出与两卡holder恢复全部托管，当前不预写metadata质量或论文完成。
 
 正式工件/来源隔离仍缺；原E1–E5双人条款不因模型意见自动完成。论文可以透明记录开发机制、真实负结果与模型评审限制，不冒充人类正式验证。
+
+
+### 14.6 v36完成：复制减少，但短槽负担和边界风险未解
+
+metadata_only三首全部完成，共**79次新文字调用、750,034输入/37,274输出tokens**；原full对照79次不重采，三份新输出的请求/工具/全部前缀/final逐项重建，同条件resume0调用。自有模型停止并恢复两张卡，最终八卡各一个holder。三格正式E3标记仍false，完成的是开发机制实验。
+
+| 开发歌 | full事件→metadata事件 | 过去action整句复制 | 最短事件秒数full→metadata |
+|---|---:|---:|---:|
+| 电子 | 67→69 | 11→1 | 1.8→1.25 |
+| 摇滚 | 69→72 | 20→3 | 1.035→0.75 |
+| 原声 | 55→61 | 10→0 | 2.0→1.5 |
+
+移除历史正文减少逐字复用，总输入由同policy full的1,018,094降至750,034；但三首都增加事件数，选出更短槽。不能把复制低或token少直接命名为编舞更好：摇滚0.75秒仍写spin/landing/knee-lift/head-snap/arm-pump；电子1.25秒仍leap/turn/land/thrust/spiral/freeze，原声1.5秒turn/rapid-steps/directional-shifts。共享局部候选的动作库局限仍在，文字更多不同不证明动作多样性或音乐理解。
+
+已直接审查全部202个metadata事件及对应full稿，评价文件assistant-content-review.private.json绑定每首plan SHA、明确引文/时长，origin=model_judge、非盲/未听音/未见运动。三首时长内容仍fail；摇滚/原声末句有更明确hold，但摇滚前一事件settling into stillness后下一事件又从crouch rise，缺乏历史语义可能弱化边界。原声末句单纯hold较清楚，但此前static pose后仍接footwork/spin；不以此判整体胜者。
+
+### 14.7 跟进并发上游的新主实验，不再等待SFT
+
+发现并保留上游58e2100/b80dddc：新49方案明确E2六开放权重模型优先，SFT后补、E1后置；H1改为24完整歌×4系统，sol61短片段不得拼成整曲。已有v35/v36只是当前工具子轨，不能冒称实现完整Self-Refine/ReAct四方法主表。与新提交rebase成功，本地v35提交变为e70057a；推送遇认证失败，未强推或丢弃并发提交。
+
+固定sol61 revision元数据已获取并按原seed42规则重建val12/test96，三split字节SHA与原selection回执一致，有序ID摘要也一致。**108条原始WAV全部实际绑定**，不存在空文件/静音替代，音频身份/单声道PCM时钟核验通过；来源仍仅声明视频组，不伪装已审核同曲/近重复或训练重叠。数据证据在v37目录，参考内容仅私有评价阶段使用，不传给生成器。
+
+首批Omni/MOSS-Music/Music-Flamingo的task_prompt入口已统一支持自由动作段落：MOSS使用原生_build_default_prompt，另两模型用原生audio+text chat模板；检查点仍禁止覆盖训练任务，MOSS-Audio不冒充MOSS-Music。116项专项通过；整合回归曾因运行时源码修改触发SHA防线失败，保留该日志，不禁用哈希检查，冻结后重跑。
+
+v38实际Omni音频基线已托管启动，使用同val12预选前3例、原5.0625秒波形、base-only Thinker、公开自由编舞prompt、seed42/T0.9/top-k50/top-p0.95、max1024，不重抽。仅当前GPU1精确让卡，其他卡不动；源码、选择、模型身份/实际加载、原raw及恢复分别留证。**启动并非3条完成，更非正式96或六模型主表完成**；结束再核验输出、失败和资源。正式目标继续保留。
+
+
+## 15. 固定test96真实音频基线和首次实际音乐评分
+
+六臂已逐原audio/request/raw/最终records完成审计，完整resume无模型构造或新调用。原公开prompt、seed42、max1024、T0.9/top-p0.95/top-k50冻结；无GT/舞种/参考/视频输入。只允许模型原生processor/EOS差别。正常EOS不是编舞或指令遵循成功。
+
+| 方法 | 实际正式调用/完整EOS | 输入tokens | 输出tokens | 运行 |
+|---|---:|---:|---:|---|
+| Qwen3-Omni Instruct | 96/96 | 16608 | 13071 | v39 |
+| MOSS-Music | 96/96 | 17760 | 14612 | v41/moss |
+| Music-Flamingo | 96/96 | 30816 | 13571 | v41/music_flamingo |
+| Audio-Flamingo3 | 96/96 | 23328 | 4006 | v46 |
+| Qwen2.5-Omni | 96/96 | 23520 | 12108 | remaining_audio_v44/qwen25_omni |
+| MOSS-Audio | 96/96 | 17760 | 14924 | v48/test |
+
+六臂576固定test输出均正常EOS，总计129,792输入/72,292输出tokens，完整矩阵审计包含全部注册槽位；开发例有MOSS舞种/多人措辞及Music-Flamingo背景词偏离，原文保留不靠EOS认证质量。Omni断线重复开发三例的六次实际调用另计，不扩大来源数。MOSS/Music固定版本23/12文件LFS SHA完成；被独占库存拒绝的重复启动不代替原下载成功回执。
+
+AF3初次在生成前因Transformers加载报告含set无法JSON序列化退出，0模型调用；排序列表后同三例与原test96通过。MOSS-Audio首次误把persistent=False的官方位置buffer当checkpoint权重，0生成退出；修复只按固定官方原生构造重建有限FP32buffer并记录来源/SHA，若持久权重缺失或存储值不符仍拒绝。原生MOSS-Audio与MOSS-Music不同，不用别名冒充。各失败及代码快照保留。
+
+新增audio_quality_judge实际输入完整原WAV+匿名候选，Thinking与Instruct不同checkpoint但同家族；文字维度NA，音乐1/3/5量表单列，真实引用、原区间内音乐observations及身份校验强制，截断/unknown不补成功或重采。v42三开发来源实际三次音乐模型调用，解析3合法，分3/1/1；模型观察不是金标，未证明真人相关性。27项CPU测试仅验证证据合同。
+
+v45三例控制正在运行，只把原音乐按固定循环错配，候选正文、实际prompt/seed/模型/4096预算不变，原三音乐分不重跑。错配不必天然更差，待观察实际差异；敏感性不是完整E5校准。GPU2首个恢复器误查GPU1，保留错误回执并改正仅实际GPU2，未杀其他holder；所有再分配按实时PID/start ticks确认。
+
+v47正式完整24歌按FMA元数据升序、CC-BY3/4、24 distinct artist并排除三开发artist，12元数据180–239秒+12元数据240–300秒冻结。只HTTP Range读取完整ZIP，512MiB上限、严格ETag/206/Content-Range/ZIP CRC，不拼接5秒片段。大范围central directory返回不完整，原失败/零歌回执保留；新目录1MiB分块进行中。实际曲长和近重复审核仍待验证。
+
+已生成五臂不是六模型质量主表完成，声明视频group不等于同曲/近重复隔离。24歌×4系统完整工具主比较、正式编辑、E1后置数据质量及音乐评分校准仍缺，不将软件通过/听音接口变成formal_E2/E3/E5完成。
+
+
+### 15.5 实际音乐敏感性检查未证明可靠性
+
+v45三例原音乐错配控制完成，实际3新音乐模型调用，原3调用复用不重采。候选正文、实际prompt、seed、Thinking模型及4096预算相同，仅音频循环替换。合法pair两项评分仍3→3、1→1，原音乐observations能描述不同歌词/音色但评分不变；第三项因非候选真实子串引用而invalid，留在3个注册pair分母、不补低分、不重抽。
+
+两个目录的6条原raw/请求/评分完整resume重建，0审核调用。**当前没有建立音乐评分敏感性**；三段开发音乐本身同为高能片段，不能由此断言模型没有听音，也不能把已返回3/1/1作为准确率证据。真实音频输入和合法引用仅是评分证据合同，真人相关性、方法排序与同家族偏差未校准。后续音乐分只能探索性报告，实际人体执行仍无证据。
+
+### 15.6 发布版软件验证
+
+原生六架构分发、实际音频音乐judge及不可补采恢复的最终相关回归为**1788 passed、4 skipped、148 subtests passed**（另有一条既有pynvml弃用warning）。测试范围为全部test_choreobench与新增CaptionLab基线/质量/校准模块，不声称无关分布式脚本的全仓pytest通过。MOSS非持久buffer与严格缺权重、官方值不一致反例、原生输入前缀/无视觉输入检查均保留；模型质量不由这些软件测试认证。
+
+
+### 15.7 六模型576条生成全部完成并通过原件审计
+
+末臂MOSS-Audio的test96完成，96/96正常EOS，实际17760输入/14924输出tokens。六方法各96共**576正式生成调用**；每臂用其原冻结代码独立进程运行完整resume，重建全部原请求/provider/音频/响应/最终record，0新模型调用。汇总回执six-baseline-generation-audit.private.json逐方法绑定results/records/contract SHA，完整成本留证；正式生成库存完成true，formal_six_model_E2_completed和music_quality_verified仍false。
+
+这不是“质量6/6通过”。字面诊断显示Music-Flamingo两条非单段、三个整段复用；Audio-Flamingo3有29个额外整段重复，Qwen2.5一个。重复全文是可复算事实，不自动证明音乐不匹配或语义多样性失败；独立质量评价须继续。
+
+v49新增正式第一阶段文字盲评：将576输出按seed49随机方法顺序/匿名ID绑定，不给参考/GT，使用独立Qwen3-32B，固定1–5动作清晰度/时间组织、音乐NA。服务与原件审计/结束恢复已托管在GPU1/2；原生成文本不会因评价而重抽或调整。当前执行中，未填有效评分数/均值。音频评分仍只开发敏感性负结果，不能与文字分混成任意总分。
+
+全部220667条sol61元数据的case_id与声明视频source_group跨split扫描完成，固定108开发/测试case没有组或ID跨split碰撞。它仅验证视频身份声明；音乐同歌、近重复与训练音频污染未证实，不能由此更改严格隔离完成标记。训练原WAV实际存在，下一步可做只读精确音频拷贝核查并保持其他变体未决。
+
+
+### 15.8 四方法工具循环与无重采大纲修复
+
+新增composition_workflows和CLI：固定workflow、Self-Refine固定生成→反馈→修改、ReAct/编舞harness自主工具循环。共享完整已提交历史、当前draft、相同候选/时钟/权限及read/propose/check/revise/commit/finish；新大纲和自身前缀独立，工具反馈不是独立质量分。1+4U调用、4096大纲/1024其他输出、总token预算统一。draft不进入历史，非法/截断调用计成本，未知usage或基础设施失败不自动继续抽取。还未开放额外原音乐重听给任何方法，子轨不冒称覆盖全H1工具要求。
+
+v51三开发首共12大纲真实调用，模型按实际公共sidecar sections回答，却被控制器拿原metadata sections验证而全部拒绝。原响应、失败结果和费用保留，不作为模型编舞失败。逐原raw校验确认12条都与实际输入分段一致；修复指向source.song，并新增对应反例。v52严格逐字段核验当前outline请求与原请求相同、provider/方法匹配，复用原12响应，不再抽大纲也不复用最终事件；在GPU6/7继续正文生成。历史大纲计入本方法预算、费用单列，结果明确new_model_calls。当前25项四方法专项通过，真实12份正文未完成，不预写质量优势。
+
+### 15.9 已有完整24歌来源复用与相似性候选审核
+
+发现并核验既有e3_formal_v1完整24原MP3、canonical PCM及decode/source回执与本轮选序完全一致；逐所有原件SHA确认，实际长度12短/12长、排除三开发歌与artist。停止冗余自有HTTP分块任务71PfTQ，保留部分文件与早先失败，复用相同已物化来源，不再把“下载中”误报为缺音频。
+
+24测试歌+3开发歌全部348个含测试pair的转调/延时chroma+envelope筛查完成：无同normalized title、无exact音频SHA。标题从固定FMA元数据补齐，原缺title脚本失败保留。最高chroma0.5776、该pair包络相关-0.1102；该算法阈值未校准，结果仅候选，不认证同一作曲/cover/变速/大时移近重复或未知预训练污染。release grouping仍unverified，不编造near_duplicate_group_id。
+
+共享K2无时间戳2254候选在v50原音频运行，原case窗口完整5.0625秒，不从两时间窗动作造标签。sol61全部220667元数据已核固定108case声明视频组无跨split碰撞；4路CPU精确WAV筛查32nkXm继续，命中需完整SHA，缺文件保留，同歌近重复不因exact筛查自动通过。所有正在运行job有真实模型/进程和journal句柄，不将等待当完成。
+
+
+### 15.10 当前发布回归与实际运行门槛
+
+加入无时间戳catalog、完整四方法、公共sidecar outline校验及原响应复用后，当前相关整合回归为**1833 passed、4 skipped、148 subtests passed**（一条pynvml弃用warning），旧1788仍保留为对应版本。不同回归不相加，不拿全部测试通过冒充正式质量。
+
+v52修复运行实际已经提交workflow正文和Self-Refine反馈/重写，旧12大纲在每方法原请求完全一致后复用；不是仅“计划启动”，也尚未完成12份完整总谱。六方法576条已完成原件审计，而两个独立文字/音乐评分576槽和24歌2254共享候选都仍进行中，真实模型/journal/资源句柄保存。正式主质量表、语义隔离和音乐评分可靠性仍未通过。
+
+
+### 15.7 六模型576格生成和后续真实任务（截至当前核验）
+
+六臂固定test96均已生成并按原audio/request/raw/record审计：每模型96请求/96正常EOS、0执行失败/0未决，合计**576请求、129,792输入/72,292输出tokens**。其中MOSS-Audio为17,760输入/14,924输出tokens，不再是进行中。全部原WAV与同一注册选序一致；原生processor/EOS不同如实记录，没有参考/GT/舞种输入。生成完整不等于六模型质量实验或音乐指标校准完成。
+
+真实匿名评分已经运行：Qwen3-32B只评价文字清晰度/时间组织，Qwen3-Omni-Thinking收到完整原5.0625秒波形评价音乐适配，两者均遮蔽方法身份/参考。各576评分格保留无效引用、截断和unknown，不根据评分换裁判或补采。Thinking与部分生成器同家族，且仅开发3例显示评分偏差，不能称为独立真值。后续音乐裁判prompt明确允许half-time和counterpoint，不因慢/流畅动作与快音乐的表面反差自动判错；旧v42/v45评分/错误不改。
+
+24曲原始完整录音已经通过已存在receipt复用，全部原file SHA与canonical PCM身份核验、实际时长180–300秒/12＋12分层、排除三开发artist。额外range下载保留为历史失败/部分工件，没有下载完整879GiB ZIP或用5秒片段拼曲。24测试＋3开发的348对完整波形筛查完成：0精确SHA匹配、0规范标题匹配，最高转调chroma匹配约0.578；阈值未校准，未证明不同作品/cover/变速/训练污染。grouping仍unverified、near_duplicate IDs不伪造。
+
+原生K=2整曲共享候选目录已运行，注册24曲1127完整观察窗/2254请求；文本为整窗无时间戳提案，不人为拆成两段。单曲所有K/窗/原始响应/PCM切片齐全后可独立封存song view，其他歌曲还在采集时不标全目录完成。四系统共享相同候选和时间权限、自己新大纲/空历史，固定workflow/Self-Refine与通用ReAct/领域策略的程序调度差异单列。
+
+首次十二格大纲失败的原raw实际按公开ns000…字段输出，旧验证器错拿原始section字段拒绝；新校验对actual effective song执行。旧12失败/成本保留。v52绑定每方法原大纲请求并复用原响应，0重新大纲生成，再从空事件历史推进；这一轮尚未完成，不写12/12质量或正式24×4完成。当前回归最新为**1833 passed、4 skipped、148 subtests passed**，各历史测试日志保留、不累加。
+
+
+### 15.11 Self-Refine当前实际内容诊断（完整对照未结束）
+
+v52第一首前3个已完成反馈/重写单位已直接审查并绑定step SHA：第0/2单位的动作正文修改前后完全相同，第1单位把两段草案扩成三段，加入jump/roll/turn等链。反馈重复称action load moderate、boundary clarity good，并主要谈轨道/时钟合法性；当前未体现识别短槽动作负担的实质诊断。原稿/反馈/修订全部保留，不把optimistic feedback当独立质量分。
+
+这只覆盖第一首3单位，不是3首完整人评；允许合理不修改，未据此认定Self-Refine无效或harness胜出。完整3case×4method仍继续各自真实历史，原12大纲复用0重采，总预算/失败照计。
+
+
+### 15.12 当前合并交付检查
+
+包含原大纲复用、新六架构、完整单歌catalog view及分项评分的最新相关回归为**1834 passed、4 skipped、148 subtests passed**（一条pynvml warning），日志integration-current.log。原1833/1788分别保留为当时版本，不加总。旧冻结运行继续用其code snapshot，不以新source重写旧调用成绩。
+
+六模型生成完成已实证，质量评审和整曲流水线不因提交代码结束。所有576条文字/音乐评分仍按冻结匿名库存执行；24歌候选和三首四方法开发按真实自身前缀推进。大纲验证bug修复复用原12合法响应、不增加重复大纲采样。代码和文档可以交付，但formal_E2/E3/E5及完整论文目标继续保持未完成。

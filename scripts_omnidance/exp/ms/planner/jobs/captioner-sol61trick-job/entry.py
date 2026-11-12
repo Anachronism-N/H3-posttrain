@@ -259,8 +259,12 @@ def verify_assets():
 
 def data_config():
     if MODE_FAMILY.startswith('sol61'):
+        # save every 100 updates so checkpoint selection is not limited to 500-step
+        # resolution; evaluation stays at 500 to keep the validation cost bounded
         return dict(name='sol61-v1', train='train.jsonl', val='val.jsonl',
-                    contract='caption_contract_nostyle.json', epochs='1', save='500', eval='500', chunk='128')
+                    contract='caption_contract_nostyle.json', epochs='1',
+                    save=setting('save_every', '100'),
+                    eval=setting('eval_every', '500'), chunk='128')
     if MODE.startswith('strat'):
         return dict(name='strat-v1', train='train.jsonl', val='val.jsonl',
                     contract='caption_contract_nostyle.json', epochs='1', save='500', eval='500', chunk='128')
@@ -285,6 +289,46 @@ def data_config():
     return dict(name='full-v3', train='train.jsonl', val='val.jsonl',
                 contract='caption_contract_nostyle.json', epochs='1', save='500', eval='500',
                 chunk='0' if MODE.startswith('loss') else '128')
+
+
+def setting(name, default):
+    """Read a run setting from the job directory (submit-time env does not reach the container)."""
+    value = os.environ.get('M2D_' + name.upper())
+    if value:
+        return value
+    marker = JOB / (name + '.txt')
+    if marker.is_file():
+        text = marker.read_text().strip()
+        if text:
+            return text
+    return default
+
+
+def resolve_resume():
+    """Continue from a checkpoint already mirrored to OSS.
+
+    M2D_RESUME=<run>/<attempt>/checkpoint-XXXXXX is resolved under the run store so
+    the same value works on either region's bucket.
+    """
+    value = (os.environ.get('M2D_RESUME') or '').strip()
+    marker = JOB / 'resume.txt'
+    if not value and marker.is_file():
+        value = marker.read_text().strip()
+    if not value:
+        return None
+    path = OSS_ROOT / 'runs' / value
+    # the object store is FUSE mounted; listings and stats can lag behind a write
+    # made by another instance, so poll briefly and touch the parent directory
+    for attempt in range(12):
+        try:
+            os.listdir(str(path.parent))
+        except OSError:
+            pass
+        if (path / 'trainer_state.json').is_file():
+            log('resuming from %s' % path)
+            return path
+        time.sleep(10)
+    raise FileNotFoundError(str(path))
 
 
 def train_command(python):
@@ -322,11 +366,13 @@ def train_command(python):
                     '--nproc_per_node=' + str(local_gpus)]
     os.environ['M2D_NODES'] = str(nodes)
     global_gpus = nodes * local_gpus
+    resume = resolve_resume()
     command = [str(python)] + launcher + ['--module', 'scripts_omnidance.exp.ms.music_planner_train',
                '--family', 'omni_captioner', '--model', str(model),
                '--train', str(data / cfg['train']), '--val', str(data / cfg['val']),
                '--out', str(out), '--caption-contract', str(data / cfg['contract']),
-               '--epochs', cfg['epochs'], '--batch', os.environ.get('M2D_BATCH', str(global_gpus * 4)), '--micro', '1',
+               '--epochs', setting('epochs', cfg['epochs']),
+               '--batch', os.environ.get('M2D_BATCH', str(global_gpus * 4)), '--micro', '1',
                '--accum', os.environ.get('M2D_ACCUM', '4'),
                '--max-updates', '2' if smoke else '0',
                '--save-every', '1' if smoke else cfg['save'], '--eval-every', '1' if smoke else cfg['eval'],
@@ -336,6 +382,8 @@ def train_command(python):
                '--loss-chunk-size', cfg['chunk'], '--max-length', '8192',
                '--lr-schedule', 'cosine', '--warmup-updates', '20', '--seed', '42',
                '--backend', 'deepspeed', '--grad-clip', '1.']
+    if resume:
+        command += ['--resume', str(resume)]
     if jev:
         command += ['--genre-classes', str(data / 'classes.json'),
                     '--train-genre-labels', str(data / 'train-genres.jsonl'),
@@ -400,7 +448,7 @@ def sync_out_once():
         if len(parts) > 2 and parts[0] == 'attempts' and parts[2].startswith('checkpoint-'):
             directory = source / parts[1] / parts[2]
             if not (directory / 'trainer_state.json').is_file():
-                # adapter/ is all evaluation needs; ship it ahead of the 60GB ZeRO shards
+                # adapter/ is all evaluation needs; ship it ahead of the ZeRO shards
                 if not parts[3:4] == ('adapter',) or not (directory / 'adapter' / 'planner_adapter.json').is_file():
                     continue
         destination = target / relative

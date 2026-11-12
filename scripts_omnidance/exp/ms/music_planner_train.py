@@ -3,6 +3,7 @@
 An explicit contract enables new captions; otherwise historical fixed2s data is
 preserved. Test data is never consumed by this training entry.
 """
+import copy
 import argparse
 from contextlib import nullcontext
 import hashlib
@@ -273,12 +274,27 @@ def lr_multiplier(step, total_updates, warmup_updates, schedule='constant'):
     return .5 * (1. + math.cos(math.pi * progress))
 
 
-def assert_shared_fingerprint(fingerprint):
+def assert_shared_fingerprint(fingerprint, config=None):
     if torch.distributed.is_available() and torch.distributed.is_initialized():
         observed = [None] * torch.distributed.get_world_size()
         torch.distributed.all_gather_object(observed, fingerprint)
         if len(set(observed)) != 1:
-            raise ValueError('Distributed ranks disagree on model/data/code/training configuration')
+            diff = {}
+            if config is not None:
+                configs = [config] * len(observed)
+                torch.distributed.all_gather_object(configs, config)
+                distinct = []
+                for candidate in configs:
+                    if json.dumps(candidate, sort_keys=True, default=str) not in distinct:
+                        distinct.append(json.dumps(candidate, sort_keys=True, default=str))
+                left = json.loads(distinct[0])
+                right = json.loads(distinct[-1])
+                diff = {key: [left.get(key), right.get(key)] for key in set(left) | set(right)
+                        if left.get(key) != right.get(key)}
+                if torch.distributed.get_rank() == 0:
+                    print('FINGERPRINT_DIFF ' + json.dumps(diff, default=str)[:4000], flush=True)
+            raise ValueError('Distributed ranks disagree on model/data/code/training configuration: '
+                             + json.dumps(list(diff)[:20]))
 
 
 def software_identity():
@@ -854,6 +870,19 @@ def validate_smoke_before_save(args, model, adapter, rows, cache, accelerator, s
     return path
 
 
+def stable_cfg(config):
+    """Node-independent view of a run config, used for identity hashing."""
+    import copy as _copy
+    view = _copy.deepcopy(config)
+    if isinstance(view.get('model'), dict) and view['model'].get('path'):
+        view['model']['path'] = Path(view['model']['path']).name
+    for split in ('train', 'val'):
+        entry = (view.get('data') or {}).get(split)
+        if isinstance(entry, dict) and entry.get('path'):
+            entry['path'] = Path(entry['path']).name
+    return view
+
+
 def train(args):
     _allow_external_autocast()
     _force_fp32_moe_fallback()
@@ -896,8 +925,10 @@ def train(args):
         raise ValueError('Initialized distributed world differs from the launch contract')
     identity = verify_cluster_model_identity(args.model, identity, accelerator, cluster)
     set_seed(args.seed)
-    # every node writes its own per-rank evidence into its node-local out dir;
-    # the launcher hands each attempt a fresh directory, so this must not gate starts
+    if accelerator.is_main_process:
+        if args.out.exists() and not args.resume and any(args.out.iterdir()):
+            raise ValueError('Output exists; use --resume rather than overwrite')
+    # every node writes its own per-rank evidence into its node-local out dir
     args.out.mkdir(parents=True, exist_ok=True)
     accelerator.wait_for_everyone()
     with plugin.zero3_init_context_manager(enable=True) if plugin else nullcontext():
@@ -973,18 +1004,44 @@ def train(args):
         config['fusion'] = dict(installation=adapter.fusion_metadata,
             cache_path=str(Path(args.musicfm_cache).resolve()), cache_identity=adapter.musicfm_store.identity,
             learning_rate=args.fusion_lr)
-    fingerprint = object_sha(config)
-    assert_shared_fingerprint(fingerprint)
+    # ranks extract data to their own scratch dirs; key the fingerprint on the
+    # split path relative to its data root, not the node-local absolute path
+    stable = stable_cfg(config)
+    fingerprint = object_sha(stable)
+    assert_shared_fingerprint(fingerprint, stable)
+    # extending the epoch budget is the one legal config change on resume. Every
+    # rank recomputes the identity because the checkpoint metadata is written with
+    # it; only the main process publishes the new run config.
+    # accum/world_size may change when the global batch is held fixed, e.g. moving
+    # a run from 32 to 64 GPUs; that guard is checked explicitly below
+    extensible = ('epochs', 'total_updates', 'source_exposure_budget', 'effective_warmup_updates',
+                  'accum', 'world_size', 'micro')
+    resume_fingerprint = fingerprint
+    if args.resume:
+        previous_path = args.out / 'run_config.json'
+        if not previous_path.is_file():
+            previous_path = Path(args.resume).resolve().parent.parent / 'run_config.json'
+        existing = json.loads(previous_path.read_text(encoding='utf-8'))
+        canonical = {key: value for key, value in existing.items() if key not in ('fingerprint', 'trainable_parameters')}
+        if existing.get('epochs', 0) > args.epochs:
+            raise ValueError('Resume cannot shrink the epoch budget')
+        if existing.get('global_batch') != config.get('global_batch'):
+            raise ValueError('Resume must keep the global batch size')
+        reduced = {key: value for key, value in stable_cfg(canonical).items() if key not in extensible}
+        current = {key: value for key, value in stable.items() if key not in extensible}
+        if object_sha(reduced) != object_sha(current):
+            raise ValueError('Resume run config differs outside the epoch budget; original run config was not overwritten')
+        if existing.get('fingerprint') and object_sha(stable_cfg(canonical)) != existing['fingerprint']:
+            raise ValueError('Existing run config is not self-consistent; refusing to extend it')
+        resume_fingerprint = existing['fingerprint']
+        config['extended_from_epochs'] = existing.get('epochs')
+        config['extended_from_fingerprint'] = resume_fingerprint
+        stable = stable_cfg(config)
+        fingerprint = object_sha(stable)
+        assert_shared_fingerprint(fingerprint, stable)
     if accelerator.is_main_process:
-        config_path = args.out / 'run_config.json'
-        if args.resume:
-            existing = json.loads(config_path.read_text(encoding='utf-8'))
-            canonical = {key: value for key, value in existing.items() if key not in ('fingerprint', 'trainable_parameters')}
-            if existing.get('fingerprint') != fingerprint or object_sha(canonical) != fingerprint:
-                raise ValueError('Resume run config differs; original run config was not overwritten')
-        else:
-            atomic_json(config_path, dict(config, fingerprint=fingerprint,
-                trainable_parameters=sum(math.prod(v['shape']) for v in config['trainable_signature'].values())))
+        atomic_json(args.out / 'run_config.json', dict(config, fingerprint=fingerprint,
+            trainable_parameters=sum(math.prod(v['shape']) for v in config['trainable_signature'].values())))
     model, optimizer = accelerator.prepare(model, optimizer)
     # Scheduler is deliberately not Accelerator-prepared: one scheduler tick per actual optimizer update.
     state = dict(epoch=0, position=0, update=0, source_exposures=0, best_val_nll=None)
@@ -992,7 +1049,7 @@ def train(args):
         state.update(genre_labeled_exposures=0, jev_head_exercised=False)
     checkpoint_args = dict(rank=rank, world=world, zero3=bool(plugin), barrier=accelerator.wait_for_everyone)
     if args.resume:
-        state = load_checkpoint(args.resume, model, optimizer, scheduler, fingerprint, **checkpoint_args)
+        state = load_checkpoint(args.resume, model, optimizer, scheduler, resume_fingerprint, **checkpoint_args)
     validate_cursor(state, len(train_rows), args.epochs, args.batch)
     starting_update = state['update']
     gradient_observe_until = starting_update + 2

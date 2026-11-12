@@ -124,12 +124,18 @@ def audit(path):
     return m
 
 
+def opening_floor(m, absolute, ratio):
+    """Absolute counts only apply to samples large enough to reach them."""
+    return min(absolute, max(1, int(ratio * m['rows'])))
+
+
 def disqualifiers(m):
     reasons = []
     if m['self_repetition'] > DISQUALIFY['self_repetition']:
         reasons.append('self_repetition>%.2f' % DISQUALIFY['self_repetition'])
-    if m['distinct_openings'] < DISQUALIFY['distinct_openings']:
-        reasons.append('distinct_openings<%d' % DISQUALIFY['distinct_openings'])
+    floor = opening_floor(m, DISQUALIFY['distinct_openings'], 0.15)
+    if m['distinct_openings'] < floor:
+        reasons.append('distinct_openings<%d' % floor)
     lo, hi = DISQUALIFY['density_ratio']
     if not lo <= m['density_ratio'] <= hi:
         reasons.append('density_ratio outside %.1f-%.1f' % (lo, hi))
@@ -142,7 +148,8 @@ def verdict(m):
         'action_recall': m['action_recall'] >= TARGETS['action_recall_min'],
         'body_recall': m['body_recall'] >= TARGETS['body_recall_min'],
         'density_ratio': lo <= m['density_ratio'] <= hi,
-        'distinct_openings': m['distinct_openings'] >= TARGETS['distinct_openings_min'],
+        'distinct_openings': m['distinct_openings'] >= opening_floor(
+            m, TARGETS['distinct_openings_min'], 0.4),
         'self_repetition': m['self_repetition'] <= TARGETS['self_repetition_max'],
         'hallucinated_parts': m['hallucinated_part_rate'] <= TARGETS['hallucinated_part_rate_max'],
     }
@@ -154,8 +161,9 @@ def selection_score(m):
     """Primary ranking value from the protocol: action recall, discounted by defects."""
     score = m['action_recall'] + 0.3 * m['body_recall']
     score *= 1.0 - min(m['self_repetition'], 0.5)
-    if m['distinct_openings'] < TARGETS['distinct_openings_min']:
-        score *= m['distinct_openings'] / float(TARGETS['distinct_openings_min'])
+    floor = opening_floor(m, TARGETS['distinct_openings_min'], 0.4)
+    if m['distinct_openings'] < floor:
+        score *= m['distinct_openings'] / float(floor)
     return round(score, 4)
 
 

@@ -896,10 +896,9 @@ def train(args):
         raise ValueError('Initialized distributed world differs from the launch contract')
     identity = verify_cluster_model_identity(args.model, identity, accelerator, cluster)
     set_seed(args.seed)
-    if accelerator.is_main_process:
-        if args.out.exists() and not args.resume:
-            raise ValueError('Output exists; use --resume rather than overwrite')
-        args.out.mkdir(parents=True, exist_ok=True)
+    # every node writes its own per-rank evidence into its node-local out dir;
+    # the launcher hands each attempt a fresh directory, so this must not gate starts
+    args.out.mkdir(parents=True, exist_ok=True)
     accelerator.wait_for_everyone()
     with plugin.zero3_init_context_manager(enable=True) if plugin else nullcontext():
         adapter = loader(family=args.family, model_path=args.model, lora_rank=args.rank,

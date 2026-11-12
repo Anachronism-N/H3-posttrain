@@ -295,7 +295,6 @@ def train_command(python):
     while out.exists():
         stamp = time.strftime('%H%M%S') + str(os.getpid())
         out = LOCAL / 'out' / ('%s-attempt%s' % (RUN_ID, stamp))
-    TOTAL_ATTEMPTS.append(out)
     cfg = data_config()
     smoke = MODE.endswith('_smoke')
     jev = MODE.startswith('jev') or MODE.startswith('mid2jev')
@@ -357,7 +356,6 @@ def train_command(python):
 
 
 SYNC_STOP = threading.Event()
-TOTAL_ATTEMPTS = []
 
 
 def sync_out_once():

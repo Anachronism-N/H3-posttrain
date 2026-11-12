@@ -108,6 +108,29 @@ vocabulary (legs, reach, bend) and structural diversity are never learned, and
 A 1e-4 run with warmup 100 was started and then stopped to give the main run
 bandwidth; it must be re-run to confirm.
 
+## 5.1 80-case paired measurements (checkpoints from the same family)
+
+Fixed 80 val cases, greedy decoding, `--max-new-tokens 2048`:
+
+| checkpoint | action recall | body recall | density | length | distinct openings | BLEU-1 | BLEU-4 | ROUGE-L |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 500 | 0.804 | 0.899 | 1.05 | 0.87 | **8** | 0.521 | 0.071 | 0.314 |
+| 1000 | 0.802 | 0.904 | 1.07 | 0.84 | **16** | 0.508 | 0.054 | 0.301 |
+
+Two things this settles:
+
+1. Action and body recall saturate by update 500 (0.804/0.899 → 0.802/0.904).
+2. Diversity and text overlap move in opposite directions. Opening variety
+   doubles (8 → 16 of 80) while BLEU-4 and ROUGE-L fall (0.071 → 0.054,
+   0.314 → 0.301). The 500-step model scores higher on overlap because its
+   collapsed opener is also the reference's most common opener. **BLEU/ROUGE
+   therefore cannot be used to choose a checkpoint here**, and any table that
+   ranks by them inverts the true ordering.
+
+Working selection rule from the evidence: keep action recall and density inside
+their bands, then prefer the checkpoint with the most distinct openings, and use
+leg coverage (body recall) as the tie-breaker that penalises over-training.
+
 ## 6. In flight
 
 - `sol61-2ep-64gpu` (`sol61_full_20261113_010434`): 2 epochs, 8 nodes × 8 GPUs,

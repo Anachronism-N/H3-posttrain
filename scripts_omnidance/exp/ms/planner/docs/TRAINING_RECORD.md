@@ -232,7 +232,27 @@ The protocol's absolute opening threshold (25 distinct) applies to 200-row
 samples; `audit_sol61.py` now scales it down with the row count so 20-row smoke
 runs are not misjudged.
 
-### 6.4 Continuing training
+### 6.4 What degrades as training proceeds: leg coverage
+
+The same 30 val rows were generated from the 500, 1000 and 1500 checkpoints:
+
+| checkpoint | action recall | body-part recall | missing `legs` | extra `legs` |
+| --- | --- | --- | --- | --- |
+| 500 | 0.821 | 0.938 | 5 | 6 |
+| 1000 | 0.783 | 0.889 | 9 | 6 |
+| 1500 | 0.810 | 0.815 | 15 | 3 |
+
+Action recall is flat within noise (30 rows is roughly +-0.03) but body-part
+recall falls monotonically, and the entire drop is `legs`: references say "the
+knee on that side softens" or "one knee bends and straightens", and the later
+checkpoint stops mentioning knees at all. Arms/hands/torso/head/feet are stable.
+So more updates concentrate the output on the high-frequency arm vocabulary and
+drop the long tail, which is also why `bend`/`knee` dominate the missing-action
+counts. Checkpoint choice must therefore depend on whether downstream review
+cares about lower-body coverage, and 30 rows cannot resolve differences of this
+size: paired comparison on 200 fixed cases is required.
+
+### 6.5 Continuing training
 
 A resume from `checkpoint-0001527` could not start: containers mounted the run
 store over FUSE and `stat` on the deep checkpoint path failed for all 12 retries,

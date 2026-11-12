@@ -172,3 +172,71 @@ collapses window count and opener diversity, so it trades three gates for one.
 | Unit tests | `tests/` |
 | Consolidated metrics | `docs/results_summary.json` |
 | Protocol / audit / handoff | `docs/M2D_PLANNER_*.md` |
+
+---
+
+## 6. sol61 timestampless run (2026-11-12/13)
+
+### 6.1 Data
+
+`sol61-v1`: 217,373 rows built by `data/build_sol61.py` from
+`avagelion/dance-data` → `sol61_captions` (revision `1ca58b4`). Gate-false rows
+(842) and rows without a verified audio match (2,452) are dropped; the
+`Dance style:` header is stripped. Splits: train 195,367 / val 10,938 /
+test 11,068, zero cross-split groups, zero id overlap. Mean 768 chars, no
+timestamps. Contract `caption_contract_nostyle.json` declares
+`caption_version=m2d-sol61-v1` and requires no windows.
+
+### 6.2 Runs completed (1 epoch, 1,527 updates each)
+
+Both used 4 nodes × 8 GPUs, global batch 128 (micro 1 × accum 4), LoRA r32/α64 on
+the last four audio-tower layers plus projector, ZeRO-3, max length 8,192.
+
+| run | token weight | val NLL 500 | 1000 | 1500 | 1527 |
+| --- | --- | --- | --- | --- | --- |
+| `sol61_full_20261112_102148` (hz) | 1.0 | 1.581 | 1.531 | 1.523 | **1.522** |
+| `sol61trick_full_20261112_093656` (sg) | 1.3 | 2.056 | 1.993 | 1.981 | **1.981** |
+
+Second batch of runs saved and validated every 100 updates:
+`sol61_full_20261112_161243` (hz, 16 checkpoints) and
+`sol61trick_full_20261112_161536` (sg, 16 checkpoints). Train loss by 200-update
+block on the hz run: 2.145 → 1.678 → 1.610 → 1.581 → 1.562 → 1.552 → 1.549 →
+1.547. The last four blocks each gain ~0.002, so one epoch is saturated but
+validation NLL never rose: no overfitting, and the budget is too small to call
+the model converged (1,527 optimizer updates for a 43M-parameter adapter).
+
+### 6.3 First measured generation quality (hz 1527, 20 val rows)
+
+`eval/audit_sol61.py`, 20 rows, greedy decoding, `--max-new-tokens 2048`:
+
+| metric | value | gate | pass |
+| --- | --- | --- | --- |
+| action recall | 0.838 | ≥0.55 | yes |
+| body-part recall | 0.944 | ≥0.75 | yes |
+| density ratio | 1.081 | 0.8–1.2 | yes |
+| self-repetition | 0.000 | ≤0.10 | yes |
+| hallucinated parts | 0.000 | ≤0.05 | yes |
+| distinct openings | 9 / 20 | scaled | yes |
+
+Shape matches the references closely: 5.45 vs 5.50 sentences per caption, 13 of
+20 captions with identical sentence counts, mean length ratio 0.865. The gap is
+inside sentences: 131 vs 160 chars per sentence and 4.6/4.6 left/right mentions
+against 5.9/5.7, i.e. the model emits the right action skeleton with ~20% less
+directional and joint detail. Missing vocabulary concentrates in
+`bend`, `reach`, `up`, `elbow`, `knee` while `raise`, `lower`, `down` appear
+instead, so most of the recall gap is wording preference rather than missing
+content. No template collapse and no invented body parts, which were the defects
+that sank the earlier timestamped planner checkpoints.
+
+The protocol's absolute opening threshold (25 distinct) applies to 200-row
+samples; `audit_sol61.py` now scales it down with the row count so 20-row smoke
+runs are not misjudged.
+
+### 6.4 Continuing training
+
+A resume from `checkpoint-0001527` could not start: containers mounted the run
+store over FUSE and `stat` on the deep checkpoint path failed for all 12 retries,
+while the same directory is readable through a parent listing from the eval job.
+The continuation therefore restarts from the base weights with `epochs=2`
+(`sol61-2ep-64gpu`, 8 nodes × 8 GPUs, global batch still 128 with accum 2), saving
+and validating every 100 updates to expose the overfitting point.

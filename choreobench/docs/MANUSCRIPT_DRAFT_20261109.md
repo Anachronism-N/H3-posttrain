@@ -464,7 +464,7 @@ The same three text controls, evaluated with the generation checkpoint as a cros
 
 The subsequent event-bound quotation protocol still does not certify semantic correctness. Of two distinct retained final texts, the rock review fails complete-neighbor citation requirements; the acoustic review passes the protocol and all model dimensions. Direct text inspection nevertheless finds an outward final arm pose followed by final stillness with hands near the chest, without a stated transition. The model-positive result and the conflicting assistant inspection are retained separately; identical policy outputs are not independent rater votes. A CPU-only schema/grammar audit also confirms that integer-rated and unknown paths are both accessible, so the text controls' universal abstention is not explained by a forced-null schema.
 
-### 6.23 Pairwise text controls and clock-fragment evidence
+### 6.25 Pairwise text controls and clock-fragment evidence
 
 The same three constructed contrasts are evaluated by a blind pairwise text prompt instead of the previously nondiscriminative absolute rubric: a consistent specific plan versus contradictory planted-feet/jumping instructions, the same specific plan versus generic unnamed movement, and two equivalently described sustained repeated movements. All three returned preferences agree with the constructed text-only expectations (two specific-plan preferences and one tie), using 720 input and 602 output tokens. These are three developer controls, not human gold, independent test songs, music calibration or a new ranking of the 576 outputs.
 
@@ -476,7 +476,7 @@ Three pairwise synthetic contrasts prefer specific sustained motion over contrad
 
 The compact-decoder control completes all four methods on the first development recording. ReAct changes from one committed unit and 109 exhausted journal records to 27/27 committed units with 83 normally finished records; the choreography arm completes 27/27 with 81 records. Each includes one reused original outline, with no truncated response accepted as a plan and no automatic commit. This is one-source decoding reliability evidence, not twelve-cell completion or choreographic quality improvement. The remaining two development recordings and 96-cell formal comparison are still pending. All 24 formal sealed source views pass a lightweight unit-count and outline-size preflight (18–29 planning units, at most 94,448 message characters); this reuses the already audited catalog and does not certify song-level isolation.
 
-### 6.25 Full-score paired development reviews
+### 6.26 Full-score paired development reviews
 
 Six comparisons use complete retained scores from the same three development recordings: Self-Refine versus workflow and choreography versus workflow on each song. All six have protocol-valid quotes, at 88,333 input and 11,846 output tokens; no new choreography is generated. Anonymous A/B order hides method labels, but the reviewer is the generation checkpoint, not an independent model family or human rater. Six contrasts are nested in three reused source songs.
 

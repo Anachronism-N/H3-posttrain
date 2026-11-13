@@ -224,7 +224,25 @@ raise the learning rate (measured 7x sample-efficiency gain) or invest in data /
 decoding changes. Any claim that the model needs "more epochs" should be checked
 against this table first.
 
-## 6. In flight
+## 6. Status summary
+
+Done and measured:
+
+- seven checkpoints scored on 80 fixed cases (section 5.2);
+- second epoch effect quantified (section 5.4);
+- learning-rate effect quantified at five points (section 5.3);
+- first-pass E2 comparison against three general baselines (section 7.1).
+
+Still running at the time of writing:
+
+- `sol61-hlr-1ep-32gpu` (`lora_lr=1e-4`, 1 epoch) — val NLL 1.4270 at update 600;
+  its 1,000-step generation audit is the last open question, namely whether the
+  opener entropy rises above the 3.04 measured under the low rate.
+- `sol61-eval-epochs-8gpu` — e1_1527 vs e2_3054 on the same 80 cases, to confirm
+  that the second epoch also fails to move generation quality.
+- E2 MOSS-Music prompt fix verification.
+
+## 7. In flight
 
 - `sol61-2ep-64gpu` (`sol61_full_20261113_010434`): 2 epochs, 8 nodes × 8 GPUs,
   global batch still 128 with accum 2, save + validate every 100 updates.

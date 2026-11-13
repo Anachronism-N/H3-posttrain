@@ -202,9 +202,24 @@ compute. The gap also narrows
 is whether the higher rate settles below it. Training is stable at 1e-4: no
 spikes, no divergence over 200 updates.
 
-Practical consequence: any future sol61 run should start at `lora_lr=1e-4`, and
-`1e-5` results should be treated as undertrained rather than as a converged
-reference.
+Practical consequence *if NLL were the target*: any future sol61 run should
+start at `lora_lr=1e-4`. **Generation quality says the opposite**, which is why
+NLL must not be used as the selection signal here.
+
+### 5.3.1 High learning rate, measured on generation (80 cases, temp 0.7)
+
+| run | action | body | density | length | openings | entropy | legs |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `1e-5` @1,000 | **0.871** | **0.945** | 1.02 | 0.93 | 54 | 4.80 | **0.787** |
+| `1e-4` @1,527 | 0.847 | 0.936 | 0.96 | 0.95 | 51 | **4.89** | 0.725 |
+
+The high-rate run recovers most of the gap once it is decoded the same way (the
+earlier 0.801 / entropy 2.05 figure was its greedy decoding, not the weights'),
+but after a full epoch it still trails the low-rate 1,000-step checkpoint on the
+two primary metrics and, notably, on leg coverage (0.725 vs 0.787 mentions).
+Its NLL is lower and its opener entropy is marginally higher. Conclusion: at
+this data scale `1e-4` is not an upgrade, it is a different trade — do not
+switch learning rates on NLL evidence alone.
 
 ## 5.4 Second epoch contributes almost nothing (measured)
 

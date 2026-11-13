@@ -551,3 +551,65 @@ def test_pairwise_cli_help(capsys):
     with pytest.raises(SystemExit) as error:
         module.main(["pairwise", "--help"])
     assert error.value.code == 0 and "--pairs" in capsys.readouterr().out
+
+
+def fullscore_inputs():
+    def score(prefix):
+        return dict(duration_seconds=9., events=[dict(index=i, start_seconds=i*3., end_seconds=(i+1)*3., track='body', action=prefix+f' movement {i}.') for i in range(3)])
+    return score('Left'), score('Right')
+
+
+def fullscore_answer(request, preference='A'):
+    data=json.loads(request['messages'][-1]['content'])
+    evidence={label:[dict(index=e['index'],quote=e['action']) for e in data[label]['events']] for label in ('A','B')}
+    return {dim:dict(preference=preference,reason='Synthetic temporal coverage control',quotes_A=[] if preference=='unknown' else evidence['A'],quotes_B=[] if preference=='unknown' else evidence['B']) for dim in module.FULLSCORE_DIMENSIONS}
+
+
+def test_fullscore_request_order_invariant_with_exact_three_third_evidence():
+    left,right=fullscore_inputs();request=module.fullscore_request(left,right)
+    assert request==module.fullscore_request(right,left)
+    data=json.loads(request['messages'][-1]['content']);schema=request['response_schema']
+    assert set(data)=={'A','B'} and set(schema['$defs'])=={'quotes_A','quotes_B'}
+    for label in ('A','B'):
+        array=schema['$defs']['quotes_'+label]['anyOf'][1]
+        assert array['minItems']==array['maxItems']==3 and array['items'] is False
+        for third,element in enumerate(array['prefixItems']):
+            branch=element['anyOf'][0]
+            assert branch['properties']['index']['enum']==[third]
+            assert branch['properties']['quote']['enum']==[data[label]['events'][third]['action']]
+    review=module.parse_fullscore_review(left,right,dict(text=json.dumps(fullscore_answer(request)),stop_reason='stop'),'fixture','identity')
+    assert review['temporal_third_evidence_required'] and not review['metric_validity_verified']
+    assert review['human_reviews']==0 and not review['audio_supplied']
+
+
+@pytest.mark.parametrize('preference',['A','B','tie','unknown'])
+def test_fullscore_preference_and_unknown_remain_separate(preference):
+    left,right=fullscore_inputs();req=module.fullscore_request(left,right)
+    response=dict(text=json.dumps(fullscore_answer(req,preference)),stop_reason='stop')
+    review=module.parse_fullscore_review(left,right,response,'reviewer','identity')
+    for v in review['preferences'].values():
+        assert v['preference']==preference
+        assert (v['preferred_score_sha256'] is None)==(preference in ('tie','unknown'))
+
+
+@pytest.mark.parametrize('change',['first_only','duplicate_third','wrong_event_quote','clock_fragment','foreign_index','truncated'])
+def test_fullscore_review_rejects_uncovered_or_unbound_evidence(change):
+    left,right=fullscore_inputs();req=module.fullscore_request(left,right);value=fullscore_answer(req);refs=value['clarity']['quotes_A'];stop='stop'
+    if change=='first_only':value['clarity']['quotes_A']=refs[:1]
+    elif change=='duplicate_third':refs[1]=copy.deepcopy(refs[0])
+    elif change=='wrong_event_quote':refs[1]['quote']=refs[0]['quote']
+    elif change=='clock_fragment':refs[1]['quote']='[0.0-3.0 s]'
+    elif change=='foreign_index':refs[1]['index']=10
+    else:stop='budget_truncation'
+    with pytest.raises(ValueError):module.parse_fullscore_review(left,right,dict(text=json.dumps(value),stop_reason=stop),'reviewer','identity')
+
+
+@pytest.mark.parametrize('change',['missing_third','clock','index','duration','boolean_time'])
+def test_fullscore_request_rejects_invalid_or_incomplete_clock(change):
+    left,right=fullscore_inputs()
+    if change=='missing_third':right['events']=right['events'][:2]
+    elif change=='clock':right['events'][1]['end_seconds']=12.
+    elif change=='index':right['events'][1]['index']=0
+    elif change=='duration':right['duration_seconds']=10.
+    else:right['events'][0]['start_seconds']=False
+    with pytest.raises(ValueError):module.fullscore_request(left,right)

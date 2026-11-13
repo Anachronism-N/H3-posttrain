@@ -851,3 +851,9 @@ python -m captionlab.quality_judge pairwise --pairs /data/pairs.json --provider-
 `pairs.json` 为 `{"pairs":[{"left":review_item,"right":review_item}]}`。双方必须绑定相同case、来源组、音频SHA、时长和参考SHA，但方法不同；未生成/失败/只有排程无动作的项仍留完整分母。A/B顺序按原件摘要和seed固定，模型不见方法/来源身份。引文选择只提供真实动作片段，时间戳不充当动作证据；tie、unknown、协议失败和实际费用分列，`--resume` 只重建原件、不补采已失败评分。合法引用不证明理由语义真实或音乐适配。
 
 `export_noop_references(registry_path, author_results_path, out_path)` 绑定全部原任务的未修改源稿引用，`patch=null`、新增模型调用0；它不是编辑器生成，也不能自动当成控制成功。作者合同、started/raw、源稿和公开任务均须匹配，缺源/作者失败保留，不复制或替换原生成稿。
+
+### 完整总谱的三段证据与No-op参照
+
+captionlab.quality_judge.fullscore_request接受同总时长的公开{duration_seconds,events}，每事件仅index/start_seconds/end_seconds/track/action。已知clarity/temporal_continuity/development判断须在A/B前中后各给一个绑定原事件的精确动作引文；未知允许空。不通过引文覆盖声称真值、音乐听音或人体执行；共享$defs保留原请求字符guard。
+
+choreobench.edit_study.export_noop_references(registry_path,author_results_path,out_path)绑定原任务和原源稿，不生成编辑、不复制原Plan、不制造空patch。48注册槽位缺源和作者失败仍保留；更换来源或删除原作者raw不可静默重新导出。可与96实际策略输出组成原144状态参照，但参考库存本身不算语义评价完成。

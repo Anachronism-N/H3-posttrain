@@ -60,6 +60,30 @@ Against every general audio/omni model tested on the same 20 cases, this
 planner is 3.6–40× higher on action recall and 1.3–10× higher on body-part
 recall (see `SOL61_TRAINING_DIAGNOSIS.md` §7.1).
 
+## Verified usage
+
+`planner/eval_harness/generate_caption.py` was run on the platform (L20Z) against
+the published adapter and the base model, on three held-out windows:
+
+```
+$ python generate_caption.py --model .../Qwen3-Omni-30B-A3B-Captioner-full \
+      --adapter .../deliverables/sol61_planner_v1/adapter --audio window.wav
+"As one hand moves left, the dancer folds both arms and lifts that hand while the
+ opposite knee straightens. The opposite arm extends as its knee bends, then both
+ hands rise before that arm curls right and the other drops into a tighter fold."
+```
+
+Two details matter for reproducing this:
+
+- the checkpoint's `generation_config` does not carry the chat terminator, so
+  `eos_token_id` must be set explicitly (`<|im_end|>`); without it the model keeps
+  writing after the caption and degenerates into symbol spam;
+- the window must be exactly 5.0625 s — the loader rejects other lengths rather
+  than padding.
+
+Three sample windows are cached at `samples/` next to this README so the check
+runs in minutes instead of re-streaming the 53 GB data tar.
+
 ## Known limits
 
 - Leg/knee/thigh coverage is below the reference; a class-weighted CE variant

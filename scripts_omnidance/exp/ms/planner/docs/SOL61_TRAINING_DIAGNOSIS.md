@@ -353,6 +353,30 @@ SFT `sol61_full_20261112_161243/checkpoint-0001000`:
 | CLAP on the *frozen references* (control) | -0.0318 |
 | ΔCLAP (real vs zeroed audio) | +0.0026 |
 
+### 8.1 Two operating points: coverage vs structure
+
+`repetition_penalty` 1.15 was found on the val panel (action 0.901 vs 0.854 at
+1.05) and then measured on test384. It raises tag coverage further, but the
+audit shows that it does so by writing fewer, longer clauses:
+
+| config (384 cases) | action | body | density ratio | length | BLEU-4 | ROUGE-L | openings | self-rep |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| v1 @1000, rp 1.05 | 0.838 | 0.927 | 0.99 | 1.01 | 8.98 | 0.3050 | 147 | 0.000 |
+| v1 @1000, rp 1.15 | 0.905 | 0.987 | **0.76** | 1.08 | 5.12 | 0.2394 | 146 | 0.000 |
+| leg @1000, rp 1.05 | 0.859 | 0.970 | 0.98 | 1.07 | 9.66 | 0.3087 | 150 | 0.000 |
+| leg @1000, rp 1.15 | **0.922** | **0.998** | **0.75** | 1.15 | 5.68 | 0.2418 | 150 | 0.000 |
+
+Paired over 384 source groups: rp 1.15 adds +0.063 action / +0.054 body on v1 and
++0.061 / +0.025 on the weighted model (all CIs exclude zero). It also drops the
+density ratio out of the protocol's sane band (0.8-1.2) and cuts BLEU-4 by 3x.
+
+Reading: **the two settings optimise different things and neither dominates.**
+rp 1.05 preserves clause structure, length and text overlap; rp 1.15 maximises
+how many reference action/body tags appear. A planner feeding a video model
+wants explicit clauses, so the recommended default stays `rp 1.05` with the
+clause-weighted checkpoint; `rp 1.15` is a documented "coverage mode", not the
+new best model. Any downstream comparison should state which mode was used.
+
 The clause-weighted planner (`sol61leg3`, step 1000, selected on the 80-case
 val panel *before* this run) on the same 384 cases:
 

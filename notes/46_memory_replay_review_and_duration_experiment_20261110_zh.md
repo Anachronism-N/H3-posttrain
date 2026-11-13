@@ -638,3 +638,93 @@ v52第一首前3个已完成反馈/重写单位已直接审查并绑定step SHA�
 包含原大纲复用、新六架构、完整单歌catalog view及分项评分的最新相关回归为**1834 passed、4 skipped、148 subtests passed**（一条pynvml warning），日志integration-current.log。原1833/1788分别保留为当时版本，不加总。旧冻结运行继续用其code snapshot，不以新source重写旧调用成绩。
 
 六模型生成完成已实证，质量评审和整曲流水线不因提交代码结束。所有576条文字/音乐评分仍按冻结匿名库存执行；24歌候选和三首四方法开发按真实自身前缀推进。大纲验证bug修复复用原12合法响应、不增加重复大纲采样。代码和文档可以交付，但formal_E2/E3/E5及完整论文目标继续保持未完成。
+
+
+## 16. 开放事实与显式关系诊断：真实pilot未校准
+
+新增motion_facts与有界motion_fact_eval，开放action谓词、真实source事实引文和发生序号，一对一最大匹配，不采用16谓词闭集。反例测试包括贪心不足、多对一、合法重复事实、unknown潜在界限、before/并发及关系对齐歧义；unknown端点或替代匹配触及relation时保留null，不选“最高关系分”。参考是sol61的一个受限动作文本，不是唯一编舞真值或人体/音乐评价。
+
+v54原三开发case实际抽取3次，全部失败于ID/quote协议，v55闭合schema同3case仍失败于side-frame/原字符跨度，旧raw保持不变。v56引文+出现序号由程序确定性定位原文，不让模型猜偏移：相同3case实际12调用，1case达到complete参考诊断，另2case因quote不在原文而failed。原/structured/quote结果分别冻结，不把它们重解析成新成绩，失败留3来源分母，0审核重采。另一个同三case平行quote试验原件也保留，不加成6独立来源。
+
+实际内容审查发现，合法quote也可能语义错：把“hand moves right”当“right limb”并给anatomical frame；将结尾“next cycle”连回起始事实当before。来源绑定不是事实抽取正确性。新增source_side_frames把已知sol61 reference image provenance显式送入模型/schema，拒绝anatomical重标；方向不是肢体身份，unknown不补造。该新约束未用于已完成v56 raw，不声称旧模型变优。
+
+当前56项开放事实/关系及模型作者合同专项通过，只认证软件证据边界。动作事实/关系F1真实性、音乐评分可靠性与独立校准都仍未通过；实际人体执行无证据。没有恢复caption重写或训练，原生成/参考文字不可修改。三casepilot机制结果可以写负结果，不能填六模型主质量表。
+
+
+### 16.1 实际开放诊断成本和软件验收
+
+当前相关整合回归**1889 passed、4 skipped、148 subtests passed**（pynvml warning1条）与新开放事实/作者接口绑定，不扩大为独立音乐评审有效性。引文pilotv56三case原12调用、1complete/2quote失真failed；参考事实/关系对齐也只是模型提出的探索性diagnostic，不发布未经校准的main F1。
+
+四方法真实开发首歌目前workflow与Self-Refine完成：27块、总28/82调用（各含复用原1大纲，实际新27/81），input381452/1204997、output10763/26296tokens。两个自主agent还在同预算下运行，后三首/完整12格未完成。Self-Refine的反馈成本明确计入，不拿额外调用当策略质量收益；原12大纲复用历史成本不是新的0成本全曲观察。
+
+来源WAV精确跨split审核和576项独立文字/音乐评价仍在原注册分母上推进。所有这些工作不修改原生成输出、不恢复标注重写或新增训练，论文完整要求继续未完成。
+
+
+## 17. 四方法草案生命周期诊断与明确中断
+
+v52首歌workflow和Self-Refine都完成，原大纲复用费用照计。两自主agent进入真实loop后，均连续至少6次propose_block写回同一草案hash、committed_units=0，文字reason一边宣称ready一边未commit。draft状态与raw已冻结在draft-lifecycle-defect-audit，不拿工具调用多当进度。
+
+共同协议原先允许已有draft再次propose，没有公开状态限制，造成模型重提同草案。新增available_tools根据draft是否存在：无draft只能propose，有draft只能check/revise/commit，read/finish仍可选；propose不再可替代revise。两agent同一约束，不只对harness自动提交或强制check。29项四方法专项验证重复draft拒绝、状态不变和共同schema一致，修复未用于旧v52 raw，不能重解析为成功。
+
+停止经核验的自有旧执行器MhuAmv和模型，保留所有原started/raw、pending和已完成两格，旧12注册库存不改为完成；controlled-cancellation与execution-failed/stop回执明确中断。正式v53监督器会拒绝失败开发条件，不允许绕过门槛。下一次合法开发使用新合同/目录，只复用精确同请求的大纲或已完成workflow，不补采旧call_id。原轨迹可作为负结果，不能因控制器修复填正式24×4成功率。
+
+
+### 17.1 修复生命周期后还存在工具参数关联问题
+
+v58允许有草案后commit/revise，但模型仍会为commit携带非空proposal，程序严格拒绝，不能隐式接受该patch。两agent同1开发来源的实际trace分别至少2/8条这样的非法commit；ReAct仅提交1块，编舞臂0块。原schema把tool与proposal独立anyOf，文字要求不足以让解码器阻止这类关系错误。
+
+新schema为每个available tool提供tool=枚举、proposal=必须null或合法block的完整分支，双方相同规则。v60在同当前draft/source下实际两次模型调用均返回可执行revise_block，关联参数合法，但仍未commit，故只证明接口关联被尊重，不证明完整agent成功或编舞收益。无效旧commit及原费用保留，旧循环不改成绩；任何新长程运行另冻合同，不放宽结构校验。
+
+
+## 18. 模型作者任务与同源编辑开发验收
+
+新增edit_authoring/edit_study：冻结源Plan、来源method、category和slot后，作者只能基于实际源事件给公开要求/保护事实、未满足或控制声明；quote需真实原动作子串，unknown或缺源留原slot不换题。模型作者不冒充人类核验。两编辑器同原稿、同共享inspect/check/submit工具，累计patch始终比较原稿，最终语义成功独立未决。
+
+三case作者试验实际3调用，2条model_declared_valid，1条保护引用不在源action被拒。有效任务一是源seated→low crouch保留spine/forward reach，另一是末句臂姿改变；后者又要求保留hands near chest等可能冲突，模型声明合法不证明语义任务合理，后续必须核查。失败category不换题，formal48注册来源不能用旧3开发score填充。
+
+断线并行调度出现两份相同三slot、相同模型/seed/源指令编辑开发试验（author_task_edit_dev_v61与authored_edit_dev_v62）。全部实际调用单独保留，不按较好结果选择、不合并成6独立case。当前只部分输出完成，预算/提交合法不代表语义保护通过。累计成本在两批原始calls完整重建后统计，未完成部分继续留分母。
+
+最新软件验证ChoreoBench+全部CaptionLab范围为2257passed、4skipped、183subtests（warnings2）；较窄基线/工具范围1903passed、4skipped、148subtests。范围不同分列、不加总，软件/作者quote安全不认证正式质量或全部论文目标。
+
+
+### 18.1 三作者槽双编辑完整开发验收及重复费用
+
+author_task_edit_dev_v61三注册槽保留，作者failed一项对应两编辑状态不可评；另两题各generic/choreography真实完成，原calls/响应/最终Plan/非目标保护在原frozen_code下resume重建，0新调用。实际编辑9调用。authored_edit_dev_v62重复相同source/任务/模型试验完成，8实际编辑调用；四已执行最终Plan SHA全部相同，两批共17编辑调用，只3独立来源、6注册状态，作者generation3次复用不重抽。
+
+直接文本评价确认摇滚seated→low crouch，原spine/forward arms/hold保留。原声任务改arms outward/palms up但同时要求保留hands near chest，最后原文仍两姿态并存且未给清楚过渡；作者合法quote不证明任务语义一致，task_validity留unknown_possible_conflict，不能计确定严格联合成功。失效任务不换原稿/类别，旧三个开发源不替代正式48题或其来源冻结。
+
+最新ChoreoBench+全部CaptionLab回归2257passed、4skipped、183subtests（warnings2），基线工具子集另1903passed、4skipped、148subtests（warning1）。不同范围不加总，所有软件成功与音乐/语义金标验证分离。
+
+
+### 18.2 正式48编辑槽预注册，不以零源假装实验完成
+
+v63按原formal24歌顺序冻结48slot：修改四类各10，already-satisfied/conflict各4，来源React/choreography各24，不按输出质量挑选源稿。原source Plan路径与原dataset hash登记，仍等待正式24×4总谱；不能把开发三首或另一method成稿移到这些路径补缺。
+
+当前实际缺源48、author model0/editor0调用，missing-source-audit完整保留48作者槽/96编辑状态；登记分母不是48真实任务完成。原v53已blocked于失败开发条件，后续换运行版本只能明确新绑定回执，不能悄悄redirect registry。模型作者必要性/保护事实仍需审核，正式strictjoint不是quote/schema通过。
+
+
+## 19. 完整评分、来源筛查与正式门槛（2026-11-13）
+
+两套匿名评分均完成576调用、零新调用重建。归一化桥保留576原输出、1152模态槽位、真实judge身份及音乐旧名册不匹配，不覆盖原评分。文字280条协议有效，其中每个主维度仅56条rated、224条unknown；296失败均为精确引用非法。音乐393条有效，其中392 rated、1 unknown；183失败中173引用非法、10观察越界。provider unknown=0不是维度unknown=0，不等覆盖子集的均分不能直接用于六模型排名。费用分列：文字514678/209611、音乐302710/462151输入/输出tokens；原576生成不重抽。
+
+24首K2候选2254/2254正常返回，对应1127完整观察窗；同条件复建无新增调用。220667 WAV精确拷贝筛查完整，无缺失、无所选108例跨split字节相同音频；未验证重编码、错位同歌、cover或近重复隔离。
+
+v59开发12格均有终局、11格完整：workflow/self-refine/choreography均3/3，ReAct2/3。原789条journal含12条历史大纲重放和777条新模型调用，不混报。失败首歌ReAct109条journal仅提交1/27块，未闭合events数组后反复换行/tab，截断原件保留，不补JSON或自动提交。xgrammar以实际any_order=True检查该前缀仍允许逗号，不能断言schema死路；无限空白是一项已观察到的解码退化。v63正式0/96，v64作者/编辑零调用、96格缺源，complete回执不证明正式编辑已做。
+
+compact_json_dev_v66精确失败请求在xgrammar＋disable_any_whitespace配置下正常返回，输出354tokens；随后planner环境缺jsonschema，属于返回后本地验证失败。已用现有vLLM环境验证原started/raw/schema并封存结果，validated-probe-reused尝试复用这份响应，0新探针调用；原三首12格同预算开发继续，完整结果未预写。早期连接拒绝探针另两次就绪重试均实际commit，但只是一个构造revision边界，不充当完整总谱或新增独立来源。
+
+v67保留原24歌×4方法槽位，只显式改开发依赖与紧凑解码服务；v68保留原48题×2方法、类别和源方法，仅显式绑定v67源稿。二者托管等待上游门槛，尚无正式模型完成成绩。重复监督器被独占锁拒绝，原进程仍存活；该重复尝试曾截断共享execution.log，日志尾部不作为唯一权威状态，原pid/start_ticks、started/raw和结果回执是核验依据。加载故障/来源重绑定单独保留，不抹除历史费用。
+
+edit_study新增audit_provider_path与CLI --audit-provider：作者后审查类别、可满足性、未改邻居兼容，仅supported进入双策略；unsupported/unknown/引用失败/缺源均保留双槽，不换题。输入provider漂移在编辑派发前拒绝，审核费用独立，私有审核不进编辑payload。审核模型与作者checkpoint不同，但与编辑器相同checkpoint、不同上下文；不能称完全独立无偏指标或人評。已有开发审核确认low crouch结尾与下一未改seated开头冲突，另一题因引用非法失败；机械提交不计联合成功。最终相关77项测试通过，软件验证不是质量验收。
+
+v69音乐反事实冻结六模型各2例、共12个不同声明视频来源、原/声学近/远36波形。按case ID排序选例，不按生成质量；声学特征在12个validation WAV上标准化，距离仅提名替换，不是真实编舞适配金标。每组三文本逐字相同、无新编舞生成，评分只收到完整实际波形与匿名文本；24对结果仍须保留invalid/unknown，分数改变不能证明改变正确。复用GPU4，开发/正式/编辑顺序复用GPU6/7，不新增训练、节点或恢复暂停的标注重写。完整音乐校准、近重复隔离、优化收益和论文验收保持未完成。
+
+### 19.1 新控制的实际结果与终稿审核
+
+v70只复用既有清晰无时间戳、显式矛盾、模糊动作三个构造控制，新schema给出机械精确quote菜单、明确无需秒级时间。三次实际调用均协议合法，却仍全部将两个文字维度标unknown；模型理由能识别矛盾和模糊，但未据量表给低分。成本2619输入/607输出tokens，非音频/真人评审。引用失败修复不等于评价区分度通过，不覆盖原576主评分，也不把这些unknown补成预期评分。
+
+v71用三首开发录音的gain/AAC/45.125秒裁剪正控制与三对不同开发录音冻结阈值，348个测试内及测试—开发配对均完成，未命中候选、无unknown。它支持有限录音拷贝筛查敏感性，不证明cover、变速、预训练/SFT音频重叠或语义同歌隔离。全量字节匹配与此录音筛查分别报告。
+
+终稿runner run_edit_outcomes只读取原study合同、作者task、editor started/raw、before与真实最后plan，submitted/abstained可进入审核；失败、缺源、不支持任务均保留原双槽。目标/保护/邻居冲突联合判定需要原指令与原/终稿实际引文，不允许凭承诺保持或假想修复算成功。v72保原96槽，审核checkpoint与编辑checkpoint不同，排在v68后顺序复用GPU6/7，最多96审核调用且不新增作者/编辑采样；模型联合意见不是人类或音乐真值。
+
+原源码范围回归2301通过/4跳过/183子测试的冻结副本可复核。后来工作区一次全回归为2300通过/1失败，失败为执行期间源码hash改变，安全检查正确拒绝；未关闭原件校验。终稿runner增量反例曾发现fixture未实际改变空evidence、缺json导入以及丢原件异常边界，均修正，不将失败日志删除。当前作者/编辑/终稿专项80通过，最终含runner完整冻结回归另行执行，不加总不同版本计数。

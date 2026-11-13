@@ -814,3 +814,30 @@ python -m choreobench run-composition --source /runs/untimed-catalog/results.jso
 完整resume从raw重建，不新抽；源件/代码/预算漂移使用新目录。--outline-reuse-run仅在当前新大纲请求与原调用逐字段完全一致、方法及provider identity一致时复用原响应，原raw与SHA/历史费用继续绑定；不借用另一方法的大纲或最终前缀。结果区分original_outline_reused/new_model_calls，重放的历史call计入总预算、不重复计费。该接口用于校验器公共结构版本错误等可复核恢复，不允许后验挑最好大纲。
 
 v51开发试验用原三首候选，12个原大纲实际与公共分段一致却被原metadata分段校验误拒；全部raw保留。v52改用实际公共分段并严格复用这12个原响应，0重抽outline，当前正文生成进行中。25项四方法专项通过；这些不证明24歌×4系统正式实验、语义质量优势或音乐评分已完成。
+
+
+## 25. 开放事实参考诊断与模型作者编辑任务
+
+captionlab.motion_facts处理开放动作谓词和原文事实引证，不用16动作闭集。bind_extraction核验原Unicode字符跨度；bind_quote_extraction核验模型选取精确连续quote及occurrence并确定性定位，禁止省略/同义改写成伪引文。真实重复occurrence分开；image/anatomical方向不可自行等同。
+
+motion_fact_eval.run_diagnostics固定1–3开发case，抽取和全pair语义匹配分开调用，最大一对一匹配不以贪心或多对一充数。unknown给潜在事实匹配界限；事实映射歧义或关系端点涉及未知替代时relation保持null。source_side_frames可声明参考image provenance并约束schema，方向不是肢体身份。失败/预算无法覆盖全部pair不发表部分F1，完整resume不得补采。该诊断只是对一个有限支持参考的探索性一致性，不是编舞音乐质量或唯一答案。
+
+edit_authoring基于预先独立注册slot/source method/原Plan/category给公开指令与真实保护quote，unknown/缺源/失败不可换题。作者是model_judge，不是人工作者核验。edit_study让两policy使用同源、同task、相同action-only工具和预算；所有累计patch对原稿比，作者失败仍留两policy槽，提交/弃权不自动认证语义成功。开发3case不可充当正式48题。
+
+完整事实/作者模式CLI见各模块--help。实际pilot结果显示源quote、字符跨度、侧别/关系语义均可能失真；JSON合法不代表抽取真实。原生成/参考文字不改写，已暂停标注重写不自动恢复，更多正式调用需冻结数据/协议而非后验择优。
+
+
+### 编辑任务的独立审核门槛
+
+python -m choreobench.edit_study --registry /data/registry.json --author-provider /data/author.json --editor-provider /data/editor.json --audit-provider /data/task-auditor.json --out-dir /runs/audited-edits
+
+审核只读取公开指令与原目标/相邻动作，不读取作者私有评分或任一编辑成稿。仅supported进入双策略编辑；unsupported、unknown、协议失败以及缺源均保留两槽，审核费用单列。--audit-provider不提供时不宣称任务已独立核查；任何模型审查仍不是人评或最终编辑语义真值。原96缺源回执不能算48任务完成。完整原件终局、评分失败分母和解码修复见notes/46第19节。
+
+run_edit_outcomes(study_dir, provider_path, out_dir)读取完整原study及editor合同/raw/before/final，保留所有registered双策略槽。仅实际submitted/abstained终稿进入模型目标/保护/相邻与并发动作审核；缺源/执行失败不补稿，丢raw或已发布原件不补采。结果区分model_joint_success true/false/null与协议失败，不宣称正式人类联合成功。完成resume不会重新构造模型或派发调用。
+
+
+### 终局模型审核的证据边界（2026-11-13）
+
+已加入同源原稿—终稿的目标、保护事实和边界联合审核。已知结论必须引用目标动作；边界结论还须比较实际提供的相邻/并发动作。缺源稿、作者失败、unknown 和裁判协议失败保留在原槽位。模型审核不等于人工或实际执行验收。
+
+三源编辑pilot的两个不同终稿仅新增2次审核调用，六策略槽位完整保留。低蹲结束→下一事件从坐姿开始被裁判误判为边界通过；原评语与成本保留，另存直接文本反证。新增证据覆盖检查不能证明裁判语义可靠，旧正式评分不重抽、不覆盖。

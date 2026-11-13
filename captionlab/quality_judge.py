@@ -6,6 +6,7 @@ semantic relevance and judge agreement with humans remain unverified.
 import argparse
 import copy
 import json
+import re
 from pathlib import Path
 
 from captionlab.choreo_quality import _item, _reviewable, review_template, rubric, validate_review
@@ -30,6 +31,11 @@ PROMPT = (
     "a reason and short exact candidate quotes. Reference fidelity additionally needs exact "
     "reference quotes. Use unknown with null score when insufficient evidence. Reference "
     "fidelity must be not_applicable with null score if no reference is supplied. "
+    "Judge specificity and consistency of the WRITTEN plan, not an observed performance. "
+    "Exact seconds and exhaustive biomechanical details are not required for untimed prose. "
+    "Explicit contradictions or vague unnamed actions are assessable low quality, not missing external evidence. "
+    "Quotation fields must select exact excerpts allowed by the response schema; do not paraphrase them. "
+    "Those mechanically supplied excerpts are not semantic labels and do not establish relevance. "
     "Never score music; the caller will record music_fit as not_applicable."
 )
 
@@ -64,8 +70,33 @@ def _request(item, seed, budget):
     phase_instruction = ("\nThis is the separate REFERENCE-ONLY phase. Evaluate only reference_fidelity. "
         "action_clarity and temporal_organization MUST be not_applicable, score null, and both quotation arrays empty. "
         "Do not re-score main choreography quality in this phase." if reference_only else "")
+    schema = response_schema(reference_only)
+    for field, source in (("text_quotes", item["text"]), ("reference_quotes", item["reference_text"] or "")):
+        quotes = []
+        for match in re.finditer(r"[^.!?\n]+[.!?]?", source):
+            sentence = match.group().strip()
+            for start in range(0, len(sentence), 400):
+                quote = sentence[start:start + 400].strip()
+                if quote and quote not in quotes:
+                    quotes.append(quote)
+        for dimension, rating in schema["properties"].items():
+            array = rating["properties"][field]
+            if array["maxItems"] == 0:
+                continue
+            if not quotes or (field == "reference_quotes" and dimension != "reference_fidelity"):
+                array["maxItems"] = 0
+            else:
+                array["items"]["enum"] = quotes
+    if not reference_only:
+        for dimension in TEXT_DIMENSIONS[:2]:
+            schema["properties"][dimension]["properties"]["status"]["enum"] = ["rated", "unknown"]
+    if not item["reference_text"]:
+        rating = schema["properties"]["reference_fidelity"]["properties"]
+        rating["status"]["enum"] = ["not_applicable"]
+        rating["score"] = dict(type="null")
+        rating["text_quotes"]["maxItems"] = 0
     return dict(call_id="quality/" + item["item_sha256"], response_kind="text_quality_review",
-        seed=seed, max_output_tokens=budget, response_schema=response_schema(reference_only), messages=[
+        seed=seed, max_output_tokens=budget, response_schema=schema, messages=[
             dict(role="system", content=PROMPT + "\nRubric:\n" + json.dumps(rubric(), ensure_ascii=False) + phase_instruction),
             dict(role="user", content=json.dumps(data, ensure_ascii=False, allow_nan=False))])
 

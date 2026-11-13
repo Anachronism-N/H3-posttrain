@@ -337,3 +337,29 @@ def test_roster_cli_without_remote_calls(source, capsys):
                  "--human", "h1", "--human", "h2", "--out", str(path)])
     assert read_json(path) == json.loads(capsys.readouterr().out)
     assert set(read_json(path)) == {"h1", "h2", "judge1"}
+
+
+def test_request_quotation_inventory_is_exact_bounded_and_not_a_semantic_label():
+    target = make_review_item("quote-control", "source", "hidden-method", "Arm moves. " + "x" * 805 + "!\nStep left?", duration_seconds=5.0625)
+    request = module._request(target, 42, 1800)
+    properties = request["response_schema"]["properties"]
+    quotes = properties["action_clarity"]["properties"]["text_quotes"]["items"]["enum"]
+    assert quotes and all(q in target["text"] and 0 < len(q) <= 400 for q in quotes)
+    assert quotes == properties["temporal_organization"]["properties"]["text_quotes"]["items"]["enum"]
+    assert "Arm moves." in quotes and "Step left?" in quotes
+    assert properties["action_clarity"]["properties"]["status"]["enum"] == ["rated", "unknown"]
+    assert properties["reference_fidelity"]["properties"]["status"]["enum"] == ["not_applicable"]
+    assert all(p["properties"]["reference_quotes"]["maxItems"] == 0 for p in properties.values())
+    assert json.loads(request["messages"][1]["content"]) == {"text": target["text"], "duration_seconds": 5.0625, "reference_text": None}
+    assert "hidden-method" not in json.dumps(request)
+
+
+def test_reference_only_quote_inventory_keeps_quality_dimensions_na():
+    target = reference_item()
+    properties = module._request(target, 42, 1800)["response_schema"]["properties"]
+    for name in module.TEXT_DIMENSIONS[:2]:
+        assert properties[name]["properties"]["text_quotes"]["maxItems"] == 0
+        assert properties[name]["properties"]["reference_quotes"]["maxItems"] == 0
+    for field, source in [("text_quotes", target["text"]), ("reference_quotes", target["reference_text"])]:
+        assert all(q in source for q in properties["reference_fidelity"]["properties"][field]["items"]["enum"])
+    assert module.parse_review(target, json.dumps(reference_answer()), "judge", "identity")["reference_fidelity"]["score"] == 4

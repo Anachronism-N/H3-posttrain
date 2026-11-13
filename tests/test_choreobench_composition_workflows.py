@@ -183,3 +183,65 @@ def test_reused_outline_must_be_bound_by_original_results(tmp_path,monkeypatch):
  with pytest.raises(ValueError,match='does not bind'):
   m.run_composition(path,sid,{'kind':'replay'},tmp_path/'corrected',method='workflow',outline_reuse_run=out)
  assert len(calls)==3
+
+
+
+def test_existing_draft_cannot_be_reproposed(tmp_path,monkeypatch):
+ s=state(tmp_path,monkeypatch);initial=proposal(s);s.execute(decision('propose_block',initial))
+ with pytest.raises(ValueError,match='already exists'):s.execute(decision('propose_block',proposal(s,'replacement')))
+ assert s.draft==initial and not s.plan['events'] and s.index==0
+ s.execute(decision('revise_block',proposal(s,'revised')));s.execute(decision('commit_block'))
+ assert s.index==1 and s.draft is None
+
+
+@pytest.mark.parametrize('method',['react','choreography'])
+def test_public_draft_tools_match_schema(tmp_path,monkeypatch,method):
+ s=state(tmp_path,monkeypatch);cfg=dict(seed=42,max_output_tokens=1024,max_request_characters=200000,call_index=1)
+ req=m._request(s,cfg,method,'propose');payload=json.loads(req['messages'][-1]['content'])
+ assert req['response_schema']['properties']['tool']['enum']==payload['available_tools']
+ assert 'propose_block' in payload['available_tools'] and 'commit_block' not in payload['available_tools']
+ s.execute(decision('propose_block',proposal(s)))
+ req=m._request(s,cfg,method,'propose');payload=json.loads(req['messages'][-1]['content'])
+ assert 'propose_block' not in payload['available_tools'] and 'commit_block' in payload['available_tools']
+ assert payload['draft_state']=='uncommitted' and 'check_block' in payload['available_tools']
+ assert req['response_schema']['properties']['tool']['enum']==payload['available_tools']
+
+
+@pytest.mark.parametrize('method',['react','choreography'])
+def test_tool_branch_requires_null_commit_and_object_draft(tmp_path,monkeypatch,method):
+ s=state(tmp_path,monkeypatch);cfg=dict(seed=42,max_output_tokens=1024,max_request_characters=200000,call_index=1)
+ first=m._request(s,cfg,method,'propose')['response_schema']
+ branches={b['properties']['tool']['enum'][0]:b for b in first['anyOf']}
+ assert branches['propose_block']['properties']['proposal']['type']=='object'
+ assert branches['finish']['properties']['proposal']['type']=='null'
+ s.execute(decision('propose_block',proposal(s)))
+ second=m._request(s,cfg,method,'propose')['response_schema']
+ branches={b['properties']['tool']['enum'][0]:b for b in second['anyOf']}
+ assert branches['commit_block']['properties']['proposal']['type']=='null'
+ assert branches['check_block']['properties']['proposal']['type']=='null'
+ assert branches['revise_block']['properties']['proposal']['type']=='object'
+ assert 'propose_block' not in branches
+
+
+def test_one_revision_attempt_spent_even_for_unchanged_draft_then_commit_resets(tmp_path,monkeypatch):
+ s=state(tmp_path,monkeypatch);p=proposal(s);s.execute(decision('propose_block',p))
+ obs=s.execute(decision('revise_block',p))
+ assert obs['status']=='unchanged_draft' and s.revisions_used==1 and s.index==0
+ with pytest.raises(ValueError,match='one-revision'):
+  s.execute(decision('revise_block',proposal(s,'extra attempt')))
+ cfg=dict(seed=42,max_output_tokens=1024,max_request_characters=200000,max_calls=9,call_index=3)
+ req=m._request(s,cfg,'react','propose');payload=json.loads(req['messages'][-1]['content'])
+ assert 'revise_block' not in payload['available_tools'] and 'commit_block' in payload['available_tools']
+ assert payload['remaining_model_calls']==6 and payload['draft_revisions_used']==1
+ s.execute(decision('commit_block'));assert s.index==1 and s.revisions_used==0
+
+
+@pytest.mark.parametrize('method',['react','choreography'])
+def test_repair_budget_is_public_and_equal_for_agent_policies(tmp_path,monkeypatch,method):
+ s=state(tmp_path,monkeypatch);cfg=dict(seed=42,max_output_tokens=1024,max_request_characters=200000,max_calls=9,call_index=1)
+ req=m._request(s,cfg,method,'propose');p=json.loads(req['messages'][-1]['content'])
+ assert p['draft_revision_limit']==1 and p['draft_revisions_used']==0
+ s.execute(decision('propose_block',proposal(s)));s.execute(decision('revise_block',proposal(s,'corrected')))
+ req=m._request(s,cfg,method,'propose');p=json.loads(req['messages'][-1]['content'])
+ assert p['draft_revisions_used']==1 and 'revise_block' not in req['response_schema']['properties']['tool']['enum']
+ assert s.plan['events']==[]

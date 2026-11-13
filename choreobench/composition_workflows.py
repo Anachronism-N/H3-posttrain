@@ -50,7 +50,7 @@ def _source(path,song_id,cfg,sources):
 class CompositionState:
  def __init__(self,source,outline):
   self.source=source;self.outline=outline;self.plan=_empty_plan(source['original'])
-  self.plan['motifs']=copy.deepcopy(outline['motifs']);self.index=0;self.draft=None;self.observations=[]
+  self.plan['motifs']=copy.deepcopy(outline['motifs']);self.index=0;self.draft=None;self.observations=[];self.revisions_used=0
  def validate(self,proposal):
   units=self.source['units']['units']
   if self.index==len(units):raise ValueError('No current unit')
@@ -71,16 +71,21 @@ class CompositionState:
   if tool=='finish':return dict(tool=tool,status='finished' if self.index==len(self.source['units']['units']) else 'incomplete_finish')
   if tool in ('propose_block','revise_block'):
    if tool=='revise_block' and self.draft is None:raise ValueError('No current draft to revise')
+   if tool=='revise_block' and self.revisions_used>=1:raise ValueError('Shared one-revision-per-unit limit reached; check, commit or finish')
+   if tool=='propose_block' and self.draft is not None:raise ValueError('Current draft already exists; use revise_block to change it or commit_block to advance')
    # Invalid draft is visible for repair but never becomes committed history.
    keys(proposal,('unit_id','events'),where='block draft')
    if self.index==len(self.source['units']['units']) or proposal['unit_id']!=self.source['units']['units'][self.index]['unit_id']:
     raise ValueError('Draft targets a different unit')
+   unchanged=proposal==self.draft
+   if tool=='revise_block':self.revisions_used+=1
    self.draft=copy.deepcopy(proposal)
-   return dict(tool=tool,status='drafted',draft_sha256=object_sha(self.draft),quality_verified=False)
+   return dict(tool=tool,status='unchanged_draft' if unchanged else 'drafted',draft_sha256=object_sha(self.draft),
+               revisions_used=self.revisions_used,revision_limit=1,quality_verified=False)
   if self.draft is None:raise ValueError('No current draft')
   events,plan=self.validate(self.draft)
   observation=dict(tool=tool,status='structurally_valid',unit_id=self.draft['unit_id'],quality_verified=False)
-  if tool=='commit_block':self.plan=plan;self.index+=1;self.draft=None;observation['status']='committed'
+  if tool=='commit_block':self.plan=plan;self.index+=1;self.draft=None;self.revisions_used=0;observation['status']='committed'
   return observation
 
 
@@ -92,15 +97,30 @@ def _request(state,cfg,method,phase,feedback=None):
  else:payload={};schema=dict(type='null');system='All units are committed.'
  payload.update(committed_plan=copy.deepcopy(state.plan),current_draft=copy.deepcopy(state.draft),
     committed_units=state.index,total_units=len(units),tool_observations=state.observations[-2:],feedback=feedback,
-    shared_permissions=True,actual_audio_access=False)
+    shared_permissions=True,actual_audio_access=False,remaining_model_calls=cfg['max_calls']-cfg['call_index'] if 'max_calls' in cfg else None,
+    draft_revision_limit=1,draft_revisions_used=state.revisions_used)
  if phase=='feedback':
   system+=' Give short source-grounded feedback about current draft action load, development and boundary clarity. Never invent heard audio or physical state. Return only {feedback}.'
   schema=dict(type='object',additionalProperties=False,required=['feedback'],properties=dict(feedback=dict(type='string',minLength=1,maxLength=2400)))
  elif method in ('react','choreography'):
+  tools=['read_evidence','read_history','finish']
+  if unit is not None:
+   if state.draft is None:tools+=['propose_block']
+   else:
+    tools+=['check_block','commit_block']
+    if state.revisions_used<1:tools+=['revise_block']
+  payload['available_tools']=tools
+  payload['draft_state']='absent' if state.draft is None else 'uncommitted'
   system+=' '+TOOL_PROMPT+POLICY[method]
+  system+=' Creating or revising a draft does not advance the song. Every method has at most ONE revision attempt per current unit, including unchanged revisions. Once that attempt is spent, check or commit the current draft, or finish with an incomplete outcome. A draft you call ready should be committed with proposal=null, not re-emitted. Use only available_tools. Completion requires actual commits, not descriptions of readiness.'
+  branches=[]
+  for tool in tools:
+   branches.append(dict(type='object',additionalProperties=False,required=['tool','proposal','reason'],properties=dict(
+    tool=dict(type='string',enum=[tool]),proposal=copy.deepcopy(schema) if tool in ('propose_block','revise_block') else dict(type='null'),
+    reason=dict(type='string',minLength=1,maxLength=1200))))
   schema=dict(type='object',additionalProperties=False,required=['tool','proposal','reason'],properties=dict(
-   tool=dict(enum=['read_evidence','read_history','propose_block','check_block','revise_block','commit_block','finish']),
-   proposal=dict(anyOf=[dict(type='null'),schema]),reason=dict(type='string',minLength=1,maxLength=1200)))
+   tool=dict(type='string',enum=tools),proposal=dict(anyOf=[dict(type='null'),schema]),
+   reason=dict(type='string',minLength=1,maxLength=1200)),anyOf=branches)
  elif phase=='revise':system+=' Revise the same current-unit draft using supplied feedback. Keep the original output contract and permissions.'
  request=dict(call_id=state.plan['song_id']+'/four-method/%04d'%cfg['call_index'],seed=cfg['seed'],max_output_tokens=cfg['max_output_tokens'],
   response_kind='composition_'+phase,messages=[dict(role='system',content=system),dict(role='user',content=json_text(payload))],response_schema=schema)
@@ -114,7 +134,7 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
                     ('max_request_characters',max_request_characters),('max_input_tokens',max_input_tokens),('max_total_output_tokens',max_total_output_tokens)]:
   integer(value,name,0 if name=='seed' else 1)
  cfg=dict(seed=seed,max_output_tokens=max_output_tokens,outline_max_output_tokens=outline_max_output_tokens,
-  max_request_characters=max_request_characters,max_events_per_unit=3,structured_unit_output=True,use_outline=True,use_history=True,
+  max_request_characters=max_request_characters,max_events_per_unit=3,structured_unit_output=True,use_outline=True,use_history=True,draft_revision_limit=1,
   event_time_format='boundary_ids',event_grid_seconds=.25,min_event_seconds=.5,event_schedule_policy='balanced_full_unit',
   unit_config=dict(bars_per_block=4,fallback_seconds=10.125,max_unit_seconds=20,meter_status='unverified',min_time_block_seconds=2))
  sources={};source=_source(source_path,song_id,cfg,sources);cfg['max_calls']=1+4*len(source['units']['units'])

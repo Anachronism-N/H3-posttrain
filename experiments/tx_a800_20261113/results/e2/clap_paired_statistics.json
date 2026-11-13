@@ -1,0 +1,158 @@
+{
+  "pairs": [
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-audio",
+      "n": 383,
+      "matching_minus_other_difference": -0.015874752930460336,
+      "ci95": [
+        -0.022253685729978143,
+        -0.009620919024697007
+      ]
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-music",
+      "n": 383,
+      "matching_minus_other_difference": -0.007343548146233342,
+      "ci95": [
+        -0.014083603323735453,
+        -0.00048147504294367854
+      ]
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "music-flamingo",
+      "n": 380,
+      "matching_minus_other_difference": -0.01759673286333533,
+      "ci95": [
+        -0.024351048580727747,
+        -0.011065665743754886
+      ]
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen25-omni",
+      "n": 382,
+      "matching_minus_other_difference": -0.0062134136002101195,
+      "ci95": [
+        -0.011951887682962526,
+        -0.00048740222170602843
+      ]
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen3-omni-instruct",
+      "n": 383,
+      "matching_minus_other_difference": -0.012516720987936632,
+      "ci95": [
+        -0.01932965141389985,
+        -0.005599099452322071
+      ]
+    },
+    {
+      "a": "moss-audio",
+      "b": "moss-music",
+      "n": 384,
+      "matching_minus_other_difference": 0.008568333842201051,
+      "ci95": [
+        0.0036627185695768576,
+        0.013462292407598393
+      ]
+    },
+    {
+      "a": "moss-audio",
+      "b": "music-flamingo",
+      "n": 381,
+      "matching_minus_other_difference": -0.0017530452255330726,
+      "ci95": [
+        -0.006660185762824065,
+        0.0032969776511814364
+      ]
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen25-omni",
+      "n": 383,
+      "matching_minus_other_difference": 0.009836980737453963,
+      "ci95": [
+        0.005095348879504966,
+        0.014915980972494325
+      ]
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen3-omni-instruct",
+      "n": 384,
+      "matching_minus_other_difference": 0.0033985915079028928,
+      "ci95": [
+        -0.0014492003848962062,
+        0.008271138444339006
+      ]
+    },
+    {
+      "a": "moss-music",
+      "b": "music-flamingo",
+      "n": 381,
+      "matching_minus_other_difference": -0.010519094370260317,
+      "ci95": [
+        -0.016287591807107902,
+        -0.004794545038578806
+      ]
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen25-omni",
+      "n": 383,
+      "matching_minus_other_difference": 0.001282465206939416,
+      "ci95": [
+        -0.004153149141902688,
+        0.006618070892364847
+      ]
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen3-omni-instruct",
+      "n": 384,
+      "matching_minus_other_difference": -0.005169742334298159,
+      "ci95": [
+        -0.010581583478472111,
+        4.6036628399784605e-05
+      ]
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen25-omni",
+      "n": 380,
+      "matching_minus_other_difference": 0.011382046620373761,
+      "ci95": [
+        0.005309560699541563,
+        0.017257816028003074
+      ]
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen3-omni-instruct",
+      "n": 381,
+      "matching_minus_other_difference": 0.0052078161510856445,
+      "ci95": [
+        -0.0005119326232672483,
+        0.010655440940714765
+      ]
+    },
+    {
+      "a": "qwen25-omni",
+      "b": "qwen3-omni-instruct",
+      "n": 383,
+      "matching_minus_other_difference": -0.006132250062345622,
+      "ci95": [
+        -0.011191890818210058,
+        -0.0008715205205946095
+      ]
+    }
+  ],
+  "resamples": 5000,
+  "seed": 42,
+  "role": "audio-text embedding sensitivity only; no dance-grounded calibration",
+  "groups": "declared video sources, song independence unverified"
+}

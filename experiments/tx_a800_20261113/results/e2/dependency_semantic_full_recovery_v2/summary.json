@@ -1,0 +1,191 @@
+{
+  "registered": 2304,
+  "methods": {
+    "audio-flamingo3": {
+      "registered": 384,
+      "status_counts": {
+        "computed": 383,
+        "generation_not_evaluable": 1
+      },
+      "unresolved_reference_mentions": 412,
+      "unresolved_candidate_mentions": 0,
+      "exact_facts_F1": {
+        "n": 383,
+        "mean": 0.002974604267355805,
+        "empty_both_not_scored": 0
+      },
+      "exact_relations_F1": {
+        "n": 380,
+        "mean": 0.0,
+        "empty_both_not_scored": 3
+      },
+      "semantic_facts_F1": {
+        "n": 383,
+        "mean": 0.01850474601742666,
+        "empty_both_not_scored": 0
+      },
+      "semantic_relations_F1": {
+        "n": 380,
+        "mean": 0.0,
+        "empty_both_not_scored": 3
+      }
+    },
+    "moss-audio": {
+      "registered": 384,
+      "status_counts": {
+        "computed": 384
+      },
+      "unresolved_reference_mentions": 413,
+      "unresolved_candidate_mentions": 115,
+      "exact_facts_F1": {
+        "n": 384,
+        "mean": 0.006115914418421431,
+        "empty_both_not_scored": 0
+      },
+      "exact_relations_F1": {
+        "n": 382,
+        "mean": 0.0,
+        "empty_both_not_scored": 2
+      },
+      "semantic_facts_F1": {
+        "n": 384,
+        "mean": 0.08204314059356232,
+        "empty_both_not_scored": 0
+      },
+      "semantic_relations_F1": {
+        "n": 382,
+        "mean": 0.0,
+        "empty_both_not_scored": 2
+      }
+    },
+    "moss-music": {
+      "registered": 384,
+      "status_counts": {
+        "computed": 384
+      },
+      "unresolved_reference_mentions": 413,
+      "unresolved_candidate_mentions": 122,
+      "exact_facts_F1": {
+        "n": 384,
+        "mean": 0.009370863339459355,
+        "empty_both_not_scored": 0
+      },
+      "exact_relations_F1": {
+        "n": 382,
+        "mean": 0.0,
+        "empty_both_not_scored": 2
+      },
+      "semantic_facts_F1": {
+        "n": 384,
+        "mean": 0.08253070622938402,
+        "empty_both_not_scored": 0
+      },
+      "semantic_relations_F1": {
+        "n": 382,
+        "mean": 0.0,
+        "empty_both_not_scored": 2
+      }
+    },
+    "music-flamingo": {
+      "registered": 384,
+      "status_counts": {
+        "computed": 384
+      },
+      "unresolved_reference_mentions": 413,
+      "unresolved_candidate_mentions": 39,
+      "exact_facts_F1": {
+        "n": 384,
+        "mean": 0.011678372282778593,
+        "empty_both_not_scored": 0
+      },
+      "exact_relations_F1": {
+        "n": 381,
+        "mean": 0.0,
+        "empty_both_not_scored": 3
+      },
+      "semantic_facts_F1": {
+        "n": 384,
+        "mean": 0.07390538888998943,
+        "empty_both_not_scored": 0
+      },
+      "semantic_relations_F1": {
+        "n": 381,
+        "mean": 0.0,
+        "empty_both_not_scored": 3
+      }
+    },
+    "qwen25-omni": {
+      "registered": 384,
+      "status_counts": {
+        "computed": 383,
+        "generation_not_evaluable": 1
+      },
+      "unresolved_reference_mentions": 413,
+      "unresolved_candidate_mentions": 109,
+      "exact_facts_F1": {
+        "n": 383,
+        "mean": 0.005757559139266765,
+        "empty_both_not_scored": 0
+      },
+      "exact_relations_F1": {
+        "n": 381,
+        "mean": 0.0,
+        "empty_both_not_scored": 2
+      },
+      "semantic_facts_F1": {
+        "n": 383,
+        "mean": 0.06905180598403121,
+        "empty_both_not_scored": 0
+      },
+      "semantic_relations_F1": {
+        "n": 381,
+        "mean": 0.0001590710252127575,
+        "empty_both_not_scored": 2
+      }
+    },
+    "qwen3-omni-instruct": {
+      "registered": 384,
+      "status_counts": {
+        "computed": 384
+      },
+      "unresolved_reference_mentions": 413,
+      "unresolved_candidate_mentions": 214,
+      "exact_facts_F1": {
+        "n": 384,
+        "mean": 0.004187638612738708,
+        "empty_both_not_scored": 0
+      },
+      "exact_relations_F1": {
+        "n": 382,
+        "mean": 0.0,
+        "empty_both_not_scored": 2
+      },
+      "semantic_facts_F1": {
+        "n": 384,
+        "mean": 0.0911461136706808,
+        "empty_both_not_scored": 0
+      },
+      "semantic_relations_F1": {
+        "n": 382,
+        "mean": 0.0,
+        "empty_both_not_scored": 2
+      }
+    }
+  },
+  "wallclock_seconds": 912.2994992937893,
+  "platform": "TX A800 cluster",
+  "device": "cpu",
+  "model": "cross-encoder/nli-deberta-v3-base",
+  "threshold": 0.7,
+  "code_sha": "0752f090778f8625887b5dd429ca624f133694cf80444023a55ce1cc140a52b5",
+  "non_generative_extraction": true,
+  "non_generative_matching": true,
+  "extractor_code_sha": "809589e3f42415b58e24b80ff1eb5be57be0226552ea9ad58c846ad9cb5d5cee",
+  "input_graphs_sha256": "b435191f0e9a620a6a48429286d6cc83d3f33994fd5279f571047d441da7c815",
+  "input_bindings_sha256": "713b77abf60b5addce3929a17dec9b114779ed4cc8fd15e50abcaaa395783d5e",
+  "model_config_sha256": "897e756eb59d3183adb505952e7910e7cbc7750a43f3b3747a96b688d2b02a47",
+  "extractor_open_text_quality_validated": false,
+  "reference_scope": "explicit supported body/side/predicate/direction facts and explicit before/concurrent relations; partial source agreement, not unique music-dance or video correctness",
+  "unresolved_coreference_not_invented": true,
+  "all_original_candidate_texts_preserved": true
+}

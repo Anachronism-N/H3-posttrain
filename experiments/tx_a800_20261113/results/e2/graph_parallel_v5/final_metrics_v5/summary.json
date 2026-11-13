@@ -1,0 +1,152 @@
+{
+  "methods": {
+    "audio-flamingo3": {
+      "registered": 384,
+      "statuses": {
+        "computed": 317,
+        "unknown": 66,
+        "generation_not_evaluable": 1
+      },
+      "exact_facts_macroF1": {
+        "n": 317,
+        "mean": 0.002196278265412949
+      },
+      "exact_relations_macroF1": {
+        "n": 317,
+        "mean": 0.0
+      },
+      "semantic_facts_macroF1": {
+        "n": 317,
+        "mean": 0.009720200868614167
+      },
+      "semantic_relations_macroF1": {
+        "n": 317,
+        "mean": 0.0
+      }
+    },
+    "moss-audio": {
+      "registered": 384,
+      "statuses": {
+        "computed": 301,
+        "unknown": 83
+      },
+      "exact_facts_macroF1": {
+        "n": 301,
+        "mean": 0.006219778826623166
+      },
+      "exact_relations_macroF1": {
+        "n": 301,
+        "mean": 0.0
+      },
+      "semantic_facts_macroF1": {
+        "n": 301,
+        "mean": 0.061963958499976345
+      },
+      "semantic_relations_macroF1": {
+        "n": 301,
+        "mean": 0.0
+      }
+    },
+    "moss-music": {
+      "registered": 384,
+      "statuses": {
+        "computed": 273,
+        "unknown": 111
+      },
+      "exact_facts_macroF1": {
+        "n": 273,
+        "mean": 0.005559360204971161
+      },
+      "exact_relations_macroF1": {
+        "n": 273,
+        "mean": 0.0
+      },
+      "semantic_facts_macroF1": {
+        "n": 273,
+        "mean": 0.05266007871088701
+      },
+      "semantic_relations_macroF1": {
+        "n": 273,
+        "mean": 0.00013822655332089293
+      }
+    },
+    "music-flamingo": {
+      "registered": 384,
+      "statuses": {
+        "computed": 288,
+        "unknown": 96
+      },
+      "exact_facts_macroF1": {
+        "n": 288,
+        "mean": 0.0029605603512075193
+      },
+      "exact_relations_macroF1": {
+        "n": 288,
+        "mean": 0.0
+      },
+      "semantic_facts_macroF1": {
+        "n": 288,
+        "mean": 0.041759101616828706
+      },
+      "semantic_relations_macroF1": {
+        "n": 288,
+        "mean": 0.00020424836601307187
+      }
+    },
+    "qwen25-omni": {
+      "registered": 384,
+      "statuses": {
+        "computed": 320,
+        "unknown": 63,
+        "generation_not_evaluable": 1
+      },
+      "exact_facts_macroF1": {
+        "n": 320,
+        "mean": 0.004793934003224872
+      },
+      "exact_relations_macroF1": {
+        "n": 320,
+        "mean": 0.0
+      },
+      "semantic_facts_macroF1": {
+        "n": 320,
+        "mean": 0.04355996947638861
+      },
+      "semantic_relations_macroF1": {
+        "n": 320,
+        "mean": 0.0
+      }
+    },
+    "qwen3-omni-instruct": {
+      "registered": 384,
+      "statuses": {
+        "computed": 291,
+        "unknown": 93
+      },
+      "exact_facts_macroF1": {
+        "n": 291,
+        "mean": 0.0050224230491515065
+      },
+      "exact_relations_macroF1": {
+        "n": 291,
+        "mean": 0.0
+      },
+      "semantic_facts_macroF1": {
+        "n": 291,
+        "mean": 0.09450080638945203
+      },
+      "semantic_relations_macroF1": {
+        "n": 291,
+        "mean": 0.0013857079424172995
+      }
+    }
+  },
+  "registered": 2304,
+  "unique_extractions": 2469,
+  "semantic_NLI_threshold": 0.7,
+  "non_generative_comparison": true,
+  "model_assisted_extraction": true,
+  "scope": "source reference agreement on supported body parts; not unique dance truth or music quality",
+  "calibration": "explicit two-event32 controls; unrestricted source extraction reliability separately audited",
+  "interrupted_prefix_preserved": true
+}

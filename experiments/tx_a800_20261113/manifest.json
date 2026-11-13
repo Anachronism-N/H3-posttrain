@@ -1,0 +1,508 @@
+{
+  "platform": "TX A800 cluster",
+  "repository_base": "0dd01dba7284f9399a452e0dd6f43b3439996dab",
+  "scope": "E2 baseline and strict/non-generative metrics; E3/E4 orchestration and measurements",
+  "upstream_packages_not_replaced": true,
+  "code_snapshot_scope": "current experimental working tree, separately isolated from newer upstream APIs; historical output code hashes remain authoritative",
+  "no_model_audio_video_or_full_raw_calls_uploaded": true,
+  "open_extraction_quality_accepted": false,
+  "formal_E3_E4_complete_at_last_verified_snapshot": false,
+  "results_snapshot_utc": "2026-11-13T07:57:53Z",
+  "files": {
+    "code/captionlab/__init__.py": {
+      "sha256": "b4904fa82c1c4e560cfd52c6ff1ca852afa28c2204cca8af00936786ce713b57",
+      "size_bytes": 183,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/acoustic_evidence.py": {
+      "sha256": "50fda51e6b54ee3d45261605c75281f152ca71802d8802d027938e35ea9f4f76",
+      "size_bytes": 2421,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/audio_observations.py": {
+      "sha256": "5f32d2780f17c5118ebc1c0e7b281b25391359976280ac9dd7006548af4e68a4",
+      "size_bytes": 1164,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/baseline_eval.py": {
+      "sha256": "b0d9c96a0a3d2f4c0ac6d475e8baaa9fa5c70a88b1a9072279ee5a379318f4dd",
+      "size_bytes": 17401,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/choreo_quality.py": {
+      "sha256": "55f16e7ad584800d232fd94146bf4c010277fab912b1c3498fa5cb648183e13a",
+      "size_bytes": 34331,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/clap_metrics.py": {
+      "sha256": "e96167c941cdde6fcbe324f0b3b5e91d3c906a6fdd7309eb304cc0189119d1f2",
+      "size_bytes": 4654,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/collect_expanded_e2.py": {
+      "sha256": "0e3bf71aae5d57185c302086d189663f7ad57e945c4284bf4195ac1aca0437e2",
+      "size_bytes": 4832,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/compact_motion_graph.py": {
+      "sha256": "9113c55dab09ab292881654e9b9fe4f74cb6c47bfde77db63898b28a7c3a8728",
+      "size_bytes": 6640,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/conflict_audit.py": {
+      "sha256": "a5dc3e03b2fc58d10117f46103a4b1990589a24f2a919f76856f71a58920e310",
+      "size_bytes": 4614,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/dependency_motion_graph.py": {
+      "sha256": "5b112739a327094003b1290ccd79599c3ce47ac34fedae4d85f33fa13558253a",
+      "size_bytes": 12799,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/dependency_semantic_metrics.py": {
+      "sha256": "0752f090778f8625887b5dd429ca624f133694cf80444023a55ce1cc140a52b5",
+      "size_bytes": 4337,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e2_music_finalize.py": {
+      "sha256": "8b72f760a18940b5b9a4ebd31afb864a226696d0593339961009ed30314fd8e6",
+      "size_bytes": 4123,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e34_final_inventory.py": {
+      "sha256": "1a607d8a52ae5dd8b7f910c2d094ce59e435a45fa48abad5964a4c6558977705",
+      "size_bytes": 10731,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e34_metrics_post.py": {
+      "sha256": "065b9abe611b6f15b484e83780739f99f0a84e6525f521cf0a364b92e74d87b7",
+      "size_bytes": 3968,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_clap_metrics.py": {
+      "sha256": "01a46bfdbe69a1f76d81be33d47f88a4d0dc7dba04be35adf4b5a9e775ce1f5e",
+      "size_bytes": 4569,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_clap_wait.py": {
+      "sha256": "fd64499f1f4ee4bd2d59d9e25dbf07e4c47c3910be8f81cfc4e348f937ebad15",
+      "size_bytes": 2681,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_continue.py": {
+      "sha256": "878d248f4e92c1c9a84f276e3d8e2e59c4b46ba12828f57ba87a240720579ccf",
+      "size_bytes": 5189,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_final_metrics.py": {
+      "sha256": "9f0f107c7cce809624042007f581dd0cfae4721849963fa84cd819ea99b965f6",
+      "size_bytes": 19244,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_formal.py": {
+      "sha256": "a74bf50d81530a55c59203dbea818fe6989eca0bd0320a752dde31f1d3b7989b",
+      "size_bytes": 3059,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_mechanical_metrics.py": {
+      "sha256": "57f238079340beca28d7676f52d00e8f957734c4240d0c0f8492887a2298d05a",
+      "size_bytes": 5313,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_music_metrics.py": {
+      "sha256": "2bc551e72fed47bb8c22a493636f0f0040b5d02aa5f20d6e51aeb51b757c867a",
+      "size_bytes": 4459,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_native_catalog.py": {
+      "sha256": "e3d7098646388d2fb5454bfd8a28d89745d08a366cb2672b9fd18ba1557b24eb",
+      "size_bytes": 1128,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_observe_catalog.py": {
+      "sha256": "e768c8af1530b3c9d342e058c31ef8379b14f9f37c0ab6510ac3910164180c19",
+      "size_bytes": 2156,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e3_repetition_metrics.py": {
+      "sha256": "fbdec0f1c6f1dc1ced045a78cef1ec97b67e845d3554f9214feb08cc55a3d246",
+      "size_bytes": 9280,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e4_final_metrics.py": {
+      "sha256": "cca9469350719eb98a6c751a176c85c956e9f37ddaa52976ccaf206d8cdfb002",
+      "size_bytes": 14249,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/e4_stream.py": {
+      "sha256": "a99974698300db17fe623036646399da4bc4133821aea4a1d6f2c428dac9ecfc",
+      "size_bytes": 6549,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/edit_review_evidence.py": {
+      "sha256": "850cd8b6e6aaae1fff19148a3b2424b29fcd95bf0fe9c75267839c58fce4fd67",
+      "size_bytes": 3483,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/evidence_music_fit.py": {
+      "sha256": "c433c742bdcc68fc52d46603fc0d1f8508f1788bec3d839c037ca6b1315fb97b",
+      "size_bytes": 7069,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/expand_e2.py": {
+      "sha256": "bf23156af09fcbb1ae98ce32f6cf03f20fc416dcab0501a52fe4b4e376dad462",
+      "size_bytes": 5631,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/expert_catalog.py": {
+      "sha256": "5951369f62fbcfcd1db51c7ab0c7d804233afd001c56725a8ce433ef135a3dd2",
+      "size_bytes": 1857,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/finalize_expanded_e2.py": {
+      "sha256": "812a7eed5f0ae8264e60b310e2ffcb253b2a45d187d3b3c16b84c1ee0bdc9800",
+      "size_bytes": 3791,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/graph_finalize.py": {
+      "sha256": "cfff4fbfbb9271ce9d57548da5133886ada6c43174e29ac2260c17e79b36af02",
+      "size_bytes": 2922,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/graph_metrics.py": {
+      "sha256": "97544cdd7b6f68f53b7105722f97bedb9b7cb6be8d90553e502d7194609a1ddb",
+      "size_bytes": 3457,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/graph_wait_finalize.py": {
+      "sha256": "4e526d35342e51b820ea5380262810f5bc541ade1cfcd2f278c454ed129b717b",
+      "size_bytes": 2246,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/independent_audio_observer.py": {
+      "sha256": "f7f58339c27a9b1c70c04a56a5d92677040f4afb84e96f2a8fff59f90ea47c74",
+      "size_bytes": 6087,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/motion_graph.py": {
+      "sha256": "a2fbc26a6637ab12de3f73de65554326675cca42eaaa7e1c021a4484436d9ff9",
+      "size_bytes": 7568,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/nli_reference.py": {
+      "sha256": "781fc34ecb5beca0b7c7c6f8142e1b9994f8b310e5ca296ecb43c9e69463a950",
+      "size_bytes": 6575,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/reference_metrics.py": {
+      "sha256": "b6dc50d514f2844d09ce6fe55df2d7835ceec14104ea0bead3e18c6f6ecec027",
+      "size_bytes": 6841,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/review_bundle.py": {
+      "sha256": "b1cfb47371e73b4f1fec4ce1a4c83ab0acc799640aad004acc1957fd63975ad3",
+      "size_bytes": 29690,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/secondwave_baseline_v3.py": {
+      "sha256": "308f3f46e7badcc32b9068ee337d0930409aa19b7c9790e4fd30839196036c18",
+      "size_bytes": 8416,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/semantic_graph_metrics.py": {
+      "sha256": "241cc8ceff9ad9ba083481973d966a6362d8380213ab765cb938a45f99a62a70",
+      "size_bytes": 4208,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/strict_rubric.py": {
+      "sha256": "d7635754074f4cfd77ca7cb6c19d8596b34f8af07b1abccbe03510714d6bc21d",
+      "size_bytes": 8885,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/captionlab/text_quality_menu.py": {
+      "sha256": "0180de98de9bfb7cac3efc7d8a0eac5fdce8f5da45f7966fe712cb312e5f1b7b",
+      "size_bytes": 8997,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/__init__.py": {
+      "sha256": "941875fbeaf466566cbdd5e8077ce492965586a593ad7459880e22e141cf61c6",
+      "size_bytes": 240,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/audio.py": {
+      "sha256": "ccf39f7274ac8f2367b9dfd8e4300ed9bf430927b935ff2776f0256f40a79843",
+      "size_bytes": 5075,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/baseline.py": {
+      "sha256": "09ee9e2f7b7b7ba50ffe25ec7b82a41844ae3ca62e1ced433c35a064a7fb3fac",
+      "size_bytes": 32011,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/candidates.py": {
+      "sha256": "df23d757fdec4de9a1a09f2d4121cc517a5ae85f88e4825c08e4c0e540d160d2",
+      "size_bytes": 18018,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/catalog_song.py": {
+      "sha256": "426664715da72d4635e38aeada0847a531468ba30fa601726c29e014ec1cdeeb",
+      "size_bytes": 5703,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/compile_selected.py": {
+      "sha256": "39f41d04e0aecd6d3723db696a8acc31384789f7d8c4cbb4ec529101690c2021",
+      "size_bytes": 6341,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/composition_workflows.py": {
+      "sha256": "8154aaac87c90ac4abd634c47162a4c6bfda5b8d43ba72f5ef1cd9d970460ea8",
+      "size_bytes": 22764,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/context.py": {
+      "sha256": "b4ae4163738649afb71ff9e33618fe42a4dc1a0a8a178f700c14f2a68f191835",
+      "size_bytes": 4036,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/coordination.py": {
+      "sha256": "3644bf342ccead5999648e4006ffd7c6ce9f26c32441ad673ced8867e951ed1a",
+      "size_bytes": 34615,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/dataset.py": {
+      "sha256": "31f081d64937287752832a716870bdcbb33252f766859b12bf548a0f1408ac7d",
+      "size_bytes": 12566,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/duration_content.py": {
+      "sha256": "4d510f7b886c3111ee09862c721e345ec694146f2181a68b457d34b8eba9b2b0",
+      "size_bytes": 9966,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/edit_agent.py": {
+      "sha256": "f625c1a95a4671cf6c65e17e4a667184a4dca23ca527b4bfd699e0fcf6a20aa5",
+      "size_bytes": 17519,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/edit_authoring.py": {
+      "sha256": "1db0ba409e841dfae6429051767a8bac6cbb59f0aee75ed728db5e5b58993c88",
+      "size_bytes": 18164,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/edit_study.py": {
+      "sha256": "a414ce561f880ad4797be8bc67390d00f0266cb5140f5c0882d5f6c7e02b7fab",
+      "size_bytes": 8405,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/editing.py": {
+      "sha256": "6be3e18edb33198c8615b163f219a2bd0d6e1eac8fc17d11ba7abae16a05d9cf",
+      "size_bytes": 12210,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/evaluation.py": {
+      "sha256": "7ed6ee9e5266ce9599eb2b96eec2e4ad79ff3b68702d3584eb829fca6c66661c",
+      "size_bytes": 11495,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/fixtures.py": {
+      "sha256": "ad2afd7e641883b75aa8793f2d8de5aa443f418f0b8dc53c3e54d95d90ebc919",
+      "size_bytes": 5984,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/harness.py": {
+      "sha256": "ec56b2059ecdfb64ea3ef344f9a228d76c4d16f2781ff884ffee86a9d540a7e1",
+      "size_bytes": 25963,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/io.py": {
+      "sha256": "eb813753dcaa0513dbe7c55ab6f397aac10904ab10a57634ac66b945e39ab7c3",
+      "size_bytes": 4812,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/memory_replay.py": {
+      "sha256": "3d939f8208329367393affc3a4e8e177d84af31b95d00c4008a00e45cf010ed2",
+      "size_bytes": 26714,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/motion_phases.py": {
+      "sha256": "61b3058e4d0c8a1878e1aa62c555fd353fd500c2fb30451ea5f53e0903cfff75",
+      "size_bytes": 7574,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/music_recheck.py": {
+      "sha256": "033e72833e03d532e1f96fcd3a6f16a5deb153b9450a536aad88b0afabb72aaa",
+      "size_bytes": 9951,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/outlines.py": {
+      "sha256": "2d96efa9dc32aadee09648080a30e56979ffc47d994a7714a55cb8802a273b42",
+      "size_bytes": 22925,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/planning_units.py": {
+      "sha256": "523dfec8b0434fbf044158dc77ce8c4f0f372004b1c6fda77cc01ba69c0d3908",
+      "size_bytes": 11929,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/providers.py": {
+      "sha256": "74d639c014026b308f51e13a57e96e4f871fd1acc58d6187794e0744f92c4d5c",
+      "size_bytes": 23050,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/public_structure.py": {
+      "sha256": "e5770471f2e697a85970c4126ab185fd5e2bb0a4f5a6a36a17d3075a96d2369c",
+      "size_bytes": 2091,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/request_budget.py": {
+      "sha256": "b022fd94da42289b055d00732dde915f3910baa7113adc747b5b1b56e7711f6e",
+      "size_bytes": 2455,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/resident.py": {
+      "sha256": "fb2abe20b43949c0fe06fe7bec5ac625b62e09ebfaf6f3634cd0e0805618d25a",
+      "size_bytes": 22433,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/revision.py": {
+      "sha256": "b0d4e166e19a54dd3af973ede2ba944c45db4335be3875f5922094efa9506f38",
+      "size_bytes": 29110,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/revision_protocol.py": {
+      "sha256": "f45edc0d5e93eb6877b37cfb97e44833e554099f7e6637b0c7ec4e500a3d56a5",
+      "size_bytes": 7427,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/schedule_diagnostics.py": {
+      "sha256": "fb58996fbfcf92f7e7b7ea165d25b2f3e8e3115f7905ca9be603179a9d742935",
+      "size_bytes": 9141,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/schema.py": {
+      "sha256": "5e756401917dbe0388868fd5825b16d38aba4d3908e5aac3bd04c1cece97b648",
+      "size_bytes": 10705,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/selection.py": {
+      "sha256": "1bee4751ed7b3cbce3e0eb260dd220353f40244d0bdb8f8816414966d426baed",
+      "size_bytes": 14931,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/song_agent.py": {
+      "sha256": "11a5a003ea9cf2c56bdb661a62662e9bfef0aa5f1a424d3cb4e1c51a17c6b76f",
+      "size_bytes": 18440,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/timing.py": {
+      "sha256": "fdb93679d8e8cc6871ef11fe1b1d52482f339c7f22986f4c34fc8ebbf2567236",
+      "size_bytes": 5018,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/choreobench/untimed_catalog.py": {
+      "sha256": "701cd51e98e3b66d8399f90958d0db4b6d7f06d5588f509d312ca96edcaaecbe",
+      "size_bytes": 15055,
+      "role": "current experimental working code snapshot; not a claim of identity with every historical runner"
+    },
+    "code/tests/test_composition_runtime.py": {
+      "sha256": "99979a1e0f762ab4976e2f143dbc73290585c24b98bc5f15150ee28e61b2acd9",
+      "size_bytes": 4712,
+      "role": "CPU regression test; no new experiment calls"
+    },
+    "code/tests/test_edit_review_evidence.py": {
+      "sha256": "e4cfd6316c2ebe862318a70cd5abb24b377b3da40ec6dde71abfac0c6d4f74a2",
+      "size_bytes": 2408,
+      "role": "CPU regression test; no new experiment calls"
+    },
+    "code/tests/test_prompted_music_models.py": {
+      "sha256": "f3ca75bc140790b079fc2aba74caf443c9d654e0978a4a42960a4434279a7744",
+      "size_bytes": 864,
+      "role": "CPU regression test; no new experiment calls"
+    },
+    "code/tests/test_secondwave_eos.py": {
+      "sha256": "d6edf22ea9a80eebdb88f3376e8294f43bf5208e8bd94a181f5323d87b8a4de6",
+      "size_bytes": 697,
+      "role": "CPU regression test; no new experiment calls"
+    },
+    "code/tests/test_segment_identity.py": {
+      "sha256": "7ddc3f7b0c062b0ffdcb74733f9290adfa99ca6483e709ef840740c1eb1074f8",
+      "size_bytes": 638,
+      "role": "CPU regression test; no new experiment calls"
+    },
+    "results/e2/reference_results_table.json": {
+      "sha256": "030a177677ed149b3c16fe69b677a00cffdb91e0ad811826dda2039c55286b60",
+      "size_bytes": 2349,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/reference_paired_statistics.json": {
+      "sha256": "06cfd0a2faa7a688a4e88da2b26ee58116bb151415730d0c366c17a3ff5555eb",
+      "size_bytes": 22856,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/clap_v1/summary.json": {
+      "sha256": "d72a0f6f5909c289c2d67a9b884ae530570388a65fd952ecac6569eecccd1396",
+      "size_bytes": 2357,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/clap_paired_statistics.json": {
+      "sha256": "e3571b75a64455bb360825f7c831923773ac2aa5b44563ad73a630ea3025859b",
+      "size_bytes": 3716,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/strict_text_formal_v1/summary.json": {
+      "sha256": "314c1024882c7f08f0a17c14069a0c5246743a501a7b27a071fc3d2b039adac9",
+      "size_bytes": 4125,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/music_final_results_v1/results.json": {
+      "sha256": "dc5141fe466862b28d1ebafad85b78f732811e658da9cd9ccd3069e332f73932",
+      "size_bytes": 6521,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/music_final_results_v1/interpretation.json": {
+      "sha256": "7aaae0509719e84224ffc6e5e3938c3fca7069be3d13b5eaf4bcade3d8ecf103",
+      "size_bytes": 396,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/music_final_results_v1/selection_multiplicity_sensitivity.json": {
+      "sha256": "d80f7cae57a89f84e9e4ca1b49c22f44dd73cd0208e24ea09fe60bfed2b0562c",
+      "size_bytes": 1675,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/dependency_semantic_full_recovery_v2/summary.json": {
+      "sha256": "6f786bed2ffa3e96014fa3f99bc717001815366cdb85173c07a0b5f5555f4724",
+      "size_bytes": 5262,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/dependency_semantic_full_recovery_v2/paired_statistics.json": {
+      "sha256": "d98750ac66f43f515017b00ae9ceb05d965953c26f755cfc8d1f5395e5f7c892",
+      "size_bytes": 23860,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/graph_parallel_v5/final_metrics_v5/summary.json": {
+      "sha256": "83f2ceac15aabaac2d396636ab2b08a48e36a45f62370986289fcf97a6e97f02",
+      "size_bytes": 3515,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "results/e2/dependency_open_audit_v1/assistant_review.json": {
+      "sha256": "f2c0f51114a6884a233d910ff06bbf69cfcc6083aa0971227c94a78bde6428b9",
+      "size_bytes": 31769,
+      "role": "measured TX A800 experiment summary or explicit assistant text-only audit; failures and limitations retained"
+    },
+    "frozen/dependency_semantic_recovery_v2.py": {
+      "sha256": "0752f090778f8625887b5dd429ca624f133694cf80444023a55ce1cc140a52b5",
+      "size_bytes": 4337,
+      "role": "exact saved recovery module used for completed CPU semantic matching"
+    }
+  },
+  "verification": {
+    "archive_pytest_passed": 14,
+    "archive_warnings": 1,
+    "warning_scope": "pynvml deprecation",
+    "upstream_regression_pytest_passed": 258,
+    "all_python_ast_and_compile_checks_passed": true,
+    "system_python_first_test_missing_soundfile": true,
+    "tests_not_experiment_or_quality_acceptance": true,
+    "private_mapping_and_full_raw_not_uploaded": true
+  }
+}

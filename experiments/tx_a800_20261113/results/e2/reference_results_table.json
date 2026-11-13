@@ -1,0 +1,103 @@
+{
+  "results": [
+    {
+      "method": "audio-flamingo3",
+      "registered": 384,
+      "evaluable": 383,
+      "bleu4": 0.022329476248071085,
+      "rougeL": {
+        "n": 383,
+        "mean": 0.08511073955643968,
+        "missing_registered": 1
+      },
+      "bertscore": {
+        "n": 383,
+        "mean": 0.8211176633523587,
+        "missing_registered": 1
+      }
+    },
+    {
+      "method": "moss-audio",
+      "registered": 384,
+      "evaluable": 384,
+      "bleu4": 0.8044407513987247,
+      "rougeL": {
+        "n": 384,
+        "mean": 0.1648042350014815,
+        "missing_registered": 0
+      },
+      "bertscore": {
+        "n": 384,
+        "mean": 0.8289330188805858,
+        "missing_registered": 0
+      }
+    },
+    {
+      "method": "moss-music",
+      "registered": 384,
+      "evaluable": 384,
+      "bleu4": 0.687333957201058,
+      "rougeL": {
+        "n": 384,
+        "mean": 0.15373178044584057,
+        "missing_registered": 0
+      },
+      "bertscore": {
+        "n": 384,
+        "mean": 0.822818125753353,
+        "missing_registered": 0
+      }
+    },
+    {
+      "method": "music-flamingo",
+      "registered": 384,
+      "evaluable": 384,
+      "bleu4": 0.8767308501016183,
+      "rougeL": {
+        "n": 384,
+        "mean": 0.15767787765098543,
+        "missing_registered": 0
+      },
+      "bertscore": {
+        "n": 381,
+        "mean": 0.8259690881088337,
+        "missing_registered": 3
+      }
+    },
+    {
+      "method": "qwen25-omni",
+      "registered": 384,
+      "evaluable": 383,
+      "bleu4": 0.6110922239382125,
+      "rougeL": {
+        "n": 383,
+        "mean": 0.14991627223675136,
+        "missing_registered": 1
+      },
+      "bertscore": {
+        "n": 383,
+        "mean": 0.8260098431191307,
+        "missing_registered": 1
+      }
+    },
+    {
+      "method": "qwen3-omni-instruct",
+      "registered": 384,
+      "evaluable": 384,
+      "bleu4": 0.8271556103248382,
+      "rougeL": {
+        "n": 384,
+        "mean": 0.16751732219756615,
+        "missing_registered": 0
+      },
+      "bertscore": {
+        "n": 384,
+        "mean": 0.8363186099256078,
+        "missing_registered": 0
+      }
+    }
+  ],
+  "role": "single action-reference agreement; no music quality ranking",
+  "paired_statistics": "reference_paired_statistics.json",
+  "meteor": "user-approved unavailable"
+}

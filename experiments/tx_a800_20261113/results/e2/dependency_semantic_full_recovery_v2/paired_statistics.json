@@ -1,0 +1,1086 @@
+{
+  "platform": "TX A800 cluster artifacts; CPU-only statistical aggregation",
+  "input_records_sha256": "bcbaac7eda0cb166534aa8633ea6f59c8e778c5d9c0a06a0a3e7f1a7db31be67",
+  "registered": 2304,
+  "seed": 42,
+  "bootstrap_samples": 5000,
+  "numpy": "2.2.6",
+  "rng": "numpy.default_rng PCG64",
+  "confidence": 0.95,
+  "resampling_unit": "declared source_group_id, NOT verified unique song",
+  "aggregation": "mean within source group; equal weight across groups",
+  "empty_both_excluded": true,
+  "generation_failures_not_imputed": true,
+  "unresolved_mention_counts_in_original_summary": true,
+  "open_extraction_quality_accepted": false,
+  "intervals_do_not_account_for_extractor_or_NLI_bias": true,
+  "multiplicity_adjusted": false,
+  "method_intervals": {
+    "exact_facts_F1": {
+      "audio-flamingo3": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.0029746042673558055,
+        "interval": [
+          0.0014535169887650303,
+          0.004716611779512416
+        ]
+      },
+      "moss-audio": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.006115914418421432,
+        "interval": [
+          0.004049369775007987,
+          0.008434168425195142
+        ]
+      },
+      "moss-music": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.009370863339459355,
+        "interval": [
+          0.006464259560512085,
+          0.01242583392384509
+        ]
+      },
+      "music-flamingo": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.011678372282778593,
+        "interval": [
+          0.00827204774473445,
+          0.015350889756593222
+        ]
+      },
+      "qwen25-omni": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.0057575591392667646,
+        "interval": [
+          0.0034903294213917374,
+          0.008342190575193704
+        ]
+      },
+      "qwen3-omni-instruct": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.004187638612738708,
+        "interval": [
+          0.0024089674258623403,
+          0.0061929702658905
+        ]
+      }
+    },
+    "exact_relations_F1": {
+      "audio-flamingo3": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "moss-audio": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "moss-music": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "music-flamingo": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "qwen25-omni": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "qwen3-omni-instruct": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "semantic_facts_F1": {
+      "audio-flamingo3": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.01850474601742666,
+        "interval": [
+          0.014106622096477566,
+          0.023237213262349794
+        ]
+      },
+      "moss-audio": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.08204314059356234,
+        "interval": [
+          0.0738148842025345,
+          0.09069500277655117
+        ]
+      },
+      "moss-music": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.08253070622938402,
+        "interval": [
+          0.07446997202033659,
+          0.09053480897485562
+        ]
+      },
+      "music-flamingo": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.07390538888998943,
+        "interval": [
+          0.0654516407145456,
+          0.08275197875325989
+        ]
+      },
+      "qwen25-omni": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.06905180598403121,
+        "interval": [
+          0.060221861363807354,
+          0.07816587037647003
+        ]
+      },
+      "qwen3-omni-instruct": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.0911461136706808,
+        "interval": [
+          0.08231740073488766,
+          0.10011932043385836
+        ]
+      }
+    },
+    "semantic_relations_F1": {
+      "audio-flamingo3": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "moss-audio": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "moss-music": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "music-flamingo": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "qwen25-omni": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0001590710252127575,
+        "interval": [
+          0.0,
+          0.0004772130756382725
+        ]
+      },
+      "qwen3-omni-instruct": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "paired": [
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-audio",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": -0.003157278596022339,
+        "interval": [
+          -0.0058285473643636095,
+          -0.0005335406106812158
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-music",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": -0.006420726078211798,
+        "interval": [
+          -0.009617343377860547,
+          -0.003219166381107709
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "music-flamingo",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": -0.008459421316697047,
+        "interval": [
+          -0.012418051665901616,
+          -0.004530565023309384
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen25-omni",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": -0.002790240094088737,
+        "interval": [
+          -0.005398210031239215,
+          -0.00030554226063858706
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": -0.0012239681276615948,
+        "interval": [
+          -0.0036868701019485244,
+          0.001216217915843817
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "moss-music",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": -0.003254948921037923,
+        "interval": [
+          -0.006821251592896656,
+          0.000405283419427439
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "music-flamingo",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": -0.005562457864357162,
+        "interval": [
+          -0.009774099185525588,
+          -0.0014636655766131004
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen25-omni",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.00037432372411137993,
+        "interval": [
+          -0.0028345193625792598,
+          0.003717424345492469
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.0019282758056827227,
+        "interval": [
+          -0.0009351825548657811,
+          0.004759946860619934
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "music-flamingo",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": -0.0023075089433192385,
+        "interval": [
+          -0.006866243839313377,
+          0.002265929327887886
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen25-omni",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.0036377712063008377,
+        "interval": [
+          0.00010546897127436992,
+          0.007150294689895537
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.005183224726720646,
+        "interval": [
+          0.0021385925388648173,
+          0.008311625710223125
+        ]
+      }
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen25-omni",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.005951304977148325,
+        "interval": [
+          0.0016737640054023646,
+          0.010401160414678388
+        ]
+      }
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.007490733670039884,
+        "interval": [
+          0.0035510054684352193,
+          0.011593122594618917
+        ]
+      }
+    },
+    {
+      "a": "qwen25-omni",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.001558986744249365,
+        "interval": [
+          -0.001243487672607028,
+          0.004545694852599599
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-audio",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-music",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "music-flamingo",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen25-omni",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 379,
+        "n_source_groups": 379,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "moss-music",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "music-flamingo",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen25-omni",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "music-flamingo",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen25-omni",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen25-omni",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "qwen25-omni",
+      "b": "qwen3-omni-instruct",
+      "metric": "exact_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-audio",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": -0.06375260643147133,
+        "interval": [
+          -0.0731954553906151,
+          -0.05469615056409776
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-music",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": -0.06395133774490325,
+        "interval": [
+          -0.07299862264602132,
+          -0.05493711693942588
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "music-flamingo",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": -0.05504393026969205,
+        "interval": [
+          -0.06446170056430882,
+          -0.04559733106526403
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen25-omni",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": -0.05067938211311399,
+        "interval": [
+          -0.0601017875041032,
+          -0.04118792060140153
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": -0.07238202019423191,
+        "interval": [
+          -0.08215786693353319,
+          -0.06310538870243075
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "moss-music",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": -0.00048756563582168694,
+        "interval": [
+          -0.01080145043544313,
+          0.010266212366391567
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "music-flamingo",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.008137751703572895,
+        "interval": [
+          -0.0032467283062601487,
+          0.01934264372632885
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen25-omni",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.013205546464866795,
+        "interval": [
+          0.0022970998355265272,
+          0.024227569772900675
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": -0.009102973077118465,
+        "interval": [
+          -0.02063049050348399,
+          0.001980679607439623
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "music-flamingo",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": 0.008625317339394584,
+        "interval": [
+          -0.002800028828817964,
+          0.02000993520876598
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen25-omni",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.013694385118014388,
+        "interval": [
+          0.0024771166244625786,
+          0.024902284208739335
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": -0.00861540744129678,
+        "interval": [
+          -0.01963888339412602,
+          0.0025728573338942313
+        ]
+      }
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen25-omni",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": 0.005046547367811984,
+        "interval": [
+          -0.005039130301272471,
+          0.01590562726855304
+        ]
+      }
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 384,
+        "n_source_groups": 384,
+        "mean": -0.01724072478069136,
+        "interval": [
+          -0.028258289617713137,
+          -0.0057503121611654105
+        ]
+      }
+    },
+    {
+      "a": "qwen25-omni",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_facts_F1",
+      "statistics": {
+        "n_rows": 383,
+        "n_source_groups": 383,
+        "mean": -0.022332287095711414,
+        "interval": [
+          -0.034385437426580755,
+          -0.010420248240211816
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-audio",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-music",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "music-flamingo",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen25-omni",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 379,
+        "n_source_groups": 379,
+        "mean": -0.00015991045014791718,
+        "interval": [
+          -0.0004797313504437515,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "moss-music",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 382,
+        "n_source_groups": 382,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "music-flamingo",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen25-omni",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": -0.0001594896331738437,
+        "interval": [
+          -0.0004784688995215311,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "music-flamingo",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen25-omni",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": -0.0001594896331738437,
+        "interval": [
+          -0.0004784688995215311,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen25-omni",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 380,
+        "n_source_groups": 380,
+        "mean": -0.0001594896331738437,
+        "interval": [
+          -0.0004784688995215311,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "a": "qwen25-omni",
+      "b": "qwen3-omni-instruct",
+      "metric": "semantic_relations_F1",
+      "statistics": {
+        "n_rows": 381,
+        "n_source_groups": 381,
+        "mean": 0.0001590710252127575,
+        "interval": [
+          0.0,
+          0.0004772130756382725
+        ]
+      }
+    }
+  ]
+}

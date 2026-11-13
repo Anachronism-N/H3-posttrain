@@ -1,0 +1,266 @@
+{
+  "registered": 2304,
+  "results": [
+    {
+      "method": "audio-flamingo3",
+      "registered": 384,
+      "status": {
+        "valid": 383,
+        "generation_not_evaluable": 1
+      },
+      "valid_scores": 383,
+      "common_cases": 382,
+      "common_source_groups": 382,
+      "common_group_mean": 2.6727748691099475,
+      "valid_mean": 2.6736292428198434,
+      "full_score_fraction": 0.010443864229765013
+    },
+    {
+      "method": "moss-audio",
+      "registered": 384,
+      "status": {
+        "valid": 384
+      },
+      "valid_scores": 384,
+      "common_cases": 382,
+      "common_source_groups": 382,
+      "common_group_mean": 3.7853403141361257,
+      "valid_mean": 3.7864583333333335,
+      "full_score_fraction": 0.22395833333333334
+    },
+    {
+      "method": "moss-music",
+      "registered": 384,
+      "status": {
+        "valid": 384
+      },
+      "valid_scores": 384,
+      "common_cases": 382,
+      "common_source_groups": 382,
+      "common_group_mean": 3.9607329842931938,
+      "valid_mean": 3.9583333333333335,
+      "full_score_fraction": 0.3255208333333333
+    },
+    {
+      "method": "music-flamingo",
+      "registered": 384,
+      "status": {
+        "valid": 384
+      },
+      "valid_scores": 384,
+      "common_cases": 382,
+      "common_source_groups": 382,
+      "common_group_mean": 2.7329842931937174,
+      "valid_mean": 2.7395833333333335,
+      "full_score_fraction": 0.13541666666666666
+    },
+    {
+      "method": "qwen25-omni",
+      "registered": 384,
+      "status": {
+        "valid": 383,
+        "generation_not_evaluable": 1
+      },
+      "valid_scores": 383,
+      "common_cases": 382,
+      "common_source_groups": 382,
+      "common_group_mean": 2.7146596858638743,
+      "valid_mean": 2.715404699738903,
+      "full_score_fraction": 0.033942558746736295
+    },
+    {
+      "method": "qwen3-omni-instruct",
+      "registered": 384,
+      "status": {
+        "valid": 384
+      },
+      "valid_scores": 384,
+      "common_cases": 382,
+      "common_source_groups": 382,
+      "common_group_mean": 3.4293193717277486,
+      "valid_mean": 3.4270833333333335,
+      "full_score_fraction": 0.2421875
+    }
+  ],
+  "paired": [
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-audio",
+      "common_cases": 383,
+      "source_groups": 383,
+      "mean_difference": -1.1096605744125327,
+      "ci95": [
+        -1.227219321148825,
+        -0.9921671018276762
+      ]
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "moss-music",
+      "common_cases": 383,
+      "source_groups": 383,
+      "mean_difference": -1.2845953002610966,
+      "ci95": [
+        -1.4073107049608355,
+        -1.1671018276762402
+      ]
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "music-flamingo",
+      "common_cases": 383,
+      "source_groups": 383,
+      "mean_difference": -0.06005221932114883,
+      "ci95": [
+        -0.2297650130548303,
+        0.10443864229765012
+      ]
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen25-omni",
+      "common_cases": 382,
+      "source_groups": 382,
+      "mean_difference": -0.041884816753926704,
+      "ci95": [
+        -0.17277486910994763,
+        0.09424083769633508
+      ]
+    },
+    {
+      "a": "audio-flamingo3",
+      "b": "qwen3-omni-instruct",
+      "common_cases": 383,
+      "source_groups": 383,
+      "mean_difference": -0.7545691906005222,
+      "ci95": [
+        -0.8981723237597912,
+        -0.608355091383812
+      ]
+    },
+    {
+      "a": "moss-audio",
+      "b": "moss-music",
+      "common_cases": 384,
+      "source_groups": 384,
+      "mean_difference": -0.171875,
+      "ci95": [
+        -0.296875,
+        -0.044270833333333336
+      ]
+    },
+    {
+      "a": "moss-audio",
+      "b": "music-flamingo",
+      "common_cases": 384,
+      "source_groups": 384,
+      "mean_difference": 1.046875,
+      "ci95": [
+        0.8749348958333334,
+        1.2109375
+      ]
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen25-omni",
+      "common_cases": 383,
+      "source_groups": 383,
+      "mean_difference": 1.073107049608355,
+      "ci95": [
+        0.9347258485639687,
+        1.206266318537859
+      ]
+    },
+    {
+      "a": "moss-audio",
+      "b": "qwen3-omni-instruct",
+      "common_cases": 384,
+      "source_groups": 384,
+      "mean_difference": 0.359375,
+      "ci95": [
+        0.21614583333333334,
+        0.5
+      ]
+    },
+    {
+      "a": "moss-music",
+      "b": "music-flamingo",
+      "common_cases": 384,
+      "source_groups": 384,
+      "mean_difference": 1.21875,
+      "ci95": [
+        1.03125,
+        1.4011067708333325
+      ]
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen25-omni",
+      "common_cases": 383,
+      "source_groups": 383,
+      "mean_difference": 1.2454308093994777,
+      "ci95": [
+        1.0966057441253263,
+        1.3994778067885119
+      ]
+    },
+    {
+      "a": "moss-music",
+      "b": "qwen3-omni-instruct",
+      "common_cases": 384,
+      "source_groups": 384,
+      "mean_difference": 0.53125,
+      "ci95": [
+        0.3723958333333333,
+        0.6822916666666666
+      ]
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen25-omni",
+      "common_cases": 383,
+      "source_groups": 383,
+      "mean_difference": 0.02349869451697128,
+      "ci95": [
+        -0.13838120104438642,
+        0.185378590078329
+      ]
+    },
+    {
+      "a": "music-flamingo",
+      "b": "qwen3-omni-instruct",
+      "common_cases": 384,
+      "source_groups": 384,
+      "mean_difference": -0.6875,
+      "ci95": [
+        -0.8541666666666666,
+        -0.5208333333333334
+      ]
+    },
+    {
+      "a": "qwen25-omni",
+      "b": "qwen3-omni-instruct",
+      "common_cases": 383,
+      "source_groups": 383,
+      "mean_difference": -0.7127937336814621,
+      "ci95": [
+        -0.8485639686684073,
+        -0.577023498694517
+      ]
+    }
+  ],
+  "seed": 42,
+  "resamples": 5000,
+  "selected_expert": "moss-music",
+  "music_mean_leader": "moss-music",
+  "unresolved_candidates": [
+    "moss-music"
+  ],
+  "statistically_established_unique_winner": true,
+  "selection_rule": "common-source music mean; unresolved pairwise95 then valid generation and input-matched recorded latency operational tie-break",
+  "latency_scope": "recorded E2 runs; architecture costs not normalized",
+  "origin": "model-assisted score using independent audio observations; not directly heard by text scorer; acoustic diagnostics separate",
+  "human": false,
+  "unknown_not_imputed": true,
+  "reference_similarity_not_used_for_music_selection": true
+}

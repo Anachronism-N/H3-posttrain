@@ -1,0 +1,65 @@
+{
+  "pairs": [
+    {
+      "selected": "moss-music",
+      "other": "audio-flamingo3",
+      "n": 383,
+      "mean": 1.2845953002610966,
+      "simultaneous_99percent_interval": [
+        1.1279373368146215,
+        1.4360443864229768
+      ],
+      "dimension": "frozen model-assisted music score"
+    },
+    {
+      "selected": "moss-music",
+      "other": "moss-audio",
+      "n": 384,
+      "mean": 0.171875,
+      "simultaneous_99percent_interval": [
+        0.010416666666666666,
+        0.3333463541666669
+      ],
+      "dimension": "frozen model-assisted music score"
+    },
+    {
+      "selected": "moss-music",
+      "other": "music-flamingo",
+      "n": 384,
+      "mean": 1.21875,
+      "simultaneous_99percent_interval": [
+        0.9739583333333334,
+        1.4531510416666673
+      ],
+      "dimension": "frozen model-assisted music score"
+    },
+    {
+      "selected": "moss-music",
+      "other": "qwen25-omni",
+      "n": 383,
+      "mean": 1.2454308093994777,
+      "simultaneous_99percent_interval": [
+        1.0391383812010444,
+        1.441253263707572
+      ],
+      "dimension": "frozen model-assisted music score"
+    },
+    {
+      "selected": "moss-music",
+      "other": "qwen3-omni-instruct",
+      "n": 384,
+      "mean": 0.53125,
+      "simultaneous_99percent_interval": [
+        0.3255208333333333,
+        0.7447916666666666
+      ],
+      "dimension": "frozen model-assisted music score"
+    }
+  ],
+  "resamples": 5000,
+  "comparisons": 5,
+  "nominal_family_coverage": 0.95,
+  "pointwise_percentile": 0.99,
+  "scope": "score-statistic descriptive sensitivity, model uncertainty and song dependence not quantified",
+  "not_human": true
+}

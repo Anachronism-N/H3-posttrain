@@ -1,0 +1,753 @@
+{
+  "platform": "TX A800 cluster generated artifacts; assistant text-only review",
+  "human": false,
+  "audio_or_video_review": false,
+  "extractor_sha": "809589e3f42415b58e24b80ff1eb5be57be0226552ea9ad58c846ad9cb5d5cee",
+  "selection": "2 distinct texts per candidate method, then2 reference texts; sorted text_id pool, random.Random(42); no quality filter",
+  "seed": 42,
+  "sample_texts": 14,
+  "reviewed_all_saved_nodes_and_edges": true,
+  "scope": "Direct review of all extracted nodes/edges and explicit source omissions in sampled open text; not human annotation, not exhaustive full semantic gold, not music/video truth",
+  "acceptance": {
+    "accepted": false,
+    "reason": "Wrong-body-part inheritance, false directions, lost states, missed explicit clauses and contradictory temporal scope remain on actual open text. Narrow controls do not certify open extraction."
+  },
+  "counts": {
+    "nodes": {
+      "partial": 11,
+      "source_supported": 48,
+      "incorrect": 8
+    },
+    "edges": {
+      "source_supported": 18,
+      "incorrect": 4,
+      "uncertain_scope": 3
+    },
+    "missed_clause_diagnostics": 15
+  },
+  "source_supported_not_complete_action_semantics": true,
+  "missed_clauses_not_false_negative_event_count": true,
+  "models_not_ranked_by_audit": true,
+  "reviews": [
+    {
+      "index": 0,
+      "text_id": "e4e681b2c85ad4e00af33b12da244ccd15961dc59fc31fb3b5a1ac2f809ab5d1",
+      "role": "audio-flamingo3",
+      "nodes": [],
+      "edges": [],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 1,
+      "text_id": "2251b98488876c16a009f8a49b3b9a83bc787a75c5517d6773e2733bf9d9c5d2",
+      "role": "audio-flamingo3",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "partial",
+          "error_type": "state_motion_conflation",
+          "source_quote": "their arms extended",
+          "reason": "A held extended state is represented as an extension event; change versus state is not distinguished."
+        },
+        {
+          "node_id": "n1",
+          "status": "source_supported",
+          "source_quote": "A dancer gracefully spins in a circle, their arms extended and flowing, as if carried by a gentle breeze, before coming to a gentle pause."
+        }
+      ],
+      "edges": [],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 2,
+      "text_id": "09627033a664fc00af301aabd23e45514e54e0553a0637a4a57b99bb4231fbda",
+      "role": "moss-audio",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "partial",
+          "error_type": "underspecified_predicate",
+          "source_quote": "slow, deliberate arm movements",
+          "reason": "The motion mention is real, but movement is generic and not a concrete predicate."
+        }
+      ],
+      "edges": [],
+      "missed_or_incompletely_represented_explicit_clauses": [
+        {
+          "source_quote": "arms sweeping in broad arcs",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "arms outstretched",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "text_id": "fc0da32900ed2f25cc7d9f04a5c0a44260a5f4926348107b61977b5bd28c7f46",
+      "role": "moss-audio",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "partial",
+          "error_type": "underspecified_predicate",
+          "source_quote": "sharp, isolated arm movements",
+          "reason": "A source-supported generic mention, not a concrete action."
+        },
+        {
+          "node_id": "n1",
+          "status": "source_supported",
+          "source_quote": "The dancer begins with sharp, isolated arm movements that mirror the punchy onset of the drums, then shifts into a flowing sequence where arms sweep fluidly across the torso, synchronized with the rising synth arpeggios."
+        },
+        {
+          "node_id": "n2",
+          "status": "source_supported",
+          "source_quote": "Weight transfers are dynamic, with a quick pivot on the left foot followed by a grounded right-hand strike at the peak of the \"I'm too spicy\" phrase."
+        }
+      ],
+      "edges": [
+        {
+          "source": "n0",
+          "target": "n1",
+          "relation": "before",
+          "status": "source_supported"
+        }
+      ],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 4,
+      "text_id": "5ed665ba5c61655bf49fc8f233d0767497615b8d0140512c6eed50d8d23fa5a5",
+      "role": "moss-music",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "source_supported",
+          "source_quote": "Arms extend outward in quick jerks, mimicking the pulse of the bass, while the body maintains a tight, upright stance to emphasize precision."
+        },
+        {
+          "node_id": "n1",
+          "status": "partial",
+          "error_type": "alternative_not_encoded",
+          "source_quote": "bunny hops or knee bends",
+          "reason": "The knee bend is a source alternative, not an unconditional asserted event."
+        },
+        {
+          "node_id": "n2",
+          "status": "incorrect",
+          "error_type": "lost_state",
+          "source_quote": "a bent-knee pose",
+          "reason": "pose drops the stated bent knee state."
+        }
+      ],
+      "edges": [],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 5,
+      "text_id": "53a5dd3a073b9d12a9b686857ca924e39d8d5f68953845db13b89444c3235950",
+      "role": "moss-music",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "source_supported",
+          "source_quote": "Arms swing forward with staccato precision, mimicking the pulse of the four-on-the-floor groove, while wrists flick in small, rapid motions that mirror the shimmering synth textures."
+        },
+        {
+          "node_id": "n1",
+          "status": "source_supported",
+          "source_quote": "Arms swing forward with staccato precision, mimicking the pulse of the four-on-the-floor groove, while wrists flick in small, rapid motions that mirror the shimmering synth textures."
+        },
+        {
+          "node_id": "n2",
+          "status": "source_supported",
+          "source_quote": "As the final phrase approaches, a quick arm chop and chest thrust accent the last rhythmic hit, adding a theatrical flair before abruptly freezing, leaving space for the next sequence to build upon the established groove."
+        },
+        {
+          "node_id": "n3",
+          "status": "incorrect",
+          "error_type": "wrong_body_part",
+          "source_quote": "a quick arm chop and chest thrust",
+          "reason": "The thrust belongs to the chest, not the arm."
+        }
+      ],
+      "edges": [
+        {
+          "source": "n0",
+          "target": "n1",
+          "relation": "concurrent",
+          "status": "source_supported"
+        }
+      ],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 6,
+      "text_id": "5244303805c42aa9d77325bb6a32f491a6fbd10a7448223a2cd78558c87e84c4",
+      "role": "music-flamingo",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "partial",
+          "error_type": "lost_state_alternative",
+          "source_quote": "keeping the arms slightly raised or clasped",
+          "reason": "keep loses both the held-state content and the alternative."
+        },
+        {
+          "node_id": "n1",
+          "status": "source_supported",
+          "source_quote": "As the melody reaches its first high point, the dancers open up into wider strides and raise their arms for emphasis, adding a sense of declaration."
+        },
+        {
+          "node_id": "n2",
+          "status": "source_supported",
+          "source_quote": "The line about “taking the world of this blank and empty authority” can be expressed through a collective, slightly theatrical gesture—everyone can raise one arm, turn their gaze to the side, and then swing their arm outward in a big arc, symbolizing expansion or control."
+        },
+        {
+          "node_id": "n3",
+          "status": "incorrect",
+          "error_type": "wrong_body_part",
+          "source_quote": "raise one arm, turn their gaze to the side",
+          "reason": "The turning applies to gaze, not an arm rotation."
+        },
+        {
+          "node_id": "n4",
+          "status": "source_supported",
+          "source_quote": "The line about “taking the world of this blank and empty authority” can be expressed through a collective, slightly theatrical gesture—everyone can raise one arm, turn their gaze to the side, and then swing their arm outward in a big arc, symbolizing expansion or control."
+        }
+      ],
+      "edges": [
+        {
+          "source": "n2",
+          "target": "n4",
+          "relation": "before",
+          "status": "source_supported"
+        },
+        {
+          "source": "n3",
+          "target": "n4",
+          "relation": "before",
+          "status": "incorrect"
+        }
+      ],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 7,
+      "text_id": "31515190bb8c9dd54552b0436465a86322ebdbc107a10c2d4adc5f19d2b45ebf",
+      "role": "music-flamingo",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "source_supported",
+          "source_quote": "Both hands move together in parallel lines, mirroring the rising intensity, and then the arms spread out wide, matching the expansive feel of the soundscape, while the chest opens and the head looks upward."
+        },
+        {
+          "node_id": "n1",
+          "status": "partial",
+          "error_type": "missing_direction_detail",
+          "source_quote": "the arms spread out wide",
+          "reason": "outward spreading is lost as unspecified."
+        },
+        {
+          "node_id": "n2",
+          "status": "source_supported",
+          "source_quote": "Towards the climax, the dancer lifts both arms straight above the head and holds a strong, open posture that aligns with the music’s peak, then gradually lowers one arm and lets the other follow, bringing the body back to a grounded stance as the music gently fades."
+        },
+        {
+          "node_id": "n3",
+          "status": "incorrect",
+          "error_type": "wrong_body_part",
+          "source_quote": "lifts both arms straight above the head and holds a strong, open posture",
+          "reason": "The held posture does not assert that the arms hold a specific state."
+        },
+        {
+          "node_id": "n4",
+          "status": "source_supported",
+          "source_quote": "Towards the climax, the dancer lifts both arms straight above the head and holds a strong, open posture that aligns with the music’s peak, then gradually lowers one arm and lets the other follow, bringing the body back to a grounded stance as the music gently fades."
+        }
+      ],
+      "edges": [
+        {
+          "source": "n0",
+          "target": "n1",
+          "relation": "before",
+          "status": "source_supported"
+        },
+        {
+          "source": "n2",
+          "target": "n4",
+          "relation": "before",
+          "status": "source_supported"
+        },
+        {
+          "source": "n3",
+          "target": "n4",
+          "relation": "before",
+          "status": "incorrect"
+        }
+      ],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 8,
+      "text_id": "27a42d7455dc678d1f84f99a479f56238255d98b3fbea00abb786c853e650bc1",
+      "role": "qwen25-omni",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "source_supported",
+          "source_quote": "The movement then flows into a combination of arm waves and spins, coordinating with the melody's climax, leading into a series of sharp, precise footwork patterns."
+        },
+        {
+          "node_id": "n1",
+          "status": "partial",
+          "error_type": "underspecified_predicate",
+          "source_quote": "graceful arm movements",
+          "reason": "Generic mention rather than concrete action."
+        }
+      ],
+      "edges": [],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 9,
+      "text_id": "e9c4c27431ca6a569da5d3744502c1fe982f035befc54dbf6880208866e62723",
+      "role": "qwen25-omni",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "partial",
+          "error_type": "underspecified_predicate",
+          "source_quote": "quick arm movements",
+          "reason": "Generic mention rather than concrete action."
+        },
+        {
+          "node_id": "n1",
+          "status": "partial",
+          "error_type": "underspecified_predicate",
+          "source_quote": "graceful arm movements",
+          "reason": "Generic mention rather than concrete action."
+        }
+      ],
+      "edges": [],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 10,
+      "text_id": "fd247fdd5be693ab90c8df9da778fca009cb052c8927b354dc6c633d2668fab7",
+      "role": "qwen3-omni-instruct",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "source_supported",
+          "source_quote": "The dancer initiates with a sharp, isolated shoulder roll into a low crouch, then launches into a dynamic spin with arms slicing through the air."
+        },
+        {
+          "node_id": "n1",
+          "status": "incorrect",
+          "error_type": "lost_state",
+          "source_quote": "a bent-knee stance",
+          "reason": "stance drops the explicit bent knee state."
+        },
+        {
+          "node_id": "n2",
+          "status": "source_supported",
+          "source_quote": "A final, expansive motion surges from the core, sweeping one arm across the body in a continuous arc as the head whips around to follow, dissolving into the next musical phrase with grounded momentum."
+        },
+        {
+          "node_id": "n3",
+          "status": "incorrect",
+          "error_type": "unsupported_subject_inheritance",
+          "source_quote": "dissolving into the next musical phrase",
+          "reason": "This is the choreography transition, not a stated arm dissolve action."
+        }
+      ],
+      "edges": [
+        {
+          "source": "n2",
+          "target": "n3",
+          "relation": "concurrent",
+          "status": "incorrect"
+        }
+      ],
+      "missed_or_incompletely_represented_explicit_clauses": [
+        {
+          "source_quote": "arms sharply outstretched",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "text_id": "ad7beaf2cb2e04dc3709dd6f332e9b50d28a855dcb2f255b5da6e0bdb7ec44c5",
+      "role": "qwen3-omni-instruct",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "source_supported",
+          "source_quote": "The dancer initiates with a sharp, isolated pop of the shoulder, quickly sweeping the arm forward as the bass hits, then follows with a fluid, circular wrist motion that rolls into the hip, rolling the torso in time with the vocal rhythm before smoothly transitioning into a low lunge that collapses downward with controlled energy."
+        },
+        {
+          "node_id": "n1",
+          "status": "partial",
+          "error_type": "lost_action_geometry",
+          "source_quote": "a fluid, circular wrist motion",
+          "reason": "motion loses the stated circular geometry."
+        }
+      ],
+      "edges": [
+        {
+          "source": "n0",
+          "target": "n1",
+          "relation": "before",
+          "status": "source_supported"
+        }
+      ],
+      "missed_or_incompletely_represented_explicit_clauses": []
+    },
+    {
+      "index": 12,
+      "text_id": "18e642663e69a0c4e8e7bbcf7d38379a3544686205c06066c1351397cc37e9b9",
+      "role": "reference",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "source_supported",
+          "source_quote": "At the outset, one hand rises and reaches right before reversing left, while the opposite hand lifts over a softening knee and the initial hand swings right and down."
+        },
+        {
+          "node_id": "n1",
+          "status": "source_supported",
+          "source_quote": "At the outset, one hand rises and reaches right before reversing left, while the opposite hand lifts over a softening knee and the initial hand swings right and down."
+        },
+        {
+          "node_id": "n2",
+          "status": "source_supported",
+          "source_quote": "At the outset, one hand rises and reaches right before reversing left, while the opposite hand lifts over a softening knee and the initial hand swings right and down."
+        },
+        {
+          "node_id": "n3",
+          "status": "source_supported",
+          "source_quote": "At the outset, one hand rises and reaches right before reversing left, while the opposite hand lifts over a softening knee and the initial hand swings right and down."
+        },
+        {
+          "node_id": "n4",
+          "status": "source_supported",
+          "source_quote": "At the outset, one hand rises and reaches right before reversing left, while the opposite hand lifts over a softening knee and the initial hand swings right and down."
+        },
+        {
+          "node_id": "n5",
+          "status": "source_supported",
+          "source_quote": "The opposite knee bends deeper as its hand lowers, and the initial hand travels right and rises while its own knee softens, releases and bends again; both hands then move left with the initial hand dropping as that knee straightens."
+        },
+        {
+          "node_id": "n6",
+          "status": "source_supported",
+          "source_quote": "The opposite knee bends deeper as its hand lowers, and the initial hand travels right and rises while its own knee softens, releases and bends again; both hands then move left with the initial hand dropping as that knee straightens."
+        },
+        {
+          "node_id": "n7",
+          "status": "source_supported",
+          "source_quote": "The opposite knee bends deeper as its hand lowers, and the initial hand travels right and rises while its own knee softens, releases and bends again; both hands then move left with the initial hand dropping as that knee straightens."
+        },
+        {
+          "node_id": "n8",
+          "status": "source_supported",
+          "source_quote": "The opposite knee bends deeper as its hand lowers, and the initial hand travels right and rises while its own knee softens, releases and bends again; both hands then move left with the initial hand dropping as that knee straightens."
+        },
+        {
+          "node_id": "n9",
+          "status": "source_supported",
+          "source_quote": "The opposite knee bends deeper as its hand lowers, and the initial hand travels right and rises while its own knee softens, releases and bends again; both hands then move left with the initial hand dropping as that knee straightens."
+        },
+        {
+          "node_id": "n10",
+          "status": "source_supported",
+          "source_quote": "The opposite knee bends deeper as its hand lowers, and the initial hand travels right and rises while its own knee softens, releases and bends again; both hands then move left with the initial hand dropping as that knee straightens."
+        },
+        {
+          "node_id": "n11",
+          "status": "source_supported",
+          "source_quote": "The initial hand returns right and lifts as both arms fold, while the opposite hand moves right and opens before tucking again over a deeper knee bend."
+        },
+        {
+          "node_id": "n12",
+          "status": "source_supported",
+          "source_quote": "The initial hand returns right and lifts as both arms fold, while the opposite hand moves right and opens before tucking again over a deeper knee bend."
+        },
+        {
+          "node_id": "n13",
+          "status": "source_supported",
+          "source_quote": "The initial hand returns right and lifts as both arms fold, while the opposite hand moves right and opens before tucking again over a deeper knee bend."
+        },
+        {
+          "node_id": "n14",
+          "status": "source_supported",
+          "source_quote": "The initial hand returns right and lifts as both arms fold, while the opposite hand moves right and opens before tucking again over a deeper knee bend."
+        },
+        {
+          "node_id": "n15",
+          "status": "source_supported",
+          "source_quote": "The initial hand returns right and lifts as both arms fold, while the opposite hand moves right and opens before tucking again over a deeper knee bend."
+        },
+        {
+          "node_id": "n16",
+          "status": "source_supported",
+          "source_quote": "The initial hand returns right and lifts as both arms fold, while the opposite hand moves right and opens before tucking again over a deeper knee bend."
+        },
+        {
+          "node_id": "n17",
+          "status": "source_supported",
+          "source_quote": "The initial hand swings left and back right, both arms lengthen downward, and the opposite hand reaches right and rises before curling left as the other arm bends into a rightward lift."
+        },
+        {
+          "node_id": "n18",
+          "status": "incorrect",
+          "error_type": "false_direction",
+          "source_quote": "swings left and back right",
+          "reason": "back right means returning toward the right, not backward travel."
+        },
+        {
+          "node_id": "n19",
+          "status": "source_supported",
+          "source_quote": "The initial hand swings left and back right, both arms lengthen downward, and the opposite hand reaches right and rises before curling left as the other arm bends into a rightward lift."
+        },
+        {
+          "node_id": "n20",
+          "status": "source_supported",
+          "source_quote": "The initial hand swings left and back right, both arms lengthen downward, and the opposite hand reaches right and rises before curling left as the other arm bends into a rightward lift."
+        },
+        {
+          "node_id": "n21",
+          "status": "source_supported",
+          "source_quote": "The initial hand swings left and back right, both arms lengthen downward, and the opposite hand reaches right and rises before curling left as the other arm bends into a rightward lift."
+        },
+        {
+          "node_id": "n22",
+          "status": "source_supported",
+          "source_quote": "The initial hand swings left and back right, both arms lengthen downward, and the opposite hand reaches right and rises before curling left as the other arm bends into a rightward lift."
+        },
+        {
+          "node_id": "n23",
+          "status": "incorrect",
+          "error_type": "direction_scope_leak",
+          "source_quote": "the other arm bends into a rightward lift",
+          "reason": "rightward belongs to the lift, not necessarily the bending."
+        }
+      ],
+      "edges": [
+        {
+          "source": "n0",
+          "target": "n2",
+          "relation": "concurrent",
+          "status": "uncertain_scope"
+        },
+        {
+          "source": "n11",
+          "target": "n13",
+          "relation": "concurrent",
+          "status": "source_supported"
+        },
+        {
+          "source": "n11",
+          "target": "n14",
+          "relation": "concurrent",
+          "status": "source_supported"
+        },
+        {
+          "source": "n15",
+          "target": "n16",
+          "relation": "before",
+          "status": "uncertain_scope"
+        },
+        {
+          "source": "n22",
+          "target": "n23",
+          "relation": "concurrent",
+          "status": "uncertain_scope"
+        },
+        {
+          "source": "n5",
+          "target": "n10",
+          "relation": "before",
+          "status": "source_supported"
+        },
+        {
+          "source": "n6",
+          "target": "n10",
+          "relation": "before",
+          "status": "source_supported"
+        },
+        {
+          "source": "n7",
+          "target": "n10",
+          "relation": "before",
+          "status": "source_supported"
+        },
+        {
+          "source": "n8",
+          "target": "n10",
+          "relation": "before",
+          "status": "source_supported"
+        },
+        {
+          "source": "n8",
+          "target": "n9",
+          "relation": "concurrent",
+          "status": "source_supported"
+        },
+        {
+          "source": "n9",
+          "target": "n10",
+          "relation": "before",
+          "status": "source_supported"
+        }
+      ],
+      "missed_or_incompletely_represented_explicit_clauses": [
+        {
+          "source_quote": "a softening knee",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "its own knee softens, releases and bends again",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "both hands then move left",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "the initial hand dropping",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "opens before tucking again",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "before curling left",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "the other arm bends into a rightward lift",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "text_id": "c96acb3693cfb52b66144fe5907061602e52fc66682b14215d2f9591aca6b199",
+      "role": "reference",
+      "nodes": [
+        {
+          "node_id": "n0",
+          "status": "source_supported",
+          "source_quote": "To begin, the dancer folds one arm rightward while the other curls upward and reaches right, then both hands drop as the first elbow releases."
+        },
+        {
+          "node_id": "n1",
+          "status": "source_supported",
+          "source_quote": "To begin, the dancer folds one arm rightward while the other curls upward and reaches right, then both hands drop as the first elbow releases."
+        },
+        {
+          "node_id": "n2",
+          "status": "source_supported",
+          "source_quote": "To begin, the dancer folds one arm rightward while the other curls upward and reaches right, then both hands drop as the first elbow releases."
+        },
+        {
+          "node_id": "n3",
+          "status": "source_supported",
+          "source_quote": "The other hand returns left and both arms tuck into a rise before descending and opening, with the first hand continuing right and down and the other following rightward."
+        },
+        {
+          "node_id": "n4",
+          "status": "source_supported",
+          "source_quote": "The other hand returns left and both arms tuck into a rise before descending and opening, with the first hand continuing right and down and the other following rightward."
+        },
+        {
+          "node_id": "n5",
+          "status": "source_supported",
+          "source_quote": "The other hand returns left and both arms tuck into a rise before descending and opening, with the first hand continuing right and down and the other following rightward."
+        },
+        {
+          "node_id": "n6",
+          "status": "source_supported",
+          "source_quote": "The other hand returns left and both arms tuck into a rise before descending and opening, with the first hand continuing right and down and the other following rightward."
+        },
+        {
+          "node_id": "n7",
+          "status": "partial",
+          "error_type": "lemma_error",
+          "source_quote": "the second hand reverses left",
+          "reason": "The action lemma revers is malformed; reverse is the source predicate."
+        },
+        {
+          "node_id": "n8",
+          "status": "source_supported",
+          "source_quote": "That raised arm folds rightward and descends, opens back left and tucks again while the other curls upward, lowers into an extension, then returns right and rises as the raised hand also climbs rightward with its elbow drawn in."
+        },
+        {
+          "node_id": "n9",
+          "status": "source_supported",
+          "source_quote": "That raised arm folds rightward and descends, opens back left and tucks again while the other curls upward, lowers into an extension, then returns right and rises as the raised hand also climbs rightward with its elbow drawn in."
+        }
+      ],
+      "edges": [
+        {
+          "source": "n0",
+          "target": "n1",
+          "relation": "before",
+          "status": "source_supported"
+        },
+        {
+          "source": "n0",
+          "target": "n1",
+          "relation": "concurrent",
+          "status": "incorrect"
+        },
+        {
+          "source": "n0",
+          "target": "n2",
+          "relation": "before",
+          "status": "source_supported"
+        },
+        {
+          "source": "n1",
+          "target": "n2",
+          "relation": "concurrent",
+          "status": "source_supported"
+        },
+        {
+          "source": "n8",
+          "target": "n9",
+          "relation": "before",
+          "status": "source_supported"
+        }
+      ],
+      "missed_or_incompletely_represented_explicit_clauses": [
+        {
+          "source_quote": "before descending and opening",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "the second hand reverses left and lifts",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "That raised arm folds rightward and descends",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "opens back left and tucks again",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        },
+        {
+          "source_quote": "its elbow drawn in",
+          "scope": "supported named body-part fact or unambiguous same-subject continuation; compound clauses not split into artificial count"
+        }
+      ]
+    }
+  ]
+}

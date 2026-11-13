@@ -1,0 +1,76 @@
+{
+  "methods": {
+    "audio-flamingo3": {
+      "registered": 384,
+      "evaluable": 383,
+      "statuses": {
+        "computed": 383,
+        "generation_not_evaluable": 1
+      },
+      "mean_cosine": 0.149916182036266,
+      "mean_matching_minus_other": 0.00688893194541374,
+      "retrieval_top1_tie_fractional": 0
+    },
+    "moss-audio": {
+      "registered": 384,
+      "evaluable": 384,
+      "statuses": {
+        "computed": 384
+      },
+      "mean_cosine": 0.21026774136407766,
+      "mean_matching_minus_other": 0.02275222126384809,
+      "retrieval_top1_tie_fractional": 0.013020833333333334
+    },
+    "moss-music": {
+      "registered": 384,
+      "evaluable": 384,
+      "statuses": {
+        "computed": 384
+      },
+      "mean_cosine": 0.18351506817513533,
+      "mean_matching_minus_other": 0.014183887421647038,
+      "retrieval_top1_tie_fractional": 0.0078125
+    },
+    "music-flamingo": {
+      "registered": 384,
+      "evaluable": 381,
+      "statuses": {
+        "computed": 381,
+        "text_overflow_not_truncated": 3
+      },
+      "mean_cosine": 0.17445316407560638,
+      "mean_matching_minus_other": 0.02490166710778885,
+      "retrieval_top1_tie_fractional": 0.007874015748031496
+    },
+    "qwen25-omni": {
+      "registered": 384,
+      "evaluable": 383,
+      "statuses": {
+        "computed": 383,
+        "generation_not_evaluable": 1
+      },
+      "mean_cosine": 0.14437934335481678,
+      "mean_matching_minus_other": 0.013122038597207002,
+      "retrieval_top1_tie_fractional": 0.005221932114882507
+    },
+    "qwen3-omni-instruct": {
+      "registered": 384,
+      "evaluable": 384,
+      "statuses": {
+        "computed": 384
+      },
+      "mean_cosine": 0.08938282044618973,
+      "mean_matching_minus_other": 0.019353629755945196,
+      "retrieval_top1_tie_fractional": 0.010416666666666666
+    }
+  },
+  "scope": "generic pretrained audio-text embedding agreement; no evidence of dance-specific calibration or motion synchronization",
+  "model": "/opt/music_action_runs/20261113_e2_metrics_v1/models/clap-htsat-unfused",
+  "non_generative": true,
+  "source_audio_unchanged": true,
+  "native_processor_padding": "repeatpad to10s, internal only, original5.0625s retained",
+  "silent_text_truncation": false,
+  "audio_pool_size": 384,
+  "similar_songs_unverified": true,
+  "quality_metric_validated": false
+}

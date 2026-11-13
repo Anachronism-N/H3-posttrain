@@ -408,3 +408,32 @@ def test_final_outcome_categories_keep_controls_separate(tmp_path,monkeypatch):
  assert len(result['category_summaries'])==2
  assert all(s['registered_category']=='body_preservation' and s['registered_states']==2 and s['model_pass']==1 and s['formal_success_rate'] is None for s in result['category_summaries'])
  assert all(r['registered_category']=='body_preservation' for r in result['rows'])
+
+
+def test_final_outcome_decoder_quotes_bind_each_event_and_side_without_labels():
+ from choreobench.edit_study import edit_outcome_request
+ from choreobench.edit_authoring import bind_authoring
+ from test_choreobench_edit_authoring import material as task_material
+ import json
+ slot,before,answer=task_material();before["events"][0]["end"]//=2
+ neighbor=copy.deepcopy(before["events"][0]);neighbor.update(event_id="untouched-neighbor",start=neighbor["end"],end=before["num_samples"],action="Begin seated. Then rise.")
+ before["events"].append(neighbor)
+ task=bind_authoring(slot,before,answer,model_id="author")["task"];after=copy.deepcopy(before);after["events"][0]["action"]="Step left while both arms sweep low."
+ request=edit_outcome_request(task,before,after);payload=json.loads(request["messages"][-1]["content"])
+ assert set(payload)=={"instruction","target_event_id","source_events","final_events","sample_rate","unchanged_original"}
+ for name,dimension in request["response_schema"]["properties"].items():
+  instructions=dimension["properties"]["instruction_quote"]["enum"]
+  assert instructions[0]=="" and all(q in task["instruction"] and len(q)<=500 for q in instructions)
+  assert dimension["properties"]["status"]["enum"]==["pass","fail","unknown"]
+  for side,plan in [("source_quotes",before),("final_quotes",after)]:
+   actions={e["event_id"]:e["action"] for e in plan["events"]}
+   branches=dimension["properties"][side]["items"]["anyOf"]
+   assert len(branches)==2
+   for branch in branches:
+    ids=branch["properties"]["event_id"]["enum"];assert len(ids)==1 and ids[0] in actions
+    quotes=branch["properties"]["quote"]["enum"]
+    assert quotes and all(q in actions[ids[0]] and 0<len(q)<=300 for q in quotes)
+   target=payload["target_event_id"]
+   target_branch=next(b for b in branches if b["properties"]["event_id"]["enum"]==[target])
+   wrong=after["events"][0]["action"] if side=="source_quotes" else before["events"][0]["action"]
+   assert wrong not in target_branch["properties"]["quote"]["enum"]

@@ -446,7 +446,7 @@ A recording-copy screen freezes its threshold using gain/AAC/large-offset transf
 
 The final editing-outcome reviewer binds the original paired-study contract, authored task, complete editor journals, before score and actual submitted/abstained final score. Missing, rejected and failed cells remain in the original denominator; no hypothetical repair or replacement author task is evaluated. Target achievement, protected motion facts and neighboring/concurrent textual compatibility require source/final quotations and retain unknown. The separately queued 96-cell review uses a checkpoint different from the editor, but its decisions remain model opinions rather than human or musical truth. No final outcome success count is reported before actual execution.
 
-### 6.22 Final-state judge counterexample and evidence coverage (2026-11-13)
+### 6.23 Final-state judge counterexample and evidence coverage (2026-11-13)
 
 A separate text-only model review examines the retained three-source editing pilot without rerunning the author or editors. Six registered policy slots include two author failures and four returned edits; the two policies produced identical final states on each available source. Consequently only two distinct final-state requests are dispatched, not four independent judgments. The reviewer declares target/protection/boundary pass for the seated-to-crouch edit and fails exact instruction-quote binding on the other source.
 
@@ -455,6 +455,14 @@ Direct inspection refutes the first boundary pass: the target ends in a low crou
 Three separate synthetic text controls with constrained exact quotations all return protocol-valid records but leave clarity and temporal organization unknown, including an explicit planted-feet versus repeated-jumping contradiction. The quotation fix therefore improves protocol support, not demonstrated discrimination. Original 576-item test reviews are retained, and no validated text ranking is claimed.
 
 A CPU recording-copy screen covers 348 held-out/development recording pairs after threshold calibration on retained gain/AAC and large-offset controls, yielding zero candidate pairs and zero unknown comparisons. Its scope is recording-copy sensitivity for those transformations, not musical-composition independence, cover-version exclusion, pretraining overlap or a release-certified split. The broader same-song/near-duplicate requirement remains open.
+
+### 6.24 Fixed-text music substitutions and unresolved calibration
+
+All 36 native waveform judgments finish and reconstruct without resampling: 30 protocol-valid and six exact-quotation failures, at 18,309 input and 27,871 output tokens. Of the 24 original-versus-substitution pairs, 17 have two rated records: eight scores change and nine remain unchanged; seven pairs are unresolved. Feature-near substitutions yield five changed/four unchanged/three unresolved pairs; feature-far substitutions yield three/five/four. Directions are mixed, including large increases and decreases for both donor types. This establishes partial dependence on supplied audio, not correctness of correspondence, ordinal calibration or a preference ranking. Acoustic donor distance is not an independently verified choreography-fit label.
+
+The same three text controls, evaluated with the generation checkpoint as a cross-check, also all yield unknown primary dimensions. Two checkpoints describing contradictions without assigning low quality do not validate the scoring rubric. A stricter original-final editing pilot has two unique final texts and four identical-policy slots, plus two author-failure slots; both distinct reviews fail evidence requirements (incomplete boundary context citations and an invented instruction quotation). No joint success is inferred or substituted. Formal whole-song and editing evaluations remain gated on actual complete artifacts.
+
+The subsequent event-bound quotation protocol still does not certify semantic correctness. Of two distinct retained final texts, the rock review fails complete-neighbor citation requirements; the acoustic review passes the protocol and all model dimensions. Direct text inspection nevertheless finds an outward final arm pose followed by final stillness with hands near the chest, without a stated transition. The model-positive result and the conflicting assistant inspection are retained separately; identical policy outputs are not independent rater votes. A CPU-only schema/grammar audit also confirms that integer-rated and unknown paths are both accessible, so the text controls' universal abstention is not explained by a forced-null schema.
 
 ## 7. Discussion and Limitations
 

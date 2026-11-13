@@ -40,6 +40,22 @@ PROMPT = (
 )
 
 
+def quotation_choices(source, max_characters=400):
+    """Return exact text excerpts, never standalone schedule-clock fragments."""
+    if not isinstance(source, str) or type(max_characters) is not int or max_characters <= 0:
+        raise ValueError("Quotation source and positive character budget required")
+    choices = []
+    for line in source.splitlines():
+        line = re.sub(r"^\s*\[\s*\d+(?:\.\d+)?\s*-\s*\d+(?:\.\d+)?\s*s?\s*\]\s*", "", line)
+        for match in re.finditer(r"\S.*?(?:[.!?](?=\s|$)|$)", line):
+            sentence = match.group().strip()
+            for start in range(0, len(sentence), max_characters):
+                quote = sentence[start:start + max_characters].strip()
+                if quote and quote not in choices:
+                    choices.append(quote)
+    return choices
+
+
 def response_schema(reference_only=False):
     rating = dict(type="object", additionalProperties=False,
         required=["status", "score", "reason", "text_quotes", "reference_quotes"], properties=dict(
@@ -72,13 +88,7 @@ def _request(item, seed, budget):
         "Do not re-score main choreography quality in this phase." if reference_only else "")
     schema = response_schema(reference_only)
     for field, source in (("text_quotes", item["text"]), ("reference_quotes", item["reference_text"] or "")):
-        quotes = []
-        for match in re.finditer(r"[^.!?\n]+[.!?]?", source):
-            sentence = match.group().strip()
-            for start in range(0, len(sentence), 400):
-                quote = sentence[start:start + 400].strip()
-                if quote and quote not in quotes:
-                    quotes.append(quote)
+        quotes = quotation_choices(source)
         for dimension, rating in schema["properties"].items():
             array = rating["properties"][field]
             if array["maxItems"] == 0:

@@ -363,3 +363,24 @@ def test_reference_only_quote_inventory_keeps_quality_dimensions_na():
     for field, source in [("text_quotes", target["text"]), ("reference_quotes", target["reference_text"])]:
         assert all(q in source for q in properties["reference_fidelity"]["properties"][field]["items"]["enum"])
     assert module.parse_review(target, json.dumps(reference_answer()), "judge", "identity")["reference_fidelity"]["score"] == 4
+
+
+def test_quotation_choices_strip_schedule_prefix_and_preserve_decimals():
+    source = "[0.000-3.250 s] Hold for 1.5 seconds while arms circle.\n[3.250-5.062 s] Step left, then pause."
+    choices = module.quotation_choices(source, 300)
+    assert choices == ["Hold for 1.5 seconds while arms circle.", "Step left, then pause."]
+    assert all(q in source for q in choices)
+    assert "[0." not in choices and not any(q.startswith("[") for q in choices)
+    assert module.quotation_choices("Use image-space motion (e.g., wrist leftward), not anatomical side.") == ["Use image-space motion (e.g., wrist leftward), not anatomical side."]
+    assert module.quotation_choices("[0.000-5.062 s] ") == []
+    item = make_review_item("timed-quotes", "source", "hidden", source, duration_seconds=5.0625)
+    schema = module._request(item, 42, 1800)["response_schema"]
+    for dimension in module.TEXT_DIMENSIONS[:2]:
+        menu = schema["properties"][dimension]["properties"]["text_quotes"]["items"]["enum"]
+        assert menu == choices
+
+
+@pytest.mark.parametrize("limit", [0, -1, True])
+def test_quotation_choices_reject_invalid_character_limit(limit):
+    with pytest.raises(ValueError):
+        module.quotation_choices("Move.", limit)

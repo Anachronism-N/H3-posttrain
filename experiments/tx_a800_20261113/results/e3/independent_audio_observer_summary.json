@@ -1,0 +1,18 @@
+{
+  "platform": "TX A800 cluster",
+  "registered": 1127,
+  "unique_rows": 1127,
+  "source_songs": 24,
+  "statuses": {
+    "valid": 1126,
+    "unknown": 1
+  },
+  "observations_sha256": "934ac2f5a3185911dec3e1622fc18dcd260328a646b6f22bbbc3db616f0790a6",
+  "items_sha256": "8b38086abc2d159157aabf2948d19ac517a8e833a8ae0879d4d2efa0ed52ae4b",
+  "bindings_sha256": "2103cc0ae71f7fb19dbdd4764b39dd36d221547c2dfb11f39be3685535fd7304",
+  "candidate_isolation": true,
+  "actual_audio": true,
+  "human": false,
+  "semantic_observation_truth_validated": false,
+  "new_audio_model_calls": 0
+}

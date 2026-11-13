@@ -493,6 +493,11 @@
       "sha256": "0752f090778f8625887b5dd429ca624f133694cf80444023a55ce1cc140a52b5",
       "size_bytes": 4337,
       "role": "exact saved recovery module used for completed CPU semantic matching"
+    },
+    "results/e3/independent_audio_observer_summary.json": {
+      "sha256": "af9f63678eb1cb61d1579a73e87b8dd658de4dd3beef9668d3ca5c88263437f7",
+      "size_bytes": 580,
+      "role": "verified complete1127 independent original audio observations;1126 valid and1 unknown; semantic truth not certified"
     }
   },
   "verification": {
@@ -504,5 +509,6 @@
     "system_python_first_test_missing_soundfile": true,
     "tests_not_experiment_or_quality_acceptance": true,
     "private_mapping_and_full_raw_not_uploaded": true
-  }
+  },
+  "incremental_audio_verification_complete": true
 }

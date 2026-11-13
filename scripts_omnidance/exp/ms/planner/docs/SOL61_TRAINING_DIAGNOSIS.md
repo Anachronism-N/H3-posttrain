@@ -332,6 +332,60 @@ information, and the weakest body group jumps 9 points. 1,000- and 1,527-step
 checkpoints of the same run are being audited to see whether it keeps improving
 or starts to collapse the way the unweighted run did after ~1,000 steps.
 
+## 8. Frozen test384 (TX assets, rerun on L20Z)
+
+Assets: `avagelion/dance-data@fc1ef0a` → `benchmarks/tx_a800_20261113`,
+384/384 WAV sha256 verified, references supplied, id and source-group leakage
+check PASS (all 384 are `test`, zero train/val overlap). Generation used the
+frozen contract (audio-only turn, temperature 0.7, top_p 0.9, top_k 20,
+num_beams 1, repetition 1.05, no_repeat_ngram 4, explicit chat EOS,
+per-case seed). **384/384 succeeded, every one stopped on EOS, no truncation.**
+
+SFT `sol61_full_20261112_161243/checkpoint-0001000`:
+
+| metric | value |
+| --- | --- |
+| sacrebleu corpus BLEU-4 | 8.98 (0-100 scale; signature `tok:13a, smooth:exp`) |
+| sentence BLEU-4 mean | 7.77 |
+| ROUGE-L F1 | 0.3050 |
+| BERTScore F1 (roberta-large, 17 layers, no idf/rescale) | 0.8975 |
+| CLAP mean cosine | -0.0354 |
+| CLAP on the *frozen references* (control) | -0.0318 |
+| ΔCLAP (real vs zeroed audio) | +0.0026 |
+
+Six baselines, same 384 cases, same harness on L20Z (TX numbers in brackets):
+
+| method | evaluable | corpus BLEU-4 | ROUGE-L | BERTScore F1 |
+| --- | --- | --- | --- | --- |
+| **SFT @1000** | 384 | **8.98** | **0.3050** | **0.8975** |
+| music-flamingo | 384 | 0.8765 (TX 0.8767) | 0.1309 (0.1577) | 0.8238 (0.8260) |
+| qwen3-omni-instruct | 384 | 0.3803 (0.8272) | 0.1128 (0.1675) | 0.7846 (0.8363) |
+| qwen25-omni | 253 | 0.1778 (0.6111) | 0.0821 (0.1499) | 0.8293 (0.8260) |
+| audio-flamingo3 | 384 | 0.1684 (0.0223) | 0.0798 (0.0851) | 0.8232 (0.8211) |
+| moss-music | pending | — | — | — |
+| moss-audio | pending | — | — | — |
+
+Reading:
+
+- **Cross-cluster reproduction.** music-flamingo matches TX to 4 decimals on
+  BLEU-4 (0.8765 vs 0.8767) and within 0.03 on ROUGE-L/BERTScore. The harness
+  is therefore comparable across the two clusters; where numbers differ
+  (qwen3, qwen25) the difference is in generation (prompt/decoding), not scoring.
+- **The six-baseline BLEU scale is raw sacrebleu 0-100**, which is why TX's
+  table shows 0.87 rather than 87. Nothing in the TX table was mis-scaled; the
+  values are simply near-zero BLEU.
+- **SFT is 10x higher on BLEU-4 and 2-4x higher on ROUGE-L** than any baseline,
+  and ~7 points higher on BERTScore. It is also the only method with 384/384
+  evaluable rows in our rerun.
+- **CLAP does not discriminate on this benchmark.** The frozen references score
+  -0.0318 and our captions -0.0354 through the identical pipeline, i.e. the
+  metric is at chance for 5.06 s windows and long dance prose. ΔCLAP is
+  therefore reported with that caveat and is not used to rank methods.
+- The three rubric dimensions TX defines (strict action clarity, temporal
+  organisation, music evidence fit) are reviewer declarations in
+  `captionlab/choreo_quality.py`; they cannot be computed and are exported for
+  TX scoring rather than substituted.
+
 ## 6. Status summary
 
 Done and measured:

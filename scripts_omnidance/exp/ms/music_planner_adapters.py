@@ -310,7 +310,9 @@ class PlannerAdapter:
         """Mark target-token positions that spell a leg-part word."""
         if LEG_WEIGHT <= 1.0:
             return None
-        spans = [m.span() for m in LEG_PART.finditer(text)]
+        # weight the whole clause that names a leg part: the words around it
+        # carry the action, and single-token weighting moves <1% of the loss
+        spans = [m.span() for m in re.finditer(r'[^.;,]+', text) if LEG_PART.search(m.group(0))]
         if not spans:
             return None
         mask = torch.zeros(len(ids), dtype=torch.bool)
@@ -557,7 +559,7 @@ def configure_trainable(adapter, rank=32, alpha=64, audio_last_n=4):
 
 def load_planner_adapter(family, model_path, checkpoint=None, device=None,
                          dtype=torch.bfloat16, max_length=8192, lora_rank=None,
-                         lora_alpha=64, audio_last_n=4):
+                         lora_alpha=64, audio_last_n=4, device_map=None):
     if family not in FAMILIES:
         raise ValueError(f'Unknown planner family: {family}')
     path = Path(model_path).expanduser().resolve()
@@ -577,11 +579,13 @@ def load_planner_adapter(family, model_path, checkpoint=None, device=None,
     else:
         # Load only the native thinker subtree: no talker/code2wav parameters or execution.
         from transformers import Qwen3OmniMoeThinkerForConditionalGeneration as cls
+    if device_map is not None:
+        model_kwargs['device_map'] = device_map
     model = cls.from_pretrained(path, local_files_only=True, dtype=dtype, **model_kwargs)
     for parameter in model.parameters():
         if parameter.is_floating_point():
             _cast_parameter_dtype(parameter, dtype)
-    if device is not None:
+    if device is not None and device_map is None:
         model = model.to(device)
     adapter = PlannerAdapter(family, model, processor, max_length=max_length)
     if lora_rank is not None:

@@ -351,7 +351,34 @@ All rows decoded greedily unless stated. `run = sol61_e2_20261113_114545`.
 | Qwen2.5-Omni-7B | 20 | 0.022 | 0.204 | 1.38 | 0.25 | 4 | 0.000 | 0.000 | 0.026 | 0.000 | 0.075 | 0.096 |
 | Music-Flamingo-2601 | 20 | 0.129 | 0.074 | 1.34 | 0.66 | 7 | 0.108 | 0.000 | 0.082 | 0.000 | 0.129 | 0.158 |
 | Audio-Flamingo-3 | 20 | 0.017 | 0.093 | 1.37 | 0.22 | 1 | 0.000 | 0.050 | 0.007 | 0.000 | 0.063 | 0.070 |
-| MOSS-Music-8B-Instruct | 0 | — | — | — | — | — | — | — | — | — | — | — |
+| MOSS-Music-8B-Instruct | 20 | 0.151 | 0.426 | 1.54 | 1.16 | 8 | 0.207 | 0.100 | 0.114 | 0.000 | 0.111 | 0.148 |
+
+### 7.2 MOSS-Music-8B under transformers 5.18 (three fixes)
+
+The published model ships for transformers 4.x. Running it unchanged on the
+platform venv (`transformers 5.18.0`) fails three separate ways; all three are
+fixed in the harness, no model weights are modified:
+
+1. **Attention signature.** `WhisperEncoderLayer.forward` now goes through the
+   new attention interface, so the encoder's tensors hit
+   `matmul: size of tensor a (64) must match tensor b (20)`. The harness
+   re-implements the layer against the module's own `q/k/v/out_proj`, head count
+   and head dim, so it does not depend on transformers internals.
+2. **Multi-device sharding.** `device_map='auto'` spreads the encoder and the
+   embedding layer across GPUs and `masked_scatter_` then raises
+   `source is on cuda:4, other tensors on cuda:0`. Load with
+   `device_map={'': 0}`; the 8B model fits a single 79 GB L20Z.
+3. **Audio re-injection on decode steps.** `prepare_inputs_for_generation`
+   only clears `audio_data` when `cache_position[0] > 0`, which transformers 5.x
+   does not always supply, so the appended token is forward-ed with
+   `[1, T+1]` embeddings against a `[1, T]` audio mask. Both `forward` and
+   `prepare_inputs_for_generation` are wrapped to drop audio inputs whenever the
+   sequence length and the audio mask length disagree (the audio is already in
+   the KV cache at that point). Wrapping with `functools.wraps` matters:
+   `generate` validates kwargs against the forward signature.
+
+After the fixes the encoder output is finite (`absmean` 0.48) and captions are
+coherent; the harness is `sol61-e2-moss-job/e2_baselines.py`.
 
 Reading, with the protocol's caveat that the reference is one instantiation and
 low overlap is not automatically low quality:
@@ -368,9 +395,10 @@ low overlap is not automatically low quality:
   Music-Flamingo-2601 (0.66 length, 0.074 body recall — almost no body nouns)
   are not usable planners as wired here: their prompts/audio adaptation still
   need work, so treat them as lower bounds on those models' ability.
-- MOSS-Music still fails at generation: `Whisper` cross-attention
-  `size of tensor a (64) must match tensor b (20)`, i.e. the audio features and
-  the decoder placeholder count disagree. Not a quality result — a wiring bug.
+- MOSS-Music now runs after three harness fixes (see 7.2). It is the second-best
+  baseline on body-part recall (0.426) but writes 1.54x the reference density
+  with 0.207 self-repetition and 10% captions naming body parts with no audio
+  evidence; action recall is 0.151.
 - BLEU/ROUGE/F1 are reference-overlap metrics and say almost nothing about
   planner quality (section 4.4); they are reported because they were requested,
   not because they select a checkpoint.

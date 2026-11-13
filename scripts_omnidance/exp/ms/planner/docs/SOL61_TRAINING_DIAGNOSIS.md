@@ -306,6 +306,32 @@ Findings:
 **Deliverable decode config:** `do_sample=True, temperature=0.7, top_p=0.9,
 repetition_penalty=1.05, no_repeat_ngram_size=4, num_beams=1`.
 
+## 5.7 Clause-level leg weighting is the first change that beats the baseline
+
+`sol61leg3`: identical recipe to the baseline run (1e-5, 32 GPU, accum 4,
+global batch 128, 1 epoch) plus `PLANNER_LEG_WEIGHT=1.5`, which multiplies the CE
+of every clause that names a leg part (`leg/knee/thigh/shin/calf/hamstring/quad`)
+by 1.5. Token-level weighting was tried first and rejected: leg words are <0.5%
+of assistant tokens, so it moved almost none of the loss.
+
+80 SHA-ordered val cases, temperature 0.7:
+
+| checkpoint | action | body | legs | density | length | openings | entropy | BLEU-1 | BLEU-4 | ROUGE-L | tok-F1 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| baseline @1,000 | 0.871 | 0.945 | 0.787 | 1.02 | 0.93 | 54 | 4.80 | 0.516 | 0.055 | 0.290 | 0.594 |
+| **leg-weighted @500** | **0.880** | **0.968** | **0.875** | 0.98 | **1.04** | **57** | **5.01** | **0.535** | **0.072** | 0.292 | **0.598** |
+
+At half the training the weighted run is better on every primary and secondary
+metric, and leg coverage moves from 0.787 to 0.875 mentions (reference 0.993).
+The length ratio also stops undershooting (0.93 → 1.04 against a reference of
+1.00), which the plain run never fixed.
+
+Reading: the leg deficit was a loss-shaping problem, not a data or capacity
+problem — the same rows, one extra weight on the clauses that carry the
+information, and the weakest body group jumps 9 points. 1,000- and 1,527-step
+checkpoints of the same run are being audited to see whether it keeps improving
+or starts to collapse the way the unweighted run did after ~1,000 steps.
+
 ## 6. Status summary
 
 Done and measured:

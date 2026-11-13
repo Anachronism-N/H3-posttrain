@@ -407,20 +407,26 @@ Six baselines, same 384 cases, same harness on L20Z (TX numbers in brackets):
 
 | method | evaluable | corpus BLEU-4 | ROUGE-L | BERTScore F1 |
 | --- | --- | --- | --- | --- |
-| **SFT @1000** | 384 | **8.98** | **0.3050** | **0.8975** |
+| **SFT v1 @1000, rp 1.05** | 384 | **8.98** | **0.3050** | **0.8975** |
+| **SFT v3 @1000, rp 1.05** | 384 | **9.66** | **0.3087** | 0.8974 |
 | music-flamingo | 384 | 0.8765 (TX 0.8767) | 0.1309 (0.1577) | 0.8238 (0.8260) |
-| qwen3-omni-instruct | 384 | 0.3803 (0.8272) | 0.1128 (0.1675) | 0.7846 (0.8363) |
-| qwen25-omni | 253 | 0.1778 (0.6111) | 0.0821 (0.1499) | 0.8293 (0.8260) |
-| audio-flamingo3 | 384 | 0.1684 (0.0223) | 0.0798 (0.0851) | 0.8232 (0.8211) |
-| moss-music | pending | — | — | — |
-| moss-audio | pending | — | — | — |
+| moss-audio | 384 | 0.7793 (TX 0.8044) | 0.1617 (0.1648) | 0.8230 (0.8289) |
+| qwen3-omni-instruct | 384 | 0.3803 (TX 0.8272) | 0.1128 (0.1675) | 0.7846 (0.8363) |
+| moss-music | 384 | 0.2177 (TX 0.6873) | 0.1125 (0.1537) | 0.8103 (0.8228) |
+| qwen25-omni | 253 | 0.1778 (TX 0.6111) | 0.0821 (0.1499) | 0.8293 (0.8260) |
+| audio-flamingo3 | 384 | 0.1684 (TX 0.0223) | 0.0798 (0.0851) | 0.8232 (0.8211) |
 
 Reading:
 
-- **Cross-cluster reproduction.** music-flamingo matches TX to 4 decimals on
-  BLEU-4 (0.8765 vs 0.8767) and within 0.03 on ROUGE-L/BERTScore. The harness
-  is therefore comparable across the two clusters; where numbers differ
-  (qwen3, qwen25) the difference is in generation (prompt/decoding), not scoring.
+- **Cross-cluster reproduction is method-dependent.** The two baselines that are
+  pure audio captioners reproduce TX closely — music-flamingo to 4 decimals on
+  BLEU-4 (0.8765 vs 0.8767), moss-audio within 0.03 (0.7793 vs 0.8044) — and
+  BERTScore agrees within 0.005 for all six. Where BLEU diverges (qwen3 0.3803
+  vs 0.8272, qwen25 0.1778 vs 0.6111, moss-music 0.2177 vs 0.6873) the gap is in
+  how the prompts/decoding were wrapped on L20Z, not in scoring: the scorer is
+  the same code and the same pinned roberta-large snapshot. These three numbers
+  should therefore be treated as L20Z-wrapper lower bounds, not as the TX
+  result.
 - **The six-baseline BLEU scale is raw sacrebleu 0-100**, which is why TX's
   table shows 0.87 rather than 87. Nothing in the TX table was mis-scaled; the
   values are simply near-zero BLEU.

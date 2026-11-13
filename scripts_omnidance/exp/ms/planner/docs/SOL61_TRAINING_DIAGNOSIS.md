@@ -194,6 +194,31 @@ Practical consequence: any future sol61 run should start at `lora_lr=1e-4`, and
 `1e-5` results should be treated as undertrained rather than as a converged
 reference.
 
+## 5.4 Second epoch contributes almost nothing (measured)
+
+`sol61_full_20261113_010434` ran the full 2-epoch budget (3,054 updates,
+8 nodes x 8 GPUs, global batch 128 via accum 2):
+
+| step | val NLL |
+| --- | --- |
+| 1,527 (end of epoch 1) | 1.4851 |
+| 2,100 | 1.4749 |
+| 2,400 | 1.4697 |
+| 2,700 | 1.4687 |
+| 2,900 | 1.4683 |
+| 3,054 (end of epoch 2) | **1.4683** |
+
+The second epoch lowers validation NLL by 0.0168 in total and the last 350
+updates change it by 0.0001. Under `lora_lr=1e-5` the run is effectively
+converged at the end of epoch 1. For comparison the 1e-4 run reaches 1.4598
+after only 400 updates, i.e. better than this 3,054-update run with 7.6x less
+training.
+
+Practical conclusion: do not spend compute on additional epochs at 1e-5. Either
+raise the learning rate (measured 7x sample-efficiency gain) or invest in data /
+decoding changes. Any claim that the model needs "more epochs" should be checked
+against this table first.
+
 ## 6. In flight
 
 - `sol61-2ep-64gpu` (`sol61_full_20261113_010434`): 2 epochs, 8 nodes × 8 GPUs,

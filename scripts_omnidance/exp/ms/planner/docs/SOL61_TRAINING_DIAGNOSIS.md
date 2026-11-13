@@ -224,6 +224,27 @@ raise the learning rate (measured 7x sample-efficiency gain) or invest in data /
 decoding changes. Any claim that the model needs "more epochs" should be checked
 against this table first.
 
+## 5.5 Two runs at the same step differ 4x in diversity
+
+Both checkpoints are update 1,527 on the same 80 val cases and the same audit:
+
+| run | GPUs / accum | val NLL | action recall | body recall | opener entropy | top opener | openings |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `sol61_full_20261112_161243` | 32 / 4 | 1.5223 | 0.822 | 0.894 | **2.88** | 0.388 | 14 |
+| `sol61_full_20261113_010434` | 64 / 2 | **1.4851** | 0.812 | 0.904 | **0.70** | 0.838 | 4 |
+
+The 64-GPU run has the *better* validation NLL and the *worse* generation: 84% of
+its captions open with the same phrase (`The dancer lowers and lengthens one
+arm...`), against 39% for the 32-GPU run. Global batch is 128 in both cases, so
+the effective difference is world size and accumulation depth (accum 2 instead of
+4).
+
+This is the third independent demonstration that validation NLL ranks checkpoints
+inversely to generation quality (see 5.2 and 4.4), and it adds a configuration
+caveat: **do not assume a wider launch reproduces the narrower one**. The
+accum-2 path must be re-checked with a generation audit before being used for
+any production run.
+
 ## 6. Status summary
 
 Done and measured:

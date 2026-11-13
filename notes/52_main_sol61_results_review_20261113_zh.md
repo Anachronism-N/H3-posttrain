@@ -1,6 +1,6 @@
 # main 分支训练结果审查与正式实验衔接
 
-审查范围：`main@ff1c23c`（2026-11-13 19:05 +08:00），相对上次记录 `ce4fc96` 新增25个提交；对照 benchmark 分支 `099cbe5` 的 TX A800 归档。已 fetch 两分支，未将 main 的训练改动合并到正在运行的 benchmark。本文替代[上一轮执行计划](51_paper_materials_and_48h_experiment_sprint_20261113_zh.md)中“SFT仍需等待首批结果”的状态判断。
+审查范围：`main@d210dc6`，相对上次记录 `ce4fc96` 新增26个提交；主体审查 `ff1c23c`（2026-11-13 19:05 +08:00）的25个提交后，又补查了MOSS修复增量。对照 benchmark 分支 `099cbe5` 的 TX A800 归档。已 fetch 两分支，未将 main 的训练改动合并到正在运行的 benchmark。本文替代[上一轮执行计划](51_paper_materials_and_48h_experiment_sprint_20261113_zh.md)中“SFT仍需等待首批结果”的状态判断。
 
 结论：main 已报告训练后的5秒 captioner、checkpoint 比较和解码实验，应立即准备加入正式384条评测。新结果支持“训练模型学到了 sol61 的表达方式，解码影响跨样本文字重复”，尚不能证明其音乐编舞质量胜过六个已跑通的通用模型。两分支的试验集、生成配置和指标实现不同，不能拼接分数计算提升。
 
@@ -17,6 +17,10 @@
 | harness有没有新结果 | 本次main增量集中在训练、局部评测和文档 | 没有新增完整E3/E4质量表，不能用这批局部结果替代整曲结论 |
 
 来源：[训练诊断](https://github.com/Anachronism-N/H3-posttrain/blob/ff1c23c/scripts_omnidance/exp/ms/planner/docs/SOL61_TRAINING_DIAGNOSIS.md)、[v1交付说明](https://github.com/Anachronism-N/H3-posttrain/blob/ff1c23c/scripts_omnidance/exp/ms/planner/docs/SOL61_PLANNER_V1_DELIVERY.md)。
+
+最新增量 `d210dc6` 已将MOSS-Music从生成失败更新为20条结果：动作词汇召回0.151、身体部位词汇召回0.426、长度比1.16、分句密度比1.54、self-repetition 0.207、固定黑名单命中率0.100。不能继续说main上的MOSS没有结果，也不能将该黑名单10%命中解读为“10%的编舞存在身体幻觉”。MOSS-Audio仍未列入这组pilot。
+
+新增 [MOSS runner](https://github.com/Anachronism-N/H3-posttrain/blob/d210dc6/scripts_omnidance/exp/ms/planner/eval_harness/e2_baselines.py)修复了原生prompt、单GPU加载、Whisper层兼容与解码音频重复注入，且采用SHA排序，与SFT的选样规则一致。它重写了Whisper forward并按mask长度不匹配清除音频，因此“输出有限且句子通顺”只证明能运行，不能替代与已验证原生路径的数值/音频条件等价检查；本轮不因它可运行而替换已完成的384条MOSS结果。[新增结果与修复说明](https://github.com/Anachronism-N/H3-posttrain/blob/d210dc6/scripts_omnidance/exp/ms/planner/docs/SOL61_TRAINING_DIAGNOSIS.md#L337)。
 
 ## 2 值得保留的解码结果
 
@@ -41,6 +45,8 @@
 ### P1 20条样本对齐声明不能由当前脚本复现
 
 文档称基线使用 `sha256('many:'+id)` 排序后的前20条，和80条SFT的前缀一致。但[baseline runner](https://github.com/Anachronism-N/H3-posttrain/blob/ff1c23c/scripts_omnidance/exp/ms/planner/jobs/e2-baselines-job/e2_baselines.py#L124)按原始ID排序；[SFT evaluator](https://github.com/Anachronism-N/H3-posttrain/blob/ff1c23c/scripts_omnidance/exp/ms/planner/eval/eval_many.py#L72)按SHA排序。服务器可能使用了未提交的版本，因此结论是“待raw ID核验”，不是声称历史20条必然不同。
+
+`d210dc6` 新增的MOSS专用runner已按SHA排序，修复了该模型新执行路径的选样规则；旧jobs runner没有修改，其他四模型历史结果的ID绑定仍需核验，不能因新增一个正确runner就视为整表对齐已获证明。
 
 ### P1 词汇召回不能叫动作正确性，文档指标与实现也不一致
 
@@ -83,7 +89,7 @@
 |---|---|---|
 | 样本 | 20/80条val，曾用于选checkpoint/解码 | 冻结384条test |
 | 数据池 | 过滤后217,373条：195,367/10,938/11,068 | 原sol61盘点220,667条：198,315/11,098/11,254 |
-| 基线 | 4个模型有表内结果；MOSS-Music失败，MOSS-Audio未列 | 六模型共2,304注册输出 |
+| 基线 | d210dc6后5个模型有表内结果，包含MOSS-Music；MOSS-Audio未列 | 六模型共2,304注册输出 |
 | 提示 | SFT原生audio-only；通用模型另用短任务提示 | 固定任务合同与已跑通的模型原生适配 |
 | 解码 | 通用模型greedy，默认512上限；SFT报告2048和T=0.7 | 冻结本地基线采样与1024预算，具体以各行生成合同为准 |
 | BLEU | 自定义平均sentence BLEU，0–1，正则分词 | corpus SacreBLEU，0–100，13a分词 |
@@ -94,7 +100,7 @@
 
 不同BLEU实现不能仅乘100后横向比较。硬件差异要求时间/吞吐分层报告，但不是禁止内容质量比较的理由；只有确认同样本、音频、参考、模型身份和评测协议后，才有共同质量比较。无需为统一显卡而重跑已成功的六模型。
 
-main的20条报告SFT词汇召回0.877，Qwen3 0.224；这不是与先前Qwen3参考指标较高或MOSS-Music音乐证据分较高发生矛盾：新模型、新样本、新维度、新适配混在了一起。MOSS接线失败更不构成其质量低的证据。
+main的20条报告SFT词汇召回0.877，Qwen3 0.224，新补MOSS-Music为0.151；这不是与先前Qwen3参考指标较高或MOSS-Music音乐证据分较高发生矛盾：新模型、新样本、新维度、新适配混在了一起。MOSS现已跑通，其早期接线失败不构成质量低的证据，新词汇分也不能直接推翻原384条音乐适配结果。
 
 ## 5 一两天内的更新执行顺序
 

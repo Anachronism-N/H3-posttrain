@@ -3,6 +3,13 @@
 Status 2026-11-13. Everything below is measured, not projected; items that are
 still running say so.
 
+> **Hardware:** every training and evaluation number in this document was
+> produced on the Xingyun (Nebula) L-card cluster — Alibaba `L20Z` GPUs
+> (79 GB each), via `nebula-cli` on `future_hz_qwenvideo` / `futurelab_vlm_caption`.
+> Decoding there runs BF16 with the same package set (`torch 2.8`, transformers
+> from the shared `venv_h3` tarball). Numbers from other hardware are not
+> comparable and are not mixed in.
+
 ## 1. Data
 
 `sol61-v1`: 217,373 rows from `avagelion/dance-data` → `sol61_captions`
@@ -288,27 +295,45 @@ Weights for six E2 baselines are downloaded and mirrored to
 The probe harness is `sol61-e2-baselines-job/e2_baselines.py`; the first-pass
 comparison runner is the same directory's `entry.py`.
 
-### 7.1 First-pass comparison (20 shared val cases)
+### 7.1 Aligned comparison on 20 identical val cases
 
-| model | rows | action recall | body recall | density | length | opener entropy |
-| --- | --- | --- | --- | --- | --- | --- |
-| SFT captioner @1000 | 20 | **0.837** | **0.913** | 1.05 | 0.87 | **3.04** |
-| Qwen3-Omni-30B-Instruct | 20 | 0.198 | 0.704 | 0.72 | 1.21 | 0.00 |
-| Music-Flamingo-2601 | 20 | 0.110 | 0.093 | 1.27 | 0.84 | 1.69 |
-| Qwen2.5-Omni-7B | 20 | 0.022 | 0.130 | 1.46 | 0.19 | 0.00 |
-| MOSS-Music-8B | 0 | — | — | — | — | — |
+Case set: the first 20 ids after the audit's SHA ordering
+(`sha256('many:' + id)`), i.e. a strict prefix of the 80-case audit set, so the
+SFT rows here are the same generations as section 5.2 restricted to those ids.
+All rows decoded greedily unless stated. `run = sol61_e2_20261113_114545`.
+
+| model | rows | actRec | bodyR | densRat | lenRat | openings | selfRp | halluc | BLEU-1 | BLEU-4 | ROUGE-L | tok-F1 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| reference (upper bound) | 20 | 1.000 | 1.000 | 1.00 | 1.00 | 17 | 0.000 | 0.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| **SFT captioner @1000 (temp 0.7)** | 20 | **0.877** | **0.944** | 1.06 | 0.82 | **17** | 0.000 | 0.000 | 0.476 | 0.052 | 0.286 | 0.580 |
+| **SFT captioner @1000 (greedy)** | 20 | 0.804 | 0.907 | 1.12 | 0.79 | 10 | 0.000 | 0.000 | 0.464 | 0.040 | 0.293 | 0.579 |
+| SFT captioner @1000 (2nd epoch, greedy) | 20 | 0.827 | 0.907 | 1.11 | 0.80 | 9 | 0.000 | 0.000 | **0.489** | **0.070** | **0.302** | **0.594** |
+| Qwen3-Omni-30B-A3B-Instruct | 20 | 0.224 | 0.722 | 0.89 | 1.18 | 2 | 0.394 | 0.000 | 0.134 | 0.000 | 0.104 | 0.157 |
+| Qwen2.5-Omni-7B | 20 | 0.022 | 0.204 | 1.38 | 0.25 | 4 | 0.000 | 0.000 | 0.026 | 0.000 | 0.075 | 0.096 |
+| Music-Flamingo-2601 | 20 | 0.129 | 0.074 | 1.34 | 0.66 | 7 | 0.108 | 0.000 | 0.082 | 0.000 | 0.129 | 0.158 |
+| Audio-Flamingo-3 | 20 | 0.017 | 0.093 | 1.37 | 0.22 | 1 | 0.000 | 0.050 | 0.007 | 0.000 | 0.063 | 0.070 |
+| MOSS-Music-8B-Instruct | 0 | — | — | — | — | — | — | — | — | — | — | — |
 
 Reading, with the protocol's caveat that the reference is one instantiation and
 low overlap is not automatically low quality:
 
-- The SFT model is 4-38x higher on action recall, i.e. it is the only model
-  inside this dataset's action vocabulary. That is what the task asks for.
-- Qwen3-Omni-Instruct shows richer whole-body vocabulary (lunges, jumps, spins)
-  and a 1.21 length ratio but almost no overlap with the reference wording.
-- Qwen2.5-Omni-7B produces 0.19 of the reference length and 0.022 action recall;
-  its prompt/audio adaptation is still wrong, so it is not a usable baseline yet.
-- MOSS-Music cannot start: `MossMusicProcessor` has no `apply_chat_template`, the
-  loader must build its native prompt via `_build_default_prompt` as the planner
-  adapter already does.
-- These numbers cannot decide "our model is better"; that needs the blinded
-  human review the protocol requires.
+- The SFT planner is 3.6-40x higher on action recall and 1.3-10x higher on body
+  recall than every general audio/omni model. It is the only model inside this
+  dataset's action vocabulary, which is what the task asks for.
+- Qwen3-Omni-Instruct writes fluent, whole-body dance prose (length ratio 1.18)
+  but reuses one opener 60% of the time, self-repeats 0.394 and hits the
+  repetition disqualifier. Its vocabulary is mostly outside the reference's
+  action inventory, so low recall here means "different description of the same
+  audio", not "wrong".
+- Qwen2.5-Omni-7B (0.25 length), Audio-Flamingo-3 (0.22 length) and
+  Music-Flamingo-2601 (0.66 length, 0.074 body recall — almost no body nouns)
+  are not usable planners as wired here: their prompts/audio adaptation still
+  need work, so treat them as lower bounds on those models' ability.
+- MOSS-Music still fails at generation: `Whisper` cross-attention
+  `size of tensor a (64) must match tensor b (20)`, i.e. the audio features and
+  the decoder placeholder count disagree. Not a quality result — a wiring bug.
+- BLEU/ROUGE/F1 are reference-overlap metrics and say almost nothing about
+  planner quality (section 4.4); they are reported because they were requested,
+  not because they select a checkpoint.
+- These numbers cannot by themselves decide "our model is better"; that needs
+  the blinded human review the protocol requires.

@@ -16,6 +16,10 @@ import torch
 import torch.nn.functional as F
 
 FAMILIES = ('moss', 'music_flamingo', 'omni_captioner')
+# Legs are the least-covered body region in generated captions; a class-weighted
+# CE makes the model pay more attention to the tokens that name them.
+LEG_PART = re.compile(r'\b(?:legs?|knees?|thighs?|shins?|calves?|calf|hamstrings?|quads?)\b', re.I)
+LEG_WEIGHT = float(os.environ.get('PLANNER_LEG_WEIGHT', '1.0'))
 TASK_INSTRUCTION = (
     'Listen to the music and describe a dance choreography in two time windows: '
     '[0-2s] and [2-5.062s]. Describe grounded, varied body movements for each window. '
@@ -292,14 +296,45 @@ class PlannerAdapter:
             if key in batch:
                 batch[key] = torch.cat((batch[key], torch.zeros_like(target)), dim=1)
         batch['labels'] = torch.cat((torch.full_like(prefix_ids, -100), target.clone()), dim=1)
+        mask = self._leg_mask(row['target_text'], target[0, :-1].tolist())
+        if mask is not None:
+            weights = torch.ones(mask.shape[0] + 1, dtype=torch.float32)
+            weights[:mask.shape[0]][mask] = LEG_WEIGHT
+            batch['token_weights'] = torch.cat((torch.ones_like(prefix_ids, dtype=torch.float32),
+                                                weights.unsqueeze(0)), dim=1)
         if not torch.equal(batch['input_ids'][:, :prefix_ids.shape[1]], prefix_ids):
             raise ValueError('Training prefix differs from native inference prefix')
         return batch
 
+    def _leg_mask(self, text, ids):
+        """Mark target-token positions that spell a leg-part word."""
+        if LEG_WEIGHT <= 1.0:
+            return None
+        spans = [m.span() for m in LEG_PART.finditer(text)]
+        if not spans:
+            return None
+        mask = torch.zeros(len(ids), dtype=torch.bool)
+        try:
+            encoded = self.tokenizer(text, add_special_tokens=False, return_offsets_mapping=True)
+            offsets = encoded['offset_mapping']
+            if len(offsets) != len(ids):
+                raise ValueError('offset map and target ids disagree')
+            for index, (start, end) in enumerate(offsets):
+                if start < end and any(a < end and start < b for a, b in spans):
+                    mask[index] = True
+        except Exception:
+            for index, token_id in enumerate(ids):
+                piece = self.tokenizer.decode([token_id], clean_up_tokenization_spaces=False)
+                if LEG_PART.search(piece):
+                    mask[index] = True
+        return mask if bool(mask.any()) else None
+
     def _move(self, batch):
         parameter = next(self.model.parameters())
         return {key: value.to(device=parameter.device,
-                             dtype=parameter.dtype if value.is_floating_point() and not key.startswith('musicfm_') else value.dtype)
+                             dtype=parameter.dtype
+                             if value.is_floating_point() and key != 'token_weights'
+                             and not key.startswith('musicfm_') else value.dtype)
                 if isinstance(value, torch.Tensor) else value
                 for key, value in batch.items() if key != 'labels'}
 
@@ -522,7 +557,7 @@ def configure_trainable(adapter, rank=32, alpha=64, audio_last_n=4):
 
 def load_planner_adapter(family, model_path, checkpoint=None, device=None,
                          dtype=torch.bfloat16, max_length=8192, lora_rank=None,
-                         lora_alpha=64, audio_last_n=4, device_map=None):
+                         lora_alpha=64, audio_last_n=4):
     if family not in FAMILIES:
         raise ValueError(f'Unknown planner family: {family}')
     path = Path(model_path).expanduser().resolve()
@@ -542,13 +577,11 @@ def load_planner_adapter(family, model_path, checkpoint=None, device=None,
     else:
         # Load only the native thinker subtree: no talker/code2wav parameters or execution.
         from transformers import Qwen3OmniMoeThinkerForConditionalGeneration as cls
-    if device_map is not None:
-        model_kwargs['device_map'] = device_map
     model = cls.from_pretrained(path, local_files_only=True, dtype=dtype, **model_kwargs)
     for parameter in model.parameters():
         if parameter.is_floating_point():
             _cast_parameter_dtype(parameter, dtype)
-    if device is not None and device_map is None:
+    if device is not None:
         model = model.to(device)
     adapter = PlannerAdapter(family, model, processor, max_length=max_length)
     if lora_rank is not None:
@@ -575,24 +608,10 @@ def load_planner_adapter(family, model_path, checkpoint=None, device=None,
         saved = load_peft_weights(export, device='cpu', local_files_only=True)
         result = set_peft_model_state_dict(adapter.model, saved)
         actual = get_peft_model_state_dict(adapter.model)
-        # PEFT <0.20 exports modules_to_save weights without the wrapper prefix.
-        normalize = lambda key: key.replace('.modules_to_save.default.', '.')
-        actual = {normalize(key): value for key, value in actual.items()}
-        saved = {normalize(key): value for key, value in saved.items()}
         if result.unexpected_keys or set(actual) != set(saved) or any(
                 not torch.equal(actual[key].detach().cpu(), saved[key]) for key in saved):
-            detail = dict(unexpected=list(result.unexpected_keys)[:5],
-                          missing=sorted(set(saved) - set(actual))[:5],
-                          extra=sorted(set(actual) - set(saved))[:5],
-                          mismatch=[key for key in saved if key in actual and not torch.equal(
-                              actual[key].detach().cpu(), saved[key])][:5])
-            raise ValueError('Portable planner adapter state did not restore exactly: ' + repr(detail))
+            raise ValueError('Portable planner adapter state did not restore exactly')
         adapter.model.eval().requires_grad_(False)
-        try:
-            adapter.processor = load_native_processor(family, export)
-        except (AttributeError, ValueError, KeyError, OSError):
-            # Older transformers cannot parse newer tokenizer_config extras (e.g. list-valued
-            # extra_special_tokens); the base-model processor is byte-identical for this export.
-            pass
+        adapter.processor = load_native_processor(family, export)
         adapter.trainable_info = metadata.get('trainable_info', {})
     return adapter

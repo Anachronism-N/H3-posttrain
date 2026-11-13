@@ -197,9 +197,13 @@ def planner_module(name):
 TOKEN_WEIGHT = float(os.environ.get('PLANNER_TOKEN_WEIGHT', '1.0'))
 
 
-def shifted_nll(logits, labels, chunk_size=0):
+def shifted_nll(logits, labels, chunk_size=0, token_weights=None):
     module = planner_module('music_planner_token_loss')
-    weights = module.assistant_token_weights(labels, TOKEN_WEIGHT) if TOKEN_WEIGHT > 1.0 else None
+    weights = token_weights.to(labels.device) if token_weights is not None else None
+    if weights is None and TOKEN_WEIGHT > 1.0:
+        weights = module.assistant_token_weights(labels, TOKEN_WEIGHT)
+    elif weights is not None and TOKEN_WEIGHT > 1.0:
+        weights = weights.to(labels.device) * TOKEN_WEIGHT
     return module.assistant_token_nll(logits, labels, chunk_size, token_weights=weights)
 
 
@@ -805,7 +809,8 @@ def prepare_batch(adapter, rows, cache, empty=False):
 def move_batch(batch, device):
     return {key: value.to(device) if isinstance(value, torch.Tensor) else value
             for key, value in batch.items()
-            if key not in ('labels', 'jev_targets', 'jev_label_mask', 'count_targets', 'count_mask')}
+            if key not in ('labels', 'token_weights', 'jev_targets', 'jev_label_mask',
+                           'count_targets', 'count_mask')}
 
 
 def genre_batch_loss(output, batch, device):
@@ -838,7 +843,8 @@ def evaluate(model, adapter, rows, cache, accelerator, micro, native_autocast=Fa
             autocast = nullcontext() if native_autocast else torch.autocast(accelerator.device.type, dtype=torch.bfloat16)
             with torch.no_grad(), autocast:
                 output = model(**move_batch(batch, accelerator.device))
-                loss, count = shifted_nll(output.logits, batch['labels'].to(accelerator.device), loss_chunk_size)
+                loss, count = shifted_nll(output.logits, batch['labels'].to(accelerator.device),
+                                          loss_chunk_size, batch.get('token_weights'))
                 genre_sum, genre_count = genre_batch_loss(output, batch, accelerator.device)
             total += torch.stack((loss.detach().double(), count.double(),
                                   genre_sum.detach().double() if genre_sum is not None else loss.detach().double() * 0,
@@ -1119,7 +1125,8 @@ def train(args):
                 autocast = nullcontext() if plugin else torch.autocast(accelerator.device.type, dtype=torch.bfloat16)
                 with autocast:
                     output = model(**move_batch(batch, accelerator.device))
-                    nll, _ = shifted_nll(output.logits, batch['labels'].to(accelerator.device), args.loss_chunk_size)
+                    nll, _ = shifted_nll(output.logits, batch['labels'].to(accelerator.device),
+                                         args.loss_chunk_size, batch.get('token_weights'))
                     genre_sum, _ = genre_batch_loss(output, batch, accelerator.device)
                     count_sum, _ = count_batch_loss(output, batch, accelerator.device)
                     if not bool(torch.isfinite(nll)):

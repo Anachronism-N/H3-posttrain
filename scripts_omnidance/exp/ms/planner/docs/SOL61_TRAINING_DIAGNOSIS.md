@@ -252,6 +252,45 @@ caveat: **do not assume a wider launch reproduces the narrower one**. The
 accum-2 path must be re-checked with a generation audit before being used for
 any production run.
 
+## 5.6 Decoding dominates the remaining quality gap (measured)
+
+All rows below are the same checkpoint
+(`sol61_full_20261112_161243/checkpoint-0001000`) on the same 80 SHA-ordered
+val cases, differing only in decoding. Sampling uses top-p 0.9,
+repetition_penalty 1.05, no_repeat_ngram 4; beam is 1 unless stated.
+
+| decoding | actRec | bodyR | densRat | lenRat | openings | entropy | top-opener | distinct-2 | BLEU-1 | BLEU-4 | ROUGE-L | tok-F1 | score |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| greedy | 0.803 | 0.904 | 1.07 | 0.84 | 16 | 2.81 | 0.413 | 0.114 | 0.508 | 0.054 | 0.301 | 0.592 | 0.687 |
+| beam = 3 | 0.714 | 0.917 | — | — | — | — | — | — | — | — | — | — | — |
+| temperature 0.6 | 0.839 | 0.931 | 0.99 | 0.88 | 58 | 4.84 | 0.138 | 0.183 | 0.506 | 0.057 | 0.297 | 0.593 | 1.118 |
+| **temperature 0.7** | **0.871** | 0.945 | 1.02 | 0.93 | 54 | 4.80 | 0.100 | 0.195 | **0.516** | 0.055 | 0.290 | **0.594** | **1.154** |
+| temperature 0.8 | 0.835 | **0.950** | 0.97 | 0.92 | 52 | 4.97 | 0.100 | 0.202 | 0.492 | 0.056 | 0.285 | 0.577 | 1.119 |
+| temperature 0.9 | 0.841 | 0.940 | 0.96 | **0.95** | **64** | **5.36** | **0.075** | **0.225** | 0.500 | 0.054 | 0.276 | 0.579 | 1.124 |
+| reference | 1.000 | 1.000 | 1.00 | 1.00 | — | 5.57 | 0.062 | 0.234 | 1.000 | 1.000 | 1.000 | 1.000 | — |
+
+Findings:
+
+- **The headline defect was the decoder, not the weights.** Greedy decoding
+  collapses the model onto one opener (41% of captions) and 16 distinct
+  openings out of 80; temperature 0.7 raises that to 54 openings and entropy
+  4.80 with no self-repetition, and simultaneously *improves* action recall
+  (0.803 → 0.871) and body recall (0.904 → 0.945).
+- Beam search is strictly worse here (action 0.714): it optimises likelihood,
+  which is exactly the quantity this model is over-fitted on.
+- temperature 0.7 is the best operating point: highest action recall, highest
+  BLEU-1/F1, and a length ratio of 0.93 against the reference's 1.00.
+- temperature 0.9 is measurably closer to the reference on diversity
+  (entropy 5.36 vs 5.57, top-opener 0.075 vs 0.062, length 0.95) but loses
+  ~3 action points; use it when longer, more varied captions matter more than
+  vocabulary overlap.
+- Greedy, beam, and all NLL-based selection agree with each other and disagree
+  with these numbers — the fourth independent demonstration in this document
+  that NLL is the wrong selection criterion.
+
+**Deliverable decode config:** `do_sample=True, temperature=0.7, top_p=0.9,
+repetition_penalty=1.05, no_repeat_ngram_size=4, num_beams=1`.
+
 ## 6. Status summary
 
 Done and measured:

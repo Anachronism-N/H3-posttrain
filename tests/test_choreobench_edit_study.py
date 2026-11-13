@@ -437,3 +437,33 @@ def test_final_outcome_decoder_quotes_bind_each_event_and_side_without_labels():
    target_branch=next(b for b in branches if b["properties"]["event_id"]["enum"]==[target])
    wrong=after["events"][0]["action"] if side=="source_quotes" else before["events"][0]["action"]
    assert wrong not in target_branch["properties"]["quote"]["enum"]
+
+
+@pytest.mark.parametrize('mode',[None,'bad_quote'])
+def test_noop_references_keep_registered_tasks_and_exact_unchanged_sources(tmp_path,mode):
+ from choreobench.edit_study import export_noop_references
+ registry,provider,out,factory,calls=author_material(tmp_path,mode)
+ run_authoring(registry,provider,out,provider_factory=factory)
+ result=export_noop_references(registry,out/'results.json',tmp_path/'noop.json')
+ assert result['registered_tasks']==2 and result['model_calls']==0 and len(calls)==1
+ first,missing=result['rows'];assert missing['status']=='author_missing_source' and missing['source_plan'] is None
+ assert first['source_plan']['plan_sha256']==object_sha(read_json(tmp_path/'original/plan.json'))
+ assert first['patch'] is None and first['unchanged_original']
+ assert first['status']==('original_reference' if mode is None else 'author_failed')
+ assert not result['formal_E4_completed'] and not result['semantic_truth_verified']
+ assert export_noop_references(registry,out/'results.json',tmp_path/'noop.json')==result
+ assert len(calls)==1
+
+
+@pytest.mark.parametrize('artifact',['plan','task','author_raw','missing_appeared'])
+def test_noop_references_refuse_changed_or_new_original_artifacts(tmp_path,artifact):
+ from choreobench.edit_study import export_noop_references
+ registry,provider,out,factory,calls=author_material(tmp_path)
+ run_authoring(registry,provider,out,provider_factory=factory)
+ if artifact=='plan':
+  p=tmp_path/'original/plan.json';value=read_json(p);value['events'][0]['action']='Changed original';write_json(p,value,overwrite=True)
+ elif artifact=='task':next((out/'tasks').glob('*.json')).unlink()
+ elif artifact=='author_raw':next((out/'calls').glob('*.raw.json')).unlink()
+ else:write_json(tmp_path/'missing/plan.json',read_json(tmp_path/'original/plan.json'))
+ with pytest.raises(ValueError):export_noop_references(registry,out/'results.json',tmp_path/'noop.json')
+ assert not (tmp_path/'noop.json').exists() and len(calls)==1

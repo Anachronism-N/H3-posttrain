@@ -841,3 +841,13 @@ run_edit_outcomes(study_dir, provider_path, out_dir)读取完整原study及edito
 已加入同源原稿—终稿的目标、保护事实和边界联合审核。已知结论必须引用目标动作；边界结论还须比较实际提供的相邻/并发动作。缺源稿、作者失败、unknown 和裁判协议失败保留在原槽位。模型审核不等于人工或实际执行验收。
 
 三源编辑pilot的两个不同终稿仅新增2次审核调用，六策略槽位完整保留。低蹲结束→下一事件从坐姿开始被裁判误判为边界通过；原评语与成本保留，另存直接文本反证。新增证据覆盖检查不能证明裁判语义可靠，旧正式评分不重抽、不覆盖。
+
+### 成对文字评价与不修改原稿对照
+
+```sh
+python -m captionlab.quality_judge pairwise --pairs /data/pairs.json --provider-config /data/judge.json --reviewer-id text-reviewer --out-dir /runs/pairwise
+```
+
+`pairs.json` 为 `{"pairs":[{"left":review_item,"right":review_item}]}`。双方必须绑定相同case、来源组、音频SHA、时长和参考SHA，但方法不同；未生成/失败/只有排程无动作的项仍留完整分母。A/B顺序按原件摘要和seed固定，模型不见方法/来源身份。引文选择只提供真实动作片段，时间戳不充当动作证据；tie、unknown、协议失败和实际费用分列，`--resume` 只重建原件、不补采已失败评分。合法引用不证明理由语义真实或音乐适配。
+
+`export_noop_references(registry_path, author_results_path, out_path)` 绑定全部原任务的未修改源稿引用，`patch=null`、新增模型调用0；它不是编辑器生成，也不能自动当成控制成功。作者合同、started/raw、源稿和公开任务均须匹配，缺源/作者失败保留，不复制或替换原生成稿。

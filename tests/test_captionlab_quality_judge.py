@@ -384,3 +384,170 @@ def test_quotation_choices_strip_schedule_prefix_and_preserve_decimals():
 def test_quotation_choices_reject_invalid_character_limit(limit):
     with pytest.raises(ValueError):
         module.quotation_choices("Move.", limit)
+
+
+def paired_items():
+    left = make_review_item("pair-source", "shared-source", "workflow-method", "[0.000-5.062 s] Step left while both arms circle.", duration_seconds=5.0625, audio_sha256="a" * 64)
+    right = make_review_item("pair-source", "shared-source", "choreography-method", "[0.000-5.062 s] Hold both feet still while repeatedly jumping.", duration_seconds=5.0625, audio_sha256="a" * 64)
+    return left, right
+
+
+def test_pairwise_request_is_anonymous_order_invariant_and_excludes_clock_evidence():
+    left, right = paired_items()
+    request = module.pairwise_request(left, right)
+    assert request == module.pairwise_request(right, left)
+    payload = json.loads(request["messages"][-1]["content"])
+    assert set(payload) == {"A", "B", "duration_seconds"}
+    assert {payload["A"], payload["B"]} == {left["text"], right["text"]}
+    serialized = json.dumps(request)
+    assert "workflow-method" not in serialized and "choreography-method" not in serialized
+    assert "shared-source" not in serialized and "a" * 64 not in serialized
+    for label in ["A", "B"]:
+        choices = request["response_schema"]["properties"]["quotes_" + label]["items"]["enum"]
+        assert choices and all(q in payload[label] and not q.startswith("[") for q in choices)
+
+
+@pytest.mark.parametrize("preference", ["A", "B", "tie", "unknown"])
+def test_pairwise_parser_preserves_preference_side_tie_and_unknown(preference):
+    left, right = paired_items();request = module.pairwise_request(left, right)
+    payload = json.loads(request["messages"][-1]["content"])
+    value = dict(preference=preference, reason="Synthetic comparison", quotes_A=[], quotes_B=[])
+    if preference != "unknown":
+        for label in ["A", "B"]:
+            value["quotes_" + label] = request["response_schema"]["properties"]["quotes_" + label]["items"]["enum"][:1]
+    response = dict(text=json.dumps(value), stop_reason="stop")
+    review = module.parse_pairwise_review(left, right, response, "fixture-judge", "fixture-identity")
+    assert review["human_reviews"] == 0 and not review["metric_validity_verified"]
+    assert not review["audio_supplied"] and not review["reference_supplied"]
+    if preference in ["tie", "unknown"]:
+        assert review["preference"] == preference and review["preferred_item_sha256"] is None
+    else:
+        expected = "left" if payload[preference] == left["text"] else "right"
+        assert review["preference"] == expected
+        reversed_review = module.parse_pairwise_review(right, left, response, "fixture-judge", "fixture-identity")
+        assert reversed_review["preference"] != review["preference"]
+        assert reversed_review["preferred_item_sha256"] == review["preferred_item_sha256"]
+
+
+@pytest.mark.parametrize("change", ["source", "audio", "duration", "same_method", "failed", "reference_phase"])
+def test_pairwise_request_rejects_mismatched_or_unreviewable_sources(change):
+    left, right = paired_items()
+    kwargs = dict(audio_sha256=right["audio_sha256"], duration_seconds=right["duration_seconds"])
+    case, group, method, status, provenance = right["case_id"], right["source_group_id"], right["method_id"], "ok", {}
+    if change == "source": group = "other-source"
+    elif change == "audio": kwargs["audio_sha256"] = "b" * 64
+    elif change == "duration": kwargs["duration_seconds"] = 10.125
+    elif change == "same_method": method = left["method_id"]
+    elif change == "failed": status = "failed"
+    else: provenance = {"review_phase": "reference"}
+    changed = make_review_item(case, group, method, right["text"], generation_status=status, provenance=provenance, **kwargs)
+    with pytest.raises(ValueError): module.pairwise_request(left, changed)
+
+
+@pytest.mark.parametrize("change", ["clock", "wrong_side", "missing_side", "invalid_choice", "truncated", "extra"])
+def test_pairwise_parser_rejects_fabricated_clock_wrong_side_and_incomplete_evidence(change):
+    left, right = paired_items();request = module.pairwise_request(left, right)
+    value = dict(preference="A", reason="Synthetic comparison", quotes_A=request["response_schema"]["properties"]["quotes_A"]["items"]["enum"][:1], quotes_B=request["response_schema"]["properties"]["quotes_B"]["items"]["enum"][:1])
+    stop = "stop"
+    if change == "clock": value["quotes_A"] = ["[0."]
+    elif change == "wrong_side": value["quotes_A"] = value["quotes_B"]
+    elif change == "missing_side": value["quotes_B"] = []
+    elif change == "invalid_choice": value["preference"] = "best"
+    elif change == "truncated": stop = "budget_truncation"
+    else: value["music_fit"] = 5
+    with pytest.raises(ValueError): module.parse_pairwise_review(left, right, dict(text=json.dumps(value), stop_reason=stop), "judge", "identity")
+
+
+def pairwise_material(tmp_path, behavior=None):
+    left, right = paired_items()
+    missing_left = make_review_item("missing-source", "other-group", "workflow", "", generation_status="failed", duration_seconds=5.0625)
+    missing_right = make_review_item("missing-source", "other-group", "harness", "Move left.", duration_seconds=5.0625)
+    pairs = tmp_path / "pairs.json"; config = tmp_path / "provider.json"; out = tmp_path / "pairs-run"
+    write_json(pairs, dict(pairs=[dict(left=left, right=right), dict(left=missing_left, right=missing_right)]))
+    write_json(config, dict(kind="chat_completions", model="pairwise-fixture"))
+    calls = []; identity = dict(kind="chat_completions", synthetic=True, model="pairwise-fixture")
+    def generate(request):
+        calls.append(copy.deepcopy(request))
+        if behavior == "exception": raise OSError("Fixture transport failure")
+        value = dict(preference="tie" if behavior != "unknown" else "unknown", reason="Fixture only",
+            quotes_A=request["response_schema"]["properties"]["quotes_A"]["items"]["enum"][:1],
+            quotes_B=request["response_schema"]["properties"]["quotes_B"]["items"]["enum"][:1])
+        if behavior == "bad_quote": value["quotes_A"] = ["[0."]
+        return dict(text=json.dumps(value), raw={}, identity=identity if behavior != "identity" else dict(identity, model="other"),
+            synthetic=True, stop_reason={"truncated": "budget_truncation", "http": "http_error"}.get(behavior, "stop"),
+            costs=dict(input_tokens=10, output_tokens=20))
+    factory = lambda *args, **kwargs: SimpleNamespace(identity=identity, generate=generate)
+    return pairs, config, out, calls, factory
+
+
+@pytest.mark.parametrize("behavior,expected", [(None, "valid"), ("unknown", "valid"), ("bad_quote", "invalid"),
+                                              ("truncated", "invalid"), ("http", "unknown_infrastructure"), ("exception", "unknown_infrastructure")])
+def test_pairwise_runner_keeps_denominator_raw_failures_and_zero_call_resume(tmp_path, behavior, expected):
+    pairs, config, out, calls, factory = pairwise_material(tmp_path, behavior)
+    result = module.run_pairwise(pairs, config, "fixture-judge", out, provider_factory=factory)
+    assert len(calls) == result["calls_used"] == 1 and result["expected_pairs"] == 2
+    assert result["status_counts"] == {"generation_not_evaluable": 1, expected: 1}
+    assert result["human_reviews"] == 0 and not result["metric_validity_verified"]
+    assert module.run_pairwise(pairs, config, "fixture-judge", out, provider_factory=forbidden, resume=True) == result
+    assert len(calls) == 1
+    if behavior == "unknown": assert result["preference_counts"]["unknown"] == 1
+    if behavior is None: assert result["preference_counts"]["tie"] == 1
+
+
+@pytest.mark.parametrize("artifact", ["raw", "reviews", "source", "budget"])
+def test_pairwise_completed_tamper_rejected_without_dispatch(tmp_path, artifact):
+    pairs, config, out, calls, factory = pairwise_material(tmp_path)
+    module.run_pairwise(pairs, config, "fixture-judge", out, provider_factory=factory)
+    kw = {}
+    if artifact == "raw": next((out / "calls").glob("*.raw.json")).unlink()
+    elif artifact == "reviews": (out / "reviews.json").unlink()
+    elif artifact == "source": change(pairs, lambda v: v["pairs"].reverse())
+    else: kw["max_output_tokens"] = 1801
+    with pytest.raises(ValueError):
+        module.run_pairwise(pairs, config, "fixture-judge", out, resume=True, provider_factory=forbidden, **kw)
+    assert len(calls) == 1
+
+
+def test_pairwise_reversed_duplicate_slot_rejected_before_provider(tmp_path):
+    pairs, config, out, calls, _ = pairwise_material(tmp_path)
+    value = read_json(pairs); pair = value["pairs"][0]
+    value["pairs"].append(dict(left=pair["right"], right=pair["left"]))
+    write_json(pairs, value, overwrite=True)
+    with pytest.raises(ValueError, match="Duplicate"):
+        module.run_pairwise(pairs, config, "fixture-judge", out, provider_factory=forbidden)
+    assert not calls
+
+
+def test_pairwise_returned_identity_drift_cannot_become_quality_failure(tmp_path):
+    pairs, config, out, calls, factory = pairwise_material(tmp_path, "identity")
+    with pytest.raises(ValueError, match="identity"):
+        module.run_pairwise(pairs, config, "fixture-judge", out, provider_factory=factory)
+    assert len(calls) == 1 and not (out / "results.json").exists()
+
+
+def test_pairwise_all_failed_generations_do_not_construct_provider(tmp_path):
+    pairs, config, out, calls, _ = pairwise_material(tmp_path)
+    value = read_json(pairs); value["pairs"] = value["pairs"][1:]; write_json(pairs, value, overwrite=True)
+    result = module.run_pairwise(pairs, config, "fixture-judge", out, provider_factory=forbidden)
+    assert result["calls_used"] == 0 and result["expected_pairs"] == 1
+    assert result["status_counts"] == {"generation_not_evaluable": 1}
+    assert module.run_pairwise(pairs, config, "fixture-judge", out, resume=True, provider_factory=forbidden) == result
+    assert not calls
+
+
+def test_pairwise_cli_dispatch_and_resume(tmp_path, monkeypatch, capsys):
+    pairs, config, out, calls, factory = pairwise_material(tmp_path)
+    monkeypatch.setattr(module, "create_provider", factory)
+    argv = ["pairwise", "--pairs", str(pairs), "--provider-config", str(config), "--reviewer-id", "fixture", "--out-dir", str(out)]
+    result = module.main(argv)
+    assert json.loads(capsys.readouterr().out)["expected_pairs"] == 2
+    assert result["calls_used"] == len(calls) == 1
+    monkeypatch.setattr(module, "create_provider", forbidden)
+    assert module.main(argv + ["--resume"]) == result
+    assert json.loads(capsys.readouterr().out)["calls_used"] == 1
+
+
+def test_pairwise_cli_help(capsys):
+    with pytest.raises(SystemExit) as error:
+        module.main(["pairwise", "--help"])
+    assert error.value.code == 0 and "--pairs" in capsys.readouterr().out

@@ -476,6 +476,21 @@ Three pairwise synthetic contrasts prefer specific sustained motion over contrad
 
 The compact-decoder control completes all four methods on the first development recording. ReAct changes from one committed unit and 109 exhausted journal records to 27/27 committed units with 83 normally finished records; the choreography arm completes 27/27 with 81 records. Each includes one reused original outline, with no truncated response accepted as a plan and no automatic commit. This is one-source decoding reliability evidence, not twelve-cell completion or choreographic quality improvement. The remaining two development recordings and 96-cell formal comparison are still pending. All 24 formal sealed source views pass a lightweight unit-count and outline-size preflight (18–29 planning units, at most 94,448 message characters); this reuses the already audited catalog and does not certify song-level isolation.
 
+### 6.25 Full-score paired development reviews
+
+Six comparisons use complete retained scores from the same three development recordings: Self-Refine versus workflow and choreography versus workflow on each song. All six have protocol-valid quotes, at 88,333 input and 11,846 output tokens; no new choreography is generated. Anonymous A/B order hides method labels, but the reviewer is the generation checkpoint, not an independent model family or human rater. Six contrasts are nested in three reused source songs.
+
+| Song | Compared method | Clarity preference | Written continuity preference | Development preference |
+|---|---|---|---|---|
+| fma-1881 | Self-Refine | workflow | workflow | workflow |
+| fma-1881 | choreography | choreography | choreography | choreography |
+| fma-3855 | Self-Refine | tie | workflow | workflow |
+| fma-3855 | choreography | workflow | workflow | workflow |
+| fma-4151 | Self-Refine | Self-Refine | Self-Refine | Self-Refine |
+| fma-4151 | choreography | choreography | choreography | choreography |
+
+These heterogeneous model preferences do not establish stable Self-Refine or specialized quality gains. Direct inspection refutes several supporting rationales: a one-knee freeze followed by a seated crossed-leg start is praised as explicit continuity although the same two events occur in both methods. An intermediate bent-knee phrase is mistaken for the final state, omitting the subsequent step-hop, rise and pivot. Another continuity argument skips an intervening event. Generated downbeat-at-sample wording and musical responsiveness are rewarded without audio or verified beat evidence. Original preferences and costs remain unchanged; a separate zero-call audit records these counterexamples. Verbatim-repeat counts remain mechanical diagnostics because repetition can be a legitimate motif.
+
 ## 7. Discussion and Limitations
 
 A text score allows controlled editing without requiring motion reconstruction, but usefulness must be measured rather than asserted. Open-vocabulary action paragraphs may compress several movements into a short event. Physical feasibility, contact, facing and support cannot be verified from empty states or text alone. Music-language proposals and structural detectors can be wrong; an apparently musically descriptive phrase may simply repeat a generic rhythmic template.

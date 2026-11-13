@@ -318,6 +318,52 @@ def run_edit_outcomes(study_dir,provider_path,out_dir,*,seed=42,max_output_token
   return report
 
 
+def export_noop_references(registry_path,author_results_path,out_path):
+ """Bind unchanged originals without generating or substituting editing states."""
+ registry_path,author_results_path,out_path=[Path(p).resolve() for p in (registry_path,author_results_path,out_path)]
+ registry,rsha=read_json_snapshot(registry_path);_verify(registry)
+ author,asha=read_json_snapshot(author_results_path);_verify(author)
+ if registry.get('schema')!='choreobench.e4_registered_slots.v1' or author.get('schema')!='choreobench.edit_author_results.v1':raise ValueError('No-op references require registered original tasks')
+ slots=registry['slots'];by_slot={r['slot_id']:r for r in author['rows']}
+ if len(slots)!=registry['expected_tasks'] or len(by_slot)!=len(author['rows']) or len(by_slot)!=len(slots) or set(by_slot)!={s['slot_id'] for s in slots}:raise ValueError('No-op registered task denominator differs')
+ contract_path=author_results_path.parent/'contract.json';contract,csha=read_json_snapshot(contract_path);_verify(contract)
+ if object_sha(contract)!=author['contract_sha256'] or contract['registry_sha256']!=rsha:raise ValueError('No-op author contract differs from registry')
+ from .baseline import _Journal
+ journal=_Journal(author_results_path.parent,object_sha(contract),author['calls_used'])
+ if author['call_records']!={cid:raw['record_sha256'] for cid,raw in journal.records.items()} or len(journal.started)!=author['calls_used']:raise ValueError('No-op author raw inventory missing/changed')
+ sources={str(registry_path):rsha,str(author_results_path):asha,str(contract_path):csha};rows=[]
+ for path in (author_results_path.parent/'calls').glob('*.json'):sources[str(path.resolve())]=file_sha(path)
+ for slot in slots:
+  authored=by_slot[slot['slot_id']];plan_path=Path(slot['source_plan_path'])
+  if not plan_path.is_absolute():plan_path=registry_path.parent/plan_path
+  plan_path=plan_path.resolve()
+  row=dict(slot_id=slot['slot_id'],song_id=slot['song_id'],registered_category=slot['registered_category'],method='no_op',author_status=authored['status'],status='author_'+authored['status'],source_plan=None,task=None,patch=None,model_calls=0,semantic_success=None)
+  if authored['status']=='missing_source':
+   if plan_path.exists():raise ValueError('Source appeared after original author freeze; no replacement')
+   rows.append(row);continue
+  if str(plan_path) not in contract['sources']:
+   if authored['status']=='model_declared_valid':raise ValueError('No-op valid author task lacks original source binding')
+   rows.append(row);continue
+  plan,psha=read_json_snapshot(plan_path)
+  if contract['sources'][str(plan_path)]!=psha:raise ValueError('No-op original source changed')
+  validate_plan(plan);sources[str(plan_path)]=psha
+  row.update(source_plan=dict(path=str(plan_path),sha256=psha,plan_sha256=object_sha(plan)),unchanged_original=True)
+  if authored['status']=='model_declared_valid':
+   task_path=(author_results_path.parent/authored['task_path']).resolve()
+   if not task_path.is_relative_to(author_results_path.parent) or not task_path.is_file():raise ValueError('No-op original task missing/escapes author run')
+   task,tsha=read_json_snapshot(task_path)
+   if author['artifacts'].get(authored['task_path'])!=tsha:raise ValueError('No-op original task changed')
+   validate_edit_task(task,plan);sources[str(task_path)]=tsha
+   row.update(status='original_reference',task=dict(path=str(task_path),sha256=tsha,task_sha256=object_sha(task)))
+  rows.append(row)
+ if any(file_sha(path)!=digest for path,digest in sources.items()):raise ValueError('No-op source changed during export')
+ report=_sealed(dict(schema='choreobench.noop_references.v1',sources=sources,rows=rows,registered_tasks=len(slots),model_calls=0,new_edit_generations=0,original_source_plans_copied=False,semantic_truth_verified=False,formal_E4_completed=False))
+ if out_path.exists():
+  if read_json(out_path)!=report:raise ValueError('Immutable No-op references changed')
+ else:write_json(out_path,report)
+ return report
+
+
 def main(argv=None):
  import argparse
  from .io import json_text

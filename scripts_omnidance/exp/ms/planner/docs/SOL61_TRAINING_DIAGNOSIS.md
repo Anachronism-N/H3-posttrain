@@ -181,11 +181,16 @@ Two runs with identical data, batch and steps, differing only in `lora_lr`
 | --- | --- | --- |
 | 100 | 1.9007 | **1.6527** |
 | 200 | 1.7171 | **1.5218** |
-| 300 | 1.6456 | — |
+| 300 | 1.6456 | 1.4853 |
+| 400 | 1.6046 | 1.4598 |
+| 500 | 1.5782 | **1.4408** |
 | 1,527 | 1.5223 | — |
+| 3,054 | 1.4683 | — |
 
-The high-rate run reaches the low-rate run's *final* validation NLL after 200
-updates, i.e. roughly one seventh of the training. The gap also narrows
+The high-rate run reaches the low-rate run's *final* (1,527-step) validation NLL
+after 200 updates, and by update 500 it is already below the 3,054-step 2-epoch
+run's endpoint (1.4408 vs 1.4683), i.e. better quality with one sixth of the
+compute. The gap also narrows
 (−0.248 → −0.195), so both are heading toward the same floor; the open question
 is whether the higher rate settles below it. Training is stable at 1e-4: no
 spikes, no divergence over 200 updates.

@@ -216,5 +216,30 @@ Weights for six E2 baselines are downloaded and mirrored to
 | Audio-Flamingo-3 | ok | 0 rows | same family as above |
 | MOSS-Audio-8B | fail | — | upstream repo ships no modeling file and transformers 5.18 has no native `moss_audio` |
 
-The probe harness is `artifacts/sol61-e2-baselines-job/e2_baselines.py`; the
-first-pass comparison runner is `sol61-e2-baselines-job/entry.py`.
+The probe harness is `sol61-e2-baselines-job/e2_baselines.py`; the first-pass
+comparison runner is the same directory's `entry.py`.
+
+### 7.1 First-pass comparison (20 shared val cases)
+
+| model | rows | action recall | body recall | density | length | opener entropy |
+| --- | --- | --- | --- | --- | --- | --- |
+| SFT captioner @1000 | 20 | **0.837** | **0.913** | 1.05 | 0.87 | **3.04** |
+| Qwen3-Omni-30B-Instruct | 20 | 0.198 | 0.704 | 0.72 | 1.21 | 0.00 |
+| Music-Flamingo-2601 | 20 | 0.110 | 0.093 | 1.27 | 0.84 | 1.69 |
+| Qwen2.5-Omni-7B | 20 | 0.022 | 0.130 | 1.46 | 0.19 | 0.00 |
+| MOSS-Music-8B | 0 | — | — | — | — | — |
+
+Reading, with the protocol's caveat that the reference is one instantiation and
+low overlap is not automatically low quality:
+
+- The SFT model is 4-38x higher on action recall, i.e. it is the only model
+  inside this dataset's action vocabulary. That is what the task asks for.
+- Qwen3-Omni-Instruct shows richer whole-body vocabulary (lunges, jumps, spins)
+  and a 1.21 length ratio but almost no overlap with the reference wording.
+- Qwen2.5-Omni-7B produces 0.19 of the reference length and 0.022 action recall;
+  its prompt/audio adaptation is still wrong, so it is not a usable baseline yet.
+- MOSS-Music cannot start: `MossMusicProcessor` has no `apply_chat_template`, the
+  loader must build its native prompt via `_build_default_prompt` as the planner
+  adapter already does.
+- These numbers cannot decide "our model is better"; that needs the blinded
+  human review the protocol requires.

@@ -1,0 +1,152 @@
+{
+  "platform": "TX A800 cluster",
+  "formal_E3_execution_complete": true,
+  "formal_E4_registered_attempts_complete": true,
+  "all_final_metric_slots_present": true,
+  "overall_scientific_quality_acceptance": false,
+  "E2_open_extractor_accepted": false,
+  "human": false,
+  "music_video_truth_verified": false,
+  "registered": {
+    "E3": 96,
+    "E4_tasks": 48,
+    "E4_editor_cells": 96,
+    "E4_evaluation_cells": 144,
+    "audio_observations": 1127,
+    "CLAP_windows": 4508,
+    "music_blocks": 2260,
+    "planning_boundaries": 2164
+  },
+  "E3_generation_stops": {
+    "finished": 87,
+    "stalled_identical_tool_state": 2,
+    "budget_exhausted": 7
+  },
+  "longterm": {
+    "reviewed": 87,
+    "full_score_count": 87,
+    "full_score_fraction": 1.0,
+    "all_gate_grades_maximum": true,
+    "discrimination_accepted": false,
+    "reason": "All87 evaluable plans receive all maximum gates; synthetic controls do not certify discrimination across actual methods."
+  },
+  "repetition": {
+    "status_counts": {
+      "reviewed": 44,
+      "unknown": 43,
+      "failed_generation": 9
+    },
+    "unknown_error_counts": {
+      "Repetition review incomplete": 43
+    },
+    "unknown_stop_reasons": {
+      "infrastructure_error": 43
+    },
+    "cannot_claim_complete_valid_repetition_quality": true,
+    "all_original_timeout_unknowns_retained": true,
+    "partial_valid_means_not_registered24_rates": true
+  },
+  "editing": {
+    "author_statuses": {
+      "model_declared_valid": 26,
+      "failed": 13,
+      "source_failed": 9
+    },
+    "actual_author_calls": 39,
+    "actual_editor_calls": 104,
+    "editor_statuses": {
+      "author_failed": 26,
+      "author_source_failed": 18,
+      "returned": 52
+    },
+    "final_review_statuses": {
+      "reviewed": 69,
+      "unknown": 75
+    },
+    "control_source_or_author_statuses": {
+      "failed": 6,
+      "source_failed": 2
+    },
+    "registered_control_tasks": 8,
+    "valid_control_tasks": 0,
+    "control_robustness_not_established": true,
+    "unchanged_source_contradicted_fact_anomalies": [
+      {
+        "slot_id": "e4_slot_02",
+        "fact": {
+          "fact_id": "f3",
+          "status": "contradicted",
+          "quote": "lift the right knee slightly while clapping hands near heart level on the offbeat"
+        }
+      },
+      {
+        "slot_id": "e4_slot_03",
+        "fact": {
+          "fact_id": "f3",
+          "status": "contradicted",
+          "quote": "lift the right knee slightly while clapping hands near heart level on the offbeat"
+        }
+      },
+      {
+        "slot_id": "e4_slot_37",
+        "fact": {
+          "fact_id": "f0",
+          "status": "contradicted",
+          "quote": "The solo concludes not with a climax, but with a sudden stop\u2014a freeze frame of bent knees, raised eyebrows, and a hand gripping the air in a gesture of refusal\u2014before the music cuts off mid-air, leaving the audience suspended in the aftermath of confrontation."
+        }
+      }
+    ],
+    "unchanged_fact_anomalies_count": 3,
+    "semantic_fact_judge_not_full_truth": true,
+    "required40_denominator_kept": true,
+    "unknown_before_need_success_count": 0
+  },
+  "model_music": {
+    "registered_blocks": 2260,
+    "scoring_attempts": 2013,
+    "rating_statuses": {
+      "valid": 2004,
+      "unknown": 9
+    },
+    "valid_numeric_scores": 2001,
+    "block_registry_statuses": {
+      "registered_for_scoring": 2013,
+      "audio_observation_unknown": 4,
+      "failed_generation": 243
+    }
+  },
+  "clap": {
+    "statuses": {
+      "computed": 4021,
+      "failed_generation": 487
+    },
+    "fixed_model_weight_sha256": "1cd3c601bc4afe0fa87be3de4c13dd2cfadd249fac1e29acf74a9b296c3219bb",
+    "generic_audio_text_sensitivity_not_motion_synchronization": true
+  },
+  "boundaries": {
+    "statuses": {
+      "no_conflict": 1906,
+      "conflict": 16,
+      "unknown": 242
+    },
+    "failed_generation_boundaries_unknown_not_no_conflict": true
+  },
+  "paired_statistics_file": "../20261113_e34_final_inventory_v1/summary.json",
+  "no_new_generation_or_scoring_calls": 0,
+  "original_artifact_hashes": {
+    "execution_results.json": "640ca4d4727d3529e6b4c29d6603532033c01adbe2cd753a1dd41cd1a2806726",
+    "long_metrics/summary.json": "37b3f167c4f8fe122fd8e07c210b990e9a6731d7701511044e6d8c701de4a6e4",
+    "repeat_metrics/summary.json": "7c7820f46f48ae3dc054c990f3d7f68eff3562cbf9e7b177cfa98afb638c6047",
+    "edit_metrics/summary.json": "831f8f704bf61c1d6887150c345d4b0bbfe76e01efb54e024c910cd925f4ca2f",
+    "music_metrics/summary.json": "af0f08ba68b4608641540745fde58db2292e8749bc4446396dc18ff41c2d9239",
+    "clap_metrics/summary.json": "902729e6dfb76c8d3f2cdd42403b8d4011884c4f5699151d49fe99cd367fd34e"
+  },
+  "decisions": [
+    "Do not interpret all5 longterm scores as method superiority",
+    "Do not call43 incomplete repetition responses no-repetition",
+    "Do not claim8 control tasks succeeded: none were valid",
+    "Do not retry unknown remote outcomes or replace failed registered tasks",
+    "Do not tune thresholds on formal method scores",
+    "Freeze observed results; scientific validity gaps remain explicit"
+  ]
+}

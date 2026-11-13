@@ -1,0 +1,7512 @@
+{
+  "platform": "TX A800 cluster",
+  "registered_E3_cells": 96,
+  "registered_E4_tasks": 48,
+  "registered_E4_edit_cells": 96,
+  "registered_E4_evaluation_cells": 144,
+  "registered_audio_observations": 1127,
+  "registered_CLAP_windows": 4508,
+  "registered_music_blocks": 2260,
+  "registered_planning_boundaries": 2164,
+  "all_required_inventories_present": true,
+  "measurement_completion_not_quality_acceptance": true,
+  "human": false,
+  "model_reviews_fallible": true,
+  "all_original_generation_and_edit_calls_preserved": true,
+  "new_generation_or_review_calls": 0,
+  "failed_or_unknown_not_imputed_quality_scores": true,
+  "lower_bound_metrics_explicitly_named": true,
+  "paired_statistics_scope": "equal-song paired percentile bootstrap, common measured songs; declared required-edit lower bound retains unknown as not-success, not imputed quality",
+  "seed": 42,
+  "bootstrap_samples": 5000,
+  "confidence": 0.95,
+  "rng": "numpy.default_rng PCG64",
+  "multiplicity_adjusted": false,
+  "input_hashes": {
+    "/opt/music_action_runs/20261113_e34_metrics_post_v4/complete.json": "654c366ce353b99b6accb06c3974099e4d08a556f3ae1270a6eafabd8aee15dd",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/execution_results.json": "640ca4d4727d3529e6b4c29d6603532033c01adbe2cd753a1dd41cd1a2806726",
+    "/opt/music_action_runs/20261113_e34_formal_v1/dataset.json": "ab4aeb8cc61221b3d71c95b2ff4ab1cc91f26d929bfde4ecc0bec5d2b8487af6",
+    "/opt/music_action_runs/20261113_e3_observe_catalog_v1/observations/complete.json": "997534f985f71dc76adeea4aef9c58e951642aa75c74952d34a356c6d9b07ae4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/mechanical/records.jsonl": "5c271fcffbcf3642c3ea804893258fcf7a33f5f55feacaa994ec469a66985f3f",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/mechanical/summary.json": "46eff097b55ca6a4899e994f4bc1b9f3bbe8c3a32bf2ac955aecb053faf2e460",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/long_metrics/records.jsonl": "0419d82395cb8e7f8327a733aec8ee9729ddd73ad634e6177f807522d0f51080",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/long_metrics/summary.json": "37b3f167c4f8fe122fd8e07c210b990e9a6731d7701511044e6d8c701de4a6e4",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/repeat_metrics/records.jsonl": "04c6929a11549014cb9a2005be014b6f8bed3eb7629c08ec98a8f9662d2b38c7",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/repeat_metrics/summary.json": "7c7820f46f48ae3dc054c990f3d7f68eff3562cbf9e7b177cfa98afb638c6047",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/edit_metrics/records.jsonl": "e5bd7ae4b91a31c70d72bf7447c330adea8c41b1d4ef16bb1aa5aea028a04f52",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/edit_metrics/summary.json": "831f8f704bf61c1d6887150c345d4b0bbfe76e01efb54e024c910cd925f4ca2f",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/music_metrics/summary.json": "af0f08ba68b4608641540745fde58db2292e8749bc4446396dc18ff41c2d9239",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/long_metrics/boundaries.jsonl": "8964eff95ce268bf6c50eb17e439e2eb1fdff1637d72b8c9b19ad8d8daa7fcbd",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/music_metrics/registry.json": "e7691ddbd575d8b3e26b1b0f6a237df8575c4457f843d53b5fd2d49ea06abb45",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/music_metrics/scores/ratings.jsonl": "0de173956a0160074ef78332c745e02728f137e1cd3698f39032696016b663c5",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/clap_metrics/records.jsonl": "d622b1627dfb5ff662a054c07583c4f30d958d822cb246c63a2b13043a413796",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/clap_metrics/summary.json": "902729e6dfb76c8d3f2cdd42403b8d4011884c4f5699151d49fe99cd367fd34e",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/e4/registry.json": "33f43890d5d37435816ce13a0f5f15beab4e964f927a0c989d9c5a8c1150ad0b",
+    "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_sol61_e3_formal_v1/e4/results.json": "9e249d2c0f805d8b5c859ef13fb5f30c011e2ba0f4838c4d755a0848abb625b6"
+  },
+  "observation_statuses": {
+    "valid": 1126,
+    "unknown": 1
+  },
+  "edit_categories": {
+    "action_replacement": 10,
+    "density_or_force": 10,
+    "body_preservation": 10,
+    "ending_or_theme": 10,
+    "already_satisfied": 4,
+    "ambiguous_or_conflicting": 4
+  },
+  "method_intervals": {
+    "legal_completion_registered24": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 1.0,
+        "interval": [
+          1.0,
+          1.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 1.0,
+        "interval": [
+          1.0,
+          1.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 24,
+        "mean": 0.7916666666666666,
+        "interval": [
+          0.625,
+          0.9583333333333334
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "choreography": {
+        "n_songs": 24,
+        "mean": 0.8333333333333334,
+        "interval": [
+          0.6666666666666666,
+          0.9583333333333334
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      }
+    },
+    "outer_calls": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 24.541666666666668,
+        "interval": [
+          23.166666666666668,
+          25.875
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 71.625,
+        "interval": [
+          67.5,
+          75.625
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 24,
+        "mean": 74.875,
+        "interval": [
+          66.790625,
+          81.41666666666667
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "choreography": {
+        "n_songs": 24,
+        "mean": 76.08333333333333,
+        "interval": [
+          71.91666666666667,
+          80.04166666666667
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      }
+    },
+    "reported_input_tokens": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 397211.0,
+        "interval": [
+          364878.61041666666,
+          428729.16354166664
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 1215833.3333333333,
+        "interval": [
+          1110657.109375,
+          1316923.7625
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 24,
+        "mean": 1457552.75,
+        "interval": [
+          1266301.9041666666,
+          1619247.4479166667
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "choreography": {
+        "n_songs": 24,
+        "mean": 1526376.0416666667,
+        "interval": [
+          1401204.890625,
+          1646618.1166666665
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      }
+    },
+    "reported_output_tokens": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 11378.75,
+        "interval": [
+          10762.74375,
+          11972.15625
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 26226.708333333332,
+        "interval": [
+          24605.298958333333,
+          27796.598958333332
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 24,
+        "mean": 32953.541666666664,
+        "interval": [
+          29386.762499999997,
+          35969.222916666666
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "choreography": {
+        "n_songs": 24,
+        "mean": 34699.291666666664,
+        "interval": [
+          32367.346875,
+          36818.715625000004
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      }
+    },
+    "wallclock_seconds": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 1334.085935377283,
+        "interval": [
+          1060.4791651372711,
+          1655.8019583347136
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 3226.510480004712,
+        "interval": [
+          2493.6648914248362,
+          4083.0218155953758
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 24,
+        "mean": 3846.2736253715507,
+        "interval": [
+          3089.6471616923905,
+          4690.909621940631
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "choreography": {
+        "n_songs": 24,
+        "mean": 4021.286273262425,
+        "interval": [
+          3321.4324126094843,
+          4841.582224513434
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      }
+    },
+    "model_longterm_score": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 5.0,
+        "interval": [
+          5.0,
+          5.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 5.0,
+        "interval": [
+          5.0,
+          5.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 19,
+        "mean": 5.0,
+        "interval": [
+          5.0,
+          5.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 5
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 5.0,
+        "interval": [
+          5.0,
+          5.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 4
+      }
+    },
+    "model_gate_theme_development": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 19,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 5
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 4
+      }
+    },
+    "model_gate_contrast": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 19,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 5
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 4
+      }
+    },
+    "model_gate_connective_progression": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 19,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 5
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 4
+      }
+    },
+    "model_gate_ending_integration": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 19,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 5
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 2.0,
+        "interval": [
+          2.0,
+          2.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 4
+      }
+    },
+    "public_five_conditions_complete_lower_bound": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 1.0,
+        "interval": [
+          1.0,
+          1.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 1.0,
+        "interval": [
+          1.0,
+          1.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 19,
+        "mean": 1.0,
+        "interval": [
+          1.0,
+          1.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 5
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 1.0,
+        "interval": [
+          1.0,
+          1.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 4
+      }
+    },
+    "boundary_conflict_registered_lower_bound": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 0.001736111111111111,
+        "interval": [
+          0.0,
+          0.005208333333333333
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 0.01532887167850936,
+        "interval": [
+          0.005289855072463768,
+          0.02606376972296353
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 24,
+        "mean": 0.001736111111111111,
+        "interval": [
+          0.0,
+          0.005208333333333333
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "choreography": {
+        "n_songs": 24,
+        "mean": 0.00893128610519915,
+        "interval": [
+          0.0016025641025641027,
+          0.018071602310732748
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      }
+    },
+    "boundary_unknown_registered_fraction": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 0.005090915190552871,
+        "interval": [
+          0.0,
+          0.011381172839506173
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 0.0015432098765432098,
+        "interval": [
+          0.0,
+          0.004629629629629629
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 24,
+        "mean": 0.21450779727095515,
+        "interval": [
+          0.054785575048732944,
+          0.3817007797270955
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "choreography": {
+        "n_songs": 24,
+        "mean": 0.16847826086956522,
+        "interval": [
+          0.041666666666666664,
+          0.33514492753623193
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      }
+    },
+    "boundary_conflict_known_fraction": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 0.001736111111111111,
+        "interval": [
+          0.0,
+          0.005208333333333333
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 0.015388225904530253,
+        "interval": [
+          0.005308097699402048,
+          0.026138984430424634
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 19,
+        "mean": 0.0021929824561403508,
+        "interval": [
+          0.0,
+          0.006578947368421052
+        ],
+        "registered_songs": 24,
+        "missing_songs": 5
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 0.010915171784737002,
+        "interval": [
+          0.0019230769230769232,
+          0.022278808148373366
+        ],
+        "registered_songs": 24,
+        "missing_songs": 4
+      }
+    },
+    "CLAP_matching_minus_other": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 0.061090063078993236,
+        "interval": [
+          0.035988033156959004,
+          0.08421404322729888
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 0.062395353830925614,
+        "interval": [
+          0.039414570774628,
+          0.08437510629852589
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 19,
+        "mean": 0.05120412303635619,
+        "interval": [
+          0.026011273367963758,
+          0.07262077765706491
+        ],
+        "registered_songs": 24,
+        "missing_songs": 5
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 0.04694910973779882,
+        "interval": [
+          0.023846931544746493,
+          0.0678287017952831
+        ],
+        "registered_songs": 24,
+        "missing_songs": 4
+      }
+    },
+    "model_music_evidence_score": {
+      "workflow": {
+        "n_songs": 24,
+        "mean": 3.804697147380526,
+        "interval": [
+          3.468594439886031,
+          4.102623082782745
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "self_refine": {
+        "n_songs": 24,
+        "mean": 3.816054956411078,
+        "interval": [
+          3.4663693452827222,
+          4.128427944961376
+        ],
+        "registered_songs": 24,
+        "missing_songs": 0
+      },
+      "react": {
+        "n_songs": 19,
+        "mean": 3.8405212122308363,
+        "interval": [
+          3.4817378942684707,
+          4.163791088628542
+        ],
+        "registered_songs": 24,
+        "missing_songs": 5
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 3.839143261846637,
+        "interval": [
+          3.5270956903418433,
+          4.136877778718654
+        ],
+        "registered_songs": 24,
+        "missing_songs": 4
+      }
+    },
+    "model_unproductive_repetition_lower_bound": {
+      "workflow": {
+        "n_songs": 13,
+        "mean": 0.09340659340659342,
+        "interval": [
+          0.0,
+          0.24175824175824176
+        ],
+        "registered_songs": 24,
+        "missing_songs": 11
+      },
+      "self_refine": {
+        "n_songs": 13,
+        "mean": 0.02621082621082621,
+        "interval": [
+          0.0,
+          0.0752136752136752
+        ],
+        "registered_songs": 24,
+        "missing_songs": 11
+      },
+      "react": {
+        "n_songs": 8,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 16
+      },
+      "choreography": {
+        "n_songs": 10,
+        "mean": 0.002040816326530612,
+        "interval": [
+          0.0,
+          0.006122448979591836
+        ],
+        "registered_songs": 24,
+        "missing_songs": 14
+      }
+    },
+    "model_repetition_unknown_fraction": {
+      "workflow": {
+        "n_songs": 13,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 11
+      },
+      "self_refine": {
+        "n_songs": 13,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 11
+      },
+      "react": {
+        "n_songs": 8,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 16
+      },
+      "choreography": {
+        "n_songs": 10,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 14
+      }
+    },
+    "model_unproductive_repetition_known_fraction": {
+      "workflow": {
+        "n_songs": 13,
+        "mean": 0.09340659340659342,
+        "interval": [
+          0.0,
+          0.24175824175824176
+        ],
+        "registered_songs": 24,
+        "missing_songs": 11
+      },
+      "self_refine": {
+        "n_songs": 13,
+        "mean": 0.02621082621082621,
+        "interval": [
+          0.0,
+          0.0752136752136752
+        ],
+        "registered_songs": 24,
+        "missing_songs": 11
+      },
+      "react": {
+        "n_songs": 8,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "registered_songs": 24,
+        "missing_songs": 16
+      },
+      "choreography": {
+        "n_songs": 10,
+        "mean": 0.002040816326530612,
+        "interval": [
+          0.0,
+          0.006122448979591836
+        ],
+        "registered_songs": 24,
+        "missing_songs": 14
+      }
+    },
+    "edit_strict_success_registered_required": {
+      "no_op": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "registered_songs": 20,
+        "missing_songs": 0
+      },
+      "generic": {
+        "n_songs": 20,
+        "mean": 0.525,
+        "interval": [
+          0.35,
+          0.675
+        ],
+        "registered_songs": 20,
+        "missing_songs": 0
+      },
+      "choreography": {
+        "n_songs": 20,
+        "mean": 0.5,
+        "interval": [
+          0.35,
+          0.65
+        ],
+        "registered_songs": 20,
+        "missing_songs": 0
+      }
+    }
+  },
+  "paired": [
+    {
+      "metric": "legal_completion_registered24",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "legal_completion_registered24",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.20833333333333334,
+        "interval": [
+          0.041666666666666664,
+          0.375
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "legal_completion_registered24",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.16666666666666666,
+        "interval": [
+          0.041666666666666664,
+          0.3333333333333333
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "legal_completion_registered24",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.20833333333333334,
+        "interval": [
+          0.041666666666666664,
+          0.375
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "legal_completion_registered24",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.16666666666666666,
+        "interval": [
+          0.041666666666666664,
+          0.3333333333333333
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "legal_completion_registered24",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.041666666666666664,
+        "interval": [
+          -0.20833333333333334,
+          0.08333333333333333
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "outer_calls",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -47.083333333333336,
+        "interval": [
+          -49.75,
+          -44.333333333333336
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "outer_calls",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -50.333333333333336,
+        "interval": [
+          -55.959375,
+          -43.082291666666684
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "outer_calls",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -51.541666666666664,
+        "interval": [
+          -54.333333333333336,
+          -48.625
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "outer_calls",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -3.25,
+        "interval": [
+          -7.958333333333333,
+          3.0833333333333335
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "outer_calls",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -4.458333333333333,
+        "interval": [
+          -5.833333333333333,
+          -3.0833333333333335
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "outer_calls",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -1.2083333333333333,
+        "interval": [
+          -7.166666666666667,
+          3.1666666666666665
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_input_tokens",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -818622.3333333334,
+        "interval": [
+          -888645.1343749999,
+          -744713.4291666667
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_input_tokens",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -1060341.75,
+        "interval": [
+          -1200499.4229166668,
+          -892483.0489583333
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_input_tokens",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -1129165.0416666667,
+        "interval": [
+          -1219622.9875,
+          -1034154.4697916667
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_input_tokens",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -241719.41666666666,
+        "interval": [
+          -351335.31145833334,
+          -97734.38229166673
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_input_tokens",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -310542.7083333333,
+        "interval": [
+          -346424.596875,
+          -271607.17604166665
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_input_tokens",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -68823.29166666667,
+        "interval": [
+          -202727.72916666666,
+          31204.202083333308
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_output_tokens",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -14847.958333333334,
+        "interval": [
+          -15842.266666666666,
+          -13827.34375
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_output_tokens",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -21574.791666666668,
+        "interval": [
+          -24178.39375,
+          -18464.062500000004
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_output_tokens",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -23320.541666666668,
+        "interval": [
+          -24980.927083333332,
+          -21531.402083333334
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_output_tokens",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -6726.833333333333,
+        "interval": [
+          -8881.229166666666,
+          -3972.385416666668
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_output_tokens",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -8472.583333333334,
+        "interval": [
+          -9606.638541666667,
+          -7279.6031250000015
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "reported_output_tokens",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -1745.75,
+        "interval": [
+          -3899.4406249999997,
+          -32.629166666668425
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "wallclock_seconds",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -1892.424544627429,
+        "interval": [
+          -2439.7091051045554,
+          -1427.0995299792676
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "wallclock_seconds",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -2512.1876899942677,
+        "interval": [
+          -3071.328929309811,
+          -1993.7906025144769
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "wallclock_seconds",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -2687.200337885142,
+        "interval": [
+          -3184.8269094854622,
+          -2243.4628808452053
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "wallclock_seconds",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -619.7631453668388,
+        "interval": [
+          -819.447055176111,
+          -373.31628960875315
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "wallclock_seconds",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -794.7757932577127,
+        "interval": [
+          -926.4941463189782,
+          -653.8019483166776
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "wallclock_seconds",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -175.01264789087386,
+        "interval": [
+          -380.4946204885045,
+          -3.106703281350254
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "model_longterm_score",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "model_longterm_score",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_longterm_score",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_longterm_score",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_longterm_score",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_longterm_score",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 18,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 6
+    },
+    {
+      "metric": "model_gate_theme_development",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "model_gate_theme_development",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_gate_theme_development",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_gate_theme_development",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_gate_theme_development",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_gate_theme_development",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 18,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 6
+    },
+    {
+      "metric": "model_gate_contrast",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "model_gate_contrast",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_gate_contrast",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_gate_contrast",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_gate_contrast",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_gate_contrast",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 18,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 6
+    },
+    {
+      "metric": "model_gate_connective_progression",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "model_gate_connective_progression",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_gate_connective_progression",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_gate_connective_progression",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_gate_connective_progression",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_gate_connective_progression",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 18,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 6
+    },
+    {
+      "metric": "model_gate_ending_integration",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "model_gate_ending_integration",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_gate_ending_integration",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_gate_ending_integration",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_gate_ending_integration",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_gate_ending_integration",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 18,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 6
+    },
+    {
+      "metric": "public_five_conditions_complete_lower_bound",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "public_five_conditions_complete_lower_bound",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "public_five_conditions_complete_lower_bound",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "public_five_conditions_complete_lower_bound",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "public_five_conditions_complete_lower_bound",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "public_five_conditions_complete_lower_bound",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 18,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 6
+    },
+    {
+      "metric": "boundary_conflict_registered_lower_bound",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.013592760567398249,
+        "interval": [
+          -0.023243319306498655,
+          -0.005144776570048313
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_conflict_registered_lower_bound",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.0,
+        "interval": [
+          -0.005208333333333333,
+          0.005208333333333333
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_conflict_registered_lower_bound",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.007195174994088037,
+        "interval": [
+          -0.01655327047650417,
+          0.00171869193608324
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_conflict_registered_lower_bound",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.013592760567398249,
+        "interval": [
+          0.004876543209876544,
+          0.024100482716424725
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_conflict_registered_lower_bound",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.006397585573310212,
+        "interval": [
+          -0.005987813674181428,
+          0.018717609366612986
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_conflict_registered_lower_bound",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.007195174994088037,
+        "interval": [
+          -0.0173653339414209,
+          0.0015851449275362318
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_unknown_registered_fraction",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.0035477053140096615,
+        "interval": [
+          -0.002893518518518519,
+          0.010300087224906052
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_unknown_registered_fraction",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.2094168820804023,
+        "interval": [
+          -0.37781965985818006,
+          -0.05143067209085521
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_unknown_registered_fraction",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.16338734567901234,
+        "interval": [
+          -0.330054012345679,
+          -0.03819444444444444
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_unknown_registered_fraction",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.21296458739441193,
+        "interval": [
+          -0.37962967024041583,
+          -0.05466532651072124
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_unknown_registered_fraction",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.166935050993022,
+        "interval": [
+          -0.3317901234567901,
+          -0.041666666666666664
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_unknown_registered_fraction",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": 0.04602953640138995,
+        "interval": [
+          -0.08145863526570048,
+          0.2049532746419187
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_conflict_known_fraction",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.013652114793419143,
+        "interval": [
+          -0.023286566015506233,
+          -0.005163170163170164
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "boundary_conflict_known_fraction",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0,
+        "interval": [
+          -0.006578947368421052,
+          0.006578947368421052
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "boundary_conflict_known_fraction",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": -0.00883183845140367,
+        "interval": [
+          -0.020454545454545454,
+          0.0019927536231884057
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "boundary_conflict_known_fraction",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.011171902087233895,
+        "interval": [
+          0.002105263157894737,
+          0.022423288953609313
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "boundary_conflict_known_fraction",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.005627622377622378,
+        "interval": [
+          -0.009613896067700417,
+          0.020610646599777033
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "boundary_conflict_known_fraction",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 18,
+        "mean": -0.007676401698140828,
+        "interval": [
+          -0.020414745278875712,
+          0.004208754208754208
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 6
+    },
+    {
+      "metric": "CLAP_matching_minus_other",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.001305290751932377,
+        "interval": [
+          -0.005509309249679648,
+          0.002395467133590276
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "CLAP_matching_minus_other",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": -0.0018556148930721883,
+        "interval": [
+          -0.005466960653425847,
+          0.0018873844118199618
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "CLAP_matching_minus_other",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": -0.0009132972915256001,
+        "interval": [
+          -0.004628534304356735,
+          0.002901428222221421
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "CLAP_matching_minus_other",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 6.901158931407327e-05,
+        "interval": [
+          -0.005051291571719651,
+          0.005700949542603704
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "CLAP_matching_minus_other",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.0013557975859035455,
+        "interval": [
+          -0.0029654111757468813,
+          0.005712438739300709
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "CLAP_matching_minus_other",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 18,
+        "mean": 0.002620855578776162,
+        "interval": [
+          -0.0010394511591385518,
+          0.006356117984784838
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 6
+    },
+    {
+      "metric": "model_music_evidence_score",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773",
+        "fma-9889"
+      ],
+      "statistics": {
+        "n_songs": 24,
+        "mean": -0.01135780903055165,
+        "interval": [
+          -0.050657815233330225,
+          0.026413078883012427
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 0
+    },
+    {
+      "metric": "model_music_evidence_score",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": -0.03271307546147967,
+        "interval": [
+          -0.09894350433413122,
+          0.03927559986014764
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_music_evidence_score",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.026554891364673962,
+        "interval": [
+          -0.025829726128181605,
+          0.08146380678182734
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_music_evidence_score",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7549",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 19,
+        "mean": 0.0038467304816817674,
+        "interval": [
+          -0.057926045359442895,
+          0.07963110184218504
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 5
+    },
+    {
+      "metric": "model_music_evidence_score",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.054672950396920716,
+        "interval": [
+          0.0021962520118770615,
+          0.10461672510047797
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 4
+    },
+    {
+      "metric": "model_music_evidence_score",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-11096",
+        "fma-11689",
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-614",
+        "fma-6674",
+        "fma-7182",
+        "fma-7773"
+      ],
+      "statistics": {
+        "n_songs": 18,
+        "mean": 0.04678502155809557,
+        "interval": [
+          -0.03705445314636767,
+          0.12497694589361262
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 6
+    },
+    {
+      "metric": "model_unproductive_repetition_lower_bound",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 10,
+        "mean": 0.116984126984127,
+        "interval": [
+          -0.008888888888888889,
+          0.28841269841269845
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 14
+    },
+    {
+      "metric": "model_unproductive_repetition_lower_bound",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-3483",
+        "fma-3880",
+        "fma-3952",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 8,
+        "mean": 0.08928571428571429,
+        "interval": [
+          0.0,
+          0.26785714285714285
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 16
+    },
+    {
+      "metric": "model_unproductive_repetition_lower_bound",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3973",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 8,
+        "mean": 0.0625,
+        "interval": [
+          0.0,
+          0.1875
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 16
+    },
+    {
+      "metric": "model_unproductive_repetition_lower_bound",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-3483",
+        "fma-3952",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 7,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 17
+    },
+    {
+      "metric": "model_unproductive_repetition_lower_bound",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3973",
+        "fma-4284",
+        "fma-614",
+        "fma-6674"
+      ],
+      "statistics": {
+        "n_songs": 9,
+        "mean": 0.03559250860838162,
+        "interval": [
+          0.0,
+          0.09690098261526832
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 15
+    },
+    {
+      "metric": "model_unproductive_repetition_lower_bound",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3952",
+        "fma-3973",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 5,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 19
+    },
+    {
+      "metric": "model_repetition_unknown_fraction",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 10,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 14
+    },
+    {
+      "metric": "model_repetition_unknown_fraction",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-3483",
+        "fma-3880",
+        "fma-3952",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 8,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 16
+    },
+    {
+      "metric": "model_repetition_unknown_fraction",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3973",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 8,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 16
+    },
+    {
+      "metric": "model_repetition_unknown_fraction",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-3483",
+        "fma-3952",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 7,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 17
+    },
+    {
+      "metric": "model_repetition_unknown_fraction",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3973",
+        "fma-4284",
+        "fma-614",
+        "fma-6674"
+      ],
+      "statistics": {
+        "n_songs": 9,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 15
+    },
+    {
+      "metric": "model_repetition_unknown_fraction",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3952",
+        "fma-3973",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 5,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 19
+    },
+    {
+      "metric": "model_unproductive_repetition_known_fraction",
+      "a": "workflow",
+      "b": "self_refine",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 10,
+        "mean": 0.116984126984127,
+        "interval": [
+          -0.008888888888888889,
+          0.28841269841269845
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 14
+    },
+    {
+      "metric": "model_unproductive_repetition_known_fraction",
+      "a": "workflow",
+      "b": "react",
+      "common_songs": [
+        "fma-3483",
+        "fma-3880",
+        "fma-3952",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 8,
+        "mean": 0.08928571428571429,
+        "interval": [
+          0.0,
+          0.26785714285714285
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 16
+    },
+    {
+      "metric": "model_unproductive_repetition_known_fraction",
+      "a": "workflow",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3973",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 8,
+        "mean": 0.0625,
+        "interval": [
+          0.0,
+          0.1875
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 16
+    },
+    {
+      "metric": "model_unproductive_repetition_known_fraction",
+      "a": "self_refine",
+      "b": "react",
+      "common_songs": [
+        "fma-3483",
+        "fma-3952",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 7,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 17
+    },
+    {
+      "metric": "model_unproductive_repetition_known_fraction",
+      "a": "self_refine",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3973",
+        "fma-4284",
+        "fma-614",
+        "fma-6674"
+      ],
+      "statistics": {
+        "n_songs": 9,
+        "mean": 0.03559250860838162,
+        "interval": [
+          0.0,
+          0.09690098261526832
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 15
+    },
+    {
+      "metric": "model_unproductive_repetition_known_fraction",
+      "a": "react",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3952",
+        "fma-3973",
+        "fma-4284",
+        "fma-614"
+      ],
+      "statistics": {
+        "n_songs": 5,
+        "mean": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "registered_songs": 24,
+      "missing_songs": 19
+    },
+    {
+      "metric": "edit_strict_success_registered_required",
+      "a": "no_op",
+      "b": "generic",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": -0.525,
+        "interval": [
+          -0.675,
+          -0.35
+        ]
+      },
+      "registered_songs": 20,
+      "missing_songs": 0
+    },
+    {
+      "metric": "edit_strict_success_registered_required",
+      "a": "no_op",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": -0.5,
+        "interval": [
+          -0.65,
+          -0.35
+        ]
+      },
+      "registered_songs": 20,
+      "missing_songs": 0
+    },
+    {
+      "metric": "edit_strict_success_registered_required",
+      "a": "generic",
+      "b": "choreography",
+      "common_songs": [
+        "fma-3483",
+        "fma-3847",
+        "fma-3880",
+        "fma-3933",
+        "fma-3944",
+        "fma-3952",
+        "fma-3962",
+        "fma-3973",
+        "fma-4002",
+        "fma-4071",
+        "fma-4284",
+        "fma-4376",
+        "fma-4385",
+        "fma-5149",
+        "fma-5287",
+        "fma-614",
+        "fma-6674",
+        "fma-6776",
+        "fma-7182",
+        "fma-7549"
+      ],
+      "statistics": {
+        "n_songs": 20,
+        "mean": 0.025,
+        "interval": [
+          0.0,
+          0.075
+        ]
+      },
+      "registered_songs": 20,
+      "missing_songs": 0
+    }
+  ],
+  "original_summaries": {
+    "mechanical": {
+      "methods": {
+        "workflow": {
+          "registered_songs": 24,
+          "statuses": {
+            "complete_attempt": 24
+          },
+          "legal_complete_songs": 24,
+          "legal_completion_rate": 1.0,
+          "mean_calls_per_registered_song": 24.541666666666668,
+          "total_calls": 589,
+          "mean_input_tokens_per_registered_song": 397211,
+          "mean_output_tokens_per_registered_song": 11378.75,
+          "rejected_tool_calls": 0,
+          "no_content_change_steps": 0,
+          "music_fit": null,
+          "long_range_organization": null,
+          "semantic_boundary_conflict_rate": null,
+          "semantic_repetition_rate": null
+        },
+        "self_refine": {
+          "registered_songs": 24,
+          "statuses": {
+            "complete_attempt": 24
+          },
+          "legal_complete_songs": 24,
+          "legal_completion_rate": 1.0,
+          "mean_calls_per_registered_song": 71.625,
+          "total_calls": 1719,
+          "mean_input_tokens_per_registered_song": 1215833.3333333333,
+          "mean_output_tokens_per_registered_song": 26226.708333333332,
+          "rejected_tool_calls": 0,
+          "no_content_change_steps": 0,
+          "music_fit": null,
+          "long_range_organization": null,
+          "semantic_boundary_conflict_rate": null,
+          "semantic_repetition_rate": null
+        },
+        "react": {
+          "registered_songs": 24,
+          "statuses": {
+            "complete_attempt": 24
+          },
+          "legal_complete_songs": 19,
+          "legal_completion_rate": 0.7916666666666666,
+          "mean_calls_per_registered_song": 74.875,
+          "total_calls": 1797,
+          "mean_input_tokens_per_registered_song": 1457552.75,
+          "mean_output_tokens_per_registered_song": 32953.541666666664,
+          "rejected_tool_calls": 15,
+          "no_content_change_steps": 469,
+          "music_fit": null,
+          "long_range_organization": null,
+          "semantic_boundary_conflict_rate": null,
+          "semantic_repetition_rate": null
+        },
+        "choreography": {
+          "registered_songs": 24,
+          "statuses": {
+            "complete_attempt": 24
+          },
+          "legal_complete_songs": 20,
+          "legal_completion_rate": 0.8333333333333334,
+          "mean_calls_per_registered_song": 76.08333333333333,
+          "total_calls": 1826,
+          "mean_input_tokens_per_registered_song": 1526376.0416666667,
+          "mean_output_tokens_per_registered_song": 34699.291666666664,
+          "rejected_tool_calls": 12,
+          "no_content_change_steps": 500,
+          "music_fit": null,
+          "long_range_organization": null,
+          "semantic_boundary_conflict_rate": null,
+          "semantic_repetition_rate": null
+        }
+      },
+      "registered_cells": 96,
+      "scope": "actual final-state structure/cost/trajectory metrics, not semantic or musical quality",
+      "human": false
+    },
+    "long_metrics": {
+      "methods": {
+        "workflow": {
+          "registered": 24,
+          "final_legal_success": 24,
+          "model_review_valid": 24,
+          "model_longterm_mean": 5,
+          "public_constraint_yes": 120,
+          "public_constraints_evaluated": 120,
+          "boundary_registered": 541,
+          "boundary_conflicts": 1,
+          "boundary_unknown": 3,
+          "invalid_semantic_repetition": "not inferred from literal reuse; source/music-aware adjudication separate",
+          "boundary_song_macro_conflict_lower_bound": 0.001736111111111111,
+          "boundary_song_macro_unknown_fraction": 0.005090915190552872,
+          "boundary_denominator_scope": "all registered adjacent planning-unit boundaries, failed final plans contribute unknown not no-conflict",
+          "public_constraints_scope": "five explicit brief requirements: solo, motion-only/no scene, actual theme development, energy/organization contrast, connected movement; gate2 complete, gate1 partial not counted complete",
+          "public_condition_unknown_count": 0,
+          "public_registered_conditions": 120,
+          "public_completion_registered_lower_bound": 1.0,
+          "mean_outer_calls_registered24": 24.541666666666668,
+          "reported_input_token_lower_bound_registered24": 397211.0,
+          "reported_output_token_lower_bound_registered24": 11378.75,
+          "missing_usage_totals_rows": 0,
+          "cost_scope": "all registered rows including failed outputs; known reported usage lower bounds when metadata missing; local K2 generation cost separate, no imputed missing costs",
+          "mean_outer_calls_evaluable": 24.541666666666668,
+          "mean_input_tokens_evaluable": 397211,
+          "mean_output_tokens_evaluable": 11378.75,
+          "mean_wallclock_seconds_evaluable": 1334.085935377283,
+          "rejected_decisions_evaluable": 0,
+          "total_decisions_evaluable": 565,
+          "budget_exceeded_evaluable": 0,
+          "longterm_gate_means": {
+            "theme_development": 2,
+            "contrast": 2,
+            "connective_progression": 2,
+            "ending_integration": 2
+          },
+          "longterm_full_score_fraction": 1.0
+        },
+        "self_refine": {
+          "registered": 24,
+          "final_legal_success": 24,
+          "model_review_valid": 24,
+          "model_longterm_mean": 5,
+          "public_constraint_yes": 120,
+          "public_constraints_evaluated": 120,
+          "boundary_registered": 541,
+          "boundary_conflicts": 9,
+          "boundary_unknown": 1,
+          "invalid_semantic_repetition": "not inferred from literal reuse; source/music-aware adjudication separate",
+          "boundary_song_macro_conflict_lower_bound": 0.015328871678509359,
+          "boundary_song_macro_unknown_fraction": 0.0015432098765432098,
+          "boundary_denominator_scope": "all registered adjacent planning-unit boundaries, failed final plans contribute unknown not no-conflict",
+          "public_constraints_scope": "five explicit brief requirements: solo, motion-only/no scene, actual theme development, energy/organization contrast, connected movement; gate2 complete, gate1 partial not counted complete",
+          "public_condition_unknown_count": 0,
+          "public_registered_conditions": 120,
+          "public_completion_registered_lower_bound": 1.0,
+          "mean_outer_calls_registered24": 71.625,
+          "reported_input_token_lower_bound_registered24": 1215833.3333333333,
+          "reported_output_token_lower_bound_registered24": 26226.708333333332,
+          "missing_usage_totals_rows": 0,
+          "cost_scope": "all registered rows including failed outputs; known reported usage lower bounds when metadata missing; local K2 generation cost separate, no imputed missing costs",
+          "mean_outer_calls_evaluable": 71.625,
+          "mean_input_tokens_evaluable": 1215833.3333333333,
+          "mean_output_tokens_evaluable": 26226.708333333332,
+          "mean_wallclock_seconds_evaluable": 3226.510480004712,
+          "rejected_decisions_evaluable": 0,
+          "total_decisions_evaluable": 1695,
+          "budget_exceeded_evaluable": 0,
+          "longterm_gate_means": {
+            "theme_development": 2,
+            "contrast": 2,
+            "connective_progression": 2,
+            "ending_integration": 2
+          },
+          "longterm_full_score_fraction": 1.0
+        },
+        "react": {
+          "registered": 24,
+          "final_legal_success": 19,
+          "model_review_valid": 19,
+          "model_longterm_mean": 5,
+          "public_constraint_yes": 95,
+          "public_constraints_evaluated": 95,
+          "boundary_registered": 541,
+          "boundary_conflicts": 1,
+          "boundary_unknown": 128,
+          "invalid_semantic_repetition": "not inferred from literal reuse; source/music-aware adjudication separate",
+          "boundary_song_macro_conflict_lower_bound": 0.001736111111111111,
+          "boundary_song_macro_unknown_fraction": 0.21450779727095518,
+          "boundary_denominator_scope": "all registered adjacent planning-unit boundaries, failed final plans contribute unknown not no-conflict",
+          "public_constraints_scope": "five explicit brief requirements: solo, motion-only/no scene, actual theme development, energy/organization contrast, connected movement; gate2 complete, gate1 partial not counted complete",
+          "public_condition_unknown_count": 25,
+          "public_registered_conditions": 120,
+          "public_completion_registered_lower_bound": 0.7916666666666666,
+          "mean_outer_calls_registered24": 74.875,
+          "reported_input_token_lower_bound_registered24": 1457552.75,
+          "reported_output_token_lower_bound_registered24": 32953.541666666664,
+          "missing_usage_totals_rows": 0,
+          "cost_scope": "all registered rows including failed outputs; known reported usage lower bounds when metadata missing; local K2 generation cost separate, no imputed missing costs",
+          "mean_outer_calls_evaluable": 77.26315789473684,
+          "mean_input_tokens_evaluable": 1501103.4736842106,
+          "mean_output_tokens_evaluable": 33911.63157894737,
+          "mean_wallclock_seconds_evaluable": 4175.68149114905,
+          "rejected_decisions_evaluable": 5,
+          "total_decisions_evaluable": 1449,
+          "budget_exceeded_evaluable": 0,
+          "longterm_gate_means": {
+            "theme_development": 2,
+            "contrast": 2,
+            "connective_progression": 2,
+            "ending_integration": 2
+          },
+          "longterm_full_score_fraction": 1.0
+        },
+        "choreography": {
+          "registered": 24,
+          "final_legal_success": 20,
+          "model_review_valid": 20,
+          "model_longterm_mean": 5,
+          "public_constraint_yes": 100,
+          "public_constraints_evaluated": 100,
+          "boundary_registered": 541,
+          "boundary_conflicts": 5,
+          "boundary_unknown": 110,
+          "invalid_semantic_repetition": "not inferred from literal reuse; source/music-aware adjudication separate",
+          "boundary_song_macro_conflict_lower_bound": 0.008931286105199148,
+          "boundary_song_macro_unknown_fraction": 0.16847826086956522,
+          "boundary_denominator_scope": "all registered adjacent planning-unit boundaries, failed final plans contribute unknown not no-conflict",
+          "public_constraints_scope": "five explicit brief requirements: solo, motion-only/no scene, actual theme development, energy/organization contrast, connected movement; gate2 complete, gate1 partial not counted complete",
+          "public_condition_unknown_count": 20,
+          "public_registered_conditions": 120,
+          "public_completion_registered_lower_bound": 0.8333333333333334,
+          "mean_outer_calls_registered24": 76.08333333333333,
+          "reported_input_token_lower_bound_registered24": 1526376.0416666667,
+          "reported_output_token_lower_bound_registered24": 34699.291666666664,
+          "missing_usage_totals_rows": 0,
+          "cost_scope": "all registered rows including failed outputs; known reported usage lower bounds when metadata missing; local K2 generation cost separate, no imputed missing costs",
+          "mean_outer_calls_evaluable": 73.7,
+          "mean_input_tokens_evaluable": 1455257.9,
+          "mean_output_tokens_evaluable": 33461.35,
+          "mean_wallclock_seconds_evaluable": 4090.9426776859445,
+          "rejected_decisions_evaluable": 4,
+          "total_decisions_evaluable": 1454,
+          "budget_exceeded_evaluable": 0,
+          "longterm_gate_means": {
+            "theme_development": 2,
+            "contrast": 2,
+            "connective_progression": 2,
+            "ending_integration": 2
+          },
+          "longterm_full_score_fraction": 1.0
+        }
+      },
+      "registered": 96,
+      "paired_song_statistics": [
+        {
+          "a": "workflow",
+          "b": "self_refine",
+          "metric": "final_legal_success_registered24",
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 24,
+            "n_songs": 24,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0.0,
+            "interval": [
+              0.0,
+              0.0
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-9889",
+                "value": 0.0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "workflow",
+          "b": "self_refine",
+          "metric": "model_longterm_common_evaluable",
+          "common_songs": 24,
+          "registered_songs": 24,
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 24,
+            "n_songs": 24,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0,
+            "interval": [
+              0.0,
+              0.0
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": 0
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0
+              },
+              {
+                "song_id": "fma-9889",
+                "value": 0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "workflow",
+          "b": "react",
+          "metric": "final_legal_success_registered24",
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 24,
+            "n_songs": 24,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0.20833333333333334,
+            "interval": [
+              0.041666666666666664,
+              0.375
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-9889",
+                "value": 1.0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "workflow",
+          "b": "react",
+          "metric": "model_longterm_common_evaluable",
+          "common_songs": 19,
+          "registered_songs": 24,
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 19,
+            "n_songs": 19,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0,
+            "interval": [
+              0.0,
+              0.0
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "workflow",
+          "b": "choreography",
+          "metric": "final_legal_success_registered24",
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 24,
+            "n_songs": 24,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0.16666666666666666,
+            "interval": [
+              0.041666666666666664,
+              0.3333333333333333
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-9889",
+                "value": 1.0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "workflow",
+          "b": "choreography",
+          "metric": "model_longterm_common_evaluable",
+          "common_songs": 20,
+          "registered_songs": 24,
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 20,
+            "n_songs": 20,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0,
+            "interval": [
+              0.0,
+              0.0
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": 0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "self_refine",
+          "b": "react",
+          "metric": "final_legal_success_registered24",
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 24,
+            "n_songs": 24,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0.20833333333333334,
+            "interval": [
+              0.041666666666666664,
+              0.375
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-9889",
+                "value": 1.0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "self_refine",
+          "b": "react",
+          "metric": "model_longterm_common_evaluable",
+          "common_songs": 19,
+          "registered_songs": 24,
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 19,
+            "n_songs": 19,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0,
+            "interval": [
+              0.0,
+              0.0
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "self_refine",
+          "b": "choreography",
+          "metric": "final_legal_success_registered24",
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 24,
+            "n_songs": 24,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0.16666666666666666,
+            "interval": [
+              0.041666666666666664,
+              0.3333333333333333
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-9889",
+                "value": 1.0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "self_refine",
+          "b": "choreography",
+          "metric": "model_longterm_common_evaluable",
+          "common_songs": 20,
+          "registered_songs": 24,
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 20,
+            "n_songs": 20,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0,
+            "interval": [
+              0.0,
+              0.0
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": 0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "react",
+          "b": "choreography",
+          "metric": "final_legal_success_registered24",
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 24,
+            "n_songs": 24,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": -0.041666666666666664,
+            "interval": [
+              -0.16666666666666666,
+              0.08333333333333333
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 1.0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-9889",
+                "value": 0.0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        },
+        {
+          "a": "react",
+          "b": "choreography",
+          "metric": "model_longterm_common_evaluable",
+          "common_songs": 18,
+          "registered_songs": 24,
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 18,
+            "n_songs": 18,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0,
+            "interval": [
+              0.0,
+              0.0
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-11096",
+                "value": 0
+              },
+              {
+                "song_id": "fma-11689",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3483",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0
+              },
+              {
+                "song_id": "fma-7773",
+                "value": 0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          }
+        }
+      ],
+      "origin": "strict model text longterm and boundary review, actual mechanical calculations separate",
+      "human": false,
+      "raw_audio_seen": false,
+      "absolute_quality_calibration": "not independently human validated",
+      "music_fit": "separate independent observations metric",
+      "schema_not_quality": true
+    },
+    "music_metrics": {
+      "methods": {
+        "workflow": {
+          "registered_songs": 24,
+          "registered_blocks": 565,
+          "valid_block_scores": 563,
+          "unscored_blocks": 2,
+          "valid_songs": 24,
+          "song_equal_mean": 3.804697147380526,
+          "song_means": {
+            "fma-614": 1.8888888888888888,
+            "fma-3483": 3.761904761904762,
+            "fma-3847": 4.666666666666667,
+            "fma-3933": 4.5,
+            "fma-3944": 4.333333333333333,
+            "fma-3952": 3.263157894736842,
+            "fma-3962": 4.7272727272727275,
+            "fma-3973": 4.3,
+            "fma-4002": 4.35,
+            "fma-4071": 4,
+            "fma-4284": 3.9473684210526314,
+            "fma-4376": 3.625,
+            "fma-3880": 3.6153846153846154,
+            "fma-4385": 4,
+            "fma-5149": 3.7037037037037037,
+            "fma-5287": 4.0344827586206895,
+            "fma-6674": 2.7916666666666665,
+            "fma-6776": 4.892857142857143,
+            "fma-7182": 3.875,
+            "fma-7549": 3.0714285714285716,
+            "fma-7773": 3.8846153846153846,
+            "fma-9889": 2,
+            "fma-11096": 3.12,
+            "fma-11689": 4.96
+          }
+        },
+        "self_refine": {
+          "registered_songs": 24,
+          "registered_blocks": 565,
+          "valid_block_scores": 559,
+          "unscored_blocks": 6,
+          "valid_songs": 24,
+          "song_equal_mean": 3.8160549564110777,
+          "song_means": {
+            "fma-614": 1.8888888888888888,
+            "fma-3483": 3.7142857142857144,
+            "fma-3847": 4.75,
+            "fma-3933": 4.45,
+            "fma-3944": 4.277777777777778,
+            "fma-3952": 3.210526315789474,
+            "fma-3962": 4.739130434782608,
+            "fma-3973": 4.5,
+            "fma-4002": 4.5,
+            "fma-4071": 4.136363636363637,
+            "fma-4284": 4.105263157894737,
+            "fma-4376": 3.5416666666666665,
+            "fma-3880": 3.576923076923077,
+            "fma-4385": 4,
+            "fma-5149": 3.7037037037037037,
+            "fma-5287": 3.888888888888889,
+            "fma-6674": 2.75,
+            "fma-6776": 4.857142857142857,
+            "fma-7182": 3.8333333333333335,
+            "fma-7549": 3.1481481481481484,
+            "fma-7773": 4.038461538461538,
+            "fma-9889": 1.8148148148148149,
+            "fma-11096": 3.2,
+            "fma-11689": 4.96
+          }
+        },
+        "react": {
+          "registered_songs": 24,
+          "registered_blocks": 565,
+          "valid_block_scores": 432,
+          "unscored_blocks": 133,
+          "valid_songs": 19,
+          "song_equal_mean": 3.8405212122308354,
+          "song_means": {
+            "fma-614": 2,
+            "fma-3483": 3.857142857142857,
+            "fma-3847": 4.791666666666667,
+            "fma-3933": 4.55,
+            "fma-3952": 3.263157894736842,
+            "fma-3962": 4.565217391304348,
+            "fma-3973": 4.55,
+            "fma-4002": 4.55,
+            "fma-4071": 3.652173913043478,
+            "fma-4284": 4.157894736842105,
+            "fma-4376": 3.7083333333333335,
+            "fma-3880": 3.72,
+            "fma-4385": 3.92,
+            "fma-6674": 2.5833333333333335,
+            "fma-7182": 3.7083333333333335,
+            "fma-7549": 3.111111111111111,
+            "fma-7773": 3.9615384615384617,
+            "fma-11096": 3.32,
+            "fma-11689": 5
+          }
+        },
+        "choreography": {
+          "registered_songs": 24,
+          "registered_blocks": 565,
+          "valid_block_scores": 447,
+          "unscored_blocks": 118,
+          "valid_songs": 20,
+          "song_equal_mean": 3.8391432618466372,
+          "song_means": {
+            "fma-614": 1.9444444444444444,
+            "fma-3483": 3.619047619047619,
+            "fma-3847": 4.625,
+            "fma-3933": 4.35,
+            "fma-3944": 4.0625,
+            "fma-3952": 3.1052631578947367,
+            "fma-3962": 4.478260869565218,
+            "fma-3973": 4.35,
+            "fma-4002": 4.4,
+            "fma-4071": 4,
+            "fma-4284": 4.105263157894737,
+            "fma-4376": 3.6818181818181817,
+            "fma-3880": 3.730769230769231,
+            "fma-4385": 3.92,
+            "fma-5149": 3.7037037037037037,
+            "fma-6674": 2.7916666666666665,
+            "fma-7182": 3.9166666666666665,
+            "fma-7773": 4.038461538461538,
+            "fma-11096": 2.96,
+            "fma-11689": 5
+          }
+        }
+      },
+      "origin": "actual-audio observer then frozen text evidence scorer; fallible model-assisted, not human music-fit validation",
+      "raw_audio_seen_by_scorer": false,
+      "no_candidate_in_observer": true,
+      "unknown_not_imputed": true
+    },
+    "repeat_metrics": {
+      "methods": {
+        "workflow": {
+          "registered_songs": 24,
+          "valid_songs": 13,
+          "unproductive_song_macro_lower_bound": 0.09340659340659341,
+          "event_unknown_song_macro": 0.0,
+          "unscored_songs": 11
+        },
+        "self_refine": {
+          "registered_songs": 24,
+          "valid_songs": 13,
+          "unproductive_song_macro_lower_bound": 0.02621082621082621,
+          "event_unknown_song_macro": 0.0,
+          "unscored_songs": 11
+        },
+        "react": {
+          "registered_songs": 24,
+          "valid_songs": 8,
+          "unproductive_song_macro_lower_bound": 0.0,
+          "event_unknown_song_macro": 0.0,
+          "unscored_songs": 16
+        },
+        "choreography": {
+          "registered_songs": 24,
+          "valid_songs": 10,
+          "unproductive_song_macro_lower_bound": 0.002040816326530612,
+          "event_unknown_song_macro": 0.0,
+          "unscored_songs": 14
+        }
+      },
+      "origin": "fallible model content-and-independent-music-evidence repetition review, not human truth",
+      "lexical_reuse_not_error": true,
+      "all_final_events_registered": true
+    },
+    "clap_metrics": {
+      "methods": {
+        "workflow": {
+          "registered_songs": 24,
+          "registered_windows": 1127,
+          "status_counts": {
+            "computed": 1127
+          },
+          "valid_songs": 24,
+          "song_equal_mean": 0.061090063078993236,
+          "song_means": {
+            "fma-614": -0.11130803541557209,
+            "fma-3483": 0.05895990399377687,
+            "fma-3847": 0.11569267356807882,
+            "fma-3933": 0.05894941251192774,
+            "fma-3944": 0.02838121253896404,
+            "fma-3952": 0.04902965474773098,
+            "fma-3962": 0.09881286582221156,
+            "fma-3973": 0.06392605812885822,
+            "fma-4002": 0.03462852668017149,
+            "fma-4071": 0.030904341489076614,
+            "fma-4284": 0.04320398134154242,
+            "fma-4376": 0.025407132236881458,
+            "fma-3880": 0.04102023253933741,
+            "fma-4385": 0.0389523135125637,
+            "fma-5149": 0.1011861539533678,
+            "fma-5287": 0.09106814630072692,
+            "fma-6674": -0.054713177999171116,
+            "fma-6776": 0.17798073829284736,
+            "fma-7182": 0.08958184315512578,
+            "fma-7549": 0.1464727722892636,
+            "fma-7773": 0.10598600051313076,
+            "fma-9889": 0.12992360808753542,
+            "fma-11096": 0.04247065775096417,
+            "fma-11689": 0.059644497856497766
+          }
+        },
+        "self_refine": {
+          "registered_songs": 24,
+          "registered_windows": 1127,
+          "status_counts": {
+            "computed": 1127
+          },
+          "valid_songs": 24,
+          "song_equal_mean": 0.062395353830925614,
+          "song_means": {
+            "fma-614": -0.10028577595949173,
+            "fma-3483": 0.0667493666655251,
+            "fma-3847": 0.11498732222838605,
+            "fma-3933": 0.061562834751038326,
+            "fma-3944": 0.042733610683196296,
+            "fma-3952": 0.04721370802537815,
+            "fma-3962": 0.10132829521013342,
+            "fma-3973": 0.056667049057208575,
+            "fma-4002": 0.03276430238038301,
+            "fma-4071": 0.012568591576483514,
+            "fma-4284": 0.05018851543600495,
+            "fma-4376": 0.02165276771213146,
+            "fma-3880": 0.03218609015815533,
+            "fma-4385": 0.05023493692278862,
+            "fma-5149": 0.09177281798900298,
+            "fma-5287": 0.08387542811447177,
+            "fma-6674": -0.024754243165565033,
+            "fma-6776": 0.1803257545190198,
+            "fma-7182": 0.08421079612647493,
+            "fma-7549": 0.14259784008588708,
+            "fma-7773": 0.10441330293158316,
+            "fma-9889": 0.12459132274878877,
+            "fma-11096": 0.04737151704728603,
+            "fma-11689": 0.07253234069794416
+          }
+        },
+        "react": {
+          "registered_songs": 24,
+          "registered_windows": 1127,
+          "status_counts": {
+            "computed": 867,
+            "failed_generation": 260
+          },
+          "valid_songs": 19,
+          "song_equal_mean": 0.05120412303635619,
+          "song_means": {
+            "fma-614": -0.0944754346399694,
+            "fma-3483": 0.06384437238531453,
+            "fma-3847": 0.10751916745558698,
+            "fma-3933": 0.042275476757259595,
+            "fma-3952": 0.04699937928770039,
+            "fma-3962": 0.10903655381306358,
+            "fma-3973": 0.07515303771465252,
+            "fma-4002": 0.028744388930499555,
+            "fma-4071": 0.030063418423136076,
+            "fma-4284": 0.04866525993959324,
+            "fma-4376": 0.025326272036800993,
+            "fma-3880": 0.05269792629405856,
+            "fma-4385": 0.045279190391302106,
+            "fma-6674": -0.050649648726296924,
+            "fma-7182": 0.0882435090218981,
+            "fma-7549": 0.13741999302516905,
+            "fma-7773": 0.10718223986760625,
+            "fma-11096": 0.05197362197563052,
+            "fma-11689": 0.05757961373776197
+          }
+        },
+        "choreography": {
+          "registered_songs": 24,
+          "registered_windows": 1127,
+          "status_counts": {
+            "computed": 900,
+            "failed_generation": 227
+          },
+          "valid_songs": 20,
+          "song_equal_mean": 0.04694910973779882,
+          "song_means": {
+            "fma-614": -0.09563197839904476,
+            "fma-3483": 0.05968285236685049,
+            "fma-3847": 0.121645608084633,
+            "fma-3933": 0.049896759823674246,
+            "fma-3944": 0.04358117574372807,
+            "fma-3952": 0.033801100241976814,
+            "fma-3962": 0.10572020304591759,
+            "fma-3973": 0.06876217631193307,
+            "fma-4002": 0.022733078710734843,
+            "fma-4071": 0.01948026277952724,
+            "fma-4284": 0.0423243443506795,
+            "fma-4376": 0.03431541551934912,
+            "fma-3880": 0.03144538015700304,
+            "fma-4385": 0.042449891269207,
+            "fma-5149": 0.10711807476462058,
+            "fma-6674": -0.049348461480500795,
+            "fma-7182": 0.09034211095422506,
+            "fma-7773": 0.10246934573043068,
+            "fma-11096": 0.05008668720722199,
+            "fma-11689": 0.05810816757380963
+          }
+        }
+      },
+      "scope": "generic audio-text embedding sensitivity to original vs23 other recordings at matched normalized progress; not dance-grounded music quality or verified movement timing",
+      "non_generative": true,
+      "no_silent_text_truncation": true,
+      "native_audio_padding": "repeatpad internal only, original PCM unchanged",
+      "human": false
+    },
+    "edit_metrics": {
+      "methods": {
+        "no_op": {
+          "registered": 48,
+          "required": 40,
+          "controls": 8,
+          "required_joint_success": 0,
+          "required_success_rate": 0.0,
+          "required_unknown": 14,
+          "control_changes": 0,
+          "controls_unknown": 8,
+          "scope_violations": 0,
+          "required_goal_complete": 0,
+          "required_goal_completion_rate": 0.0,
+          "required_protected_facts_preserved": 23,
+          "required_protection_preservation_rate": 0.575,
+          "required_new_boundary_conflicts": 0,
+          "required_boundary_conflict_rate": 0.0,
+          "required_invalid_author_condition": 1,
+          "control_reasonable_unchanged": 0,
+          "protected_fact_status_counts": {
+            "retained": 75,
+            "contradicted": 3
+          },
+          "protected_fact_evaluable": 78,
+          "protected_fact_unknown": 0,
+          "protected_fact_retained_rate": 0.9615384615384616,
+          "protected_fact_verdict_count": 78,
+          "protected_fact_retention_lower_bound": 0.9615384615384616,
+          "protected_fact_denominator_scope": "all cited source facts in returned evaluated task rows; failed source/author/review tasks reported in registered unknown denominator separately; no-fact tasks not perfect retention",
+          "full_evaluable_rows": 26
+        },
+        "generic": {
+          "registered": 48,
+          "required": 40,
+          "controls": 8,
+          "required_joint_success": 21,
+          "required_success_rate": 0.525,
+          "required_unknown": 18,
+          "control_changes": 0,
+          "controls_unknown": 8,
+          "scope_violations": 0,
+          "required_goal_complete": 22,
+          "required_goal_completion_rate": 0.55,
+          "required_protected_facts_preserved": 22,
+          "required_protection_preservation_rate": 0.55,
+          "required_new_boundary_conflicts": 0,
+          "required_boundary_conflict_rate": 0.0,
+          "required_invalid_author_condition": 1,
+          "control_reasonable_unchanged": 0,
+          "protected_fact_status_counts": {
+            "retained": 64
+          },
+          "protected_fact_evaluable": 64,
+          "protected_fact_unknown": 0,
+          "protected_fact_retained_rate": 1.0,
+          "protected_fact_verdict_count": 64,
+          "protected_fact_retention_lower_bound": 1.0,
+          "protected_fact_denominator_scope": "all cited source facts in returned evaluated task rows; failed source/author/review tasks reported in registered unknown denominator separately; no-fact tasks not perfect retention",
+          "full_evaluable_rows": 22
+        },
+        "choreography": {
+          "registered": 48,
+          "required": 40,
+          "controls": 8,
+          "required_joint_success": 20,
+          "required_success_rate": 0.5,
+          "required_unknown": 19,
+          "control_changes": 0,
+          "controls_unknown": 8,
+          "scope_violations": 0,
+          "required_goal_complete": 21,
+          "required_goal_completion_rate": 0.525,
+          "required_protected_facts_preserved": 21,
+          "required_protection_preservation_rate": 0.525,
+          "required_new_boundary_conflicts": 0,
+          "required_boundary_conflict_rate": 0.0,
+          "required_invalid_author_condition": 1,
+          "control_reasonable_unchanged": 0,
+          "protected_fact_status_counts": {
+            "retained": 61
+          },
+          "protected_fact_evaluable": 61,
+          "protected_fact_unknown": 0,
+          "protected_fact_retained_rate": 1.0,
+          "protected_fact_verdict_count": 61,
+          "protected_fact_retention_lower_bound": 1.0,
+          "protected_fact_denominator_scope": "all cited source facts in returned evaluated task rows; failed source/author/review tasks reported in registered unknown denominator separately; no-fact tasks not perfect retention",
+          "full_evaluable_rows": 21
+        }
+      },
+      "registered_cells": 144,
+      "paired_song_statistics": [
+        {
+          "a": "no_op",
+          "b": "generic",
+          "metric": "strict_joint_success_registered40",
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 40,
+            "n_songs": 20,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": -0.525,
+            "interval": [
+              -0.675,
+              -0.35
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-3483",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-3944",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-3952",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-3962",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-4071",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-4284",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-4376",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-614",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-6674",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 0.0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          },
+          "unknown_counts_as_not_success_not_imputed_score": true
+        },
+        {
+          "a": "no_op",
+          "b": "choreography",
+          "metric": "strict_joint_success_registered40",
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 40,
+            "n_songs": 20,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": -0.5,
+            "interval": [
+              -0.65,
+              -0.35
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-3483",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-3944",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-3952",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-3962",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-4071",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-4284",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-4376",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-614",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-6674",
+                "value": -0.5
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": -1.0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 0.0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          },
+          "unknown_counts_as_not_success_not_imputed_score": true
+        },
+        {
+          "a": "generic",
+          "b": "choreography",
+          "metric": "strict_joint_success_registered40",
+          "statistics": {
+            "schema": "choreobench.song_bootstrap.v1",
+            "metric": "value",
+            "n_rows": 40,
+            "n_songs": 20,
+            "n_resamples": 5000,
+            "confidence": 0.95,
+            "seed": 42,
+            "estimate": 0.025,
+            "interval": [
+              0.0,
+              0.075
+            ],
+            "status": "computed",
+            "resampling_unit": "song",
+            "aggregation": "mean within song, then equally weighted mean across songs",
+            "song_means": [
+              {
+                "song_id": "fma-3483",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3847",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3880",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3933",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3944",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3952",
+                "value": 0.5
+              },
+              {
+                "song_id": "fma-3962",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-3973",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4002",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4071",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4284",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4376",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-4385",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5149",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-5287",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-614",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6674",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-6776",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7182",
+                "value": 0.0
+              },
+              {
+                "song_id": "fma-7549",
+                "value": 0.0
+              }
+            ],
+            "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+          },
+          "unknown_counts_as_not_success_not_imputed_score": true
+        }
+      ],
+      "origin": "literal metrics plus fallible model semantic review, not human review",
+      "no_source_replacement": true
+    }
+  }
+}

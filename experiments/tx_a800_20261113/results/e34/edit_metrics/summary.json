@@ -1,0 +1,415 @@
+{
+  "methods": {
+    "no_op": {
+      "registered": 48,
+      "required": 40,
+      "controls": 8,
+      "required_joint_success": 0,
+      "required_success_rate": 0.0,
+      "required_unknown": 14,
+      "control_changes": 0,
+      "controls_unknown": 8,
+      "scope_violations": 0,
+      "required_goal_complete": 0,
+      "required_goal_completion_rate": 0.0,
+      "required_protected_facts_preserved": 23,
+      "required_protection_preservation_rate": 0.575,
+      "required_new_boundary_conflicts": 0,
+      "required_boundary_conflict_rate": 0.0,
+      "required_invalid_author_condition": 1,
+      "control_reasonable_unchanged": 0,
+      "protected_fact_status_counts": {
+        "retained": 75,
+        "contradicted": 3
+      },
+      "protected_fact_evaluable": 78,
+      "protected_fact_unknown": 0,
+      "protected_fact_retained_rate": 0.9615384615384616,
+      "protected_fact_verdict_count": 78,
+      "protected_fact_retention_lower_bound": 0.9615384615384616,
+      "protected_fact_denominator_scope": "all cited source facts in returned evaluated task rows; failed source/author/review tasks reported in registered unknown denominator separately; no-fact tasks not perfect retention",
+      "full_evaluable_rows": 26
+    },
+    "generic": {
+      "registered": 48,
+      "required": 40,
+      "controls": 8,
+      "required_joint_success": 21,
+      "required_success_rate": 0.525,
+      "required_unknown": 18,
+      "control_changes": 0,
+      "controls_unknown": 8,
+      "scope_violations": 0,
+      "required_goal_complete": 22,
+      "required_goal_completion_rate": 0.55,
+      "required_protected_facts_preserved": 22,
+      "required_protection_preservation_rate": 0.55,
+      "required_new_boundary_conflicts": 0,
+      "required_boundary_conflict_rate": 0.0,
+      "required_invalid_author_condition": 1,
+      "control_reasonable_unchanged": 0,
+      "protected_fact_status_counts": {
+        "retained": 64
+      },
+      "protected_fact_evaluable": 64,
+      "protected_fact_unknown": 0,
+      "protected_fact_retained_rate": 1.0,
+      "protected_fact_verdict_count": 64,
+      "protected_fact_retention_lower_bound": 1.0,
+      "protected_fact_denominator_scope": "all cited source facts in returned evaluated task rows; failed source/author/review tasks reported in registered unknown denominator separately; no-fact tasks not perfect retention",
+      "full_evaluable_rows": 22
+    },
+    "choreography": {
+      "registered": 48,
+      "required": 40,
+      "controls": 8,
+      "required_joint_success": 20,
+      "required_success_rate": 0.5,
+      "required_unknown": 19,
+      "control_changes": 0,
+      "controls_unknown": 8,
+      "scope_violations": 0,
+      "required_goal_complete": 21,
+      "required_goal_completion_rate": 0.525,
+      "required_protected_facts_preserved": 21,
+      "required_protection_preservation_rate": 0.525,
+      "required_new_boundary_conflicts": 0,
+      "required_boundary_conflict_rate": 0.0,
+      "required_invalid_author_condition": 1,
+      "control_reasonable_unchanged": 0,
+      "protected_fact_status_counts": {
+        "retained": 61
+      },
+      "protected_fact_evaluable": 61,
+      "protected_fact_unknown": 0,
+      "protected_fact_retained_rate": 1.0,
+      "protected_fact_verdict_count": 61,
+      "protected_fact_retention_lower_bound": 1.0,
+      "protected_fact_denominator_scope": "all cited source facts in returned evaluated task rows; failed source/author/review tasks reported in registered unknown denominator separately; no-fact tasks not perfect retention",
+      "full_evaluable_rows": 21
+    }
+  },
+  "registered_cells": 144,
+  "paired_song_statistics": [
+    {
+      "a": "no_op",
+      "b": "generic",
+      "metric": "strict_joint_success_registered40",
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 40,
+        "n_songs": 20,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": -0.525,
+        "interval": [
+          -0.675,
+          -0.35
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-3483",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-3944",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-3952",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-4071",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-4284",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-4376",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-614",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-6674",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 0.0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      },
+      "unknown_counts_as_not_success_not_imputed_score": true
+    },
+    {
+      "a": "no_op",
+      "b": "choreography",
+      "metric": "strict_joint_success_registered40",
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 40,
+        "n_songs": 20,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": -0.5,
+        "interval": [
+          -0.65,
+          -0.35
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-3483",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-3944",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-3952",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-3962",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-4071",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-4284",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-4376",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-614",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-6674",
+            "value": -0.5
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 0.0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      },
+      "unknown_counts_as_not_success_not_imputed_score": true
+    },
+    {
+      "a": "generic",
+      "b": "choreography",
+      "metric": "strict_joint_success_registered40",
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 40,
+        "n_songs": 20,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0.025,
+        "interval": [
+          0.0,
+          0.075
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-3483",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0.5
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 0.0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      },
+      "unknown_counts_as_not_success_not_imputed_score": true
+    }
+  ],
+  "origin": "literal metrics plus fallible model semantic review, not human review",
+  "no_source_replacement": true
+}

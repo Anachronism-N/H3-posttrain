@@ -1,0 +1,1533 @@
+{
+  "methods": {
+    "workflow": {
+      "registered": 24,
+      "final_legal_success": 24,
+      "model_review_valid": 24,
+      "model_longterm_mean": 5,
+      "public_constraint_yes": 120,
+      "public_constraints_evaluated": 120,
+      "boundary_registered": 541,
+      "boundary_conflicts": 1,
+      "boundary_unknown": 3,
+      "invalid_semantic_repetition": "not inferred from literal reuse; source/music-aware adjudication separate",
+      "boundary_song_macro_conflict_lower_bound": 0.001736111111111111,
+      "boundary_song_macro_unknown_fraction": 0.005090915190552872,
+      "boundary_denominator_scope": "all registered adjacent planning-unit boundaries, failed final plans contribute unknown not no-conflict",
+      "public_constraints_scope": "five explicit brief requirements: solo, motion-only/no scene, actual theme development, energy/organization contrast, connected movement; gate2 complete, gate1 partial not counted complete",
+      "public_condition_unknown_count": 0,
+      "public_registered_conditions": 120,
+      "public_completion_registered_lower_bound": 1.0,
+      "mean_outer_calls_registered24": 24.541666666666668,
+      "reported_input_token_lower_bound_registered24": 397211.0,
+      "reported_output_token_lower_bound_registered24": 11378.75,
+      "missing_usage_totals_rows": 0,
+      "cost_scope": "all registered rows including failed outputs; known reported usage lower bounds when metadata missing; local K2 generation cost separate, no imputed missing costs",
+      "mean_outer_calls_evaluable": 24.541666666666668,
+      "mean_input_tokens_evaluable": 397211,
+      "mean_output_tokens_evaluable": 11378.75,
+      "mean_wallclock_seconds_evaluable": 1334.085935377283,
+      "rejected_decisions_evaluable": 0,
+      "total_decisions_evaluable": 565,
+      "budget_exceeded_evaluable": 0,
+      "longterm_gate_means": {
+        "theme_development": 2,
+        "contrast": 2,
+        "connective_progression": 2,
+        "ending_integration": 2
+      },
+      "longterm_full_score_fraction": 1.0
+    },
+    "self_refine": {
+      "registered": 24,
+      "final_legal_success": 24,
+      "model_review_valid": 24,
+      "model_longterm_mean": 5,
+      "public_constraint_yes": 120,
+      "public_constraints_evaluated": 120,
+      "boundary_registered": 541,
+      "boundary_conflicts": 9,
+      "boundary_unknown": 1,
+      "invalid_semantic_repetition": "not inferred from literal reuse; source/music-aware adjudication separate",
+      "boundary_song_macro_conflict_lower_bound": 0.015328871678509359,
+      "boundary_song_macro_unknown_fraction": 0.0015432098765432098,
+      "boundary_denominator_scope": "all registered adjacent planning-unit boundaries, failed final plans contribute unknown not no-conflict",
+      "public_constraints_scope": "five explicit brief requirements: solo, motion-only/no scene, actual theme development, energy/organization contrast, connected movement; gate2 complete, gate1 partial not counted complete",
+      "public_condition_unknown_count": 0,
+      "public_registered_conditions": 120,
+      "public_completion_registered_lower_bound": 1.0,
+      "mean_outer_calls_registered24": 71.625,
+      "reported_input_token_lower_bound_registered24": 1215833.3333333333,
+      "reported_output_token_lower_bound_registered24": 26226.708333333332,
+      "missing_usage_totals_rows": 0,
+      "cost_scope": "all registered rows including failed outputs; known reported usage lower bounds when metadata missing; local K2 generation cost separate, no imputed missing costs",
+      "mean_outer_calls_evaluable": 71.625,
+      "mean_input_tokens_evaluable": 1215833.3333333333,
+      "mean_output_tokens_evaluable": 26226.708333333332,
+      "mean_wallclock_seconds_evaluable": 3226.510480004712,
+      "rejected_decisions_evaluable": 0,
+      "total_decisions_evaluable": 1695,
+      "budget_exceeded_evaluable": 0,
+      "longterm_gate_means": {
+        "theme_development": 2,
+        "contrast": 2,
+        "connective_progression": 2,
+        "ending_integration": 2
+      },
+      "longterm_full_score_fraction": 1.0
+    },
+    "react": {
+      "registered": 24,
+      "final_legal_success": 19,
+      "model_review_valid": 19,
+      "model_longterm_mean": 5,
+      "public_constraint_yes": 95,
+      "public_constraints_evaluated": 95,
+      "boundary_registered": 541,
+      "boundary_conflicts": 1,
+      "boundary_unknown": 128,
+      "invalid_semantic_repetition": "not inferred from literal reuse; source/music-aware adjudication separate",
+      "boundary_song_macro_conflict_lower_bound": 0.001736111111111111,
+      "boundary_song_macro_unknown_fraction": 0.21450779727095518,
+      "boundary_denominator_scope": "all registered adjacent planning-unit boundaries, failed final plans contribute unknown not no-conflict",
+      "public_constraints_scope": "five explicit brief requirements: solo, motion-only/no scene, actual theme development, energy/organization contrast, connected movement; gate2 complete, gate1 partial not counted complete",
+      "public_condition_unknown_count": 25,
+      "public_registered_conditions": 120,
+      "public_completion_registered_lower_bound": 0.7916666666666666,
+      "mean_outer_calls_registered24": 74.875,
+      "reported_input_token_lower_bound_registered24": 1457552.75,
+      "reported_output_token_lower_bound_registered24": 32953.541666666664,
+      "missing_usage_totals_rows": 0,
+      "cost_scope": "all registered rows including failed outputs; known reported usage lower bounds when metadata missing; local K2 generation cost separate, no imputed missing costs",
+      "mean_outer_calls_evaluable": 77.26315789473684,
+      "mean_input_tokens_evaluable": 1501103.4736842106,
+      "mean_output_tokens_evaluable": 33911.63157894737,
+      "mean_wallclock_seconds_evaluable": 4175.68149114905,
+      "rejected_decisions_evaluable": 5,
+      "total_decisions_evaluable": 1449,
+      "budget_exceeded_evaluable": 0,
+      "longterm_gate_means": {
+        "theme_development": 2,
+        "contrast": 2,
+        "connective_progression": 2,
+        "ending_integration": 2
+      },
+      "longterm_full_score_fraction": 1.0
+    },
+    "choreography": {
+      "registered": 24,
+      "final_legal_success": 20,
+      "model_review_valid": 20,
+      "model_longterm_mean": 5,
+      "public_constraint_yes": 100,
+      "public_constraints_evaluated": 100,
+      "boundary_registered": 541,
+      "boundary_conflicts": 5,
+      "boundary_unknown": 110,
+      "invalid_semantic_repetition": "not inferred from literal reuse; source/music-aware adjudication separate",
+      "boundary_song_macro_conflict_lower_bound": 0.008931286105199148,
+      "boundary_song_macro_unknown_fraction": 0.16847826086956522,
+      "boundary_denominator_scope": "all registered adjacent planning-unit boundaries, failed final plans contribute unknown not no-conflict",
+      "public_constraints_scope": "five explicit brief requirements: solo, motion-only/no scene, actual theme development, energy/organization contrast, connected movement; gate2 complete, gate1 partial not counted complete",
+      "public_condition_unknown_count": 20,
+      "public_registered_conditions": 120,
+      "public_completion_registered_lower_bound": 0.8333333333333334,
+      "mean_outer_calls_registered24": 76.08333333333333,
+      "reported_input_token_lower_bound_registered24": 1526376.0416666667,
+      "reported_output_token_lower_bound_registered24": 34699.291666666664,
+      "missing_usage_totals_rows": 0,
+      "cost_scope": "all registered rows including failed outputs; known reported usage lower bounds when metadata missing; local K2 generation cost separate, no imputed missing costs",
+      "mean_outer_calls_evaluable": 73.7,
+      "mean_input_tokens_evaluable": 1455257.9,
+      "mean_output_tokens_evaluable": 33461.35,
+      "mean_wallclock_seconds_evaluable": 4090.9426776859445,
+      "rejected_decisions_evaluable": 4,
+      "total_decisions_evaluable": 1454,
+      "budget_exceeded_evaluable": 0,
+      "longterm_gate_means": {
+        "theme_development": 2,
+        "contrast": 2,
+        "connective_progression": 2,
+        "ending_integration": 2
+      },
+      "longterm_full_score_fraction": 1.0
+    }
+  },
+  "registered": 96,
+  "paired_song_statistics": [
+    {
+      "a": "workflow",
+      "b": "self_refine",
+      "metric": "final_legal_success_registered24",
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 24,
+        "n_songs": 24,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-9889",
+            "value": 0.0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "workflow",
+      "b": "self_refine",
+      "metric": "model_longterm_common_evaluable",
+      "common_songs": 24,
+      "registered_songs": 24,
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 24,
+        "n_songs": 24,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": 0
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0
+          },
+          {
+            "song_id": "fma-9889",
+            "value": 0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "workflow",
+      "b": "react",
+      "metric": "final_legal_success_registered24",
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 24,
+        "n_songs": 24,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0.20833333333333334,
+        "interval": [
+          0.041666666666666664,
+          0.375
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-9889",
+            "value": 1.0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "workflow",
+      "b": "react",
+      "metric": "model_longterm_common_evaluable",
+      "common_songs": 19,
+      "registered_songs": 24,
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 19,
+        "n_songs": 19,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "workflow",
+      "b": "choreography",
+      "metric": "final_legal_success_registered24",
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 24,
+        "n_songs": 24,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0.16666666666666666,
+        "interval": [
+          0.041666666666666664,
+          0.3333333333333333
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-9889",
+            "value": 1.0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "workflow",
+      "b": "choreography",
+      "metric": "model_longterm_common_evaluable",
+      "common_songs": 20,
+      "registered_songs": 24,
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 20,
+        "n_songs": 20,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": 0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "self_refine",
+      "b": "react",
+      "metric": "final_legal_success_registered24",
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 24,
+        "n_songs": 24,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0.20833333333333334,
+        "interval": [
+          0.041666666666666664,
+          0.375
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-9889",
+            "value": 1.0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "self_refine",
+      "b": "react",
+      "metric": "model_longterm_common_evaluable",
+      "common_songs": 19,
+      "registered_songs": 24,
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 19,
+        "n_songs": 19,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "self_refine",
+      "b": "choreography",
+      "metric": "final_legal_success_registered24",
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 24,
+        "n_songs": 24,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0.16666666666666666,
+        "interval": [
+          0.041666666666666664,
+          0.3333333333333333
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-9889",
+            "value": 1.0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "self_refine",
+      "b": "choreography",
+      "metric": "model_longterm_common_evaluable",
+      "common_songs": 20,
+      "registered_songs": 24,
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 20,
+        "n_songs": 20,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": 0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "react",
+      "b": "choreography",
+      "metric": "final_legal_success_registered24",
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 24,
+        "n_songs": 24,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": -0.041666666666666664,
+        "interval": [
+          -0.16666666666666666,
+          0.08333333333333333
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3944",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-5149",
+            "value": -1.0
+          },
+          {
+            "song_id": "fma-5287",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-6776",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-7549",
+            "value": 1.0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0.0
+          },
+          {
+            "song_id": "fma-9889",
+            "value": 0.0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    },
+    {
+      "a": "react",
+      "b": "choreography",
+      "metric": "model_longterm_common_evaluable",
+      "common_songs": 18,
+      "registered_songs": 24,
+      "statistics": {
+        "schema": "choreobench.song_bootstrap.v1",
+        "metric": "value",
+        "n_rows": 18,
+        "n_songs": 18,
+        "n_resamples": 5000,
+        "confidence": 0.95,
+        "seed": 42,
+        "estimate": 0,
+        "interval": [
+          0.0,
+          0.0
+        ],
+        "status": "computed",
+        "resampling_unit": "song",
+        "aggregation": "mean within song, then equally weighted mean across songs",
+        "song_means": [
+          {
+            "song_id": "fma-11096",
+            "value": 0
+          },
+          {
+            "song_id": "fma-11689",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3483",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3847",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3880",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3933",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3952",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3962",
+            "value": 0
+          },
+          {
+            "song_id": "fma-3973",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4002",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4071",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4284",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4376",
+            "value": 0
+          },
+          {
+            "song_id": "fma-4385",
+            "value": 0
+          },
+          {
+            "song_id": "fma-614",
+            "value": 0
+          },
+          {
+            "song_id": "fma-6674",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7182",
+            "value": 0
+          },
+          {
+            "song_id": "fma-7773",
+            "value": 0
+          }
+        ],
+        "note": "Percentile bootstrap; not an automatic significance test or scientific quality gate."
+      }
+    }
+  ],
+  "origin": "strict model text longterm and boundary review, actual mechanical calculations separate",
+  "human": false,
+  "raw_audio_seen": false,
+  "absolute_quality_calibration": "not independently human validated",
+  "music_fit": "separate independent observations metric",
+  "schema_not_quality": true
+}

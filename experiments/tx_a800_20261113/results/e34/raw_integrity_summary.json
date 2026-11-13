@@ -1,0 +1,36 @@
+{
+  "platform": "TX A800 cluster",
+  "totals": {
+    "cells": 96,
+    "calls": 5931,
+    "returned_raws": 5931,
+    "artifacts": 8251,
+    "success": 87
+  },
+  "methods": {
+    "workflow": {
+      "calls": 589,
+      "cells": 24
+    },
+    "self_refine": {
+      "calls": 1719,
+      "cells": 24
+    },
+    "react": {
+      "calls": 1797,
+      "cells": 24
+    },
+    "choreography": {
+      "calls": 1826,
+      "cells": 24
+    }
+  },
+  "all_result_and_call_seals_verified": true,
+  "started_returned_inventory_verified": true,
+  "all_declared_artifact_hashes_verified": true,
+  "all_original_budgets_verified": true,
+  "no_retries_or_new_generation_calls": 0,
+  "execution_inventory_sha256": "640ca4d4727d3529e6b4c29d6603532033c01adbe2cd753a1dd41cd1a2806726",
+  "wallclock_seconds": 17.21490246616304,
+  "semantic_quality_not_verified": true
+}

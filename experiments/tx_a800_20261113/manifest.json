@@ -6,7 +6,7 @@
   "code_snapshot_scope": "current experimental working tree, separately isolated from newer upstream APIs; historical output code hashes remain authoritative",
   "no_model_audio_video_or_full_raw_calls_uploaded": true,
   "open_extraction_quality_accepted": false,
-  "formal_E3_E4_complete_at_last_verified_snapshot": false,
+  "formal_E3_E4_complete_at_last_verified_snapshot": true,
   "results_snapshot_utc": "2026-11-13T07:57:53Z",
   "files": {
     "code/captionlab/__init__.py": {
@@ -498,6 +498,66 @@
       "sha256": "af9f63678eb1cb61d1579a73e87b8dd658de4dd3beef9668d3ca5c88263437f7",
       "size_bytes": 580,
       "role": "verified complete1127 independent original audio observations;1126 valid and1 unknown; semantic truth not certified"
+    },
+    "results/e34/final_inventory_summary.json": {
+      "sha256": "6ec7a6c744322557bd6fb23af4cba1975f627b0baa4beffa350e06c9c8535022",
+      "size_bytes": 184434,
+      "role": "final registered measured results with failures/unknown retained"
+    },
+    "results/e34/final_integrity_summary.json": {
+      "sha256": "0639dd0490363f2982d6abde47852096ded34309eab422b2d5ae607bf333ebdf",
+      "size_bytes": 5140,
+      "role": "final registered measured results with failures/unknown retained"
+    },
+    "results/e34/mechanical/summary.json": {
+      "sha256": "46eff097b55ca6a4899e994f4bc1b9f3bbe8c3a32bf2ac955aecb053faf2e460",
+      "size_bytes": 2650,
+      "role": "final registered measured results with failures/unknown retained"
+    },
+    "results/e34/long_metrics/summary.json": {
+      "sha256": "37b3f167c4f8fe122fd8e07c210b990e9a6731d7701511044e6d8c701de4a6e4",
+      "size_bytes": 39939,
+      "role": "final registered measured results with failures/unknown retained"
+    },
+    "results/e34/music_metrics/summary.json": {
+      "sha256": "af0f08ba68b4608641540745fde58db2292e8749bc4446396dc18ff41c2d9239",
+      "size_bytes": 4191,
+      "role": "final registered measured results with failures/unknown retained"
+    },
+    "results/e34/repeat_metrics/summary.json": {
+      "sha256": "7c7820f46f48ae3dc054c990f3d7f68eff3562cbf9e7b177cfa98afb638c6047",
+      "size_bytes": 1036,
+      "role": "final registered measured results with failures/unknown retained"
+    },
+    "results/e34/clap_metrics/summary.json": {
+      "sha256": "902729e6dfb76c8d3f2cdd42403b8d4011884c4f5699151d49fe99cd367fd34e",
+      "size_bytes": 5012,
+      "role": "final registered measured results with failures/unknown retained"
+    },
+    "results/e34/edit_metrics/summary.json": {
+      "sha256": "831f8f704bf61c1d6887150c345d4b0bbfe76e01efb54e024c910cd925f4ca2f",
+      "size_bytes": 11272,
+      "role": "final registered measured results with failures/unknown retained"
+    },
+    "revisions/dependency_scope_repair_v5.py": {
+      "sha256": "8252858d6da3f41af8d68679cd557411a343d55ce71da3c4e5b2b665d557c850",
+      "size_bytes": 13592,
+      "role": "post-experiment correction; original frozen modules and scores not overwritten"
+    },
+    "revisions/test_dependency_motion_scope.py": {
+      "sha256": "8fb1e2d5c80013c483314056ad1439b77f624fc06568162cc09ca7d8ffe97624",
+      "size_bytes": 1973,
+      "role": "post-experiment correction; original frozen modules and scores not overwritten"
+    },
+    "revisions/e34_final_inventory_recovery_v2.py": {
+      "sha256": "076be19111fd66b7b4cf0c0bc8787769e380741fed9fc7b14fc011c6031f32ff",
+      "size_bytes": 10768,
+      "role": "post-experiment correction; original frozen modules and scores not overwritten"
+    },
+    "results/e34/raw_integrity_summary.json": {
+      "sha256": "432611ca3179b4547feed400aeeb390881798b8e0d3acb0c8bcb295fc2362d16",
+      "size_bytes": 846,
+      "role": "all96 results,5931 paired start/return records and8251 declared artifacts sealed/hash/budget verified; not semantic quality"
     }
   },
   "verification": {
@@ -510,5 +570,15 @@
     "tests_not_experiment_or_quality_acceptance": true,
     "private_mapping_and_full_raw_not_uploaded": true
   },
-  "incremental_audio_verification_complete": true
+  "incremental_audio_verification_complete": true,
+  "final_execution_and_measurement_slots_verified": true,
+  "scientific_quality_acceptance": false,
+  "quality_limitations": [
+    "E2 open motion extraction not accepted",
+    "E3 longterm all87 scored maximum; no method discrimination",
+    "43 repetition infrastructure unknowns not repeated",
+    "All8 E4 control tasks source/author failed"
+  ],
+  "final_measurement_pairs": 117,
+  "raw_models_media_full_logs_still_not_uploaded": true
 }

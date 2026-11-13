@@ -1,0 +1,35 @@
+{
+  "methods": {
+    "workflow": {
+      "registered_songs": 24,
+      "valid_songs": 13,
+      "unproductive_song_macro_lower_bound": 0.09340659340659341,
+      "event_unknown_song_macro": 0.0,
+      "unscored_songs": 11
+    },
+    "self_refine": {
+      "registered_songs": 24,
+      "valid_songs": 13,
+      "unproductive_song_macro_lower_bound": 0.02621082621082621,
+      "event_unknown_song_macro": 0.0,
+      "unscored_songs": 11
+    },
+    "react": {
+      "registered_songs": 24,
+      "valid_songs": 8,
+      "unproductive_song_macro_lower_bound": 0.0,
+      "event_unknown_song_macro": 0.0,
+      "unscored_songs": 16
+    },
+    "choreography": {
+      "registered_songs": 24,
+      "valid_songs": 10,
+      "unproductive_song_macro_lower_bound": 0.002040816326530612,
+      "event_unknown_song_macro": 0.0,
+      "unscored_songs": 14
+    }
+  },
+  "origin": "fallible model content-and-independent-music-evidence repetition review, not human truth",
+  "lexical_reuse_not_error": true,
+  "all_final_events_registered": true
+}

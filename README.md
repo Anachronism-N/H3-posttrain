@@ -22,6 +22,10 @@ Model weights, caches, data and generated videos are not included.
 
 ## Music-to-text choreography benchmark
 
+[2026-11-13 code/results review and next experiments (中文)](notes/50_ce19250_review_and_experiment_closeout_20261113_zh.md)
+reviews the six-model 384-clip results, separates recorded cluster progress from archived evidence,
+and specifies scoring audits and completion of the existing whole-song/editing experiments.
+
 [Sol61 baseline evaluation (中文)](notes/48_sol61_baseline_evaluation_20261111_zh.md)
 provides pinned caption-data auditing, audio-bound open-model generation, blinded
 listening review, text-only judges and metric agreement analysis while the trained

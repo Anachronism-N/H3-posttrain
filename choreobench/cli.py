@@ -394,9 +394,14 @@ def build_parser():
     for name in ("source", "song-id", "provider", "out-dir"):
         four.add_argument("--" + name, required=True)
     four.add_argument("--method", choices=("workflow", "self_refine", "react", "choreography"), default="workflow")
+    four.add_argument("--controller-version", choices=("v1", "v2"), default="v1",
+                      help="Opt into bounded v2 control in a new run directory; historical runs are immutable")
     four.add_argument("--seed", type=int, default=42)
     four.add_argument("--max-input-tokens", type=int, default=2000000)
     four.add_argument("--max-total-output-tokens", type=int, default=150000)
+    four.add_argument("--max-request-characters", type=int, default=200000)
+    four.add_argument("--max-output-tokens", type=int, default=1024)
+    four.add_argument("--outline-max-output-tokens", type=int, default=4096)
     four.add_argument("--resume", action="store_true")
     four.add_argument("--outline-reuse-run")
     return parser
@@ -418,7 +423,9 @@ def dispatch(args):
         _emit(run_composition(args.source, args.song_id, read_json(args.provider), args.out_dir,
             method=args.method, seed=args.seed, max_input_tokens=args.max_input_tokens,
             max_total_output_tokens=args.max_total_output_tokens, resume=args.resume,
-            outline_reuse_run=args.outline_reuse_run))
+            max_request_characters=args.max_request_characters,max_output_tokens=args.max_output_tokens,
+            outline_max_output_tokens=args.outline_max_output_tokens,
+            outline_reuse_run=args.outline_reuse_run,controller_version=args.controller_version))
     elif cmd == "run-song-agent":
         from .song_agent import run_song_agent
         _emit(run_song_agent(args.source_run, args.song_id, read_json(args.provider), args.out_dir,

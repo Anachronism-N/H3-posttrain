@@ -90,6 +90,9 @@ class CompositionState:
 
 
 def _request(state,cfg,method,phase,feedback=None):
+ bounded=cfg.get('controller_version')=='v2'
+ if bounded:
+  from .composition_controller_v2 import TOOL_PROMPT as BOUNDED_TOOL_PROMPT,observation_context,choreography_context
  units=state.source['units']['units'];unit=units[state.index] if state.index<len(units) else None
  if unit is not None:
   req=_unit_request(state.source['song'],state.source['options'],state.source['units'],unit,state.outline,state.plan,state.source['config'])
@@ -99,24 +102,38 @@ def _request(state,cfg,method,phase,feedback=None):
     committed_units=state.index,total_units=len(units),tool_observations=state.observations[-2:],feedback=feedback,
     shared_permissions=True,actual_audio_access=False,remaining_model_calls=cfg['max_calls']-cfg['call_index'] if 'max_calls' in cfg else None,
     draft_revision_limit=1,draft_revisions_used=state.revisions_used)
+ if bounded:
+  payload['tool_observations']=observation_context(state.observations)
+  payload.pop('recent_committed_events',None)  # Already present in committed_plan.
+  payload.update(controller_version='v2',remaining_input_tokens=cfg['remaining_input_tokens'],
+    remaining_output_tokens=cfg['remaining_output_tokens'],
+    reserved_commit_calls=len(units)-state.index,no_progress_streak=state.no_progress_streak,
+    controller_completion='All units committed finishes automatically; no model finish call required.')
+  if method=='choreography':payload['choreography_state']=choreography_context(state)
  if phase=='feedback':
   system+=' Give short source-grounded feedback about current draft action load, development and boundary clarity. Never invent heard audio or physical state. Return only {feedback}.'
   schema=dict(type='object',additionalProperties=False,required=['feedback'],properties=dict(feedback=dict(type='string',minLength=1,maxLength=2400)))
  elif method in ('react','choreography'):
-  tools=['read_evidence','read_history','finish']
-  if unit is not None:
-   if state.draft is None:tools+=['propose_block']
-   else:
-    tools+=['check_block','commit_block']
-    if state.revisions_used<1:tools+=['revise_block']
+  if bounded:tools=state.available_tools()
+  else:
+   tools=['read_evidence','read_history','finish']
+   if unit is not None:
+    if state.draft is None:tools+=['propose_block']
+    else:
+     tools+=['check_block','commit_block']
+     if state.revisions_used<1:tools+=['revise_block']
   payload['available_tools']=tools
   payload['draft_state']='absent' if state.draft is None else 'uncommitted'
-  system+=' '+TOOL_PROMPT+POLICY[method]
-  system+=' Creating or revising a draft does not advance the song. Every method has at most ONE revision attempt per current unit, including unchanged revisions. Once that attempt is spent, check or commit the current draft, or finish with an incomplete outcome. A draft you call ready should be committed with proposal=null, not re-emitted. Use only available_tools. Completion requires actual commits, not descriptions of readiness.'
+  if bounded:
+   payload['block_contract']=payload.pop('output_contract',{})
+   payload['output_contract']=dict(fields=['tool','proposal','reason'],
+      proposal_for_tools=['propose_block','revise_block','submit_block'],proposal_for_other_tools=None)
+  system+=' '+(BOUNDED_TOOL_PROMPT if bounded else TOOL_PROMPT)+POLICY[method]
+  if not bounded:system+=' Creating or revising a draft does not advance the song. Every method has at most ONE revision attempt per current unit, including unchanged revisions. Once that attempt is spent, check or commit the current draft, or finish with an incomplete outcome. A draft you call ready should be committed with proposal=null, not re-emitted. Use only available_tools. Completion requires actual commits, not descriptions of readiness.'
   branches=[]
   for tool in tools:
    branches.append(dict(type='object',additionalProperties=False,required=['tool','proposal','reason'],properties=dict(
-    tool=dict(type='string',enum=[tool]),proposal=copy.deepcopy(schema) if tool in ('propose_block','revise_block') else dict(type='null'),
+    tool=dict(type='string',enum=[tool]),proposal=copy.deepcopy(schema) if tool in ('propose_block','revise_block','submit_block') else dict(type='null'),
     reason=dict(type='string',minLength=1,maxLength=1200))))
   schema=dict(type='object',additionalProperties=False,required=['tool','proposal','reason'],properties=dict(
    tool=dict(type='string',enum=tools),proposal=dict(anyOf=[dict(type='null'),schema]),
@@ -128,8 +145,10 @@ def _request(state,cfg,method,phase,feedback=None):
 
 
 def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow',seed=42,max_output_tokens=1024,
-                    outline_max_output_tokens=4096,max_request_characters=200000,max_input_tokens=2000000,max_total_output_tokens=150000,resume=False,outline_reuse_run=None):
+                    outline_max_output_tokens=4096,max_request_characters=200000,max_input_tokens=2000000,max_total_output_tokens=150000,resume=False,outline_reuse_run=None,controller_version='v1'):
  if method not in METHODS:raise ValueError('Unknown composition method')
+ if controller_version not in ('v1','v2'):raise ValueError('Unknown composition controller version')
+ bounded=controller_version=='v2'
  for name,value in [('seed',seed),('max_output_tokens',max_output_tokens),('outline_max_output_tokens',outline_max_output_tokens),
                     ('max_request_characters',max_request_characters),('max_input_tokens',max_input_tokens),('max_total_output_tokens',max_total_output_tokens)]:
   integer(value,name,0 if name=='seed' else 1)
@@ -137,6 +156,10 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
   max_request_characters=max_request_characters,max_events_per_unit=3,structured_unit_output=True,use_outline=True,use_history=True,draft_revision_limit=1,
   event_time_format='boundary_ids',event_grid_seconds=.25,min_event_seconds=.5,event_schedule_policy='balanced_full_unit',
   unit_config=dict(bars_per_block=4,fallback_seconds=10.125,max_unit_seconds=20,meter_status='unverified',min_time_block_seconds=2))
+ if bounded:
+  from .composition_controller_v2 import CompositionStateV2,NO_PROGRESS_LIMIT
+  cfg.update(controller_version='v2',no_progress_limit=NO_PROGRESS_LIMIT,
+    controller_policy='bounded-revision-reserved-commit-auto-finish-v2')
  sources={};source=_source(source_path,song_id,cfg,sources);cfg['max_calls']=1+4*len(source['units']['units'])
  # Historical input cfg can contain a different provider; only timing/structure is used from it.
  source['config']=dict(source['config'],max_output_tokens=max_output_tokens,max_request_characters=max_request_characters,structured_unit_output=True,use_outline=True,use_history=True)
@@ -212,10 +235,17 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
   try:
    req=_outline_request(source['song'],source['options'],source['units'],cfg);req['call_id']=song_id+'/four-method/0000'
    outline=_read_outline(json_text(call(req)),source['song']);save('outline.json',outline);artifacts['outline.json']=file_sha(output/'outline.json')
-   state=CompositionState(source,outline);feedback=None;phase='propose'
+   state=(CompositionStateV2 if bounded else CompositionState)(source,outline);feedback=None;phase='propose'
    while index<cfg['max_calls']:
-    if state.index==len(source['units']['units']) and method in ('workflow','self_refine'):stop='finished';break
-    req=_request(state,dict(cfg,call_index=index),method,phase,feedback)
+    if state.index==len(source['units']['units']) and (bounded or method in ('workflow','self_refine')):stop='finished';break
+    request_cfg=dict(cfg,call_index=index)
+    if bounded:
+     request_cfg.update(remaining_input_tokens=max(0,max_input_tokens-input_tokens),
+                        remaining_output_tokens=max(0,max_total_output_tokens-output_tokens))
+     state.remaining_calls=cfg['max_calls']-index if method in ('react','choreography') else None
+     if method in ('react','choreography') and not state.available_tools():stop='unrepairable_draft';break
+     progress_before=state.progress_signature()
+    req=_request(state,request_cfg,method,phase,feedback)
     before=object_sha(state.plan);cursor=state.index;decision=None
     try:
      decision=call(req)
@@ -223,8 +253,9 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
      elif phase=='feedback':
       keys(decision,('feedback',));text(decision['feedback'],'feedback');feedback=decision['feedback'];observation=dict(status='feedback_recorded',quality_verified=False);phase='revise'
      else:
-      state.execute(dict(tool='revise_block' if phase=='revise' else 'propose_block',proposal=decision,reason='Fixed workflow stage'))
+      draft_observation=state.execute(dict(tool='revise_block' if phase=='revise' else 'propose_block',proposal=decision,reason='Fixed workflow stage'))
       if method=='self_refine' and phase=='propose':observation=dict(status='drafted',quality_verified=False);phase='feedback'
+      elif bounded and draft_observation.get('status')=='committed':observation=draft_observation;phase='propose';feedback=None
       else:observation=state.execute(dict(tool='commit_block',proposal=None,reason='Fixed structural check and commit'));phase='propose';feedback=None
     except (ValueError,TypeError,KeyError) as error:
      observation=dict(status='rejected',error=str(error),quality_verified=False)
@@ -234,13 +265,22 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
          or info.get('stop_reason') in (None,'http_error','infrastructure_error','malformed_api_response')
          or any(type(info.get('costs',{}).get(k)) is not int or info['costs'][k]<0 for k in ('input_tokens','output_tokens'))):fatal=str(error)
      if method in ('workflow','self_refine'):stop='model_or_structure_failed';fatal=fatal or str(error)
+     if bounded and (input_tokens>max_input_tokens or output_tokens>max_total_output_tokens):
+      fatal=fatal or str(error);stop='failed_or_budget_exhausted'
+    controller_action=None
+    if bounded and method in ('react','choreography') and not fatal:
+     controller_action=state.after_decision(progress_before)
+     if controller_action and controller_action['status']=='stalled_no_content_progress':stop='stalled_no_content_progress'
     record=dict(call_id=req['call_id'],source_prefix_sha256=before,committed_units_before=cursor,decision=decision,observation=observation,committed_units_after=state.index)
+    if controller_action:record['controller_actions']=[controller_action]
     name='steps/%04d.json'%len(history);save(name,record);artifacts[name]=file_sha(output/name);history.append(record);state.observations.append(observation)
+    if controller_action:state.observations.append(controller_action)
     if state.index!=cursor:
      name='prefixes/%04d.json'%cursor;save(name,state.plan);artifacts[name]=file_sha(output/name)
     if fatal:break
+    if controller_action and controller_action['status']=='stalled_no_content_progress':break
     if observation.get('status') in ('finished','incomplete_finish'):stop=observation['status'];break
-   if state.index==len(source['units']['units']) and method in ('workflow','self_refine'):stop='finished'
+   if state.index==len(source['units']['units']) and (bounded or method in ('workflow','self_refine')) and not fatal:stop='finished'
   except (ValueError,TypeError,KeyError) as error:fatal=str(error);stop='failed_or_budget_exhausted'
   plan=state.plan if state is not None else _empty_plan(source['original']);full=state is not None and state.index==len(source['units']['units']) and stop=='finished' and fatal is None
   name='plan.json' if full else 'partial-plan.not-success.json';save(name,plan);artifacts[name]=file_sha(output/name)
@@ -254,6 +294,10 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
    original_outline_reused=reused_outline is not None,new_model_calls=len(journal.started)-(1 if reused_outline is not None and journal.started else 0),
    reused_outline_calls=1 if reused_outline is not None and journal.started else 0,
    reused_outline_source_costs=None if reused_outline is None else copy.deepcopy(reused_outline['costs']),
-   token_totals_include_reused_outline=reused_outline is not None))
+   token_totals_include_reused_outline=reused_outline is not None,
+   **(dict(controller_version='v2',controller_statistics=dict(
+      automatic_commits=0 if state is None else state.automatic_commits,
+      no_progress_steps=0 if state is None else state.no_progress_steps,
+      no_progress_limit=NO_PROGRESS_LIMIT)) if bounded else {})))
   if old is not None and result!=old:raise ValueError('Completed composition reconstruction changed')
   save('results.json',result);return result

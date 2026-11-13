@@ -353,6 +353,29 @@ SFT `sol61_full_20261112_161243/checkpoint-0001000`:
 | CLAP on the *frozen references* (control) | -0.0318 |
 | ΔCLAP (real vs zeroed audio) | +0.0026 |
 
+The clause-weighted planner (`sol61leg3`, step 1000, selected on the 80-case
+val panel *before* this run) on the same 384 cases:
+
+| metric | v1 @1000 | leg-weighted @1000 |
+| --- | --- | --- |
+| action recall | 0.838 | **0.859** |
+| body-part recall | 0.927 | **0.970** |
+| corpus BLEU-4 | **0.0898** | 0.0895 |
+| ROUGE-L | **0.3050** | 0.2878 |
+| length ratio | **1.006** | 1.073 |
+| rows ok / EOS-stopped | 384/384 | 384/384 |
+
+Paired comparison over 384 source groups (4,000 bootstrap resamples):
+
+| metric | delta (weighted - baseline) | 95% CI | win / loss / tie |
+| --- | --- | --- | --- |
+| action recall | **+0.0187** | [0.0022, 0.0354] | 41.1% / 31.5% / 27.3% |
+| body-part recall | **+0.0382** | [0.0234, 0.0530] | 16.4% / 4.9% / 78.6% |
+
+Both intervals exclude zero, so the coverage gain is real; ROUGE-L moves the
+other way and the captions run 7% long, which is the honest cost of the
+intervention and is reported rather than hidden.
+
 Six baselines, same 384 cases, same harness on L20Z (TX numbers in brackets):
 
 | method | evaluable | corpus BLEU-4 | ROUGE-L | BERTScore F1 |

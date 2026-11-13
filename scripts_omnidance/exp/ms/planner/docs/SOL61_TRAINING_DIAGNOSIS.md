@@ -140,7 +140,22 @@ leg coverage (body recall) as the tie-breaker that penalises over-training.
 | run-A @1000 | 0.802 | 0.904 | 1.07 | 2.81 | 0.412 | 16 | 0.054 |
 | run-A @1500 | 0.814 | 0.853 | 1.06 | 2.93 | 0.362 | 15 | 0.074 |
 | **run-B @1000** | **0.837** | **0.913** | 1.05 | **3.04** | **0.275** | 16 | 0.069 |
+| run-A @1527 | 0.822 | 0.894 | 1.06 | 2.88 | 0.388 | 14 | 0.071 |
+| run-B @1527 | 0.836 | **0.917** | 1.04 | 2.90 | 0.375 | **17** | 0.072 |
 | reference | — | — | — | **5.57** | **0.062** | — | — |
+
+With seven checkpoints across two independent runs the plateau is unambiguous:
+opener entropy sits at 2.88-3.04 for every weight at or past 1,000 updates and
+never approaches the reference's 5.57, while 500 updates gives 1.52. BLEU-4
+again inverts the ordering: the highest value (0.074, run-A @1500) belongs to the
+checkpoint with the weakest body recall (0.853).
+
+Two acceptable deliverables:
+
+- `run-B @1000` — highest action recall (0.837), highest entropy (3.04), least
+  repetitive opening (0.275 of samples share the top opening).
+- `run-B @1527` — best body-part coverage (0.917) and most distinct openings (17),
+  at a slightly lower entropy (2.90).
 
 Selection outcome:
 

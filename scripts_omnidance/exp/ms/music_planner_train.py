@@ -483,7 +483,7 @@ def assert_portable_equal(expected, actual):
 
 
 def save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, rank=0, world=1,
-                    zero3=False, barrier=lambda: None, adapter=None):
+                    zero3=False, barrier=lambda: None, adapter=None, distributed=True):
     path = Path(path)
     finish_zero3_forward(model, zero3)
     if rank == 0:
@@ -511,9 +511,13 @@ def save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, rank=
                     adapter, path / 'fusion', identity=dict(run_fingerprint=fingerprint,
                         trainable_sha256=file_sha(path / 'trainable.pt'),
                         installation=adapter.fusion_metadata), state_dict=portable)
-    if zero3:
+    if zero3 and distributed:
         model.save_checkpoint(str(path / 'distributed'), tag='zero3', exclude_frozen_parameters=True)
-    else:
+    elif zero3 and rank == 0:
+        # adapter-only save: lets the trainer skip ~60 GB of optimiser shards per
+        # checkpoint; such a directory cannot be resumed from
+        atomic_json(path / 'adapter_only.json', dict(update=state['update'], resumable=False))
+    if not zero3:
         torch.save(optimizer.state_dict(), path / f'optimizer-rank{rank}.pt')
     torch.save(capture_rng(), path / f'rng-rank{rank}.pt')
     atomic_json(path / f'writer-rank{rank}.json', dict(PROCESS_IDENTITY, rank=rank,
@@ -521,7 +525,8 @@ def save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, rank=
     barrier()
     if rank == 0:
         atomic_json(path / 'trainer_state.json', dict(schema=SCHEMA, fingerprint=fingerprint,
-            world_size=world, zero3=zero3, trainable_signature=parameter_signature(unwrapped),
+            world_size=world, zero3=zero3, distributed_saved=bool(distributed),
+            trainable_signature=parameter_signature(unwrapped),
             cursor=state, trainable_sha256=file_sha(path / 'trainable.pt'),
             files=[file_ref(p) for p in sorted(path.rglob('*')) if p.is_file()], complete=True))
     barrier()
@@ -1067,7 +1072,9 @@ def train(args):
         cache.flush()
         if path == last_checkpoint:
             return path
-        save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, adapter=adapter, **checkpoint_args)
+        full = args.distributed_every <= 0 or state['update'] % args.distributed_every == 0
+        save_checkpoint(path, model, optimizer, scheduler, state, fingerprint, adapter=adapter,
+                        distributed=full, **checkpoint_args)
         last_checkpoint = path
         if accelerator.is_main_process:
             atomic_json(args.out / 'latest.json', dict(checkpoint=str(path), update=state['update'], cursor=state))
@@ -1275,6 +1282,8 @@ def parser():
     result.add_argument('--warmup-updates', type=int, default=10)
     result.add_argument('--max-length', type=int, default=8192)
     result.add_argument('--audio-last-n', type=int, default=4, help='Native audio-tower trailing LoRA layers')
+    result.add_argument('--distributed-every', type=int, default=0,
+                        help='Write ZeRO-3 optimizer state only every N checkpoints; 0 writes it every time')
     result.add_argument('--loss-chunk-size', type=int, default=128, help='Assistant CE rows per recomputed vocabulary chunk; 0 disables chunk recompute')
     result.add_argument('--caption-contract', type=Path, help='Explicit versioned full-audio/text schema; absent keeps historical fixed2s data')
     result.add_argument('--genre-classes', type=Path, help='Explicit JSON class list; never inferred from captions')
@@ -1312,6 +1321,8 @@ def main():
         raise ValueError('Positive epochs/batch/micro/accum/rank/alpha/context required')
     if args.max_updates < 0 or args.save_every < 0 or args.eval_every < 0:
         raise ValueError('Update limits/intervals must not be negative')
+    if args.distributed_every < 0:
+        raise ValueError('distributed-every must be nonnegative')
     if min(args.audio_last_n, args.genre_head_dim, args.fusion_hidden_dim, args.count_head_dim) < 1 or args.loss_chunk_size < 0:
         raise ValueError('Positive audio scope/head size and nonnegative loss chunk size required')
     if (any(not math.isfinite(value) or value <= 0 for value in

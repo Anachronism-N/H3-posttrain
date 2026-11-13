@@ -558,6 +558,26 @@
       "sha256": "432611ca3179b4547feed400aeeb390881798b8e0d3acb0c8bcb295fc2362d16",
       "size_bytes": 846,
       "role": "all96 results,5931 paired start/return records and8251 declared artifacts sealed/hash/budget verified; not semantic quality"
+    },
+    "results/music_uncertainty_audit_v1/sensitivity_summary.json": {
+      "sha256": "765cf8c2a9fcc1c829b03738bc020e13572a8a73119a31f9e89a93bfb24fbfd6",
+      "size_bytes": 5136,
+      "role": "CPU hypothetical uncertainty-priority sensitivity; original scores unchanged, no model calls"
+    },
+    "results/music_uncertainty_audit_v1/provenance.json": {
+      "sha256": "05af46787998657ec9e8381ba0f1c0b57c35280c6a6485b1c04206e85ce648dc",
+      "size_bytes": 724,
+      "role": "CPU hypothetical uncertainty-priority sensitivity; original scores unchanged, no model calls"
+    },
+    "results/music_uncertainty_audit_v1/e2/summary.json": {
+      "sha256": "fa2c0869902f1cce7cb06020c7705812c93bc495a1284ef4cf32e8a5f7303499",
+      "size_bytes": 4589,
+      "role": "CPU hypothetical uncertainty-priority sensitivity; original scores unchanged, no model calls"
+    },
+    "results/music_uncertainty_audit_v1/e3/summary.json": {
+      "sha256": "8e28dead4b129a4937ac83780b00c5e2191eb26f8b40ff2c3ca27af5ec4b7678",
+      "size_bytes": 3632,
+      "role": "CPU hypothetical uncertainty-priority sensitivity; original scores unchanged, no model calls"
     }
   },
   "verification": {
@@ -580,5 +600,7 @@
     "All8 E4 control tasks source/author failed"
   ],
   "final_measurement_pairs": 117,
-  "raw_models_media_full_logs_still_not_uploaded": true
+  "raw_models_media_full_logs_still_not_uploaded": true,
+  "offline_uncertainty_audit_completed": true,
+  "official_music_rescoring_adopted": false
 }

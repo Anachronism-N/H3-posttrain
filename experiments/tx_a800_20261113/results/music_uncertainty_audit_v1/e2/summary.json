@@ -1,0 +1,121 @@
+{
+  "schema": "captionlab.music_score_audit.v1",
+  "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/choreobench_runs/20261113_music_uncertainty_audit_v1/e2_generator_bound_input.jsonl",
+  "source_sha256": "d75d505bfca8ca956e35193ebc800b21af959e1477c0cedb45e94de0ee7e670e",
+  "source_bytes": 3458784,
+  "tool_sha256": "5754590c08e4ddbcf9d5358ea8b520cdc9c0a315d5b35f201d7535de166cac3d",
+  "registered": 2304,
+  "methods": {
+    "audio-flamingo3": {
+      "registered": 384,
+      "source_status_counts": {
+        "valid": 383,
+        "generation_not_evaluable": 1
+      },
+      "recomputable_rows": 383,
+      "missing_rating_rows": 0,
+      "original_valid_count": 383,
+      "proposed_valid_count": 378,
+      "original_unscored_count": 1,
+      "proposed_unscored_count": 6,
+      "uncertain_mis_scored_count": 5,
+      "changed_score_count": 5,
+      "original_mean": 2.6736292428198434,
+      "proposed_mean": 2.6693121693121693
+    },
+    "moss-audio": {
+      "registered": 384,
+      "source_status_counts": {
+        "valid": 384
+      },
+      "recomputable_rows": 384,
+      "missing_rating_rows": 0,
+      "original_valid_count": 384,
+      "proposed_valid_count": 383,
+      "original_unscored_count": 0,
+      "proposed_unscored_count": 1,
+      "uncertain_mis_scored_count": 1,
+      "changed_score_count": 1,
+      "original_mean": 3.7864583333333335,
+      "proposed_mean": 3.7885117493472587
+    },
+    "moss-music": {
+      "registered": 384,
+      "source_status_counts": {
+        "valid": 384
+      },
+      "recomputable_rows": 384,
+      "missing_rating_rows": 0,
+      "original_valid_count": 384,
+      "proposed_valid_count": 381,
+      "original_unscored_count": 0,
+      "proposed_unscored_count": 3,
+      "uncertain_mis_scored_count": 3,
+      "changed_score_count": 3,
+      "original_mean": 3.9583333333333335,
+      "proposed_mean": 3.9658792650918637
+    },
+    "music-flamingo": {
+      "registered": 384,
+      "source_status_counts": {
+        "valid": 384
+      },
+      "recomputable_rows": 384,
+      "missing_rating_rows": 0,
+      "original_valid_count": 384,
+      "proposed_valid_count": 384,
+      "original_unscored_count": 0,
+      "proposed_unscored_count": 0,
+      "uncertain_mis_scored_count": 0,
+      "changed_score_count": 0,
+      "original_mean": 2.7395833333333335,
+      "proposed_mean": 2.7395833333333335
+    },
+    "qwen25-omni": {
+      "registered": 384,
+      "source_status_counts": {
+        "valid": 383,
+        "generation_not_evaluable": 1
+      },
+      "recomputable_rows": 383,
+      "missing_rating_rows": 0,
+      "original_valid_count": 383,
+      "proposed_valid_count": 383,
+      "original_unscored_count": 1,
+      "proposed_unscored_count": 1,
+      "uncertain_mis_scored_count": 0,
+      "changed_score_count": 0,
+      "original_mean": 2.715404699738903,
+      "proposed_mean": 2.715404699738903
+    },
+    "qwen3-omni-instruct": {
+      "registered": 384,
+      "source_status_counts": {
+        "valid": 384
+      },
+      "recomputable_rows": 384,
+      "missing_rating_rows": 0,
+      "original_valid_count": 384,
+      "proposed_valid_count": 384,
+      "original_unscored_count": 0,
+      "proposed_unscored_count": 0,
+      "uncertain_mis_scored_count": 0,
+      "changed_score_count": 0,
+      "original_mean": 3.4270833333333335,
+      "proposed_mean": 3.4270833333333335
+    }
+  },
+  "proposed_rule": "clear=1; uncertain=null; none+absent=2; none+partial=3; none+explicit=4 or 5 with full_support",
+  "hypothetical_rescoring": true,
+  "historical_code_verified": false,
+  "raw_model_responses_verified": false,
+  "generator_identities_verified": false,
+  "generation_inventory_verified": false,
+  "grouping_scope": "stored method_id only; potentially per-case randomized blind alias",
+  "quality_validated": false,
+  "expert_selection_change_established": false,
+  "original_scores_modified": false,
+  "model_calls": 0,
+  "limitation": "Stored judgment-field audit only. Verify the historical frozen code SHA and original raw responses before adopting any proposed scores. No musical quality, human agreement, or change in expert ranking is established. Means are conditional on the separately reported valid counts; missing/failed slots receive no score. Grouping uses the stored method_id, which may be a per-case blind alias, not a generator identity. Bind the private mapping and generation-status inventory before any model-level aggregation; this audit does not perform that unblinding.",
+  "row_audit_sha256": "a47eff3b75a6073456dd2c6a7e6dac9ea5be2d7755732bf558cabc4df3865597"
+}

@@ -16,9 +16,9 @@ EOS, per-case seed.
 | --- | --- | --- |
 | action recall | 0.838 | **0.859** |
 | body-part recall | 0.927 | **0.970** |
-| corpus BLEU-4 (raw sacrebleu) | **0.0898** | 0.0895 |
-| ROUGE-L | **0.3050** | 0.2878 |
-| BERTScore F1 | 0.8975 | pending |
+| corpus BLEU-4 (raw sacrebleu) | 8.98 | **9.66** |
+| ROUGE-L F1 (rouge_score, stemming) | 0.3050 | **0.3087** |
+| BERTScore F1 | 0.8975 | 0.8974 |
 | length ratio | **1.006** | 1.073 |
 
 Paired over 384 source groups, 4,000 bootstrap resamples:
@@ -28,8 +28,9 @@ Paired over 384 source groups, 4,000 bootstrap resamples:
 | action recall | +0.0187 | [0.0022, 0.0354] | 41.1% / 31.5% / 27.3% |
 | body-part recall | +0.0382 | [0.0234, 0.0530] | 16.4% / 4.9% / 78.6% |
 
-Both intervals exclude zero. The costs are explicit: ROUGE-L is 0.017 lower and
-captions run ~7% longer than the reference.
+Both intervals exclude zero, and all three text metrics are equal or better
+(BLEU-4 9.66 vs 8.98, ROUGE-L 0.3087 vs 0.3050, BERTScore tied). The one cost is
+length: captions run ~7% longer than the reference.
 
 Val panel (80 cases, temperature 0.7, per-case seeds): action 0.875 / body 0.995
 / 57 distinct openings / length 1.02 — best of the ten configurations tested

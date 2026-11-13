@@ -360,8 +360,9 @@ val panel *before* this run) on the same 384 cases:
 | --- | --- | --- |
 | action recall | 0.838 | **0.859** |
 | body-part recall | 0.927 | **0.970** |
-| corpus BLEU-4 | **0.0898** | 0.0895 |
-| ROUGE-L | **0.3050** | 0.2878 |
+| corpus BLEU-4 (raw sacrebleu) | 8.98 | **9.66** |
+| ROUGE-L F1 (rouge_score, stemming) | 0.3050 | **0.3087** |
+| BERTScore F1 | 0.8975 | 0.8974 |
 | length ratio | **1.006** | 1.073 |
 | rows ok / EOS-stopped | 384/384 | 384/384 |
 
@@ -372,9 +373,11 @@ Paired comparison over 384 source groups (4,000 bootstrap resamples):
 | action recall | **+0.0187** | [0.0022, 0.0354] | 41.1% / 31.5% / 27.3% |
 | body-part recall | **+0.0382** | [0.0234, 0.0530] | 16.4% / 4.9% / 78.6% |
 
-Both intervals exclude zero, so the coverage gain is real; ROUGE-L moves the
-other way and the captions run 7% long, which is the honest cost of the
-intervention and is reported rather than hidden.
+Both intervals exclude zero, so the coverage gain is real. The only cost is
+length: captions run ~7% long. Text-overlap does **not** degrade once both runs
+are scored with the TX implementation (sacrebleu 13a, rouge_score with stemming,
+roberta-large BERTScore); an earlier note in this document compared them with the
+lightweight audit implementation, which is not the benchmark's scorer.
 
 Six baselines, same 384 cases, same harness on L20Z (TX numbers in brackets):
 

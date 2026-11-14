@@ -20,6 +20,7 @@ from .io import atomic_write, file_lock, file_sha, object_sha, read_json, read_j
 from .planning_units import build_planning_units
 from .providers import create_provider, parse_json_response
 from .public_structure import load_public_structure
+from .public_style_prior import load_public_style_prior
 from .schema import identifier, keys, text, validate_dataset, validate_plan
 from .selection import candidate_options
 from .evaluation import evaluate_plan
@@ -96,10 +97,12 @@ def _messages(payload, instruction):
             dict(role="user", content=json.dumps(payload, ensure_ascii=False, sort_keys=True, allow_nan=False))]
 
 
-def _outline_request(song, options, units, cfg):
+def _outline_request(song, options, units, cfg, style_prior=None):
     payload = dict(song=public_song(song), planning_units=[{k: u[k] for k in
         ("unit_id", "section_id", "start", "end", "kind")} for u in units["units"]],
         local_proposals=_candidates(options), local_proposals_are_unverified=True)
+    if style_prior is not None:
+        payload["style_prior"] = style_prior.signal(song["song_id"])
     instruction = (
         "Design whole-song contrast, motif introduction, recurrence/variation and an ending. "
         "If functional sections are unknown, do not invent chorus/verse detections; your organization is a design goal. "
@@ -119,7 +122,7 @@ def _neutral_outline(song):
                                          motif_ids=[]) for s in song["music"]["sections"]])
 
 
-def _unit_request(song, options, units, unit, outline, plan, cfg):
+def _unit_request(song, options, units, unit, outline, plan, cfg, style_prior=None):
     clock = event_clock(unit, plan["sample_rate"], cfg)
     time_fields = ["start_boundary", "end_boundary"] if clock["format"] == "boundary_ids" else ["start", "end"]
     section_design = next(s for s in outline["sections"] if s["section_id"] == unit["section_id"])
@@ -145,6 +148,8 @@ def _unit_request(song, options, units, unit, outline, plan, cfg):
         event_clock=clock,
         output_contract=dict(unit_id=unit["unit_id"], fields=time_fields + ["track", "action", "motif_id", "source_call_ids"],
             max_events=cfg["max_events_per_unit"], allowed_motif_ids=section_design["motif_ids"]))
+    if style_prior is not None:
+        payload["style_prior"] = style_prior.signal(song["song_id"], unit)
     payload.update(outline_available=use_outline, history_available=use_history)
     if not use_outline:
         for name in ("whole_song_design", "current_section_design", "current_motif_definitions"):
@@ -320,7 +325,7 @@ def _read_unit(response, original, unit, outline, options, max_events=3, clock=N
         raise ModelOutputError(str(error)) from error
 
 
-def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False):
+def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False, style_prior=None):
     current = Path(__file__).stat()
     if (current.st_ino, current.st_mtime_ns, current.st_ctime_ns) != _IMPORT_SIGNATURE:
         raise ValueError("Harness source changed after process import; start a fresh frozen process before model calls")
@@ -340,7 +345,18 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
         if not path.is_absolute():
             path = dataset_path.parent / path
     effective, structure, structure_sha = load_public_structure(path, dataset_sha, songs)
+    if style_prior is not None:
+        prior_path = Path(style_prior).expanduser()
+        if not prior_path.is_absolute():
+            prior_path = dataset_path.parent / prior_path
+        style_prior = load_public_style_prior(prior_path, dataset_sha, dataset["songs"])
+    def assert_style_prior_unchanged():
+        if style_prior is not None:
+            style_prior.assert_unchanged()
+    assert_style_prior_unchanged()
     shared_path = cfg.get("shared_outline_path")
+    if shared_path is not None and style_prior is not None:
+        raise ValueError("Shared outline v1 cannot bind a style prior; use a fresh outline")
     if shared_path is not None:
         shared_path = Path(shared_path).expanduser()
         shared_path = shared_path.resolve() if shared_path.is_absolute() else (dataset_path.parent / shared_path).resolve()
@@ -386,6 +402,8 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
         original_local_sampling_unchanged=True, automatic_repair_loop=False, model_weights_updated=False,
         ablation=dict(use_outline=cfg["use_outline"], use_history=cfg["use_history"]),
         limits=LIMITS, generated_actions_are_new_proposals=True)
+    if style_prior is not None:
+        contract.update(style_prior.binding(), sources={str(style_prior.path): style_prior.digest})
     if output.exists() and not resume:
         raise ValueError("Output exists; use unchanged resume or a new directory")
     if resume and not (output / "contract.json").is_file():
@@ -404,6 +422,7 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                         raise ValueError("Published coordination artifact changed")
                 bank.assert_unchanged(full=True)
                 assert_shared_unchanged()
+                assert_style_prior_unchanged()
                 return previous
         plans, artifacts, failures = [], [], []
         def publish(relative, value):
@@ -438,7 +457,9 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                     if shared is not None:
                         outline = copy.deepcopy(shared_rows[sid]["outline"])
                     elif cfg["use_outline"]:
-                        response = journal.call(provider, _outline_request(song, options, units, cfg))
+                        request = _outline_request(song, options, units, cfg, style_prior)
+                        assert_style_prior_unchanged()
+                        response = journal.call(provider, request)
                         outline = _read_outline(response["text"], song)
                     else:
                         outline = _neutral_outline(song)
@@ -451,8 +472,9 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                     plan = _empty_plan(original)
                     plan["motifs"] = copy.deepcopy(outline["motifs"])
                     for unit in units["units"]:
-                        request = _unit_request(song, options, units, unit, outline, plan, cfg)
+                        request = _unit_request(song, options, units, unit, outline, plan, cfg, style_prior)
                         assert_shared_unchanged()
+                        assert_style_prior_unchanged()
                         response = journal.call(provider, request)
                         events = _read_unit(response["text"], original, unit, outline, options, cfg["max_events_per_unit"],
                                             clock=event_clock(unit, song["audio"]["sample_rate"], cfg))
@@ -491,6 +513,7 @@ def run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=False
                         raise
             bank.assert_unchanged(full=True)
             assert_shared_unchanged()
+            assert_style_prior_unchanged()
             final = result(True)
             atomic_write(output / "results.json", final)
             return final

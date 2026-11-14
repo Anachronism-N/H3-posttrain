@@ -214,6 +214,7 @@ def build_parser():
     for name in ("dataset", "candidates", "config", "out-dir"):
         harness.add_argument("--" + name, required=True, type=Path)
     harness.add_argument("--resume", action="store_true")
+    harness.add_argument("--style-prior", type=Path, help="Optional source-bound public JEV probability sidecar; no hard genre constraint")
     ablation = sub.add_parser("prepare-ablation", help="Prepare a source-bound 2x2 outline/history experiment without model calls")
     for name in ("dataset", "candidates", "config", "out-dir"):
         ablation.add_argument("--" + name, required=True, type=Path)
@@ -404,6 +405,7 @@ def build_parser():
     four.add_argument("--outline-max-output-tokens", type=int, default=4096)
     four.add_argument("--resume", action="store_true")
     four.add_argument("--outline-reuse-run")
+    four.add_argument("--style-prior", type=Path, help="Optional source-bound public JEV probability sidecar; no hard genre constraint")
     return parser
 
 
@@ -425,7 +427,7 @@ def dispatch(args):
             max_total_output_tokens=args.max_total_output_tokens, resume=args.resume,
             max_request_characters=args.max_request_characters,max_output_tokens=args.max_output_tokens,
             outline_max_output_tokens=args.outline_max_output_tokens,
-            outline_reuse_run=args.outline_reuse_run,controller_version=args.controller_version))
+            outline_reuse_run=args.outline_reuse_run,controller_version=args.controller_version,style_prior=args.style_prior))
     elif cmd == "run-song-agent":
         from .song_agent import run_song_agent
         _emit(run_song_agent(args.source_run, args.song_id, read_json(args.provider), args.out_dir,
@@ -470,7 +472,7 @@ def dispatch(args):
         _emit(run_baseline(args.dataset, args.out_dir, read_json(args.config), resume=args.resume))
     elif cmd == "run-harness":
         from .harness import run_harness
-        _emit(run_harness(args.dataset, args.candidates, args.out_dir, read_json(args.config), resume=args.resume))
+        _emit(run_harness(args.dataset, args.candidates, args.out_dir, read_json(args.config), resume=args.resume, style_prior=args.style_prior))
     elif cmd == "prepare-ablation":
         from .experiments import prepare_ablation_experiment
         prepared = prepare_ablation_experiment(args.dataset, args.candidates, args.config, args.out_dir)

@@ -19,6 +19,7 @@ from .io import atomic_write, file_lock, file_sha, finite_json, object_sha, read
 from .planning_units import build_planning_units
 from .providers import create_provider, parse_json_response
 from .public_structure import load_public_structure
+from .public_style_prior import load_public_style_prior
 from .schema import validate_dataset, validate_plan
 from .selection import NoFeasibleSelectionError, candidate_options, make_selection, select_with_scores
 from .compile_selected import compile_selection
@@ -135,7 +136,7 @@ def _owned_windows(options, units):
     return result
 
 
-def _unit_request(song, options, units, unit, owned, choices, cfg):
+def _unit_request(song, options, units, unit, owned, choices, cfg, style_prior=None):
     by_id = {row["window_id"]: row for row in options["windows"]}
     context = []
     for choice in choices[-2:]:
@@ -172,6 +173,8 @@ def _unit_request(song, options, units, unit, owned, choices, cfg):
             "downbeats": [t for t in public["music"]["downbeats"] if unit["start"] <= t < unit["end"]]},
         windows=relevant, prior_selected_text=context,
         response_template={"choices": [{"window_id": window_id, "candidate_index": 0} for window_id in owned]})
+    if style_prior is not None:
+        payload["style_prior"] = style_prior.signal(song["song_id"], unit)
     messages = [dict(role="system", content=(
         "Select existing WHOLE audio-expert responses to organize a choreography plan. You have not heard audio directly. "
         "Return only {\"choices\":[{\"window_id\":...,\"candidate_index\":...}]}. Choose exactly one available candidate "
@@ -209,14 +212,14 @@ def _read_choices(text, expected, options):
         raise ModelOutputError(str(error)) from error
 
 
-def run_harness(dataset_path, candidates_path, output_dir, config, resume=False):
+def run_harness(dataset_path, candidates_path, output_dir, config, resume=False, style_prior=None):
     current = Path(__file__).stat()
     if (current.st_ino, current.st_mtime_ns, current.st_ctime_ns) != _IMPORT_SIGNATURE:
         raise ValueError("Harness source changed after process import; start a fresh frozen process before model calls")
     cfg = _config(config)
     if cfg["mode"] == "coordinated":
         from .coordination import run_coordinated
-        return run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=resume)
+        return run_coordinated(dataset_path, candidates_path, output_dir, cfg, resume=resume, style_prior=style_prior)
     dataset_path, output = Path(dataset_path).resolve(), Path(output_dir).resolve()
     dataset, dataset_sha = read_json_snapshot(dataset_path)
     validate_dataset(dataset)
@@ -234,6 +237,15 @@ def run_harness(dataset_path, candidates_path, output_dir, config, resume=False)
         if not structure_path.is_absolute():
             structure_path = dataset_path.parent / structure_path
     planning_songs, structure_snapshot, structure_sha = load_public_structure(structure_path, dataset_sha, songs)
+    if style_prior is not None:
+        prior_path = Path(style_prior).expanduser()
+        if not prior_path.is_absolute():
+            prior_path = dataset_path.parent / prior_path
+        style_prior = load_public_style_prior(prior_path, dataset_sha, dataset["songs"])
+    def assert_style_prior_unchanged():
+        if style_prior is not None:
+            style_prior.assert_unchanged()
+    assert_style_prior_unchanged()
     planning = {s["song_id"]: s for s in planning_songs}
     prepared, expected_calls = {}, 0
     for song in songs:
@@ -283,6 +295,8 @@ def run_harness(dataset_path, candidates_path, output_dir, config, resume=False)
         code_sha256={p.name: file_sha(p) for p in sorted(Path(__file__).parent.glob("*.py"))},
         software=dict(python=sys.version, platform=platform.platform()), synthetic=synthetic,
         model_weights_updated=False, requires_new_training_data=False, automatic_repair_loop=False)
+    if style_prior is not None:
+        contract.update(style_prior.binding(), sources={str(style_prior.path): style_prior.digest})
     if output.exists() and not resume:
         raise ValueError("Output exists; use unchanged resume or a new directory")
     if resume and not (output / "contract.json").is_file():
@@ -301,6 +315,7 @@ def run_harness(dataset_path, candidates_path, output_dir, config, resume=False)
             for ref in previous["plans"] + previous["artifacts"]:
                 if file_sha(output / ref["path"]) != ref["sha256"]:
                     raise ValueError("Published harness artifact changed")
+            assert_style_prior_unchanged()
             return previous
         plans, artifacts, failures = [], [], []
         def publish(relative, value):
@@ -346,7 +361,8 @@ def run_harness(dataset_path, candidates_path, output_dir, config, resume=False)
                             owned = data["owners"][unit["unit_id"]]
                             if not owned:
                                 continue
-                            request = _unit_request(planning[sid], options, data["units"], unit, owned, choices, cfg)
+                            request = _unit_request(planning[sid], options, data["units"], unit, owned, choices, cfg, style_prior)
+                            assert_style_prior_unchanged()
                             response = journal.call(provider, request)
                             choices.extend(_read_choices(response["text"], owned, options))
                     selection = make_selection(bank, song, choices, selection_provenance=dict(
@@ -370,6 +386,7 @@ def run_harness(dataset_path, candidates_path, output_dir, config, resume=False)
                     if not cfg["continue_on_model_error"]:
                         raise
             bank.assert_unchanged(full=True)
+            assert_style_prior_unchanged()
             final = result(True)
             atomic_write(output / "results.json", final)
             return final

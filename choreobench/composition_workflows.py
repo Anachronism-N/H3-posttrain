@@ -10,8 +10,9 @@ from .io import file_lock,file_sha,object_sha,read_json,write_json,json_text
 from .memory_replay import _dispatch,_unchanged,_ReplayInfrastructureError,_snapshot
 from .planning_units import build_planning_units
 from .providers import create_provider,parse_json_response
+from .public_style_prior import load_public_style_prior
 from .request_budget import guard_request
-from .schema import keys,text,integer,validate_plan
+from .schema import keys,text,integer,validate_dataset,validate_plan
 from .song_agent import load_song_source
 from .timing import event_clock
 from .untimed_catalog import load_catalog_song
@@ -45,6 +46,28 @@ def _source(path,song_id,cfg,sources):
  units=build_planning_units(original,config=cfg['unit_config'])
  return dict(original=original,song=copy.deepcopy(original),options=options,units=units,config=cfg,
              synthetic=synthetic,source_contract_sha256=digest)
+
+
+def _load_style_prior(path,source_path,source,sources):
+ # Bind to the original dataset, not a result/plan hash or effective music metadata.
+ root=Path(source_path).resolve()
+ if root.is_dir():contract_path=root/'contract.json'
+ else:
+  header=_snapshot(root,sources)
+  contract_path=(Path(header['catalog_dir'])/'contract.json' if header.get('schema')=='choreobench.complete_catalog_song.v1'
+                 else root.parent/'contract.json')
+ contract=_snapshot(contract_path,sources)
+ if contract.get('schema') not in ('choreobench.coordination_contract.v1','choreobench.untimed_catalog_contract.v1'):
+  raise ValueError('Style prior requires the original source dataset contract')
+ dataset=contract['dataset_snapshot'];validate_dataset(dataset)
+ original=next((s for s in dataset['songs'] if s['song_id']==source['original']['song_id']),None)
+ if original!=source['original']:raise ValueError('Style prior source song differs from original dataset')
+ path=Path(path).expanduser()
+ if not path.is_absolute():path=(root if root.is_dir() else root.parent)/path
+ prior=load_public_style_prior(path,contract['dataset_sha256'],dataset['songs'])
+ if str(prior.path) in sources and sources[str(prior.path)]!=prior.digest:raise ValueError('Style prior source changed')
+ sources[str(prior.path)]=prior.digest
+ return prior
 
 
 class CompositionState:
@@ -95,9 +118,11 @@ def _request(state,cfg,method,phase,feedback=None):
   from .composition_controller_v2 import TOOL_PROMPT as BOUNDED_TOOL_PROMPT,observation_context,choreography_context
  units=state.source['units']['units'];unit=units[state.index] if state.index<len(units) else None
  if unit is not None:
-  req=_unit_request(state.source['song'],state.source['options'],state.source['units'],unit,state.outline,state.plan,state.source['config'])
+  req=_unit_request(state.source['song'],state.source['options'],state.source['units'],unit,state.outline,state.plan,state.source['config'],state.source.get('style_prior'))
   payload=parse_json_response(req['messages'][-1]['content']);schema=req['response_schema'];system=req['messages'][0]['content']
- else:payload={};schema=dict(type='null');system='All units are committed.'
+ else:
+  payload={};schema=dict(type='null');system='All units are committed.'
+  if state.source.get('style_prior') is not None:payload['style_prior']=state.source['style_prior'].signal(state.plan['song_id'])
  payload.update(committed_plan=copy.deepcopy(state.plan),current_draft=copy.deepcopy(state.draft),
     committed_units=state.index,total_units=len(units),tool_observations=state.observations[-2:],feedback=feedback,
     shared_permissions=True,actual_audio_access=False,remaining_model_calls=cfg['max_calls']-cfg['call_index'] if 'max_calls' in cfg else None,
@@ -145,7 +170,7 @@ def _request(state,cfg,method,phase,feedback=None):
 
 
 def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow',seed=42,max_output_tokens=1024,
-                    outline_max_output_tokens=4096,max_request_characters=200000,max_input_tokens=2000000,max_total_output_tokens=150000,resume=False,outline_reuse_run=None,controller_version='v1'):
+                    outline_max_output_tokens=4096,max_request_characters=200000,max_input_tokens=2000000,max_total_output_tokens=150000,resume=False,outline_reuse_run=None,controller_version='v1',style_prior=None):
  if method not in METHODS:raise ValueError('Unknown composition method')
  if controller_version not in ('v1','v2'):raise ValueError('Unknown composition controller version')
  bounded=controller_version=='v2'
@@ -161,6 +186,9 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
   cfg.update(controller_version='v2',no_progress_limit=NO_PROGRESS_LIMIT,
     controller_policy='bounded-revision-reserved-commit-auto-finish-v2')
  sources={};source=_source(source_path,song_id,cfg,sources);cfg['max_calls']=1+4*len(source['units']['units'])
+ if style_prior is not None:
+  style_prior=_load_style_prior(style_prior,source_path,source,sources)
+  source['style_prior']=style_prior
  # Historical input cfg can contain a different provider; only timing/structure is used from it.
  source['config']=dict(source['config'],max_output_tokens=max_output_tokens,max_request_characters=max_request_characters,structured_unit_output=True,use_outline=True,use_history=True)
  if provider_spec.get('kind') not in ('chat_completions','replay'):raise ValueError('Composition requires explicit real/replay text provider')
@@ -174,7 +202,7 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
    raise ValueError('Outline reuse method/model or complete result differs')
   old_journal=_Journal(reuse,object_sha(prior),cfg['max_calls']);cid=song_id+'/four-method/0000'
   if cid not in old_journal.records:raise ValueError('Original outline raw missing; no replacement')
-  expected=_outline_request(source['song'],source['options'],source['units'],cfg);expected['call_id']=cid
+  expected=_outline_request(source['song'],source['options'],source['units'],cfg,style_prior);expected['call_id']=cid
   if old_journal.started[cid]['request']!=expected:raise ValueError('Original outline request differs')
   record=old_journal.records[cid]
   if prior_result['call_records'].get(cid)!=record['record_sha256']:raise ValueError('Original result does not bind outline raw')
@@ -186,6 +214,7 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
   max_input_tokens=max_input_tokens,max_total_output_tokens=max_total_output_tokens,source_inputs_sha256={k:object_sha(source[k]) for k in ('original','song','options','units')},
   code_sha256={p.name:file_sha(p) for p in Path(__file__).parent.glob('*.py')},same_tool_permissions=True,fresh_method_outline=outline_reuse_run is None,historical_event_prefix_reused=False,
   original_outline_reused=outline_reuse_run is not None)
+ if style_prior is not None:contract.update(style_prior.binding())
  output=Path(out_dir).resolve()
  if output.exists() and not resume:raise FileExistsError(str(output))
  if resume and not (output/'contract.json').exists():raise ValueError('Resume requires original contract')
@@ -233,7 +262,7 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
    return parse_json_response(response['text'])
   state=None
   try:
-   req=_outline_request(source['song'],source['options'],source['units'],cfg);req['call_id']=song_id+'/four-method/0000'
+   req=_outline_request(source['song'],source['options'],source['units'],cfg,style_prior);req['call_id']=song_id+'/four-method/0000'
    outline=_read_outline(json_text(call(req)),source['song']);save('outline.json',outline);artifacts['outline.json']=file_sha(output/'outline.json')
    state=(CompositionStateV2 if bounded else CompositionState)(source,outline);feedback=None;phase='propose'
    while index<cfg['max_calls']:

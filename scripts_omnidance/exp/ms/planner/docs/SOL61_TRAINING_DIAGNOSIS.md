@@ -503,6 +503,35 @@ is not a sampling artefact. Structural separation is larger than any mean
 difference: **SFT emits 384 distinct captions out of 384** while the baselines
 collapse onto 1-22 opening phrases and up to 46% self-repetition.
 
+### 8.4 Master table (all measured metrics, 384 frozen cases)
+
+Every column below was computed on the same 384 cases with the same code.
+`eval` is how many captions were usable; `uniq` is the number of distinct
+captions out of 384; text metrics use the benchmark scorer.
+
+| method | eval | action | body | legs | density | length | uniq | openings | entropy | self-rep | halluc | BLEU-4 | ROUGE-L | BERT F1 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| SFT v3 rp1.05 | 384 | 0.861 | 0.973 | 0.846 | 0.98 | 1.07 | **384** | 150 | 5.57 | 0.000 | 0.000 | **9.66** | **0.3087** | **0.8974** |
+| SFT v1 rp1.05 | 384 | 0.843 | 0.935 | 0.680 | 0.99 | 1.01 | **384** | 147 | 5.56 | 0.000 | 0.000 | 8.98 | 0.3050 | 0.8975 |
+| SFT v3 rp1.15 | 384 | **0.922** | **0.998** | 0.977 | 0.75 | 1.15 | **384** | 150 | 5.57 | 0.000 | 0.000 | 6.28 | 0.2630 | 0.8873 |
+| SFT v1 rp1.15 | 384 | 0.905 | 0.987 | 0.945 | 0.76 | 1.08 | **384** | 146 | 5.56 | 0.000 | 0.000 | 5.65 | 0.2606 | 0.8875 |
+| music-flamingo | 384 | 0.151 | 0.137 | 0.107 | 1.22 | 0.72 | 309 | 22 | 1.81 | 0.077 | 0.050 | 0.8765 | 0.1309 | 0.8238 |
+| moss-audio | 384 | 0.250 | 0.506 | 0.354 | 1.43 | 1.58 | 186 | 6 | 0.74 | 0.452 | 0.003 | 0.7793 | 0.1617 | 0.8230 |
+| qwen3-omni-instruct | 384 | 0.260 | 0.737 | 0.758 | 0.76 | 1.46 | 384 | 6 | 0.09 | 0.465 | 0.039 | 0.3803 | 0.1128 | 0.7846 |
+| moss-music | 384 | 0.124 | 0.448 | 0.326 | 1.49 | 1.58 | 346 | 18 | 2.33 | 0.240 | 0.076 | 0.2177 | 0.1125 | 0.8103 |
+| qwen25-omni | 253 | 0.020 | 0.142 | 0.029 | 0.93 | 0.18 | 137 | 7 | 1.53 | 0.000 | 0.005 | 0.1778 | 0.0821 | 0.8293 |
+| audio-flamingo3 | 384 | 0.059 | 0.069 | 0.000 | 1.30 | 0.28 | 211 | 1 | 0.00 | 0.001 | 0.023 | 0.1684 | 0.0798 | 0.8232 |
+
+Status of the remaining evaluation tracks:
+
+| track | status |
+| --- | --- |
+| six-baseline generation + all text/structure metrics | done |
+| paired significance vs every baseline (action/body) | done, all CIs exclude zero |
+| CLAP / ΔCLAP | done, shown non-discriminative (reference control -0.032) |
+| audio-aware model judge (pairwise vs qwen3-instruct + 1-5 rubric) | running, `runs/sol61_eval_judge_*` |
+| human rubric (TX's three dimensions) | not run; review pack required |
+
 ## 6. Status summary
 
 Done and measured:

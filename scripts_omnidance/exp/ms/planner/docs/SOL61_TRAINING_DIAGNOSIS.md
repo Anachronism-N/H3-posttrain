@@ -454,8 +454,8 @@ captions and references (section 8).
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | **SFT v3 @1000 (rp 1.05)** | 384 | 0.859 | 0.970 | 0.846 | 0.98 | 1.07 | 150 | 5.57 | 0.000 | 0.000 | **9.66** | **0.3087** | **0.8974** |
 | SFT v1 @1000 (rp 1.05) | 384 | 0.838 | 0.927 | 0.680 | 0.99 | 1.01 | 147 | 5.56 | 0.000 | 0.000 | 8.98 | 0.3050 | 0.8975 |
-| SFT v3 @1000 (rp 1.15, coverage mode) | 384 | **0.922** | **0.998** | 0.977 | 0.75 | 1.15 | 150 | 5.57 | 0.000 | 0.000 | 5.68 | 0.2418 | — |
-| SFT v1 @1000 (rp 1.15, coverage mode) | 384 | 0.905 | 0.987 | 0.945 | 0.76 | 1.08 | 146 | 5.56 | 0.000 | 0.000 | 5.12 | 0.2394 | — |
+| SFT v3 @1000 (rp 1.15, coverage mode) | 384 | **0.922** | **0.998** | 0.977 | 0.75 | 1.15 | 150 | 5.57 | 0.000 | 0.000 | 6.28 | 0.2630 | 0.8873 |
+| SFT v1 @1000 (rp 1.15, coverage mode) | 384 | 0.905 | 0.987 | 0.945 | 0.76 | 1.08 | 146 | 5.56 | 0.000 | 0.000 | 5.65 | 0.2606 | 0.8875 |
 | music-flamingo | 384 | 0.147 | 0.137 | 0.107 | 1.22 | 0.72 | 22 | 1.81 | 0.077 | 0.050 | 0.8765 | 0.1309 | 0.8238 |
 | moss-audio | 384 | 0.242 | 0.501 | 0.354 | 1.43 | 1.58 | 6 | 0.74 | **0.452** | 0.003 | 0.7793 | 0.1617 | 0.8230 |
 | qwen3-omni-instruct | 384 | 0.262 | 0.739 | **0.758** | 0.76 | 1.46 | 6 | 0.09 | **0.465** | 0.039 | 0.3803 | 0.1128 | 0.7846 |
@@ -482,6 +482,26 @@ What the table says:
    and cuts BLEU-4 by ~40%.
 5. qwen25-omni only produced 253 evaluable captions out of 384 even after the
    sampler fix; its numbers are a lower bound, not its ceiling.
+
+### 8.3 Paired significance against every baseline
+
+Per-case action and body recall, averaged within source group and bootstrapped
+over 384 groups (4,000 resamples), SFT v3 (rp 1.05) minus each baseline:
+
+| baseline | action delta [95% CI] | body delta [95% CI] | leg coverage gap | unique captions (SFT vs it) |
+| --- | --- | --- | --- | --- |
+| audio-flamingo3 | +0.803 [0.787, 0.818] | +0.904 [0.887, 0.922] | +0.846 | 384 vs 211 |
+| qwen25-omni | +0.841 [0.827, 0.854] | +0.831 [0.809, 0.853] | +0.818 | 384 vs 137 |
+| music-flamingo | +0.710 [0.690, 0.728] | +0.836 [0.811, 0.859] | +0.740 | 384 vs 309 |
+| moss-music | +0.738 [0.719, 0.756] | +0.525 [0.491, 0.560] | +0.521 | 384 vs 346 |
+| moss-audio | +0.611 [0.594, 0.628] | +0.467 [0.439, 0.495] | +0.492 | 384 vs 186 |
+| qwen3-omni-instruct | +0.602 [0.583, 0.621] | +0.236 [0.211, 0.261] | +0.089 | 384 vs 384 |
+| SFT v1 @1000 | +0.019 [0.002, 0.034] | +0.038 [0.023, 0.053] | +0.167 | 384 vs 384 |
+
+Every interval excludes zero, so the coverage advantage over the six baselines
+is not a sampling artefact. Structural separation is larger than any mean
+difference: **SFT emits 384 distinct captions out of 384** while the baselines
+collapse onto 1-22 opening phrases and up to 46% self-repetition.
 
 ## 6. Status summary
 

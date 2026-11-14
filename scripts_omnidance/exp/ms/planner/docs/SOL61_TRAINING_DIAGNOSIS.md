@@ -442,6 +442,47 @@ Reading:
   `captionlab/choreo_quality.py`; they cannot be computed and are exported for
   TX scoring rather than substituted.
 
+### 8.2 Complete table: six baselines and every SFT operating point
+
+All rows are the frozen 384 test cases on L20Z. Text metrics use the benchmark
+scorer (sacrebleu 13a / rouge_score with stemming / roberta-large BERTScore);
+structural columns come from `audit_sol61.py`; `legs` is the share of captions
+naming a leg part. CLAP is omitted because it was shown to be at chance for both
+captions and references (section 8).
+
+| method | eval | action | body | legs | density | length | openings | entropy | self-rep | halluc | BLEU-4 | ROUGE-L | BERT F1 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **SFT v3 @1000 (rp 1.05)** | 384 | 0.859 | 0.970 | 0.846 | 0.98 | 1.07 | 150 | 5.57 | 0.000 | 0.000 | **9.66** | **0.3087** | **0.8974** |
+| SFT v1 @1000 (rp 1.05) | 384 | 0.838 | 0.927 | 0.680 | 0.99 | 1.01 | 147 | 5.56 | 0.000 | 0.000 | 8.98 | 0.3050 | 0.8975 |
+| SFT v3 @1000 (rp 1.15, coverage mode) | 384 | **0.922** | **0.998** | 0.977 | 0.75 | 1.15 | 150 | 5.57 | 0.000 | 0.000 | 5.68 | 0.2418 | — |
+| SFT v1 @1000 (rp 1.15, coverage mode) | 384 | 0.905 | 0.987 | 0.945 | 0.76 | 1.08 | 146 | 5.56 | 0.000 | 0.000 | 5.12 | 0.2394 | — |
+| music-flamingo | 384 | 0.147 | 0.137 | 0.107 | 1.22 | 0.72 | 22 | 1.81 | 0.077 | 0.050 | 0.8765 | 0.1309 | 0.8238 |
+| moss-audio | 384 | 0.242 | 0.501 | 0.354 | 1.43 | 1.58 | 6 | 0.74 | **0.452** | 0.003 | 0.7793 | 0.1617 | 0.8230 |
+| qwen3-omni-instruct | 384 | 0.262 | 0.739 | **0.758** | 0.76 | 1.46 | 6 | 0.09 | **0.465** | 0.039 | 0.3803 | 0.1128 | 0.7846 |
+| moss-music | 384 | 0.121 | 0.441 | 0.326 | 1.49 | 1.58 | 18 | 2.33 | 0.240 | 0.076 | 0.2177 | 0.1125 | 0.8103 |
+| qwen25-omni | 253 | 0.020 | 0.139 | 0.029 | 0.93 | 0.18 | 7 | 1.53 | 0.000 | 0.005 | 0.1778 | 0.0821 | 0.8293 |
+| audio-flamingo3 | 384 | 0.057 | 0.067 | 0.000 | 1.30 | 0.28 | 1 | 0.00 | 0.001 | 0.023 | 0.1684 | 0.0798 | 0.8232 |
+
+What the table says:
+
+1. **Vocabulary.** SFT is 3-15x higher on action recall and 1.3-14x higher on
+   body recall than any baseline. The closest baseline on legs is
+   qwen3-omni-instruct (0.758), and it pays for that with 46% self-repetition and
+   0.76 density — it repeats one template.
+2. **Structure.** SFT is the only method whose captions sit inside the protocol's
+   density band (0.98 vs the reference's 1.00), with 147-150 distinct openings
+   and zero self-repetition. Every baseline is flagged by at least one structural
+   gate.
+3. **Text overlap.** SFT is ~11x the best baseline on BLEU-4 and ~1.9x on
+   ROUGE-L, and 7 points higher on BERTScore. That gap is expected — it is
+   trained on this caption distribution — and should be reported as in-distribution
+   agreement, not as independent quality evidence.
+4. **The two SFT modes bracket the trade-off.** rp 1.05 keeps clause structure,
+   length and overlap; rp 1.15 maximises tag coverage but drops density to 0.75
+   and cuts BLEU-4 by ~40%.
+5. qwen25-omni only produced 253 evaluable captions out of 384 even after the
+   sampler fix; its numbers are a lower bound, not its ceiling.
+
 ## 6. Status summary
 
 Done and measured:

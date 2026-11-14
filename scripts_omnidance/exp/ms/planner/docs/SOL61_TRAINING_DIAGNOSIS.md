@@ -529,8 +529,50 @@ Status of the remaining evaluation tracks:
 | six-baseline generation + all text/structure metrics | done |
 | paired significance vs every baseline (action/body) | done, all CIs exclude zero |
 | CLAP / ΔCLAP | done, shown non-discriminative (reference control -0.032) |
-| audio-aware model judge (pairwise vs qwen3-instruct + 1-5 rubric) | running, `runs/sol61_eval_judge_*` |
+| audio-aware model judge (pairwise vs qwen3-instruct + 1-5 rubric) | done, see 8.5 - **the judge prefers the baseline** |
 | human rubric (TX's three dimensions) | not run; review pack required |
+
+### 8.5 Audio-aware model judge (and why its verdict needs care)
+
+Judge: Qwen3-Omni-30B-A3B-Instruct with the audio in the prompt, 384 cases,
+both A/B orders per case (a single random order was unusable - the judge picked
+slot A 69.8% of the time), no references and no method names shown.
+
+**Pairwise** (a case counts as ours only if it wins in *both* orders):
+
+| verdict | cases | share |
+| --- | --- | --- |
+| baseline (qwen3-omni-instruct) | 224 | 58.3% |
+| split by order (no preference) | 157 | 40.9% |
+| ours | 3 | 0.8% |
+
+**Rubric (1-5, same judge, same audio):**
+
+| caption | action clarity | music fit |
+| --- | --- | --- |
+| SFT v3 | 3.32 | 2.97 |
+| qwen3-omni-instruct (baseline) | 4.95 | 4.81 |
+
+This contradicts the automatic metrics and must be reported, not buried. Three
+facts constrain how far it can be read:
+
+1. **The judge is the same model as the baseline being judged.** The 4.95/4.81
+   near-ceiling on its own outputs against 3.3/3.0 on ours is the signature of
+   self-preference, and it is the single largest confound here.
+2. **The two captions optimise different things.** The baseline writes vivid,
+   high-energy prose ("explodes upwards", "whipping around") that reads as
+   specific to a judge; ours follows the reference's restrained vocabulary and
+   scores high on recall of *reference* tags. A judge asked for "concrete and
+   executable" rewards the former.
+3. **Automatic and judged quality agree on nothing here**, which is the same
+   lesson as CLAP: reference-overlap metrics and model judges measure different
+   constructs.
+
+Consequence for claims: "significantly better" is supported for **coverage
+(action/body recall), structure (density, uniqueness, self-repetition) and
+reference overlap**. It is **not** supported by this model judge, and a human
+review with the TX rubric is required before any claim about perceived caption
+quality.
 
 ## 6. Status summary
 

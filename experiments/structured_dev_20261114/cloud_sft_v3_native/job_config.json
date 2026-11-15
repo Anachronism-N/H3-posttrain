@@ -1,0 +1,59 @@
+{
+  "schema": "choreobench.best_sft_smoke_spec.v1",
+  "run_id": "sft-v3-native-smoke-20261116-010000",
+  "source_split": "dev",
+  "source_song_id": "fma-1881",
+  "source_song_sha256": "b2a105d5465f46286ef615adb4a5f024929ed502b4f98d2916ffa26077674e0a",
+  "source_interval_samples": [
+    0,
+    81000
+  ],
+  "audio": {
+    "sample_rate": 16000,
+    "num_samples": 81000,
+    "sha256": "a57d39431e5b866ff364e1d7044de295676a841798706308cbb1bd56a65b81c7"
+  },
+  "cases": [
+    {
+      "case_id": "fma-1881/untimed/0000/00",
+      "seed": 1537376698
+    },
+    {
+      "case_id": "fma-1881/untimed/0000/01",
+      "seed": 3181329194
+    }
+  ],
+  "model_oss_prefix": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/",
+  "adapter_oss_prefix": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/",
+  "expected_adapter_sha256": "c1621d64f22275bcce51074ac708a4a8ec24e75cb9e365bbd45c63c79a03f9a7",
+  "expected_loader_sha256": "01dcd73b7a4ba19dca26f9dc4e30142f539b27ecfc7979ae2600be8ca8c6fae5",
+  "provider_factory": "checkpoint_provider.create",
+  "candidates_per_window": 2,
+  "max_new_tokens": 1024,
+  "audio_only": true,
+  "task_prompt": null,
+  "workers": 1,
+  "gpus": 8,
+  "cpu_cores": 16,
+  "memory_mib": 262144,
+  "model_device": "cuda:0",
+  "model_calls_sent": 0,
+  "automatic_retry": false,
+  "allow_full_268_case_collection_in_this_smoke": false,
+  "benchmark_first_line_protocol_equivalent": false,
+  "choreography_quality_evaluated": false,
+  "source_asset_bytes": 63594854438,
+  "source_assets_manifest_sha256": "f4f62929216b58ff8f38ba8846a9583a45cc1afdc41f754edffdd41730e33928",
+  "provider_source_sha256": "f8a52e1b5feb273d3bf88e70b8d2245b32a833b22ed848a80930e62b838c5e03",
+  "runtime_profile_sha256": "9347086a9a98312f716118dc9280e684f4ac4ec2b671c980634ef2b1b890f098",
+  "runtime_packages": {
+    "torch": "2.8.0",
+    "transformers": "5.18.0",
+    "peft": "0.20.0",
+    "accelerate": "1.14.0",
+    "numpy": "1.26.4",
+    "librosa": "0.11.0",
+    "soundfile": "0.14.0"
+  },
+  "result_oss_prefix": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sft-v3-native-smoke-20261116-010000/"
+}

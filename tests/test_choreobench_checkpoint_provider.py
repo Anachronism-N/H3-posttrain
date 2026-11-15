@@ -77,6 +77,8 @@ def test_measures_actual_tokens_and_uses_audio_only_prefix(fixture):
     assert result["costs"]["input_tokens"] == 3
     assert result["costs"]["output_tokens"] == 2
     assert result["raw"]["new_token_ids"] == [77, 151645]
+    assert len(result["raw"]["input_token_ids"]) == result["costs"]["input_tokens"]
+    assert result["raw"]["generated_sequence_ids"] == result["raw"]["input_token_ids"] + result["raw"]["new_token_ids"]
     assert result["stop_reason"] == "eos"
     case_id = fixture.request["call_id"]
     assert result["raw"]["canonical_case_id"] == case_id
@@ -108,6 +110,7 @@ def test_observed_stops_are_not_guessed_from_text(fixture, tokens, stop):
     assert result["stop_reason"] == stop
     assert result["costs"]["output_tokens"] == len(tokens)
     assert result["raw"]["new_token_ids"] == tokens
+    assert result["raw"]["generated_sequence_ids"] == result["raw"]["input_token_ids"] + tokens
 
 
 @pytest.mark.parametrize("budget", [512, 2048, True, 1024.0])

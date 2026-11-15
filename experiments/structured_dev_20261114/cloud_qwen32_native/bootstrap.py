@@ -10,7 +10,10 @@ import time
 import urllib.parse
 import urllib.request
 
-from entry import NoRedirect, OssTransport, sha_file, write_new
+if __package__:
+    from .entry import NoRedirect, OssTransport, sha_file, write_new
+else:
+    from entry import NoRedirect, OssTransport, sha_file, write_new
 
 ROOT = Path(__file__).resolve().parent
 ARCHIVE_NAME = "vllm019-py310-cu128-public-runtime.tar"
@@ -20,15 +23,17 @@ LOCK_SHA256 = "de4361d227491b6453cf90114d58251bd9b41ac9bc5aec78761a780970352de6"
 ARCHIVE_KEY = "/niezichao.nzc/m2d_train_v1/runtimes/vllm019-py310-cu128/sha256-" + ARCHIVE_SHA256 + "/" + ARCHIVE_NAME
 
 
-def download_runtime(capabilities, target):
-    url = capabilities["RUNTIME_GET"][ARCHIVE_NAME]
+def download_runtime(capabilities, target, profile=None):
+    profile = profile or dict(archive_name=ARCHIVE_NAME, archive_bytes=ARCHIVE_BYTES,
+                             archive_sha256=ARCHIVE_SHA256, archive_key=ARCHIVE_KEY)
+    url = capabilities["RUNTIME_GET"][profile["archive_name"]]
     parsed = urllib.parse.urlsplit(url)
     if (parsed.scheme != "https" or parsed.netloc != "futurelab-dpro-hz.oss-cn-hangzhou.aliyuncs.com"
-            or urllib.parse.unquote(parsed.path) != ARCHIVE_KEY or parsed.fragment):
+            or urllib.parse.unquote(parsed.path) != profile["archive_key"] or parsed.fragment):
         raise ValueError("Runtime capability violates its pinned HTTPS object scope")
     opener = urllib.request.build_opener(NoRedirect())
     with opener.open(url, timeout=600) as response, target.open("xb") as stream:
-        remaining = ARCHIVE_BYTES
+        remaining = profile["archive_bytes"]
         while remaining:
             block = response.read(min(8 << 20, remaining))
             if not block:
@@ -37,7 +42,7 @@ def download_runtime(capabilities, target):
             remaining -= len(block)
         if response.read(1):
             raise ValueError("Runtime archive exceeds its pinned size")
-    if sha_file(target) != ARCHIVE_SHA256:
+    if sha_file(target) != profile["archive_sha256"]:
         raise ValueError("Runtime archive SHA256 differs from the pinned public bundle")
 
 
@@ -67,12 +72,15 @@ def extract_runtime(archive, destination):
         tar.extractall(destination, members=members, filter="data")
 
 
-def install_runtime(destination):
+def install_runtime(destination, profile=None):
+    profile = profile or dict(lock_sha256=LOCK_SHA256, wheel_count=183, torch_build="2.10.0+cu128",
+        packages={"transformers": "4.57.6", "lm-format-enforcer": "0.11.3"},
+        imports=["lmformatenforcer.integrations.transformers"])
     lock = destination / "requirements.lock"
-    if sha_file(lock) != LOCK_SHA256:
+    if sha_file(lock) != profile["lock_sha256"]:
         raise ValueError("Runtime dependency lock changed")
     manifest = json.loads((destination / "wheel_manifest.json").read_text())
-    if manifest.get("dependency_closure_verified") is not True or len(manifest["files"]) != 183:
+    if manifest.get("dependency_closure_verified") is not True or len(manifest["files"]) != profile["wheel_count"]:
         raise ValueError("Runtime dependency closure is incomplete")
     for item in manifest["files"]:
         path = destination / item["path"]
@@ -86,17 +94,19 @@ def install_runtime(destination):
                UV_LINK_MODE="copy", PYTHONNOUSERSITE="1", HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1")
     env.pop("PYTHONPATH", None)
     env.pop("PYTHONHOME", None)
+    probe = (
+        "import torch, transformers, importlib, importlib.metadata as m, json, platform, sys; "
+        "assert sys.prefix != sys.base_prefix and platform.python_version() == '3.10.22'; "
+        "profile = json.loads(" + repr(json.dumps(profile)) + "); "
+        "assert torch.__version__ == profile['torch_build']; "
+        "assert all(m.version(k) == v for k, v in profile['packages'].items()); "
+        "[importlib.import_module(name) for name in profile['imports']]"
+    )
     commands = [
         [str(uv), "venv", "--offline", "--python", str(python), str(venv)],
         [str(uv), "pip", "install", "--offline", "--python", str(venv / "bin/python"), "--no-index",
          "--find-links", str(destination / "wheels"), "--require-hashes", "-r", str(lock)],
-        [str(venv / "bin/python"), "-I", "-c",
-         "import torch, transformers, lmformatenforcer; "
-         "from lmformatenforcer.integrations.transformers import build_transformers_prefix_allowed_tokens_fn; "
-         "import importlib.metadata as m, platform, sys; "
-         "assert sys.prefix != sys.base_prefix and platform.python_version() == '3.10.22'; "
-         "assert torch.__version__ == '2.10.0+cu128' and transformers.__version__ == '4.57.6'; "
-         "assert m.version('lm-format-enforcer') == '0.11.3'"],
+        [str(venv / "bin/python"), "-I", "-c", probe],
     ]
     for command in commands:
         subprocess.run(command, env=env, check=True, timeout=600)

@@ -1,0 +1,28 @@
+{
+  "schema": "choreobench.sft_runtime_profile.v1",
+  "archive_name": "sft-v3-py310-cu128-runtime.tar",
+  "archive_bytes": 4249036800,
+  "archive_sha256": "73defff4aa3c7bc191c325916da9f82fb99716cea9c723722bc08289694f86cd",
+  "archive_key": "/niezichao.nzc/m2d_train_v1/runtimes/sft-v3-py310-cu128/sha256-73defff4aa3c7bc191c325916da9f82fb99716cea9c723722bc08289694f86cd/sft-v3-py310-cu128-runtime.tar",
+  "lock_sha256": "5053cd8f66bbb437318c259a886760b0ec4905527b6ed90e8b5a40d380275eb6",
+  "wheel_count": 84,
+  "torch_build": "2.8.0+cu128",
+  "packages": {
+    "torch": "2.8.0",
+    "transformers": "5.18.0",
+    "peft": "0.20.0",
+    "accelerate": "1.14.0",
+    "numpy": "1.26.4",
+    "librosa": "0.11.0",
+    "soundfile": "0.14.0"
+  },
+  "imports": [
+    "peft",
+    "accelerate",
+    "librosa",
+    "soundfile"
+  ],
+  "source_python": "3.10.22",
+  "legacy_python_patch_not_claimed_equivalent": true,
+  "model_calls_sent": 0
+}

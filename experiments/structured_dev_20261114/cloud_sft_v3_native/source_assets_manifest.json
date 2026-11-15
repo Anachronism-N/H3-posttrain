@@ -1,0 +1,231 @@
+{
+  "schema": "choreobench.sft_smoke_source_assets.v1",
+  "files": [
+    {
+      "path": "base/.gitattributes",
+      "bytes": 1519,
+      "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/.gitattributes"
+    },
+    {
+      "path": "base/README.md",
+      "bytes": 11542,
+      "sha256": "5561afcbfa9eded1e96d86bf6f47062c57faf20e95ab68d2c66ddd9ff6d2b0bc",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/README.md"
+    },
+    {
+      "path": "base/chat_template.json",
+      "bytes": 5946,
+      "sha256": "3afb9519448b62e252cefeed1c0c1939b01b4e8ed70adbaf3c9f952969aa0ec7",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/chat_template.json"
+    },
+    {
+      "path": "base/config.json",
+      "bytes": 8528,
+      "sha256": "e6f8c637528461398ef4e11d48b6112ce73db2458a563dfea548127c2cce253f",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/config.json"
+    },
+    {
+      "path": "base/generation_config.json",
+      "bytes": 112,
+      "sha256": "399218e58e26b42d0856fb6624fe6f54a01c212682adb6442c06c875a2b200fb",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/generation_config.json"
+    },
+    {
+      "path": "base/merges.txt",
+      "bytes": 1671839,
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/merges.txt"
+    },
+    {
+      "path": "base/model.safetensors.index.json",
+      "bytes": 1928754,
+      "sha256": "282a41fa34d22e13753ae868ce12872ed48c14f32bfbe25b627e18844664afc4",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model.safetensors.index.json"
+    },
+    {
+      "path": "base/preprocessor_config.json",
+      "bytes": 603,
+      "sha256": "b10e27fd4542cf89ec7145942b87f3e65408d4e9f9d031a29acdd293c15fb3fc",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/preprocessor_config.json"
+    },
+    {
+      "path": "base/tokenizer_config.json",
+      "bytes": 7344,
+      "sha256": "dc3c31c3bdaedd5016382bb3cbe07323026775ad51f5a4fb564505992ae4a670",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/tokenizer_config.json"
+    },
+    {
+      "path": "base/vocab.json",
+      "bytes": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/vocab.json"
+    },
+    {
+      "path": "base/model-00001-of-00016.safetensors",
+      "bytes": 3999958720,
+      "sha256": "7f2e8477f5e8aef9163d7b46ead3e955bf13fec2826092990bc1df434cba67af",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00001-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00002-of-00016.safetensors",
+      "bytes": 3999984304,
+      "sha256": "1eea7a21447ac311636eeb8b2a8f4a10fbe8e1dbb85870432081a0785715c820",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00002-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00003-of-00016.safetensors",
+      "bytes": 3997370920,
+      "sha256": "95465568b11da26b96dbf873c785baec9b371b07d1eaee7516bf0b97ca4d8b8d",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00003-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00004-of-00016.safetensors",
+      "bytes": 3999985128,
+      "sha256": "b6b237e045ab59f8038c8b31fb2d311ef3063101adf90656f1ab931f6c082f87",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00004-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00005-of-00016.safetensors",
+      "bytes": 3999985488,
+      "sha256": "ca7c8c1000c27533a7a1142f6249119539e39964056d67f1bbc889c56e7b7365",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00005-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00006-of-00016.safetensors",
+      "bytes": 3999985560,
+      "sha256": "9f292ccd339bb83d5282ea8d941a77d7a8a8e12ba721a711b6691a2e9156cdbd",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00006-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00007-of-00016.safetensors",
+      "bytes": 3999985584,
+      "sha256": "628f156bc9f4bfa57095dd91b21e2fdf16856d67d249eeb722915f40e1821e8d",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00007-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00008-of-00016.safetensors",
+      "bytes": 3997372144,
+      "sha256": "461eeda21222c8f69c4bc7ebc6e977ad776f7350f92c0b440de9149b1452b27c",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00008-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00009-of-00016.safetensors",
+      "bytes": 3999985488,
+      "sha256": "40e7baf316bbfbf5ca007847402f9435ce985bb2893e25e33bd9bb7972aee3f3",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00009-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00010-of-00016.safetensors",
+      "bytes": 3999985504,
+      "sha256": "9c8bd10a2f8d6c5c504f50ec6a1bfbfb311757ce226e600775ac6511c6589bbb",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00010-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00011-of-00016.safetensors",
+      "bytes": 3999985560,
+      "sha256": "b86e1441bdc73585b1e958535aa58a39c96b60ffb1a4af88bdb344df8b678ac8",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00011-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00012-of-00016.safetensors",
+      "bytes": 3987402152,
+      "sha256": "39ae0c5e0073778cc6ac487e8056d803696aa9045738e7e9339e1197b37ba0f7",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00012-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00013-of-00016.safetensors",
+      "bytes": 3997372112,
+      "sha256": "80d775cad42794687b663d5c574b2ec851035e1a8fda81a61f9bec7dfb84cc86",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00013-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00014-of-00016.safetensors",
+      "bytes": 3999985488,
+      "sha256": "c3195c7dda8c4f6033f5f2bc002d06e2f6eb8fad38fe73e92fe798715f42d03e",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00014-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00015-of-00016.safetensors",
+      "bytes": 3999985520,
+      "sha256": "4b5049b50cfd5ef272dca6473b2451774a8828a93aeb37beaadbbe6b4c1f2e41",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00015-of-00016.safetensors"
+    },
+    {
+      "path": "base/model-00016-of-00016.safetensors",
+      "bytes": 3461668112,
+      "sha256": "1fe9823d6d7edf67788970f1f9336cf88cf908dd62bdc26692795dbb4488bebe",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/models/Qwen3-Omni-30B-A3B-Captioner-full/model-00016-of-00016.safetensors"
+    },
+    {
+      "path": "adapter/README.md",
+      "bytes": 5268,
+      "sha256": "1b583b78c2b26190943adf7232daefec4ba64b85447d4431467cb4e7d30a17e8",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/README.md"
+    },
+    {
+      "path": "adapter/adapter_config.json",
+      "bytes": 6487,
+      "sha256": "b4badd411cbf99d965a5961df55b9c06571f30e6abe6a9bb87e94fc5ba3c8478",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/adapter_config.json"
+    },
+    {
+      "path": "adapter/adapter_model.safetensors",
+      "bytes": 135862808,
+      "sha256": "c1621d64f22275bcce51074ac708a4a8ec24e75cb9e365bbd45c63c79a03f9a7",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/adapter_model.safetensors"
+    },
+    {
+      "path": "adapter/caption_contract.json",
+      "bytes": 276,
+      "sha256": "f23fff676174780601360b36b74c2da9bfd0734016f242107e907e23b301b4bc",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/caption_contract.json"
+    },
+    {
+      "path": "adapter/chat_template.jinja",
+      "bytes": 5715,
+      "sha256": "f61059186b44ffa656362bf6a56fc80160f6873b49546042afa25654c9a660ea",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/chat_template.jinja"
+    },
+    {
+      "path": "adapter/planner_adapter.json",
+      "bytes": 134980,
+      "sha256": "eea9d81508b781e438ee012fd71b40e60664ff424eb25a21129e31f728c2c99a",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/planner_adapter.json"
+    },
+    {
+      "path": "adapter/processor_config.json",
+      "bytes": 2388,
+      "sha256": "10ec2e5c1b0bfb69408cf63fd85aacc0241e8a71d19316254be87a3c8db28057",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/processor_config.json"
+    },
+    {
+      "path": "adapter/tokenizer.json",
+      "bytes": 11424262,
+      "sha256": "a7d41145c408f3062e824f965be1c29854cd809e111cdf8170aa8b0bcd5d1fab",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/tokenizer.json"
+    },
+    {
+      "path": "adapter/tokenizer_config.json",
+      "bytes": 1450,
+      "sha256": "c4290cdc4a297bf5a70f6132c7ec6abf7adee8f4fc3cc76a812bc919e9dfe8c8",
+      "source_oss": "oss://futurelab-dpro-hz/niezichao.nzc/m2d_train_v1/runs/sol61leg3_full_20261113_193635/attempts/sol61leg3_full_20261113_193635-attempt194115/checkpoint-0001000/adapter/tokenizer_config.json"
+    }
+  ],
+  "total_bytes": 63594854438,
+  "all_source_local_sha256_verified": true,
+  "all_remote_metadata_and_adapter_sha_verified": true,
+  "remote_base_weight_shas_not_yet_verified": true,
+  "source_fingerprint": {
+    "adapter_sha256": "c1621d64f22275bcce51074ac708a4a8ec24e75cb9e365bbd45c63c79a03f9a7",
+    "loader_sha256": "01dcd73b7a4ba19dca26f9dc4e30142f539b27ecfc7979ae2600be8ca8c6fae5",
+    "provider_source_sha256": "f8a52e1b5feb273d3bf88e70b8d2245b32a833b22ed848a80930e62b838c5e03"
+  },
+  "audio_asset": {
+    "path": "dev1881-first-window.wav",
+    "bytes": 162044,
+    "sha256": "a57d39431e5b866ff364e1d7044de295676a841798706308cbb1bd56a65b81c7"
+  },
+  "intended_use": "two-case standalone native SFT smoke before full dev collection",
+  "model_calls_sent": 0
+}

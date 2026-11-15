@@ -218,6 +218,7 @@ class CheckpointProvider:
             stop = "incomplete_output"
         self._assert_unchanged()
         return dict(text=decoded, raw=dict(raw_text=decoded, new_token_ids=tokens,
+                    input_token_ids=prefix[0].cpu().tolist(), generated_sequence_ids=sequence[0].cpu().tolist(),
                     stop_reason=stop, seed=seed, canonical_case_id=case_id,
                     case_id_source=case_id_source, decoding=dict(copy.deepcopy(DECODING), max_new_tokens=budget),
                     resolved_generation_config=copy.deepcopy(self._generation_snapshot),

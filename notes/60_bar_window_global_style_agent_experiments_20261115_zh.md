@@ -295,9 +295,9 @@ D6 适用性先由不看候选的音频观察确定；平稳片段全方法统�
 在服务器已有 H3-posttrain 工作目录中执行；工作树有未提交修改时先保存，不强制覆盖：
 
 ```bash
-git fetch origin codex/music-choreo-benchmark
-git switch codex/music-choreo-benchmark
-git pull --ff-only origin codex/music-choreo-benchmark
+git fetch origin codex/bar-style-agent-20261115
+git switch codex/bar-style-agent-20261115
+git pull --ff-only origin codex/bar-style-agent-20261115
 git rev-parse HEAD
 ```
 

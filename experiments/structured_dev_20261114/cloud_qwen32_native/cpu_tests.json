@@ -1,0 +1,9 @@
+{
+  "schema": "choreobench.native_smoke_cpu_tests.v1",
+  "passed": true,
+  "valid_clock_cases": 1,
+  "invalid_clock_cases_rejected": 8,
+  "missing_mount_rejected_before_inference": true,
+  "real_model_inference_tested": false,
+  "entry_sha256": "45467e6b9b71b3cf55faaf9ad113ed0dd6d17bab457889dddefc5f305eaa4a82"
+}

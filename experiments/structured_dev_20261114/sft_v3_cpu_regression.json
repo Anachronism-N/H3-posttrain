@@ -1,0 +1,12 @@
+{
+  "schema": "choreobench.sft_contract_cpu_regression.v1",
+  "pytest_exit_code": 0,
+  "summary": "1790 passed, 4 skipped in 78.71s (0:01:18)",
+  "real_model_inference_tested": false,
+  "source_sha256": {
+    "experiments/structured_dev_20261114/checkpoint_provider.py": "3c064a174cfcf5724d04265c689ba2cc850de05933412528a76a8e7f6e511cb9",
+    "experiments/structured_dev_20261114/collect_sft_v3.py": "5059ba414394cbb5e4639c10a2f1d2246e18dfdba6c6bb63b0bf3e8c544bb885",
+    "tests/test_choreobench_checkpoint_provider.py": "811e82cc3236f70b18fe31104640c0b1391358c8255ef8a214cf6429a55f7518"
+  },
+  "checked_unix": 1794743467.5292733
+}

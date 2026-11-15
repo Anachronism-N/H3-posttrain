@@ -1,0 +1,56 @@
+{
+ "schema": "choreobench.style_prior_effect.v1",
+ "comparison": "S4 (music_structured + acoustic guidance) vs S4 + MuQ-JEV style prior",
+ "songs": 6,
+ "judge": "Qwen3-VL-8B, labels hidden, order swapped",
+ "overall": {
+  "mean_delta": 1.1666666666666667,
+  "ci95": [
+   0.16666666666666666,
+   2.3333333333333335
+  ],
+  "wins": 3,
+  "losses": 0,
+  "ties": 3,
+  "preference_consistent": 3
+ },
+ "null_pairs": {
+  "songs": [
+   "fma-10811",
+   "fma-12099",
+   "fma-4151"
+  ],
+  "rule": "action text identical in both arms",
+  "deltas": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "mean": 0.0,
+  "note": "identical content must score zero; the judge returns exactly 0.0 on all three"
+ },
+ "changed_pairs": {
+  "deltas": [
+   4.0,
+   2.0,
+   1.0
+  ],
+  "mean": 2.3333333333333335,
+  "note": "only where the prior changed the text does the judge differ; 3/3 positive but 1/3 order-inconsistent"
+ },
+ "duplicate_rates": {
+  "S4": 0.735,
+  "prior": 0.716,
+  "per_song": {
+   "fma-1881": [
+    0.84,
+    0.68
+   ],
+   "fma-3856": [
+    0.96,
+    0.92
+   ]
+  }
+ },
+ "verdict": "The field is usable and auditable, changes behaviour on half the songs, and helps only where it changes text; the effect is small."
+}

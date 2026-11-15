@@ -1,0 +1,244 @@
+{
+ "schema": "choreobench.sr_2x2_sol61_results.v1",
+ "local_expert": {
+  "name": "sol61_planner_v3 (sol61leg3_full_20261113_193635/checkpoint-0001000)",
+  "adapter_sha256": "c1621d64f22275bcce51...",
+  "audio": "audio-only, no text instruction",
+  "decoding": "T=0.7 top_p=0.9 top_k=20 rp=1.05 no_repeat_ngram=4 eos=[151645,151643] max_new=1024",
+  "candidates": "K=2 per 5.0625 s window, seed per case",
+  "calls": 268
+ },
+ "outer_model": "Qwen3-VL-30B-A3B-Instruct text-only T=0",
+ "songs": [
+  "fma-1881",
+  "fma-3856",
+  "fma-6789"
+ ],
+ "per_song": {
+  "fma-1881": {
+   "B": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 26,
+    "input_tokens": 336020,
+    "output_tokens": 6608,
+    "outcome": "finished",
+    "events": 27,
+    "min_seconds": 3.25,
+    "mean_seconds": 9.369,
+    "repeated_action_types": 3,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m02"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/B/fma-1881/plan.json"
+   },
+   "S": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 26,
+    "input_tokens": 350821,
+    "output_tokens": 10541,
+    "outcome": "finished",
+    "events": 26,
+    "min_seconds": 5.0,
+    "mean_seconds": 9.73,
+    "repeated_action_types": 4,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m02"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/S/fma-1881/plan.json"
+   },
+   "R": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 27,
+    "input_tokens": 346621,
+    "output_tokens": 6613,
+    "draft_calls": 26,
+    "revision_calls": 1,
+    "outcome": "no_change",
+    "changed_event_ids": [],
+    "events": 27,
+    "min_seconds": 3.25,
+    "mean_seconds": 9.369,
+    "repeated_action_types": 3,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m02"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/R/fma-1881/final_plan.json"
+   },
+   "SR": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 27,
+    "input_tokens": 361272,
+    "output_tokens": 10546,
+    "draft_calls": 26,
+    "revision_calls": 1,
+    "outcome": "no_change",
+    "changed_event_ids": [],
+    "events": 26,
+    "min_seconds": 5.0,
+    "mean_seconds": 9.73,
+    "repeated_action_types": 4,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m02"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/SR/fma-1881/final_plan.json"
+   }
+  },
+  "fma-3856": {
+   "B": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 25,
+    "input_tokens": 273294,
+    "output_tokens": 9251,
+    "outcome": "finished",
+    "events": 26,
+    "min_seconds": 2.985,
+    "mean_seconds": 9.072,
+    "repeated_action_types": 5,
+    "motifs_used": [
+     "m00",
+     "m03"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/B/fma-3856/plan.json"
+   },
+   "S": {
+    "status": "complete",
+    "full_song_succeeded": false,
+    "calls": 5,
+    "input_tokens": 38824,
+    "output_tokens": 4969,
+    "outcome": "model_or_structure_failed"
+   },
+   "R": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 27,
+    "input_tokens": 282981,
+    "output_tokens": 9579,
+    "draft_calls": 25,
+    "revision_calls": 2,
+    "outcome": "no_change",
+    "changed_event_ids": [],
+    "events": 26,
+    "min_seconds": 2.985,
+    "mean_seconds": 9.072,
+    "repeated_action_types": 5,
+    "motifs_used": [
+     "m00",
+     "m03"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/R/fma-3856/final_plan.json"
+   },
+   "SR": {
+    "status": "missing"
+   }
+  },
+  "fma-6789": {
+   "B": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 20,
+    "input_tokens": 220482,
+    "output_tokens": 12415,
+    "outcome": "finished",
+    "events": 19,
+    "min_seconds": 4.421,
+    "mean_seconds": 9.825,
+    "repeated_action_types": 6,
+    "motifs_used": [
+     "m00",
+     "m04",
+     "m06"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/B/fma-6789/plan.json"
+   },
+   "S": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 20,
+    "input_tokens": 239769,
+    "output_tokens": 3878,
+    "outcome": "finished",
+    "events": 19,
+    "min_seconds": 4.421,
+    "mean_seconds": 9.825,
+    "repeated_action_types": 2,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m02",
+     "m03",
+     "m04",
+     "m06"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/S/fma-6789/plan.json"
+   },
+   "R": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 22,
+    "input_tokens": 228393,
+    "output_tokens": 12789,
+    "draft_calls": 20,
+    "revision_calls": 2,
+    "outcome": "no_change",
+    "changed_event_ids": [],
+    "events": 19,
+    "min_seconds": 4.421,
+    "mean_seconds": 9.825,
+    "repeated_action_types": 6,
+    "motifs_used": [
+     "m00",
+     "m04",
+     "m06"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/R/fma-6789/final_plan.json"
+   },
+   "SR": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 21,
+    "input_tokens": 246363,
+    "output_tokens": 4303,
+    "draft_calls": 20,
+    "revision_calls": 1,
+    "outcome": "revision_failed",
+    "changed_event_ids": null,
+    "events": 19,
+    "min_seconds": 4.421,
+    "mean_seconds": 9.825,
+    "repeated_action_types": 2,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m02",
+     "m03",
+     "m04",
+     "m06"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/SR/fma-6789/final_plan.json"
+   }
+  }
+ },
+ "findings": {
+  "B": "3/3 complete; 20-26 calls; 2-3 distinct motifs per song",
+  "S": "2/3 complete (fma-3856 truncated); motif diversity 3 and 6 (better than MOSS run)",
+  "R": "3/3 audit+patch completed, all no_change: auditor either found no issue or the patch echoed the same action",
+  "SR": "2/3; fma-6789 failed closed on a duplicate JSON key in the audit output",
+  "patch_quality": "no substantive rewrite observed; no_change is correct behaviour for unchanged text",
+  "cost": "revision adds 1-2 calls and is counted with the draft"
+ },
+ "recommendation": "do_not_freeze_for_formal_24: still no demonstrated quality gain; main bottleneck is model adherence to the audit/patch instruction"
+}

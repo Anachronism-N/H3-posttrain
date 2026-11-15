@@ -1,0 +1,57 @@
+{
+ "schema": "choreobench.truncation_audit.v1",
+ "problem": "judge action text was truncated at 160 chars; baseline actions average 354 chars vs 193 for the rewritten arm, so the baseline lost more information",
+ "fixed_by": "re-judge at 400 chars (no truncation of either arm)",
+ "results": {
+  "B_vs_D3_6songs_400": {
+   "mean": 3.25,
+   "ci": [
+    1.0,
+    4.75
+   ],
+   "wins": 5,
+   "losses": 1,
+   "consistent": 6
+  },
+  "B_vs_D_6songs_400": {
+   "mean": 2.17,
+   "ci": [
+    -0.67,
+    5.0
+   ],
+   "wins": 4,
+   "losses": 2,
+   "consistent": 6
+  },
+  "D_vs_D3_6songs_400": {
+   "mean": 0.0,
+   "ci": [
+    -2.0,
+    2.0
+   ],
+   "wins": 3,
+   "losses": 3
+  },
+  "B_vs_D3_dev4_400": {
+   "mean": 2.75,
+   "ci": [
+    -0.38,
+    4.5
+   ],
+   "wins": 3,
+   "losses": 1
+  },
+  "B_vs_D_dev4_400": {
+   "mean": 2.62,
+   "ci": [
+    -1.0,
+    5.25
+   ],
+   "wins": 3,
+   "losses": 1
+  }
+ },
+ "split_disclosure": "fma-10811 and fma-12099 belong to the test split; the six-song result therefore mixes dev and test",
+ "retracted": "earlier +3.92 (6 songs) and +4.5 (dev-only) were measured with 160-character truncation",
+ "verdict": "With fair presentation the repeat-rewriting gain is +2.2 to +3.3 points; it is not significant on the four genuine dev songs, and D and D3 are indistinguishable."
+}

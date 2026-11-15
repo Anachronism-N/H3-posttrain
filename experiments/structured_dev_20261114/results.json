@@ -1,0 +1,374 @@
+{
+ "schema": "choreobench.sr_2x2_results.v1",
+ "development_songs": [
+  "fma-1881",
+  "fma-3856",
+  "fma-6789"
+ ],
+ "assets": {
+  "local_expert": "MOSS-Music-8B-Instruct base + fixed task prompt, K=2, seed 42",
+  "outer_model": "Qwen3-VL-30B-A3B-Instruct text-only, T=0",
+  "audio": "FMA CC-BY/PD canonical 16 kHz",
+  "music_summary": "fixed-parameter acoustic summary"
+ },
+ "per_song": {
+  "fma-1881": {
+   "B": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 26,
+    "input_tokens": 294858,
+    "output_tokens": 4977,
+    "outcome": "finished",
+    "events": 29,
+    "min_seconds": 3.25,
+    "mean_seconds": 8.723,
+    "repeated_action_types": 3,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m05",
+     "m07"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/B/fma-1881/plan.json"
+   },
+   "S": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 26,
+    "input_tokens": 290261,
+    "output_tokens": 4715,
+    "outcome": "finished",
+    "events": 25,
+    "min_seconds": 9.97,
+    "mean_seconds": 10.119,
+    "repeated_action_types": 1,
+    "motifs_used": [
+     "m00"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/S/fma-1881/plan.json"
+   },
+   "R": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 28,
+    "input_tokens": 304408,
+    "output_tokens": 5411,
+    "draft_calls": 26,
+    "revision_calls": 2,
+    "outcome": "patched",
+    "changed_event_ids": [
+     "pu0003-e00",
+     "pu0017-e00",
+     "pu0017-e02"
+    ],
+    "events": 29,
+    "min_seconds": 3.25,
+    "mean_seconds": 8.723,
+    "repeated_action_types": 3,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m05",
+     "m07"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/R/fma-1881/final_plan.json"
+   },
+   "SR": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 27,
+    "input_tokens": 298422,
+    "output_tokens": 4720,
+    "draft_calls": 26,
+    "revision_calls": 1,
+    "outcome": "no_change",
+    "changed_event_ids": [],
+    "events": 25,
+    "min_seconds": 9.97,
+    "mean_seconds": 10.119,
+    "repeated_action_types": 1,
+    "motifs_used": [
+     "m00"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/SR/fma-1881/final_plan.json"
+   }
+  },
+  "fma-3856": {
+   "B": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 25,
+    "input_tokens": 277761,
+    "output_tokens": 11093,
+    "outcome": "finished",
+    "events": 24,
+    "min_seconds": 2.985,
+    "mean_seconds": 9.827,
+    "repeated_action_types": 1,
+    "motifs_used": [
+     "m00"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/B/fma-3856/plan.json"
+   },
+   "S": {
+    "status": "complete",
+    "full_song_succeeded": false,
+    "calls": 3,
+    "input_tokens": 26054,
+    "output_tokens": 4293,
+    "outcome": "model_or_structure_failed"
+   },
+   "R": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 26,
+    "input_tokens": 286061,
+    "output_tokens": 11098,
+    "draft_calls": 25,
+    "revision_calls": 1,
+    "outcome": "no_change",
+    "changed_event_ids": [],
+    "events": 24,
+    "min_seconds": 2.985,
+    "mean_seconds": 9.827,
+    "repeated_action_types": 1,
+    "motifs_used": [
+     "m00"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/R/fma-3856/final_plan.json"
+   },
+   "SR": {
+    "status": "missing"
+   }
+  },
+  "fma-6789": {
+   "B": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 20,
+    "input_tokens": 195616,
+    "output_tokens": 3587,
+    "outcome": "finished",
+    "events": 19,
+    "min_seconds": 4.421,
+    "mean_seconds": 9.825,
+    "repeated_action_types": 3,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m02",
+     "m03"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/B/fma-6789/plan.json"
+   },
+   "S": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 20,
+    "input_tokens": 203300,
+    "output_tokens": 3711,
+    "outcome": "finished",
+    "events": 19,
+    "min_seconds": 4.421,
+    "mean_seconds": 9.825,
+    "repeated_action_types": 1,
+    "motifs_used": [
+     "m00"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/S/fma-6789/plan.json"
+   },
+   "R": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 22,
+    "input_tokens": 202253,
+    "output_tokens": 3934,
+    "draft_calls": 20,
+    "revision_calls": 2,
+    "outcome": "no_change",
+    "changed_event_ids": [],
+    "events": 19,
+    "min_seconds": 4.421,
+    "mean_seconds": 9.825,
+    "repeated_action_types": 3,
+    "motifs_used": [
+     "m00",
+     "m01",
+     "m02",
+     "m03"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/R/fma-6789/final_plan.json"
+   },
+   "SR": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 21,
+    "input_tokens": 209449,
+    "output_tokens": 3716,
+    "draft_calls": 20,
+    "revision_calls": 1,
+    "outcome": "no_change",
+    "changed_event_ids": [],
+    "events": 19,
+    "min_seconds": 4.421,
+    "mean_seconds": 9.825,
+    "repeated_action_types": 1,
+    "motifs_used": [
+     "m00"
+    ],
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs/SR/fma-6789/final_plan.json"
+   }
+  }
+ },
+ "controls": {
+  "schema": "choreobench.sr_controls.v1",
+  "song_id": "fma-1881",
+  "outline_normal": {
+   "label": "normal",
+   "valid": true,
+   "blocks": [
+    [
+     "b00",
+     "b01",
+     "b02",
+     "b03",
+     "b04",
+     "b05",
+     "b06",
+     "b07",
+     "b08",
+     "b09",
+     "b10",
+     "b11",
+     "b12",
+     "b13",
+     "b14",
+     "b15",
+     "b16",
+     "b17",
+     "b18",
+     "b19",
+     "b20",
+     "b21",
+     "b22",
+     "b23",
+     "b24",
+     "b25"
+    ]
+   ],
+   "quantity": [
+    "steady"
+   ]
+  },
+  "outline_shuffled": {
+   "label": "shuffled",
+   "valid": true,
+   "blocks": [
+    [
+     "b00",
+     "b01",
+     "b02",
+     "b03",
+     "b04",
+     "b05",
+     "b06",
+     "b07",
+     "b08",
+     "b09",
+     "b10",
+     "b11",
+     "b12",
+     "b13",
+     "b14",
+     "b15",
+     "b16",
+     "b17",
+     "b18",
+     "b19",
+     "b20",
+     "b21",
+     "b22",
+     "b23",
+     "b24",
+     "b25"
+    ]
+   ],
+   "quantity": [
+    "increase"
+   ]
+  },
+  "shuffled_changed_mapping": false,
+  "explicit_gap": {
+   "valid": true,
+   "codes": [
+    "missing_motif",
+    "missing_motif",
+    "missing_motif"
+   ],
+   "issues": [
+    {
+     "event_id": "pu0001-e00",
+     "quote": "Sharp, staccato shoulder rolls and hip flicks synchronized with a pulsating bassline, creating a mechanical, insect-like motion with elbow pops and wrist snaps.",
+     "problem_type": "missing_motif",
+     "target": "m00 should appear in pu0001-e00 but is missing",
+     "music_block": null
+    },
+    {
+     "event_id": "pu0002-e00",
+     "quote": "Sharp, staccato shoulder rolls and hip flicks synchronized with a pulsating bassline, creating a mechanical, insect-like motion with elbow pops and wrist snaps.",
+     "problem_type": "missing_motif",
+     "target": "m00 should appear in pu0002-e00 but is missing",
+     "music_block": null
+    },
+    {
+     "event_id": "pu0003-e00",
+     "quote": "Sharp, staccato shoulder rolls and hip flicks synchronized with a pulsating bassline, creating a mechanical, insect-like motion with elbow pops and wrist snaps.",
+     "problem_type": "missing_motif",
+     "target": "m00 should appear in pu0003-e00 but is missing",
+     "music_block": null
+    }
+   ]
+  },
+  "reasonable_motif_return": {
+   "valid": true,
+   "codes": [
+    "mechanical_repeat",
+    "mechanical_repeat",
+    "quantity_mismatch"
+   ],
+   "issues": [
+    {
+     "event_id": "pu0003-e00",
+     "quote": "Sharp, staccato shoulder rolls and hip flicks synchronized with a pulsating bassline, creating a mechanical, insect-like motion with elbow pops and wrist snaps.",
+     "problem_type": "mechanical_repeat",
+     "target": "do not repeat m00 in a short segment; transition to m01 and m07 as planned",
+     "music_block": null
+    },
+    {
+     "event_id": "pu0017-e00",
+     "quote": "Sharp, staccato shoulder rolls and hip flicks synchronized with a pulsating bassline, creating a mechanical, insect-like motion with elbow pops and wrist snaps.",
+     "problem_type": "mechanical_repeat",
+     "target": "do not repeat m00 after a long sequence of m07; transition to m05 as planned",
+     "music_block": null
+    },
+    {
+     "event_id": "pu0017-e02",
+     "quote": "Sharp, explosive foot stamps and arm snaps across the chest, synchronized with heavy kick drum hits, creating a sudden, impactful entry.",
+     "problem_type": "quantity_mismatch",
+     "target": "reduce intensity of m05 to match the falling energy trend in b21-b25",
+     "music_block": "b21"
+    }
+   ]
+  }
+ },
+ "findings": {
+  "S_completion": "2/3 complete; fma-3856 rejected one block with >3 events",
+  "S_motif_diversity": "one motif used for 100% of events on both completed songs (B: 4 motifs on 2/3)",
+  "S_summary_use": "shuffled summary produced identical music_block references -> summary not used",
+  "R_outcome": "fma-1881 patched 3 events but changes are cosmetic (suffix/prefix); others no_change",
+  "R_audit_control": "explicit 3 s inter-block gap reported as missing_motif, not continuity_conflict",
+  "R_cost": "2 extra calls per song, counted with the draft cost"
+ },
+ "recommendation": "do_not_freeze_for_formal_24: no quality gain demonstrated; fix model-adherence first"
+}

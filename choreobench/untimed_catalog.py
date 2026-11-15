@@ -23,8 +23,10 @@ def run_catalog(dataset_path,provider_path,out_dir,*,seed=42,candidates_per_wind
         integer(value,name,low)
         if value>high:raise ValueError('Catalog budget outside bounds')
     if spec.get('kind') not in ('native','native_service','replay'):raise ValueError('Catalog requires explicit original-audio provider')
-    if spec.get('kind')=='native' and (spec.get('checkpoint') or not spec.get('task_prompt')):
+    if spec.get('kind')=='native' and not spec.get('portable_checkpoint') and (spec.get('checkpoint') or not spec.get('task_prompt')):
         raise ValueError('Untimed base-only catalog requires a frozen public task prompt')
+    if spec.get('portable_checkpoint') and (spec.get('checkpoint') is None or spec.get('task_prompt')):
+        raise ValueError('A portable-checkpoint catalog requires a checkpoint and no task prompt override')
     songs=[];requests=[];prepared=[]
     for song in dataset['songs']:
         path=resolve_audio(song,dataset_path);audio=inspect_audio(path)

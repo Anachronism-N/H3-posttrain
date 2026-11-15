@@ -1,0 +1,160 @@
+{
+ "schema": "choreobench.author_review_v2",
+ "reviewer": "author-side LLM reading (not human, hypothesis known)",
+ "protocol": "read both plans position-blind on structural evidence, score four criteria, then map positions",
+ "pairs": [
+  {
+   "song_id": "fma-384",
+   "position_methods": {
+    "A": "B",
+    "B": "O"
+   },
+   "scores": {
+    "B": {
+     "fit": 3,
+     "motif": 2,
+     "exec": 4,
+     "boundary": 3,
+     "total": 12
+    },
+    "O": {
+     "fit": 3,
+     "motif": 3,
+     "exec": 4,
+     "boundary": 4,
+     "total": 14
+    }
+   },
+   "preferred": "O",
+   "reason": "both have 4 unique actions; the treatment opens with four different actions while the baseline repeats one four times"
+  },
+  {
+   "song_id": "fma-397",
+   "position_methods": {
+    "A": "O",
+    "B": "B"
+   },
+   "scores": {
+    "O": {
+     "fit": 4,
+     "motif": 4,
+     "exec": 3,
+     "boundary": 4,
+     "total": 15
+    },
+    "B": {
+     "fit": 2,
+     "motif": 1,
+     "exec": 2,
+     "boundary": 2,
+     "total": 7
+    }
+   },
+   "preferred": "O",
+   "reason": "11 unique actions versus 1"
+  },
+  {
+   "song_id": "fma-533",
+   "position_methods": {
+    "A": "B",
+    "B": "O"
+   },
+   "scores": {
+    "B": {
+     "fit": 3,
+     "motif": 2,
+     "exec": 3,
+     "boundary": 2,
+     "total": 10
+    },
+    "O": {
+     "fit": 4,
+     "motif": 4,
+     "exec": 3,
+     "boundary": 4,
+     "total": 15
+    }
+   },
+   "preferred": "O",
+   "reason": "8 unique versus 3"
+  },
+  {
+   "song_id": "fma-550",
+   "position_methods": {
+    "A": "B",
+    "B": "O"
+   },
+   "scores": {
+    "B": {
+     "fit": 2,
+     "motif": 1,
+     "exec": 2,
+     "boundary": 2,
+     "total": 7
+    },
+    "O": {
+     "fit": 4,
+     "motif": 3,
+     "exec": 3,
+     "boundary": 4,
+     "total": 14
+    }
+   },
+   "preferred": "O",
+   "reason": "6 unique versus 1"
+  },
+  {
+   "song_id": "fma-646",
+   "position_methods": {
+    "A": "O",
+    "B": "B"
+   },
+   "scores": {
+    "O": {
+     "fit": 4,
+     "motif": 4,
+     "exec": 4,
+     "boundary": 4,
+     "total": 16
+    },
+    "B": {
+     "fit": 2,
+     "motif": 1,
+     "exec": 3,
+     "boundary": 2,
+     "total": 8
+    }
+   },
+   "preferred": "O",
+   "reason": "8 unique versus 2; shorter but concrete sentences"
+  },
+  {
+   "song_id": "fma-874",
+   "position_methods": {
+    "A": "B",
+    "B": "O"
+   },
+   "scores": {
+    "B": {
+     "fit": 3,
+     "motif": 3,
+     "exec": 3,
+     "boundary": 3,
+     "total": 12
+    },
+    "O": {
+     "fit": 3,
+     "motif": 3,
+     "exec": 3,
+     "boundary": 4,
+     "total": 13
+    }
+   },
+   "preferred": "O",
+   "reason": "marginal: same unique count, treatment denser (32 vs 27 events, 8.4 s vs 9.9 s spans)"
+  }
+ ],
+ "prefer_treatment": 6,
+ "n": 6,
+ "note": "agrees 6/6 with both model judges; the closest case is fma-874 (1 point)"
+}

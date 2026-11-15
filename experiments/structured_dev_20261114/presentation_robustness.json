@@ -1,0 +1,31 @@
+{
+ "schema": "choreobench.presentation_robustness.v1",
+ "check": "show every plan with its events in reverse order, then judge as usual",
+ "results": {
+  "all6": {
+   "mean": 4.25,
+   "ci": [
+    2.17,
+    6.08
+   ],
+   "wins": 5,
+   "losses": 0,
+   "consistent": 4
+  },
+  "dev4": {
+   "mean": 4.62,
+   "ci": [
+    3.0,
+    6.25
+   ],
+   "wins": 4,
+   "losses": 0
+  }
+ },
+ "position_votes": {
+  "first": 32,
+  "second": 15,
+  "tie": 1
+ },
+ "interpretation": "the treatment preference survives a reversed presentation, but reversing the list also shifts the judge toward the first position, so this is a robustness check, not a replacement for the frozen protocol"
+}

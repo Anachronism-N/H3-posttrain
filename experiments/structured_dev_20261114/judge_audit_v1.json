@@ -1,0 +1,208 @@
+{
+ "schema": "choreobench.judge_audit_v1",
+ "audit": [
+  {
+   "judge": "Qwen2.5-Omni-7B",
+   "audio": true,
+   "verdict": "unusable",
+   "evidence": "identical A/B scores and identical reason on the first pair; no discrimination"
+  },
+  {
+   "judge": "MOSS-Audio-8B-Instruct",
+   "audio": true,
+   "verdict": "unusable",
+   "evidence": "pairwise: 5/6 pairs flip when order is swapped (consistency 0/4); absolute: every one of 12 plans scored 4/3/4/3"
+  },
+  {
+   "judge": "Qwen3-Omni-30B-A3B-Instruct",
+   "audio": true,
+   "verdict": "not run",
+   "evidence": "processor truncates to a 30 s window (feature_attention_mask 3000 frames) and generation repeats; cannot hear a whole song"
+  },
+  {
+   "judge": "Qwen3-VL-8B-Instruct",
+   "audio": false,
+   "verdict": "usable with correction",
+   "evidence": "second-position prior is large (34 of 48 criterion votes) but method-level preference agrees 6/6 across orders"
+  }
+ ],
+ "position_bias": {
+  "judge": "Qwen3-VL-8B-Instruct",
+  "first": 20,
+  "second": 20,
+  "tie": 8
+ },
+ "core": {
+  "songs": 6,
+  "raw": {
+   "mean": 3.6666666666666665,
+   "ci95": [
+    0.6666666666666666,
+    6.0
+   ],
+   "wins": 5,
+   "losses": 1,
+   "ties": 0
+  },
+  "corrected": {
+   "mean": 3.5,
+   "ci95": [
+    0.0,
+    5.916666666666667
+   ],
+   "wins": 5,
+   "losses": 1,
+   "ties": 0
+  },
+  "preferred_agreement": {
+   "consistent": 6,
+   "inconsistent": 0
+  }
+ },
+ "ablation": {
+  "B_vs_Q": {
+   "songs": 4,
+   "raw": {
+    "mean": 4.25,
+    "ci95": [
+     2.0,
+     6.5
+    ],
+    "wins": 4,
+    "losses": 0,
+    "ties": 0
+   },
+   "corrected": {
+    "mean": 2.625,
+    "ci95": [
+     -0.5,
+     5.75
+    ],
+    "wins": 3,
+    "losses": 1,
+    "ties": 0
+   },
+   "agreement": {
+    "consistent": 2,
+    "inconsistent": 2
+   }
+  },
+  "B_vs_G": {
+   "songs": 4,
+   "raw": {
+    "mean": 6.25,
+    "ci95": [
+     5.5,
+     7.0
+    ],
+    "wins": 4,
+    "losses": 0,
+    "ties": 0
+   },
+   "corrected": {
+    "mean": 6.0,
+    "ci95": [
+     5.0,
+     7.0
+    ],
+    "wins": 4,
+    "losses": 0,
+    "ties": 0
+   },
+   "agreement": {
+    "consistent": 4,
+    "inconsistent": 0
+   }
+  },
+  "B_vs_S4": {
+   "songs": 4,
+   "raw": {
+    "mean": 4.75,
+    "ci95": [
+     2.25,
+     6.0
+    ],
+    "wins": 4,
+    "losses": 0,
+    "ties": 0
+   },
+   "corrected": {
+    "mean": 5.0,
+    "ci95": [
+     3.25,
+     6.5
+    ],
+    "wins": 4,
+    "losses": 0,
+    "ties": 0
+   },
+   "agreement": {
+    "consistent": 4,
+    "inconsistent": 0
+   }
+  },
+  "Q_vs_G": {
+   "songs": 4,
+   "raw": {
+    "mean": 0.5,
+    "ci95": [
+     -4.5,
+     5.5
+    ],
+    "wins": 2,
+    "losses": 2,
+    "ties": 0
+   },
+   "corrected": {
+    "mean": 1.375,
+    "ci95": [
+     -2.5,
+     5.25
+    ],
+    "wins": 2,
+    "losses": 2,
+    "ties": 0
+   },
+   "agreement": {
+    "consistent": 3,
+    "inconsistent": 1
+   }
+  }
+ },
+ "conclusion": "Neither local audio model can judge. The text judge shows no position bias and prefers the same method in both orders 6/6; S4 and G are robust, quota-only Q is not (preference consistent 2/4). Human review is still required.",
+ "note": "Model-assisted, development songs only; not human review.",
+ "retest": {
+  "rubric": "paraphrased_v2",
+  "seed": 23,
+  "evaluated": 6,
+  "s4_wins": 5,
+  "b_wins": 1,
+  "mean_delta": 4.0
+ },
+ "objective_alignment": {
+  "metric": "Spearman(1s event starts, onset strength) from raw audio",
+  "B": [
+   -0.0008949714832067772,
+   -0.15237842396791082,
+   0.01172654801549016,
+   -0.027856317930130964,
+   -0.1295737631242583,
+   -0.23747609732106484
+  ],
+  "S4": [
+   -0.041192035309682365,
+   -0.15237842396791082,
+   -0.016757292690192382,
+   -0.01997836278398846,
+   -0.1295737631242583,
+   -0.23747609732106484
+  ],
+  "verdict": "no measurable difference; do not claim second-level audio alignment"
+ },
+ "judge_audit_correction": {
+  "retracted": "earlier claim that the text judge preferred the second position 34 of 48 votes",
+  "reason": "the statistic double-counted already-mapped swapped scores; measured in response space the split is 20/20/8",
+  "method": "two-order repeated measurement (average of both orders), no bias correction applied",
+  "pack_defect": "review bundles put the baseline in position A for every pair; the HTML human pack now randomises positions by seed"
+ }
+}

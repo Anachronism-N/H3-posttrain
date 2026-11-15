@@ -1,0 +1,361 @@
+{
+ "schema": "choreobench.sr_v2_results.v1",
+ "judge": {
+  "model": "Qwen3-VL-8B-Instruct",
+  "mode": "model_assisted_not_human",
+  "repeat_swapped": true
+ },
+ "design": {
+  "songs": 3,
+  "arms": [
+   "B",
+   "S4",
+   "R4",
+   "SR4",
+   "BB",
+   "SB"
+  ],
+  "note": "S4=time blocks+quota+deterministic acoustic guidance; BB/SB=bar-aligned blocks (assumed 4/4)"
+ },
+ "per_song": {
+  "fma-1881": {
+   "B": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 26,
+    "input_tokens": 336020,
+    "output_tokens": 6608,
+    "outcome": "finished",
+    "events": 27,
+    "mean_seconds": 9.37,
+    "repeated_action_types": 3,
+    "distinct_motifs": 3,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/B/fma-1881/plan.json"
+   },
+   "S4": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 27,
+    "input_tokens": 307491,
+    "output_tokens": 6785,
+    "outcome": "finished",
+    "events": 25,
+    "mean_seconds": 10.12,
+    "repeated_action_types": 4,
+    "distinct_motifs": 4,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/S4/fma-1881/plan.json"
+   },
+   "R4": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 28,
+    "input_tokens": 347770,
+    "output_tokens": 7314,
+    "outcome": "patched",
+    "changed_events": 3,
+    "events": 27,
+    "mean_seconds": 9.37,
+    "repeated_action_types": 2,
+    "distinct_motifs": 3,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/R4/fma-1881/final_plan.json"
+   },
+   "SR4": {
+    "status": "missing"
+   },
+   "BB": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 35,
+    "input_tokens": 415823,
+    "output_tokens": 10180,
+    "outcome": "finished",
+    "events": 34,
+    "mean_seconds": 7.44,
+    "repeated_action_types": 3,
+    "distinct_motifs": 3,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_bar/BB/fma-1881/plan.json"
+   },
+   "SB": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 35,
+    "input_tokens": 440969,
+    "output_tokens": 7200,
+    "outcome": "finished",
+    "events": 34,
+    "mean_seconds": 7.44,
+    "repeated_action_types": 1,
+    "distinct_motifs": 1,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_bar/SB/fma-1881/plan.json"
+   }
+  },
+  "fma-3856": {
+   "B": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 25,
+    "input_tokens": 273294,
+    "output_tokens": 9251,
+    "outcome": "finished",
+    "events": 26,
+    "mean_seconds": 9.07,
+    "repeated_action_types": 5,
+    "distinct_motifs": 2,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/B/fma-3856/plan.json"
+   },
+   "S4": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 25,
+    "input_tokens": 269200,
+    "output_tokens": 5017,
+    "outcome": "finished",
+    "events": 25,
+    "mean_seconds": 9.43,
+    "repeated_action_types": 1,
+    "distinct_motifs": 1,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/S4/fma-3856/plan.json"
+   },
+   "R4": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 27,
+    "input_tokens": 283011,
+    "output_tokens": 9660,
+    "outcome": "patched",
+    "changed_events": 3,
+    "events": 26,
+    "mean_seconds": 9.07,
+    "repeated_action_types": 4,
+    "distinct_motifs": 2,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/R4/fma-3856/final_plan.json"
+   },
+   "SR4": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 27,
+    "input_tokens": 277168,
+    "output_tokens": 5182,
+    "outcome": "patched",
+    "changed_events": 1,
+    "events": 25,
+    "mean_seconds": 9.43,
+    "repeated_action_types": 1,
+    "distinct_motifs": 1,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/SR4/fma-3856/final_plan.json"
+   },
+   "BB": {
+    "status": "complete",
+    "full_song_succeeded": false,
+    "calls": 5,
+    "input_tokens": 38248,
+    "output_tokens": 9236,
+    "outcome": "model_or_structure_failed"
+   },
+   "SB": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 31,
+    "input_tokens": 359450,
+    "output_tokens": 6669,
+    "outcome": "finished",
+    "events": 31,
+    "mean_seconds": 7.61,
+    "repeated_action_types": 1,
+    "distinct_motifs": 1,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_bar/SB/fma-3856/plan.json"
+   }
+  },
+  "fma-6789": {
+   "B": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 20,
+    "input_tokens": 220482,
+    "output_tokens": 12415,
+    "outcome": "finished",
+    "events": 19,
+    "mean_seconds": 9.82,
+    "repeated_action_types": 6,
+    "distinct_motifs": 3,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/B/fma-6789/plan.json"
+   },
+   "S4": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 20,
+    "input_tokens": 231432,
+    "output_tokens": 4245,
+    "outcome": "finished",
+    "events": 19,
+    "mean_seconds": 9.82,
+    "repeated_action_types": 8,
+    "distinct_motifs": 8,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/S4/fma-6789/plan.json"
+   },
+   "R4": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 22,
+    "input_tokens": 228552,
+    "output_tokens": 12979,
+    "outcome": "patched",
+    "changed_events": 3,
+    "events": 19,
+    "mean_seconds": 9.82,
+    "repeated_action_types": 5,
+    "distinct_motifs": 3,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/R4/fma-6789/final_plan.json"
+   },
+   "SR4": {
+    "status": "incomplete",
+    "full_song_succeeded": null,
+    "calls": 22,
+    "input_tokens": 238008,
+    "output_tokens": 4381,
+    "outcome": "patched",
+    "changed_events": 1,
+    "events": 19,
+    "mean_seconds": 9.82,
+    "repeated_action_types": 8,
+    "distinct_motifs": 8,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_sol61/SR4/fma-6789/final_plan.json"
+   },
+   "BB": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 25,
+    "input_tokens": 299836,
+    "output_tokens": 6104,
+    "outcome": "finished",
+    "events": 24,
+    "mean_seconds": 7.78,
+    "repeated_action_types": 1,
+    "distinct_motifs": 1,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_bar/BB/fma-6789/plan.json"
+   },
+   "SB": {
+    "status": "complete",
+    "full_song_succeeded": true,
+    "calls": 25,
+    "input_tokens": 334839,
+    "output_tokens": 5886,
+    "outcome": "finished",
+    "events": 24,
+    "mean_seconds": 7.78,
+    "repeated_action_types": 8,
+    "distinct_motifs": 8,
+    "plan_path": "/ssd/2/niezichao.nzc/artifacts/sr-dev/runs_bar/SB/fma-6789/plan.json"
+   }
+  }
+ },
+ "deltas": {
+  "B_vs_BB|musical_fit": {
+   "mean": -1.5,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "B_vs_BB|motif_development": {
+   "mean": -1.5,
+   "n": 2,
+   "consistent": 2,
+   "consistency_n": 2
+  },
+  "B_vs_BB|action_executability": {
+   "mean": -1.0,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "B_vs_BB|boundary_connection": {
+   "mean": -2.0,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "BB_vs_SB|musical_fit": {
+   "mean": 0.5,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "BB_vs_SB|motif_development": {
+   "mean": 1.5,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "BB_vs_SB|action_executability": {
+   "mean": -0.5,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "BB_vs_SB|boundary_connection": {
+   "mean": -0.5,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "B_vs_S4|musical_fit": {
+   "mean": -0.67,
+   "n": 3,
+   "consistent": 3,
+   "consistency_n": 3
+  },
+  "B_vs_S4|motif_development": {
+   "mean": 0.0,
+   "n": 3,
+   "consistent": 3,
+   "consistency_n": 3
+  },
+  "B_vs_S4|action_executability": {
+   "mean": -0.67,
+   "n": 3,
+   "consistent": 3,
+   "consistency_n": 3
+  },
+  "B_vs_S4|boundary_connection": {
+   "mean": -1.0,
+   "n": 3,
+   "consistent": 3,
+   "consistency_n": 3
+  },
+  "S4_vs_SR4|musical_fit": {
+   "mean": 0.0,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "S4_vs_SR4|motif_development": {
+   "mean": -0.5,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "S4_vs_SR4|action_executability": {
+   "mean": 0.0,
+   "n": 2,
+   "consistent": 1,
+   "consistency_n": 2
+  },
+  "S4_vs_SR4|boundary_connection": {
+   "mean": 0.0,
+   "n": 2,
+   "consistent": 2,
+   "consistency_n": 2
+  }
+ },
+ "failures": {
+  "BB_fma_3856": "model degeneration: no closed JSON within 8192 tokens",
+  "SB_fma_6789": "recovered after ignoring model block_guidance"
+ },
+ "conclusion": {
+  "S_vs_B": "S4 scored higher on musical_fit, executability and boundary_connection in all 3 songs, consistent under A/B swap; fma-3856 went the other way",
+  "bar_units": "BB (bar-aligned) scored higher than B on all four criteria on the 2 songs that completed; motif delta consistent 2/2",
+  "bar_structure": "SB vs BB mixed (structure guidance on bar blocks not clearly better)",
+  "R": "R4/SR4 neutral: patches change text but the judge sees no consistent gain",
+  "caveat": "single small independent judge, n=3 songs, no human review; not a significance claim"
+ }
+}

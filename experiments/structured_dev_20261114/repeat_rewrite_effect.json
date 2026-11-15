@@ -1,0 +1,63 @@
+{
+ "schema": "choreobench.repeat_rewrite_effect.v1",
+ "method": "after a completed music_structured plan, rewrite duplicated action sentences (action-only, <=3 groups, <=1 call/group)",
+ "duplicate_rate": {
+  "before_mean": 0.7314,
+  "after_mean": 0.36819999999999997,
+  "per_song": [
+   {
+    "song": "fma-1881",
+    "ok": true,
+    "calls": 29,
+    "before": 0.68,
+    "after": 0.44
+   },
+   {
+    "song": "fma-3856",
+    "ok": true,
+    "calls": 27,
+    "before": 0.92,
+    "after": 0.48
+   },
+   {
+    "song": "fma-6789",
+    "ok": true,
+    "calls": 23,
+    "before": 0.579,
+    "after": 0.316
+   },
+   {
+    "song": "fma-4151",
+    "ok": true,
+    "calls": 26,
+    "before": 0.636,
+    "after": 0.5
+   },
+   {
+    "song": "fma-12099",
+    "ok": true,
+    "calls": 23,
+    "before": 0.842,
+    "after": 0.105
+   },
+   {
+    "song": "fma-10811",
+    "ok": null
+   }
+  ]
+ },
+ "judged": {
+  "n": 5,
+  "mean_delta": 2.9,
+  "ci95": [
+   1.8,
+   3.9
+  ],
+  "wins": 5,
+  "losses": 0,
+  "preference_consistent": 4
+ },
+ "author_review": "3/3 pairs favour the rewritten arm on unique-action count (15 vs 4; 13 vs 1; 13 vs 8)",
+ "cost": "2-3 extra model calls per song, within the existing 1+4U budget",
+ "verdict": "The only intervention so far with agreeing objective, judged and author-side evidence."
+}

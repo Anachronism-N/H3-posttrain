@@ -1,0 +1,186 @@
+{
+ "schema": "choreobench.author_side_review.v1",
+ "reviewer": "author-side LLM reading (not human, not blind to hypothesis)",
+ "protocol": "read both plans from the public bundle, score 1-5 on four criteria with structural evidence (unique actions, duplication, block granularity), then map positions to methods",
+ "limits": [
+  "no audio listening",
+  "only the four public criteria",
+  "author knows the hypothesis",
+  "scores reflect text structure more than musical fit"
+ ],
+ "totals": {
+  "S4": 70,
+  "B": 73
+ },
+ "wins": {
+  "S4": 3,
+  "B": 3
+ },
+ "diff_meth": "S4-B",
+ "diff": -3,
+ "pairs": [
+  {
+   "pair_id": "pair-00",
+   "song_id": "fma-1881",
+   "positions": {
+    "A": "B",
+    "B": "S4"
+   },
+   "scores": {
+    "A": {
+     "musical_fit": 4,
+     "motif_development": 3,
+     "action_executability": 4,
+     "boundary_connection": 3,
+     "total": 14
+    },
+    "B": {
+     "musical_fit": 3,
+     "motif_development": 2,
+     "action_executability": 3,
+     "boundary_connection": 3,
+     "total": 11
+    }
+   },
+   "preferred_position": "A",
+   "preferred_method": "B",
+   "reason": "workflow opens with 3/3/4 s blocks and 10 unique actions; S4 repeats one sentence for 30 s (4 unique / 25 events)"
+  },
+  {
+   "pair_id": "pair-01",
+   "song_id": "fma-3856",
+   "positions": {
+    "A": "S4",
+    "B": "B"
+   },
+   "scores": {
+    "A": {
+     "musical_fit": 2,
+     "motif_development": 1,
+     "action_executability": 2,
+     "boundary_connection": 2,
+     "total": 7
+    },
+    "B": {
+     "musical_fit": 4,
+     "motif_development": 4,
+     "action_executability": 3,
+     "boundary_connection": 3,
+     "total": 14
+    }
+   },
+   "preferred_position": "B",
+   "preferred_method": "B",
+   "reason": "S4 emits 25 identical sentences (1 unique action); workflow alternates two motifs with development"
+  },
+  {
+   "pair_id": "pair-02",
+   "song_id": "fma-6789",
+   "positions": {
+    "A": "B",
+    "B": "S4"
+   },
+   "scores": {
+    "A": {
+     "musical_fit": 4,
+     "motif_development": 4,
+     "action_executability": 3,
+     "boundary_connection": 4,
+     "total": 15
+    },
+    "B": {
+     "musical_fit": 3,
+     "motif_development": 3,
+     "action_executability": 3,
+     "boundary_connection": 3,
+     "total": 12
+    }
+   },
+   "preferred_position": "A",
+   "preferred_method": "B",
+   "reason": "10 unique actions vs 8; workflow keeps sentences distinct longer"
+  },
+  {
+   "pair_id": "pair-03",
+   "song_id": "fma-4151",
+   "positions": {
+    "A": "S4",
+    "B": "B"
+   },
+   "scores": {
+    "A": {
+     "musical_fit": 4,
+     "motif_development": 3,
+     "action_executability": 3,
+     "boundary_connection": 3,
+     "total": 13
+    },
+    "B": {
+     "musical_fit": 3,
+     "motif_development": 3,
+     "action_executability": 3,
+     "boundary_connection": 3,
+     "total": 12
+    }
+   },
+   "preferred_position": "A",
+   "preferred_method": "S4",
+   "reason": "marginal: S4 has 8 unique vs 7 and no triple repeat at the opening"
+  },
+  {
+   "pair_id": "pair-04",
+   "song_id": "fma-10811",
+   "positions": {
+    "A": "B",
+    "B": "S4"
+   },
+   "scores": {
+    "A": {
+     "musical_fit": 3,
+     "motif_development": 2,
+     "action_executability": 3,
+     "boundary_connection": 3,
+     "total": 11
+    },
+    "B": {
+     "musical_fit": 4,
+     "motif_development": 4,
+     "action_executability": 3,
+     "boundary_connection": 4,
+     "total": 15
+    }
+   },
+   "preferred_position": "B",
+   "preferred_method": "S4",
+   "reason": "S4 breaks 30-40 s into 4/3/3 s units and has 8 unique actions vs 6"
+  },
+  {
+   "pair_id": "pair-05",
+   "song_id": "fma-12099",
+   "positions": {
+    "A": "S4",
+    "B": "B"
+   },
+   "scores": {
+    "A": {
+     "musical_fit": 3,
+     "motif_development": 3,
+     "action_executability": 3,
+     "boundary_connection": 3,
+     "total": 12
+    },
+    "B": {
+     "musical_fit": 2,
+     "motif_development": 1,
+     "action_executability": 2,
+     "boundary_connection": 2,
+     "total": 7
+    }
+   },
+   "preferred_position": "A",
+   "preferred_method": "S4",
+   "reason": "workflow repeats one sentence 19 times; S4 cycles three"
+  }
+ ],
+ "verdict": "3-3 by song and S4 -3 points by total; this contradicts the 8B judge (+4.5, 5-1). The S4 advantage is not robust across review instruments."
+}

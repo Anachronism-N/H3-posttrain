@@ -1,0 +1,19 @@
+{
+ "schema": "choreobench.twin_control_extension.v1",
+ "design": "both arms are byte-identical copies of the baseline plan for the same song; the judge sees the same text twice",
+ "songs": 8,
+ "parsed": 7,
+ "mean_delta": 0.0,
+ "ci": [
+  0.0,
+  0.0
+ ],
+ "wins": 0,
+ "losses": 0,
+ "criterion_votes": {
+  "first": 0,
+  "second": 6,
+  "tie": 50
+ },
+ "verdict": "the judge produces no difference when there is none, so the 8-0 preference on real pairs is not an artefact of the judging procedure"
+}

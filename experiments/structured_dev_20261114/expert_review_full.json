@@ -1,0 +1,180 @@
+{
+ "schema": "choreobench.expert_review_full.v1",
+ "reviewer": "author-side simulated reviewer (not human, hypothesis known)",
+ "formal": {
+  "pairs": [
+   {
+    "song_id": "fma-10811",
+    "methods": {
+     "A": "B",
+     "B": "O"
+    },
+    "scores": {
+     "B": {
+      "fit": 3,
+      "motif": 3,
+      "exec": 4,
+      "boundary": 3,
+      "total": 13
+     },
+     "O": {
+      "fit": 3,
+      "motif": 2,
+      "exec": 4,
+      "boundary": 3,
+      "total": 12
+     }
+    },
+    "preferred_method": "B",
+    "reason": "both repeat heavily (6 vs 5 unique); baseline keeps one more distinct line"
+   },
+   {
+    "song_id": "fma-12099",
+    "methods": {
+     "A": "O",
+     "B": "B"
+    },
+    "scores": {
+     "O": {
+      "fit": 3,
+      "motif": 3,
+      "exec": 3,
+      "boundary": 3,
+      "total": 12
+     },
+     "B": {
+      "fit": 2,
+      "motif": 1,
+      "exec": 2,
+      "boundary": 2,
+      "total": 7
+     }
+    },
+    "preferred_method": "O",
+    "reason": "3 unique against 1; the baseline is one sentence for the whole song"
+   },
+   {
+    "song_id": "fma-1881",
+    "methods": {
+     "A": "B",
+     "B": "O"
+    },
+    "scores": {
+     "B": {
+      "fit": 4,
+      "motif": 3,
+      "exec": 3,
+      "boundary": 4,
+      "total": 14
+     },
+     "O": {
+      "fit": 3,
+      "motif": 3,
+      "exec": 3,
+      "boundary": 4,
+      "total": 13
+     }
+    },
+    "preferred_method": "B",
+    "reason": "near-tie: 10 vs 9 unique; baseline has slightly more distinct lines"
+   },
+   {
+    "song_id": "fma-3856",
+    "methods": {
+     "A": "O",
+     "B": "B"
+    },
+    "scores": {
+     "O": {
+      "fit": 4,
+      "motif": 4,
+      "exec": 3,
+      "boundary": 4,
+      "total": 15
+     },
+     "B": {
+      "fit": 3,
+      "motif": 2,
+      "exec": 3,
+      "boundary": 3,
+      "total": 11
+     }
+    },
+    "preferred_method": "O",
+    "reason": "16 unique at 0.36 duplication against 10 at 0.62 with a triple repeat at the opening"
+   },
+   {
+    "song_id": "fma-4151",
+    "methods": {
+     "A": "B",
+     "B": "O"
+    },
+    "scores": {
+     "B": {
+      "fit": 3,
+      "motif": 2,
+      "exec": 3,
+      "boundary": 3,
+      "total": 11
+     },
+     "O": {
+      "fit": 4,
+      "motif": 3,
+      "exec": 3,
+      "boundary": 3,
+      "total": 13
+     }
+    },
+    "preferred_method": "O",
+    "reason": "baseline repeats its first line three times; ours has 10 unique"
+   },
+   {
+    "song_id": "fma-6789",
+    "methods": {
+     "A": "O",
+     "B": "B"
+    },
+    "scores": {
+     "O": {
+      "fit": 4,
+      "motif": 4,
+      "exec": 4,
+      "boundary": 4,
+      "total": 16
+     },
+     "B": {
+      "fit": 3,
+      "motif": 3,
+      "exec": 3,
+      "boundary": 3,
+      "total": 12
+     }
+    },
+    "preferred_method": "O",
+    "reason": "11 unique at 0.42 against 10 at 0.47 with a double repeat at the opening"
+   }
+  ],
+  "n": 6,
+  "prefer_treatment": 4
+ },
+ "extension": {
+  "n": 8,
+  "prefer_treatment": 8,
+  "note": "see expert_review_author.json"
+ },
+ "combined": {
+  "n": 14,
+  "prefer_treatment": 12
+ },
+ "disagreements": [
+  "fma-1881: the judge prefers ours (+4.0) but I read it as a near-tie slightly favouring the baseline"
+ ],
+ "agreements": [
+  "fma-10811: both the judge (-3.5) and I prefer the baseline"
+ ],
+ "caveats": [
+  "no audio listening",
+  "author knows the hypothesis",
+  "scores weigh text structure more than musical fit"
+ ]
+}

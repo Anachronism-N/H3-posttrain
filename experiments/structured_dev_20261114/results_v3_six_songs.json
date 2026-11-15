@@ -1,0 +1,81 @@
+{
+ "schema": "choreobench.sr_6song.v1",
+ "judge": {
+  "model": "Qwen3-VL-8B-Instruct",
+  "mode": "model_assisted_not_human",
+  "order_swapped": true
+ },
+ "songs_total": 6,
+ "judged_pairs": 4,
+ "completion": {
+  "B": "5/6 (fma-3855 schedule mismatch)",
+  "S4": "6/6"
+ },
+ "per_song": {
+  "fma-1881": {
+   "B_total": 14,
+   "S4_total": 18,
+   "delta": {
+    "musical_fit": 1,
+    "motif_development": 0,
+    "action_executability": 1,
+    "boundary_connection": 2
+   },
+   "winner": "S4"
+  },
+  "fma-3856": {
+   "B_total": 16,
+   "S4_total": 13,
+   "delta": {
+    "musical_fit": -1,
+    "motif_development": -1,
+    "action_executability": 0,
+    "boundary_connection": -1
+   },
+   "winner": "B"
+  },
+  "fma-6789": {
+   "B_total": 14,
+   "S4_total": 20,
+   "delta": {
+    "musical_fit": 2,
+    "motif_development": 1,
+    "action_executability": 1,
+    "boundary_connection": 2
+   },
+   "winner": "S4"
+  },
+  "fma-4151": {
+   "B_total": 12,
+   "S4_total": 19,
+   "delta": {
+    "musical_fit": 1,
+    "motif_development": 3,
+    "action_executability": 1,
+    "boundary_connection": 2
+   },
+   "winner": "S4"
+  }
+ },
+ "mean_delta_S4_minus_B": {
+  "musical_fit": 0.75,
+  "motif_development": 0.75,
+  "action_executability": 0.75,
+  "boundary_connection": 1.25
+ },
+ "total_score_mean_delta": 3.5,
+ "wins": {
+  "S4": 3,
+  "B": 1
+ },
+ "order_consistency": {
+  "musical_fit": "4/4",
+  "motif_development": "4/4",
+  "action_executability": "3/4",
+  "boundary_connection": "4/4"
+ },
+ "excluded": {
+  "fma_10811": "judge returned unterminated JSON; excluded, not imputed"
+ },
+ "conclusion": "S4 is scored higher on all four criteria (total +3.5 on a 20-point scale) and wins 3 of 4 judged songs, and completes 6/6 vs 5/6. This is model-assisted evidence with one small judge; fma-3856 goes the other way, so it is a promising but not yet conclusive gain."
+}

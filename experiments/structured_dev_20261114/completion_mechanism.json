@@ -1,0 +1,27 @@
+{
+ "schema": "choreobench.completion_mechanism.v1",
+ "observation": "every baseline failure is a runaway repetitive generation that hits the 4096 output cap",
+ "response_lengths": {
+  "B": {
+   "responses": 194,
+   "median": 219,
+   "p90": 537,
+   "max": 4096,
+   "at_cap": 8
+  },
+  "O": {
+   "responses": 299,
+   "median": 154,
+   "p90": 238,
+   "max": 1639,
+   "at_cap": 0
+  }
+ },
+ "failure_calls": {
+  "fma-11689": "call 0003",
+  "fma-13317": "call 0001",
+  "fma-50459": "call 0000"
+ },
+ "interpretation": "a single capped response is fatal for that song, so 8 runaway calls cost the baseline 5 of 11 songs; the treatment never entered that state",
+ "caveat": "this is an observed association, not a proof of the precise cause"
+}

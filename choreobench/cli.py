@@ -214,6 +214,7 @@ def build_parser():
     for name in ("dataset", "candidates", "config", "out-dir"):
         harness.add_argument("--" + name, required=True, type=Path)
     harness.add_argument("--resume", action="store_true")
+    harness.add_argument("--style-prior", type=Path, help="Optional source-bound MuQ-JEV genre probabilities; a recommendation, never a constraint")
     ablation = sub.add_parser("prepare-ablation", help="Prepare a source-bound 2x2 outline/history experiment without model calls")
     for name in ("dataset", "candidates", "config", "out-dir"):
         ablation.add_argument("--" + name, required=True, type=Path)
@@ -393,7 +394,7 @@ def build_parser():
     four = sub.add_parser("run-composition", help="Four matched whole-song workflow/tool adaptations")
     for name in ("source", "song-id", "provider", "out-dir"):
         four.add_argument("--" + name, required=True)
-    four.add_argument("--method", choices=("workflow", "self_refine", "react", "choreography"), default="workflow")
+    four.add_argument("--method", choices=("workflow", "self_refine", "react", "choreography", "structured", "music_structured"), default="workflow")
     four.add_argument("--controller-version", choices=("v1", "v2"), default="v1",
                       help="Opt into bounded v2 control in a new run directory; historical runs are immutable")
     four.add_argument("--seed", type=int, default=42)
@@ -404,6 +405,41 @@ def build_parser():
     four.add_argument("--outline-max-output-tokens", type=int, default=4096)
     four.add_argument("--resume", action="store_true")
     four.add_argument("--outline-reuse-run")
+    four.add_argument("--music-summary", help="Public acoustic summary JSON; required by music_structured")
+    four.add_argument("--outline-proposal-chars", type=int, default=None,
+                      help="Deterministic per-proposal character cap for the whole-song outline")
+    four.add_argument("--outline-candidates-per-window", type=int, default=None)
+    four.add_argument("--bar-structure", help="Precomputed bar/downbeat JSON; replaces the planning-unit partition")
+    four.add_argument("--bars-per-block", type=int, default=4)
+    bars = sub.add_parser("analyze-bars", help="librosa beat estimate plus an ASSUMED 4/4 downbeat phase")
+    bars.add_argument("--audio", required=True)
+    bars.add_argument("--out", required=True)
+    bars.add_argument("--bars-per-block", type=int, default=4)
+    bars.add_argument("--max-unit-seconds", type=float, default=20.0)
+    four.add_argument("--no-motif-quota", action="store_true",
+                      help="Disable the per-block motif quota (ablation)")
+    four.add_argument("--style-prior", type=Path,
+                      help="Optional source-bound MuQ-JEV genre probabilities; a recommendation, never a constraint")
+    four.add_argument("--rewrite-repeats", action="store_true",
+                      help="after a completed plan, rewrite verbatim repeated action sentences (action-only, budgeted)")
+    four.add_argument("--repeat-groups", type=int, default=3,
+                      help="maximum number of duplicated sentence groups to rewrite")
+    four.add_argument("--motif-variation", action="store_true",
+                      help="require a returning theme to change direction, level, concurrency or lead limb "
+                           "(music_structured only)")
+    four.add_argument("--acoustic-guidance", action="store_true",
+                      help="Let the harness derive each block's movement-amount requirement from the summary")
+    music = sub.add_parser("analyze-music", help="Fixed-parameter public acoustic summary of one canonical WAV")
+    music.add_argument("--audio", required=True)
+    music.add_argument("--out", required=True)
+    revision = sub.add_parser("revise-whole-song", help="One whole-song audit plus an action-only patch of a frozen draft")
+    for name in ("source", "song-id", "draft-run", "provider", "music-summary", "out-dir"):
+        revision.add_argument("--" + name, required=True)
+    revision.add_argument("--seed", type=int, default=42)
+    revision.add_argument("--max-calls", type=int, default=600)
+    revision.add_argument("--max-input-tokens", type=int, default=2000000)
+    revision.add_argument("--max-total-output-tokens", type=int, default=150000)
+    revision.add_argument("--max-request-characters", type=int, default=300000)
     return parser
 
 
@@ -418,12 +454,58 @@ def main(argv=None):
 
 def dispatch(args):
     cmd = args.command
+    if cmd == "analyze-bars":
+        from . import bar_structure
+        value = bar_structure.analyze(args.audio, bars_per_block=args.bars_per_block,
+                                      max_unit_seconds=args.max_unit_seconds)
+        digest = bar_structure.save(value, args.out)
+        return _emit(dict(schema=value["schema"], out=args.out, sha256=digest,
+                          beats=len(value["beats"]), downbeats=len(value["downbeats"]),
+                          bar_seconds=value["bar_seconds"], meter_assumed=value["meter_assumed"]))
+    if cmd == "analyze-music":
+        from . import music_structure_summary as music
+        summary = music.analyze(args.audio)
+        digest = music.save(summary, args.out)
+        return _emit(dict(schema=summary["schema"], out=args.out, sha256=digest,
+                          blocks=len(summary["blocks"]), relations=len(summary["relations"])))
+    if cmd == "revise-whole-song":
+        from .composition_workflows import _source
+        from .whole_song_revision import run_revision
+        from .io import read_json as _read
+        from .music_structure_summary import load as _load_summary
+        cfg = dict(seed=args.seed, max_output_tokens=1024, outline_max_output_tokens=4096,
+                   max_request_characters=args.max_request_characters, max_events_per_unit=3,
+                   structured_unit_output=True, use_outline=True, use_history=True, draft_revision_limit=1,
+                   event_time_format='boundary_ids', event_grid_seconds=.25, min_event_seconds=.5,
+                   event_schedule_policy='balanced_full_unit',
+                   unit_config=dict(bars_per_block=4, fallback_seconds=10.125, max_unit_seconds=20,
+                                    meter_status='unverified', min_time_block_seconds=2))
+        sources = {}
+        source = _source(args.source, args.song_id, cfg, sources)
+        outline = _read(Path(args.draft_run).resolve() / "outline.json")
+        summary = _load_summary(args.music_summary)
+        return _emit(run_revision(args.draft_run, _read(args.provider), args.music_summary, args.out_dir,
+                                  song=source["song"], outline=outline, seed=args.seed,
+                                  max_calls=args.max_calls, max_input_tokens=args.max_input_tokens,
+                                  max_total_output_tokens=args.max_total_output_tokens,
+                                  max_request_characters=args.max_request_characters))
     if cmd == "run-composition":
         from .composition_workflows import run_composition
         _emit(run_composition(args.source, args.song_id, read_json(args.provider), args.out_dir,
             method=args.method, seed=args.seed, max_input_tokens=args.max_input_tokens,
             max_total_output_tokens=args.max_total_output_tokens, resume=args.resume,
             max_request_characters=args.max_request_characters,max_output_tokens=args.max_output_tokens,
+            music_summary_path=getattr(args,'music_summary',None),
+            outline_proposal_char_limit=getattr(args,'outline_proposal_chars',None),
+            outline_candidates_per_window=getattr(args,'outline_candidates_per_window',None),
+            acoustic_guidance=getattr(args,'acoustic_guidance',False),
+            bar_structure=getattr(args,'bar_structure',None),
+            bars_per_block=getattr(args,'bars_per_block',4),
+            motif_quota=not getattr(args,'no_motif_quota',False),
+            motif_variation=getattr(args,'motif_variation',False),
+            style_prior=getattr(args,'style_prior',None),
+            rewrite_repeats=getattr(args,'rewrite_repeats',False),
+            repeat_groups=getattr(args,'repeat_groups',3),
             outline_max_output_tokens=args.outline_max_output_tokens,
             outline_reuse_run=args.outline_reuse_run,controller_version=args.controller_version))
     elif cmd == "run-song-agent":
@@ -470,7 +552,8 @@ def dispatch(args):
         _emit(run_baseline(args.dataset, args.out_dir, read_json(args.config), resume=args.resume))
     elif cmd == "run-harness":
         from .harness import run_harness
-        _emit(run_harness(args.dataset, args.candidates, args.out_dir, read_json(args.config), resume=args.resume))
+        _emit(run_harness(args.dataset, args.candidates, args.out_dir, read_json(args.config), resume=args.resume,
+                          style_prior=args.style_prior))
     elif cmd == "prepare-ablation":
         from .experiments import prepare_ablation_experiment
         prepared = prepare_ablation_experiment(args.dataset, args.candidates, args.config, args.out_dir)

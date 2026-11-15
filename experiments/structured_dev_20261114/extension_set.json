@@ -1,0 +1,188 @@
+{
+ "schema": "choreobench.extension_set_v3",
+ "n": 6,
+ "songs": [
+  "fma-384",
+  "fma-397",
+  "fma-533",
+  "fma-550",
+  "fma-646",
+  "fma-874",
+  "fma-1085",
+  "fma-1224",
+  "fma-1306"
+ ],
+ "selection": "FMA Electronic, 180-280 s, one song per artist, sorted by track_id, chosen by rule before any generation; two batches, neither used for development",
+ "collection": "272 + 294 + 280 windows x K=2 with the frozen MOSS expert, zero failures",
+ "completion": {
+  "B": "8/9",
+  "O": "9/9",
+  "baseline_failure": "fma-1224"
+ },
+ "judged": {
+  "judge8B": {
+   "mean": 6.0,
+   "ci": [
+    5.12,
+    6.88
+   ],
+   "wins": 8,
+   "losses": 0
+  },
+  "judge30B": {
+   "mean": 4.44,
+   "ci": [
+    3.38,
+    5.56
+   ],
+   "wins": 8,
+   "losses": 0
+  }
+ },
+ "duplicate_rates": {
+  "fma-384": {
+   "B": 0.852,
+   "O": 0.84
+  },
+  "fma-397": {
+   "B": 0.958,
+   "O": 0.577
+  },
+  "fma-533": {
+   "B": 0.85,
+   "O": 0.652
+  },
+  "fma-550": {
+   "B": 0.963,
+   "O": 0.8
+  },
+  "fma-646": {
+   "B": 0.9,
+   "O": 0.667
+  },
+  "fma-874": {
+   "B": 0.889,
+   "O": 0.906
+  }
+ },
+ "verdict": "Eight fresh held-out songs, sixteen judge decisions, all favour the treatment; both intervals are well above zero.",
+ "structure": {
+  "fma-384": {
+   "B": {
+    "events": 27,
+    "unique": 4,
+    "mean_span": 9.2,
+    "coverage": 100.0
+   },
+   "O": {
+    "events": 25,
+    "unique": 4,
+    "mean_span": 10.0,
+    "coverage": 100.0
+   }
+  },
+  "fma-397": {
+   "B": {
+    "events": 24,
+    "unique": 1,
+    "mean_span": 10.0,
+    "coverage": 100.0
+   },
+   "O": {
+    "events": 26,
+    "unique": 11,
+    "mean_span": 9.2,
+    "coverage": 100.0
+   }
+  },
+  "fma-533": {
+   "B": {
+    "events": 20,
+    "unique": 3,
+    "mean_span": 9.6,
+    "coverage": 100.0
+   },
+   "O": {
+    "events": 23,
+    "unique": 8,
+    "mean_span": 8.3,
+    "coverage": 100.0
+   }
+  },
+  "fma-550": {
+   "B": {
+    "events": 27,
+    "unique": 1,
+    "mean_span": 10.1,
+    "coverage": 100.0
+   },
+   "O": {
+    "events": 30,
+    "unique": 6,
+    "mean_span": 9.1,
+    "coverage": 100.0
+   }
+  },
+  "fma-646": {
+   "B": {
+    "events": 20,
+    "unique": 2,
+    "mean_span": 9.9,
+    "coverage": 100.0
+   },
+   "O": {
+    "events": 24,
+    "unique": 8,
+    "mean_span": 8.2,
+    "coverage": 100.0
+   }
+  },
+  "fma-874": {
+   "B": {
+    "events": 27,
+    "unique": 3,
+    "mean_span": 9.9,
+    "coverage": 100.0
+   },
+   "O": {
+    "events": 32,
+    "unique": 3,
+    "mean_span": 8.4,
+    "coverage": 100.0
+   }
+  }
+ },
+ "structure_note": "both arms always cover 100% of the song; the treatment has more events in 4/6, higher unique counts in 5/6, and fma-384 is the counter-example (fewer events, equal unique, still preferred)",
+ "n_paired": 8,
+ "attempted": 9,
+ "paired": [
+  "fma-384",
+  "fma-397",
+  "fma-533",
+  "fma-550",
+  "fma-646",
+  "fma-874",
+  "fma-1085",
+  "fma-1306"
+ ],
+ "per_song_8B": [
+  3.5,
+  7.0,
+  6.0,
+  5.5,
+  5.5,
+  6.0,
+  8.5,
+  6.0
+ ],
+ "per_song_30B": [
+  1.5,
+  5.0,
+  4.0,
+  4.5,
+  4.5,
+  3.5,
+  7.5,
+  5.0
+ ]
+}

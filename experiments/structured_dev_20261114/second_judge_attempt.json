@@ -1,0 +1,70 @@
+{
+ "schema": "choreobench.second_judge_attempt.v1",
+ "model": "MOSS-Audio-8B-Instruct, text-only messages (no audio)",
+ "result": "unusable",
+ "evidence": {
+  "position_votes": {
+   "first": 8,
+   "second": 39,
+   "tie": 1
+  },
+  "two_order_mean": -0.083,
+  "ci": [
+   -2.0,
+   1.917
+  ],
+  "wins": 1,
+  "losses": 2,
+  "preference_consistent": 2
+ },
+ "note": "the model discriminates in text mode but votes for the second position 81% of the time; averaging both orders leaves no signal",
+ "absolute_text_mode": {
+  "model": "MOSS-Audio-8B-Instruct, text-only, single-plan absolute scoring",
+  "n": 8,
+  "delta": 0.5,
+  "ci": [
+   -1.0,
+   2.0
+  ],
+  "wins": 2,
+  "losses": 2,
+  "ties": 4,
+  "per_song": [
+   [
+    "fma-384",
+    -2
+   ],
+   [
+    "fma-397",
+    0
+   ],
+   [
+    "fma-533",
+    0
+   ],
+   [
+    "fma-550",
+    4
+   ],
+   [
+    "fma-646",
+    0
+   ],
+   [
+    "fma-874",
+    -2
+   ],
+   [
+    "fma-1085",
+    4
+   ],
+   [
+    "fma-1306",
+    0
+   ]
+  ],
+  "observation": "four pairs score identically and the rest move by at most two points; the model emits a near-constant profile",
+  "conclusion": "still unusable; the non-Qwen independent check cannot confirm or refute the Qwen-family result"
+ },
+ "status": "no usable non-Qwen judge found after four attempts (audio pairwise, audio absolute, text pairwise, text absolute)"
+}

@@ -1,0 +1,96 @@
+{
+ "schema": "choreobench.ablation_v1",
+ "songs": [
+  "fma-1881",
+  "fma-6789",
+  "fma-10811",
+  "fma-12099"
+ ],
+ "arms": {
+  "B": "workflow baseline",
+  "Q": "quota only (model block guidance)",
+  "G": "deterministic acoustic guidance only",
+  "S4": "quota + guidance"
+ },
+ "completion": {
+  "B": "4/4",
+  "Q": "4/4",
+  "G": "4/4",
+  "S4": "4/4"
+ },
+ "results": {
+  "B_vs_Q": {
+   "total": 4.25,
+   "ci": [
+    2.0,
+    6.5
+   ],
+   "wins": {
+    "treatment": 4,
+    "baseline": 0,
+    "tie": 0
+   },
+   "per_criterion": {
+    "musical_fit": 1.5,
+    "motif_development": 0.5,
+    "action_executability": 0.25,
+    "boundary_connection": 2.0
+   }
+  },
+  "B_vs_G": {
+   "total": 6.25,
+   "ci": [
+    5.5,
+    7.0
+   ],
+   "wins": {
+    "treatment": 4,
+    "baseline": 0,
+    "tie": 0
+   },
+   "per_criterion": {
+    "musical_fit": 1.75,
+    "motif_development": 1.75,
+    "action_executability": 0.75,
+    "boundary_connection": 2.0
+   }
+  },
+  "B_vs_S4": {
+   "total": 4.75,
+   "ci": [
+    2.25,
+    6.0
+   ],
+   "wins": {
+    "treatment": 4,
+    "baseline": 0,
+    "tie": 0
+   },
+   "per_criterion": {
+    "musical_fit": 1.0,
+    "motif_development": 1.5,
+    "action_executability": 0.5,
+    "boundary_connection": 1.75
+   }
+  },
+  "Q_vs_G": {
+   "total": 0.5,
+   "ci": [
+    -4.5,
+    5.5
+   ],
+   "wins": {
+    "treatment": 2,
+    "baseline": 2,
+    "tie": 0
+   },
+   "per_criterion": {
+    "musical_fit": 0.5,
+    "motif_development": 0.25,
+    "action_executability": -0.25,
+    "boundary_connection": 0.0
+   }
+  }
+ },
+ "conclusion": "Both single-component arms beat the baseline (Q +4.25 CI [2.0,6.5]; G +6.25 CI [5.5,7.0]; S4 +4.75 CI [2.25,6.0]; each 4-0). Q vs G is a tie (CI [-4.5,5.5], 2-2), so the effect comes from constraining the block at all, and the two components are not additive. Model-judged (Qwen3-VL-8B), 4 songs, not human review."
+}

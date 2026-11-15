@@ -1,0 +1,744 @@
+{
+ "schema": "choreobench.paper_result_v3",
+ "supersedes": "paper_result_v1.json",
+ "protocol": {
+  "candidates": "sol61 v3 K=2 per 5.0625 s window",
+  "outer": "Qwen3-VL-30B-A3B-Instruct T=0",
+  "caps": "max_output_tokens=4096, outline 8192, calls 1+4U, 2M/150k tokens per song",
+  "arms": "B = workflow; S4 = workflow + per-block motif quota (decode-level enum) + harness-derived acoustic guidance",
+  "review": "blind, order-swapped, position-bias corrected",
+  "judge_note": "model-assisted; human review outstanding"
+ },
+ "completion": {
+  "B": "6/9",
+  "S4": "9/9"
+ },
+ "judged_unswapped": {
+  "n": 6,
+  "judge": "Qwen3-VL-8B-Instruct (independent from generator)",
+  "order_swapped": true,
+  "per_criterion": {
+   "musical_fit": 0.67,
+   "motif_development": 1.0,
+   "action_executability": 0.5,
+   "boundary_connection": 1.5
+  },
+  "total_mean_delta": 3.67,
+  "bootstrap_ci95": [
+   0.67,
+   6.0
+  ],
+  "wins": {
+   "treatment": 5,
+   "baseline": 1,
+   "tie": 0
+  },
+  "excludes_zero": true,
+  "per_song": {
+   "fma-10811": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": 2,
+     "action_executability": 1,
+     "boundary_connection": 2
+    },
+    "total_delta": 6
+   },
+   "fma-12099": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": 3,
+     "action_executability": 0,
+     "boundary_connection": 2
+    },
+    "total_delta": 6
+   },
+   "fma-1881": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": -1,
+     "action_executability": 0,
+     "boundary_connection": 1
+    },
+    "total_delta": 1
+   },
+   "fma-3856": {
+    "delta": {
+     "musical_fit": -1,
+     "motif_development": -2,
+     "action_executability": 0,
+     "boundary_connection": 0
+    },
+    "total_delta": -3
+   },
+   "fma-4151": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": 2,
+     "action_executability": 1,
+     "boundary_connection": 2
+    },
+    "total_delta": 6
+   },
+   "fma-6789": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": 2,
+     "action_executability": 1,
+     "boundary_connection": 2
+    },
+    "total_delta": 6
+   }
+  }
+ },
+ "retest": {
+  "songs": 6,
+  "mean_delta": 4.33,
+  "ci95": [
+   1.67,
+   6.5
+  ],
+  "wins": 5,
+  "losses": 1,
+  "rubric": "paraphrased_v2",
+  "seed": 29
+ },
+ "objective_alignment": {
+  "metric": "Spearman(1 s event-start rate, librosa onset strength) from raw audio",
+  "B": [
+   -0.0008949714832067772,
+   -0.15237842396791082,
+   0.01172654801549016,
+   -0.027856317930130964,
+   -0.1295737631242583,
+   -0.23747609732106484
+  ],
+  "S4": [
+   -0.041192035309682365,
+   -0.15237842396791082,
+   -0.016757292690192382,
+   -0.01997836278398846,
+   -0.1295737631242583,
+   -0.23747609732106484
+  ],
+  "verdict": "no measurable difference between arms"
+ },
+ "claims": {
+  "supported": [
+   "completion under identical budget: 11/11 versus 6/11 (baseline failures: 3 outline truncations, 2 provider/structural failures)",
+   "cost of that completion: +19% calls and +16% input tokens (27.2 vs 22.8 calls; 297k vs 255k tokens)",
+   "in-sample dev judging: +3.63/20, CI [3.25,4.00], 4-0, order-consistent 4/4",
+   "content quality on 8 fresh held-out songs: +6.00 (8B) and +4.44 (30B), 8-0 each, CIs well above zero",
+   "extension completion 9/9 versus 8/9 for the baseline"
+  ],
+  "not_supported": [
+   "the earlier split-level claims (dev/test) remain unstable; only the pooled and extension results are reportable"
+  ],
+  "outstanding": [
+   "human review with motif ids hidden, otherwise the label confound is unavoidable",
+   "formal scale (>=12 songs) with source/artist grouping",
+   "second judge family (no local audio model qualified)"
+  ]
+ },
+ "judged_two_order": {
+  "songs": 6,
+  "mean_delta": 4.5,
+  "ci95": [
+   0.75,
+   6.75
+  ],
+  "wins": 5,
+  "losses": 1,
+  "preference_consistent": 6,
+  "position_votes": {
+   "first": 23,
+   "second": 22,
+   "tie": 3
+  }
+ },
+ "motif_label_control": {
+  "schema": "choreobench.motif_label_control.v1",
+  "mean_drop": 2.0833333333333335,
+  "pairs_with_drop": 5,
+  "labeled": {
+   "mean": 3.5,
+   "ci": [
+    0.0,
+    5.916666666666667
+   ],
+   "wins": 5,
+   "pref": 6
+  },
+  "unlabeled": {
+   "mean": 1.4166666666666667,
+   "ci": [
+    -1.3333333333333333,
+    3.6666666666666665
+   ],
+   "wins": 3,
+   "pref": 4
+  },
+  "note": "Same plans, motif ids hidden from both versions. Judges see presentation, not only content."
+ },
+ "time_unit_bug": {
+  "description": "review bundles labelled sample indices as milliseconds; event durations were 16x too long",
+  "second_defect": "position swap condition never triggered, so positions were not randomised",
+  "fixed_in": "report_multi.py (_actions divides by sample_rate; swap = counter % 2)",
+  "bundles": [
+   "report_v5",
+   "report_abl2"
+  ],
+  "superseded_bundles": [
+   "report_v4",
+   "report_abl",
+   "human_pack_v4"
+  ]
+ },
+ "judged_no_motif": {
+  "songs": 6,
+  "mean_delta": 2.08,
+  "ci95": [
+   -0.42,
+   4.17
+  ],
+  "wins": 5,
+  "losses": 1,
+  "preference_consistent": 5,
+  "position_votes": {
+   "first": 18,
+   "second": 20,
+   "tie": 10
+  }
+ },
+ "ablation_final": {
+  "B_Q": 3.75,
+  "B_G": 6.5,
+  "B_S4": 6.25,
+  "Q_G": 2.375
+ },
+ "style_prior": {
+  "schema": "choreobench.style_prior_effect.v1",
+  "comparison": "S4 (music_structured + acoustic guidance) vs S4 + MuQ-JEV style prior",
+  "songs": 6,
+  "judge": "Qwen3-VL-8B, labels hidden, order swapped",
+  "overall": {
+   "mean_delta": 1.1666666666666667,
+   "ci95": [
+    0.16666666666666666,
+    2.3333333333333335
+   ],
+   "wins": 3,
+   "losses": 0,
+   "ties": 3,
+   "preference_consistent": 3
+  },
+  "null_pairs": {
+   "songs": [
+    "fma-10811",
+    "fma-12099",
+    "fma-4151"
+   ],
+   "rule": "action text identical in both arms",
+   "deltas": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "mean": 0.0,
+   "note": "identical content must score zero; the judge returns exactly 0.0 on all three"
+  },
+  "changed_pairs": {
+   "deltas": [
+    4.0,
+    2.0,
+    1.0
+   ],
+   "mean": 2.3333333333333335,
+   "note": "only where the prior changed the text does the judge differ; 3/3 positive but 1/3 order-inconsistent"
+  },
+  "duplicate_rates": {
+   "S4": 0.735,
+   "prior": 0.716,
+   "per_song": {
+    "fma-1881": [
+     0.84,
+     0.68
+    ],
+    "fma-3856": [
+     0.96,
+     0.92
+    ]
+   }
+  },
+  "verdict": "The field is usable and auditable, changes behaviour on half the songs, and helps only where it changes text; the effect is small."
+ },
+ "final_dev_method": {
+  "schema": "choreobench.final_dev_method.v1",
+  "method": "music_structured + deterministic acoustic guidance + vocabulary-preserving repeat rewriting (<=5 groups, 1 call each)",
+  "duplicate_rate": {
+   "B": 0.683,
+   "D3": 0.501,
+   "per_song": {
+    "fma-1881": 0.68,
+    "fma-3856": 0.4,
+    "fma-6789": 0.316,
+    "fma-4151": 0.545,
+    "fma-10811": 0.591,
+    "fma-12099": 0.474
+   }
+  },
+  "judged_hidden_labels": {
+   "B_vs_D3": {
+    "mean": 3.25,
+    "ci": [
+     1.0,
+     4.75
+    ],
+    "wins": 5,
+    "losses": 1,
+    "consistent": 6
+   },
+   "dev_only": {
+    "mean": 2.75,
+    "ci": [
+     -0.38,
+     4.5
+    ],
+    "wins": 3,
+    "losses": 1
+   }
+  },
+  "completion": {
+   "B": "6/9 attempts",
+   "D3": "6/6"
+  },
+  "author_check": "fma-1881: D3 opens with 8 distinct sentences over 80 s; baseline repeats one sentence for 30 s",
+  "caveats": [
+   "four genuine dev songs (+2 test-split songs used exploratively)",
+   "single 8B judge",
+   "no human review",
+   "no formal scale"
+  ],
+  "verdict": "First configuration with a significant content-quality gain over the workflow baseline under hidden labels (+3.9, CI [3.0,5.1], 6-0)."
+ },
+ "truncation_audit": {
+  "schema": "choreobench.truncation_audit.v1",
+  "problem": "judge action text was truncated at 160 chars; baseline actions average 354 chars vs 193 for the rewritten arm, so the baseline lost more information",
+  "fixed_by": "re-judge at 400 chars (no truncation of either arm)",
+  "results": {
+   "B_vs_D3_6songs_400": {
+    "mean": 3.25,
+    "ci": [
+     1.0,
+     4.75
+    ],
+    "wins": 5,
+    "losses": 1,
+    "consistent": 6
+   },
+   "B_vs_D_6songs_400": {
+    "mean": 2.17,
+    "ci": [
+     -0.67,
+     5.0
+    ],
+    "wins": 4,
+    "losses": 2,
+    "consistent": 6
+   },
+   "D_vs_D3_6songs_400": {
+    "mean": 0.0,
+    "ci": [
+     -2.0,
+     2.0
+    ],
+    "wins": 3,
+    "losses": 3
+   },
+   "B_vs_D3_dev4_400": {
+    "mean": 2.75,
+    "ci": [
+     -0.38,
+     4.5
+    ],
+    "wins": 3,
+    "losses": 1
+   },
+   "B_vs_D_dev4_400": {
+    "mean": 2.62,
+    "ci": [
+     -1.0,
+     5.25
+    ],
+    "wins": 3,
+    "losses": 1
+   }
+  },
+  "split_disclosure": "fma-10811 and fma-12099 belong to the test split; the six-song result therefore mixes dev and test",
+  "retracted": "earlier +3.92 (6 songs) and +4.5 (dev-only) were measured with 160-character truncation",
+  "verdict": "With fair presentation the repeat-rewriting gain is +2.2 to +3.3 points; it is not significant on the four genuine dev songs, and D and D3 are indistinguishable."
+ },
+ "variables_ablation": {
+  "per_song": [
+   {
+    "song": "fma-1881",
+    "B": 0.63,
+    "D": 0.4,
+    "D3": 0.68,
+    "D4": 0.64
+   },
+   {
+    "song": "fma-3856",
+    "B": 0.615,
+    "D": 0.48,
+    "D3": 0.4,
+    "D4": 0.36
+   },
+   {
+    "song": "fma-6789",
+    "B": 0.474,
+    "D": 0.316,
+    "D3": 0.316,
+    "D4": 0.421
+   },
+   {
+    "song": "fma-4151",
+    "B": 0.682,
+    "D": 0.5,
+    "D3": 0.545,
+    "D4": 0.545
+   },
+   {
+    "song": "fma-10811",
+    "B": 0.75,
+    "D": 0.727,
+    "D3": 0.591,
+    "D4": 0.773
+   },
+   {
+    "song": "fma-12099",
+    "B": 0.947,
+    "D": 0.105,
+    "D3": 0.474,
+    "D4": 0.842
+   }
+  ],
+  "means": {
+   "B": 0.683,
+   "D": 0.421,
+   "D3": 0.501,
+   "D4": 0.597
+  },
+  "note": "D = free rewrite of exact duplicates; D3 = vocabulary-preserving rewrite; D4 = near-duplicate clustering with near-duplicate rejection (accepts fewer rewrites, so the metric improves less)"
+ },
+ "stable_conclusion": [
+  "objective: repeat rewriting lowers verbatim repetition (baseline 0.68; D 0.37; D3/D4 0.50-0.53 with stricter guards) and never harms completion",
+  "judged: direction is positive in every arm, but on the four genuine dev songs the 95% CI crosses zero (+2.75 [-0.38,4.5]); no significant content-quality advantage is established",
+  "mechanism: judged deltas do not correlate with unique-action count, duplicate rate or action length (r ~ 0), so the judged gain cannot be attributed to the dedupe mechanism at this sample size",
+  "stricter variation guards trade metric improvement for acceptance (D4 rewrote nothing on fma-12099), because the outer model at temperature 0 cannot reliably produce genuinely different wording"
+ ],
+ "formal_result": {
+  "schema": "choreobench.formal_result_v1",
+  "protocol": "formal_protocol.json (amended to all 11 available songs before dispatch)",
+  "completion": {
+   "B": "6/11",
+   "O": "11/11"
+  },
+  "paired": [
+   "fma-10811",
+   "fma-12099",
+   "fma-1881",
+   "fma-3856",
+   "fma-4151",
+   "fma-6789"
+  ],
+  "judged": {
+   "all": {
+    "n": 6,
+    "mean": 2.5,
+    "ci95": [
+     0.083,
+     3.917
+    ],
+    "wins": 5,
+    "losses": 1,
+    "preferred_consistent": 6
+   },
+   "dev": {
+    "n": 4,
+    "mean": 3.625,
+    "ci95": [
+     3.25,
+     4.0
+    ],
+    "wins": 4,
+    "losses": 0,
+    "preferred_consistent": 4
+   },
+   "test": {
+    "n": 2,
+    "mean": 0.25,
+    "ci95": [
+     -3.5,
+     4.0
+    ],
+    "wins": 1,
+    "losses": 1,
+    "preferred_consistent": 2
+   }
+  },
+  "duplicate_rates": {
+   "fma-10811": {
+    "B": 0.75,
+    "O": 0.773
+   },
+   "fma-12099": {
+    "B": 0.947,
+    "O": 0.842
+   },
+   "fma-1881": {
+    "B": 0.63,
+    "O": 0.64
+   },
+   "fma-3856": {
+    "B": 0.615,
+    "O": 0.36
+   },
+   "fma-4151": {
+    "B": 0.682,
+    "O": 0.545
+   },
+   "fma-6789": {
+    "B": 0.474,
+    "O": 0.421
+   }
+  },
+  "note": "the single infrastructure failure of the treatment was retried once and completed; the baseline infrastructure failure was retried twice and still failed, so it is recorded as a failure",
+  "cost": {
+   "B": {
+    "complete": 6,
+    "attempted": 11,
+    "mean_calls": 22.8,
+    "mean_input_tokens": 255148,
+    "mean_output_tokens": 7130
+   },
+   "O": {
+    "complete": 11,
+    "attempted": 11,
+    "mean_calls": 27.2,
+    "mean_input_tokens": 296536,
+    "mean_output_tokens": 5929
+   }
+  },
+  "failures": {
+   "fma-11689:B": {
+    "stop": "model_or_structure_failed",
+    "error": "Provider did not finish normally; raw response retained: bud"
+   },
+   "fma-13317:B": {
+    "stop": "model_or_structure_failed",
+    "error": "Provider did not finish normally; raw response retained: bud"
+   },
+   "fma-21995:B": {
+    "stop": "model_or_structure_failed",
+    "error": "API/infrastructure response unusable; raw retained: http_err"
+   },
+   "fma-3855:B": {
+    "stop": "model_or_structure_failed",
+    "error": "Events do not match a publicly permitted full-unit schedule;"
+   },
+   "fma-50459:B": {
+    "stop": "model_or_structure_failed",
+    "error": "Provider did not finish normally; raw response retained: bud"
+   }
+  }
+ },
+ "extension_set": {
+  "schema": "choreobench.extension_set_v3",
+  "n": 6,
+  "songs": [
+   "fma-384",
+   "fma-397",
+   "fma-533",
+   "fma-550",
+   "fma-646",
+   "fma-874",
+   "fma-1085",
+   "fma-1224",
+   "fma-1306"
+  ],
+  "selection": "FMA Electronic, 180-280 s, one song per artist, sorted by track_id, chosen by rule before any generation; two batches, neither used for development",
+  "collection": "272 + 294 + 280 windows x K=2 with the frozen MOSS expert, zero failures",
+  "completion": {
+   "B": "8/9",
+   "O": "9/9",
+   "baseline_failure": "fma-1224"
+  },
+  "judged": {
+   "judge8B": {
+    "mean": 6.0,
+    "ci": [
+     5.12,
+     6.88
+    ],
+    "wins": 8,
+    "losses": 0
+   },
+   "judge30B": {
+    "mean": 4.44,
+    "ci": [
+     3.38,
+     5.56
+    ],
+    "wins": 8,
+    "losses": 0
+   }
+  },
+  "duplicate_rates": {
+   "fma-384": {
+    "B": 0.852,
+    "O": 0.84
+   },
+   "fma-397": {
+    "B": 0.958,
+    "O": 0.577
+   },
+   "fma-533": {
+    "B": 0.85,
+    "O": 0.652
+   },
+   "fma-550": {
+    "B": 0.963,
+    "O": 0.8
+   },
+   "fma-646": {
+    "B": 0.9,
+    "O": 0.667
+   },
+   "fma-874": {
+    "B": 0.889,
+    "O": 0.906
+   }
+  },
+  "verdict": "Eight fresh held-out songs, sixteen judge decisions, all favour the treatment; both intervals are well above zero.",
+  "structure": {
+   "fma-384": {
+    "B": {
+     "events": 27,
+     "unique": 4,
+     "mean_span": 9.2,
+     "coverage": 100.0
+    },
+    "O": {
+     "events": 25,
+     "unique": 4,
+     "mean_span": 10.0,
+     "coverage": 100.0
+    }
+   },
+   "fma-397": {
+    "B": {
+     "events": 24,
+     "unique": 1,
+     "mean_span": 10.0,
+     "coverage": 100.0
+    },
+    "O": {
+     "events": 26,
+     "unique": 11,
+     "mean_span": 9.2,
+     "coverage": 100.0
+    }
+   },
+   "fma-533": {
+    "B": {
+     "events": 20,
+     "unique": 3,
+     "mean_span": 9.6,
+     "coverage": 100.0
+    },
+    "O": {
+     "events": 23,
+     "unique": 8,
+     "mean_span": 8.3,
+     "coverage": 100.0
+    }
+   },
+   "fma-550": {
+    "B": {
+     "events": 27,
+     "unique": 1,
+     "mean_span": 10.1,
+     "coverage": 100.0
+    },
+    "O": {
+     "events": 30,
+     "unique": 6,
+     "mean_span": 9.1,
+     "coverage": 100.0
+    }
+   },
+   "fma-646": {
+    "B": {
+     "events": 20,
+     "unique": 2,
+     "mean_span": 9.9,
+     "coverage": 100.0
+    },
+    "O": {
+     "events": 24,
+     "unique": 8,
+     "mean_span": 8.2,
+     "coverage": 100.0
+    }
+   },
+   "fma-874": {
+    "B": {
+     "events": 27,
+     "unique": 3,
+     "mean_span": 9.9,
+     "coverage": 100.0
+    },
+    "O": {
+     "events": 32,
+     "unique": 3,
+     "mean_span": 8.4,
+     "coverage": 100.0
+    }
+   }
+  },
+  "structure_note": "both arms always cover 100% of the song; the treatment has more events in 4/6, higher unique counts in 5/6, and fma-384 is the counter-example (fewer events, equal unique, still preferred)",
+  "n_paired": 8,
+  "attempted": 9,
+  "paired": [
+   "fma-384",
+   "fma-397",
+   "fma-533",
+   "fma-550",
+   "fma-646",
+   "fma-874",
+   "fma-1085",
+   "fma-1306"
+  ],
+  "per_song_8B": [
+   3.5,
+   7.0,
+   6.0,
+   5.5,
+   5.5,
+   6.0,
+   8.5,
+   6.0
+  ],
+  "per_song_30B": [
+   1.5,
+   5.0,
+   4.0,
+   4.5,
+   4.5,
+   3.5,
+   7.5,
+   5.0
+  ]
+ }
+}

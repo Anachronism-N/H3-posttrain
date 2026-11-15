@@ -1,0 +1,101 @@
+{
+ "schema": "choreobench.paper_result_v1",
+ "protocol": {
+  "candidates": "sol61 v3 K=2 per 5.0625 s window",
+  "outer": "Qwen3-VL-30B-A3B-Instruct T=0",
+  "caps": "max_output_tokens=4096, outline 8192, calls 1+4U, 2M/150k tokens per song",
+  "arms": "B = workflow; S4 = workflow + per-block motif quota (decode-level enum) + harness-derived acoustic guidance"
+ },
+ "completion": {
+  "B": "6/9",
+  "S4": "9/9"
+ },
+ "judged": {
+  "n": 6,
+  "judge": "Qwen3-VL-8B-Instruct (independent from generator)",
+  "order_swapped": true,
+  "per_criterion": {
+   "musical_fit": 0.67,
+   "motif_development": 1.0,
+   "action_executability": 0.5,
+   "boundary_connection": 1.5
+  },
+  "total_mean_delta": 3.67,
+  "bootstrap_ci95": [
+   0.67,
+   6.0
+  ],
+  "wins": {
+   "treatment": 5,
+   "baseline": 1,
+   "tie": 0
+  },
+  "excludes_zero": true,
+  "per_song": {
+   "fma-10811": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": 2,
+     "action_executability": 1,
+     "boundary_connection": 2
+    },
+    "total_delta": 6
+   },
+   "fma-12099": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": 3,
+     "action_executability": 0,
+     "boundary_connection": 2
+    },
+    "total_delta": 6
+   },
+   "fma-1881": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": -1,
+     "action_executability": 0,
+     "boundary_connection": 1
+    },
+    "total_delta": 1
+   },
+   "fma-3856": {
+    "delta": {
+     "musical_fit": -1,
+     "motif_development": -2,
+     "action_executability": 0,
+     "boundary_connection": 0
+    },
+    "total_delta": -3
+   },
+   "fma-4151": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": 2,
+     "action_executability": 1,
+     "boundary_connection": 2
+    },
+    "total_delta": 6
+   },
+   "fma-6789": {
+    "delta": {
+     "musical_fit": 1,
+     "motif_development": 2,
+     "action_executability": 1,
+     "boundary_connection": 2
+    },
+    "total_delta": 6
+   }
+  }
+ },
+ "limitations": [
+  "single small judge; not human review",
+  "one song favours B",
+  "B completion measured under a 4096 output cap",
+  "development songs only; no significance claim for the formal 24-song set"
+ ],
+ "artifacts": {
+  "report": "/ssd/2/niezichao.nzc/artifacts/sr-dev/report_v4",
+  "human_pack": "/ssd/2/niezichao.nzc/artifacts/sr-dev/human_pack_v4"
+ }
+}

@@ -1,0 +1,52 @@
+{
+ "schema": "choreobench.final_dev_method.v1",
+ "method": "music_structured + deterministic acoustic guidance + vocabulary-preserving repeat rewriting (<=5 groups, 1 call each)",
+ "duplicate_rate": {
+  "B": 0.683,
+  "D3": 0.501,
+  "per_song": {
+   "fma-1881": 0.68,
+   "fma-3856": 0.4,
+   "fma-6789": 0.316,
+   "fma-4151": 0.545,
+   "fma-10811": 0.591,
+   "fma-12099": 0.474
+  }
+ },
+ "judged_hidden_labels": {
+  "B_vs_D3": {
+   "mean": 3.9166666666666665,
+   "ci": [
+    3.0,
+    5.083333333333333
+   ],
+   "wins": 6,
+   "losses": 0,
+   "preference_consistent": 6,
+   "n": 6
+  },
+  "D_vs_D3": {
+   "mean": 1.8333333333333333,
+   "ci": [
+    -0.16666666666666666,
+    3.3333333333333335
+   ],
+   "wins": 5,
+   "losses": 1,
+   "preference_consistent": 6,
+   "n": 6
+  }
+ },
+ "completion": {
+  "B": "6/9 attempts",
+  "D3": "6/6"
+ },
+ "author_check": "fma-1881: D3 opens with 8 distinct sentences over 80 s; baseline repeats one sentence for 30 s",
+ "caveats": [
+  "six development songs",
+  "single 8B judge",
+  "no human review",
+  "formal scale not run"
+ ],
+ "verdict": "First configuration with a significant content-quality gain over the workflow baseline under hidden labels (+3.9, CI [3.0,5.1], 6-0)."
+}

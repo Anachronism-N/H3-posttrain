@@ -1,0 +1,82 @@
+{
+ "schema": "choreobench.dev_ladder.v1",
+ "objective": {
+  "duplicate_rate": [
+   {
+    "song": "fma-1881",
+    "B": 0.63,
+    "D": 0.4
+   },
+   {
+    "song": "fma-3856",
+    "B": 0.615,
+    "D": 0.48
+   },
+   {
+    "song": "fma-6789",
+    "B": 0.474,
+    "D": 0.316
+   },
+   {
+    "song": "fma-4151",
+    "B": 0.682,
+    "D": 0.5
+   },
+   {
+    "song": "fma-10811",
+    "B": 0.75,
+    "D": 0.727
+   },
+   {
+    "song": "fma-12099",
+    "B": 0.947,
+    "D": 0.105
+   }
+  ],
+  "B_mean": 0.683,
+  "D_mean": 0.421
+ },
+ "judged_hidden_labels": {
+  "B_vs_S4": {
+   "options": 2.0833333333333335,
+   "ci": [
+    -0.4166666666666667,
+    4.166666666666667
+   ]
+  },
+  "S4_vs_D": {
+   "mean": 2.9,
+   "ci": [
+    1.8,
+    3.9
+   ],
+   "wins": 5,
+   "losses": 0
+  },
+  "S4_vs_F": {
+   "mean": 1.75,
+   "ci": [
+    -0.3333333333333333,
+    3.5
+   ],
+   "wins": 5,
+   "losses": 1
+  },
+  "B_vs_D": {
+   "mean": 1.5,
+   "ci": [
+    -0.8333333333333334,
+    3.5833333333333335
+   ],
+   "wins": 3,
+   "losses": 2
+  }
+ },
+ "completion": {
+  "B": "6/9",
+  "S4": "9/9",
+  "D": "6/6",
+  "F": "6/6"
+ },
+ "verdict": "Repeat rewriting fixes a real defect: verbatim repetition falls from 0.73 to 0.37 on average and D beats S4 5-0 when labels are hidden. But against the workflow baseline on content alone D is only +1.5 with a CI crossing zero (3-2), so at six songs the honest claim is: better completion, cleaner theme structure, far less verbatim repetition, and content quality not yet established."
+}

@@ -1,0 +1,56 @@
+{
+ "schema": "choreobench.formal_protocol.v1",
+ "frozen": "2026-11-15",
+ "arms": {
+  "B": "workflow baseline",
+  "O": "music_structured + deterministic acoustic guidance + repeat rewriting (<=5 groups, vocabulary overlap >=0.20)"
+ },
+ "config": {
+  "method_commons": {
+   "seed": 42,
+   "max_request_characters": 300000,
+   "max_output_tokens": 4096,
+   "outline_max_output_tokens": 8192,
+   "max_input_tokens": 2000000,
+   "max_total_output_tokens": 150000,
+   "outline_proposal_chars": 160,
+   "outline_candidates_per_window": 1
+  },
+  "outer_model": "Qwen3-VL-30B-A3B-Instruct, temperature 0, json mode",
+  "local_candidates": "sol61 v3 K=2 per 5.0625 s window, unchanged",
+  "controller": "v1",
+  "no_style_prior": true
+ },
+ "review": {
+  "judge": "Qwen3-VL-8B-Instruct, temperature 0",
+  "protocol": "blinded pair, order swapped, actions shown in full (no truncation), theme ids hidden, 4 criteria 1-5",
+  "aggregation": "two-order mean, song-level bootstrap 95% CI, preference consistency reported",
+  "human": "2 independent reviewers on the same blinded pairs; abstain allowed, never imputed"
+ },
+ "primary_metrics": [
+  "full-song completion",
+  "blind judged total (treatment minus baseline)"
+ ],
+ "secondary_metrics": [
+  "verbatim duplicate rate",
+  "calls and tokens per song"
+ ],
+ "excluded_claims": [
+  "second-level audio alignment (measured as absent)",
+  "any component additivity without a dedicated arm"
+ ],
+ "data_discipline": {
+  "dev": "dev split only; fma-10811 and fma-12099 are test and must not appear in development or tuning",
+  "formal": "all 11 available songs; dev (5) and test (6) reported separately; no tuning on test"
+ },
+ "power_estimate": "with the observed dev effect (mean +2.75, sd 3.18) 12 songs reach ~92% power",
+ "cost_estimate": "outer model only: ~25 calls per song; 12 songs x 2 arms = 24 runs, roughly 3-4 hours on two local 30B servers",
+ "gate": "freeze code sha before dispatch; report every failure as a result, never drop incomplete runs",
+ "amended": {
+  "date": "2026-11-15",
+  "before": "the local corpus contains exactly 11 songs with views and summaries",
+  "change": "formal scale fixed at all 11 available songs instead of >=12; 5 dev songs and 6 test songs are reported separately",
+  "rationale": "the 12-song target cannot be met without new candidate collection; the protocol is fixed before any formal dispatch",
+  "still_reported": "every attempted song, including failures"
+ }
+}

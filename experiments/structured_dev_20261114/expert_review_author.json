@@ -1,0 +1,48 @@
+{
+ "schema": "choreobench.expert_review_author.v1",
+ "reviewer": "author-side expert reading; NOT a human reviewer",
+ "method": "read full plans with timing against the measured acoustic blocks; score four criteria 1-5; positions mapped afterwards",
+ "cases": [
+  {
+   "song": "fma-384",
+   "verdict": "O",
+   "evidence": "baseline repeats one sentence for the first 11 blocks (~111 s); ours cycles four distinct actions every block; acoustic blocks are steady until 100 s then fall, which neither follows but ours at least varies"
+  },
+  {
+   "song": "fma-874",
+   "verdict": "O",
+   "evidence": "baseline uses one sentence for 10 consecutive blocks; ours alternates three actions and subdivides the first 40 s into 5-second events, matching the early energy swings (9.8 -> 7.2 -> 8.3 -> 0.0 -> 7.4 dB) better"
+  },
+  {
+   "song": "fma-397",
+   "verdict": "O",
+   "evidence": "11 unique vs 1; baseline is a single sentence repeated 24 times"
+  },
+  {
+   "song": "fma-533",
+   "verdict": "O",
+   "evidence": "8 unique vs 3"
+  },
+  {
+   "song": "fma-550",
+   "verdict": "O",
+   "evidence": "6 unique vs 1"
+  },
+  {
+   "song": "fma-646",
+   "verdict": "O",
+   "evidence": "8 unique vs 2"
+  }
+ ],
+ "prefer_treatment": 6,
+ "n": 6,
+ "agreement": {
+  "judge8B": "6/6",
+  "judge30B": "6/6"
+ },
+ "caveats": [
+  "author knows the hypothesis",
+  "no audio listening",
+  "the two deep cases show neither arm follows the energy trend closely"
+ ]
+}

@@ -75,6 +75,8 @@ def outline_request(song, options, units, summary, cfg, require_guidance=True, s
             unknown_is_expected=True,
             never_claim=["chorus/verse detection", "musical phrase", "beat synchronization", "measured audio energy as intention"]),
     )
+    if style_prior is not None:
+        payload["style_prior"] = style_prior.signal(song["song_id"])
     request = _guard_request(song["song_id"] + "/music-outline", cfg,
                              _messages(payload, INSTRUCTION), "music_outline", cfg["outline_max_output_tokens"])
     required_fields = ["motifs", "sections", "section_metadata"]
@@ -228,7 +230,7 @@ def read_outline(response, song, summary, units, require_guidance=True):
                 warnings.append(dict(section_id=section_of[item["unit_id"]], unit_id=item["unit_id"],
                                      dropped_block_motif=motif))
                 motif = None
-            clean.append(dict(item))
+            clean.append(dict(item, motif_id=motif))
         return dict(motifs=value["motifs"], sections=sections, block_guidance=clean,
                     outline_warnings=warnings)
     except (ValueError, TypeError, KeyError) as error:

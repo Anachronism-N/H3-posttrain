@@ -15,21 +15,45 @@ CRITERIA = ("musical_fit", "motif_development", "action_executability", "boundar
 ABSTAIN = ("无法判断", "cannot tell", "tie", "", None)
 
 
+def cohen_kappa(first, second):
+    """Binary marginal agreement; undefined for empty or degenerate panels."""
+    if len(first) != len(second):
+        raise ValueError("Reviewer vectors have different lengths")
+    if not first:
+        return None
+    if any(type(v) is not bool for v in list(first) + list(second)):
+        raise ValueError("Kappa expects binary reviewer vectors")
+    p1, p2 = sum(first) / len(first), sum(second) / len(second)
+    expected = p1 * p2 + (1 - p1) * (1 - p2)
+    observed = sum(a == b for a, b in zip(first, second)) / len(first)
+    return None if expected == 1 else (observed - expected) / (1 - expected)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--bindings", required=True, help="review-pairs.private.json")
     parser.add_argument("--answers", action="append", required=True, help="answers_*.json per reviewer")
     parser.add_argument("--baseline", default="B")
-    parser.add_argument("--treatment", default="S4")
+    parser.add_argument("--treatment", default="O")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
+    if args.baseline == args.treatment:
+        parser.error("baseline and treatment must differ")
+    if Path(args.out).exists():
+        raise FileExistsError(args.out)
     bindings = {p["pair_id"]: p for p in json.loads(Path(args.bindings).read_text())["pairs"]}
     reviewers, rows = [], []
     for path in args.answers:
         payload = json.loads(Path(path).read_text())
         reviewer = payload.get("reviewer_id") or Path(path).stem
+        if reviewer in reviewers:
+            raise ValueError("Duplicate reviewer identity: " + reviewer)
         reviewers.append(reviewer)
+        seen_pairs = set()
         for pair in payload["pairs"]:
+            if pair["pair_id"] in seen_pairs:
+                raise ValueError("Repeated pair from the same reviewer")
+            seen_pairs.add(pair["pair_id"])
             binding = bindings.get(pair["pair_id"])
             if binding is None:
                 raise SystemExit("unknown pair in answers: " + str(pair["pair_id"]))
@@ -39,14 +63,19 @@ def main():
             def method(choice):
                 if choice in ABSTAIN:
                     return None
+                if choice not in ("A", "B"):
+                    raise ValueError("Invalid review choice: " + str(choice))
                 return binding[choice]
 
             row = dict(reviewer=reviewer, pair_id=pair["pair_id"], song_id=pair["song_id"],
                        heard_audio=pair.get("heard_audio"), reason=pair.get("reason", ""),
                        overall_choice=pair.get("overall"), overall_method=method(pair.get("overall")),
-                       criteria={c: method(pair.get(c)) for c in CRITERIA})
+                       criteria={c: (None if c == "musical_fit" and pair.get("heard_audio") is not True
+                                     else method(pair.get(c))) for c in CRITERIA})
             rows.append(row)
     by_reviewer = {}
+    if not rows:
+        raise ValueError("No matching reviews; check baseline/treatment labels and bindings")
     for reviewer in reviewers:
         mine = [r for r in rows if r["reviewer"] == reviewer]
         votes = [r["overall_method"] for r in mine]
@@ -58,7 +87,7 @@ def main():
                                      baseline=sum(1 for r in mine if r["criteria"][c] == args.baseline),
                                      abstain=sum(1 for r in mine if r["criteria"][c] is None))
                              for c in CRITERIA},
-            songs_without_audio=[r["song_id"] for r in mine if r["heard_audio"] is False])
+            songs_without_verified_audio_declaration=[r["song_id"] for r in mine if r["heard_audio"] is not True])
     agreement = []
     for first, second in itertools.combinations(reviewers, 2):
         f = {r["pair_id"]: r["overall_method"] for r in rows if r["reviewer"] == first}
@@ -67,10 +96,8 @@ def main():
         agree = [p for p in shared if f[p] == s[p]]
         observed = len(agree) / len(shared) if shared else None
         # Cohen's kappa for the two-category choice, ties/abstains dropped.
-        p_yes = (sum(1 for p in shared if f[p] == args.treatment) / len(shared)
-                 + sum(1 for p in shared if s[p] == args.treatment) / len(shared)) / 2 if shared else None
-        expected = (p_yes ** 2 + (1 - p_yes) ** 2) if shared else None
-        kappa = None if not shared or expected in (None, 1) else (observed - expected) / (1 - expected)
+        kappa = cohen_kappa([f[p] == args.treatment for p in shared],
+                            [s[p] == args.treatment for p in shared])
         agreement.append(dict(reviewers=[first, second], shared_pairs=len(shared),
                               observed_agreement=observed, kappa=kappa,
                               disagreements=[dict(pair_id=p, first=f[p], second=s[p])

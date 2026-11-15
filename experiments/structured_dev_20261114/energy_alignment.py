@@ -16,7 +16,6 @@ import argparse
 import json
 from pathlib import Path
 
-import librosa
 import numpy as np
 
 HOP = 512
@@ -24,6 +23,7 @@ SR = 16000
 
 
 def curve(audio, seconds):
+    import librosa
     signal, _ = librosa.load(str(audio), sr=SR, mono=True)
     onset = librosa.onset.onset_strength(y=signal, sr=SR, hop_length=HOP)
     frames_per_second = SR / HOP
@@ -50,9 +50,17 @@ def plan_curves(plan, bins, rate):
 
 
 def spearman(a, b):
+    from scipy.stats import rankdata
+    a, b = np.asarray(a, dtype=float), np.asarray(b, dtype=float)
+    if a.ndim != 1 or b.ndim != 1 or len(a) != len(b):
+        raise ValueError("Spearman inputs must be equally sized one-dimensional arrays")
+    if len(a) < 2:
+        return None
+    if not np.isfinite(a).all() or not np.isfinite(b).all():
+        raise ValueError("Spearman inputs must be finite")
     if np.std(a) == 0 or np.std(b) == 0:
         return None
-    return float(np.corrcoef(np.argsort(np.argsort(a)), np.argsort(np.argsort(b)))[0, 1])
+    return float(np.corrcoef(rankdata(a, method="average"), rankdata(b, method="average"))[0, 1])
 
 
 def main():
@@ -71,7 +79,7 @@ def main():
                 continue
             plan = json.loads(plan_path.read_text())
             rate = plan.get("sample_rate", SR)
-            duration = plan["events"][-1]["end"] / rate if plan["events"] else 0
+            duration = plan["num_samples"] / rate
             bins, onset_bin, rms_db = curve(Path(args.audio_root) / (song + ".wav"), duration)
             starts, active = plan_curves(plan, bins, rate)
             rows.append(dict(arm=arm, song=song, seconds=round(duration, 1), events=len(plan["events"]),
@@ -80,7 +88,9 @@ def main():
                              start_rate=round(float(starts.mean()), 3),
                              active_share=round(float(active.mean()), 3)))
     payload = dict(schema="choreobench.energy_alignment.v1", hop_seconds=1.0, rows=rows,
-                   note="Raw-audio onset strength and RMS vs the finished plan; no judge, no acoustic summary.")
+                   note="Exploratory text-timing diagnostics only, not motion intensity or music quality. "
+                        "active is binary event coverage, often constant; constant correlations are undefined. "
+                        "Spearman uses average ranks for ties.")
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n")
     for row in rows:

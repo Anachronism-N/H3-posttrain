@@ -228,3 +228,32 @@ def validate_planning_units(document, song, windows=None):
     if object_sha(document) != object_sha(expected):
         raise ValidationError("Planning units differ from exact source-bound recomputation")
     return document
+
+
+def build_bar_planning_units(song, manifest_song):
+    """One planning unit per validated variable observation, without clock drift.
+
+    This is an explicit v2 path. The legacy fixed-window builder and its exact
+    validation remain unchanged for old E2 and whole-song runs.
+    """
+    from .bar_windows import validate_song_windows
+    validate_song_windows(manifest_song, song)
+    windows = manifest_song['windows']
+    units = []
+    for window in windows:
+        start, end = window['ownership_start'], window['ownership_end']
+        units.append(dict(unit_id='bw%04d' % window['index'], section_id=window['section_id'],
+            kind='metrical_block' if window['kind'] == 'complete_bars' else 'partial_fragment',
+            start=start, end=end, bars=window['complete_bar_count'],
+            complete_bar_count=window['complete_bar_count'], bar_intervals=window['bar_intervals'],
+            reasons=window['reasons'], boundary_source='beat_this_model_downbeats_and_residuals',
+            semantic_phrase_verified=False, window_refs=[dict(window_index=window['index'],
+                observation_overlap=dict(start=start, end=end), ownership_overlap=dict(start=start, end=end))]))
+    return dict(schema='choreobench.planning_units.v2', song_id=song['song_id'],
+        sample_rate=song['audio']['sample_rate'], num_samples=song['audio']['num_samples'],
+        audio_sha256=song['audio']['sha256'], song_sha256=object_sha(song),
+        music_sha256=object_sha(song['music']), windows_sha256=object_sha(windows),
+        window_count=len(windows), config=manifest_song['config'],
+        provenance=dict(algorithm='beat_this_closed_bars_dp.v2',
+                        bar_window_song_sha256=object_sha(manifest_song),
+                        semantic_phrase_detection=False, boundaries_are_action_boundaries=False), units=units)

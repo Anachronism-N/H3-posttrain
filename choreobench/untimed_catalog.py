@@ -15,15 +15,22 @@ from .providers import create_provider
 from .schema import validate_dataset,integer
 
 
-def run_catalog(dataset_path,provider_path,out_dir,*,seed=42,candidates_per_window=2,max_output_tokens=1024,max_calls=3000,resume=False,provider_factory=None):
+def run_catalog(dataset_path,provider_path,out_dir,*,seed=42,candidates_per_window=2,max_output_tokens=1024,max_calls=3000,resume=False,provider_factory=None,windows_manifest=None):
     dataset_path=Path(dataset_path).resolve();provider_path=Path(provider_path).resolve();output=Path(out_dir).resolve()
     dataset,sha=read_json_snapshot(dataset_path);validate_dataset(dataset)
     spec,spec_sha=read_json_snapshot(provider_path)
+    window_document=window_sha=None
+    if windows_manifest is not None:
+        from .bar_windows import load_manifest
+        windows_manifest=Path(windows_manifest).resolve()
+        window_document,window_sha=load_manifest(windows_manifest,dataset,sha)
+        if spec.get('kind')!='native' or spec.get('audio_contract')!='variable_duration_v1':
+            raise ValueError('Bar catalog requires explicit native variable_duration_v1; fixed providers cannot consume variable windows')
     for name,value,low,high in [('seed',seed,0,2**63-1),('candidates_per_window',candidates_per_window,1,4),('max_output_tokens',max_output_tokens,1,8192),('max_calls',max_calls,1,10000)]:
         integer(value,name,low)
         if value>high:raise ValueError('Catalog budget outside bounds')
     if spec.get('kind') not in ('native','native_service','replay'):raise ValueError('Catalog requires explicit original-audio provider')
-    if spec.get('kind')=='native' and not spec.get('portable_checkpoint') and (spec.get('checkpoint') or not spec.get('task_prompt')):
+    if window_document is None and spec.get('kind')=='native' and not spec.get('portable_checkpoint') and (spec.get('checkpoint') or not spec.get('task_prompt')):
         raise ValueError('Untimed base-only catalog requires a frozen public task prompt')
     if spec.get('portable_checkpoint') and (spec.get('checkpoint') is None or spec.get('task_prompt')):
         raise ValueError('A portable-checkpoint catalog requires a checkpoint and no task prompt override')
@@ -31,7 +38,9 @@ def run_catalog(dataset_path,provider_path,out_dir,*,seed=42,candidates_per_wind
     for song in dataset['songs']:
         path=resolve_audio(song,dataset_path);audio=inspect_audio(path)
         if any(audio[k]!=song['audio'][k] for k in ('sha256','sample_rate','num_samples')):raise ValueError('Full-song waveform differs from dataset')
-        windows=make_windows(audio['num_samples'],audio['sample_rate']);songs.append(dict(song_id=song['song_id'],windows=windows))
+        windows=(next(r['windows'] for r in window_document['songs'] if r['song_id']==song['song_id'])
+                 if window_document is not None else make_windows(audio['num_samples'],audio['sample_rate']))
+        songs.append(dict(song_id=song['song_id'],windows=windows))
         prepared.append((song,audio,windows))
     expected=sum(len(s['windows'])*candidates_per_window for s in songs)
     if expected>max_calls:raise ValueError('Catalog cannot fit complete independent source inventory')
@@ -40,6 +49,10 @@ def run_catalog(dataset_path,provider_path,out_dir,*,seed=42,candidates_per_wind
         provider_path=str(provider_path),provider_config_sha256=spec_sha,provider_config=spec,seed=seed,
         candidates_per_window=candidates_per_window,max_output_tokens=max_output_tokens,max_calls=max_calls,
         expected_calls=expected,song_windows=songs,code_sha256=code,untimed_whole_window=True)
+    if window_document is not None:
+        base.update(schema='choreobench.untimed_catalog_contract.v2',
+            window_manifest_sha256=window_sha,window_manifest_snapshot=window_document,
+            audio_contract='variable_duration_v1')
     if output.exists() and not resume:raise FileExistsError(str(output))
     if resume and not (output/'contract.json').is_file():raise ValueError('Resume requires original catalog contract')
     output.mkdir(parents=True,exist_ok=True)
@@ -50,6 +63,8 @@ def run_catalog(dataset_path,provider_path,out_dir,*,seed=42,candidates_per_wind
             if set(contract)!=set(base)|{'provider_identity','synthetic','record_sha256'} or any(contract[k]!=v for k,v in base.items()):raise ValueError('Catalog input/code/config changed')
         else:
             provider=(provider_factory or create_provider)(spec,role='local',base_dir=provider_path.parent)
+            if window_document is not None and not provider.identity.get('synthetic') and provider.identity.get('audio_contract')!='variable_duration_v1':
+                raise ValueError('Variable catalog provider did not attest the variable-duration contract')
             contract=_sealed(dict(base,provider_identity=copy.deepcopy(provider.identity),synthetic=dataset['synthetic'] or provider.identity['synthetic']))
             write_json(output/'contract.json',contract)
         identity=contract['provider_identity'];journal=_Journal(output,object_sha(contract),max_calls)
@@ -57,6 +72,7 @@ def run_catalog(dataset_path,provider_path,out_dir,*,seed=42,candidates_per_wind
         audio_signatures={audio['path']:(Path(audio['path']).stat().st_ino,Path(audio['path']).stat().st_size,Path(audio['path']).stat().st_mtime_ns,Path(audio['path']).stat().st_ctime_ns) for song,audio,windows in prepared}
         def unchanged():
             if file_sha(dataset_path)!=sha or file_sha(provider_path)!=spec_sha:raise ValueError('Catalog source changed')
+            if windows_manifest is not None and file_sha(windows_manifest)!=window_sha:raise ValueError('Window manifest changed')
             if read_json(output/'contract.json')!=contract:raise ValueError('Frozen catalog contract changed')
             if any(file_sha(Path(__file__).parent/name)!=digest for name,digest in code.items()):raise ValueError('Catalog execution code changed')
             for song,audio,windows in prepared:
@@ -110,7 +126,7 @@ def run_catalog(dataset_path,provider_path,out_dir,*,seed=42,candidates_per_wind
         for key in ('unknown_outcome_call_ids','unknown_usage_call_ids'):accounting[key].sort()
         for song,audio,windows in prepared:
             if file_sha(audio['path'])!=audio['sha256']:raise ValueError('Full-song source audio changed at publication')
-        result=_sealed(dict(schema='choreobench.untimed_catalog.v1',complete=True,contract_sha256=object_sha(contract),dataset_sha256=sha,
+        result=_sealed(dict(schema='choreobench.untimed_catalog.v2' if window_document is not None else 'choreobench.untimed_catalog.v1',complete=True,contract_sha256=object_sha(contract),dataset_sha256=sha,
             dataset_snapshot=dataset,provider_identity=identity,entries=entries,artifacts=artifacts,expected_calls=expected,calls_used=len(journal.started),
             call_records={k:v['record_sha256'] for k,v in journal.records.items()},**accounting,
             complete_proposals=sum(e['status']=='complete' for e in entries),failed_proposals=sum(e['status']=='failed' for e in entries),
@@ -125,7 +141,7 @@ def run_catalog(dataset_path,provider_path,out_dir,*,seed=42,candidates_per_wind
 def load_catalog_song(catalog_path,song_id,sources):
     catalog_path=Path(catalog_path).resolve();value,sha=read_json_snapshot(catalog_path);_verify(value)
     sources[str(catalog_path)]=sha
-    if value['schema']!='choreobench.untimed_catalog.v1' or not value['complete']:raise ValueError('Complete raw catalog required')
+    if value['schema'] not in ('choreobench.untimed_catalog.v1','choreobench.untimed_catalog.v2') or not value['complete']:raise ValueError('Complete raw catalog required')
     contract_path=catalog_path.parent/'contract.json';contract,digest=read_json_snapshot(contract_path);_verify(contract);sources[str(contract_path)]=digest
     if (object_sha(contract)!=value['contract_sha256'] or contract['dataset_sha256']!=value['dataset_sha256']
             or contract['dataset_snapshot']!=value['dataset_snapshot'] or contract['provider_identity']!=value['provider_identity']):raise ValueError('Catalog source binding differs')
@@ -136,7 +152,17 @@ def load_catalog_song(catalog_path,song_id,sources):
     journal=_Journal(catalog_path.parent,object_sha(contract),contract['max_calls'])
     if value['call_records']!={k:v['record_sha256'] for k,v in journal.records.items()} or value['calls_used']!=len(journal.started):raise ValueError('Catalog calls missing/changed')
     windows=next(s['windows'] for s in contract['song_windows'] if s['song_id']==song_id);options=[]
-    if windows!=make_windows(original['audio']['num_samples'],original['audio']['sample_rate']):raise ValueError('Catalog window clock differs')
+    bar_song=None
+    if value['schema']=='choreobench.untimed_catalog.v2':
+        from .bar_windows import validate_manifest
+        if contract.get('schema')!='choreobench.untimed_catalog_contract.v2' or contract.get('audio_contract')!='variable_duration_v1':
+            raise ValueError('Variable catalog requires the exact v2 audio contract')
+        manifest=validate_manifest(contract['window_manifest_snapshot'],value['dataset_snapshot'],value['dataset_sha256'])
+        # read_json_snapshot hashes bytes; validate the immutable snapshot via its
+        # content recomputation, and retain the original byte hash as provenance.
+        bar_song=next(r for r in manifest['songs'] if r['song_id']==song_id)
+        if windows!=bar_song['windows']:raise ValueError('Catalog bar window clock differs')
+    elif windows!=make_windows(original['audio']['num_samples'],original['audio']['sample_rate']):raise ValueError('Catalog window clock differs')
     if len(selected)!=len(windows)*contract['candidates_per_window']:raise ValueError('Catalog proposal inventory differs')
     for window in windows:
         relative='audio/'+song_id+'/%04d.wav'%window['index']
@@ -164,14 +190,22 @@ def load_catalog_song(catalog_path,song_id,sources):
         if len(candidates)!=contract['candidates_per_window']:raise ValueError('Catalog K changed')
         options.append(dict(window=copy.deepcopy(window),candidates=candidates))
     for p in journal.directory.glob('*.json'):sources[str(p.resolve())]=file_sha(p)
-    return copy.deepcopy(original),dict(windows=options),value['synthetic'],value['record_sha256']
+    result_options=dict(windows=options)
+    if bar_song is not None:
+        result_options.update(bar_windows=copy.deepcopy(bar_song),window_manifest_sha256=contract['window_manifest_sha256'])
+    return copy.deepcopy(original),result_options,value['synthetic'],value['record_sha256']
 
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('dataset','provider','out-dir'):parser.add_argument('--'+name,required=True,type=Path)
     parser.add_argument('--max-calls',type=int,default=3000);parser.add_argument('--resume',action='store_true')
-    args=parser.parse_args(argv);result=run_catalog(args.dataset,args.provider,args.out_dir,max_calls=args.max_calls,resume=args.resume)
+    parser.add_argument('--windows-manifest',type=Path,help='Explicit Beat This variable-window v2 manifest; no fixed-window fallback')
+    parser.add_argument('--seed',type=int,default=42)
+    parser.add_argument('--candidates-per-window',type=int,default=2)
+    parser.add_argument('--max-output-tokens',type=int,default=1024)
+    args=parser.parse_args(argv);result=run_catalog(args.dataset,args.provider,args.out_dir,max_calls=args.max_calls,resume=args.resume,
+        windows_manifest=args.windows_manifest,seed=args.seed,candidates_per_window=args.candidates_per_window,max_output_tokens=args.max_output_tokens)
     print({k:result[k] for k in ('calls_used','complete_proposals','failed_proposals','formal_E3_completed')})
 
 

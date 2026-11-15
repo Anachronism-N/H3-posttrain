@@ -2,7 +2,7 @@
 """Does Module S actually use the acoustic summary?
 
 Generates the whole-song outline twice for the same song: once with the real
-summary and once with a shuffled one (block order mirrored, energies/onsets
+   summary and once with a shuffled one (block evidence cyclically shifted, energies/onsets
 swapped, relations dropped). Then compares
 
 - the returned per-block guidance (identical output would mean the summary is
@@ -41,13 +41,16 @@ def cfg():
 def shuffled(summary):
     value = copy.deepcopy(summary)
     blocks = value["blocks"]
+    permutation = [(index + 1) % len(blocks) for index in range(len(blocks))]
     for index, block in enumerate(blocks):
-        mirror = blocks[len(blocks) - 1 - index]
+        mirror = summary["blocks"][permutation[index]]
         block["relative_energy_db"], block["onset_rate_per_second"] = (
             mirror["relative_energy_db"], mirror["onset_rate_per_second"])
         block["energy_trend"] = mirror["energy_trend"]
     value["relations"] = []
     value["_control_shuffled"] = True
+    value["_control_permutation"] = permutation
+    value["_control_identifiable"] = len(blocks) > 1
     return value
 
 

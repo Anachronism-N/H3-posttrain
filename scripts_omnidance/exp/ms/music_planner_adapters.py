@@ -201,13 +201,25 @@ class PlannerAdapter:
                 raise ValueError('Audio bytes differ from declared audio_sha256')
             self._audio_identities[str(path)] = (identity, expected)
         window = row.get('audio_window_seconds', [0., 5.0625])
-        if window != [0., 5.0625]:
+        variable = row.get('audio_contract', 'fixed_5s_v1') == 'variable_duration_v1'
+        if row.get('audio_contract', 'fixed_5s_v1') not in ('fixed_5s_v1', 'variable_duration_v1'):
+            raise ValueError('Unknown native audio contract')
+        if not variable and window != [0., 5.0625]:
             raise ValueError('Only one full [0,5.0625] audio, never a physical window crop')
         audio, rate = sf.read(path, dtype='float32', always_2d=True)
         if audio.shape[1] != 1 or not np.isfinite(audio).all():
             raise ValueError('Require the original finite mono waveform')
+        if variable:
+            if (type(row.get('audio_num_samples')) is not int or type(row.get('audio_sample_rate')) is not int
+                    or row['audio_num_samples'] != len(audio) or row['audio_sample_rate'] != rate
+                    or len(audio) < 2 or window != [0., len(audio) / rate]):
+                raise ValueError('Variable audio must declare the exact complete waveform and duration')
+            self._last_audio_contract_receipt = dict(contract='variable_duration_v1',
+                source_sample_rate=rate, source_num_samples=len(audio),
+                source_seconds=len(audio)/rate, complete_waveform_loaded=True,
+                time_stretched=False, silently_cropped=False, quality_verified=False)
         extra_frames = len(audio) - 5.0625 * rate
-        if abs(len(audio) / rate - 5.0625) > 1 / rate:
+        if not variable and abs(len(audio) / rate - 5.0625) > 1 / rate:
             raise ValueError('Audio must contain the complete 5.0625-second source: '
                              f'id={row.get("id")}, rate={rate}, samples={len(audio)}, '
                              f'expected={5.0625 * rate}, extra_frames={extra_frames}')

@@ -1,0 +1,290 @@
+{
+  "schema": "choreobench.bar_style_agent_experiment_plan.v1",
+  "date": "2026-11-15",
+  "status": "implementation_written_static_checked_server_preflight_pending",
+  "formal_dispatch_ready": false,
+  "source_revisions": {
+    "h3": "98b0e2336df3737bb3c304839cb03e67515e59db",
+    "sound_caption": "a61bb1bf921b5b295e08822a8e5beed9fbcfd29f"
+  },
+  "document": "../../notes/60_bar_window_global_style_agent_experiments_20261115_zh.md",
+  "run_contract_note": "Planning metadata only; not accepted by current run-composition CLI.",
+  "data": {
+    "dev_songs": 3,
+    "formal_songs": 12,
+    "formal_duration_seconds": [
+      180,
+      300
+    ],
+    "source_disjoint": true,
+    "selection_before_generation": true,
+    "song_manifest": null,
+    "historical_panel": "prior 9 songs are retest only; never silently replace new holdout"
+  },
+  "windows": {
+    "detector": "beat_this.inference.File2Beats",
+    "checkpoint": "final0",
+    "dbn": false,
+    "allowed_complete_bars": [
+      2,
+      3,
+      4
+    ],
+    "target_seconds": 5.0625,
+    "grouping": "DP minimize sum(((duration-target)/target)^2), tie by fewer windows then lexicographic bar-count sequence",
+    "time_basis": "integer samples on canonical audio",
+    "partial_edges": "explicit ownership, preserve all audio",
+    "fixed_duration_fallback": "separate declared condition, never silently use in bar-window main results",
+    "provider_duration_preflight_required": true
+  },
+  "style": {
+    "preferred_model": "frozen MuQ + validation-selected focal pilot head at a61bb1b",
+    "output_classes": 22,
+    "training_supported_classes": 15,
+    "checkpoint": null,
+    "model_identity": null,
+    "global_once": true,
+    "header_template": "Dance style is {label}.",
+    "unknown_header": "Dance style is unspecified.",
+    "aggregation": "ownership-duration-weighted mean probabilities; split overlap weight across observations",
+    "internal_native_windows_allowed": true,
+    "unknown_when": [
+      "no valid coverage",
+      "prediction failure",
+      "argmax outside frozen training-supported class list"
+    ],
+    "threshold": null,
+    "shared_by_all_arms": true,
+    "exclude_header_from_body_metrics": true
+  },
+  "models": {
+    "local_expert": null,
+    "outer": "Qwen3-VL-30B-A3B-Instruct (text interface)",
+    "audio_judge": null,
+    "text_judge": null,
+    "candidates_per_window": 2,
+    "outer_temperature": 0,
+    "outer_seed": 42,
+    "local_expert_decoding": {
+      "status": "freeze validated checkpoint configuration before collection",
+      "temperature": null,
+      "top_p": null,
+      "do_sample": null,
+      "max_new_tokens": null,
+      "repetition_control": null,
+      "candidate_seeds": null
+    }
+  },
+  "arms": [
+    {
+      "id": "W",
+      "method": "workflow",
+      "strategy": "outline + history + block generation + common validation"
+    },
+    {
+      "id": "SF",
+      "method": "self_refine",
+      "strategy": "draft feedback refine per block; task adaptation"
+    },
+    {
+      "id": "RA",
+      "method": "react",
+      "strategy": "tool-selection loop with common bounded controller; task adaptation"
+    },
+    {
+      "id": "O",
+      "method": "music_structured",
+      "strategy": "acoustic binding + motif organization + bounded repeat rewriting"
+    }
+  ],
+  "required_ablations": [
+    {
+      "id": "O-noR",
+      "source": "O",
+      "reuse": "exact pre-rewrite completed plan and cost prefix"
+    },
+    {
+      "id": "W-plusR",
+      "source": "W",
+      "reuse": "same frozen W plan; same rewrite mechanism; own remaining budget = common cap minus actual W consumption"
+    }
+  ],
+  "optional_ablations": [
+    "fixed duration vs real bars, regenerate respective candidates",
+    "global style on/off",
+    "correct vs mismatched acoustic evidence",
+    "budget curves",
+    "local expert x harness 2x2",
+    "separate scoped edit panel"
+  ],
+  "shared_evidence": [
+    "canonical audio",
+    "bar manifest",
+    "candidate cache",
+    "global style",
+    "acoustic summaries",
+    "generic tool permissions",
+    "common validation and retry rules"
+  ],
+  "budget": {
+    "outer_calls": "1+4U",
+    "input_tokens": 2000000,
+    "output_tokens": 150000,
+    "local_output_tokens": 4096,
+    "outline_output_tokens": 8192,
+    "request_characters": 300000,
+    "max_repeat_groups": 5,
+    "service_retries": 2,
+    "format_repairs": 1,
+    "retries_and_repairs_counted": true,
+    "actual_physical_calls_required": true,
+    "longest_dev_song_preflight": true,
+    "service_retry_scope": "per request, at most two retries, counted as physical requests",
+    "format_repair_scope": "at most one per planning block and one for outline; all counted",
+    "call_limit_counts": "all physical requests including retries, repairs and rewrites"
+  },
+  "evaluation": {
+    "rubric": "../../notes/54_benchmark_rubric_ablations_and_case_studies_20261114_zh.md",
+    "primary_dimensions": [
+      "L1",
+      "L2",
+      "L3"
+    ],
+    "comparisons": [
+      "O-W",
+      "O-SF",
+      "O-RA"
+    ],
+    "multiplicity": "Holm over nine comparisons from one primary judge frozen before formal evaluation; other judges reported separately",
+    "secondary_dimensions": [
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5",
+      "D6"
+    ],
+    "scales": {
+      "quality": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "unknown": "evidence/service unresolved, not low-quality text",
+      "D6_NA": "audio-only applicability frozen for all methods"
+    },
+    "whole_song_audio_evidence": {
+      "chunk_seconds": 30,
+      "independent_of_candidates": true,
+      "complete_coverage_required": true,
+      "capability_checked_before_freeze": true
+    },
+    "local_regions": {
+      "seconds": 20,
+      "starts": [
+        "0",
+        "(T-20)/2",
+        "T-20"
+      ],
+      "same_across_arms": true
+    },
+    "pairwise": {
+      "registered_pairs": 36,
+      "swapped_orders": true,
+      "independent_sampling_unit": "song/source group"
+    },
+    "human": {
+      "reviewers": 2,
+      "pairs_per_reviewer": 36,
+      "planned_not_completed": true,
+      "ties_and_abstentions": true
+    },
+    "bootstrap": {
+      "draws": 10000,
+      "unit": "song/source group",
+      "seed": 42,
+      "confidence": 0.95
+    },
+    "report_separate": [
+      "completion all registered songs",
+      "paired quality valid intersection and coverage",
+      "text-only vs audio judgments",
+      "each judge family",
+      "shared preprocessing vs outer costs"
+    ],
+    "diagnostics": [
+      "event-union coverage",
+      "exact/near text repetition excluding header",
+      "confirmed boundary conflicts and judged coverage",
+      "unproductive repetition and judged coverage"
+    ],
+    "never_use_as_independent_quality": [
+      "bar boundary hit rate",
+      "fixed style header correctness",
+      "motif ID count",
+      "generator quota adherence"
+    ],
+    "primary_judge": null,
+    "paired_test": {
+      "method": "two-sided paired sign permutation of mean song difference",
+      "n_lte_20": "enumerate all 2^n sign vectors",
+      "null_assumption": "paired differences are sign-exchangeable",
+      "separate_from_bootstrap": true
+    },
+    "audio_clock": {
+      "time_unit": "seconds",
+      "required": [
+        "audio_global_start_seconds",
+        "audio_global_end_seconds"
+      ],
+      "comparison_scope": "observable audio intersection; retain full action text and global clock"
+    }
+  },
+  "readiness_required": [
+    "duration-aware window/catalog/provider contract",
+    "new JEV identity and global header path",
+    "identical public music evidence access across four arms",
+    "transactional rewrite logging and shared postprocessor",
+    "correct immutable audio permutation",
+    "seconds time unit in all judge payloads/prompts",
+    "full untruncated anonymous text with validated score schema",
+    "audio encoding coverage proof and rubric calibration",
+    "correct tied ranks and Cohen kappa",
+    "general registered matrix runner and raw artifact reporting",
+    "frozen data/model/code/protocol identities"
+  ],
+  "resources": {
+    "h3_repo": null,
+    "sound_caption_repo": null,
+    "data_root": null,
+    "run_root": null,
+    "beatthis_checkpoint": null,
+    "beatthis_checkpoint_source": null,
+    "local_expert_provider": null,
+    "outer_provider": null,
+    "jev_model": null,
+    "jev_encoder_config": null,
+    "audio_judge_provider": null,
+    "text_judge_provider": null
+  },
+  "dispatch_sequence": [
+    "P0 implementation and dev validation",
+    "freeze new 12 songs and protocol",
+    "shared evidence and candidates",
+    "48 registered main runs",
+    "reuse ablation drafts",
+    "machine evaluation and artifact export",
+    "independent human review",
+    "paired report including failures"
+  ],
+  "training_required": false,
+  "implementation": {
+    "matrix_entry": "python -m choreobench.bar_agent_experiment",
+    "runbook": "README.md",
+    "tests_executed": false,
+    "model_inference_executed": false,
+    "formal_dispatch_ready": false
+  }
+}

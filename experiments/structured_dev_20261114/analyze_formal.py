@@ -30,13 +30,15 @@ def main():
     parser.add_argument("--runs", required=True, help="root with <arm>/<song>/plan.json")
     parser.add_argument("--inventory", required=True, help="formal_song_inventory.json for splits")
     parser.add_argument("--out", required=True)
-    parser.add_argument("--provider", required=True, help="provider json for the judge server")
+    parser.add_argument("--provider", help="provider json for the judge server (required unless --skip-judge)")
     parser.add_argument("--base-url", default="http://127.0.0.1:8014/v1")
     parser.add_argument("--model", default="Qwen3-VL-8B-Instruct")
     parser.add_argument("--skip-judge", action="store_true")
     args = parser.parse_args()
+    if not args.skip_judge and not args.provider:
+        parser.error("--provider is required for judging")
     runs, out = Path(args.runs), Path(args.out)
-    out.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=False)
     inventory = {s["song_id"]: s for s in json.loads(Path(args.inventory).read_text())["songs"]}
     status = {}
     for arm in ("B", "O"):
@@ -47,7 +49,7 @@ def main():
                 status[(arm, song)] = "missing"
                 continue
             payload = json.loads(result.read_text())
-            status[(arm, song)] = "complete" if payload.get("full_song_succeeded") else "failed"
+            status[(arm, song)] = "complete" if payload.get("full_song_succeeded") is True and plan.is_file() else "failed"
     paired = sorted(song for song in inventory
                     if status[("B", song)] == "complete" and status[("O", song)] == "complete")
     completion = dict(
@@ -68,7 +70,7 @@ def main():
                         "--pairs", str(out / "bundle/review-pairs.public.json"),
                         "--music-root", str(Path(args.provider).resolve().parent / "music_all"),
                         "--out", str(out / "judge.json"), "--repeat-swapped", "--hide-motif",
-                        "--action-chars", "400", "--max-tokens", "1800",
+                        "--action-chars", "0", "--max-tokens", "1800",
                         "--base-url", args.base_url, "--model", args.model], check=True, cwd=HERE)
         judge = json.loads((out / "judge.json").read_text())
         bindings = {p["pair_id"]: p for p in json.loads((out / "bundle/review-pairs.private.json").read_text())["pairs"]}

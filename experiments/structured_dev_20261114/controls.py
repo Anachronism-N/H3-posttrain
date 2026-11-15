@@ -37,13 +37,19 @@ def cfg():
 def shuffled(summary):
     value = copy.deepcopy(summary)
     blocks = value["blocks"]
+    # Read from the immutable input: reading a previously overwritten block
+    # duplicates evidence instead of permuting it. A cyclic shift has no fixed
+    # points for n > 1, unlike reversal of an odd-length sequence.
+    permutation = [(index + 1) % len(blocks) for index in range(len(blocks))]
     for index, block in enumerate(blocks):
-        mirror = blocks[len(blocks) - 1 - index]
+        mirror = summary["blocks"][permutation[index]]
         block["relative_energy_db"], block["onset_rate_per_second"] = (
             mirror["relative_energy_db"], mirror["onset_rate_per_second"])
         block["energy_trend"] = mirror["energy_trend"]
     value["relations"] = []
     value["_control_shuffled"] = True
+    value["_control_permutation"] = permutation
+    value["_control_identifiable"] = len(blocks) > 1
     return value
 
 

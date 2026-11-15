@@ -128,7 +128,7 @@ class ReplayProvider:
 class NativeProvider:
     def __init__(self, spec, role, base_dir=None):
         _allowed(spec, ("kind", "family", "model", "checkpoint", "training_source_dir", "device",
-                        "max_length", "temperature", "top_p", "top_k", "task_prompt"))
+                        "max_length", "temperature", "top_p", "top_k", "task_prompt", "audio_contract"))
         if role != "local":
             raise ValueError("Native audio-only model is a local provider, never a text editor/planner")
         self.spec = copy.deepcopy(spec)
@@ -136,6 +136,11 @@ class NativeProvider:
         if self.family not in ("omni_captioner", "moss", "music_flamingo"):
             raise ValueError("Unknown native model family")
         self.task_prompt = spec.get("task_prompt")
+        self.audio_contract = spec.get("audio_contract", "fixed_5s_v1")
+        if self.audio_contract not in ("fixed_5s_v1", "variable_duration_v1"):
+            raise ValueError("Unknown native audio contract")
+        if self.audio_contract == "variable_duration_v1" and not spec.get("checkpoint") and not self.task_prompt:
+            raise ValueError("Variable-duration base inference requires an explicit untimed task_prompt")
         if "task_prompt" in spec and (spec.get("checkpoint")
                 or not isinstance(self.task_prompt, str) or not self.task_prompt.strip()
                 or len(self.task_prompt) > 16384 or "<|" in self.task_prompt or "<audio>" in self.task_prompt):
@@ -170,6 +175,9 @@ class NativeProvider:
         self.adapter = None
         self.verification = None
         self.requires_restart = False
+        if self.audio_contract == "variable_duration_v1":
+            self.identity["audio_contract"] = self.audio_contract
+            self.identity["variable_duration_quality_verified"] = False
 
     def _task_template(self):
         if self.family == "moss":
@@ -216,10 +224,22 @@ class NativeProvider:
         audio = request["audio"]
         row = dict(id=request["call_id"], audio_path=audio["path"], audio_sha256=audio["sha256"],
                    audio_window_seconds=[0., 5.0625])
+        if self.audio_contract == "variable_duration_v1":
+            from .audio import inspect_audio
+            actual = inspect_audio(audio["path"])
+            if any(actual[key] != audio[key] for key in ("sha256", "sample_rate", "num_samples")):
+                raise ValueError("Variable-duration waveform identity differs from request")
+            row.update(audio_contract=self.audio_contract,
+                       audio_window_seconds=[0., actual["num_samples"] / actual["sample_rate"]],
+                       audio_num_samples=actual["num_samples"], audio_sample_rate=actual["sample_rate"])
         started = time.monotonic()
         generated = sample_native(self.adapter, row, seed=request["seed"],
                                   max_new_tokens=request["max_output_tokens"], **self.sampling)
         raw = dict(generation=generated, loaded_artifact_verification=self.verification)
+        if self.audio_contract == "variable_duration_v1":
+            raw["audio_contract_receipt"] = copy.deepcopy(getattr(self.adapter, "_last_audio_contract_receipt", None))
+            if raw["audio_contract_receipt"] is None:
+                raise ValueError("Variable inference did not record complete-waveform loading")
         if self.task_prompt is not None:
             raw["formatted_task_prompt"] = self._task_template()
         return dict(text=generated["raw_text"], raw=raw, identity=self.identity,

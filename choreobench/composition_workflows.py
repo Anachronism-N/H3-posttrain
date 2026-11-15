@@ -50,7 +50,7 @@ def _load_style_prior(path,source_path,source,sources):
   contract_path=(Path(header['catalog_dir'])/'contract.json' if header.get('schema')=='choreobench.complete_catalog_song.v1'
                  else root.parent/'contract.json')
  contract=_snapshot(contract_path,sources)
- if contract.get('schema') not in ('choreobench.coordination_contract.v1','choreobench.untimed_catalog_contract.v1'):
+ if contract.get('schema') not in ('choreobench.coordination_contract.v1','choreobench.untimed_catalog_contract.v1','choreobench.untimed_catalog_contract.v2'):
   raise ValueError('Style prior requires the original source dataset contract')
  dataset=contract['dataset_snapshot'];validate_dataset(dataset)
  original=next((s for s in dataset['songs'] if s['song_id']==source['original']['song_id']),None)
@@ -72,6 +72,10 @@ def _source(path,song_id,cfg,sources):
   original,options,synthetic,digest=load_song_view(path,song_id,sources)
  else:original,options,synthetic,digest=load_catalog_song(path,song_id,sources)
  units=build_planning_units(original,config=cfg['unit_config'])
+ if options.get('bar_windows'):
+  if cfg.get('bar_structure'):raise ValueError('Bound bar-window candidates cannot use a different bar_structure partition')
+  from .planning_units import build_bar_planning_units
+  units=build_bar_planning_units(original,options['bar_windows'])
  if cfg.get('bar_structure'):
   from . import bar_structure
   structure=bar_structure.load(cfg['bar_structure'])
@@ -81,6 +85,41 @@ def _source(path,song_id,cfg,sources):
   units['song_id']=original['song_id']
  return dict(original=original,song=copy.deepcopy(original),options=options,units=units,config=cfg,
              synthetic=synthetic,source_contract_sha256=digest)
+
+
+def _shared_request(request,source,cfg,unit=None):
+ """Equal public evidence for all strategies; constraints remain strategy-specific."""
+ request=copy.deepcopy(request)
+ payload=parse_json_response(request['messages'][-1]['content'])
+ if source.get('music_summary') is not None:
+  summary=source['music_summary']
+  from .music_structure_summary import compact
+  payload['music_summary']=(dict(blocks=summary['blocks'],relations=summary['relations'],parameters=summary['parameters'],
+                                functional_labels_verified=False,beat_or_meter_assumed=False)
+                            if unit is None else compact(summary,unit['start'],unit['end']))
+ condition=source.get('global_style')
+ if condition is not None:
+  payload['global_style']=condition
+  request['messages'][0]['content']=condition['header']+'\nUse this shared global creative condition; output only the requested JSON, never a style header inside action text.\n'+request['messages'][0]['content']
+ request['messages'][-1]['content']=json_text(payload)
+ return guard_request(request,cfg)
+
+
+def _global_condition(prior,song_id,override=None):
+ if prior is None and override is None:return None
+ signal=prior.signal(song_id) if prior is not None else {}
+ if 'header' in signal:condition=copy.deepcopy(signal)
+ else:
+  p=signal.get('probabilities');labels=signal.get('model_identity',{}).get('class_order',[])
+  label=labels[max(range(len(p)),key=lambda i:p[i])] if p else 'unspecified'
+  condition=dict(label=label,header='Dance style is '+label+'.',status='available' if p else 'no_valid_coverage',
+                 source=signal,scope='global')
+ if override is not None:
+  import re
+  if not isinstance(override,str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9 /_+()-]{0,79}',override):
+   raise ValueError('Explicit user style must be a safe single label')
+  condition.update(original_label=condition['label'],label=override,header='Dance style is '+override+'.',status='explicit_user_override')
+ return condition
 
 
 class CompositionState:
@@ -203,20 +242,21 @@ def _request(state,cfg,method,phase,feedback=None):
  elif phase=='revise':system+=' Revise the same current-unit draft using supplied feedback. Keep the original output contract and permissions.'
  request=dict(call_id=state.plan['song_id']+'/four-method/%04d'%cfg['call_index'],seed=cfg['seed'],max_output_tokens=cfg['max_output_tokens'],
   response_kind='composition_'+phase,messages=[dict(role='system',content=system),dict(role='user',content=json_text(payload))],response_schema=schema)
- return guard_request(request,cfg)
+ return _shared_request(request,state.source,cfg,unit)
 
 
 def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow',seed=42,max_output_tokens=1024,
                     outline_max_output_tokens=4096,max_request_characters=200000,max_input_tokens=2000000,max_total_output_tokens=150000,resume=False,outline_reuse_run=None,controller_version='v1',music_summary_path=None,
-                    outline_proposal_char_limit=None,outline_candidates_per_window=None,acoustic_guidance=False,bar_structure=None,bars_per_block=4,motif_quota=True,motif_variation=False,style_prior=None,rewrite_repeats=False,repeat_groups=3):
+                    outline_proposal_char_limit=None,outline_candidates_per_window=None,acoustic_guidance=False,bar_structure=None,bars_per_block=4,motif_quota=True,motif_variation=False,style_prior=None,rewrite_repeats=False,repeat_groups=3,global_style_override=None):
  if method not in METHODS:raise ValueError('Unknown composition method')
  if controller_version not in ('v1','v2'):raise ValueError('Unknown composition controller version')
  if method=='structured' and controller_version!='v2':
   raise ValueError('The structured method requires the bounded v2 controller')
  if method=='music_structured' and music_summary_path is None:
   raise ValueError('The music_structured method requires music_summary_path')
- if method!='music_structured' and music_summary_path is not None:
-  raise ValueError('music_summary_path is only consumed by music_structured')
+ if rewrite_repeats and method not in ('workflow','music_structured'):
+  raise ValueError('Repeat rewriting is supported for matched workflow/music_structured ablations')
+ integer(repeat_groups,'repeat_groups',0)
  bounded=controller_version=='v2'
  for name,value in [('seed',seed),('max_output_tokens',max_output_tokens),('outline_max_output_tokens',outline_max_output_tokens),
                     ('max_request_characters',max_request_characters),('max_input_tokens',max_input_tokens),('max_total_output_tokens',max_total_output_tokens)]:
@@ -228,16 +268,21 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
   outline_proposal_char_limit=outline_proposal_char_limit,
   outline_candidates_per_window=outline_candidates_per_window,acoustic_guidance=acoustic_guidance,
   bar_structure=bar_structure,bars_per_block=bars_per_block,motif_quota=motif_quota,motif_variation=motif_variation,
-  rewrite_repeats=rewrite_repeats,repeat_groups=repeat_groups)
+   rewrite_repeats=rewrite_repeats,repeat_groups=repeat_groups,global_style_override=global_style_override)
  if bounded:
   from .composition_controller_v2 import CompositionStateV2,NO_PROGRESS_LIMIT
   cfg.update(controller_version='v2',no_progress_limit=NO_PROGRESS_LIMIT,
     controller_policy='bounded-revision-reserved-commit-auto-finish-v2')
  sources={};source=_source(source_path,song_id,cfg,sources);cfg['max_calls']=1+4*len(source['units']['units'])
  if style_prior is not None:source['style_prior']=_load_style_prior(style_prior,source_path,source,sources)
+ source['global_style']=_global_condition(source.get('style_prior'),song_id,global_style_override)
  if music_summary_path is not None:
   from .music_structure_summary import load as load_music_summary
   source['music_summary']=load_music_summary(music_summary_path)
+  summary=_snapshot(Path(music_summary_path).resolve(),sources)
+  audio=source['original']['audio'];bound=summary.get('audio',{})
+  if any(bound.get(k)!=audio[k] for k in ('sha256','sample_rate','num_samples')):
+   raise ValueError('Public acoustic summary must bind this exact song waveform and clock')
  # Historical input cfg can contain a different provider; only timing/structure is used from it.
  source['config']=dict(source['config'],max_output_tokens=max_output_tokens,max_request_characters=max_request_characters,structured_unit_output=True,use_outline=True,use_history=True)
  if provider_spec.get('kind') not in ('chat_completions','replay'):raise ValueError('Composition requires explicit real/replay text provider')
@@ -253,7 +298,7 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
    raise ValueError('Outline reuse method/model or complete result differs')
   old_journal=_Journal(reuse,object_sha(prior),cfg['max_calls']);cid=song_id+'/four-method/0000'
   if cid not in old_journal.records:raise ValueError('Original outline raw missing; no replacement')
-  expected=_outline_request(source['song'],source['options'],source['units'],cfg,source.get('style_prior'));expected['call_id']=cid
+  expected=_shared_request(_outline_request(source['song'],source['options'],source['units'],cfg,source.get('style_prior')),source,cfg);expected['call_id']=cid
   if old_journal.started[cid]['request']!=expected:raise ValueError('Original outline request differs')
   record=old_journal.records[cid]
   if prior_result['call_records'].get(cid)!=record['record_sha256']:raise ValueError('Original result does not bind outline raw')
@@ -320,6 +365,7 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
     from .baseline import ModelOutputError as _MOE
     _need=not cfg.get('acoustic_guidance')
     req=music_outline_request(source['song'],source['options'],source['units'],source['music_summary'],cfg,_need,source.get('style_prior'));req['call_id']=song_id+'/four-method/0000'
+    req=_shared_request(req,source,cfg)
     raw=json_text(call(req))
     try:
      outline=read_music_outline(raw,source['song'],source['music_summary'],source['units'],_need)
@@ -330,6 +376,7 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
     from .composition_structured import outline_request as structured_outline_request, read_outline as read_structured_outline, StructuredState
     from .baseline import ModelOutputError as _MOE
     req=structured_outline_request(source['song'],source['options'],source['units'],cfg,source.get('style_prior'));req['call_id']=song_id+'/four-method/0000'
+    req=_shared_request(req,source,cfg)
     raw=json_text(call(req))
     try:
      outline=read_structured_outline(raw,source['song'],source['options'])
@@ -338,6 +385,7 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
      outline=read_structured_outline(json_text(call(repair)),source['song'],source['options'])
    else:
     req=_outline_request(source['song'],source['options'],source['units'],cfg,source.get('style_prior'));req['call_id']=song_id+'/four-method/0000'
+    req=_shared_request(req,source,cfg)
     outline=_read_outline(json_text(call(req)),source['song'])
    save('outline.json',outline);artifacts['outline.json']=file_sha(output/'outline.json')
    if outline_repair:save('outline_repair.json',dict(used=True,call_id=song_id+'/four-method/outline-repair'))
@@ -390,10 +438,16 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
    if state.index==len(source['units']['units']) and (bounded or method in ('workflow','self_refine','music_structured')) and not fatal:stop='finished'
   except (ValueError,TypeError,KeyError) as error:fatal=str(error);stop='failed_or_budget_exhausted'
   repeat_stats=None
-  if (cfg.get('rewrite_repeats') and method=='music_structured' and state is not None
+  if (cfg.get('rewrite_repeats') and method in ('workflow','music_structured') and state is not None
       and state.index==len(source['units']['units']) and fatal is None):
    from .repeat_revision import duplicate_groups,rewrite_request,read_rewrites,apply_rewrites,summary as repeat_summary
    original=copy.deepcopy(state.plan);groups=duplicate_groups(state.plan)[:cfg.get('repeat_groups',3)]
+   before_costs=dict(calls_used=len(journal.started),input_tokens=input_tokens,output_tokens=output_tokens,
+                      full_song_succeeded=True,max_calls=cfg['max_calls'],max_input_tokens=max_input_tokens,
+                      max_total_output_tokens=max_total_output_tokens)
+   save('before_rewrite.json',original);artifacts['before_rewrite.json']=file_sha(output/'before_rewrite.json')
+   save('before_rewrite_costs.json',before_costs);artifacts['before_rewrite_costs.json']=file_sha(output/'before_rewrite_costs.json')
+   rewrite_call_start=len(journal.started)
    applied=[];failures=[]
    for group_index,group in enumerate(groups):
     if index>=cfg['max_calls']:break
@@ -407,20 +461,31 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
       if len(failures)>=2:break
       continue
      final,changed=apply_rewrites(state.plan,rewrites)
-     state.plan=final;applied.append(dict(event_ids=changed,group=group['event_ids'],skipped=skipped))
      name='steps/%04d.json'%len(history)
-     save(name,dict(call_id=request['call_id'],kind='repeat_rewrite',decision=decision,
-                    observation=dict(status='rewritten',event_ids=changed,quality_verified=False)))
+     record=dict(call_id=request['call_id'],kind='repeat_rewrite',decision=decision,
+                  observation=dict(status='rewritten',event_ids=changed,quality_verified=False))
+     save(name,record)
      artifacts[name]=file_sha(output/name)
+     history.append(record)
+     state.plan=final;applied.append(dict(event_ids=changed,group=group['event_ids'],skipped=skipped))
     except (ValueError,TypeError,KeyError) as error:
      failures.append(dict(group=group['event_ids'],error=str(error)))
      if len(failures)>=2:break
    repeat_stats=dict(groups=len(groups),applied=len(applied),failed=failures,
-     calls_used=len(applied)+len(failures),**repeat_summary(original,state.plan))
-   if applied:
-    save('final_plan.json',state.plan);artifacts['final_plan.json']=file_sha(output/'final_plan.json')
+      calls_used=len(journal.started)-rewrite_call_start,**repeat_summary(original,state.plan))
+   save('final_plan.json',state.plan);artifacts['final_plan.json']=file_sha(output/'final_plan.json')
   plan=state.plan if state is not None else _empty_plan(source['original']);full=state is not None and state.index==len(source['units']['units']) and stop=='finished' and fatal is None
   name='plan.json' if full else 'partial-plan.not-success.json';save(name,plan);artifacts[name]=file_sha(output/name)
+  if full:
+   from .global_style import presentation
+   if source.get('global_style') is not None:
+    save('global_style.json',source['global_style']);artifacts['global_style.json']=file_sha(output/'global_style.json')
+   for filename,content in [('presentation.txt',presentation(plan,source.get('global_style')))]+(
+       [('before_rewrite_presentation.txt',presentation(original,source.get('global_style')))] if repeat_stats is not None else []):
+    path=output/filename
+    if path.exists() and path.read_text(encoding='utf-8')!=content:raise ValueError('Immutable presentation changed')
+    if not path.exists():path.write_text(content,encoding='utf-8')
+    artifacts[filename]=file_sha(path)
   _unchanged(sources)
   infrastructure_failed=any(not raw.get('success') or not isinstance(raw.get('result'),dict) or
     raw['result'].get('stop_reason') in (None,'http_error','infrastructure_error','malformed_api_response') for raw in journal.records.values())

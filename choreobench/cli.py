@@ -406,6 +406,7 @@ def build_parser():
     four.add_argument("--resume", action="store_true")
     four.add_argument("--outline-reuse-run")
     four.add_argument("--music-summary", help="Public acoustic summary JSON; required by music_structured")
+    four.add_argument("--global-style-override", help="Explicit user-specified global dance style, recorded above model predictions")
     four.add_argument("--outline-proposal-chars", type=int, default=None,
                       help="Deterministic per-proposal character cap for the whole-song outline")
     four.add_argument("--outline-candidates-per-window", type=int, default=None)
@@ -432,6 +433,9 @@ def build_parser():
     music = sub.add_parser("analyze-music", help="Fixed-parameter public acoustic summary of one canonical WAV")
     music.add_argument("--audio", required=True)
     music.add_argument("--out", required=True)
+    style_import = sub.add_parser("import-global-style", help="Import source-clock native JEV probabilities as a 22-output/15-supported v2 sidecar; no inference")
+    for name in ("dataset", "predictions", "identity", "out"):
+        style_import.add_argument("--" + name, type=Path, required=True)
     revision = sub.add_parser("revise-whole-song", help="One whole-song audit plus an action-only patch of a frozen draft")
     for name in ("source", "song-id", "draft-run", "provider", "music-summary", "out-dir"):
         revision.add_argument("--" + name, required=True)
@@ -504,10 +508,14 @@ def dispatch(args):
             motif_quota=not getattr(args,'no_motif_quota',False),
             motif_variation=getattr(args,'motif_variation',False),
             style_prior=getattr(args,'style_prior',None),
+            global_style_override=getattr(args,'global_style_override',None),
             rewrite_repeats=getattr(args,'rewrite_repeats',False),
             repeat_groups=getattr(args,'repeat_groups',3),
             outline_max_output_tokens=args.outline_max_output_tokens,
             outline_reuse_run=args.outline_reuse_run,controller_version=args.controller_version))
+    elif cmd == "import-global-style":
+        from .global_style import import_predictions
+        _emit(import_predictions(args.dataset, args.predictions, args.identity, args.out))
     elif cmd == "run-song-agent":
         from .song_agent import run_song_agent
         _emit(run_song_agent(args.source_run, args.song_id, read_json(args.provider), args.out_dir,

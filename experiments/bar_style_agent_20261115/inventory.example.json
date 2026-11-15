@@ -1,0 +1,28 @@
+{
+  "schema": "choreobench.bar_agent_inventory.v1",
+  "panel": "dev",
+  "expected_songs": 3,
+  "source": null,
+  "style_prior": null,
+  "songs": [
+    {"song_id": "REPLACE_DEV_SONG_1", "music_summary": null},
+    {"song_id": "REPLACE_DEV_SONG_2", "music_summary": null},
+    {"song_id": "REPLACE_DEV_SONG_3", "music_summary": null}
+  ],
+  "readiness": {
+    "variable_audio_consumption_verified": false,
+    "local_decoding_frozen": false,
+    "model_identities_frozen": false,
+    "source_split_verified": false,
+    "budgets_dev_checked": false
+  },
+  "limits": {
+    "seed": 42,
+    "max_output_tokens": 4096,
+    "outline_max_output_tokens": 8192,
+    "max_request_characters": 300000,
+    "max_input_tokens": 2000000,
+    "max_total_output_tokens": 150000,
+    "repeat_groups": 5
+  }
+}

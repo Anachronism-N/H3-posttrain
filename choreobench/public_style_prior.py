@@ -153,5 +153,9 @@ def load_public_style_prior(path, dataset_sha, songs):
     if path is None:
         return None
     document, digest = read_json_snapshot(Path(path))
+    from .global_style import SCHEMA as V2_SCHEMA, validate as validate_v2, GlobalStylePrior
+    if document.get("schema") == V2_SCHEMA:
+        validate_v2(document, dataset_sha, songs)
+        return GlobalStylePrior(path, document, digest)
     _validate(document, dataset_sha, songs)
     return PublicStylePrior(path, document, digest)

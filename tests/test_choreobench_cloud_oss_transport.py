@@ -3,6 +3,7 @@ import io
 import json
 from pathlib import Path
 from types import SimpleNamespace
+import sys
 import urllib.error
 import urllib.parse
 
@@ -198,3 +199,41 @@ def test_clock_contract_still_rejects_invalid_outputs(entry, mutation):
     event[field] = value
     with pytest.raises(ValueError):
         entry.validate_unit({"unit_id": "u0", "events": [event]}, {"unit_id": "u0", "start": 0, "end": 5})
+
+
+def test_loader_uses_native_to_without_device_map(entry, config, tmp_path, monkeypatch, capsys):
+    config.update(input_provenance="test controls only", allocated_gpus=8, model_device="cuda:0")
+    (tmp_path / "job_config.json").write_text(json.dumps(config))
+    (tmp_path / "signed_io.json").write_text(json.dumps(capabilities(config)))
+    monkeypatch.setattr(entry, "ROOT", tmp_path)
+    monkeypatch.setenv("RANK", "0")
+    monkeypatch.setattr(entry.OssTransport, "put", lambda *args: None)
+    monkeypatch.setattr(entry, "stage_model", lambda *args: "fixture-model")
+    calls = []
+
+    class Model:
+        def to(self, device):
+            calls.append(("to", device))
+            raise RuntimeError("fixture stops before generation")
+
+    def from_pretrained(path, **kwargs):
+        assert "device_map" not in kwargs
+        assert kwargs == {"torch_dtype": "bf16-fixture", "local_files_only": True, "trust_remote_code": False}
+        calls.append(("from_pretrained", path))
+        return Model()
+
+    torch = SimpleNamespace(__version__="fixture", version=SimpleNamespace(cuda="fixture"),
+        bfloat16="bf16-fixture", cuda=SimpleNamespace(device_count=lambda: 8,
+        get_device_properties=lambda i: SimpleNamespace(name="fixture", total_memory=1)))
+    transformers = SimpleNamespace(__version__="fixture", GenerationConfig=object,
+        AutoTokenizer=SimpleNamespace(from_pretrained=lambda *args, **kwargs: None),
+        AutoModelForCausalLM=SimpleNamespace(from_pretrained=from_pretrained))
+    monkeypatch.setitem(sys.modules, "torch", torch)
+    monkeypatch.setitem(sys.modules, "transformers", transformers)
+    with pytest.raises(SystemExit) as error:
+        entry.main()
+    assert error.value.code == 2
+    report = json.loads(capsys.readouterr().out)
+    assert report["model_calls_attempted"] == 0
+    assert report["error"]["message"] == "fixture stops before generation"
+    assert calls == [("from_pretrained", "fixture-model"), ("to", "cuda:0")]

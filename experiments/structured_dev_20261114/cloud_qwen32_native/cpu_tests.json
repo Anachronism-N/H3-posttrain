@@ -1,9 +1,9 @@
 {
-  "schema": "choreobench.native_smoke_cpu_tests.v2",
+  "schema": "choreobench.native_smoke_cpu_tests.v3",
   "passed": true,
-  "transport_and_clock_tests": 23,
+  "transport_and_clock_tests": 24,
   "sft_contract_tests": 34,
-  "summary": "57 passed in 1.92s",
+  "summary": "58 passed in 1.95s",
   "valid_clock_cases": 1,
   "invalid_clock_cases_rejected": 8,
   "initial_upload_failure_stops_before_inference": true,
@@ -13,5 +13,17 @@
   "atomic_server_overwrite_guard": false,
   "real_model_inference_tested": false,
   "whole_repository_collection_errors": 5,
-  "entry_sha256": "e9b465d1fdd2c8a1e9b31fec7f22608f7e218c2012d0fc5528b02cdade118b59"
+  "entry_sha256": "a83116c975a32353eaf8d34b0161edb02eb0fd9c36dcdb2a423a317007b1af94",
+  "native_loader_does_not_require_device_map": true,
+  "tiny_cpu_loading_without_accelerate_verified": true,
+  "tiny_cpu_loader_runtime": {
+    "torch": "2.10.0+cu128",
+    "transformers": "4.57.6"
+  },
+  "pretrained_qwen32_inference_tested": false,
+  "previous_cloud_runtime": {
+    "torch": "2.8.0",
+    "transformers": "4.55.0",
+    "accelerate_available": false
+  }
 }

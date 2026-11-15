@@ -188,7 +188,7 @@ def main():
         model_path = stage_model(config, output, store)
         tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True, trust_remote_code=False)
         model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype=torch.bfloat16,
-                device_map={"": config["model_device"]}, local_files_only=True, trust_remote_code=False).eval()
+                local_files_only=True, trust_remote_code=False).to(config["model_device"]).eval()
         eos = model.generation_config.eos_token_id
         eos_ids = eos if isinstance(eos, list) else [eos]
         if not eos_ids or any(type(t) is not int for t in eos_ids):

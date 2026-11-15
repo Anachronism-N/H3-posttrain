@@ -208,6 +208,7 @@ def test_loader_uses_native_to_without_device_map(entry, config, tmp_path, monke
     monkeypatch.setattr(entry, "ROOT", tmp_path)
     monkeypatch.setenv("RANK", "0")
     monkeypatch.setattr(entry.OssTransport, "put", lambda *args: None)
+    monkeypatch.setattr(entry, "runtime_preflight", lambda *args: {"isolated_runtime": "fixture"})
     monkeypatch.setattr(entry, "stage_model", lambda *args: "fixture-model")
     calls = []
 
@@ -237,3 +238,123 @@ def test_loader_uses_native_to_without_device_map(entry, config, tmp_path, monke
     assert report["model_calls_attempted"] == 0
     assert report["error"]["message"] == "fixture stops before generation"
     assert calls == [("from_pretrained", "fixture-model"), ("to", "cuda:0")]
+
+
+@pytest.mark.parametrize("text", [
+    '```json\n{}\n```', '{} {}', '{"unit_id":"a","unit_id":"b"}',
+    '{"events":[{"end":NaN}]}', '{"end":Infinity}', '{"end":-Infinity}', '{"end":1e999}',
+])
+def test_full_json_parser_does_not_extract_or_allow_ambiguous_numbers(entry, text):
+    with pytest.raises(ValueError):
+        entry.parse_decision(text)
+
+
+def test_full_json_parser_preserves_valid_exact_output(entry):
+    value = {"unit_id": "u0", "events": [{"start": 0, "end": 5, "track": "body", "action": "Step."}]}
+    assert entry.parse_decision("\n" + json.dumps(value) + "\n") == value
+    schema = entry.response_schema({"unit_id": "u0", "start": 0, "end": 5})
+    assert schema["properties"]["unit_id"]["enum"] == ["u0"]
+    event = schema["properties"]["events"]["items"]
+    assert event["properties"]["start"]["enum"] == [i / 4 for i in range(21)]
+    assert event["additionalProperties"] is False and schema["additionalProperties"] is False
+
+
+@pytest.mark.parametrize("mode", ["success", "fences", "truncation", "prefix_changed", "excess_tokens", "extra_special"])
+def test_generated_raw_is_saved_before_strict_validation(entry, config, tmp_path, monkeypatch, capsys, mode):
+    torch = pytest.importorskip("torch")
+    config.update(input_provenance="test controls only", allocated_gpus=8, model_device="cpu", seed=42,
+                  probes=2, max_new_tokens=512)
+    (tmp_path / "job_config.json").write_text(json.dumps(config))
+    (tmp_path / "signed_io.json").write_text(json.dumps(capabilities(config)))
+    monkeypatch.setattr(entry, "ROOT", tmp_path)
+    monkeypatch.setenv("RANK", "0")
+    monkeypatch.setattr(entry.OssTransport, "put", lambda *args: None)
+    monkeypatch.setattr(entry, "runtime_preflight", lambda *args: {"isolated_runtime": "fixture"})
+    monkeypatch.setattr(entry, "stage_model", lambda *args: "fixture-model")
+    monkeypatch.setattr(torch.cuda, "device_count", lambda: 8)
+    monkeypatch.setattr(torch.cuda, "get_device_properties", lambda i: SimpleNamespace(name="fixture", total_memory=1))
+    constraint_calls = []
+    calls = []
+
+    class Inputs(dict):
+        def to(self, device):
+            return self
+
+    class Tokenizer:
+        all_special_ids = [1, 2]
+
+        def apply_chat_template(self, *args, **kwargs):
+            return "fixture input"
+
+        def __call__(self, *args, **kwargs):
+            return Inputs(input_ids=torch.tensor([[5, 6]]))
+
+        def decode(self, *args, **kwargs):
+            index = len(calls) - 1
+            value = dict(unit_id="probe-u" + str(index), events=[dict(start=index * 5, end=(index + 1) * 5,
+                         track="body", action="Step and settle.")])
+            text = json.dumps(value)
+            return "```json\n" + text + "\n```" if mode == "fences" else text
+
+    class GenerationConfig:
+        def __init__(self, **kwargs):
+            self.value = kwargs
+
+        def to_dict(self):
+            return self.value
+
+    class Model:
+        config = SimpleNamespace(vocab_size=200)
+        generation_config = SimpleNamespace(eos_token_id=[1], pad_token_id=1)
+
+        def to(self, device):
+            return self
+
+        def eval(self):
+            return self
+
+        def generate(self, **kwargs):
+            kwargs["prefix_allowed_tokens_fn"](0, kwargs["input_ids"][0])
+            calls.append(kwargs)
+            ids = [100, 1]
+            if mode == "truncation":
+                ids = [100] * 512
+            elif mode == "excess_tokens":
+                ids = [100] * 513 + [1]
+            elif mode == "extra_special":
+                ids = [2, 100, 1]
+            prefix = [7, 6] if mode == "prefix_changed" else [5, 6]
+            return torch.tensor([prefix + ids])
+
+    tokenizer = Tokenizer()
+    transformers = SimpleNamespace(__version__="fixture", GenerationConfig=GenerationConfig,
+        AutoTokenizer=SimpleNamespace(from_pretrained=lambda *args, **kwargs: tokenizer),
+        AutoModelForCausalLM=SimpleNamespace(from_pretrained=lambda *args, **kwargs: Model()))
+    monkeypatch.setitem(sys.modules, "transformers", transformers)
+    integration = SimpleNamespace(build_token_enforcer_tokenizer_data=lambda *args: SimpleNamespace(eos_token_id=1))
+    monkeypatch.setitem(sys.modules, "lmformatenforcer.integrations.transformers", integration)
+
+    def decoder(data, unit):
+        assert data.eos_token_id == [1]
+        constraint_calls.append(unit["unit_id"])
+        return entry.response_schema(unit), lambda *args: [100]
+
+    monkeypatch.setattr(entry, "constrained_decoder", decoder)
+    with pytest.raises(SystemExit) as error:
+        entry.main()
+    report = json.loads(capsys.readouterr().out)
+    raw = json.loads((tmp_path / "transport-test-records/00.raw.json").read_text())
+    assert raw["usage"]["input_tokens"] == 2
+    assert raw["usage"]["output_tokens"] == len(raw["new_token_ids"])
+    assert raw["constrained_decoding"]["schema"] == entry.response_schema({"unit_id": "probe-u0", "start": 0, "end": 5})
+    assert raw["generated_sequence_ids"][2:] == raw["new_token_ids"]
+    if mode == "success":
+        assert error.value.code == 0 and report["validated_units"] == 2
+        assert report["model_calls_attempted"] == 2
+        assert constraint_calls == ["probe-u0", "probe-u1"]
+    else:
+        assert error.value.code == 2 and report["validated_units"] == 0
+        assert report["model_calls_attempted"] == 1
+        assert not (tmp_path / "transport-test-records/00.validated.json").exists()
+    if mode == "truncation":
+        assert raw["stop_reason"] == "budget_truncation"

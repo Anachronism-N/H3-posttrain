@@ -1,29 +1,47 @@
 {
-  "schema": "choreobench.native_smoke_cpu_tests.v3",
-  "passed": true,
-  "transport_and_clock_tests": 24,
-  "sft_contract_tests": 34,
-  "summary": "58 passed in 1.95s",
-  "valid_clock_cases": 1,
-  "invalid_clock_cases_rejected": 8,
+  "schema": "choreobench.native_smoke_cpu_tests.v4",
+  "pytest_returncode": 0,
+  "summary": "1861 passed, 4 skipped in 79.07s (0:01:19)",
+  "scope": "all ChoreoBench-named tests, not the entire repository",
+  "browser_tests_skipped": 4,
+  "known_whole_repository_collection_errors": 5,
+  "native_loader_does_not_require_device_map": true,
   "initial_upload_failure_stops_before_inference": true,
-  "real_https_get_put_readback_verified": true,
-  "remote_existing_object_precheck_verified": true,
+  "raw_retained_before_prefix_budget_json_validation": true,
+  "full_parser_rejects_fences_duplicate_keys_and_nonfinite_numbers": true,
+  "real_fixed_tokenizer_grammar_negative_control": {
+    "initial_eos_rejected": true,
+    "markdown_fence_rejected": true,
+    "full_json_token_sequence_allowed": true,
+    "native_eos_allowed_after_complete_json": true,
+    "independent_parser_state_verified": true,
+    "model_calls_sent": 0
+  },
+  "actual_private_runtime_bootstrap": {
+    "safe_archive_extraction_verified": true,
+    "fresh_offline_hashed_environment_installed": true,
+    "python": "3.10.22",
+    "torch": "2.10.0+cu128",
+    "transformers": "4.57.6",
+    "lm_format_enforcer": "0.11.3",
+    "missing_eight_gpu_allocation_rejected_before_model_transfer": true,
+    "shared_environment_modified": false,
+    "archive_sha256": "67ade6b5d360f7d8bdf0b2a49ecfd3b08f638a0fa5e67f3953b45a7ad8f617f0",
+    "lock_sha256": "de4361d227491b6453cf90114d58251bd9b41ac9bc5aec78761a780970352de6"
+  },
+  "previous_unconstrained_gpu_generation": {
+    "input_tokens": 313,
+    "output_tokens": 162,
+    "native_eos_token_id": 151645,
+    "token_ids_independently_verified": true,
+    "whole_plain_json_contract_passed": false,
+    "not_reclassified_as_success": true
+  },
+  "constrained_cloud_gpu_inference_tested": false,
+  "sft_model_gpu_validated": false,
+  "choreography_quality_evaluated": false,
   "single_writer_only": true,
   "atomic_server_overwrite_guard": false,
-  "real_model_inference_tested": false,
-  "whole_repository_collection_errors": 5,
-  "entry_sha256": "a83116c975a32353eaf8d34b0161edb02eb0fd9c36dcdb2a423a317007b1af94",
-  "native_loader_does_not_require_device_map": true,
-  "tiny_cpu_loading_without_accelerate_verified": true,
-  "tiny_cpu_loader_runtime": {
-    "torch": "2.10.0+cu128",
-    "transformers": "4.57.6"
-  },
-  "pretrained_qwen32_inference_tested": false,
-  "previous_cloud_runtime": {
-    "torch": "2.8.0",
-    "transformers": "4.55.0",
-    "accelerate_available": false
-  }
+  "entry_sha256": "8fc1ce35ca53dca6b84d6384c0376190c0e2f4286a42fea7606dafc0e3a21770",
+  "bootstrap_sha256": "a68def158db5446b061867f46e29190f27381464d753c060b4a766a69cb92967"
 }

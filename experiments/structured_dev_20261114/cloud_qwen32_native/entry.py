@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import hashlib
+import importlib.metadata
 import json
 import math
 import os
@@ -120,6 +121,76 @@ def validate_unit(value, unit):
         raise ValueError("Events do not fully cover the unit")
 
 
+def parse_decision(text):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError("Duplicate model JSON key")
+            result[key] = value
+        return result
+
+    def constant(value):
+        raise ValueError("Nonfinite model JSON")
+
+    def number(value):
+        result = float(value)
+        if not math.isfinite(result):
+            raise ValueError("Nonfinite model JSON number")
+        return result
+
+    return json.loads(text, object_pairs_hook=pairs, parse_constant=constant, parse_float=number)
+
+
+def response_schema(unit):
+    times = [t // 4 if t % 4 == 0 else t / 4 for t in range(unit["start"] * 4, unit["end"] * 4 + 1)]
+    event = dict(type="object", additionalProperties=False,
+        required=["start", "end", "track", "action"], properties=dict(
+            start=dict(type="number", enum=times), end=dict(type="number", enum=times),
+            track=dict(type="string", enum=["body"]), action=dict(type="string", minLength=1, maxLength=600)))
+    return dict(type="object", additionalProperties=False, required=["unit_id", "events"], properties=dict(
+        unit_id=dict(type="string", enum=[unit["unit_id"]]),
+        events=dict(type="array", minItems=1, maxItems=3, items=event)))
+
+
+def constrained_decoder(tokenizer_data, unit):
+    from lmformatenforcer import JsonSchemaParser
+    from lmformatenforcer.integrations.transformers import build_transformers_prefix_allowed_tokens_fn
+    schema = response_schema(unit)
+    constraint = build_transformers_prefix_allowed_tokens_fn(tokenizer_data, JsonSchemaParser(schema))
+    eos_ids = tokenizer_data.eos_token_id
+    eos_ids = eos_ids if isinstance(eos_ids, list) else [eos_ids]
+
+    def allowed_tokens(batch_id, sequence):
+        allowed = constraint(batch_id, sequence)
+        state = constraint.token_enforcer.prefix_states[tuple(sequence.tolist())]
+        if not state.parser.can_end() and any(t in allowed for t in eos_ids):
+            raise RuntimeError("Grammar permitted EOS before a complete JSON object")
+        return allowed
+
+    return schema, allowed_tokens
+
+
+def runtime_preflight(torch, transformers, config):
+    from lmformatenforcer.integrations.transformers import build_token_enforcer_tokenizer_data
+    runtime = dict(python=platform.python_version(), python_prefix=sys.prefix,
+        libc=platform.libc_ver(), torch=torch.__version__, transformers=transformers.__version__,
+        lm_format_enforcer=importlib.metadata.version("lm-format-enforcer"), cuda=torch.version.cuda,
+        visible_gpus=torch.cuda.device_count(), inference_device=config["model_device"])
+    if (sys.prefix == sys.base_prefix or runtime["python"] != "3.10.22"
+            or runtime["torch"] != "2.10.0+cu128" or runtime["transformers"] != "4.57.6"
+            or runtime["lm_format_enforcer"] != "0.11.3" or runtime["cuda"] != "12.8"):
+        raise ValueError("The pinned isolated inference runtime is required before model transfer")
+    if runtime["visible_gpus"] != config["allocated_gpus"] or runtime["visible_gpus"] != 8:
+        raise ValueError("Expected exactly eight allocated visible GPUs")
+    with torch.inference_mode():
+        value = torch.ones((8, 8), device=config["model_device"], dtype=torch.bfloat16)
+        if not torch.all(value @ value == 8).item():
+            raise ValueError("Native BF16 kernel preflight failed")
+    runtime["bf16_kernel_verified"] = True
+    return runtime
+
+
 def stage_model(config, output, store):
     manifest_path = ROOT / "source_manifest.json"
     if sha_file(manifest_path) != config["source_manifest_sha256"]:
@@ -177,11 +248,8 @@ def main():
         import torch
         import transformers
         from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
-        report["runtime"] = dict(python=sys.version, libc=platform.libc_ver(), torch=torch.__version__,
-                                 transformers=transformers.__version__, cuda=torch.version.cuda,
-                                 visible_gpus=torch.cuda.device_count(), inference_device=config["model_device"])
-        if torch.cuda.device_count() != config["allocated_gpus"]:
-            raise ValueError("Expected exactly eight allocated visible GPUs")
+        report["runtime"] = runtime_preflight(torch, transformers, config)
+        write_new(store, output / "runtime_preflight.json", report["runtime"])
         report["gpus"] = [dict(ordinal=i, name=torch.cuda.get_device_properties(i).name,
                               bytes=torch.cuda.get_device_properties(i).total_memory)
                           for i in range(torch.cuda.device_count())]
@@ -197,6 +265,11 @@ def main():
             max_new_tokens=config["max_new_tokens"], eos_token_id=eos,
             pad_token_id=model.generation_config.pad_token_id)
         report["generation_config"] = generation.to_dict()
+        from lmformatenforcer.integrations.transformers import build_token_enforcer_tokenizer_data
+        tokenizer_data = build_token_enforcer_tokenizer_data(tokenizer)
+        tokenizer_data.eos_token_id = eos_ids
+        if any(not 0 <= t < model.config.vocab_size for t in eos_ids):
+            raise ValueError("Native EOS token is outside the model vocabulary")
         history = []
         for index in range(config["probes"]):
             unit = dict(unit_id="probe-u" + str(index), start=index * 5, end=(index + 1) * 5)
@@ -212,15 +285,19 @@ def main():
             prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True,
                                                    enable_thinking=False)
             inputs = tokenizer(prompt, return_tensors="pt").to(config["model_device"])
+            schema, constraint = constrained_decoder(tokenizer_data, unit)
+            decoding = dict(mode="lm_format_enforcer_json_schema", version="0.11.3", schema=schema,
+                schema_sha256=hashlib.sha256(json.dumps(schema, sort_keys=True).encode()).hexdigest(),
+                native_eos_token_ids=eos_ids, grammar_does_not_verify_physical_or_musical_quality=True)
             write_new(store, output / ("%02d.started.json" % index), dict(messages=messages, unit=unit,
-                seed=config["seed"], generation_config=generation.to_dict()))
+                seed=config["seed"], generation_config=generation.to_dict(), constrained_decoding=decoding))
             report["model_calls_attempted"] += 1
             torch.manual_seed(config["seed"])
             started = time.monotonic()
             prefix_len = inputs["input_ids"].shape[1]
             try:
                 with torch.inference_mode():
-                    generated = model.generate(**inputs, generation_config=generation)
+                    generated = model.generate(**inputs, generation_config=generation, prefix_allowed_tokens_fn=constraint)
             except Exception as error:
                 write_new(store, output / ("%02d.raw.json" % index), dict(stop_reason="infrastructure_error",
                     usage=dict(input_tokens=prefix_len, output_tokens=None), new_token_ids=None,
@@ -229,17 +306,22 @@ def main():
             prefix_matches = torch.equal(generated[:, :prefix_len], inputs["input_ids"])
             ids = generated[0, prefix_len:].cpu().tolist()
             text = tokenizer.decode(ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
-            stop = "eos" if ids and ids[-1] in eos_ids else "incomplete_output"
-            raw = dict(text=text, new_token_ids=ids, stop_reason=stop,
+            stop = ("eos" if ids and ids[-1] in eos_ids else
+                    "budget_truncation" if len(ids) == config["max_new_tokens"] else "incomplete_output")
+            raw = dict(text=text, new_token_ids=ids, stop_reason=stop, constrained_decoding=decoding,
                 prefix_matches=prefix_matches, generated_sequence_ids=generated[0].cpu().tolist(),
                 usage=dict(input_tokens=prefix_len, output_tokens=len(ids)),
                 latency_seconds=time.monotonic() - started)
             write_new(store, output / ("%02d.raw.json" % index), raw)
             if not prefix_matches:
                 raise ValueError("Generation changed the input prefix")
+            if len(ids) > config["max_new_tokens"]:
+                raise ValueError("Generation exceeded the frozen output budget")
             if stop != "eos":
                 raise ValueError("Native generation did not finish at EOS")
-            decision = json.loads(text)
+            if any(t in tokenizer.all_special_ids for t in ids[:-1]):
+                raise ValueError("Unexpected special token inside model JSON")
+            decision = parse_decision(text)
             validate_unit(decision, unit)
             write_new(store, output / ("%02d.validated.json" % index), decision)
             history.append(decision)

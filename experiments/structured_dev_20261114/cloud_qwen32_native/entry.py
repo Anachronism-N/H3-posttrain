@@ -8,6 +8,9 @@ import platform
 import shutil
 import sys
 import time
+import urllib.error
+import urllib.parse
+import urllib.request
 
 ROOT = Path(__file__).resolve().parent
 SYSTEM = (
@@ -28,10 +31,67 @@ def sha_file(path):
     return digest.hexdigest()
 
 
-def write_new(path, value):
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise RuntimeError("OSS redirects are not permitted")
+
+
+class OssTransport:
+    def __init__(self, config, capabilities):
+        self.capabilities = capabilities
+        self.prefixes = {}
+        for method, field in (("GET", "model_oss_prefix"), ("PUT", "result_oss_prefix"), ("HEAD", "result_oss_prefix")):
+            prefix = urllib.parse.urlsplit(config[field])
+            if prefix.scheme != "oss" or prefix.netloc != "futurelab-dpro-hz" or not prefix.path.endswith("/"):
+                raise ValueError("OSS prefix differs from the declared bucket")
+            self.prefixes[method] = prefix.path
+        if self.prefixes["PUT"] != "/niezichao.nzc/m2d_train_v1/runs/" + config["run_id"] + "/":
+            raise ValueError("Result prefix must belong to this new run")
+        if PurePosixPath(config["run_id"]).name != config["run_id"] or config["run_id"] in ("", ".", ".."):
+            raise ValueError("Invalid run directory")
+        self.opener = urllib.request.build_opener(NoRedirect())
+
+    def open(self, method, name, data=None):
+        url = self.capabilities[method][name]
+        parsed = urllib.parse.urlsplit(url)
+        if (parsed.scheme != "https" or parsed.netloc != "futurelab-dpro-hz.oss-cn-hangzhou.aliyuncs.com"
+                or urllib.parse.unquote(parsed.path) != self.prefixes[method] + name or parsed.fragment):
+            raise ValueError("OSS capability violates its HTTPS object scope")
+        headers = {"Content-Type": "application/json", "x-oss-forbid-overwrite": "true"} if method == "PUT" else {}
+        return self.opener.open(urllib.request.Request(url, data=data, headers=headers, method=method), timeout=600)
+
+    def download(self, name, target, expected_bytes):
+        with self.open("GET", name) as response, target.open("xb") as stream:
+            remaining = expected_bytes
+            while remaining:
+                block = response.read(min(1 << 20, remaining))
+                if not block:
+                    raise ValueError("OSS object ended before the declared size")
+                stream.write(block)
+                remaining -= len(block)
+            if response.read(1):
+                raise ValueError("OSS object exceeds the declared size")
+
+    def put(self, path):
+        # Runs have one writer; versioned OSS buckets ignore forbid-overwrite.
+        try:
+            with self.open("HEAD", path.name):
+                raise FileExistsError("OSS record already exists; refusing overwrite")
+        except urllib.error.HTTPError as error:
+            if error.code != 404:
+                raise
+        with self.open("PUT", path.name, path.read_bytes()) as response:
+            if response.status != 200:
+                raise RuntimeError("OSS record upload did not succeed")
+
+
+def write_new(store, path, value):
     with Path(path).open("x") as stream:
         json.dump(value, stream, ensure_ascii=False, indent=2)
         stream.write("\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    store.put(Path(path))
 
 
 def validate_unit(value, unit):
@@ -60,13 +120,13 @@ def validate_unit(value, unit):
         raise ValueError("Events do not fully cover the unit")
 
 
-def stage_model(config, output):
-    source = Path(config["mounted_model_dir"])
+def stage_model(config, output, store):
     manifest_path = ROOT / "source_manifest.json"
     if sha_file(manifest_path) != config["source_manifest_sha256"]:
         raise ValueError("Packaged source manifest changed")
     manifest = json.loads(manifest_path.read_text())
-    marker = json.loads((source / "transfer_complete.json").read_text())
+    with store.open("GET", "transfer_complete.json") as response:
+        marker = json.load(response)
     if (marker.get("complete") is not True or marker["model"] != config["model_repository"]
             or marker["revision"] != config["model_revision"]
             or marker["source_manifest_sha256"] != config["source_manifest_sha256"]):
@@ -86,16 +146,14 @@ def stage_model(config, output):
         name = PurePosixPath(item["path"])
         if name.is_absolute() or ".." in name.parts:
             raise ValueError("Model path escapes the snapshot")
-        original, target = source / item["path"], local / item["path"]
-        if original.stat().st_size != item["bytes"]:
-            raise ValueError("OSS file size differs: " + item["path"])
+        target = local / item["path"]
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(original, target)
+        store.download(item["path"], target, item["bytes"])
         if sha_file(target) != item["sha256"]:
             raise ValueError("Downloaded model SHA256 differs: " + item["path"])
         receipts.append(dict(path=item["path"], sha256=item["sha256"], bytes=item["bytes"]))
         print(json.dumps(dict(stage="model_copy", checked=len(receipts), total=len(manifest["files"]))), flush=True)
-    write_new(output / "model_verification.json", dict(files=receipts, all_sha256_verified=True))
+    write_new(store, output / "model_verification.json", dict(files=receipts, all_sha256_verified=True))
     return local
 
 
@@ -111,14 +169,11 @@ def main():
                   remote_persistence_verified=False, status="started")
     output = None
     try:
-        source = Path(config["mounted_model_dir"])
-        parent = Path(config["result_parent"])
-        if not source.is_dir() or not parent.is_dir():
-            raise FileNotFoundError("The declared OSS source/result mount is unavailable")
-        destination = parent / config["run_id"]
+        store = OssTransport(config, json.loads((ROOT / "signed_io.json").read_text()))
+        destination = ROOT / (config["run_id"] + "-records")
         destination.mkdir()
         output = destination
-        write_new(output / "job_config.json", config)
+        write_new(store, output / "job_config.json", config)
         import torch
         import transformers
         from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
@@ -130,7 +185,7 @@ def main():
         report["gpus"] = [dict(ordinal=i, name=torch.cuda.get_device_properties(i).name,
                               bytes=torch.cuda.get_device_properties(i).total_memory)
                           for i in range(torch.cuda.device_count())]
-        model_path = stage_model(config, output)
+        model_path = stage_model(config, output, store)
         tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True, trust_remote_code=False)
         model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype=torch.bfloat16,
                 device_map={"": config["model_device"]}, local_files_only=True, trust_remote_code=False).eval()
@@ -157,7 +212,7 @@ def main():
             prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True,
                                                    enable_thinking=False)
             inputs = tokenizer(prompt, return_tensors="pt").to(config["model_device"])
-            write_new(output / ("%02d.started.json" % index), dict(messages=messages, unit=unit,
+            write_new(store, output / ("%02d.started.json" % index), dict(messages=messages, unit=unit,
                 seed=config["seed"], generation_config=generation.to_dict()))
             report["model_calls_attempted"] += 1
             torch.manual_seed(config["seed"])
@@ -167,7 +222,7 @@ def main():
                 with torch.inference_mode():
                     generated = model.generate(**inputs, generation_config=generation)
             except Exception as error:
-                write_new(output / ("%02d.raw.json" % index), dict(stop_reason="infrastructure_error",
+                write_new(store, output / ("%02d.raw.json" % index), dict(stop_reason="infrastructure_error",
                     usage=dict(input_tokens=prefix_len, output_tokens=None), new_token_ids=None,
                     error=dict(type=type(error).__name__, message=str(error))))
                 raise
@@ -179,14 +234,14 @@ def main():
                 prefix_matches=prefix_matches, generated_sequence_ids=generated[0].cpu().tolist(),
                 usage=dict(input_tokens=prefix_len, output_tokens=len(ids)),
                 latency_seconds=time.monotonic() - started)
-            write_new(output / ("%02d.raw.json" % index), raw)
+            write_new(store, output / ("%02d.raw.json" % index), raw)
             if not prefix_matches:
                 raise ValueError("Generation changed the input prefix")
             if stop != "eos":
                 raise ValueError("Native generation did not finish at EOS")
             decision = json.loads(text)
             validate_unit(decision, unit)
-            write_new(output / ("%02d.validated.json" % index), decision)
+            write_new(store, output / ("%02d.validated.json" % index), decision)
             history.append(decision)
             report["validated_units"] += 1
         report["status"] = "engineering_smoke_passed"
@@ -195,7 +250,7 @@ def main():
     report["finished_unix"] = time.time()
     if output is not None:
         try:
-            write_new(output / "result.json", report)
+            write_new(store, output / "result.json", report)
         except Exception as error:
             report.update(status="engineering_smoke_failed",
                           persistence_error=dict(type=type(error).__name__, message=str(error)))

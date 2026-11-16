@@ -10,7 +10,7 @@ explicit current-label provenance diagram is in the appendix. Their
 different scope remains stated in the main text and captions.
 The evaluation figure, nine-dimension core-anchor table, and per-song
 aggregation formula are in `sec/3a_evaluation.tex`. Four result tables
-are now in the main paper: full-2,000 E2; versioned D1-D3 refinement
+are now in the main paper: full-2,000 E2; matched D1-D3 automatic
 ratings; the 822-clip style comparison; and preliminary whole-song
 composition. Historical controller reliability/cost and repaired
 four-song exploratory ablations are supplementary. Wide result floats
@@ -28,9 +28,11 @@ Pending experiments have no numerical scores.
 - Exact public manifest, outputs and judgments are preserved under `results/d123_refine_v1/`; the provenance receipt records byte hashes and all denominators.
 - `python results/build_d123_refinement_table.py` recomputes the active `tables/refinement_d123.tex`. All 2,000 case identities and caption hashes were checked; invalid/null scores remain missing.
 - The manuscript displays the complete inference pipeline as **Ours**, without internal version branding or per-cell sample counts. Coverage and the editor configuration are documented in the appendix; source identities and denominators remain unchanged in these receipts.
-- These are **SFT v3 plus refine-v1**, with Qwen3.5-397B-A17B as editor. They are not raw-SFT scores, and no baseline judgments are supplied.
+- Baseline release `92d6dcfd590d520cff40c7ec1cb04da48970e11e` supplies seven models under r4 holdout and older v1.2 full-run scoring. Exact exports and a joint audit are under `results/d123_baselines/`.
+- The main table selects **r4**, the recorded scoring family available for all eight methods. Each dimension uses its all-method valid intersection on the common holdout; no scoring versions are mixed. The main table has no rating-version column or per-cell sample counts. Ours is 4.97 / 3.33 / 4.80; Audio-Flamingo-Next leads D2 at 3.74. All seven comparator scores are filled. Counts, available-case sensitivity and full case hashes remain in the appendix and audit.
+- Ours uses **SFT v3 plus text editing**, with Qwen3.5-397B-A17B as editor; the E2 reference-agreement table uses original SFT outputs. These output stages are explicitly distinguished in the appendix.
 - r4 means/counts: D1 4.96698/1,999; D2 3.33467/1,990; D3 4.80190/1,999. v2.1: 4.92200/2,000; 4.50102/1,966; 4.91446/1,999. Versions score the same outputs and are never pooled.
-- The release lacks judge identity, acoustic-input metadata, anchor definitions and evidence quotations. Dimension IDs are retained as source IDs, not certified as our nine-dimensional rubric. v2.1 was defined after earlier test results; D1 is near saturation. Neither version establishes comparative quality, musical fit or semantic faithfulness.
+- The exports lack judge identity, acoustic-input metadata, anchor definitions and evidence quotations. The baseline r4 version name is given, but its rubric content hash is absent; exact prompt-hash parity cannot be verified. Dimension IDs are retained as source IDs, not certified as our nine-dimensional rubric. v2.1 is excluded from the primary comparison. The observed comparison does not establish musical fit or semantic faithfulness.
 - D4-D6 are displayed as unreported (`--`), not zero. Edited-output reference metrics have not been recomputed; the E2 agreement table retains the original SFT outputs.
 
 ## E2 caption evaluation

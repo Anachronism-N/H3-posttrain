@@ -1,51 +1,81 @@
 {
-  "source_commit": "dc6dfd9894fb702acb857524f930481efec829df",
-  "method": "SFT_v3_rp105+refine-v1",
+  "schema": "paper.automatic_caption_ratings.v2",
+  "source_commits": {
+    "ours": "dc6dfd9894fb702acb857524f930481efec829df",
+    "baselines": "92d6dcfd590d520cff40c7ec1cb04da48970e11e"
+  },
+  "primary_rating_version": "r4",
+  "protocol_selection": "Only recorded scoring family published for all methods; no cross-version maxima.",
+  "baseline_rubric_version": "sol61.sixdim-development.v1.3r4-per-dimension-field-contract-caps",
+  "ours_rubric_sha256": "ea5d0dec8b15cbab6290c14d71d0356d670673a832c6136afc8eb3055860fc2c",
+  "exact_prompt_hash_parity_verified": false,
+  "aggregation": "All-method common valid intersection per dimension on the same registered cases.",
   "display_method": "Ours",
-  "display_scope": "Complete captioning inference pipeline",
   "per_cell_counts_displayed": false,
-  "editor_model": "Qwen3.5-397B-A17B",
-  "summaries": {
-    "r4": {
-      "D1": {
-        "mean": 4.966983491745873,
-        "valid": 1999,
-        "registered": 2000
-      },
-      "D2": {
-        "mean": 3.334673366834171,
-        "valid": 1990,
-        "registered": 2000
-      },
-      "D3": {
-        "mean": 4.801900950475238,
-        "valid": 1999,
-        "registered": 2000
-      }
+  "means": {
+    "qwen3-omni-instruct": {
+      "D1": 4.315677966101695,
+      "D2": 3.2836879432624113,
+      "D3": 3.5882669537136707
     },
-    "v2.1": {
-      "D1": {
-        "mean": 4.922,
-        "valid": 2000,
-        "registered": 2000
-      },
-      "D2": {
-        "mean": 4.501017293997966,
-        "valid": 1966,
-        "registered": 2000
-      },
-      "D3": {
-        "mean": 4.914457228614308,
-        "valid": 1999,
-        "registered": 2000
-      }
+    "moss-audio": {
+      "D1": 2.95021186440678,
+      "D2": 2.8374249863611567,
+      "D3": 3.8266953713670615
+    },
+    "moss-music": {
+      "D1": 2.9777542372881354,
+      "D2": 3.468630660120022,
+      "D3": 4.629171151776103
+    },
+    "music-flamingo": {
+      "D1": 3.079449152542373,
+      "D2": 2.8057828696126568,
+      "D3": 3.5446716899892357
+    },
+    "audio-flamingo3": {
+      "D1": 2.6583686440677967,
+      "D2": 2.524277141298418,
+      "D3": 3.7244348762109794
+    },
+    "audio-flamingo-next": {
+      "D1": 3.4740466101694913,
+      "D2": 3.7397708674304417,
+      "D3": 4.293864370290635
+    },
+    "qwen25-omni": {
+      "D1": 2.9713983050847457,
+      "D2": 2.9296235679214404,
+      "D3": 3.9784714747039827
+    },
+    "Ours": {
+      "D1": 4.966101694915254,
+      "D2": 3.3338788870703766,
+      "D3": 4.79924650161464
     }
   },
-  "missing_dimensions": [
+  "maxima": {
+    "D1": 4.966101694915254,
+    "D2": 3.7397708674304417,
+    "D3": 4.79924650161464
+  },
+  "registered_cases": 1900,
+  "common_valid_counts": {
+    "D1": 1888,
+    "D2": 1833,
+    "D3": 1858
+  },
+  "common_valid_ids_sha256": {
+    "D1": "86c5cbf5a16be9c1e6585ef30fff3a2580148aed7d9b9e78ae35ffd1a0b48e9e",
+    "D2": "2a64a4b883bbc66220108142afb0e58069bcdc4bc0af7dcd8b08721e86fa85d3",
+    "D3": "8b289717f1af92f90efabdc2aa30ae94442d70c1f8810cebc15178efd6390a5a"
+  },
+  "missing_scores_imputed": false,
+  "baseline_comparison_available": true,
+  "source_dimension_mapping_verified": false,
+  "unreported_dimensions": [
     "D4",
     "D5",
     "D6"
-  ],
-  "protocol_mapping_verified": false,
-  "baseline_comparison_available": false
+  ]
 }

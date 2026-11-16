@@ -41,31 +41,39 @@
       12
     ]
   },
-  "pdf_sha256": "9ab7a252ac79ac9df587a2ca5657468cfa7f5fa1992716c09ba39e35d0e1d13f",
+  "pdf_sha256": "b3745b3449ac91d3023b5a26099ecb0b03d44c9f0c6d183004efb75409f7a095",
   "source_sha256": {
-    "sec/0_abstract.tex": "62dd0fc28aa6cf92762abacc8399e36753ae64997a93832d72fd370c867c6a9d",
-    "sec/1_introduction.tex": "ff3aaee8fe3f2d5ac8ad1cfaf2c9f912ce240dfce4dd18c9bbf6b761238f3cbf",
+    "sec/0_abstract.tex": "099f66cba3e3b07b2a4399791081609602027bf1d2220b49bee683a379d9a8e1",
+    "sec/1_introduction.tex": "d62dcc7a921a76e90249e1649e119b7ab45949984c2624a53367c63c50e74e84",
     "sec/2_related_work.tex": "20558e926a8bf29c47a9057e7a6a5d9d423cca38b4cfbb8151b308dbc5a39af4",
-    "sec/2a_dataset.tex": "ba986142ad5a345d4c16810522dc354f9198a3a04efb329b0367d88633a34de8",
+    "sec/2a_dataset.tex": "e298ab7a0607efd98435014acab7bbd80417bb425ec45cc106093e26b219e565",
     "sec/3_method.tex": "ad7e4bbb9b03e2040451fe81560dd04c767c05b669687addf39315c8e332ac28",
-    "sec/3a_evaluation.tex": "dfe7b78b416f63062e9947f8552be154b48ca907031b85ccaca258593401e6ae",
-    "sec/4_experiments.tex": "2b350fe6ecadaa684028fd2c79c4f9a5c7f1057588472aff9da729c841a39145",
-    "sec/5_conclusion.tex": "289b3f5581407c77faf81b9af563390b2efc755e60feebb28c470c294500d9a7",
+    "sec/3a_evaluation.tex": "e178f2f366502d995bb2f18bd00485ffa04f322354969f1f50af4cac5e8ba89e",
+    "sec/4_experiments.tex": "112e6b881a1e8775c03ead2eb269c2bac4a91341fcea5c3b350f67202b2ec922",
+    "sec/5_conclusion.tex": "15132236352a2b78ac02cc2bd87cd0736c17be1b4efc678c3f4b8888de5797b9",
     "figures/dataset_overview.tex": "55e9b07da5d83815a14c2938bb2a2766b369fa90b4984382c2dd2424e8f1cac8",
     "figures/annotation_pipeline_v5.png": "8601f3051079d6a4ed5d5ffa81dfb76ba20b5bf20e4bfd36013164bf7e9efd27",
     "figures/choreography_example.tex": "81119e4f35c9a5fa48cfd610a8949508a4be59cb9543db6aba74fe4bbda77bef",
     "figures/choreography_example_v3.pdf": "3a1cb38db382889a420d885d77fa115b63a63b7b6498dfe11901b9a7e721730a",
     "figures/source/plot_choreography_example_v3.py": "200531d69e4c9e7eaa9a88519c7a4a32a4e7ded5fec9623fb652a24005b8183f",
     "results/style_prior_822.source.json": "6e70dbf282a782fc235a9cf85679c7354f31b3014c10b74ae1298fa82153a5c6",
-    "results/build_style_prior_822.py": "20b97fb3eede5d9abe1e4a17590a14eae478e50f6f18da560a2416b412f43ceb",
-    "tables/style_prior_822.tex": "4fcf143b7597503fcb898ba5ff3ddfd7ee628c7d4fd919c9acebb626e7418ca6",
-    "sec/8_supplementary.tex": "fc2adfe13b49a998886e0cc535b981b4c658ae07adeee179b2c450678339230a",
+    "results/build_style_prior_822.py": "a40f014e5b730850e1c0c7d6cd357320d474e81d4567352f6afc6472ad505a32",
+    "tables/style_prior_822.tex": "b50916bcada70a23e6cd30738aa5dbc71246aa1226399eeb0ee52b0af0add6e0",
+    "sec/8_supplementary.tex": "1c31cca9eba3ec1728f1079eae4f3e750f6d0510eac5e81e1ab0d1844737d9a3",
     "figures/choreography_example_v4.pdf": "eafe178bae5288552b93fe14fddb6947d5a266f2bfd1499155493726ddd67124",
     "figures/source/choreography_example_v4.audit.json": "f280c745e72a4d01288e3b4336d72b76b3e422c6ef9859c7a764379e030c7615",
-    "tables/refinement_d123.tex": "51123a41d02554c194ef65ad7cf9df6aaabc592086e66b5611558397a2eb7829",
-    "results/build_d123_refinement_table.py": "23beabe79d5bb7134598e7b73d54df011c3d34d6ef65676ea6e7482192a7d46d",
+    "tables/refinement_d123.tex": "045fb262c49d2bf512332b9a7220cab87b5cf1cda336d5701257339ec8e5a71f",
+    "results/build_d123_refinement_table.py": "9cefa0f322790cf762649d0f83af5fdaa27432748c3048d1c3169bc3b4106f2b",
     "results/d123_refine_v1/provenance.json": "a65b027564347893403d8e446c01761eac2794784d59a4ee2070620355f9c593",
-    "figures/source/plot_choreography_example_v4.py": "9b5690c0cf18295f7fd9aee537a817cf9dfe3211cbc4c7bb78e34710e958af30"
+    "figures/source/plot_choreography_example_v4.py": "9b5690c0cf18295f7fd9aee537a817cf9dfe3211cbc4c7bb78e34710e958af30",
+    "tables/e2_reference_agreement.tex": "f84115d4fffa147dc160c40e29be030849b16566be272b887126d6b370cc8a73",
+    "tables/harness_preliminary.tex": "babddae640efc9af14d0dd2f6970c80348dad26ed895c6aedd8557a8907aac74",
+    "results/d123_refine_v1/baseline_search_audit.json": "0e85ad9c5c3865d1c5c588b7d6ae75c8d76ee9efe718a7f59a392b50001b04ce",
+    "results/d123_baselines/judgments_r4_holdout.jsonl": "a108617a31b0ff5fa3dc3d1a0252ac616e071ef4b266234939929930642a41ca",
+    "results/d123_baselines/manifest.json": "177edceac84fbb95ab96edc202ef4f241c9a2d338f31065aad4638356d5019e6",
+    "results/d123_baselines/provenance.json": "f8c2240694963f74d4b6360c6879a6550340b6f22a908a62146065ff84610fe3",
+    "results/d123_baselines/outputs_2000.jsonl": "c353c84fceeffc6b93473162535018d22da57dc6b37f00aaa786cf1e304ad5e2",
+    "results/d123_baselines/judgments_v12_full2000.jsonl": "d829603c6bb5fcf4c4cf9c0c17f3e343baadc7a6ea1ff212b0e47c3139f81ebc"
   },
   "checks": {
     "compile": true,
@@ -75,7 +83,11 @@
     "style_table_and_text_822_only": true,
     "style_table_visual_review": true,
     "qualitative_boundary_context_explicit": true,
-    "d123_display_and_inference_scope_verified": true
+    "d123_display_and_inference_scope_verified": true,
+    "repeated_main_text_sample_counts_consolidated": true,
+    "d123_raw_record_recomputation": true,
+    "d123_seven_baselines_in_main": true,
+    "d123_single_protocol_no_cross_version_maxima": true
   },
   "model_training_or_new_benchmark_inference": false,
   "qualitative_example_scope": "Six unchanged source frames and measured waveform; illustrative author instructions and textual hand-off, not measured musical quality.",
@@ -100,9 +112,28 @@
       "D6"
     ],
     "rubric_mapping_verified": false,
-    "no_baseline_comparison": true,
+    "no_baseline_comparison": false,
     "display_method": "Ours",
     "display_scope": "Complete inference pipeline; configuration in appendix",
-    "per_cell_counts_displayed": false
+    "per_cell_counts_displayed": false,
+    "primary_rating_version": "r4",
+    "rating_version_column_displayed": false,
+    "primary_scores": [
+      4.97,
+      3.33,
+      4.8
+    ],
+    "baseline_rows_registered": 7,
+    "baseline_scores_available": true,
+    "source_commits": {
+      "ours": "dc6dfd9894fb702acb857524f930481efec829df",
+      "baselines": "92d6dcfd590d520cff40c7ec1cb04da48970e11e"
+    },
+    "aggregation": "All-method common valid intersection per dimension on the same registered cases.",
+    "common_valid_counts": {
+      "D1": 1888,
+      "D2": 1833,
+      "D3": 1858
+    }
   }
 }

@@ -28,20 +28,19 @@ precedes commitment, while bounded revision targets repetitive action
 spans and preserves their temporal scaffold. The outer planner operates
 with fixed model weights.
 
-The framework delivers an evidence-linked annotation resource and
-construction pipeline, a task-specific model trained by supervised
-fine-tuning, a compositional harness, and an evaluation protocol with
-six local and three whole-song dimensions. Current experimental captions
-refine 2D rule logs using GPT-6.1-sol; the implemented geometry-aware 3D
-annotation route remains an extension. The evaluation protocol requests
-explicit textual and musical evidence, separating reference agreement
-from judgments of choreography quality.
+The framework connects four contributions: an evidence-linked
+music--movement resource and construction pipeline, a task-specific
+local model trained by supervised fine-tuning, a stateful compositional
+harness, and an evaluation protocol covering local content, musical
+response, and whole-song organization. Together, they address supervision,
+local prediction, global composition, and assessment within one textual
+planning interface.
 
-On a frozen 2,000-clip panel, the adapted model achieves 30.80 ROUGE-L,
-compared with 14.99 for the best evaluated general audio-language baseline
-on this metric. These results characterize reference agreement;
-music-conditioned quality requires separate assessment. Whole-song results use the historical
-fixed-window harness; controlled comparisons of the latest bar-aligned
-agents and independent audio-grounded assessment remain prospective.
+The local model achieves 30.80 ROUGE-L versus 14.99 for the strongest
+evaluated general audio-language baseline on this metric, with gains
+across all reported reference-agreement measures. A dedicated audio-based
+style expert supplies global conditioning. Fixed-window whole-song
+experiments examine delivery reliability, composition, and targeted
+revision; the controlled bar-aligned comparison is specified separately.
 
 \input{figures/harness_overview}

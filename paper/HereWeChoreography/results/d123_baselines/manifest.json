@@ -1,0 +1,65 @@
+{
+ "schema": "sol61.baselines-d1d3-public-export.v1",
+ "methods": [
+  "qwen3-omni-instruct",
+  "moss-audio",
+  "moss-music",
+  "music-flamingo",
+  "audio-flamingo3",
+  "qwen25-omni",
+  "audio-flamingo-next"
+ ],
+ "cases": 2000,
+ "files": {
+  "outputs_2000.jsonl": {
+   "bytes": 8556392,
+   "sha256": "c353c84fceeffc6b93473162535018d22da57dc6b37f00aaa786cf1e304ad5e2",
+   "rows": 14000
+  },
+  "judgments_v12_full2000.jsonl": {
+   "bytes": 6300000,
+   "sha256": "d829603c6bb5fcf4c4cf9c0c17f3e343baadc7a6ea1ff212b0e47c3139f81ebc",
+   "rows": 42000
+  },
+  "judgments_r4_holdout.jsonl": {
+   "bytes": 5706166,
+   "sha256": "a108617a31b0ff5fa3dc3d1a0252ac616e071ef4b266234939929930642a41ca",
+   "rows": 39900
+  }
+ },
+ "generation": {
+  "snapshot_sha256": "41d037e2daa3df3a0287ee5055ca701e1ccaf09855bbdf1c8a9c1d96f3800ca2",
+  "audio_flamingo_next_sha256": "0777339a67c1007b6f299c90ead3a92421f1b3033a540c6db09bf16d1cbae8c2",
+  "identity": "case_id and text copied unchanged"
+ },
+ "v12": {
+  "rubric_version": "sol61.sixdim-development.v1.2",
+  "results_sha256": "199ed79f9e8043ac8d651597314db3b40694c15c30883e3d52dedca7d6bafe65",
+  "bindings_sha256": "09046f599b20fdd801e7a993437c0c52bf21fd68e9cb51f537d257997003fd32",
+  "coverage": "all 2000 cases x 7 baselines x D1-D3; D4-D6 were audio_unavailable in this run"
+ },
+ "r4": {
+  "rubric_version": "sol61.sixdim-development.v1.3r4-per-dimension-field-contract-caps",
+  "shards": {
+   "holdout_s0": {
+    "results_sha256": "4c3d10b0477aaad05d59a587a99ce5fafa27e30d7ce2c528c5e0c025dba8873d",
+    "bindings_sha256": "53f063f85774f142f30dd6cb9035a2e7ad3798faf90da9eb7db59a53bba95400"
+   },
+   "holdout_s1": {
+    "results_sha256": "0fea4c1556394e84fbcb6dd9383c5daeffa43b76d63586c6ad548e5da5e7a509",
+    "bindings_sha256": "8fcd3e5a22e30bf28c25bce6ac036124b9a4b321527b71f82f6784dca1ee5c67"
+   },
+   "holdout_s2": {
+    "results_sha256": "359a6c1eab8da59a2ef36080fbf6ed9acd942eba934960e2adc8564d82d3cee4",
+    "bindings_sha256": "49f50b7458afcc2604184b169f0bb36ce74fd69be48b258f1dc38cfb9a8a27c4"
+   }
+  },
+  "coverage": "holdout shards only; every row keeps its split; invalid judgments keep status and null score"
+ },
+ "caveats": [
+  "Automatic judge scores, not human validation.",
+  "r4 holdout and v1.2 full-run scores use different protocols and rubrics; never pool or compare them directly.",
+  "No audio, reference captions, URLs, credentials, or private paths are included.",
+  "Only case_id, method, dimension, status, score and split are published from the judge records."
+ ]
+}

@@ -56,22 +56,43 @@ captioning inference pipeline: the local SFT captioner followed by a
 Qwen3.5-397B-A17B text editor. The reference-agreement experiment in
 Table~\ref{tab:e2-full2000-v2} evaluates SFT outputs before this editing
 step; the two tables concern different output stages.
-All 2,000 case IDs and caption hashes match public commit
-\texttt{dc6dfd9}. The editor returns 1,996 outputs; four cases
+The Ours release comes from public commit \texttt{dc6dfd9}; the baseline
+release comes from \texttt{92d6dcf}. All eight generation inventories
+contain the same 2,000 case IDs. The editor returns 1,996 outputs; four cases
 retain raw text after a content check or failure, and 1,991 final texts
-differ from raw SFT. We retain all cases. Scores marked invalid or null
+differ from raw SFT. All released outputs are retained in the audit.
+Scores marked invalid or null
 are omitted per dimension, never replaced with zero. The public export
 contains numeric scores and status fields, without response bodies,
 evidence quotations, assessor identity, or acoustic-input metadata.
-The r4 and v2.1 hashes differ; v2.1 was defined after earlier tests.
+The main comparison uses the recorded r4 scoring family, the only
+published version available for every method. Baselines provide r4
+judgments on the same 1,900 holdout IDs; Ours is restricted to those
+IDs before aggregation. Each dimension then uses the common valid
+intersection across all eight methods: 1,888 for D1, 1,833 for D2,
+and 1,858 for D3. The shared valid-case means, per-method available-case
+means, missing statuses, and ID hashes are preserved in the audit.
+The older baseline v1.2 run is not mixed into the comparison.
+
+For sensitivity on the complete Ours release, r4 yields 4.97/3.33/4.80
+and v2.1 yields 4.92/4.50/4.91. v2.1 was defined after earlier tests;
+it is excluded from the main comparison because compatible baseline
+judgments were not released. No per-dimension maximum across versions
+is selected. The baseline manifest identifies the r4 version by name,
+but omits the rubric content hash, so exact prompt-hash parity cannot
+be independently established from the export.
 These records cannot establish calibration to our nine-dimensional
-anchors. No score difference between rows is a model improvement, and
+anchors. Differences between protocols are not model improvements, and
 reference agreement after editing has not been recomputed.
-Valid D1/D2/D3 counts are 1,999/1,990/1,999 for r4 and
-2,000/1,966/1,999 for v2.1. We report per-dimension valid means and
-retain all missing statuses in the reproducibility records.
+Full-release Ours D1/D2/D3 valid counts are 1,999/1,990/1,999 for r4
+and 2,000/1,966/1,999 for v2.1; these available-case values are not
+substituted for the common-case main table. The earlier two-axis
+baseline assessment is likewise not relabeled as these three dimensions.
 
 \paragraph{Caption decoding and metric configuration.}
+Reference agreement uses 2,000 clips; BERTScore uses the common
+1,861 valid cases for every method, while the other main-table reference
+metrics use all clips.
 The reported SFT checkpoint uses temperature 0.7, top-$p$ 0.9,
 top-$k$ 20, one beam, repetition penalty 1.05, no-repeat 4-grams,
 at most 1,024 generated tokens, and an explicit chat EOS. A per-case

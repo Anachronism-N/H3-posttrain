@@ -7,9 +7,8 @@
 The collection contains 220,667 music--choreography records, partitioned
 into 198,315 training, 11,098 validation, and 11,254 test records.
 Records retain media identity, observation intervals, source groups,
-and annotation metadata. These inventory counts do not establish the
-model's exact training subset without its training manifest; video-source
-grouping likewise does not establish song-level disjointness.
+and annotation metadata. Appendix~\ref{sec:remaining-tests} documents
+training provenance and split-audit requirements.
 
 \paragraph{From movement evidence to language.}
 Current references are GPT-6.1-sol text-only rewrites of windowed 2D
@@ -39,8 +38,8 @@ production source of current labels. Appendix~\ref{sec:annotation-details}
 details provenance.
 
 \paragraph{Descriptive statistics.}
-Figure~\ref{fig:annotation-distributions} compares the same 22,352 paired
-validation/test clips, retaining all quality flags. Source-style metadata
+Figure~\ref{fig:annotation-distributions} compares paired source logs
+and refined captions, retaining all quality flags. Source-style metadata
 are unchanged and unknown for 59.6\%. Event and word counts have
 different units and do not establish greater action diversity.
 References describe individual observed dances; agreement does not

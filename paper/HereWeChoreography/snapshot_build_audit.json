@@ -3,9 +3,13 @@
   "preview_pages": 16,
   "main_pages": 8,
   "rebuilt_text_matches_all_pages": true,
-  "preview_sha256": "9ab7a252ac79ac9df587a2ca5657468cfa7f5fa1992716c09ba39e35d0e1d13f",
+  "preview_sha256": "b3745b3449ac91d3023b5a26099ecb0b03d44c9f0c6d183004efb75409f7a095",
   "no_model_runs": true,
   "table_method_label": "Ours",
   "per_cell_counts": false,
+  "rating_version_column": false,
+  "primary_protocol": "r4",
+  "baseline_methods_filled": 7,
+  "common_valid_per_dimension": true,
   "inference_configuration_disclosed_in_appendix": true
 }

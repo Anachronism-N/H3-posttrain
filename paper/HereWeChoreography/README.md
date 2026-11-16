@@ -6,6 +6,11 @@ The experiment section reports the available D1-D3 evidence; D4-D6 remain
 unreported until their evaluation is complete. The style comparison uses only
 the 822-clip population. Detailed result scopes and limitations are in `results/`.
 
+The proposed local D4-D6 redesign is documented in
+[the style/affect rubric proposal](../../notes/62_local_music_rubric_style_affect_proposal_20261117_zh.md).
+It requires calibration and has not been applied to the manuscript's rubric,
+evaluation code, or reported scores.
+
 ## Build
 
 Run from this directory with a TeX distribution containing the CVPR dependencies:

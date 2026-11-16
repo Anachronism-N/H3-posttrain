@@ -1,0 +1,100 @@
+{
+  "schema": "paper.harness_exploratory_ablation_repaired.v1",
+  "source_repository": "https://github.com/Anachronism-N/H3-posttrain",
+  "inspected_checkout": "083d1d0387bba582a4504e79d57f12ab065fa3b9",
+  "source_last_commit": "98b0e2336df3737bb3c304839cb03e67515e59db",
+  "sources": [
+    {
+      "repo_relative_path": "notes/55_music_structure_and_whole_song_revision_20261114_zh.md",
+      "sha256": "ee7dd76fa09c8d4a17799d19c62361362b1a3ef9f13732de54fd83ced2d87b4b"
+    },
+    {
+      "repo_relative_path": "experiments/structured_dev_20261114/paper_result_v7.json",
+      "sha256": "65d5185cf7cc7ecd41a3802564be786786f2085679ae9c3123d578e6c03117e9"
+    }
+  ],
+  "source_section": "17: corrected time-unit and presentation-order rerun; supersedes Sections 13-16",
+  "frozen_excerpt": {
+    "path": "results/harness/exploratory_ablation_repaired.notes_excerpt.txt",
+    "sha256": "a78e2a5411b4095c0c72e6775b566b066cf5974a4bdcfe6710446e3792e8777e"
+  },
+  "table": {
+    "path": "tables/harness_exploratory_ablation.tex",
+    "sha256": "f5354009ef18fc57e07954b5a7df48a87d2d50173500f7e360fcad0c9855c2a6",
+    "caption_note": "Caption condensed during main-text integration; numerical entries unchanged."
+  },
+  "rows": [
+    {
+      "variant": "Q",
+      "baseline_archive_id": "B",
+      "baseline_paper_id": "W",
+      "n": 4,
+      "mean_delta": 3.75,
+      "ci95": [
+        -1.63,
+        7.25
+      ],
+      "win_loss": "3–1",
+      "order_consistency": "4/4",
+      "verbatim_source_row": "| B vs Q（4 首） | +3.75 | [−1.63, 7.25] | 3–1 | 4/4 | 16/14/2 |"
+    },
+    {
+      "variant": "G",
+      "baseline_archive_id": "B",
+      "baseline_paper_id": "W",
+      "n": 4,
+      "mean_delta": 6.5,
+      "ci95": [
+        4.75,
+        7.75
+      ],
+      "win_loss": "4–0",
+      "order_consistency": "4/4",
+      "verbatim_source_row": "| B vs G（4 首） | **+6.50** | [4.75, 7.75] | 4–0 | 4/4 | 14/14/4 |"
+    },
+    {
+      "variant": "S4",
+      "baseline_archive_id": "B",
+      "baseline_paper_id": "W",
+      "n": 4,
+      "mean_delta": 6.25,
+      "ci95": [
+        5.5,
+        7.0
+      ],
+      "win_loss": "4–0",
+      "order_consistency": "4/4",
+      "verbatim_source_row": "| B vs S4（4 首） | **+6.25** | [5.50, 7.00] | 4–0 | 4/4 | 15/15/2 |"
+    }
+  ],
+  "archive_ablation_final": {
+    "B_Q": 3.75,
+    "B_G": 6.5,
+    "B_S4": 6.25,
+    "Q_G": 2.375
+  },
+  "cohort": [
+    "fma-1881",
+    "fma-6789",
+    "fma-10811",
+    "fma-12099"
+  ],
+  "judge": {
+    "model": "Qwen3-VL-8B-Instruct",
+    "modality": "text and acoustic summaries; no direct audio",
+    "score": "sum of four 1-5 criteria; maximum total 20",
+    "direction": "variant minus workflow",
+    "aggregation": "mean over both presentation orders, then across songs",
+    "ci": "95% song-level bootstrap intervals transcribed from repaired Section 17"
+  },
+  "provenance_level": "archived result summaries; original per-call judgments and plans not locally available",
+  "caveats": [
+    "Do not combine these repaired means with the older ablation_v1 or judge_audit_v1 confidence intervals.",
+    "Historical workflow did not receive equal acoustic evidence; not a clean isolated-component comparison.",
+    "Historical fixed windows; not evidence for the new bar-aligned protocol.",
+    "Four exploratory songs include two nominal test songs later inspected during development; not untouched holdout evidence.",
+    "Motif-label hiding and text-truncation settings are not fully bound in this four-song aggregate.",
+    "No direct S4-versus-G test; the table cannot establish nonadditivity or equivalence.",
+    "No audio-grounded or human judgment is supplied by this table."
+  ]
+}

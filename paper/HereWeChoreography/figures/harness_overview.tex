@@ -1,0 +1,14 @@
+% !TeX root = ../main.tex
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/harness_runtime_gpt_v4.png}
+\caption{\textbf{Agent--harness execution in \method.}
+Detected bar groups determine the local expert's observation windows.
+Cached candidates, global style, and acoustic summaries condition a
+frozen composer. The controller schedules stages, executes tools, and
+returns observations through a feedback loop. Persistent state separates
+the draft from committed history and tracks the remaining budget.
+One local expert is fixed per run. The figure shows the latest design;
+reported whole-song results use its earlier fixed-window configuration.}
+\label{fig:harness-overview}
+\end{figure*}

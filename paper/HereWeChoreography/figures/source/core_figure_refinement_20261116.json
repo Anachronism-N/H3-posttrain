@@ -1,0 +1,26 @@
+{
+  "generator": "built-in GPT Image",
+  "mode": "edit",
+  "figures": [
+    {
+      "key": "harness_runtime_gpt_v4",
+      "reference": "E:/Program/CVPR/6af8799bdc4c574be1ca3027/figures/harness_runtime_gpt_v3.png",
+      "prompt": "Refine this existing CVPR architecture diagram, preserving its good visual identity, model names, agent/controller feedback loop, tool/state structure and pastel palette. Do not replace it with a new conceptual picture.\nMake three targeted improvements.\n1. Correct the top preprocessing dependencies. Delete the words \"(parallel analysis)\" under Shared evidence. Beat This! estimates downbeats and its grouping module determines the local expert's observation windows. Add one clear thin RIGHTWARD arrow from the Beat This! module to the Local choreography expert module, labeled \"bar windows\"; keep music input fan-out for audio and the MuQ/librosa branches. The local expert therefore has both source-audio input and a bar-window dependency. Keep \"one backend per run\", \"SFT Qwen3-Omni or MOSS-Music-8B\", \"MuQ + style head\", \"librosa\" and the fixed shared cache. Route the added arrow using the whitespace between/around the top modules, never through text. Top module body text may be shortened to \"Downbeats → bar groups\" for Beat This! and \"RMS · onset · chroma\" for librosa.\n2. Improve the readability of the right Tool execution panel. Replace its raw-code rows with exactly four short human-readable operations: \"Read evidence / history\", \"Validate schedule\", \"Commit unit\", \"Revise selected text\". Retain the tool execution heading and preserve its execute and observation/error arrows.\n3. Keep all remaining graph edges and state compartments, but use the space saved by shorter labels for slightly larger type and cleaner consistent spacing. Model boxes lavender, controller teal, tools warm amber, persistent state blue-gray; fine dark-slate strokes on white. The controller explicitly schedules stages and enforces budget/permissions; do not imply the proposed agent chooses arbitrary tools or directly listens to raw full-song audio. The composer remains Qwen3-VL / 30B-A3B-Instruct, frozen during planning. Output remains timed choreography TEXT. No new modules, no grader, no learned compatibility or physical motion synthesis. Do not remove the feedback loop or state. Preserve the existing wide landscape aspect ratio and professional, restrained scientific aesthetic."
+    },
+    {
+      "key": "evaluation_rubric_gpt_v3",
+      "reference": "E:/Program/CVPR/6af8799bdc4c574be1ca3027/figures/evaluation_rubric_gpt_v2.png",
+      "prompt": "Make a precise typography and clarity edit to this existing CVPR evaluation illustration. Preserve its entire layout, attractive line illustrations, nine dimension badges, waveform, action text, colors, evidence ribbon and scale. Change ONLY these labels:\n- \"D3 Written feasibility\" to \"D3 Local timing\".\n- \"5 Fully evidenced\" to \"5 Fully supported\".\n- The bottom-right chip to \"D6 N/A: frozen audio-only decision\".\nThese changes clarify that D3 evaluates the written temporal schedule and that score 5 requires fulfillment supported by evidence; it is not earned merely by supplying quotations. Improve the small text's sharpness and spacing, using the existing type style. Keep 1 Core failure, 2 Critical defect, 3 Usable, incomplete, 4 Minor issues, all other dimensions, unknown status, music-evidence requirements, and all artwork unchanged. Do not add scores, models, plots or decorative elements. Preserve wide landscape proportions and white background."
+    }
+  ],
+  "statistics": {
+    "script": "plot_annotation_distributions_v3.py",
+    "source": "dataset_distribution_audit.json",
+    "outputs": [
+      "annotation_distributions_v3.pdf",
+      "annotation_distributions_v3.svg",
+      "annotation_distributions_v3.png"
+    ]
+  },
+  "layout": "dataset_overview.tex combines the original detailed framework with compact vector statistics; source bitmap is preserved."
+}

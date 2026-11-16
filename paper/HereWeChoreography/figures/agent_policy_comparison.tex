@@ -1,0 +1,15 @@
+% !TeX root = ../main.tex
+\begin{figure*}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/agent_policy_comparison_gpt.png}
+\caption{\textbf{Control-policy schematics for the shared-evidence comparison.}
+Workflow uses direct composition, Self-Refine adds per-unit feedback and
+revision, and ReAct selects tools through a bounded observation loop.
+Commit observations advance ReAct to the next unit within that loop;
+the displayed commit branch is a state update, not whole-song termination.
+The proposed policy adds music/motif objectives and terminal targeted
+revision with remaining budget. Common validation and failure handling
+are abbreviated. These are implemented task adaptations, and this
+figure reports no comparative quality result.}
+\label{fig:agent-policy-comparison}
+\end{figure*}

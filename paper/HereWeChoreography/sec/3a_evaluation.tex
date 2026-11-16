@@ -1,0 +1,70 @@
+% !TeX root = ../main.tex
+\section{Evaluating Textual Choreography}
+\label{sec:evaluation}
+\input{figures/evaluation_rubric}
+\input{tables/rubric_core_anchors}
+% Declare the wide results float early so it stays with the main-paper
+% experiment discussion rather than being deferred past the conclusion.
+\input{tables/e2_reference_agreement}
+\input{tables/refinement_d123}
+\input{tables/style_prior_822}
+
+\paragraph{Evaluation targets.}
+Our music-and-text protocol separates reference agreement, surface
+diagnostics, and choreography quality. Connective counts and exact-string
+duplication describe surface behavior; neither they nor reference
+agreement establish performed synchronization or biomechanics.
+
+\paragraph{Local and whole-song criteria.}
+Figure~\ref{fig:evaluation-rubric} groups D1--D3 as \emph{Local movement
+content}, D4--D6 as \emph{Musical response}, and L1--L3 as
+\emph{Whole-song composition}. Tables~\ref{tab:rubric-core-anchors}
+and~\ref{tab:rubric-detailed-anchors} define integer 1--5 anchors, without
+a weighted total: 2 indicates useful content with a critical defect,
+3 an important omission, and 4 minor deficiencies. Sustained motion,
+half-time, contrast, and intentional recurrence can score highly.
+Verbosity and motif labels cannot replace evidence; missing support-foot
+information alone is not a contradiction.
+
+\paragraph{Evidence and scoring.}
+Ratings require reasons, exact action quotations, and existing event IDs.
+D4--D6 and L2--L3 additionally require audible observations with global
+timestamps. D6 applicability is determined from audio before inspecting
+candidates and frozen across methods. Confirmed absence of salient
+change is \emph{not applicable}; unresolved applicability or insufficient
+evidence is \emph{unknown}. Neither receives a number. Assessable vagueness
+and unsupported musical claims receive low scores; service/parsing
+failures remain separate.
+
+The executor retains raw responses and checks types, quotations, IDs,
+audio identity, and time bounds. These checks establish format compliance,
+not semantic validity, audio coverage, calibration, or listener agreement.
+
+\paragraph{Coverage and aggregation.}
+L1--L3 require full-song audio and the complete plan; D1--D6 use crops
+with global offsets. A chunk-observation fallback remains unimplemented.
+
+For each method and dimension $d$, $\mathcal V_{sd}$ indexes valid,
+applicable regions of song $s$, and $\mathcal S_d$ contains songs with
+at least one such region:
+\begin{equation}
+\label{eq:rubric-aggregation}
+\begin{aligned}
+\bar r_{sd}&=\frac{1}{|\mathcal V_{sd}|}
+                  \sum_{w\in\mathcal V_{sd}}r_{swd},\\
+R_d&=\frac{1}{|\mathcal S_d|}\sum_{s\in\mathcal S_d}\bar r_{sd}.
+\end{aligned}
+\end{equation}
+Whole-song dimensions contribute one rating per song. Coverage divides
+valid ratings by registered, confirmed-applicable cases, reporting unknown,
+failed, and unresolved counts separately. Paired effects use shared valid
+regions/songs and song-bootstrap intervals. Completion includes all
+registered songs; empty denominators remain undefined.
+
+\paragraph{Controlled validation.}
+The 12-song protocol has not run; it fixes beginning/middle/end regions, evidence,
+and budgets across Workflow, Self-Refine, ReAct, and our harness.
+Calibration and validation require two independent listeners and
+cross-family judges. Archived four-criterion, acoustic-summary-only
+results (Section~\ref{sec:exp-harness}) assess a different protocol and
+cannot validate these audio-conditioned ratings.

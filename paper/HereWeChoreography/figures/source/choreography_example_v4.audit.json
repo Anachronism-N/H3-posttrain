@@ -1,0 +1,141 @@
+{
+  "schema": "herewechoreography.real_case_figure.v4",
+  "case_id": "wJPptuhclZmKAEWs",
+  "figure_size_inches": [
+    6.875,
+    3.55
+  ],
+  "minimum_font_points": 8.1,
+  "source_files": {
+    "annotation_audit": {
+      "file": "case_example\\wJPptuhclZmKAEWs.audit.json",
+      "sha256": "f45279b05c27d8e7e1a8c4e2ff13cf4ba9697787b444583f27e0ed8efd24f92f"
+    },
+    "frame_audit": {
+      "file": "case_example\\wJPptuhclZmKAEWs.frame_audit.json",
+      "sha256": "4a7bc0a45862a046c913e74a4707c41001516cfab28dbec60275e8de75029bd2"
+    },
+    "beat_audit": {
+      "file": "case_example\\wJPptuhclZmKAEWs.beat_audit.json",
+      "sha256": "28974ff0d95a325a9246dede527c3100832231de7b8120c5d81c14b28bd53a71"
+    },
+    "audio": {
+      "file": "case_example\\wJPptuhclZmKAEWs.wav",
+      "sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e"
+    }
+  },
+  "selected_frames": [
+    {
+      "file": "case_example\\wJPptuhclZmKAEWs_frames_v4\\frame_01.png",
+      "sha256": "0b6cfdd0b7e391a64083dff1a70cf8e156c70e1cbf44e38b6edd5ca035708e49",
+      "video_frame": 0,
+      "seconds": 0.0
+    },
+    {
+      "file": "case_example\\wJPptuhclZmKAEWs_frames_v4\\frame_02.png",
+      "sha256": "5b295671b80b9e5d03b79e5b3a34432ab23872ba220b96eaf6ceb72c1fd7812f",
+      "video_frame": 20,
+      "seconds": 1.25
+    },
+    {
+      "file": "case_example\\wJPptuhclZmKAEWs_frames_v4\\frame_03.png",
+      "sha256": "7fe4c4ae9566c3742f8dbf5e4d9624af6f2cd77a6763fe9cb5d656fdd0f72754",
+      "video_frame": 36,
+      "seconds": 2.25
+    },
+    {
+      "file": "case_example\\wJPptuhclZmKAEWs_frames_v4\\frame_04.png",
+      "sha256": "4fadc016d7043bbc94599964ed302057f00958975331b8268fe849441e3851f9",
+      "video_frame": 56,
+      "seconds": 3.5
+    },
+    {
+      "file": "case_example\\wJPptuhclZmKAEWs_frames_v4\\frame_05.png",
+      "sha256": "f9d707f93aa0ecdad862f9f8b1bfbfee3e87502975df134e80517b309e3d3ab9",
+      "video_frame": 68,
+      "seconds": 4.25
+    },
+    {
+      "file": "case_example\\wJPptuhclZmKAEWs_frames_v4\\frame_06.png",
+      "sha256": "edd0f80b572e1fcb4cab303c8d0a6c5754733af932f483d8d95a2c027b1940a1",
+      "video_frame": 80,
+      "seconds": 5.0
+    }
+  ],
+  "source_video_sha256": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+  "frame_extraction": "FFmpeg select by zero-based source index; passthrough; lossless PNG",
+  "display_viewport_xyxy": [
+    120,
+    280,
+    640,
+    1250
+  ],
+  "display_crop_scope": "Background only; all six figures retain full body",
+  "waveform": {
+    "kind": "2-ms measured PCM min/max envelope",
+    "global_scaling_only": true,
+    "sample_rate": 24000,
+    "sample_count": 121500,
+    "synthetic_or_locally_amplified": false
+  },
+  "predicted_downbeats_seconds": [
+    0.2,
+    1.96,
+    3.7
+  ],
+  "detector_checkpoint_sha256": "8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331",
+  "planning_units_seconds": [
+    [
+      0,
+      3.7
+    ],
+    [
+      3.7,
+      5.0625
+    ]
+  ],
+  "complete_bars_seconds": [
+    [
+      0.2,
+      1.96
+    ],
+    [
+      1.96,
+      3.7
+    ]
+  ],
+  "merged_lead_in_seconds": [
+    0,
+    0.2
+  ],
+  "ending_is_incomplete_fragment": true,
+  "text_origin": "Author-composed illustrative score, not GT or model output",
+  "text_cards": [
+    "Lower the raised foot; sweep both hands side to side in a small range in front of the upper torso, with elbows softly bent.",
+    "Then lower both hands toward the waist while keeping the elbows softly bent.",
+    "From the waist, lift both forearms in front of the upper torso; near the end, raise one knee."
+  ],
+  "text_line_counts": [
+    3,
+    3,
+    4
+  ],
+  "phase_frame_references": [
+    "A-C",
+    "C-D",
+    "D-F"
+  ],
+  "phase_timing": "Illustrative internal phases, not annotated exact movement boundaries",
+  "hand_off": "Textually specified hand state, not measured body-state continuity",
+  "source_style_metadata": "contemporary",
+  "video_modified_with_ai": false,
+  "new_model_inference": false,
+  "independent_av_alignment_verified": false,
+  "music_fit_or_quality_measured": false,
+  "quality_ratings": null,
+  "output_sha256": {
+    "choreography_example_v4.pdf": "eafe178bae5288552b93fe14fddb6947d5a266f2bfd1499155493726ddd67124",
+    "choreography_example_v4.svg": "c072ef1990da6ed3c9e057bd61636349639199908a36844f1fb8be4eb4d2d152",
+    "choreography_example_v4.png": "3aa04c59ce7ee23f86706c607b1e952829687df7d26462af452d87501a1bfce7"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "methods": {
+    "workflow": {
+      "registered_songs": 24,
+      "statuses": {
+        "complete_attempt": 24
+      },
+      "legal_complete_songs": 24,
+      "legal_completion_rate": 1.0,
+      "mean_calls_per_registered_song": 24.541666666666668,
+      "total_calls": 589,
+      "mean_input_tokens_per_registered_song": 397211,
+      "mean_output_tokens_per_registered_song": 11378.75,
+      "rejected_tool_calls": 0,
+      "no_content_change_steps": 0,
+      "music_fit": null,
+      "long_range_organization": null,
+      "semantic_boundary_conflict_rate": null,
+      "semantic_repetition_rate": null
+    },
+    "self_refine": {
+      "registered_songs": 24,
+      "statuses": {
+        "complete_attempt": 24
+      },
+      "legal_complete_songs": 24,
+      "legal_completion_rate": 1.0,
+      "mean_calls_per_registered_song": 71.625,
+      "total_calls": 1719,
+      "mean_input_tokens_per_registered_song": 1215833.3333333333,
+      "mean_output_tokens_per_registered_song": 26226.708333333332,
+      "rejected_tool_calls": 0,
+      "no_content_change_steps": 0,
+      "music_fit": null,
+      "long_range_organization": null,
+      "semantic_boundary_conflict_rate": null,
+      "semantic_repetition_rate": null
+    },
+    "react": {
+      "registered_songs": 24,
+      "statuses": {
+        "complete_attempt": 24
+      },
+      "legal_complete_songs": 19,
+      "legal_completion_rate": 0.7916666666666666,
+      "mean_calls_per_registered_song": 74.875,
+      "total_calls": 1797,
+      "mean_input_tokens_per_registered_song": 1457552.75,
+      "mean_output_tokens_per_registered_song": 32953.541666666664,
+      "rejected_tool_calls": 15,
+      "no_content_change_steps": 469,
+      "music_fit": null,
+      "long_range_organization": null,
+      "semantic_boundary_conflict_rate": null,
+      "semantic_repetition_rate": null
+    },
+    "choreography": {
+      "registered_songs": 24,
+      "statuses": {
+        "complete_attempt": 24
+      },
+      "legal_complete_songs": 20,
+      "legal_completion_rate": 0.8333333333333334,
+      "mean_calls_per_registered_song": 76.08333333333333,
+      "total_calls": 1826,
+      "mean_input_tokens_per_registered_song": 1526376.0416666667,
+      "mean_output_tokens_per_registered_song": 34699.291666666664,
+      "rejected_tool_calls": 12,
+      "no_content_change_steps": 500,
+      "music_fit": null,
+      "long_range_organization": null,
+      "semantic_boundary_conflict_rate": null,
+      "semantic_repetition_rate": null
+    }
+  },
+  "registered_cells": 96,
+  "scope": "actual final-state structure/cost/trajectory metrics, not semantic or musical quality",
+  "human": false
+}

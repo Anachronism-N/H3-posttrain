@@ -1,0 +1,168 @@
+{
+  "repository": "Anachronism-N/H3-posttrain",
+  "commit": "dc6dfd9894fb702acb857524f930481efec829df",
+  "branch": "results/sft-refine-v1-2000-20261116",
+  "source_path": "results/m2d/sft_v3_rp105_refine_v1_2000_20261116/",
+  "source_files": {
+    "manifest.json": {
+      "sha256": "ffc25b6f4b6645f95f20fdc9307d5fc03fb29f63be058ef335b03b5b65bb8d0f",
+      "bytes": 2267
+    },
+    "outputs.jsonl": {
+      "sha256": "709f61d91a43b4e0a34af436e0d03f1d1d66e73f5b2eeb59dc36edd3bba79a7e",
+      "bytes": 2007825
+    },
+    "judgments.jsonl": {
+      "sha256": "25afb70325e3a6ce81456349141b214ed977dc991912308d8ac96399f5c5c53e",
+      "bytes": 950188
+    }
+  },
+  "method": "SFT_v3_rp105+refine-v1",
+  "editor": "Qwen3.5-397B-A17B",
+  "registered": 2000,
+  "methods_published": [
+    "SFT_v3_rp105+refine-v1"
+  ],
+  "d4_d6": null,
+  "judge_identity_published": false,
+  "rubric_anchor_definitions_published": false,
+  "scores": {
+    "r4": {
+      "dimensions": {
+        "D1": {
+          "available_mean": 4.966983491745873,
+          "valid": 1999,
+          "invalid": 1,
+          "score_distribution": {
+            "3": 30,
+            "4": 6,
+            "5": 1963
+          },
+          "status_counts": {
+            "valid_structure": 1999,
+            "invalid_judgment": 1
+          }
+        },
+        "D2": {
+          "available_mean": 3.334673366834171,
+          "valid": 1990,
+          "invalid": 10,
+          "score_distribution": {
+            "2": 26,
+            "3": 1279,
+            "4": 678,
+            "5": 7
+          },
+          "status_counts": {
+            "valid_structure": 1990,
+            "invalid_judgment": 10
+          }
+        },
+        "D3": {
+          "available_mean": 4.801900950475238,
+          "valid": 1999,
+          "invalid": 1,
+          "score_distribution": {
+            "3": 38,
+            "4": 320,
+            "5": 1641
+          },
+          "status_counts": {
+            "valid_structure": 1999,
+            "invalid_judgment": 1
+          }
+        }
+      },
+      "rubric_sha256": "ea5d0dec8b15cbab6290c14d71d0356d670673a832c6136afc8eb3055860fc2c",
+      "common_all3_valid": 1988,
+      "common_all3_means": {
+        "D1": 4.9678068410462775,
+        "D2": 3.335010060362173,
+        "D3": 4.802816901408451
+      }
+    },
+    "v2.1": {
+      "dimensions": {
+        "D1": {
+          "available_mean": 4.922,
+          "valid": 2000,
+          "invalid": 0,
+          "score_distribution": {
+            "2": 2,
+            "3": 63,
+            "4": 24,
+            "5": 1911
+          },
+          "status_counts": {
+            "valid_structure": 2000
+          }
+        },
+        "D2": {
+          "available_mean": 4.501017293997966,
+          "valid": 1966,
+          "invalid": 34,
+          "score_distribution": {
+            "2": 104,
+            "3": 234,
+            "4": 201,
+            "5": 1427
+          },
+          "status_counts": {
+            "valid_structure": 1966,
+            "invalid_judgment": 34
+          }
+        },
+        "D3": {
+          "available_mean": 4.914457228614308,
+          "valid": 1999,
+          "invalid": 1,
+          "score_distribution": {
+            "2": 1,
+            "3": 59,
+            "4": 50,
+            "5": 1889
+          },
+          "status_counts": {
+            "valid_structure": 1999,
+            "invalid_judgment": 1
+          }
+        }
+      },
+      "rubric_sha256": "656c251af9232be150c3d2f592d38d2249190068707ec8abd2fde290accb6326",
+      "common_all3_valid": 1965,
+      "common_all3_means": {
+        "D1": 4.92468193384224,
+        "D2": 4.5022900763358775,
+        "D3": 4.919083969465649
+      }
+    }
+  },
+  "limits": [
+    "No other method judgments are published in this branch; cannot reconstruct a paired baseline comparison.",
+    "Manifest records editor, not judge identity.",
+    "r4 and v2.1 anchor text absent; source hashes differ and scores must remain separate.",
+    "v2.1 was defined after earlier test results.",
+    "Numeric scores with valid_structure are schema-valid, not human validation.",
+    "Refined e2 reference metrics were not recomputed.",
+    "No independent music or semantic-faithfulness validation.",
+    "No confidence intervals calculated from this export; source grouping absent."
+  ],
+  "source_url": "https://github.com/Anachronism-N/H3-posttrain/tree/dc6dfd9894fb702acb857524f930481efec829df/results/m2d/sft_v3_rp105_refine_v1_2000_20261116",
+  "acoustic_input_to_judge_documented": false,
+  "judgment_record_keys": [
+    "case_id",
+    "method",
+    "scores",
+    "text_sha256"
+  ],
+  "score_entry_keys": [
+    "score",
+    "status"
+  ],
+  "judgment_reason_or_evidence_quotes_published": false,
+  "human_validated": false,
+  "semantic_faithfulness_verified": false,
+  "rubric_version_comparison": "Different rubric hashes; do not treat row differences as method effects.",
+  "mean_aggregation": "Mean numeric scores among valid entries independently per dimension; no null-to-zero imputation.",
+  "new_model_inference_or_metric_resampling": false
+}

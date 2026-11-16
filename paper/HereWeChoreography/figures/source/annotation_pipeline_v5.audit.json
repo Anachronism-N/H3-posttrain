@@ -1,0 +1,15 @@
+{
+  "tool": "built-in GPT Image edit",
+  "base": "figures/annotation_pipeline_v4.png",
+  "preferred_layout_origin": "figures/annotation_pipeline_v2.png",
+  "final": "figures/annotation_pipeline_v5.png",
+  "sha256": "8601f3051079d6a4ed5d5ffa81dfb76ba20b5bf20e4bfd36013164bf7e9efd27",
+  "prompt": "figures/source/annotation_pipeline_v5.prompt.txt",
+  "prompt_sha256": "a27821ff7b1178c0cee8630a75418f57af2451ecb75e1cca709082ed8d3885a6",
+  "fixes": [
+    "palm and leg detail with distinct wrist/knee callouts",
+    "matching lower detail badges 4 and 5; remove winding expansion connectors",
+    "retain Temporal Event Extraction name and two-panel layout",
+    "retain refinement objectives and source-framework citation outside artwork"
+  ]
+}

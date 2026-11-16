@@ -1,0 +1,728 @@
+{
+  "schema": "incomplete22-pilot-preview-audit-v1",
+  "all2822_prediction_identities_verified": true,
+  "three_frozen_models_sha_verified": true,
+  "probability_normalization_verified": true,
+  "no_training_or_hyperparameter_update": true,
+  "full22_training_ready": false,
+  "preview_counts": {
+    "all": 822,
+    "common7": 700
+  },
+  "preview_only_supported_gt_classes": 13,
+  "full_preview_paired_top1_top3": [
+    {
+      "candidate": "weighted-ce",
+      "reference": "ce",
+      "denominator": 822,
+      "delta": {
+        "top1": -0.03041362530413627,
+        "top3": -0.03892944038929447
+      },
+      "ci95": {
+        "top1": [
+          -0.06447688564476883,
+          0.0024330900243309528
+        ],
+        "top3": [
+          -0.06690997566909973,
+          -0.009732360097323589
+        ]
+      }
+    },
+    {
+      "candidate": "focal-gamma2",
+      "reference": "ce",
+      "denominator": 822,
+      "delta": {
+        "top1": 0.0048661800486617945,
+        "top3": -0.0048661800486619056
+      },
+      "ci95": {
+        "top1": [
+          -0.024330900243309028,
+          0.03527980535279801
+        ],
+        "top3": [
+          -0.02676399026763998,
+          0.017031630170316392
+        ]
+      }
+    }
+  ],
+  "common7_paired": {
+    "methods": {
+      "ce": {
+        "metrics": {
+          "denominator": 700,
+          "top1": 0.49142857142857144,
+          "top3": 0.8742857142857143,
+          "macro_f1": 0.4856683146678095,
+          "balanced_accuracy": 0.49142857142857144,
+          "confusion": [
+            [
+              34,
+              14,
+              17,
+              3,
+              6,
+              5,
+              21,
+              0
+            ],
+            [
+              9,
+              46,
+              10,
+              1,
+              2,
+              1,
+              31,
+              0
+            ],
+            [
+              10,
+              7,
+              58,
+              3,
+              4,
+              2,
+              16,
+              0
+            ],
+            [
+              6,
+              2,
+              8,
+              32,
+              16,
+              35,
+              1,
+              0
+            ],
+            [
+              4,
+              2,
+              5,
+              8,
+              74,
+              5,
+              2,
+              0
+            ],
+            [
+              4,
+              3,
+              2,
+              13,
+              17,
+              58,
+              3,
+              0
+            ],
+            [
+              23,
+              22,
+              13,
+              0,
+              0,
+              0,
+              42,
+              0
+            ]
+          ],
+          "confusion_rows": [
+            "pop / casual",
+            "hip-hop",
+            "jazz funk / heels",
+            "chinese classical",
+            "chinese folk",
+            "contemporary",
+            "k-pop"
+          ],
+          "confusion_columns": [
+            "pop / casual",
+            "hip-hop",
+            "jazz funk / heels",
+            "chinese classical",
+            "chinese folk",
+            "contemporary",
+            "k-pop",
+            "invalid"
+          ],
+          "macro_f1_class_scope": "all_seven_classes",
+          "balanced_accuracy_class_scope": "supported_classes"
+        },
+        "ci95": {
+          "top1": [
+            0.45571428571428574,
+            0.5285714285714286
+          ],
+          "top3": [
+            0.8485714285714285,
+            0.8985714285714286
+          ],
+          "macro_f1": [
+            0.4486568265654918,
+            0.5200804903549879
+          ],
+          "balanced_accuracy": [
+            0.45542298890532046,
+            0.526627399058773
+          ]
+        }
+      },
+      "weighted-ce": {
+        "metrics": {
+          "denominator": 700,
+          "top1": 0.4471428571428571,
+          "top3": 0.8157142857142857,
+          "macro_f1": 0.4314715502814228,
+          "balanced_accuracy": 0.4471428571428571,
+          "confusion": [
+            [
+              33,
+              12,
+              16,
+              5,
+              20,
+              5,
+              9,
+              0
+            ],
+            [
+              13,
+              44,
+              14,
+              4,
+              13,
+              4,
+              8,
+              0
+            ],
+            [
+              15,
+              8,
+              45,
+              4,
+              13,
+              4,
+              11,
+              0
+            ],
+            [
+              3,
+              1,
+              3,
+              45,
+              24,
+              24,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              0,
+              11,
+              79,
+              6,
+              1,
+              0
+            ],
+            [
+              2,
+              1,
+              2,
+              23,
+              21,
+              51,
+              0,
+              0
+            ],
+            [
+              29,
+              26,
+              18,
+              2,
+              7,
+              2,
+              16,
+              0
+            ]
+          ],
+          "confusion_rows": [
+            "pop / casual",
+            "hip-hop",
+            "jazz funk / heels",
+            "chinese classical",
+            "chinese folk",
+            "contemporary",
+            "k-pop"
+          ],
+          "confusion_columns": [
+            "pop / casual",
+            "hip-hop",
+            "jazz funk / heels",
+            "chinese classical",
+            "chinese folk",
+            "contemporary",
+            "k-pop",
+            "invalid"
+          ],
+          "macro_f1_class_scope": "all_seven_classes",
+          "balanced_accuracy_class_scope": "supported_classes"
+        },
+        "ci95": {
+          "top1": [
+            0.4114285714285714,
+            0.48428571428571426
+          ],
+          "top3": [
+            0.7871428571428571,
+            0.8442857142857143
+          ],
+          "macro_f1": [
+            0.3951578361135106,
+            0.46603384357131294
+          ],
+          "balanced_accuracy": [
+            0.41320790622823955,
+            0.48142540371901343
+          ]
+        }
+      },
+      "focal-gamma2": {
+        "metrics": {
+          "denominator": 700,
+          "top1": 0.48857142857142855,
+          "top3": 0.8514285714285714,
+          "macro_f1": 0.4867179486358025,
+          "balanced_accuracy": 0.4885714285714286,
+          "confusion": [
+            [
+              31,
+              14,
+              14,
+              9,
+              6,
+              2,
+              24,
+              0
+            ],
+            [
+              13,
+              46,
+              11,
+              1,
+              1,
+              2,
+              26,
+              0
+            ],
+            [
+              9,
+              8,
+              52,
+              6,
+              5,
+              1,
+              19,
+              0
+            ],
+            [
+              5,
+              2,
+              2,
+              52,
+              17,
+              21,
+              1,
+              0
+            ],
+            [
+              3,
+              1,
+              4,
+              15,
+              71,
+              3,
+              3,
+              0
+            ],
+            [
+              3,
+              3,
+              2,
+              23,
+              20,
+              47,
+              2,
+              0
+            ],
+            [
+              23,
+              18,
+              16,
+              0,
+              0,
+              0,
+              43,
+              0
+            ]
+          ],
+          "confusion_rows": [
+            "pop / casual",
+            "hip-hop",
+            "jazz funk / heels",
+            "chinese classical",
+            "chinese folk",
+            "contemporary",
+            "k-pop"
+          ],
+          "confusion_columns": [
+            "pop / casual",
+            "hip-hop",
+            "jazz funk / heels",
+            "chinese classical",
+            "chinese folk",
+            "contemporary",
+            "k-pop",
+            "invalid"
+          ],
+          "macro_f1_class_scope": "all_seven_classes",
+          "balanced_accuracy_class_scope": "supported_classes"
+        },
+        "ci95": {
+          "top1": [
+            0.4514285714285714,
+            0.5257142857142857
+          ],
+          "top3": [
+            0.8242857142857143,
+            0.8771428571428571
+          ],
+          "macro_f1": [
+            0.4489433359030156,
+            0.5222023911298502
+          ],
+          "balanced_accuracy": [
+            0.452041386397345,
+            0.5251631533251103
+          ]
+        }
+      },
+      "released7-class-jev": {
+        "metrics": {
+          "denominator": 700,
+          "top1": 0.4342857142857143,
+          "top3": 0.8428571428571429,
+          "macro_f1": 0.4333857178672709,
+          "balanced_accuracy": 0.4342857142857143,
+          "confusion": [
+            [
+              34,
+              18,
+              13,
+              6,
+              3,
+              5,
+              21,
+              0
+            ],
+            [
+              16,
+              53,
+              10,
+              2,
+              0,
+              3,
+              16,
+              0
+            ],
+            [
+              13,
+              14,
+              46,
+              5,
+              3,
+              4,
+              15,
+              0
+            ],
+            [
+              8,
+              3,
+              5,
+              42,
+              11,
+              31,
+              0,
+              0
+            ],
+            [
+              6,
+              4,
+              2,
+              18,
+              55,
+              13,
+              2,
+              0
+            ],
+            [
+              3,
+              4,
+              1,
+              27,
+              14,
+              49,
+              2,
+              0
+            ],
+            [
+              24,
+              33,
+              18,
+              0,
+              0,
+              0,
+              25,
+              0
+            ]
+          ],
+          "confusion_rows": [
+            "pop / casual",
+            "hip-hop",
+            "jazz funk / heels",
+            "chinese classical",
+            "chinese folk",
+            "contemporary",
+            "k-pop"
+          ],
+          "confusion_columns": [
+            "pop / casual",
+            "hip-hop",
+            "jazz funk / heels",
+            "chinese classical",
+            "chinese folk",
+            "contemporary",
+            "k-pop",
+            "invalid"
+          ],
+          "macro_f1_class_scope": "all_seven_classes",
+          "balanced_accuracy_class_scope": "supported_classes"
+        },
+        "ci95": {
+          "top1": [
+            0.3985714285714286,
+            0.4714285714285714
+          ],
+          "top3": [
+            0.8157142857142857,
+            0.87
+          ],
+          "macro_f1": [
+            0.39694316570009186,
+            0.4687925254731876
+          ],
+          "balanced_accuracy": [
+            0.39875542191753344,
+            0.47087324572025746
+          ]
+        }
+      }
+    },
+    "comparisons": [
+      {
+        "candidate": "weighted-ce",
+        "reference": "ce",
+        "delta": {
+          "top1": -0.04428571428571432,
+          "top3": -0.05857142857142861,
+          "macro_f1": -0.05419676438638671,
+          "balanced_accuracy": -0.04428571428571432
+        },
+        "ci95": {
+          "top1": [
+            -0.07857142857142857,
+            -0.010000000000000009
+          ],
+          "top3": [
+            -0.08857142857142852,
+            -0.029999999999999916
+          ],
+          "macro_f1": [
+            -0.08820456480645517,
+            -0.01915888288146304
+          ],
+          "balanced_accuracy": [
+            -0.076726945411531,
+            -0.010575121767556444
+          ]
+        }
+      },
+      {
+        "candidate": "focal-gamma2",
+        "reference": "ce",
+        "delta": {
+          "top1": -0.0028571428571428914,
+          "top3": -0.02285714285714291,
+          "macro_f1": 0.0010496339679929578,
+          "balanced_accuracy": -0.002857142857142836
+        },
+        "ci95": {
+          "top1": [
+            -0.03142857142857142,
+            0.025714285714285745
+          ],
+          "top3": [
+            -0.04428571428571426,
+            -0.0014285714285714457
+          ],
+          "macro_f1": [
+            -0.02770311727153645,
+            0.031208347689463335
+          ],
+          "balanced_accuracy": [
+            -0.030535224538661424,
+            0.025689931391791532
+          ]
+        }
+      },
+      {
+        "candidate": "released7-class-jev",
+        "reference": "ce",
+        "delta": {
+          "top1": -0.05714285714285716,
+          "top3": -0.03142857142857147,
+          "macro_f1": -0.052282596800538594,
+          "balanced_accuracy": -0.05714285714285716
+        },
+        "ci95": {
+          "top1": [
+            -0.09142857142857136,
+            -0.022857142857142854
+          ],
+          "top3": [
+            -0.055714285714285716,
+            -0.0071428571428572285
+          ],
+          "macro_f1": [
+            -0.08565435717088116,
+            -0.01830103461526647
+          ],
+          "balanced_accuracy": [
+            -0.08975340407897309,
+            -0.023393676557566394
+          ]
+        }
+      },
+      {
+        "candidate": "ce",
+        "reference": "released7-class-jev",
+        "delta": {
+          "top1": 0.05714285714285716,
+          "top3": 0.03142857142857147,
+          "macro_f1": 0.052282596800538594,
+          "balanced_accuracy": 0.05714285714285716
+        },
+        "ci95": {
+          "top1": [
+            0.022857142857142854,
+            0.09142857142857136
+          ],
+          "top3": [
+            0.0071428571428572285,
+            0.055714285714285716
+          ],
+          "macro_f1": [
+            0.018301034615266467,
+            0.08565435717088116
+          ],
+          "balanced_accuracy": [
+            0.023393676557566384,
+            0.08975340407897309
+          ]
+        }
+      },
+      {
+        "candidate": "weighted-ce",
+        "reference": "released7-class-jev",
+        "delta": {
+          "top1": 0.012857142857142845,
+          "top3": -0.027142857142857135,
+          "macro_f1": -0.0019141675858481144,
+          "balanced_accuracy": 0.012857142857142845
+        },
+        "ci95": {
+          "top1": [
+            -0.015714285714285736,
+            0.041428571428571426
+          ],
+          "top3": [
+            -0.052857142857142936,
+            -0.0014285714285713347
+          ],
+          "macro_f1": [
+            -0.030697074207776082,
+            0.026557341782728994
+          ],
+          "balanced_accuracy": [
+            -0.015142007534825792,
+            0.04036009690960243
+          ]
+        }
+      },
+      {
+        "candidate": "focal-gamma2",
+        "reference": "released7-class-jev",
+        "delta": {
+          "top1": 0.05428571428571427,
+          "top3": 0.008571428571428563,
+          "macro_f1": 0.05333223076853155,
+          "balanced_accuracy": 0.054285714285714326
+        },
+        "ci95": {
+          "top1": [
+            0.022857142857142854,
+            0.08571428571428574
+          ],
+          "top3": [
+            -0.011428571428571455,
+            0.02857142857142858
+          ],
+          "macro_f1": [
+            0.022233064123781735,
+            0.0848139020726391
+          ],
+          "balanced_accuracy": [
+            0.023726488407343923,
+            0.0855097396077982
+          ]
+        }
+      }
+    ],
+    "resampling": {
+      "unit": "source_group_id",
+      "groups": 700,
+      "cases": 700,
+      "samples": 10000,
+      "seed": 20261115,
+      "rng": "numpy.random.default_rng/PCG64",
+      "shared_draws": true,
+      "interval": "95% percentile",
+      "percentile_method": "linear",
+      "class_scope_recomputed_per_draw": true,
+      "multiple_comparison_adjustment": false
+    },
+    "references": [
+      "ce",
+      "released7-class-jev"
+    ]
+  },
+  "result_summary_sha256": "7bad2108b09675b853ba3a89ad54d7f219e663809fc11a938ade6beeba8d6643",
+  "cache_manifest_sha256": "eb9b6a6795ab394c5d7d887fd452986252ccb5f7e60d2d1bc683cd8580991985",
+  "script_sha256": "087bf1fd3beaf3cc71e951d99e9e05e13f02f2afcfa23727c60a66f27da9b1d9",
+  "statistical_caveat": "Descriptive unadjusted source-group bootstrap; scarce classes with1–3 examples cannot support robust classwise generalization claims. Legacy2000 is diagnostic only."
+}

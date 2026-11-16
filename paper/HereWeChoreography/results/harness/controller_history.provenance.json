@@ -1,0 +1,73 @@
+{
+  "schema": "choreobench.paper_controller_history_provenance.v1",
+  "source_repository": "https://github.com/Anachronism-N/H3-posttrain",
+  "audited_checkout_revision": "083d1d0387bba582a4504e79d57f12ab065fa3b9",
+  "historical_run_label": "20261113_sol61_e3_formal_v1",
+  "historical_generation_code_revision": null,
+  "revision_scope_note": "The inspected checkout identifies the archive, not the original generation revision. These are earlier fixed-window controller runs, not the latest shared-evidence bar-aligned experiment.",
+  "primary_source": {
+    "repository_relative_path": "experiments/tx_a800_20261113/results/e34/mechanical/summary.json",
+    "sha256": "cb199386c043e2f37795dccdc5cd746892d7919d3a8361b66827def9b08ac87c",
+    "paper_copy": "results/harness/controller_history_mechanical.source.json",
+    "copy_mode": "byte-for-byte"
+  },
+  "crosscheck_source": {
+    "repository_relative_path": "experiments/tx_a800_20261113/results/e34/final_inventory_summary.json",
+    "sha256": "2543696a6bf064948d29339b70bb32f80bbc935420fa578fc0b72d8c89189fd9",
+    "validated_fields": [
+      "method_intervals.legal_completion_registered24",
+      "method_intervals.outer_calls"
+    ],
+    "agreement": true
+  },
+  "rows": [
+    {
+      "source_method_key": "workflow",
+      "display_label": "Workflow",
+      "registered_songs": 24,
+      "legal_complete_songs": 24,
+      "recorded_calls_total": 589,
+      "mean_recorded_calls_per_registered_song": 24.541666666666668,
+      "display_calls": "24.54"
+    },
+    {
+      "source_method_key": "self_refine",
+      "display_label": "Self-Refine",
+      "registered_songs": 24,
+      "legal_complete_songs": 24,
+      "recorded_calls_total": 1719,
+      "mean_recorded_calls_per_registered_song": 71.625,
+      "display_calls": "71.63"
+    },
+    {
+      "source_method_key": "react",
+      "display_label": "ReAct",
+      "registered_songs": 24,
+      "legal_complete_songs": 19,
+      "recorded_calls_total": 1797,
+      "mean_recorded_calls_per_registered_song": 74.875,
+      "display_calls": "74.88"
+    },
+    {
+      "source_method_key": "choreography",
+      "display_label": "Early choreography",
+      "registered_songs": 24,
+      "legal_complete_songs": 20,
+      "recorded_calls_total": 1826,
+      "mean_recorded_calls_per_registered_song": 76.08333333333333,
+      "display_calls": "76.08"
+    }
+  ],
+  "calls_denominator": "all 24 registered songs per method, including failed runs",
+  "completion_definition": "legal final plan according to the archived mechanical validator; not semantic or musical correctness",
+  "call_count_scope": "recorded outer calls in the archived summary; service-internal request coverage is not inferred",
+  "rounding": "decimal ROUND_HALF_UP to two places",
+  "new_model_inference": false,
+  "quality_ranking_claimed": false,
+  "must_not_pool_with": [
+    "11-song development cohort",
+    "9-song extension cohort",
+    "prospective 12-song shared-evidence bar-aligned comparison"
+  ],
+  "table": "tables/harness_controller_history.tex"
+}

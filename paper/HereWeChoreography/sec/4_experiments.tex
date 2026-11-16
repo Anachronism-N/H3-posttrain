@@ -1,0 +1,106 @@
+% !TeX root = ../main.tex
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Protocol and Evidence Scope}
+\label{sec:exp-protocol}
+Captioning compares SFT checkpoint 1,000 with six audio-language
+baselines~\cite{qwen3omni,mossaudio,mossmusic,musicflamingo,audioflamingo3,qwen25omni}.
+All return 2,000 texts; training/checkpoint provenance needs a final
+audit before claiming unseen-data generalization. BLEU-4 uses 0--100;
+other agreement scores are multiplied by 100. BERTScore uses
+RoBERTa-large, layer 17, without IDF or baseline rescaling, on the same
+1,861 valid cases for every method; other caption metrics use all 2,000.
+Style evaluation uses the 822-clip population only. Published refinement
+ratings use separate versioned protocols. Historical fixed-window
+controllers differ from the shared-evidence bar protocol.
+
+\subsection{Short-Clip Caption Agreement}
+\label{sec:exp-reference}
+SFT leads all six agreement measures (Table~\ref{tab:e2-full2000-v2}),
+reaching 9.74 BLEU-4, 30.80 ROUGE-L, and 89.71 BERTScore F1 versus
+the strongest baseline values of 0.85, 14.99, and 82.85. This consistency
+supports task adaptation; shared references prevent interpreting these
+metrics as independent music-quality evidence.
+
+Motion-keyword precision/recall reach 76.23/85.90 versus Qwen3-Omni's
+35.09/24.67, showing both broader reference-category coverage and a
+lower proportion of non-reference categories. The lexicons omit
+laterality, negation, action--body binding, and temporal correctness.
+Temporal-connective presence scarcely separates Qwen2.5-Omni
+(1,998/2,000) from SFT (2,000/2,000), motivating stricter evidence
+requirements. Table~\ref{tab:e2-full2000-diagnostics} retains surface
+diagnostics without treating duplication or length as dance quality.
+
+\subsection{Versioned Refinement Ratings}
+\label{sec:exp-refinement}
+The new public export adds 2,000 SFT v3 captions processed by a
+Qwen3.5-397B-A17B editor (refine-v1). Table~\ref{tab:refinement-d123}
+recomputes its published r4 and v2.1 ratings, retaining each dimension's
+valid count. D4--D6 remain unreported. Assessor metadata and anchor text
+are absent; source rating IDs are not yet verified against
+Section~\ref{sec:evaluation}.
+
+On the same outputs, D2 averages 3.33 under r4 and 4.50 under v2.1,
+illustrating protocol sensitivity. The latter was defined after earlier
+test results. D1 is also saturated: r4 assigns 5 to 1,963 of 1,999 valid
+texts. These ratings neither compare against raw SFT/baselines nor
+establish musical fit or motion faithfulness. Reference metrics in
+Table~\ref{tab:e2-full2000-v2} concern the original SFT outputs.
+
+\subsection{Audio-Conditioned Style Prior}
+\label{sec:exp-jev}
+Table~\ref{tab:style-prior-822} compares three supervised MuQ-JEV
+heads with seven zero-shot audio-language models on the same 822 clips.
+Rankings use 22 labels, with 13 observed classes and positive training
+examples in 15 classes. Focal reaches 44.77 Top-1, 81.39 Top-3,
+32.17 Macro-F1, and 32.35 balanced accuracy, versus 22.38, 54.50,
+11.21, and 14.15 for the strongest zero-shot comparator, Qwen2.5-Omni.
+All three training objectives exceed that comparator on every measure.
+
+Cross-entropy has the highest Top-3 (81.87); focal has the highest
+point estimates on the other three metrics. Focal's paired Top-$k$
+intervals against cross-entropy include zero. Weighted cross-entropy
+trades Top-$k$ accuracy for slightly higher class-balanced scores than
+ordinary cross-entropy. These results support supervised style
+specialization against video-VLM pseudo-labels. Scarce classes and
+incomplete training support limit coverage; human music--dance
+suitability and downstream harness benefits require separate evidence.
+
+\subsection{Controller Reliability and Composition}
+\label{sec:exp-harness}
+\input{tables/harness_preliminary}
+Only Workflow and Self-Refine complete all 24 songs in the initial
+four-policy study (Table~\ref{tab:harness-controller-history}).
+Self-Refine uses nearly three times Workflow's calls; tool-loop
+policies cost more and complete fewer songs. Additional iteration alone
+does not ensure delivery. The old quality check gives all 87 evaluable
+plans its maximum, preventing quality discrimination.
+
+The later W/O study uses Qwen3-VL-30B-A3B-Instruct at temperature zero,
+approximately 5.06~s windows, and no JEV prior. O adds acoustic guidance
+and bounded rewriting with unequal evidence access, a system-level
+contrast. Table~\ref{tab:harness-preliminary} separates 11 development
+songs from nine subsequent FMA Electronic songs. Completion counts
+all attempts; scores use six/eight completed pairs. O completes all
+extension songs, whereas W misses one.
+
+Qwen judges favor O by +6.00/+4.44 out of 20 on the extension after
+averaging orders. Both see text and acoustic summaries, not audio,
+and share the planner's family. Cross-family text-only MOSS yields
+$+0.50\;[-1.00,2.00]$, leaving independent musical confirmation
+unresolved. These historical scores cannot validate the new rubric
+or bar/style mechanisms.
+
+\subsection{Exploratory Mechanism Analysis}
+\label{sec:exp-mechanisms}
+The repaired four-song comparison (Table~\ref{tab:harness-exploratory})
+favors acoustically guided variants under its text-judge setup;
+the quota-only interval crosses zero. Unequal evidence and development
+reuse preclude isolated component attribution.
+
+Early repair reduces mean normalized exact-text repetition from 73.14\%
+to 36.82\% on five valid pairs of six registered songs, all decreasing.
+This optimized diagnostic does not establish movement diversity.
+Appendix~\ref{sec:remaining-tests} reports presentation sensitivity and
+further controls.

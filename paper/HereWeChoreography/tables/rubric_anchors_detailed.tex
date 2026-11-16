@@ -1,0 +1,46 @@
+% !TeX root = ../main.tex
+% Dimension definitions: notes/54_benchmark_rubric_ablations_and_case_studies_20261114_zh.md.
+% Executable identifiers/common scale: experiments/structured_dev_20261114/judge_rubric_v2.py.
+% This table is a recommended calibration guide, not a completed validation study.
+\begin{table}[!htbp]
+\centering
+\caption{Detailed anchors for the proposed evaluation protocol. The executor implements the nine dimension identifiers and common 1--5 scale. The dimension-specific anchors below are a \textbf{recommended calibration guide}, not validated scoring thresholds or completed calibration results. Judge only the supplied music and timed action text.}
+\label{tab:rubric-detailed-anchors}
+\begingroup\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.11}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.13\textwidth}p{0.27\textwidth}p{0.27\textwidth}p{0.27\textwidth}@{}}
+\toprule
+Dimension & 1: severe defect & 3: usable but important omission & 5: supported fulfillment \\
+\midrule
+D1: Movement specificity & Core movement cannot be identified; text mainly states mood, style, or generic dancing. & Main movement is identifiable, but an attribute essential to interpreting it is missing. & Core movements and necessary attributes are explicit, without requiring the reader to invent the main action. \\
+\addlinespace
+D2: Body/spatial consistency & Explicit body-part, laterality, reference-frame, or simultaneous-action relations conflict. & Most relations are understandable, but an important direction, referent, or coordination relation is ambiguous. & Necessary body/spatial relations are clear and mutually consistent; simultaneous actions are compatible as written. \\
+\addlinespace
+D3: Local temporal organization & Explicit order, concurrency, or duration requirements conflict, or clearly serial actions exceed the available time. & The local sequence is intelligible, but a consequential duration, transition, or temporal dependency is underspecified. & Ordering, concurrency, sustained actions, and transitions fit the stated interval without an explicit timing conflict. \\
+\addlinespace
+D4: Rhythmic response & Asserted rhythmic correspondence contradicts audible pulse/pauses, or no assessable movement rhythm is specified. & Movement rhythm broadly fits, but its connection to a specific audible pattern is weak or incomplete. & A concrete relationship links movement repetition, pauses, speed, or density to audible rhythm; justified half-time remains valid. \\
+\addlinespace
+D5: Expressive response & Claimed force or articulation correspondence relies on an absent musical feature or a clear unsupported conflict. & The broad expression is compatible, but movement force, release, articulation, or its musical rationale remains generic. & Specific force, articulation, or sustained movement responds to audible expression, including a clearly grounded intentional contrast. \\
+\addlinespace
+D6: Local development response & Invents a key musical change, or an applicable change has no interpretable movement response. & Some movement development is described, but its relation to the independently identified musical change is incomplete. & Maintaining, emphasizing, or changing movement has a clear relationship to the independently identified audible development. \\
+\midrule
+L1: Cross-window continuity & Important neighboring windows impose explicitly incompatible states with no resolving transition. & Most boundaries connect, but an important transition remains ambiguous or insufficiently explained. & Important boundaries admit coherent transitions; no decisive explicit state conflict remains across neighboring windows. \\
+\addlinespace
+L2: Global development & The score is predominantly unorganized concatenation or clearly conflicts with the audible whole-song structure. & A global arrangement exists, but section roles, contrast, or progression are weakly connected. & Section functions and overall progression form a coherent plan grounded in the music's actual development. \\
+\addlinespace
+L3: Motif recurrence/variation & Templates repeat without musical organization, or unrelated changes prevent recognizable thematic development. & Recognizable motifs and variation occur, but some returns or changes lack a clear organizing rationale. & Recognizable motifs recur, extend, or vary at musically justified positions; repeated material has a coherent purpose. \\
+\bottomrule
+\end{tabular}
+\par\vspace{5pt}
+\begin{minipage}{\textwidth}\footnotesize
+\textbf{Intermediate scores.} Score 2 retains some useful content but has a critical defect; score 4 meets core requirements with only minor deficiencies. Scores 4--5 require a concrete correspondence, not generic claims of suitability. One defect affects multiple dimensions only when its consequences independently warrant each deduction.
+\par\smallskip
+\textbf{Evidence.} Every numeric score requires an exact quotation, cited event identifiers, and a reason. D4--D6 and L2--L3 additionally require an audible observation and an interval on the global song clock. Quote matching and timestamp validation check the response contract, not semantic correctness or actual model listening.
+\par\smallskip
+\textbf{Unknown and applicability.} Insufficient observable evidence gives \emph{unknown}, with no numeric score; assessable vagueness or poor content instead receives a low score. Only D6 permits \emph{not applicable}, when its audio-only applicability decision was frozen as false before candidates were inspected. Unresolved D6 applicability gives unknown for every method. Missing audio, service errors, and parsing failures retain distinct failure records and count toward coverage reporting.
+\par\smallskip
+\textbf{Creative latitude.} Do not require extra joints, longer descriptions, faster movement, or a change at every musical event. Sustained movement, silence, half-time, contrast, and motivated repetition are legitimate. An unspecified support foot alone is not an explicit contradiction. D3 concerns the written local schedule; L1 concerns boundaries between windows. Neither measures biomechanics of an executed dance.
+\end{minipage}
+\endgroup
+\end{table}

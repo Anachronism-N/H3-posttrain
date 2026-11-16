@@ -1,0 +1,48 @@
+{
+  "source_commit": "dc6dfd9894fb702acb857524f930481efec829df",
+  "method": "SFT_v3_rp105+refine-v1",
+  "editor_model": "Qwen3.5-397B-A17B",
+  "summaries": {
+    "r4": {
+      "D1": {
+        "mean": 4.966983491745873,
+        "valid": 1999,
+        "registered": 2000
+      },
+      "D2": {
+        "mean": 3.334673366834171,
+        "valid": 1990,
+        "registered": 2000
+      },
+      "D3": {
+        "mean": 4.801900950475238,
+        "valid": 1999,
+        "registered": 2000
+      }
+    },
+    "v2.1": {
+      "D1": {
+        "mean": 4.922,
+        "valid": 2000,
+        "registered": 2000
+      },
+      "D2": {
+        "mean": 4.501017293997966,
+        "valid": 1966,
+        "registered": 2000
+      },
+      "D3": {
+        "mean": 4.914457228614308,
+        "valid": 1999,
+        "registered": 2000
+      }
+    }
+  },
+  "missing_dimensions": [
+    "D4",
+    "D5",
+    "D6"
+  ],
+  "protocol_mapping_verified": false,
+  "baseline_comparison_available": false
+}

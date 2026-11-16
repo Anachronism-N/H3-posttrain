@@ -1,0 +1,24 @@
+% !TeX root = ../main.tex
+% Byte-preserved source and SHA: results/harness/controller_history.provenance.json.
+% Historical 20261113 runs; not the current bar-aligned harness.
+\begin{table}[t]
+\centering
+\caption{Earlier fixed-window controllers on 24 songs. Completion counts
+legal final plans; mean calls includes all 24 attempts. These runs
+predate the current bar-aligned harness.}
+\label{tab:harness-controller-history}
+\begingroup\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrr@{}}
+\toprule
+Controller & Complete & Calls/song \\
+\midrule
+Workflow & 24/24 & 24.54 \\
+Self-Refine & 24/24 & 71.63 \\
+ReAct & 19/24 & 74.88 \\
+Early choreography & 20/24 & 76.08 \\
+\bottomrule
+\end{tabular*}
+\endgroup
+\end{table}

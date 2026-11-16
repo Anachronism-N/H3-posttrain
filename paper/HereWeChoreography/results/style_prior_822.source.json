@@ -1,0 +1,148 @@
+{
+  "schema": "paper.style_prior_822.v1",
+  "source_files": {
+    "comparison": {
+      "path": "results/baselines822-comparison-v1.json",
+      "sha256": "1772e0b1e409c57a0d390f9a396c68c9ec4e5e92b28659093f2185e6b861fb84"
+    },
+    "status": {
+      "path": "results/pilot_final_status_v1.json",
+      "sha256": "bc7c420012b487e41e883f441ced2b497b456479501f620856f6ddd17df9a716"
+    },
+    "audit": {
+      "path": "results/preview-audit-v1.json",
+      "sha256": "cf92fb4c5b25309ef5a957ab493ae9df7972d75f614a4314e5a2d54d432b4870"
+    }
+  },
+  "metric_storage": "fractions",
+  "display_scale": 100,
+  "rows": [
+    {
+      "method_id": "qwen3-omni-instruct",
+      "display_name": "Qwen3-Omni-Instruct",
+      "metrics": {
+        "top1": 0.21654501216545013,
+        "top3": 0.40389294403892945,
+        "macro_f1": 0.10664799572813775,
+        "balanced_accuracy": 0.13692307692307693
+      },
+      "regime": "zero-shot"
+    },
+    {
+      "method_id": "moss-audio",
+      "display_name": "MOSS-Audio",
+      "metrics": {
+        "top1": 0.2116788321167883,
+        "top3": 0.42700729927007297,
+        "macro_f1": 0.104135324190264,
+        "balanced_accuracy": 0.13788461538461538
+      },
+      "regime": "zero-shot"
+    },
+    {
+      "method_id": "moss-music",
+      "display_name": "MOSS-Music",
+      "metrics": {
+        "top1": 0.14233576642335766,
+        "top3": 0.30656934306569344,
+        "macro_f1": 0.09045308466195653,
+        "balanced_accuracy": 0.09807692307692309
+      },
+      "regime": "zero-shot"
+    },
+    {
+      "method_id": "music-flamingo",
+      "display_name": "Music-Flamingo",
+      "metrics": {
+        "top1": 0.14233576642335766,
+        "top3": 0.36009732360097324,
+        "macro_f1": 0.050689289481036424,
+        "balanced_accuracy": 0.09
+      },
+      "regime": "zero-shot"
+    },
+    {
+      "method_id": "audio-flamingo3",
+      "display_name": "Audio-Flamingo3",
+      "metrics": {
+        "top1": 0.12895377128953772,
+        "top3": 0.38077858880778587,
+        "macro_f1": 0.024515648893319177,
+        "balanced_accuracy": 0.08153846153846155
+      },
+      "regime": "zero-shot"
+    },
+    {
+      "method_id": "af-next-instruct",
+      "display_name": "Audio-Flamingo-Next",
+      "metrics": {
+        "top1": 0.15936739659367397,
+        "top3": 0.25669099756691,
+        "macro_f1": 0.055252426300827794,
+        "balanced_accuracy": 0.10076923076923078
+      },
+      "regime": "zero-shot"
+    },
+    {
+      "method_id": "qwen25-omni",
+      "display_name": "Qwen2.5-Omni",
+      "metrics": {
+        "top1": 0.22384428223844283,
+        "top3": 0.5450121654501217,
+        "macro_f1": 0.11210751525025844,
+        "balanced_accuracy": 0.14153846153846156
+      },
+      "regime": "zero-shot"
+    },
+    {
+      "method_id": "ce",
+      "display_name": "MuQ-JEV head: CE",
+      "metrics": {
+        "top1": 0.44282238442822386,
+        "top3": 0.818734793187348,
+        "macro_f1": 0.2918229632679173,
+        "balanced_accuracy": 0.29211538461538455
+      },
+      "regime": "supervised"
+    },
+    {
+      "method_id": "weighted-ce",
+      "display_name": "MuQ-JEV head: weighted CE",
+      "metrics": {
+        "top1": 0.4124087591240876,
+        "top3": 0.7798053527980535,
+        "macro_f1": 0.29312304747381585,
+        "balanced_accuracy": 0.30115384615384616
+      },
+      "regime": "supervised"
+    },
+    {
+      "method_id": "focal-gamma2",
+      "display_name": "MuQ-JEV head: focal",
+      "metrics": {
+        "top1": 0.44768856447688565,
+        "top3": 0.8138686131386861,
+        "macro_f1": 0.3216889567999276,
+        "balanced_accuracy": 0.3234615384615384
+      },
+      "regime": "supervised"
+    }
+  ],
+  "maxima": {
+    "top1": 0.44768856447688565,
+    "top3": 0.818734793187348,
+    "macro_f1": 0.3216889567999276,
+    "balanced_accuracy": 0.3234615384615384
+  },
+  "numeric_cells": 40,
+  "population_scope": {
+    "cases": 822,
+    "supported_classes": 13,
+    "outputs": 22,
+    "training_supported_classes": 15
+  },
+  "provenance_limit": "Archived identity fields checked; raw case identities are not independently revalidated here.",
+  "selection": "All seven zero-shot models and all three training objectives on the same 822 registered clips.",
+  "interpretation": "Video pseudo-label agreement, not human music suitability or downstream harness benefit.",
+  "manuscript_scope": "Only the 822-clip population is included; older populations remain archived."
+}

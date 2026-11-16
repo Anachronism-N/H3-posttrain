@@ -1,0 +1,71 @@
+% !TeX root = ../main.tex
+\paragraph{Observation and planning contracts.}
+The candidate cache retains the source audio identity, exact observation
+intervals, model configuration, and generation provenance. Proposals
+are compositional evidence rather than ground-truth action sequences
+or instructions that must be copied verbatim. Extending the planning
+horizon does not require the captioner to describe an entire song in
+one response. The outline and committed history supply long-range
+context beyond local proposals.
+
+\paragraph{Reproducible controller defaults.}
+The candidate collector defaults to two proposals per observation window.
+The controlled experiment runner uses up to five repetition groups;
+older runs may use the underlying controller's three-group default and
+must retain their recorded configuration. Grouping compares normalized
+token sets against a representative action at Jaccard similarity
+$\geq0.80$. The first occurrence stays fixed. Replacement text is accepted
+only when its overlap with the representative lies between 0.20 and
+0.80 and the patch passes structural validation. This vocabulary guard
+does not verify semantic correctness. Each selected group receives at
+most one request within the remaining outer budget. Time, track, motif,
+evidence, and other protected event fields remain unchanged.
+
+\paragraph{Clock and cost accounting.}
+Observation and event boundaries use integer samples on the canonical
+audio clock. Exported review cases divide these boundaries by the source
+sample rate to obtain global seconds, retaining the original offset for
+audio crops. Shared audio preparation and candidate collection are
+accounted for separately from outer composition. The $1+4U$ outer-call
+limit is an upper bound, not a fixed inference cost. Client-visible
+dispatches and their usage are recorded; any hidden service retry
+requires separate tracing before physical-request totals can be claimed.
+The cached proposal and evidence configuration is fixed for the new
+controlled comparison, while historical results retain their original
+conditions.
+
+\paragraph{Variable-duration deployment.}
+The bar partition supplies both observation intervals and planning units.
+Leading and trailing incomplete bars remain explicit fragments; a short
+fragment may merge with a neighbor in the same public section.
+Insufficient downbeat evidence or an unsupported duration requires
+review rather than silent fallback to fixed windows. Audio is neither
+stretched nor implicitly truncated to match the target duration.
+Variable-duration captioner consumption requires server preflight:
+successful partitioning and waveform loading do not establish that the
+model's processor consumes the entire waveform or preserves caption
+quality. The current variable-duration collection path uses a native
+model resident in one process; the legacy fixed-duration service
+contract cannot substitute for this path. These deployment checks have
+not yet been reported as completed model experiments.
+
+\paragraph{Global condition and evidence.}
+The style predictor may retain its native short observation windows
+independently of the choreography partition. Duration-weighted pooling
+gives overlapping observations shared ownership of their common span.
+The resulting label is a creative prior rather than a unique correct
+dance genre. The composer consumes cached captions and acoustic
+summaries; it has no additional raw-audio listening tool inside the
+current composition loop. An unavailable or uncertain signal must remain
+explicit rather than be replaced with an invented musical label.
+
+\paragraph{Scoped editing interface.}
+For editing, the user supplies an instruction and target regions or
+event identifiers. A version-bound patch declares editable targets,
+protected fields, and any explicitly permitted boundary-repair events.
+Changes outside this scope are rejected; accepted operations are
+applied transactionally and the resulting score is validated. This
+protects unrelated choreography, while semantic fulfillment of the
+request requires separate evaluation. The interface does not establish
+the physical feasibility of an unrendered dance, and a validated
+user-editing experiment is not included in the current results.

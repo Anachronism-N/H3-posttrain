@@ -1,0 +1,23 @@
+% !TeX root = ../main.tex
+% Sources: formal_result_v1.json, judge_size_robustness.json,
+% extension_set.json in experiments/structured_dev_20261114.
+% The extension's attempted=9 and n_paired=8 supersede its stale n=6 field.
+\begin{table}[t]
+\centering
+\caption{Preliminary fixed-window whole-song comparison. Completion reports W/O over all attempts; $n$ counts completed pairs. Entries show O$-$W mean total-score differences and 95\% song-bootstrap intervals. Judges see acoustic summaries and text, not audio; both belong to the planner's Qwen family.}
+\label{tab:harness-preliminary}
+\begingroup\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccrr@{}}
+\toprule
+Cohort & Completion & $n$ & Qwen 8B & Qwen 30B \\
+\midrule
+Original & 6/11; 11/11 & 6 & +2.50 & +2.42 \\
+ & & & $[0.08,3.92]$ & $[0.00,4.25]$ \\
+Extension & 8/9; 9/9 & 8 & +6.00 & +4.44 \\
+ & & & $[5.12,6.88]$ & $[3.38,5.56]$ \\
+\bottomrule
+\end{tabular*}
+\endgroup
+\end{table}

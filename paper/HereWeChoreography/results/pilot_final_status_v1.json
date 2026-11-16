@@ -1,0 +1,52 @@
+{
+  "schema": "muq-incomplete22-pilot-final-status-v1",
+  "coverage_mode": "incomplete-coverage-pilot",
+  "full22_training_ready": false,
+  "training_task": "01a1ddfe6df121da65c090e645f0bb56",
+  "training_status": "SUCCESS",
+  "evaluation_task": "01a1de19f83bef1a7fcd61424de0bd79",
+  "evaluation_status": "SUCCESS",
+  "training_rows": 16058,
+  "validation_rows": 823,
+  "calibration_rows": 809,
+  "preview_rows": 822,
+  "supported_training_classes": 15,
+  "missing_positive_training_classes": ["modern jazz", "house", "krump", "latin", "indian / bollywood", "other ethnic / folk", "freestyle / other"],
+  "output_dimensions": 22,
+  "encoder": "Frozen MuQ; source identity and cached-feature equivalence verified",
+  "validation_selection": {"winner": "focal-gamma2", "rule": "Supported-class validation macroF1, balanced accuracy, then unweighted NLL; before preview", "supported_classes": 14},
+  "validation_macro_f1": {"ce": 0.4160765268977719, "weighted-ce": 0.40274431577688635, "focal-gamma2": 0.440838060219499},
+  "head_training_run_seconds": {"ce": 15.421186869032681, "weighted-ce": 11.769743839278817, "focal-gamma2": 15.662485159933567},
+  "feature_shard_run_seconds_approx": [63,65],
+  "timing_scope": "Head run timings include cache loading and training but exclude resource scheduling, dependency setup and encoder extraction",
+  "calibration_temperatures": {"ce": 1.227889456360264, "weighted-ce": 0.9999430906901234, "focal-gamma2": 0.8362722282984827},
+  "preview_metrics": {
+    "denominator": 822,
+    "positive_gt_classes": 13,
+    "ce": {"top1": 0.44282238442822386, "top3": 0.818734793187348, "supported_macro_f1": 0.2918229632679173, "supported_balanced_accuracy": 0.29211538461538455},
+    "weighted-ce": {"top1": 0.4124087591240876, "top3": 0.7798053527980535, "supported_macro_f1": 0.29312304747381585, "supported_balanced_accuracy": 0.30115384615384616},
+    "focal-gamma2": {"top1": 0.44768856447688565, "top3": 0.8138686131386861, "supported_macro_f1": 0.3216889567999276, "supported_balanced_accuracy": 0.3234615384615384}
+  },
+  "focal_minus_ce_preview_top1_ci95": [-0.024330900243309028, 0.03527980535279801],
+  "focal_minus_ce_preview_top3_ci95": [-0.02676399026763998, 0.017031630170316392],
+  "common7_preview_projection": {
+    "denominator": 700,
+    "candidate_classes": "Explicitly restricted to the same seven known classes, not raw22 rankings",
+    "top1": {"ce": 0.49142857142857144, "weighted-ce": 0.4471428571428571, "focal-gamma2": 0.48857142857142855, "released7-class-jev": 0.4342857142857143}
+  },
+  "interpretation": [
+    "The larger/cleaner-data pilot improves shared-seven preview point estimates over the previous seven-class model, but data and architecture differences prevent attributing that entire gain to focal loss",
+    "Focal improves observed supported-class macroF1/BA over CE, but Top1/Top3 paired intervals include zero and scarce classes are not robustly validated",
+    "Weighted CE alone does not provide a consistent improvement; retain negative results",
+    "822 preview is near-balanced for eight common classes with very scarce remaining classes; not a complete22-class balanced benchmark",
+    "Old2000 is a previously inspected diagnostic panel only, not confirmatory final evaluation",
+    "All quality values describe video-VLM pseudo-label agreement, not human music suitability",
+    "Missing classes remain unresolved data requirements; weighting or22 logits does not train absent positive classes"
+  ],
+  "model_and_audit_locations": {
+    "models": ["pilot-model-ce-v1", "pilot-model-weighted-ce-v1", "pilot-model-focal42-v1"],
+    "raw_training": "pilot-results-v1",
+    "raw_evaluation": "preview-results-v1",
+    "verified_preview_audit": "preview-audit-v1.json"
+  }
+}

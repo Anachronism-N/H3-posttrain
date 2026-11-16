@@ -1,0 +1,58 @@
+{
+  "schema": "herewechoreography.tar_member_range_extract.v1",
+  "case_id": "wJPptuhclZmKAEWs",
+  "source_dataset": "avagelion/dance-data",
+  "known_revision": "a04949e95985af4552c41d44cd800819f628d46a",
+  "range_request_revision": "main",
+  "video_sha256_matches_frozen_source": true,
+  "video_sha256": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+  "video_file": "wJPptuhclZmKAEWs.mp4",
+  "audio_file": "wJPptuhclZmKAEWs.wav",
+  "audio_sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e",
+  "video_tar": "videos_tars/part_0048.tar",
+  "audio_tar": "audio_tars/part_0048.tar",
+  "ordinal_zero_based": 4024,
+  "member": {
+    "name": "wJPptuhclZmKAEWs.mp4",
+    "size": 1254102,
+    "type": "0",
+    "header_offset": 5077360128,
+    "data_offset": 5077360640
+  },
+  "source_tar_size_bytes": 6309304320,
+  "downloaded_bytes_total": 5699786,
+  "range_requests": [
+    {
+      "group": "audio_tars",
+      "part": 48,
+      "start": 984818688,
+      "returned_bytes": 512
+    },
+    {
+      "group": "audio_tars",
+      "part": 48,
+      "start": 984819200,
+      "returned_bytes": 243124
+    },
+    {
+      "group": "videos_tars",
+      "part": 48,
+      "start": 0,
+      "returned_bytes": 2048
+    },
+    {
+      "group": "videos_tars",
+      "part": 48,
+      "start": 5075719680,
+      "returned_bytes": 4200000
+    },
+    {
+      "group": "videos_tars",
+      "part": 48,
+      "start": 5077360640,
+      "returned_bytes": 1254102
+    }
+  ],
+  "whole_tar_downloaded": false,
+  "video_frames_or_quality_judged": false
+}

@@ -1,0 +1,47 @@
+% !TeX root = ../main.tex
+\section{Evidence-Linked Choreography Supervision}
+\label{sec:data}
+\input{figures/dataset_overview}
+
+\paragraph{Paired resource.}
+The collection contains 220,667 music--choreography records, partitioned
+into 198,315 training, 11,098 validation, and 11,254 test records.
+Records retain media identity, observation intervals, source groups,
+and annotation metadata. These inventory counts do not establish the
+model's exact training subset without its training manifest; video-source
+grouping likewise does not establish song-level disjointness.
+
+\paragraph{From movement evidence to language.}
+Current references are GPT-6.1-sol text-only rewrites of windowed 2D
+rule-event logs: sixteen event types describe wrist directions and
+projected elbow/knee angle changes. \emph{Evidence-Grounded Refinement}
+targets source coverage, body/direction fidelity, timing/repetition
+consistency, and concise grounded prose. Sentences link to source-event
+IDs; automatic flags support auditing without human semantic approval.
+The refiner receives no audio; aligned music is retained for subsequent
+learning. Open-vocabulary prose remains bounded by observed events.
+Figure~\ref{fig:choreography-example} illustrates how a score states body
+references, movement range, and order, then carries an explicit end state
+into the next action. Its author-composed instructions accompany real media.
+\input{figures/choreography_example}
+
+\paragraph{Geometry and evidence consolidation.}
+Figure~\ref{fig:annotation-pipeline} depicts the geometry extension using
+NLF~\cite{nlf} and MotionScript~\cite{motionscript}. Body-relative signals
+are resampled to 20~FPS; support masks preserve unsupported intervals.
+\emph{Motion Evidence Consolidation} validates evidence, deduplicates
+overlaps, summarizes supported alternations, and preserves source
+occurrences. Optional direct-RGB palm/foot landmarks and DWPose hand
+observations supplement body geometry; template joints add no observation.
+Hand insets magnify keypoints, rather than denote an implemented
+independent ROI estimator. This 3D route is not established as the
+production source of current labels. Appendix~\ref{sec:annotation-details}
+details provenance.
+
+\paragraph{Descriptive statistics.}
+Figure~\ref{fig:annotation-distributions} compares the same 22,352 paired
+validation/test clips, retaining all quality flags. Source-style metadata
+are unchanged and unknown for 59.6\%. Event and word counts have
+different units and do not establish greater action diversity.
+References describe individual observed dances; agreement does not
+imply a unique choreography for the music.

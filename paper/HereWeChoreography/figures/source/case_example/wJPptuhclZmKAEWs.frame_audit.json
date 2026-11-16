@@ -1,0 +1,76 @@
+{
+  "schema": "herewechoreography.real_video_frame_extract.v1",
+  "case_id": "wJPptuhclZmKAEWs",
+  "video_file": "wJPptuhclZmKAEWs.mp4",
+  "video_sha256": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+  "video_probe": {
+    "width": 704,
+    "height": 1280,
+    "fps_numerator": 16,
+    "fps_denominator": 1,
+    "num_frames": 81,
+    "duration_seconds": 5.0625
+  },
+  "audio_file": "wJPptuhclZmKAEWs.wav",
+  "audio_sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e",
+  "audio_probe": {
+    "sample_rate": 24000,
+    "num_samples": 121500,
+    "channels": 1,
+    "sample_width_bytes": 2,
+    "duration_seconds": 5.0625
+  },
+  "av_container_durations_match": true,
+  "independent_audio_video_alignment_verified": false,
+  "frames": [
+    {
+      "file": "wJPptuhclZmKAEWs_frames\\frame_01.png",
+      "zero_based_video_frame": 8,
+      "time_seconds": 0.5,
+      "sha256": "f56d5675cf8ff51d6e001cd1f760c451d19a76917ffae28546757e3f11884692"
+    },
+    {
+      "file": "wJPptuhclZmKAEWs_frames\\frame_02.png",
+      "zero_based_video_frame": 24,
+      "time_seconds": 1.5,
+      "sha256": "a81e12a90ff5f03a871121b67324273d77cdbb0fc4f3937e045a8f8cad56081f"
+    },
+    {
+      "file": "wJPptuhclZmKAEWs_frames\\frame_03.png",
+      "zero_based_video_frame": 40,
+      "time_seconds": 2.5,
+      "sha256": "147a65442a5b061b3dd92458ed5de413334150cfedb0d456f371a2ba2145a31e"
+    },
+    {
+      "file": "wJPptuhclZmKAEWs_frames\\frame_04.png",
+      "zero_based_video_frame": 56,
+      "time_seconds": 3.5,
+      "sha256": "4fadc016d7043bbc94599964ed302057f00958975331b8268fe849441e3851f9"
+    },
+    {
+      "file": "wJPptuhclZmKAEWs_frames\\frame_05.png",
+      "zero_based_video_frame": 72,
+      "time_seconds": 4.5,
+      "sha256": "e93b1718f9261d1a5c2cd3718e193eac241a65c90066cffbbf06ddfd68257067"
+    }
+  ],
+  "extraction": "FFmpeg select eq(n,8)+eq(n,24)+eq(n,40)+eq(n,56)+eq(n,72); passthrough timestamps, lossless PNG",
+  "contactsheet": {
+    "file": "wJPptuhclZmKAEWs_contactsheet.png",
+    "sha256": "95c02a47b1dc0db7db17fceaf1480b79596c1eb6fe3c27d46fca6f9c9f6e517a",
+    "construction": "FFmpeg select same frames, scale=176:320, tile=5x1:padding=6:margin=6"
+  },
+  "source_caption_windows_seconds": [
+    [
+      0.0,
+      1.96
+    ],
+    [
+      1.96,
+      5.0625
+    ]
+  ],
+  "source_caption_window_note": "Coarse merged provenance windows, not by themselves verified musical bars or precise action boundaries.",
+  "synthetic_or_ai_edited_frames": false,
+  "quality_or_beat_alignment_judgment": false
+}

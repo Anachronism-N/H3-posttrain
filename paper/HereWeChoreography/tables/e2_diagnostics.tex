@@ -1,0 +1,55 @@
+% !TeX root = ../main.tex
+% Supporting diagnostics; requires booktabs.
+\begin{table*}[!htbp]
+\centering
+\caption{Full-2000 lexicon diagnostics and evaluation coverage. These are supporting statistics, not additional independent choreography-quality experiments.}
+\label{tab:e2-full2000-diagnostics}
+\begingroup\small
+\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.12}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrrrr@{}}
+\toprule
+\multicolumn{7}{l}{\textbf{A. Micro-averaged lexicon agreement (all values $\times 100$)}}\\
+\midrule
+Method & KW-P & KW-R & KW-F1 & BP-P & BP-R & BP-F1 \\
+\midrule
+Qwen3-Omni-Instruct & 35.09 & 24.67 & 28.97 & 50.39 & 74.69 & 60.18 \\
+MOSS-Audio & 17.58 & 5.83 & 8.76 & 54.71 & 13.23 & 21.31 \\
+MOSS-Music & 15.42 & 9.80 & 11.99 & 49.73 & 53.81 & 51.69 \\
+Music-Flamingo & 32.03 & 14.19 & 19.67 & 29.17 & 14.60 & 19.46 \\
+Audio-Flamingo3 & 20.00 & 6.02 & 9.25 & 81.67 & 6.52 & 12.08 \\
+Qwen2.5-Omni & 7.93 & 2.84 & 4.18 & 72.54 & 20.60 & 32.09 \\
+\textbf{SFT v3 (ours)} & \textbf{76.23} & \textbf{85.90} & \textbf{80.78} & \textbf{91.66} & \textbf{96.72} & \textbf{94.12} \\
+\bottomrule\end{tabular*}\par\vspace{9pt}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrr@{}}
+\toprule
+\multicolumn{4}{l}{\textbf{B. BERTScore coverage and original available-case means}}\\
+\midrule
+Method & Valid / 2,000 & Coverage (\%) & Available-case F1 $\times100$ \\
+\midrule
+Qwen3-Omni-Instruct & 1,999 & 99.95 & 78.49 \\
+MOSS-Audio & 1,999 & 99.95 & 82.63 \\
+MOSS-Music & 1,998 & 99.90 & 82.13 \\
+Music-Flamingo & 1,865 & 93.25 & 82.29 \\
+Audio-Flamingo3 & 2,000 & 100.00 & 82.20 \\
+Qwen2.5-Omni & 2,000 & 100.00 & 82.85 \\
+SFT v3 (ours) & 2,000 & 100.00 & 89.71 \\
+\bottomrule\end{tabular*}\par\vspace{9pt}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+\multicolumn{5}{l}{\textbf{C. Surface diagnostics (no quality ranking)}}\\
+\midrule
+Method & BV $\times100$ & TC present / 2,000 & Duplicate excess & Length ratio \\
+\midrule
+Qwen3-Omni-Instruct & 13.03 & 1,721 & 12 & 1.388 \\
+MOSS-Audio & 2.01 & 1,996 & 801 & 0.544 \\
+MOSS-Music & 10.75 & 1,617 & 16 & 0.995 \\
+Music-Flamingo & 7.93 & 1,848 & 626 & 0.750 \\
+Audio-Flamingo3 & 0.77 & 1,985 & 1,357 & 0.285 \\
+Qwen2.5-Omni & 5.45 & 1,998 & 1,398 & 0.281 \\
+SFT v3 (ours) & 43.23 & 2,000 & 0 & 1.063 \\
+\bottomrule\end{tabular*}
+\par\vspace{5pt}
+\begin{minipage}{\textwidth}\footnotesize
+\textbf{Reading the diagnostics.} BERT coverage is a measurement-availability statistic, not a quality score. Original means in B use different valid sets and should not be subtracted as paired effects. BV is body-part/verb co-occurrence; TC counts texts containing a temporal connective, not correct temporal relations. Duplicate excess is $N-U$, where $U$ is the number of distinct exact text strings; it is not the count of every sample belonging to a duplicate cluster. A zero does not establish semantic novelty. TC counts and duplicate excess are exact re-expressions of the archived rates, not newly computed semantic metrics. Length ratio is the mean generated/reference character ratio; a value near one is not a quality target. All seven methods returned 2,000 texts. KW and BP inventories are coarse and partly overlapping.
+\end{minipage}
+\endgroup\end{table*}

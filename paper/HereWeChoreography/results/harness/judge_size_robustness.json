@@ -1,0 +1,65 @@
+{
+ "schema": "choreobench.judge_size_robustness.v1",
+ "judges": {
+  "Qwen3-VL-8B": {
+   "all": {
+    "mean": 2.5,
+    "ci": [
+     0.08,
+     3.92
+    ],
+    "wins": 5,
+    "losses": 1
+   },
+   "dev": {
+    "mean": 3.63,
+    "ci": [
+     3.25,
+     4.0
+    ],
+    "wins": 4,
+    "losses": 0
+   },
+   "test": {
+    "mean": 0.25,
+    "ci": [
+     -3.5,
+     4.0
+    ],
+    "wins": 1,
+    "losses": 1
+   }
+  },
+  "Qwen3-VL-30B": {
+   "all": {
+    "mean": 2.42,
+    "ci": [
+     0.0,
+     4.25
+    ],
+    "wins": 5,
+    "losses": 1
+   },
+   "dev": {
+    "mean": 1.75,
+    "ci": [
+     -1.25,
+     4.5
+    ],
+    "wins": 3,
+    "losses": 1
+   },
+   "test": {
+    "mean": 3.75,
+    "ci": [
+     3.5,
+     4.0
+    ],
+    "wins": 2,
+    "losses": 0
+   }
+  }
+ },
+ "interpretation": "overall direction and magnitude agree across judge sizes (+2.5 vs +2.4), but the dev/test split flips completely; with 4 and 2 songs per split, neither split-level conclusion is reliable",
+ "caveat": "both judges belong to the generator family; this checks judge size, not independence"
+}

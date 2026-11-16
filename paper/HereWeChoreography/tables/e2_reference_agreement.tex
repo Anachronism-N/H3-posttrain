@@ -1,0 +1,37 @@
+% !TeX root = ../main.tex
+% Frozen full-2000 aggregates, with BERTScore on the common valid set.
+% Requires \usepackage{booktabs}. No model inference was performed.
+\begin{table*}[t]
+\centering
+\caption{Reference agreement on the frozen 2,000-clip choreography panel. BLEU-4 uses a 0--100 scale; other scores are multiplied by 100. BERTScore$^{\dagger}$ uses the common 1,861 valid clips. Higher agreement does not independently establish music alignment or motion quality.}
+\label{tab:e2-full2000-v2}
+\begingroup
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrrrr@{}}
+\toprule
+& \multicolumn{4}{c}{Reference text agreement} & \multicolumn{2}{c}{Lexicon agreement}\\
+\cmidrule(lr){2-5}\cmidrule(lr){6-7}
+Method & BLEU-4 & ROUGE-L & BERT-F1$^{\dagger}$ & Token-F1 & KW-F1 & BP-F1 \\
+\midrule
+Qwen3-Omni-Instruct & 0.36 & 11.19 & 78.50 & 15.13 & 28.97 & 60.18 \\
+MOSS-Audio & 0.73 & 12.77 & 82.64 & 16.32 & 8.76 & 21.31 \\
+MOSS-Music & 0.56 & 14.99 & 82.14 & 20.18 & 11.99 & 51.69 \\
+Music-Flamingo & 0.85 & 12.79 & 82.29 & 16.11 & 19.67 & 19.46 \\
+Audio-Flamingo3 & 0.18 & 7.93 & 82.21 & 9.08 & 9.25 & 12.08 \\
+Qwen2.5-Omni & 0.17 & 8.09 & 82.85 & 9.80 & 4.18 & 32.09 \\
+\midrule
+\textbf{Task-specific SFT (ours)} & \textbf{9.74} & \textbf{30.80} & \textbf{89.71} & \textbf{58.06} & \textbf{80.78} & \textbf{94.12} \\
+\bottomrule
+\end{tabular*}
+\par\vspace{4pt}
+\begin{minipage}{\textwidth}\footnotesize
+KW/BP: micro-averaged category-set F1 over 39 motion and six body-part
+categories. Token-F1: token-multiset overlap. $^{\dagger}$RoBERTa-large,
+layer 17, without IDF or baseline rescaling. All remaining metrics use
+2,000 clips. Diagnostics and available-case BERTScore appear in
+Table~\ref{tab:e2-full2000-diagnostics}. Bold identifies our model.
+\end{minipage}
+\endgroup
+\end{table*}

@@ -1,0 +1,51 @@
+% !TeX root = ../main.tex
+\section{Method}
+\label{sec:method}
+
+\subsection{Local Expert and Stateful Harness}
+Given music $x$ of duration $T$ and an optional brief, we generate a whole-song textual score. Each event specifies an interval, movement track, action, and optional motif. Tracks represent concurrency; motifs represent recurring movement ideas. Our motion primitives are open-vocabulary movement proposals, rather than a learned codebook or 3D clips. Integer sample indices define the source clock; presentation and evaluation use global seconds.
+
+The expert is a LoRA-adapted Qwen3-Omni-30B-A3B-Captioner~\cite{qwen3omni}, whose checkpoint report describes supervised training weighted toward clauses naming lower-body parts:
+\begin{equation}
+ \mathcal{L}_{\mathrm{SFT}}
+ =-\frac{\sum_{i,t}w_{i,t}\log p_\theta(y_{i,t}\mid x_i,y_{i,<t})}
+ {\sum_{i,t}w_{i,t}}.
+\end{equation}
+Here $x_i,y_i$ are paired audio and captions; exact token weights $w_{i,t}$ and their isolated benefit remain unverified.
+
+We decouple local movement prediction from long-term organization. The expert supplies $K=2$ independently requested, cached captions per window by default. A stateful harness organizes them using musical context and committed history, with all model weights fixed during inference. The controlled protocol fixes candidates, acoustic evidence, style, windows, and resource caps across strategies.
+
+\subsection{Bar-Aligned Window Partition}
+To preserve bar boundaries while keeping inputs near the expert's short training horizon, Beat This!~\cite{beatthis} supplies downbeats defining complete bars. Within each available public section, dynamic programming groups two, three, or four bars, first minimizing unavoidable singletons and then
+\begin{equation}
+ \sum_{u=1}^{U}(\Delta_u-\tau)^2,
+ \qquad \tau=5.0625\,\mathrm{s},
+\end{equation}
+subject to contiguous coverage and supported durations. Actual window length is $\Delta_u$; fewer windows break remaining ties. Singletons and incomplete boundary bars are marked, with short fragments eligible for adjacent merging.
+
+The target is soft: two $4/4$ bars at 120 BPM last four seconds. Audio duration is preserved and the timeline covered exactly once. Bars need not coincide with semantic phrases; absent functional annotations, the song forms one public section.
+
+\subsection{Shared Musical Conditions}
+Shared conditions connect local decisions to song-level context. A MuQ-based classifier~\cite{muq} uses temporal mean and standard-deviation features from a frozen encoder. Calibrated observation probabilities define global style through
+\begin{equation}
+ \bar{\mathbf p}=\frac{\sum_j w_j\mathbf p_j}{\sum_j w_j},
+\end{equation}
+where $w_j$ is attributed duration, dividing overlap equally. A supported winner yields \texttt{Dance style is <style>.} User style takes precedence; failed or unsupported predictions yield unspecified style. This creative condition appears once and is excluded from action-text metrics.
+
+Acoustic summaries contain relative RMS energy, onset rate, spectral centroid, and chroma similarity. Energy relative to the song median favors several shorter events in high-energy regions and one sustained event in low-energy regions. Chroma recurrence and contrast provide uncertain similarity cues. These planning heuristics do not certify synchronization.
+
+\subsection{Motif- and History-Conditioned Composition}
+As Fig.~\ref{fig:harness-overview} shows, the agent generates objectives, movements, and revisions; the harness preserves evidence, committed history, drafts, permissions, and budgets between calls. This state lets each unit respond to earlier choices. The controller schedules proposal, validation, commitment, and stopping; ReAct instead explicitly selects permitted tools.
+
+The outline specifies intentions, motifs, and introduction, variation, contrast, or resolution roles. A deterministic schedule returns to the initial motif in the final unit of sections containing at least three units. For unit $u$,
+\begin{equation}
+ E_u\sim p_\phi(\,\cdot\mid C_u,A_u,g,O,E_{<u}),
+\end{equation}
+where $C_u,A_u,g,O,E_{<u}$ denote candidates, acoustic evidence, global style, outline, and committed history. They condition proposal adaptation, not a learned compatibility score.
+
+Validators check event bounds, timing choices, tracks, and motif identifiers before atomic commitment. Separate drafts protect earlier committed units. Validation establishes textual well-formedness, not physical executability; missing musical or bodily evidence remains uncertain. Reference choreography and benchmark grader scores stay outside the loop.
+
+\subsection{Bounded Targeted Revision}
+Targeted revision addresses near-identical wording while preserving the committed schedule. Normalized token-set Jaccard similarity $\geq0.80$ flags action groups; at most five receive one rewrite request each. Requests protect the first occurrence and supply later occurrences, neighbors, and motif context. Rewrites may vary direction, level, leading limb, concurrency, or spatial path. Only action text changes; timestamps, tracks, and motifs remain fixed. Lexical and plan checks restrict drift without prohibiting intentional repetition.
+
+The outer-call ceiling is $1+4U$, not prescribed consumption. Actual calls, tokens, and failures are reported separately from shared preprocessing and expert costs. Saved pre-revision plans and cost prefixes support paired comparisons. Variable-duration inference requires server validation; Appendix~\ref{sec:remaining-tests} distinguishes this requirement from completed fixed-window results.

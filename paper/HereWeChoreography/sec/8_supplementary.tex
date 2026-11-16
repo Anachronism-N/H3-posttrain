@@ -1,0 +1,229 @@
+% !TeX root = ../main.tex
+\section{Annotation Components and Provenance}
+\label{sec:annotation-details}
+\input{figures/dataset_construction}
+The main-paper component-integration figure describes the implemented geometric
+annotation route and the documented refinement interface. It is not
+the established production history of the references used in the
+captioning experiment. Those references come from the text-only
+refinement of 2D rule-event logs described in Sec.~\ref{sec:data}.
+In particular, neither a 20~FPS resampling operation nor additional
+template joints introduces a new visual observation.
+
+For descriptive analysis, original annotations and refined captions
+were matched by identifier on 22,352 validation/test clips, retaining
+all automatic quality flags. Original logs contain 47.21 event
+statements per clip on average; refined descriptions contain 135.33
+English body words and 5.12 producer-reported sentences. Wrist, elbow,
+and knee events account for 60.3\%, 29.7\%, and 10.0\% of source-event
+occurrences. These quantities have different units. They do not show
+that the number of distinct observed actions increased or that
+annotation accuracy improved. Source-style fields are unchanged;
+unknown labels remain in the audited population and are reported in
+the main text rather than excluded from the statistics.
+
+\section{Composition and Targeted Revision}
+\label{sec:revision-details}
+\input{figures/agent_policy_comparison}
+\input{tables/harness_controller_history}
+\input{tables/harness_exploratory_ablation}
+Figure~\ref{fig:agent-policy-comparison} summarizes the four control
+policies. Committed state and the remaining budget persist across unit
+boundaries. Reading evidence or checking a draft does not advance the
+song; a valid commit does. Only the proposed policy's predeclared
+targeted revision stage may patch its selected completed spans.
+A repeated movement can be an intentional
+motif return. Candidate detection therefore identifies possible
+redundancy for constrained revision, rather than determining artistic
+quality. The current revision mechanism changes selected action text
+while preserving its time bounds and protected regions. Boundary
+reasoning remains text-based; it does not reconstruct an unobserved
+physical state.
+
+\section{Diagnostic Metrics and Style Protocols}
+\label{sec:experimental-details}
+\input{tables/e2_diagnostics}
+The diagnostics retain each method's evaluation coverage and
+available-case BERTScore in addition to the common-case main comparison.
+An exact duplicate count measures identical returned strings, not
+semantic movement diversity. Table~\ref{tab:style-prior-822} reports
+only the 822-clip style population, retaining all seven zero-shot models
+and all three supervised objectives on the same clips.
+
+\paragraph{Published refinement ratings.}
+The versioned ratings in Table~\ref{tab:refinement-d123} come from public
+commit \texttt{dc6dfd9}. All 2,000 case IDs and caption hashes match the
+released refine-v1 outputs. The editor returns 1,996 outputs; four cases
+retain raw text after a content check or failure, and 1,991 final texts
+differ from raw SFT. We retain all cases. Scores marked invalid or null
+are omitted per dimension, never replaced with zero. The public export
+contains numeric scores and status fields, without response bodies,
+evidence quotations, assessor identity, or acoustic-input metadata.
+The r4 and v2.1 hashes differ; v2.1 was defined after earlier tests.
+These records cannot establish calibration to our nine-dimensional
+anchors. No score difference between rows is a model improvement, and
+reference agreement after editing has not been recomputed.
+
+\paragraph{Caption decoding and metric configuration.}
+The reported SFT checkpoint uses temperature 0.7, top-$p$ 0.9,
+top-$k$ 20, one beam, repetition penalty 1.05, no-repeat 4-grams,
+at most 1,024 generated tokens, and an explicit chat EOS. A per-case
+sampling seed is derived from its identifier. The baseline stopping
+metadata are incomplete; a returned text does not by itself prove
+that generation was untruncated. BERTScore is computed without silent
+truncation on the common valid intersection; the available-case
+statistics use different case sets and cannot be subtracted as paired
+effects.
+
+\paragraph{Style pseudo-labels and supervision.}
+The 822-clip style population uses video-VLM pseudo-labels, rather than
+human judgments of music--dance suitability. Rankings use 22 labels;
+Macro-F1 and balanced accuracy average over the 13 classes observed in
+this population. Eight classes have 100 examples each; the other five
+have 1, 1, 1, 3, and 16 examples. Class-balanced scores are therefore
+descriptive and sensitive to very scarce classes.
+
+The frozen MuQ encoder supplies features to three supervised heads:
+cross-entropy, weighted cross-entropy, and focal loss. Positive training
+examples cover only 15 of 22 outputs. Focal was selected by validation
+Macro-F1, then balanced accuracy and unweighted NLL, before inspecting
+this preview; scalar-temperature calibration uses separate calibration
+data. The paired focal-minus-cross-entropy 95\% intervals are
+$[-2.43,3.53]$ points for Top-1 and $[-2.68,1.70]$ for Top-3.
+Seven unsupported outputs prevent a complete 22-class training claim.
+Neither classification agreement nor these objective comparisons establish
+that conditioning a harness on the predicted style improves choreography.
+
+\section{Implementation and Validation Details}
+\label{sec:remaining-tests}
+\input{sec/9_method_implementation_details}
+The controlled comparison preserves failed and partial runs in its
+registered inventory. It requires no additional model training.
+
+Two implemented revision controls reuse the actual saved drafts:
+the proposed harness before its terminal revision, and the Workflow
+draft passed through the same revision mechanism with its remaining
+budget. They isolate structured composition from simply adding more
+rewriting. Further ablations can compare true bar-aligned versus fixed
+windows, remove the global style condition, or permute acoustic evidence
+from an immutable source copy. They require independent runs and are
+not assigned numerical outcomes in this draft.
+
+The latest implementation has static syntax and consistency checks;
+its real variable-duration model input and audio-judge coverage still
+require server validation. The 2,000-clip reference panel also needs a
+final training/checkpoint provenance audit before it can support a
+strictly unseen-data generalization claim. The evaluation report names
+the v3 base model and lower-body-clause weighting; the exact training
+scope, coefficient, optimizer schedule, batch size, and record filter
+still require the original training configuration. A controlled comparison
+against trained-model-disabled decoding would further isolate the
+effect of adaptation. A listener study, rubric sensitivity controls,
+and human--model agreement are needed before the new rubric can be
+presented as a validated automatic quality metric.
+
+\paragraph{Reference-metric calculation.}
+For a predicted category set $P_i$ and reference set $R_i$, the pooled
+counts are $\mathrm{TP}=\sum_i|P_i\cap R_i|$,
+$\mathrm{FP}=\sum_i|P_i\setminus R_i|$, and
+$\mathrm{FN}=\sum_i|R_i\setminus P_i|$. The reported lexicon score is
+\begin{equation}
+ F_{1,\mathrm{micro}}=
+ \frac{2\mathrm{TP}}{2\mathrm{TP}+\mathrm{FP}+\mathrm{FN}}.
+\end{equation}
+The same definition is applied separately to the motion-keyword and
+body-part inventories; it is not a score for binding the two. Token-F1
+uses token multiplicity rather than binary category membership.
+ROUGE-L uses longest-common-subsequence overlap; BERTScore uses
+contextual token matching. Corpus BLEU-4 is displayed after multiplication
+by 100, so a table value above one is consistent with its scale.
+There is no additional undocumented normalized-BERT composite in the
+main comparison. BERTScore's raw F1 and its valid-case coverage are
+reported explicitly.
+
+\paragraph{Plan diagnostics.}
+For a song of duration $T$ and written action intervals $I_k$, temporal
+coverage is $|\bigcup_k(I_k\cap[0,T])|/T$. This measures how much time
+has a scheduled description, not whether the dancer follows the beat.
+Exact duplicate excess is $N-U$, where $U$ is the number of unique
+returned strings. Near-text similarity identifies potential repeated
+wording; neither measure can distinguish a desirable recurring motif
+from unproductive copying without context. Confirmed boundary conflicts
+should count only explicit incompatible states and report the number
+of boundaries for which sufficient evidence exists.
+
+\paragraph{Historical mechanism diagnostics.}
+The earlier repetition-repair experiment counts normalized exact
+strings within each plan: $d_s=1-U_s/N_s$, where $N_s$ is its number
+of action entries and $U_s$ its number of unique normalized strings.
+Normalization lowercases text, replaces non-alphanumeric characters
+with spaces, and collapses whitespace. The main-text 73.14\% and 36.82\%
+are means over five paired song records, not a pooled event-level rate;
+the sixth registered record has no valid pair. This early variant
+rewrites at most three groups. It differs from both the cosine-based
+near-duplicate diagnostic and the latest five-group Jaccard-based
+revision mechanism. Their rates cannot be combined.
+
+The repaired four-song ablation supersedes the earlier timing-unit
+results. Its songs participated in development, and the archived
+summary does not fully establish label blinding and action-text
+presentation limits. We retain its uncertainty intervals as exploratory
+evidence. In a separate six-song presentation audit, extending visible
+action text from 160 to 400 characters removes the apparent advantage
+of more restrictive rewriting over its predecessor: $0.00\;[-2.00,2.00]$.
+This is a sensitivity result, not confirmation of equivalent quality.
+An identical-plan control has seven parsed pairs of eight registered;
+its two-order mean difference is zero, but six of 56 dimension-level
+comparisons still favor a presentation position. Order averaging
+therefore does not establish an unbiased judge.
+
+\paragraph{Quality summaries and uncertainty.}
+The proposed rubric keeps each dimension separate. For local evaluation,
+the three common regions are first averaged within each song using the
+scored regions for that dimension. A song-level mean then gives each
+song equal weight, with valid-region and valid-song counts reported.
+Unknown or not-applicable judgments are not replaced by zeros.
+Comparisons use paired song differences; source-group bootstrap draws
+resample songs together with all of their regions. The planned primary
+comparisons are the proposed method against each of the three baseline
+policies on L1--L3; multiplicity control and the primary judge must be
+frozen before examining results. These aggregation rules specify the
+next experiment and do not imply that new rubric scores already exist.
+
+\section{Limitations and Responsible Use}
+The current labels inherit the observational limits of their source
+events and do not supply unique correct dances for music. Projected
+directions do not always identify anatomical laterality. Missing or
+occluded body regions can produce uncertain geometry, and richer
+wording must not be interpreted as new visual evidence. The global
+style classifier is a supervised creative prior evaluated against
+video-derived pseudo-labels; it is neither a universal music-genre
+classifier nor an authority on culturally appropriate choreography.
+
+The outer composer uses summarized evidence, rather than direct raw
+audio in its tool loop. Its checks verify a written schedule and
+explicit textual constraints, not balance, joint limits, contact, or
+injury risk. Precise editing is supported by scoped permissions, but a
+validated user-editing experiment is not included here. Dataset release
+must respect the licenses and permissions of the underlying music and
+videos; these rights cannot be inferred from the availability of
+derived captions.
+
+\section{Detailed Rubric and Calibration Guide}
+\label{sec:rubric-guide}
+\input{tables/rubric_anchors_detailed}
+The anchors distinguish requirements for local movement, music response,
+and whole-song organization. Before collecting formal scores, calibration
+should test intentional music mismatch, explicit body/timing conflicts,
+unproductive copying, and legitimate motif returns on frozen examples.
+Neither a visually clear rubric nor successful response validation
+establishes agreement with independent listeners.
+
+\paragraph{AI assistance.}
+Language models assisted with drafting and revising manuscript text,
+literature organization, code, and experiment planning. GPT Image
+produced conceptual illustrations; statistical plots reproduce frozen
+audit values. GPT-6.1-sol participates in annotation refinement.
+Numerical results come from saved experiment artifacts. The authors
+retain responsibility for the manuscript, citations, figures, code,
+data provenance, results, and final submission declarations.

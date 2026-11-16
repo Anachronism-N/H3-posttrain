@@ -1,0 +1,48 @@
+{
+  "schema": "sol61.refine-v1-public-export.v1",
+  "method": "SFT_v3_rp105+refine-v1",
+  "original_model": "SFT_v3_rp105",
+  "editor_model": "Qwen3.5-397B-A17B",
+  "refine_version": "v1",
+  "cases": 2000,
+  "e2_case_inventory_verified": true,
+  "e2_original_text_identity_verified": true,
+  "all_2000_refine_requests_sent": true,
+  "origin_counts": {
+    "editor_output": 1996,
+    "raw_fallback_content_check_or_failure": 4
+  },
+  "changed_from_raw": 1991,
+  "source_refined_file_sha256": "97b582041597adc05b17e73438a9d274b4b1bfea2fdc45bef0d9622ac7863e26",
+  "score_provenance": {
+    "v2.1": {
+      "run_id": "sol61_score_refined_v21_20261116_d2b16bb0c35b471781a3445ffadc94bb",
+      "result_sha256": "ff7a7b16a27294a1b4be8d37123ecef16be1346be9d00849ebfb6baf7c39d14a",
+      "rubric_sha256": "656c251af9232be150c3d2f592d38d2249190068707ec8abd2fde290accb6326",
+      "content_revalidated": 10159,
+      "raw_response_bodies_revalidated": false
+    },
+    "r4": {
+      "run_id": "sol61_score_refined_r4_20261116_8088dd7e43e143eeb692bd65b35928bc",
+      "result_sha256": "cd0ba8a06ab651e14e67f4ea240edf7483386390b5ac503b3107f2e66abf2711",
+      "rubric_sha256": "ea5d0dec8b15cbab6290c14d71d0356d670673a832c6136afc8eb3055860fc2c",
+      "content_revalidated": 10178,
+      "raw_response_bodies_revalidated": false
+    }
+  },
+  "artifacts_sha256": {
+    "outputs.jsonl": "709f61d91a43b4e0a34af436e0d03f1d1d66e73f5b2eeb59dc36edd3bba79a7e",
+    "judgments.jsonl": "25afb70325e3a6ce81456349141b214ed977dc991912308d8ac96399f5c5c53e"
+  },
+  "refined_e2_reference_metrics": "not_recomputed",
+  "d4_d6": "Gemini experiment stopped incomplete; no final music scores are published here",
+  "human_validated": false,
+  "semantic_faithfulness_verified": false,
+  "notes": [
+    "Published outputs are the exact refine-v1 pipeline, not v2/v3 or manually corrected captions.",
+    "Refinement can resolve ambiguous limb labels incorrectly; score improvements are not proof of motion truth.",
+    "v2.1 was defined after earlier test results; retained r4 scores are provided separately.",
+    "Failed or unknown judgments have null scores and are not imputed.",
+    "No source audio, video, reference captions, credentials, signed URLs or private binding files are included."
+  ]
+}

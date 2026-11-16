@@ -1,0 +1,805 @@
+{
+  "schema": "dataset_distribution_audit.v1",
+  "source_revision": "1ca58b4ebc7f9457fb7dc7db587c05f3e79b767a",
+  "source_files": {
+    "train": {
+      "path": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\planner-search-idea\\.captionlab-data\\sol61-inspection\\sol61_captions\\train_captions.jsonl",
+      "n": 198315,
+      "sha256": "3c37397021ef64cd8ce6ccd5439c6ff812e88dc1df2f8bb6488f6afefb6fc77e",
+      "matches_committed_audit": true
+    },
+    "val": {
+      "path": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\planner-search-idea\\.captionlab-data\\sol61-inspection\\sol61_captions\\val_captions.jsonl",
+      "n": 11098,
+      "sha256": "224806881d50c74ebea0574fa5520aad42a1c488420e78507c7bdc613d13f4ec",
+      "matches_committed_audit": true
+    },
+    "test": {
+      "path": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\planner-search-idea\\.captionlab-data\\sol61-inspection\\sol61_captions\\test_captions.jsonl",
+      "n": 11254,
+      "sha256": "4d0afe66bed3df72a740cb7847076574098bb79cc717920500e6fd815f99af04",
+      "matches_committed_audit": true
+    }
+  },
+  "original_files": {
+    "val": {
+      "path": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\planner-search-idea\\.captionlab-data\\sol61-inspection\\original_val.jsonl",
+      "n": 11098,
+      "sha256": "f6003ecd92ad08bc41d1884ce4233d31249f26700b1530efffe7e57b45ac5f4f"
+    },
+    "test": {
+      "path": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\planner-search-idea\\.captionlab-data\\sol61-inspection\\original_test.jsonl",
+      "n": 11254,
+      "sha256": "df880bf1ecb3c8c9dcbf120ef839d8c2d874b03a595c9a1f69d65f09f696243a"
+    }
+  },
+  "definitions": {
+    "english_words": "ASCII Latin words including apostrophized/hyphenated compounds; Dance style header removed; recomputed from motion_caption",
+    "final_sents": "Producer sents field, not independently semantic sentence validation",
+    "original_events": "Nonempty Chinese full-stop-separated statements in target_windows captions, concatenated once across windows",
+    "gate": "Producer automatic check; not human or visual quality approval",
+    "style": "Existing source metadata, not an independent inferred class; unknown retained",
+    "histogram_overflow": "Final large edge 100000 is display overflow, labelled >=180 words / >=80 events / >=10 sentences"
+  },
+  "all_sol61": {
+    "all": {
+      "n": 220667,
+      "style_counts": {
+        "contemporary": 81270,
+        "unknown": 124644,
+        "chinese classical": 1708,
+        "other ethnic / folk": 1082,
+        "chinese folk": 297,
+        "hip-hop": 755,
+        "indian / bollywood": 35,
+        "pop / casual": 1453,
+        "k-pop": 6303,
+        "jazz funk / heels": 2363,
+        "lyrical": 213,
+        "freestyle / other": 161,
+        "modern jazz": 253,
+        "street jazz": 20,
+        "belly dance": 74,
+        "ballet": 32,
+        "krump": 3,
+        "latin": 1
+      },
+      "english_body_words": {
+        "n": 220667,
+        "mean": 130.71795510882913,
+        "median": 129,
+        "p10": 85.0,
+        "p90": 178.0,
+        "min": 4,
+        "max": 335
+      },
+      "english_body_word_histogram": {
+        "edges": [
+          0,
+          60,
+          100,
+          140,
+          180,
+          100000
+        ],
+        "interval": "[left,right)",
+        "counts": [
+          4660,
+          38115,
+          91950,
+          65280,
+          20662
+        ],
+        "n": 220667
+      },
+      "producer_reported_sentence_count": {
+        "n": 220667,
+        "mean": 5.053397200306344,
+        "median": 5,
+        "p10": 4.0,
+        "p90": 6.0,
+        "min": 1,
+        "max": 8
+      },
+      "producer_reported_sentence_histogram": {
+        "edges": [
+          0,
+          4,
+          7,
+          10,
+          100000
+        ],
+        "interval": "[left,right)",
+        "counts": [
+          1911,
+          218188,
+          568,
+          0
+        ],
+        "n": 220667
+      }
+    },
+    "gate_true": {
+      "n": 219825,
+      "style_counts": {
+        "contemporary": 80910,
+        "unknown": 124223,
+        "chinese classical": 1705,
+        "other ethnic / folk": 1078,
+        "chinese folk": 295,
+        "hip-hop": 752,
+        "indian / bollywood": 35,
+        "pop / casual": 1445,
+        "k-pop": 6271,
+        "jazz funk / heels": 2356,
+        "lyrical": 213,
+        "freestyle / other": 160,
+        "modern jazz": 252,
+        "street jazz": 20,
+        "belly dance": 74,
+        "ballet": 32,
+        "krump": 3,
+        "latin": 1
+      },
+      "english_body_words": {
+        "n": 219825,
+        "mean": 130.76847492323438,
+        "median": 130,
+        "p10": 85.0,
+        "p90": 178.0,
+        "min": 4,
+        "max": 335
+      },
+      "english_body_word_histogram": {
+        "edges": [
+          0,
+          60,
+          100,
+          140,
+          180,
+          100000
+        ],
+        "interval": "[left,right)",
+        "counts": [
+          4627,
+          37897,
+          91552,
+          65139,
+          20610
+        ],
+        "n": 219825
+      },
+      "producer_reported_sentence_count": {
+        "n": 219825,
+        "mean": 5.053497099965882,
+        "median": 5,
+        "p10": 4.0,
+        "p90": 6.0,
+        "min": 1,
+        "max": 8
+      },
+      "producer_reported_sentence_histogram": {
+        "edges": [
+          0,
+          4,
+          7,
+          10,
+          100000
+        ],
+        "interval": "[left,right)",
+        "counts": [
+          1894,
+          217363,
+          568,
+          0
+        ],
+        "n": 219825
+      }
+    },
+    "gate_false": {
+      "n": 842,
+      "style_counts": {
+        "contemporary": 360,
+        "unknown": 421,
+        "pop / casual": 8,
+        "k-pop": 32,
+        "jazz funk / heels": 7,
+        "hip-hop": 3,
+        "chinese folk": 2,
+        "chinese classical": 3,
+        "modern jazz": 1,
+        "other ethnic / folk": 4,
+        "freestyle / other": 1
+      },
+      "english_body_words": {
+        "n": 842,
+        "mean": 117.52850356294537,
+        "median": 113.0,
+        "p10": 80.0,
+        "p90": 165.89999999999998,
+        "min": 7,
+        "max": 245
+      },
+      "english_body_word_histogram": {
+        "edges": [
+          0,
+          60,
+          100,
+          140,
+          180,
+          100000
+        ],
+        "interval": "[left,right)",
+        "counts": [
+          33,
+          218,
+          398,
+          141,
+          52
+        ],
+        "n": 842
+      },
+      "producer_reported_sentence_count": {
+        "n": 842,
+        "mean": 5.027315914489312,
+        "median": 5.0,
+        "p10": 4.0,
+        "p90": 6.0,
+        "min": 1,
+        "max": 6
+      },
+      "producer_reported_sentence_histogram": {
+        "edges": [
+          0,
+          4,
+          7,
+          10,
+          100000
+        ],
+        "interval": "[left,right)",
+        "counts": [
+          17,
+          825,
+          0,
+          0
+        ],
+        "n": 842
+      }
+    }
+  },
+  "pairing": {
+    "original_val_test_records": 22352,
+    "final_val_test_records": 22352,
+    "original_duplicate_id_records": 0,
+    "final_duplicate_id_records": 0,
+    "missing_final_unique_ids": 0,
+    "missing_original_unique_ids": 0,
+    "source_or_split_mismatch": 0,
+    "strict_paired_unique_ids": 22352,
+    "all_ids_used_not_quality_selected": true
+  },
+  "paired_val_test": {
+    "all": {
+      "n": 22352,
+      "original_style_counts": {
+        "unknown": 13312,
+        "contemporary": 8612,
+        "chinese classical": 60,
+        "k-pop": 202,
+        "indian / bollywood": 2,
+        "other ethnic / folk": 107,
+        "belly dance": 9,
+        "pop / casual": 21,
+        "hip-hop": 18,
+        "freestyle / other": 7,
+        "lyrical": 1,
+        "ballet": 1
+      },
+      "final": {
+        "n": 22352,
+        "style_counts": {
+          "unknown": 13312,
+          "contemporary": 8612,
+          "chinese classical": 60,
+          "k-pop": 202,
+          "indian / bollywood": 2,
+          "other ethnic / folk": 107,
+          "belly dance": 9,
+          "pop / casual": 21,
+          "hip-hop": 18,
+          "freestyle / other": 7,
+          "lyrical": 1,
+          "ballet": 1
+        },
+        "english_body_words": {
+          "n": 22352,
+          "mean": 135.327979599141,
+          "median": 133.0,
+          "p10": 88.0,
+          "p90": 186.0,
+          "min": 4,
+          "max": 328
+        },
+        "english_body_word_histogram": {
+          "edges": [
+            0,
+            60,
+            100,
+            140,
+            180,
+            100000
+          ],
+          "interval": "[left,right)",
+          "counts": [
+            407,
+            3442,
+            8761,
+            6903,
+            2839
+          ],
+          "n": 22352
+        },
+        "producer_reported_sentence_count": {
+          "n": 22352,
+          "mean": 5.118691839656407,
+          "median": 5.0,
+          "p10": 4.0,
+          "p90": 6.0,
+          "min": 1,
+          "max": 8
+        },
+        "producer_reported_sentence_histogram": {
+          "edges": [
+            0,
+            4,
+            7,
+            10,
+            100000
+          ],
+          "interval": "[left,right)",
+          "counts": [
+            194,
+            22071,
+            87,
+            0
+          ],
+          "n": 22352
+        }
+      },
+      "style_field_changed_count": 0,
+      "original_event_statement_counts": {
+        "一侧手腕相对肩部向画面左侧移动": 77674,
+        "一侧手腕相对肩部在画面中下移": 80313,
+        "另一侧手腕相对肩部在画面中下移": 81272,
+        "另一侧肘部的二维投影夹角增大": 77036,
+        "另一侧手腕相对肩部向画面右侧移动": 77979,
+        "另一侧手腕相对肩部在画面中上移": 84379,
+        "另一侧肘部的二维投影夹角减小": 80943,
+        "一侧手腕相对肩部向画面右侧移动": 76075,
+        "另一侧手腕相对肩部向画面左侧移动": 75614,
+        "一侧手腕相对肩部在画面中上移": 83357,
+        "另一侧膝部的二维投影夹角减小": 26442,
+        "另一侧膝部的二维投影夹角增大": 26451,
+        "一侧膝部的二维投影夹角增大": 26348,
+        "一侧肘部的二维投影夹角减小": 78938,
+        "一侧肘部的二维投影夹角增大": 76047,
+        "一侧膝部的二维投影夹角减小": 26270
+      },
+      "original_event_types": 16,
+      "original_event_total": 1055138,
+      "original_bodypart_event_counts": {
+        "wrist": 636663,
+        "elbow": 312964,
+        "knee": 105511
+      },
+      "original_event_statements_per_clip": {
+        "n": 22352,
+        "mean": 47.20552970651396,
+        "median": 47.0,
+        "p10": 28.0,
+        "p90": 68.0,
+        "min": 1,
+        "max": 111
+      },
+      "original_event_histogram": {
+        "edges": [
+          0,
+          10,
+          20,
+          40,
+          60,
+          80,
+          100000
+        ],
+        "interval": "[left,right)",
+        "counts": [
+          108,
+          543,
+          6504,
+          10507,
+          4198,
+          492
+        ],
+        "n": 22352
+      },
+      "original_windows_per_clip": {
+        "n": 22352,
+        "mean": 2.8396564065855405,
+        "median": 2.0,
+        "p10": 2.0,
+        "p90": 4.0,
+        "min": 1,
+        "max": 12
+      },
+      "original_window_count_histogram": {
+        "3": 4821,
+        "4": 3841,
+        "2": 10538,
+        "5": 1455,
+        "1": 1070,
+        "6": 342,
+        "7": 178,
+        "8": 63,
+        "10": 13,
+        "9": 25,
+        "11": 5,
+        "12": 1
+      },
+      "original_chinese_event_characters_excluding_punctuation": {
+        "n": 22352,
+        "mean": 679.622181460272,
+        "median": 672.0,
+        "p10": 401.0,
+        "p90": 972.0,
+        "min": 14,
+        "max": 1587
+      },
+      "audio_duration_seconds_counts": {
+        "5.0625": 22352
+      }
+    },
+    "gate_true": {
+      "n": 22247,
+      "original_style_counts": {
+        "unknown": 13257,
+        "contemporary": 8567,
+        "chinese classical": 60,
+        "k-pop": 198,
+        "indian / bollywood": 2,
+        "other ethnic / folk": 106,
+        "belly dance": 9,
+        "pop / casual": 21,
+        "hip-hop": 18,
+        "freestyle / other": 7,
+        "lyrical": 1,
+        "ballet": 1
+      },
+      "final": {
+        "n": 22247,
+        "style_counts": {
+          "unknown": 13257,
+          "contemporary": 8567,
+          "chinese classical": 60,
+          "k-pop": 198,
+          "indian / bollywood": 2,
+          "other ethnic / folk": 106,
+          "belly dance": 9,
+          "pop / casual": 21,
+          "hip-hop": 18,
+          "freestyle / other": 7,
+          "lyrical": 1,
+          "ballet": 1
+        },
+        "english_body_words": {
+          "n": 22247,
+          "mean": 135.35959904706252,
+          "median": 133,
+          "p10": 88.0,
+          "p90": 186.0,
+          "min": 4,
+          "max": 328
+        },
+        "english_body_word_histogram": {
+          "edges": [
+            0,
+            60,
+            100,
+            140,
+            180,
+            100000
+          ],
+          "interval": "[left,right)",
+          "counts": [
+            405,
+            3421,
+            8712,
+            6885,
+            2824
+          ],
+          "n": 22247
+        },
+        "producer_reported_sentence_count": {
+          "n": 22247,
+          "mean": 5.11862273564975,
+          "median": 5,
+          "p10": 4.0,
+          "p90": 6.0,
+          "min": 1,
+          "max": 8
+        },
+        "producer_reported_sentence_histogram": {
+          "edges": [
+            0,
+            4,
+            7,
+            10,
+            100000
+          ],
+          "interval": "[left,right)",
+          "counts": [
+            192,
+            21968,
+            87,
+            0
+          ],
+          "n": 22247
+        }
+      },
+      "style_field_changed_count": 0,
+      "original_event_statement_counts": {
+        "一侧手腕相对肩部向画面左侧移动": 77252,
+        "一侧手腕相对肩部在画面中下移": 79960,
+        "另一侧手腕相对肩部在画面中下移": 80903,
+        "另一侧肘部的二维投影夹角增大": 76676,
+        "另一侧手腕相对肩部向画面右侧移动": 77551,
+        "另一侧手腕相对肩部在画面中上移": 83987,
+        "另一侧肘部的二维投影夹角减小": 80560,
+        "一侧手腕相对肩部向画面右侧移动": 75679,
+        "另一侧手腕相对肩部向画面左侧移动": 75218,
+        "一侧手腕相对肩部在画面中上移": 82948,
+        "另一侧膝部的二维投影夹角减小": 26349,
+        "另一侧膝部的二维投影夹角增大": 26350,
+        "一侧膝部的二维投影夹角增大": 26263,
+        "一侧肘部的二维投影夹角减小": 78565,
+        "一侧肘部的二维投影夹角增大": 75694,
+        "一侧膝部的二维投影夹角减小": 26181
+      },
+      "original_event_types": 16,
+      "original_event_total": 1050136,
+      "original_bodypart_event_counts": {
+        "wrist": 633498,
+        "elbow": 311495,
+        "knee": 105143
+      },
+      "original_event_statements_per_clip": {
+        "n": 22247,
+        "mean": 47.20348811075651,
+        "median": 47,
+        "p10": 28.0,
+        "p90": 68.0,
+        "min": 1,
+        "max": 111
+      },
+      "original_event_histogram": {
+        "edges": [
+          0,
+          10,
+          20,
+          40,
+          60,
+          80,
+          100000
+        ],
+        "interval": "[left,right)",
+        "counts": [
+          106,
+          543,
+          6474,
+          10460,
+          4172,
+          492
+        ],
+        "n": 22247
+      },
+      "original_windows_per_clip": {
+        "n": 22247,
+        "mean": 2.8402031734615902,
+        "median": 2,
+        "p10": 2.0,
+        "p90": 4.0,
+        "min": 1,
+        "max": 12
+      },
+      "original_window_count_histogram": {
+        "3": 4796,
+        "4": 3824,
+        "2": 10486,
+        "5": 1448,
+        "1": 1066,
+        "6": 342,
+        "7": 178,
+        "8": 63,
+        "10": 13,
+        "9": 25,
+        "11": 5,
+        "12": 1
+      },
+      "original_chinese_event_characters_excluding_punctuation": {
+        "n": 22247,
+        "mean": 679.5774711197015,
+        "median": 672,
+        "p10": 401.0,
+        "p90": 972.0,
+        "min": 14,
+        "max": 1587
+      },
+      "audio_duration_seconds_counts": {
+        "5.0625": 22247
+      }
+    },
+    "gate_false": {
+      "n": 105,
+      "original_style_counts": {
+        "unknown": 55,
+        "contemporary": 45,
+        "other ethnic / folk": 1,
+        "k-pop": 4
+      },
+      "final": {
+        "n": 105,
+        "style_counts": {
+          "unknown": 55,
+          "contemporary": 45,
+          "other ethnic / folk": 1,
+          "k-pop": 4
+        },
+        "english_body_words": {
+          "n": 105,
+          "mean": 128.62857142857143,
+          "median": 119,
+          "p10": 85.4,
+          "p90": 193.0,
+          "min": 18,
+          "max": 245
+        },
+        "english_body_word_histogram": {
+          "edges": [
+            0,
+            60,
+            100,
+            140,
+            180,
+            100000
+          ],
+          "interval": "[left,right)",
+          "counts": [
+            2,
+            21,
+            49,
+            18,
+            15
+          ],
+          "n": 105
+        },
+        "producer_reported_sentence_count": {
+          "n": 105,
+          "mean": 5.133333333333334,
+          "median": 5,
+          "p10": 4.0,
+          "p90": 6.0,
+          "min": 1,
+          "max": 6
+        },
+        "producer_reported_sentence_histogram": {
+          "edges": [
+            0,
+            4,
+            7,
+            10,
+            100000
+          ],
+          "interval": "[left,right)",
+          "counts": [
+            2,
+            103,
+            0,
+            0
+          ],
+          "n": 105
+        }
+      },
+      "style_field_changed_count": 0,
+      "original_event_statement_counts": {
+        "另一侧手腕相对肩部向画面左侧移动": 396,
+        "一侧手腕相对肩部向画面右侧移动": 396,
+        "另一侧手腕相对肩部在画面中上移": 392,
+        "另一侧肘部的二维投影夹角减小": 383,
+        "一侧肘部的二维投影夹角减小": 373,
+        "一侧手腕相对肩部在画面中上移": 409,
+        "另一侧肘部的二维投影夹角增大": 360,
+        "另一侧手腕相对肩部在画面中下移": 369,
+        "另一侧手腕相对肩部向画面右侧移动": 428,
+        "一侧手腕相对肩部向画面左侧移动": 422,
+        "一侧肘部的二维投影夹角增大": 353,
+        "一侧手腕相对肩部在画面中下移": 353,
+        "另一侧膝部的二维投影夹角增大": 101,
+        "另一侧膝部的二维投影夹角减小": 93,
+        "一侧膝部的二维投影夹角增大": 85,
+        "一侧膝部的二维投影夹角减小": 89
+      },
+      "original_event_types": 16,
+      "original_event_total": 5002,
+      "original_bodypart_event_counts": {
+        "wrist": 3165,
+        "elbow": 1469,
+        "knee": 368
+      },
+      "original_event_statements_per_clip": {
+        "n": 105,
+        "mean": 47.63809523809524,
+        "median": 45,
+        "p10": 31.0,
+        "p90": 71.60000000000001,
+        "min": 2,
+        "max": 79
+      },
+      "original_event_histogram": {
+        "edges": [
+          0,
+          10,
+          20,
+          40,
+          60,
+          80,
+          100000
+        ],
+        "interval": "[left,right)",
+        "counts": [
+          2,
+          0,
+          30,
+          47,
+          26,
+          0
+        ],
+        "n": 105
+      },
+      "original_windows_per_clip": {
+        "n": 105,
+        "mean": 2.723809523809524,
+        "median": 2,
+        "p10": 2.0,
+        "p90": 4.0,
+        "min": 1,
+        "max": 5
+      },
+      "original_window_count_histogram": {
+        "3": 25,
+        "2": 52,
+        "4": 17,
+        "1": 4,
+        "5": 7
+      },
+      "original_chinese_event_characters_excluding_punctuation": {
+        "n": 105,
+        "mean": 689.0952380952381,
+        "median": 655,
+        "p10": 450.0,
+        "p90": 1035.6000000000001,
+        "min": 27,
+        "max": 1137
+      },
+      "audio_duration_seconds_counts": {
+        "5.0625": 105
+      }
+    }
+  },
+  "limits": [
+    "Original Chinese event statements and final English sentences are different units; their counts demonstrate compression/organization only, not higher action diversity.",
+    "Raw 16-class event vocabulary versus free prose vocabulary is not a comparable action-space measure.",
+    "No verified before/after action-class coverage claimed; lexical mentions can change through paraphrase and do not prove factual coverage.",
+    "Gate filtering changes retained metadata distribution only, not demonstrated caption quality.",
+    "Full corpus final distribution is 220667; original-final paired distributions cover val+test only, not full corpus.",
+    "No video/audio downloaded or read for this audit; no inference or quality judging performed."
+  ]
+}

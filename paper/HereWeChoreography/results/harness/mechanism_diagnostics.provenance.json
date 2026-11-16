@@ -1,0 +1,76 @@
+{
+  "schema": "paper.harness_mechanism_diagnostics.v1",
+  "source_repository": "https://github.com/Anachronism-N/H3-posttrain",
+  "inspected_checkout": "083d1d0387bba582a4504e79d57f12ab065fa3b9",
+  "result_archive_commit": "98b0e2336df3737bb3c304839cb03e67515e59db",
+  "files": [
+    {
+      "source": "experiments/structured_dev_20261114/repeat_rewrite_effect.json",
+      "source_sha256": "16ef1b483efc0da3cd4dcbae4b543d90f120899ef141c7771e214fe074dabc7f",
+      "copied_to": "results/harness/repeat_rewrite_effect.json",
+      "copied_sha256": "16ef1b483efc0da3cd4dcbae4b543d90f120899ef141c7771e214fe074dabc7f"
+    },
+    {
+      "source": "experiments/structured_dev_20261114/truncation_audit.json",
+      "source_sha256": "fca4d3b9ddcf41fa75cf232b73476da16450b9d83ee5c612ee25c1e90c56bb35",
+      "copied_to": "results/harness/truncation_audit.json",
+      "copied_sha256": "fca4d3b9ddcf41fa75cf232b73476da16450b9d83ee5c612ee25c1e90c56bb35"
+    }
+  ],
+  "repeat_diagnostic": {
+    "registered_records": 6,
+    "paired_valid_records": 5,
+    "included_songs": [
+      "fma-1881",
+      "fma-3856",
+      "fma-6789",
+      "fma-4151",
+      "fma-12099"
+    ],
+    "excluded": [
+      {
+        "song_id": "fma-10811",
+        "archived_status": null,
+        "reason": "ok=null; no paired before/after values"
+      }
+    ],
+    "mean_before": 0.7314,
+    "mean_after": 0.3682,
+    "absolute_drop_percentage_points": 36.32,
+    "aggregation": "Arithmetic mean of the five archived per-song rates, which were already rounded; not pooled event counts.",
+    "historical_method": "D: early free rewrite of repeated action text, at most 3 groups and at most one call per group.",
+    "formula": "D(P) = 1 - number_of_distinct_normalized_action_strings / number_of_events; 0 for an empty plan.",
+    "normalization": "Lowercase; replace characters outside [a-z0-9 ] with spaces; collapse whitespace.",
+    "implementation_source": {
+      "path": "choreobench/repeat_revision.py",
+      "sha256": "4e069e2a574edc941bf5892a3e767d7332bd4a7eb4bd07290f367e1785f12a14",
+      "normalization_pattern": "[^a-z0-9 ]+",
+      "normalise_function": "def normalise(action):\n    return \" \".join(_PUNCT.sub(\" \", action.lower()).split())",
+      "summary_function": "def summary(before, after):\n    def dup(plan):\n        events = plan[\"events\"]\n        return 1 - len({normalise(e[\"action\"]) for e in events}) / len(events) if events else 0.0\n    return dict(duplicate_rate_before=round(dup(before), 3), duplicate_rate_after=round(dup(after), 3))"
+    },
+    "provenance_boundary": "The archived summary labels these as verbatim repetition. The retained implementation specifies normalized exact strings; original plans and execution-time producer hashes are not locally archived.",
+    "interpretation": "Directly targeted lexical diagnostic; not independent evidence of motion diversity, music alignment, or choreographic quality."
+  },
+  "fair_presentation_contrast": {
+    "source_json_key": "results.D_vs_D3_6songs_400",
+    "direction": "D3 minus D",
+    "n": 6,
+    "presentation_action_character_limit": 400,
+    "mean_delta": 0.0,
+    "ci95": [
+      -2.0,
+      2.0
+    ],
+    "wins": 3,
+    "losses": 3,
+    "score": "Four text-judge criteria, each 1-5; total maximum 20; two-order mean.",
+    "comparison": "Vocabulary-preserving D3 versus earlier free-rewrite D.",
+    "caveats": [
+      "400 characters is the recorded presentation limit; the archive claims neither compared arm was truncated.",
+      "The six-song aggregate includes nominal test songs inspected during development.",
+      "A confidence interval spanning zero does not prove equivalence.",
+      "This is not an evaluation of the newer five-group Jaccard-threshold revision algorithm."
+    ]
+  },
+  "scope": "Historical diagnostics only. Do not merge these rates or contrasts with results for the current bar-aligned protocol or the newer Jaccard >=0.80 revision variant. No new experiments were run."
+}

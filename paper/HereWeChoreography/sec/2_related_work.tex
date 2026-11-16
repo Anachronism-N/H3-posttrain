@@ -1,0 +1,37 @@
+% !TeX root = ../main.tex
+\section{Related Work}
+\label{sec:related-work}
+\paragraph{Music-conditioned dance and language guidance.}
+FACT generates long motion sequences using a cross-modal
+transformer~\cite{aistpp}; Bailando composes quantized movements with
+choreographic memory~\cite{bailando}; EDGE supports editable dance through
+diffusion and temporal constraints~\cite{edge}. Their joint trajectories
+permit evaluation of realized movement and alignment. Text already
+connects music and motion: M$^3$GPT includes music-to-text
+tasks~\cite{m3gpt}, and DanceChat supplies LLM-generated movement
+instructions to diffusion~\cite{dancechat}. We study the textual score
+itself, emphasizing whole-song composition and assessment.
+
+\paragraph{Movement description and musical evidence.}
+HumanML3D pairs motion with natural-language
+descriptions~\cite{humanml3d}. MotionScript derives descriptions from
+geometric attributes and temporal changes~\cite{motionscript}; NLF
+localizes arbitrary body points and supports parametric
+fitting~\cite{nlf}. Beat This estimates beats and
+downbeats~\cite{beatthis}, MuQ provides music
+representations~\cite{muq}, and Qwen2.5-Omni and Qwen3-Omni support
+audio-to-text interaction~\cite{qwen25omni,qwen3omni}. These building
+blocks support annotation, partitioning, style conditioning, and local
+prediction. Whole-song composition additionally requires ordering,
+recurrence, and retained context.
+
+\paragraph{Inference-time control and assessment.}
+ReAct interleaves reasoning and tool actions~\cite{react}; Self-Refine
+iterates feedback and revision without retraining~\cite{selfrefine}.
+For choreography, musical objectives, recurring motifs, and accepted
+history must inform successive proposals. Our implemented common
+interface enables controlled comparisons with shared evidence and
+resource limits; the full comparison remains pending. BLEU, ROUGE, and
+BERTScore measure reference agreement~\cite{bleu,rouge,bertscore}.
+Complementary local and whole-song criteria assess movement content and
+musical response with explicit evidence requirements.

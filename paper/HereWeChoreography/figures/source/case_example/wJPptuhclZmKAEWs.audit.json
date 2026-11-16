@@ -1,0 +1,559 @@
+{
+  "schema": "herewechoreography.real_dataset_example.v1",
+  "example_id": "wJPptuhclZmKAEWs",
+  "hf_metadata_revision": "a04949e95985af4552c41d44cd800819f628d46a",
+  "hf_cached_caption_revision": "1ca58b4ebc7f9457fb7dc7db587c05f3e79b767a",
+  "source_group_id": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+  "caption": {
+    "id": "wJPptuhclZmKAEWs",
+    "split": "test",
+    "source_group_id": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+    "dance_style": "contemporary",
+    "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJPptuhclZmKAEWs.mp4",
+    "motion_caption": "Dance style: contemporary\nAs one knee straightens, the dancer lowers the hand on that side to the right while the other reaches right and up, then folds back left as the lower arm rises and opens leftward. The folded hand drops farther left and reverses right while the other continues upward, then lengthens down-left as both hands sweep left and return right. Both arms extend downward before the first folds into a shared lift, carries its hand right, and descends with the other hand. The other hand moves left and rebounds upward before both lower again and sweep right. The first hand lifts as the opposite knee softens and its arm opens, then sinks with an extending elbow.",
+    "gestures": [
+      {
+        "s": 1,
+        "from": "w0e0",
+        "to": "w0e10"
+      },
+      {
+        "s": 2,
+        "from": "w0e11",
+        "to": "w1e8"
+      },
+      {
+        "s": 3,
+        "from": "w1e9",
+        "to": "w1e17"
+      },
+      {
+        "s": 4,
+        "from": "w1e18",
+        "to": "w1e23"
+      },
+      {
+        "s": 5,
+        "from": "w1e24",
+        "to": "w1e28"
+      }
+    ],
+    "gate": true,
+    "coverage": 1.0,
+    "evidence": 1.0,
+    "words": 116,
+    "sents": 5,
+    "caption_version": "sol61_choreo_text_v2",
+    "mode": "batch"
+  },
+  "original_record": {
+    "id": "wJPptuhclZmKAEWs",
+    "source_group_id": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+    "split": "test",
+    "audio_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/wJPptuhclZmKAEWs.wav",
+    "audio_sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e",
+    "audio_duration_seconds": 5.0625,
+    "audio_window_seconds": [
+      0.0,
+      5.0625
+    ],
+    "target_text": "Dance style: contemporary\n[0.000-1.960s] 另一侧膝部的二维投影夹角增大。 另一侧手腕相对肩部向画面右侧移动。 另一侧手腕相对肩部在画面中下移。 一侧手腕相对肩部向画面右侧移动。 一侧手腕相对肩部在画面中上移。 一侧肘部的二维投影夹角增大。 一侧手腕相对肩部向画面左侧移动。 一侧肘部的二维投影夹角减小。 另一侧手腕相对肩部在画面中上移。 另一侧肘部的二维投影夹角增大。 另一侧手腕相对肩部向画面左侧移动。 一侧手腕相对肩部在画面中下移。 一侧手腕相对肩部向画面左侧移动。 另一侧手腕相对肩部在画面中上移。 一侧手腕相对肩部向画面右侧移动。\n[1.960-5.062s] 一侧肘部的二维投影夹角增大。 一侧手腕相对肩部向画面左侧移动。 一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部向画面左侧移动。 另一侧肘部的二维投影夹角增大。 一侧手腕相对肩部向画面左侧移动。 一侧手腕相对肩部向画面右侧移动。 另一侧手腕相对肩部向画面右侧移动。 一侧肘部的二维投影夹角增大。 一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部在画面中下移。 另一侧肘部的二维投影夹角增大。 一侧肘部的二维投影夹角减小。 一侧手腕相对肩部在画面中上移。 另一侧手腕相对肩部在画面中上移。 一侧手腕相对肩部向画面右侧移动。 一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部向画面左侧移动。 另一侧手腕相对肩部在画面中上移。 一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部在画面中下移。 一侧手腕相对肩部向画面右侧移动。 另一侧手腕相对肩部向画面右侧移动。 一侧手腕相对肩部在画面中上移。 另一侧膝部的二维投影夹角减小。 另一侧肘部的二维投影夹角增大。 一侧手腕相对肩部在画面中下移。 一侧肘部的二维投影夹角增大。",
+    "target_windows": [
+      {
+        "start": 0.0,
+        "end": 1.96,
+        "caption": "另一侧膝部的二维投影夹角增大。 另一侧手腕相对肩部向画面右侧移动。 另一侧手腕相对肩部在画面中下移。 一侧手腕相对肩部向画面右侧移动。 一侧手腕相对肩部在画面中上移。 一侧肘部的二维投影夹角增大。 一侧手腕相对肩部向画面左侧移动。 一侧肘部的二维投影夹角减小。 另一侧手腕相对肩部在画面中上移。 另一侧肘部的二维投影夹角增大。 另一侧手腕相对肩部向画面左侧移动。 一侧手腕相对肩部在画面中下移。 一侧手腕相对肩部向画面左侧移动。 另一侧手腕相对肩部在画面中上移。 一侧手腕相对肩部向画面右侧移动。"
+      },
+      {
+        "start": 1.96,
+        "end": 5.0625,
+        "caption": "一侧肘部的二维投影夹角增大。 一侧手腕相对肩部向画面左侧移动。 一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部向画面左侧移动。 另一侧肘部的二维投影夹角增大。 一侧手腕相对肩部向画面左侧移动。 一侧手腕相对肩部向画面右侧移动。 另一侧手腕相对肩部向画面右侧移动。 一侧肘部的二维投影夹角增大。 一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部在画面中下移。 另一侧肘部的二维投影夹角增大。 一侧肘部的二维投影夹角减小。 一侧手腕相对肩部在画面中上移。 另一侧手腕相对肩部在画面中上移。 一侧手腕相对肩部向画面右侧移动。 一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部向画面左侧移动。 另一侧手腕相对肩部在画面中上移。 一侧手腕相对肩部在画面中下移。 另一侧手腕相对肩部在画面中下移。 一侧手腕相对肩部向画面右侧移动。 另一侧手腕相对肩部向画面右侧移动。 一侧手腕相对肩部在画面中上移。 另一侧膝部的二维投影夹角减小。 另一侧肘部的二维投影夹角增大。 一侧手腕相对肩部在画面中下移。 一侧肘部的二维投影夹角增大。"
+      }
+    ],
+    "caption_version": "ms-original-ruledraft-zh-v1",
+    "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJPptuhclZmKAEWs.mp4",
+    "video_sha256": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+    "style_metadata_not_in_target": {
+      "dance_style": "contemporary",
+      "style_source": "rich_chapter2",
+      "resolve_conflict": false,
+      "label_version": "ms-original-style-v1"
+    },
+    "semantic_approval": false,
+    "human_review_completed": false,
+    "notes": "2-D kinematic rule sentences; 一侧/另一侧 is NOT a real left/right hand; pipeline-validation data, not final caption quality"
+  },
+  "raw_caption_sha256": "08501dcc286ff36c4d5f75fccd90a1854e6b0a2bed8f25387c23115a2ca07159",
+  "source_events": [
+    {
+      "event_id": "w0e0",
+      "text": "另一侧膝部的二维投影夹角增大。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e1",
+      "text": "另一侧手腕相对肩部向画面右侧移动。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e2",
+      "text": "另一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e3",
+      "text": "一侧手腕相对肩部向画面右侧移动。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e4",
+      "text": "一侧手腕相对肩部在画面中上移。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e5",
+      "text": "一侧肘部的二维投影夹角增大。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e6",
+      "text": "一侧手腕相对肩部向画面左侧移动。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e7",
+      "text": "一侧肘部的二维投影夹角减小。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e8",
+      "text": "另一侧手腕相对肩部在画面中上移。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e9",
+      "text": "另一侧肘部的二维投影夹角增大。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e10",
+      "text": "另一侧手腕相对肩部向画面左侧移动。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e11",
+      "text": "一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e12",
+      "text": "一侧手腕相对肩部向画面左侧移动。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e13",
+      "text": "另一侧手腕相对肩部在画面中上移。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w0e14",
+      "text": "一侧手腕相对肩部向画面右侧移动。",
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "event_id": "w1e0",
+      "text": "一侧肘部的二维投影夹角增大。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e1",
+      "text": "一侧手腕相对肩部向画面左侧移动。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e2",
+      "text": "一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e3",
+      "text": "另一侧手腕相对肩部向画面左侧移动。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e4",
+      "text": "另一侧肘部的二维投影夹角增大。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e5",
+      "text": "一侧手腕相对肩部向画面左侧移动。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e6",
+      "text": "一侧手腕相对肩部向画面右侧移动。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e7",
+      "text": "另一侧手腕相对肩部向画面右侧移动。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e8",
+      "text": "一侧肘部的二维投影夹角增大。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e9",
+      "text": "一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e10",
+      "text": "另一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e11",
+      "text": "另一侧肘部的二维投影夹角增大。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e12",
+      "text": "一侧肘部的二维投影夹角减小。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e13",
+      "text": "一侧手腕相对肩部在画面中上移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e14",
+      "text": "另一侧手腕相对肩部在画面中上移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e15",
+      "text": "一侧手腕相对肩部向画面右侧移动。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e16",
+      "text": "一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e17",
+      "text": "另一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e18",
+      "text": "另一侧手腕相对肩部向画面左侧移动。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e19",
+      "text": "另一侧手腕相对肩部在画面中上移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e20",
+      "text": "一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e21",
+      "text": "另一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e22",
+      "text": "一侧手腕相对肩部向画面右侧移动。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e23",
+      "text": "另一侧手腕相对肩部向画面右侧移动。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e24",
+      "text": "一侧手腕相对肩部在画面中上移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e25",
+      "text": "另一侧膝部的二维投影夹角减小。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e26",
+      "text": "另一侧肘部的二维投影夹角增大。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e27",
+      "text": "一侧手腕相对肩部在画面中下移。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "event_id": "w1e28",
+      "text": "一侧肘部的二维投影夹角增大。",
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    }
+  ],
+  "sentence_evidence_mapping": [
+    {
+      "sentence_index_1based": 1,
+      "text": "As one knee straightens, the dancer lowers the hand on that side to the right while the other reaches right and up, then folds back left as the lower arm rises and opens leftward.",
+      "source_event_ids": [
+        "w0e0",
+        "w0e1",
+        "w0e2",
+        "w0e3",
+        "w0e4",
+        "w0e5",
+        "w0e6",
+        "w0e7",
+        "w0e8",
+        "w0e9",
+        "w0e10"
+      ],
+      "coarse_interval_seconds": [
+        0.0,
+        1.96
+      ]
+    },
+    {
+      "sentence_index_1based": 2,
+      "text": "The folded hand drops farther left and reverses right while the other continues upward, then lengthens down-left as both hands sweep left and return right.",
+      "source_event_ids": [
+        "w0e11",
+        "w0e12",
+        "w0e13",
+        "w0e14",
+        "w1e0",
+        "w1e1",
+        "w1e2",
+        "w1e3",
+        "w1e4",
+        "w1e5",
+        "w1e6",
+        "w1e7",
+        "w1e8"
+      ],
+      "coarse_interval_seconds": [
+        0.0,
+        5.0625
+      ]
+    },
+    {
+      "sentence_index_1based": 3,
+      "text": "Both arms extend downward before the first folds into a shared lift, carries its hand right, and descends with the other hand.",
+      "source_event_ids": [
+        "w1e9",
+        "w1e10",
+        "w1e11",
+        "w1e12",
+        "w1e13",
+        "w1e14",
+        "w1e15",
+        "w1e16",
+        "w1e17"
+      ],
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "sentence_index_1based": 4,
+      "text": "The other hand moves left and rebounds upward before both lower again and sweep right.",
+      "source_event_ids": [
+        "w1e18",
+        "w1e19",
+        "w1e20",
+        "w1e21",
+        "w1e22",
+        "w1e23"
+      ],
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    },
+    {
+      "sentence_index_1based": 5,
+      "text": "The first hand lifts as the opposite knee softens and its arm opens, then sinks with an extending elbow.",
+      "source_event_ids": [
+        "w1e24",
+        "w1e25",
+        "w1e26",
+        "w1e27",
+        "w1e28"
+      ],
+      "coarse_interval_seconds": [
+        1.96,
+        5.0625
+      ]
+    }
+  ],
+  "audio": {
+    "sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e",
+    "expected_duration_seconds": 5.0625,
+    "source_window_seconds": [
+      0.0,
+      5.0625
+    ]
+  },
+  "video": {
+    "sha256": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+    "producing_cluster_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJPptuhclZmKAEWs.mp4"
+  },
+  "caption_source": {
+    "local_path": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\planner-search-idea\\.captionlab-data\\sol61-inspection\\sol61_captions__test_captions.jsonl",
+    "line_1based": 10375
+  },
+  "original_source": {
+    "local_path": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\planner-search-idea\\.captionlab-data\\sol61-inspection\\original_test.jsonl",
+    "line_1based": 10375
+  },
+  "timing_caveat": "Source windows are coarse attribution, not exact action intervals. Bar annotations require independent recorded BeatThis evidence.",
+  "quality_caveat": "Automatic gate and stylistic labels are not human quality certification; no musical fit inferred."
+}

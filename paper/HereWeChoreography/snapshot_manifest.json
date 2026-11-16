@@ -14,7 +14,7 @@
     "figures/evaluation_rubric_gpt_v3.png",
     "figures/harness_runtime_gpt_v4.png"
   ],
-  "total_bytes": 28526641,
+  "total_bytes": 28528322,
   "files": [
     {
       "path": "cvpr.sty",
@@ -273,8 +273,8 @@
     },
     {
       "path": "results/build_d123_refinement_table.py",
-      "sha256": "2eb1ffc147f8bc147e53f4fc1c7e71efa3b1a140b48cdcf31094aa94f7c9aaf6",
-      "bytes": 3276
+      "sha256": "23beabe79d5bb7134598e7b73d54df011c3d34d6ef65676ea6e7482192a7d46d",
+      "bytes": 3408
     },
     {
       "path": "results/build_style_prior_822.py",
@@ -303,8 +303,8 @@
     },
     {
       "path": "results/d123_refine_v1/table.source.json",
-      "sha256": "31f5180988a29da157a0860e3acc2ac8cb58cd18606a5fbc59af3818be4835da",
-      "bytes": 1026
+      "sha256": "f1c24d57bce230a3217baf237bbbabf07f728e4df5f92f1714342d768f5e2f01",
+      "bytes": 1156
     },
     {
       "path": "results/e2_full2000.source.json",
@@ -373,8 +373,8 @@
     },
     {
       "path": "results/main_text_evidence_audit.json",
-      "sha256": "45640a616004db90c0359c3512081db2a49537478a4f56e80261302422562f2e",
-      "bytes": 4197
+      "sha256": "a41cfbeca31db7e0170eaeabeb21e5030df8fa78842f4160650618070234b089",
+      "bytes": 4405
     },
     {
       "path": "results/pilot_final_status_v1.json",
@@ -388,8 +388,8 @@
     },
     {
       "path": "results/README.md",
-      "sha256": "09054ed4563b8d0c37354121d9672620cc39f62eb75d497dd6676ab7280af26c",
-      "bytes": 14148
+      "sha256": "4e42b3e502fa12a2651367af86bffa42839e1ceea6f641f24fa03d50a1f6afa6",
+      "bytes": 14421
     },
     {
       "path": "results/style_prior_822.source.json",
@@ -403,8 +403,8 @@
     },
     {
       "path": "results/writing_revision_20261117.md",
-      "sha256": "2d1d5919b12072c7e7e70b91d39da9014d009980ddbaa623deca4aae5a9d716b",
-      "bytes": 3292
+      "sha256": "052308c1bce679bf5cd79b1f2a4a74c54f3e257c29143f0ac5acb9c7d46b2f85",
+      "bytes": 3585
     },
     {
       "path": "sec/0_abstract.tex",
@@ -438,13 +438,13 @@
     },
     {
       "path": "sec/4_experiments.tex",
-      "sha256": "bb06c22af6249ac904c1227e41f118e51772d09309d1969f0d87d911eda270c4",
-      "bytes": 5656
+      "sha256": "2b350fe6ecadaa684028fd2c79c4f9a5c7f1057588472aff9da729c841a39145",
+      "bytes": 5556
     },
     {
       "path": "sec/5_conclusion.tex",
-      "sha256": "31661ce219189358ad8d70aa9440e56a8b21587839bc49adb8f73262c5a48568",
-      "bytes": 572
+      "sha256": "289b3f5581407c77faf81b9af563390b2efc755e60feebb28c470c294500d9a7",
+      "bytes": 569
     },
     {
       "path": "sec/6_llm_usage_statement.tex",
@@ -458,8 +458,8 @@
     },
     {
       "path": "sec/8_supplementary.tex",
-      "sha256": "16acb9cc53936bef9fd3dc192a91fd889f38d7c4653f3e5b5b4707daf11d9650",
-      "bytes": 13268
+      "sha256": "fc2adfe13b49a998886e0cc535b981b4c658ae07adeee179b2c450678339230a",
+      "bytes": 13709
     },
     {
       "path": "sec/9_method_implementation_details.tex",
@@ -493,8 +493,8 @@
     },
     {
       "path": "tables/refinement_d123.tex",
-      "sha256": "d33a22ccb921f8dd8e3c99a0eaf225a102a6f1f08e3a4e0f95b87b826fb1be63",
-      "bytes": 930
+      "sha256": "51123a41d02554c194ef65ad7cf9df6aaabc592086e66b5611558397a2eb7829",
+      "bytes": 867
     },
     {
       "path": "tables/rubric_anchors_detailed.tex",
@@ -514,8 +514,8 @@
   ],
   "compiled_preview": {
     "path": "HereWeChoreography.pdf",
-    "sha256": "494af6037c806b2fa6465edd4a281e030325a2fb84869915e00b2d3622e0055e",
-    "bytes": 8579584
+    "sha256": "9ab7a252ac79ac9df587a2ca5657468cfa7f5fa1992716c09ba39e35d0e1d13f",
+    "bytes": 8579954
   },
   "excluded": [
     "raw audio/video",
@@ -523,5 +523,6 @@
     "inactive figures",
     "obsolete style-population reports",
     "credentials"
-  ]
+  ],
+  "updated_utc": "2026-11-16T17:41:44.199439+00:00"
 }

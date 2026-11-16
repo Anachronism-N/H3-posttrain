@@ -41,7 +41,7 @@
       12
     ]
   },
-  "pdf_sha256": "494af6037c806b2fa6465edd4a281e030325a2fb84869915e00b2d3622e0055e",
+  "pdf_sha256": "9ab7a252ac79ac9df587a2ca5657468cfa7f5fa1992716c09ba39e35d0e1d13f",
   "source_sha256": {
     "sec/0_abstract.tex": "62dd0fc28aa6cf92762abacc8399e36753ae64997a93832d72fd370c867c6a9d",
     "sec/1_introduction.tex": "ff3aaee8fe3f2d5ac8ad1cfaf2c9f912ce240dfce4dd18c9bbf6b761238f3cbf",
@@ -49,8 +49,8 @@
     "sec/2a_dataset.tex": "ba986142ad5a345d4c16810522dc354f9198a3a04efb329b0367d88633a34de8",
     "sec/3_method.tex": "ad7e4bbb9b03e2040451fe81560dd04c767c05b669687addf39315c8e332ac28",
     "sec/3a_evaluation.tex": "dfe7b78b416f63062e9947f8552be154b48ca907031b85ccaca258593401e6ae",
-    "sec/4_experiments.tex": "bb06c22af6249ac904c1227e41f118e51772d09309d1969f0d87d911eda270c4",
-    "sec/5_conclusion.tex": "31661ce219189358ad8d70aa9440e56a8b21587839bc49adb8f73262c5a48568",
+    "sec/4_experiments.tex": "2b350fe6ecadaa684028fd2c79c4f9a5c7f1057588472aff9da729c841a39145",
+    "sec/5_conclusion.tex": "289b3f5581407c77faf81b9af563390b2efc755e60feebb28c470c294500d9a7",
     "figures/dataset_overview.tex": "55e9b07da5d83815a14c2938bb2a2766b369fa90b4984382c2dd2424e8f1cac8",
     "figures/annotation_pipeline_v5.png": "8601f3051079d6a4ed5d5ffa81dfb76ba20b5bf20e4bfd36013164bf7e9efd27",
     "figures/choreography_example.tex": "81119e4f35c9a5fa48cfd610a8949508a4be59cb9543db6aba74fe4bbda77bef",
@@ -59,11 +59,11 @@
     "results/style_prior_822.source.json": "6e70dbf282a782fc235a9cf85679c7354f31b3014c10b74ae1298fa82153a5c6",
     "results/build_style_prior_822.py": "20b97fb3eede5d9abe1e4a17590a14eae478e50f6f18da560a2416b412f43ceb",
     "tables/style_prior_822.tex": "4fcf143b7597503fcb898ba5ff3ddfd7ee628c7d4fd919c9acebb626e7418ca6",
-    "sec/8_supplementary.tex": "16acb9cc53936bef9fd3dc192a91fd889f38d7c4653f3e5b5b4707daf11d9650",
+    "sec/8_supplementary.tex": "fc2adfe13b49a998886e0cc535b981b4c658ae07adeee179b2c450678339230a",
     "figures/choreography_example_v4.pdf": "eafe178bae5288552b93fe14fddb6947d5a266f2bfd1499155493726ddd67124",
     "figures/source/choreography_example_v4.audit.json": "f280c745e72a4d01288e3b4336d72b76b3e422c6ef9859c7a764379e030c7615",
-    "tables/refinement_d123.tex": "d33a22ccb921f8dd8e3c99a0eaf225a102a6f1f08e3a4e0f95b87b826fb1be63",
-    "results/build_d123_refinement_table.py": "2eb1ffc147f8bc147e53f4fc1c7e71efa3b1a140b48cdcf31094aa94f7c9aaf6",
+    "tables/refinement_d123.tex": "51123a41d02554c194ef65ad7cf9df6aaabc592086e66b5611558397a2eb7829",
+    "results/build_d123_refinement_table.py": "23beabe79d5bb7134598e7b73d54df011c3d34d6ef65676ea6e7482192a7d46d",
     "results/d123_refine_v1/provenance.json": "a65b027564347893403d8e446c01761eac2794784d59a4ee2070620355f9c593",
     "figures/source/plot_choreography_example_v4.py": "9b5690c0cf18295f7fd9aee537a817cf9dfe3211cbc4c7bb78e34710e958af30"
   },
@@ -74,7 +74,8 @@
     "main_figures_and_tables_before_references": true,
     "style_table_and_text_822_only": true,
     "style_table_visual_review": true,
-    "qualitative_boundary_context_explicit": true
+    "qualitative_boundary_context_explicit": true,
+    "d123_display_and_inference_scope_verified": true
   },
   "model_training_or_new_benchmark_inference": false,
   "qualitative_example_scope": "Six unchanged source frames and measured waveform; illustrative author instructions and textual hand-off, not measured musical quality.",
@@ -99,6 +100,9 @@
       "D6"
     ],
     "rubric_mapping_verified": false,
-    "no_baseline_comparison": true
+    "no_baseline_comparison": true,
+    "display_method": "Ours",
+    "display_scope": "Complete inference pipeline; configuration in appendix",
+    "per_cell_counts_displayed": false
   }
 }

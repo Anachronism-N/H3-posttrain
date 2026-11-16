@@ -3,6 +3,9 @@
   "preview_pages": 16,
   "main_pages": 8,
   "rebuilt_text_matches_all_pages": true,
-  "preview_sha256": "494af6037c806b2fa6465edd4a281e030325a2fb84869915e00b2d3622e0055e",
-  "no_model_runs": true
+  "preview_sha256": "9ab7a252ac79ac9df587a2ca5657468cfa7f5fa1992716c09ba39e35d0e1d13f",
+  "no_model_runs": true,
+  "table_method_label": "Ours",
+  "per_cell_counts": false,
+  "inference_configuration_disclosed_in_appendix": true
 }

@@ -50,10 +50,14 @@ semantic movement diversity. Table~\ref{tab:style-prior-822} reports
 only the 822-clip style population, retaining all seven zero-shot models
 and all three supervised objectives on the same clips.
 
-\paragraph{Published refinement ratings.}
-The versioned ratings in Table~\ref{tab:refinement-d123} come from public
-commit \texttt{dc6dfd9}. All 2,000 case IDs and caption hashes match the
-released refine-v1 outputs. The editor returns 1,996 outputs; four cases
+\paragraph{Automatic-rating configuration and coverage.}
+For Table~\ref{tab:refinement-d123}, \emph{Ours} denotes the complete
+captioning inference pipeline: the local SFT captioner followed by a
+Qwen3.5-397B-A17B text editor. The reference-agreement experiment in
+Table~\ref{tab:e2-full2000-v2} evaluates SFT outputs before this editing
+step; the two tables concern different output stages.
+All 2,000 case IDs and caption hashes match public commit
+\texttt{dc6dfd9}. The editor returns 1,996 outputs; four cases
 retain raw text after a content check or failure, and 1,991 final texts
 differ from raw SFT. We retain all cases. Scores marked invalid or null
 are omitted per dimension, never replaced with zero. The public export
@@ -63,6 +67,9 @@ The r4 and v2.1 hashes differ; v2.1 was defined after earlier tests.
 These records cannot establish calibration to our nine-dimensional
 anchors. No score difference between rows is a model improvement, and
 reference agreement after editing has not been recomputed.
+Valid D1/D2/D3 counts are 1,999/1,990/1,999 for r4 and
+2,000/1,966/1,999 for v2.1. We report per-dimension valid means and
+retain all missing statuses in the reproducibility records.
 
 \paragraph{Caption decoding and metric configuration.}
 The reported SFT checkpoint uses temperature 0.7, top-$p$ 0.9,

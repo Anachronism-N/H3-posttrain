@@ -27,6 +27,7 @@ Pending experiments have no numerical scores.
 - Source: H3-posttrain `dc6dfd9894fb702acb857524f930481efec829df`, branch `results/sft-refine-v1-2000-20261116`, directory `results/m2d/sft_v3_rp105_refine_v1_2000_20261116/`.
 - Exact public manifest, outputs and judgments are preserved under `results/d123_refine_v1/`; the provenance receipt records byte hashes and all denominators.
 - `python results/build_d123_refinement_table.py` recomputes the active `tables/refinement_d123.tex`. All 2,000 case identities and caption hashes were checked; invalid/null scores remain missing.
+- The manuscript displays the complete inference pipeline as **Ours**, without internal version branding or per-cell sample counts. Coverage and the editor configuration are documented in the appendix; source identities and denominators remain unchanged in these receipts.
 - These are **SFT v3 plus refine-v1**, with Qwen3.5-397B-A17B as editor. They are not raw-SFT scores, and no baseline judgments are supplied.
 - r4 means/counts: D1 4.96698/1,999; D2 3.33467/1,990; D3 4.80190/1,999. v2.1: 4.92200/2,000; 4.50102/1,966; 4.91446/1,999. Versions score the same outputs and are never pooled.
 - The release lacks judge identity, acoustic-input metadata, anchor definitions and evidence quotations. Dimension IDs are retained as source IDs, not certified as our nine-dimensional rubric. v2.1 was defined after earlier test results; D1 is near saturation. Neither version establishes comparative quality, musical fit or semantic faithfulness.

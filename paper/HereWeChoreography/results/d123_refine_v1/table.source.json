@@ -1,6 +1,9 @@
 {
   "source_commit": "dc6dfd9894fb702acb857524f930481efec829df",
   "method": "SFT_v3_rp105+refine-v1",
+  "display_method": "Ours",
+  "display_scope": "Complete captioning inference pipeline",
+  "per_cell_counts_displayed": false,
   "editor_model": "Qwen3.5-397B-A17B",
   "summaries": {
     "r4": {

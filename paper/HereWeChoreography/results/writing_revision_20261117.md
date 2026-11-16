@@ -14,6 +14,10 @@ evaluation separates reference agreement, versioned ratings and musical response
 - D1-D3 are transcribed from the public refine-v1 release, with exact per-case
   recomputation. r4 and v2.1 appear separately on the same 2,000 outputs.
   D4-D6 remain unreported. Refinement is identified as an extra editor step.
+- In the manuscript, the method is named **Ours** and score cells contain only
+  means. Valid counts and the complete inference configuration are concentrated
+  in the appendix. The automatic-rating table remains distinguished from the
+  reference-agreement table's original SFT output stage.
 - Missing assessor metadata and anchor definitions prevent interpreting source
   rating IDs as a validated application of the manuscript's proposed rubric.
   No baseline comparison, human agreement or musical superiority is inferred.

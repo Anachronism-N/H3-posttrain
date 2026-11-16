@@ -1,0 +1,36 @@
+Use case: infographic-diagram.
+Asset type: full-width CVPR overview, VERSION B emphasizing the dataset and benchmark contributions, with our method included as the baseline. Very high resolution wide landscape about 2.2:1. Original polished scientific editorial illustration. White/off-white canvas, restrained ink navy, teal, muted blue, plum and amber palette, fine consistent vector-like strokes. Use three clean coordinated panels, a strong left-to-right story with an aligned lower method lane. No big top title/subtitle. No glossy rendering, shadows, gradients, robots, generic AI clip art, score radar charts or fabricated results.
+
+Panel (a), LEFT 38% width, title "Evidence-linked annotation".
+Top show a filmstrip of three small elegant silhouette dance frames with whole-body joints, beside an authentic-looking variable-amplitude music waveform. They are schematic source-media icons, not photographs or experimental results.
+The CURRENT LABEL route is shown clearly with small numbered stages:
+"2D rule events" -> "GPT-6.1-sol" -> "Evidence-linked captions".
+Illustrate 2D rule events as a small body skeleton and colored wrist/angle event intervals. The GPT card has a grounded rewrite symbol, no company logo.
+Under the captions, display a short authored sample with colored body/action words, connected by thin provenance lines to event IDs. Example: "The left arm rises as the knees bend." Make it an illustrative sample, no claimed observed ground truth.
+A compact refinement checklist: "Coverage", "Body + direction", "Timing + repetition", "Grounded prose".
+Under a hairline divider a smaller clearly DASHED inset labeled "3D geometry extension": "NLF" -> "Temporal events" -> "Evidence consolidation". Include full-body skeleton, small palm/leg detail insets with correctly routed connectors, and a repeated bend–extend timeline summarized while retaining event links. A dashed connector to the refinement stage denotes the extension route. It MUST NOT imply that NLF/3D supplied the current dataset labels.
+Music waveform bypass arrow retains aligned audio alongside captions.
+
+Panel (b), CENTER 24% width, title "Paired music–choreography resource".
+Show an elegant stack of aligned audio-caption records, each with a different waveform, short colored action-text strips, link icon and tiny time interval. A simple record schema at bottom: "Audio · movement text · time · provenance". No dataset names, internal paths, exact counts, fake genre distributions or fabricated statistics.
+The resource feeds the lower baseline-method lane via an arrow labeled "Supervised learning".
+A small held-out branch feeds the right benchmark panel. Draw a clear visual split between training and evaluation, with no feedback from benchmark judge into generation.
+
+Panel (c), RIGHT 38% width, title "Music-to-text choreography benchmark".
+At top a paired input tray: "Music audio" + "Candidate choreography". A small detached reference card is labeled "Reference agreement" to show lexical/semantic agreement is complementary, not a music-quality oracle.
+Under inputs show a compact evidence process: "Listen" -> "Quote movement evidence" -> "Rate independently". Make the raw audio visibly available to evaluation.
+Three stacked assessment cards, NOT nine tiny rubric boxes:
+"Local movement content" with "Specificity · body / space · local timing";
+"Music–movement response" with "Rhythm · dynamics · musical interpretation";
+"Whole-song composition" with "Continuity · structure · motif variation".
+At bottom a miniature STRICT RUBRIC example, no model results: "1 Unsupported / conflicting", "3 Partially supported", "5 Evidence-supported". Add small text "Reasons + evidence" and a tiny headphones + quotation symbol.
+The musical-interpretation axis is under development; use broad category wording, do NOT assign a D6 name or claim the proposed mood metric has been validated. No numerical experimental performance or checkmark suggesting validation completed.
+
+LOWER shared lane spanning CENTER and RIGHT, about 20% image height, title "Our baseline: local expert + compositional harness".
+A concise but identifiable sequence:
+"Our trained Qwen3-Omni" -> "Stateful harness" -> "Timed choreography text".
+Under the model small "Joint-aware text supervision". Under harness show miniature planner/controller/tool feedback loop above an "Outline · motifs · committed history" state bar; add a small "JEV" chip for global style and a "Beat This!" chip for bar units. Label a narrow loop "Targeted revision". Do not put benchmark evaluation inside this loop.
+Output text score has "Dance style is …" and bar-group rows. Connect this output UP into benchmark Candidate choreography input using one short noncrossing arrow.
+In small type along bottom: "Shared evidence · controlled comparisons · explicit resource budgets".
+
+Constraints: emphasize data and benchmark visually, with method as one compact baseline lane. No extra local model such as MOSS. JEV is a component, not our invented encoder. No new learned compatibility scorer, motion renderer, claimed human validation or benchmark performance. All text legible, no data counts or file names. Rich purposeful scientific illustrations, not generic boxes alone; maintain visual unity with the method-focused companion figure.

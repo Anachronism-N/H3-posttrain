@@ -1,0 +1,35 @@
+{
+  "generator": "built-in GPT Image",
+  "generated_utc": "2026-11-16T19:54:30.675781+00:00",
+  "generation_calls": 5,
+  "variants": [
+    {
+      "file": "overview_method_v3.png",
+      "sha256": "bd21459c013f028afc2873e4ec63c11725e5f8f0a6e5f9535eaa14898f0c8b02",
+      "prompts": [
+        "overview_method_v1.prompt.txt",
+        "overview_method_v2.prompt.txt",
+        "overview_method_v3.prompt.txt"
+      ]
+    },
+    {
+      "file": "overview_data_benchmark_v2.png",
+      "sha256": "29f35e3c2b08e5d7fd425d33dc2f4b88011cb163c50a76636eed14de4469da95",
+      "prompts": [
+        "overview_data_benchmark_v1.prompt.txt",
+        "overview_data_benchmark_v2.prompt.txt"
+      ]
+    }
+  ],
+  "review": {
+    "MOSS_removed_from_local_expert": true,
+    "JEV_module_label": true,
+    "clause_weights_not_coordinate_loss": true,
+    "tool_feedback_structural_not_grader": true,
+    "persistent_state_and_scoped_revision": true,
+    "no_raw_audio_to_text_refiner": true,
+    "current_2d_labels_and_3d_extension_distinguished": true,
+    "rubric_calibration_not_claimed": true,
+    "schematic_media_and_text_not_experimental_results": true
+  }
+}

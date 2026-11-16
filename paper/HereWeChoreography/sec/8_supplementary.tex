@@ -142,13 +142,28 @@ its real variable-duration model input and audio-judge coverage still
 require server validation. The 2,000-clip reference panel also needs a
 final training/checkpoint provenance audit before it can support a
 strictly unseen-data generalization claim. The evaluation report names
-the v3 base model and lower-body-clause weighting; the exact training
-scope, coefficient, optimizer schedule, batch size, and record filter
-still require the original training configuration. A controlled comparison
+the v3 base model and joint-aware clause weighting. The released
+implementation and checkpoint report specify a lower-limb vocabulary
+and a coefficient of 1.5. The original run configuration and source
+hashes are still needed to verify the exact training scope, optimizer
+schedule, batch size, and record filter. A controlled comparison
 against trained-model-disabled decoding would further isolate the
 effect of adaptation. A listener study, rubric sensitivity controls,
 and human--model agreement are needed before the new rubric can be
 presented as a validated automatic quality metric.
+
+\paragraph{Joint-aware clause reweighting.}
+The released configuration targets clauses naming leg, knee, thigh,
+shin, calf, hamstring, or quad. Clause boundaries follow commas,
+semicolons, and sentence stops. With tokenizer offsets, all overlapping
+clause tokens receive the weight; an offset-mapping fallback marks
+matched part tokens only. Weighted cross-entropy is normalized by the
+unweighted number of valid assistant tokens, not by the sum of weights.
+The development report records lower-limb mention coverage of 0.993
+in references versus 0.787 in baseline outputs, motivating the selected
+region. These are lexical diagnostics, not joint-motion accuracy.
+A random-clause control has not been run, so version differences cannot
+be attributed solely to the semantics of the selected joints.
 
 \paragraph{Reference-metric calculation.}
 For a predicted category set $P_i$ and reference set $R_i$, the pooled

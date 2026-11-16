@@ -1,0 +1,26 @@
+Use case: infographic-diagram.
+Asset type: full-width CVPR research-paper overview, VERSION A emphasizing our method. Generate a highly polished original scientific illustration at very high resolution, wide landscape about 2.2:1. White/off-white background, ink navy typography, restrained teal, muted blue, plum and warm amber accents. Crisp vector-like drawing, refined editorial design, clear hierarchy, softly tinted panel headers, fine consistent strokes. Generous spacing, large readable labels, no big overall title or subtitle. Visually richer than a plain block diagram but never glossy, cartoonish or cluttered. No gradients, shadows, 3D cubes, robot mascot, logos or marketing art.
+
+The central story: a trained local movement expert is composed into whole-song textual choreography by an explicit agent–harness loop with tools, persistent memory, constrained commitment and scoped revision. All output is TEXT, not synthesized video or 3D animation.
+
+Layout:
+TOP slim strip: "Music" beside a realistically varied blue waveform with quiet and strong passages, thin bar ticks and groups of 2–4 bars. Add small optional input card "Choreographic brief". Branch cleanly into the left evidence column and the center harness; do not route raw audio directly to the composer.
+
+LEFT COLUMN, 26% width, heading "Specialists and shared evidence".
+A large illustrated model cutaway titled "Our trained choreography expert". Inside, three neatly stacked model blocks: "Audio front end" then "Qwen3-Omni + LoRA" then "Local movement proposals". A small adjacent training ribbon reads "Joint-aware text supervision" and shows caption tokens with selected joint-related phrases colored and a compact whole-body joint skeleton; the weighting applies to TEXT tokens, not a 3D-coordinate regression loss. The only local choreography model is ours. Never write MOSS or any alternative local model.
+Under it, three small tool cards in a tidy grid: "Beat This!" / "2–4-bar windows"; "JEV" / "Global dance-style prior"; "librosa" / "Acoustic summaries". Show tiny icons: bar marks, a style-tag stack, an acoustic curve. JEV is the module name, NOT "MuQ + head". Do not claim that we invented JEV or its underlying encoder.
+At base of this column a clear data tray: "Frozen evidence + proposal cache", with tiny aligned caption cards. A single clean arrow feeds read-only evidence to the harness.
+
+CENTER, 54% width, a subtly tinted framed region "Stateful compositional harness". Show the learned agent separately from the deterministic infrastructure:
+Upper left purple card: "Composer agent" then "Qwen3-VL" and smaller "Outline · motifs · unit drafts". A small lock glyph or text "Fixed weights at inference".
+Upper center/right teal card "Controller" with concise rows "Schedule stages", "Budget + permissions", "Continue / stop".
+Right amber card "Tool execution" with four concise operations "Read evidence / history", "Validate schedule", "Commit unit", "Patch selected text".
+This MUST be an actual feedback loop with unambiguous arrowheads, not a simple chain: controller -> composer labeled "Context + feedback"; composer -> controller labeled "Structured proposal"; controller -> tools labeled "Execute"; tools -> controller labeled "Observation / error". Use parallel arrow lanes with enough space, no overlapping labels.
+Below these, a horizontal blue-gray memory cabinet "Persistent state", four equal cells "Outline + motifs", "Current draft", "Committed history", "Call / token ledger". Bidirectional access between state and controller/tools, drawn with short vertical connectors.
+Inside bottom of harness a sophisticated small timeline illustrates "Targeted revision": five adjacent score cells, the middle one outlined amber as editable, the others softly blue and padlocked. Label the editable cell "Revise selected text" and retained cells "Protected context". Thin brace underneath: "Keep time · track · motif fixed". This is revision of TEXT, no generated human motion or critic network. No judge scores in the loop.
+
+RIGHT COLUMN, 20% width, title "Whole-song textual score". A handsome music-score-like output document with header "Dance style is …", followed by three clearly separated time/bar groups and concise movement text strips; example times/bars are illustrative. Use "Bars 1–2", "Bars 3–4", "Bars 5–6". Colored tags A, B, A′ indicate motif variation, NOT codebook tokens. Show a small coordinated dancer pose icon next to each text row to enrich the visual, clearly an explanatory icon. Output enters from committed tool execution, not directly from audio.
+At bottom right, a tiny text chip "Inspect · edit · compose".
+Bottom figure-wide unobtrusive legend: plum = learned models, teal = control, amber = tools, blue = retained state.
+
+Scientific constraints: never add a learned compatibility model, retrieval bank, transition diffusion, reinforcement learning, recursive self-improvement, raw-audio-listening composer, benchmark grader in the loop, or unsupported performance claims. Do not show 5-second fixed windows, dataset counts, filenames or numerical results. Trainable local expert versus fixed inference agent must be visually distinguishable. All arrows and labels fully inside the canvas. No overall title. Preserve exact model names and a readable research-paper finish.

@@ -1,0 +1,26 @@
+{
+  "source_repository": "Anachronism-N/H3-posttrain",
+  "source_commit": "50ac71158655f0139eb3bb1384152356fa41b7e0",
+  "files": [
+    {
+      "repository_path": "scripts_omnidance/exp/ms/music_planner_adapters.py",
+      "frozen_file": "music_planner_adapters.py",
+      "sha256": "dd54a7c0619d5daf25089fe1a5e48bc44addd4c1a48346c6ac0a1e2fe54a3937"
+    },
+    {
+      "repository_path": "scripts_omnidance/exp/ms/music_planner_token_loss.py",
+      "frozen_file": "music_planner_token_loss.py",
+      "sha256": "0f44d479bb3276657557f3d3f369a4375f697a88ef64bea21542240689200d0e"
+    },
+    {
+      "repository_path": "scripts_omnidance/exp/ms/planner/docs/SOL61_PLANNER_V3_DELIVERY.md",
+      "frozen_file": "SOL61_PLANNER_V3_DELIVERY.md",
+      "sha256": "32fab403fd5620cbfa14bdb6083c29ef28e78d8b9af43f6580590b65fb503f72"
+    }
+  ],
+  "code_default_weight": 1.0,
+  "reported_v3_weight": 1.5,
+  "normalization": "Unweighted valid assistant-token count",
+  "scope": "Released code and checkpoint report; original run source/config artifacts not independently reconstructed",
+  "random_clause_control_completed": false
+}

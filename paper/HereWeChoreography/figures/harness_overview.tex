@@ -1,14 +1,27 @@
 % !TeX root = ../main.tex
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/harness_runtime_gpt_v4.png}
-\caption{\textbf{Agent--harness execution in \method.}
-Detected bar groups determine the local expert's observation windows.
-Cached candidates, global style, and acoustic summaries condition a
-frozen composer. The controller schedules stages, executes tools, and
-returns observations through a feedback loop. Persistent state separates
-the draft from committed history and tracks the remaining budget.
-One local expert is fixed per run. The figure shows the latest design;
-reported whole-song results use its earlier fixed-window configuration.}
+\ifdefined\OverviewDataBenchmark
+\includegraphics[width=\textwidth]{figures/overview_data_benchmark_v2.png}
+\caption{\textbf{Data, benchmark, and baseline in \method.}
+Evidence-linked captions retain movement provenance and paired music.
+Current labels follow the 2D rule-event route; the dashed 3D route
+depicts the geometry extension. The trained local expert and stateful
+harness provide a baseline for assessing local movement, musical
+response, and whole-song composition. The proposed protocol uses audio
+and quoted movement evidence; calibration remains pending.
+Media, score snippets, and rubric anchors are schematic illustrations.}
+\else
+\includegraphics[width=\textwidth]{figures/overview_method_v3.png}
+\caption{\textbf{From a trained local expert to stateful composition.}
+Joint-aware clause supervision trains our Qwen3-Omni expert; Beat This!,
+JEV, and acoustic analysis provide shared musical conditions.
+The composer proposes movements, the controller schedules tool
+execution, and structural feedback informs subsequent decisions.
+Persistent state retains motifs, drafts, committed history, and budgets.
+Targeted revision protects the temporal scaffold and accepted context.
+Poses and score excerpts are schematic. The latest design uses bar
+groups; reported whole-song results retain their fixed-window configuration.}
+\fi
 \label{fig:harness-overview}
 \end{figure*}

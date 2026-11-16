@@ -19,8 +19,9 @@ dance therefore measures only part of the task; musical response and
 whole-song organization require separate assessment.
 
 We address these requirements with \method, which decouples local movement
-prediction from global composition. A dedicated short-clip model provides
-movement proposals. A stateful harness groups two to four musical bars
+prediction from global composition. A dedicated short-clip model,
+trained with joint-aware clause reweighting, provides movement proposals.
+A stateful harness groups two to four musical bars
 into duration-aware units and composes them using a segment outline,
 shared musical evidence, a global dance-style condition, and accepted
 history. Motif memory tracks recurrence and variation. Schedule validation

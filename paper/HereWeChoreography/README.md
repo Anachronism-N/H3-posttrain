@@ -11,6 +11,22 @@ The proposed local D4-D6 redesign is documented in
 It requires calibration and has not been applied to the manuscript's rubric,
 evaluation code, or reported scores.
 
+## Overview variants and expert supervision
+
+The default Figure 1 uses `figures/overview_method_v3.png`, emphasizing the
+trained expert, JEV, controller/tool feedback, persistent state and targeted
+revision. The alternative `figures/overview_data_benchmark_v2.png` emphasizes
+paired supervision and the proposed benchmark. Uncomment the
+`\def\OverviewDataBenchmark{1}` line in `main.tex` to select the latter.
+The two images are alternatives for one overview slot. Source prompts and a
+semantic review receipt are in `figures/source/overview_*`.
+
+The expert's training description now uses joint-aware clause reweighting,
+instantiated for lower-limb clauses at weight 1.5. Public implementation and
+checkpoint-report evidence are frozen in `results/joint_clause_weighting/`;
+the objective uses the count of valid assistant tokens as its denominator.
+No new training, benchmark inference or experimental result was added.
+
 ## Build
 
 Run from this directory with a TeX distribution containing the CVPR dependencies:

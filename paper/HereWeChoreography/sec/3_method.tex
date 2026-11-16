@@ -5,13 +5,22 @@
 \subsection{Local Expert and Stateful Harness}
 Given music $x$ of duration $T$ and an optional brief, we generate a whole-song textual score. Each event specifies an interval, movement track, action, and optional motif. Tracks represent concurrency; motifs represent recurring movement ideas. Our motion primitives are open-vocabulary movement proposals, rather than a learned codebook or 3D clips. Integer sample indices define the source clock; presentation and evaluation use global seconds.
 
-The expert is a LoRA-adapted Qwen3-Omni-30B-A3B-Captioner~\cite{qwen3omni}, whose checkpoint report describes supervised training weighted toward clauses naming lower-body parts:
+The expert is a LoRA-adapted Qwen3-Omni-30B-A3B-Captioner~\cite{qwen3omni}.
+We use \emph{joint-aware clause reweighting} to emphasize movement
+descriptions associated with selected joints or body regions:
 \begin{equation}
  \mathcal{L}_{\mathrm{SFT}}
- =-\frac{\sum_{i,t}w_{i,t}\log p_\theta(y_{i,t}\mid x_i,y_{i,<t})}
- {\sum_{i,t}w_{i,t}}.
+ =-\frac{1}{N}\sum_i\sum_{t\in\mathcal V_i}
+ w_{i,t}\log p_\theta(y_{i,t}\mid x_i,y_{i,<t}).
 \end{equation}
-Here $x_i,y_i$ are paired audio and captions; exact token weights $w_{i,t}$ and their isolated benefit remain unverified.
+Here $x_i,y_i$ are paired audio and captions, $\mathcal V_i$ contains
+valid assistant tokens, and $N=\sum_i|\mathcal V_i|$.
+Weights apply to text clauses, preserving supervision for the joint's
+action and spatial relation. Development diagnostics identified
+lower-limb omissions as a prominent failure mode; the released
+configuration therefore assigns weight 1.5 to tokens in clauses naming
+lower-limb parts and 1 otherwise. Its isolated causal benefit remains
+to be established.
 
 We decouple local movement prediction from long-term organization. The expert supplies $K=2$ independently requested, cached captions per window by default. A stateful harness organizes them using musical context and committed history, with all model weights fixed during inference. The controlled protocol fixes candidates, acoustic evidence, style, windows, and resource caps across strategies.
 
@@ -26,7 +35,10 @@ subject to contiguous coverage and supported durations. Actual window length is 
 The target is soft: two $4/4$ bars at 120 BPM last four seconds. Audio duration is preserved and the timeline covered exactly once. Bars need not coincide with semantic phrases; absent functional annotations, the song forms one public section.
 
 \subsection{Shared Musical Conditions}
-Shared conditions connect local decisions to song-level context. A MuQ-based classifier~\cite{muq} uses temporal mean and standard-deviation features from a frozen encoder. Calibrated observation probabilities define global style through
+Shared conditions connect local decisions to song-level context.
+The JEV style expert uses a MuQ-based classifier~\cite{muq}, with
+temporal mean and standard-deviation features from a frozen encoder.
+Calibrated observation probabilities define global style through
 \begin{equation}
  \bar{\mathbf p}=\frac{\sum_j w_j\mathbf p_j}{\sum_j w_j},
 \end{equation}

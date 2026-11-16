@@ -12,13 +12,25 @@
 \def\confYear{2027}
 \def\paperID{1134}
 
-\title{HereWeChoreography: From Motion Primitives to Long-Form Choreography}
+\DeclareRobustCommand{\herewechoreographyicon}{%
+  \ensuremath{\vcenter{\hbox{%
+    \includegraphics[height=2.15em]{figures/title-icons/herewechoreography-title-icon.png}}}}%
+  \hspace{0.5em}}
+\title{\texorpdfstring{%
+  \herewechoreographyicon
+  \begin{tabular}[c]{@{}c@{}}
+    HereWeChoreography: From Motion Primitives\\
+    to Long-Form Choreography
+  \end{tabular}%
+}{HereWeChoreography: From Motion Primitives to Long-Form Choreography}}
 \author{Anonymous CVPR submission}
 
 \begin{document}
 \maketitle
 
 \input{sec/0_abstract}
+% Uncomment to use the data-and-benchmark overview instead of the method overview.
+% \def\OverviewDataBenchmark{1}
 \input{sec/1_introduction}
 \input{sec/2_related_work}
 \input{sec/2a_dataset}

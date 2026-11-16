@@ -4,7 +4,7 @@
   "destination": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\paper-release-20261117\\paper\\HereWeChoreography",
   "branch": "codex/paper-d123-20261117",
   "base_commit": "083d1d0387bba582a4504e79d57f12ab065fa3b9",
-  "source_files": 119,
+  "source_files": 161,
   "active_graphics": [
     "figures/agent_policy_comparison_gpt.png",
     "figures/annotation_distributions_v3.pdf",
@@ -15,7 +15,7 @@
     "figures/overview_method_v3.png",
     "figures/title-icons/herewechoreography-title-icon.png"
   ],
-  "total_bytes": 56697574,
+  "total_bytes": 62078145,
   "files": [
     {
       "path": "cvpr.sty",
@@ -86,6 +86,211 @@
       "path": "figures/dataset_overview.tex",
       "sha256": "55e9b07da5d83815a14c2938bb2a2766b369fa90b4984382c2dd2424e8f1cac8",
       "bytes": 1398
+    },
+    {
+      "path": "figures/editable/.gitignore",
+      "sha256": "d39c192b3840a9d11b3ecb57861c455df91486941356f09215c4aed7c3cd4751",
+      "bytes": 72
+    },
+    {
+      "path": "figures/editable/README.md",
+      "sha256": "1f77173773b9b2b8c222853fd11eea41850a3aeb1fd1c784b56f0f64c95e947d",
+      "bytes": 4259
+    },
+    {
+      "path": "figures/editable/agent_policy_comparison.editable.svg",
+      "sha256": "7148f6e80c9e8f236806a2ec6ddf5013afc5e5bc06910715d9216ad81e030ef4",
+      "bytes": 13738
+    },
+    {
+      "path": "figures/editable/annotation_distributions.editable.svg",
+      "sha256": "caafb940dc4ba101672aa13c808a4b98c5dedc09a8da69b1f17b765230bd906e",
+      "bytes": 22151
+    },
+    {
+      "path": "figures/editable/annotation_pipeline.editable.svg",
+      "sha256": "eba31c65791fc7dc721df1e5b7202d3ba443e458ff8faebf3de5c82a4f441c07",
+      "bytes": 134517
+    },
+    {
+      "path": "figures/editable/choreography_example.editable.svg",
+      "sha256": "c072ef1990da6ed3c9e057bd61636349639199908a36844f1fb8be4eb4d2d152",
+      "bytes": 906058
+    },
+    {
+      "path": "figures/editable/core_diagrams.audit.json",
+      "sha256": "d466b1f7dbd089b2a07871fcbe9e3130210ce707ba8bb29c678364436466cfad",
+      "bytes": 1836
+    },
+    {
+      "path": "figures/editable/dataset_construction.editable.svg",
+      "sha256": "baef2f9ac9fbba2f108fe908c6a16b57b834b3c68966dd9f90b2720213c01c9f",
+      "bytes": 18625
+    },
+    {
+      "path": "figures/editable/editability_manifest.json",
+      "sha256": "df20754ecc1d7f0f211cd80f86dfd841a5a24493a66dd7e62348ec09e08efe87",
+      "bytes": 3671
+    },
+    {
+      "path": "figures/editable/evaluation_rubric.editable.svg",
+      "sha256": "e13e96e127772ac6cf5b8a3604601dffdfc6c075feef003a5bb03193033d3eaf",
+      "bytes": 74908
+    },
+    {
+      "path": "figures/editable/native_pptx_objects.json",
+      "sha256": "b9d15b0371f045205dbd33e7196988b2ff09aeab45c2fd37b5bb749a9d0e648c",
+      "bytes": 1026
+    },
+    {
+      "path": "figures/editable/overview_data_benchmark.editable.preview.png",
+      "sha256": "5bd3d2f2d8d88905d1466b32f7950a827960de4b3bd44817f40a65198208e624",
+      "bytes": 251218
+    },
+    {
+      "path": "figures/editable/overview_data_benchmark.editable.svg",
+      "sha256": "cd6a53b90682171fb85de49f59552176f12d9ae3bebd89e2af47177a21721659",
+      "bytes": 98310
+    },
+    {
+      "path": "figures/editable/overview_method.editable.preview.png",
+      "sha256": "755438f51d286c1487d2209deb3bddaec003b3d8713f7fcdf943886a38358357",
+      "bytes": 255140
+    },
+    {
+      "path": "figures/editable/overview_method.editable.svg",
+      "sha256": "791a3b29e3d1af5481bd541607c8b6cf5a94611802a10af61c140cf7b709a581",
+      "bytes": 77473
+    },
+    {
+      "path": "figures/editable/powerpoint/HereWeChoreography_editable_figures.pptx",
+      "sha256": "568e9cc72729542fb625678d8c6b1327e607f5a1e9ca99f3f86c6fa23bb933ea",
+      "bytes": 869451
+    },
+    {
+      "path": "figures/editable/pptx_preview/slide-1.png",
+      "sha256": "b498572cb61a1d32665478781b7ed6747436be23cc82cb5b10eea07e1594d656",
+      "bytes": 221756
+    },
+    {
+      "path": "figures/editable/pptx_preview/slide-2.png",
+      "sha256": "1fe2f782a9dc60313fafd7fc97cdd86527fbf191baafdf962ead6153622e0e6e",
+      "bytes": 218798
+    },
+    {
+      "path": "figures/editable/pptx_preview/slide-3.png",
+      "sha256": "6409d856eedeb530e0c96ba6e651a1e5acc882145df9d6c4c6eb207c13a9086d",
+      "bytes": 203019
+    },
+    {
+      "path": "figures/editable/pptx_preview/slide-4.png",
+      "sha256": "653debd90aed293f5af34c397e0a5ed472b5a4c86a1bd376b4c96801ab8011a7",
+      "bytes": 113698
+    },
+    {
+      "path": "figures/editable/pptx_preview/slide-5.png",
+      "sha256": "6152478ef8637c1adcdb383c370b4369bd8e4e5591da85d87d0e479a43c7e966",
+      "bytes": 84310
+    },
+    {
+      "path": "figures/editable/pptx_preview/slide-6.png",
+      "sha256": "20fdb1804324486c33ea54718c99e9a12c3fa1699e1e110ae796e340313b3632",
+      "bytes": 102515
+    },
+    {
+      "path": "figures/editable/pptx_preview/slide-7.png",
+      "sha256": "bf912257222b2b51d5118877aec9efaae53eb22c37ae513dd64bc8b9ab6b600e",
+      "bytes": 70302
+    },
+    {
+      "path": "figures/editable/pptx_preview/slide-8.png",
+      "sha256": "96a130e150bb6ab17d5ff5cd8a2fa0f9de7aad21eec1420193abe95b39004714",
+      "bytes": 422422
+    },
+    {
+      "path": "figures/editable/preview/agent_policy_comparison.editable.png",
+      "sha256": "c1cb714253fe6200f6333f23d269bf25b02465b58736970b7398f6d23a131e4f",
+      "bytes": 104756
+    },
+    {
+      "path": "figures/editable/preview/annotation_distributions.png",
+      "sha256": "ba343a52b8b78403e513b1d9df73fe27655210cfde0dc2cc991c92d3e7a74f19",
+      "bytes": 37450
+    },
+    {
+      "path": "figures/editable/preview/annotation_pipeline.editable.png",
+      "sha256": "f7c3ec9ade86c94faed57b33cfdda80e85cafb6b4ab8c89fdf9bca4e3d8cd0d8",
+      "bytes": 260683
+    },
+    {
+      "path": "figures/editable/preview/choreography_example.png",
+      "sha256": "f3b71ad9dec50fa51298d23aa63829dc8835899b16e6bc28dcfa1ccaa8406132",
+      "bytes": 179809
+    },
+    {
+      "path": "figures/editable/preview/dataset_construction.png",
+      "sha256": "bb6fdeafe9e26462dfbe5d2f712a4dbe09353be219c0ef1e7de22fe886bcb626",
+      "bytes": 132658
+    },
+    {
+      "path": "figures/editable/preview/evaluation_rubric.editable.png",
+      "sha256": "16a4bc8f56ec0a1dc047e69c1a06a0f1a97cf79c091fb599ebd40e1ca303310d",
+      "bytes": 154546
+    },
+    {
+      "path": "figures/editable/source/build_additional_figures.py",
+      "sha256": "d6928a00daeda885a120a95b8d965f507c605360aa66a8ef90ecf926629871cf",
+      "bytes": 5571
+    },
+    {
+      "path": "figures/editable/source/build_core_diagrams.py",
+      "sha256": "d4fef168fa53587f8dc24f15418da579c2592dc45b96ed84de104326681d8ae1",
+      "bytes": 22806
+    },
+    {
+      "path": "figures/editable/source/build_native_pptx.mjs",
+      "sha256": "ced23a80b6d46b923d01feb54b9db2ba6bc51fade3adffd21d76cb4d3db4c9f9",
+      "bytes": 3771
+    },
+    {
+      "path": "figures/editable/source/build_overviews.py",
+      "sha256": "672bf519ee427a04d069a7b7b2dacde0352b62b5b81c7399479a12195d93aff9",
+      "bytes": 24883
+    },
+    {
+      "path": "figures/editable/source/finalize_native_pptx.mjs",
+      "sha256": "dbb2b11db5b13142dce8c91ec3a24bd2ae158d9dfe2ba6faeef64705bdf2e9fb",
+      "bytes": 1689
+    },
+    {
+      "path": "figures/editable/source/overview_data_benchmark.scene.json",
+      "sha256": "79f4fcbe25319b56d0dbaf4ea45dcee9a95eaa7167e54547a0fb54fdd75561d6",
+      "bytes": 137855
+    },
+    {
+      "path": "figures/editable/source/overview_editability_audit.json",
+      "sha256": "6687078deff3bd21a5ef537da0f5a359476e68b93d59fcad3d23428a925594ca",
+      "bytes": 906
+    },
+    {
+      "path": "figures/editable/source/overview_method.scene.json",
+      "sha256": "fb8e8c9f00003d25156dcfe65600b269c97fe982d49ab128b5941f7927fac078",
+      "bytes": 105261
+    },
+    {
+      "path": "figures/editable/source/render_core_previews.py",
+      "sha256": "93a3f7a85dabde1ae4656ba80aefd049beaff13d9970afbdac56b55891b03d78",
+      "bytes": 1816
+    },
+    {
+      "path": "figures/editable/source/svg_to_native_scene.py",
+      "sha256": "f3a475cce1065e1681b1f62cdbfdeaca0329f8f9777458959ae5001163ba7ba7",
+      "bytes": 9778
+    },
+    {
+      "path": "figures/editable/validation_receipt.json",
+      "sha256": "dc54862d8f5e3fcfb43ece7dc52180d15e5d362a73108e486c1745f097ac91d1",
+      "bytes": 4641
     },
     {
       "path": "figures/evaluation_rubric.tex",
@@ -508,6 +713,11 @@
       "bytes": 4173
     },
     {
+      "path": "review/strict_review_20261117_zh.md",
+      "sha256": "40162138bc4e2ed1ea5e8137c8ed87ebf03536f7a953d1a11f157cd7ffa5cb2d",
+      "bytes": 22419
+    },
+    {
       "path": "sec/0_abstract.tex",
       "sha256": "099f66cba3e3b07b2a4399791081609602027bf1d2220b49bee683a379d9a8e1",
       "bytes": 1212
@@ -625,8 +835,14 @@
     "obsolete style-population reports",
     "credentials"
   ],
-  "updated_utc": "2026-11-16T19:57:57.356330+00:00",
+  "updated_utc": "2026-11-16T20:34:19.764441+00:00",
   "alternative_overview_graphics": [
     "figures/overview_data_benchmark_v2.png"
-  ]
+  ],
+  "editable_figures": {
+    "powerpoint": "figures/editable/powerpoint/HereWeChoreography_editable_figures.pptx",
+    "svg_count": 8,
+    "native_text_boxes": 571,
+    "source_paper_unchanged": true
+  }
 }

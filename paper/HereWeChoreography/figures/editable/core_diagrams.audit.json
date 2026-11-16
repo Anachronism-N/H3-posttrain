@@ -1,0 +1,52 @@
+{
+  "scope": "Editable rebuilds of three current figures; no manuscript modification or new results",
+  "primitive_types": [
+    "text",
+    "rect",
+    "circle",
+    "path",
+    "g"
+  ],
+  "text_remains_text": true,
+  "whole_image_wrappers": false,
+  "schematic_poses_and_waveforms": true,
+  "D6": "Local development (existing protocol)",
+  "diagrams": [
+    {
+      "file": "annotation_pipeline.editable.svg",
+      "sha256": "eba31c65791fc7dc721df1e5b7202d3ba443e458ff8faebf3de5c82a4f441c07",
+      "editable_text_elements": 106,
+      "groups": 22,
+      "native_paths": 541,
+      "raster_images": 0,
+      "canvas_width": 1920,
+      "canvas_height": 1040,
+      "preview": "preview/annotation_pipeline.editable.png",
+      "visual_review": "Text and boxes remain within canvas; arrows use explicit filled triangles."
+    },
+    {
+      "file": "evaluation_rubric.editable.svg",
+      "sha256": "e13e96e127772ac6cf5b8a3604601dffdfc6c075feef003a5bb03193033d3eaf",
+      "editable_text_elements": 47,
+      "groups": 10,
+      "native_paths": 335,
+      "raster_images": 0,
+      "canvas_width": 1920,
+      "canvas_height": 750,
+      "preview": "preview/evaluation_rubric.editable.png",
+      "visual_review": "Text and boxes remain within canvas; arrows use explicit filled triangles."
+    },
+    {
+      "file": "agent_policy_comparison.editable.svg",
+      "sha256": "7148f6e80c9e8f236806a2ec6ddf5013afc5e5bc06910715d9216ad81e030ef4",
+      "editable_text_elements": 36,
+      "groups": 9,
+      "native_paths": 38,
+      "raster_images": 0,
+      "canvas_width": 1920,
+      "canvas_height": 850,
+      "preview": "preview/agent_policy_comparison.editable.png",
+      "visual_review": "Text and boxes remain within canvas; arrows use explicit filled triangles."
+    }
+  ]
+}

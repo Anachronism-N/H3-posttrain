@@ -1,0 +1,42 @@
+[
+  {
+    "file": "overview_method.editable.svg",
+    "elements": {
+      "svg": 1,
+      "title": 1,
+      "desc": 1,
+      "defs": 1,
+      "marker": 5,
+      "path": 36,
+      "rect": 66,
+      "g": 5,
+      "text": 114,
+      "line": 303,
+      "circle": 23
+    },
+    "all_labels_native_text": true,
+    "embedded_bitmap_count": 0,
+    "rendered_and_visually_reviewed": true,
+    "source": "source/build_overviews.py"
+  },
+  {
+    "file": "overview_data_benchmark.editable.svg",
+    "elements": {
+      "svg": 1,
+      "title": 1,
+      "desc": 1,
+      "defs": 1,
+      "marker": 5,
+      "path": 40,
+      "rect": 116,
+      "g": 4,
+      "text": 103,
+      "line": 422,
+      "circle": 75
+    },
+    "all_labels_native_text": true,
+    "embedded_bitmap_count": 0,
+    "rendered_and_visually_reviewed": true,
+    "source": "source/build_overviews.py"
+  }
+]

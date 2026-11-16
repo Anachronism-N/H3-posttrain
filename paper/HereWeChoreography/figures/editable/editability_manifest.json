@@ -1,0 +1,118 @@
+{
+  "scope": "8 major figure panels, including both overview alternatives; decorative title icon excluded",
+  "powerpoint": {
+    "path": "powerpoint\\HereWeChoreography_editable_figures.pptx",
+    "sha256": "568e9cc72729542fb625678d8c6b1327e607f5a1e9ca99f3f86c6fa23bb933ea",
+    "bytes": 869451,
+    "slides": [
+      {
+        "slide": 1,
+        "native_text_boxes": 114,
+        "editable_shapes": 537,
+        "pictures": 0
+      },
+      {
+        "slide": 2,
+        "native_text_boxes": 103,
+        "editable_shapes": 751,
+        "pictures": 0
+      },
+      {
+        "slide": 3,
+        "native_text_boxes": 106,
+        "editable_shapes": 910,
+        "pictures": 0
+      },
+      {
+        "slide": 4,
+        "native_text_boxes": 47,
+        "editable_shapes": 427,
+        "pictures": 0
+      },
+      {
+        "slide": 5,
+        "native_text_boxes": 36,
+        "editable_shapes": 101,
+        "pictures": 0
+      },
+      {
+        "slide": 6,
+        "native_text_boxes": 33,
+        "editable_shapes": 130,
+        "pictures": 0
+      },
+      {
+        "slide": 7,
+        "native_text_boxes": 48,
+        "editable_shapes": 100,
+        "pictures": 0
+      },
+      {
+        "slide": 8,
+        "native_text_boxes": 84,
+        "editable_shapes": 161,
+        "pictures": 6
+      }
+    ],
+    "full_figure_bitmap_slides": 0,
+    "only_photos_are_raster": true,
+    "native_PowerPoint_application_tested": false,
+    "artifact_tool_rendered_all_slides": true
+  },
+  "svg": [
+    {
+      "file": "agent_policy_comparison.editable.svg",
+      "native_text_elements": 36,
+      "images": 0,
+      "sha256": "7148f6e80c9e8f236806a2ec6ddf5013afc5e5bc06910715d9216ad81e030ef4"
+    },
+    {
+      "file": "annotation_distributions.editable.svg",
+      "native_text_elements": 48,
+      "images": 0,
+      "sha256": "caafb940dc4ba101672aa13c808a4b98c5dedc09a8da69b1f17b765230bd906e"
+    },
+    {
+      "file": "annotation_pipeline.editable.svg",
+      "native_text_elements": 106,
+      "images": 0,
+      "sha256": "eba31c65791fc7dc721df1e5b7202d3ba443e458ff8faebf3de5c82a4f441c07"
+    },
+    {
+      "file": "choreography_example.editable.svg",
+      "native_text_elements": 84,
+      "images": 6,
+      "sha256": "c072ef1990da6ed3c9e057bd61636349639199908a36844f1fb8be4eb4d2d152"
+    },
+    {
+      "file": "dataset_construction.editable.svg",
+      "native_text_elements": 33,
+      "images": 0,
+      "sha256": "baef2f9ac9fbba2f108fe908c6a16b57b834b3c68966dd9f90b2720213c01c9f"
+    },
+    {
+      "file": "evaluation_rubric.editable.svg",
+      "native_text_elements": 47,
+      "images": 0,
+      "sha256": "e13e96e127772ac6cf5b8a3604601dffdfc6c075feef003a5bb03193033d3eaf"
+    },
+    {
+      "file": "overview_data_benchmark.editable.svg",
+      "native_text_elements": 103,
+      "images": 0,
+      "sha256": "cd6a53b90682171fb85de49f59552176f12d9ae3bebd89e2af47177a21721659"
+    },
+    {
+      "file": "overview_method.editable.svg",
+      "native_text_elements": 114,
+      "images": 0,
+      "sha256": "791a3b29e3d1af5481bd541607c8b6cf5a94611802a10af61c140cf7b709a581"
+    }
+  ],
+  "conversion_notes": [
+    "Native SVG text and paths reconstructed from conceptual PNG figures; layout is a reconstruction, not pixel-identical tracing.",
+    "Statistical marks and measured waveform copied from existing vector sources.",
+    "PPTX transparency uses visually equivalent tints; SVG retains original alpha.",
+    "Slide 7 rotated-axis textbox bounding-box warnings were visually reviewed; displayed glyphs do not overlap."
+  ]
+}

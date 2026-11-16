@@ -29,6 +29,13 @@ No new training, benchmark inference or experimental result was added.
 
 ## Build
 
+The eight major figure panels are now available as native editable PowerPoint
+objects and SVG sources in [figures/editable](figures/editable/README.md),
+including both overview alternatives. The internal strict review of the
+current manuscript is in [review/strict_review_20261117_zh.md](review/strict_review_20261117_zh.md).
+The review identifies unresolved evidence and fair-comparison requirements;
+this delivery does not revise manuscript claims or add experimental results.
+
 Run from this directory with a TeX distribution containing the CVPR dependencies:
 
 ```sh

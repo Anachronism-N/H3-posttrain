@@ -4,7 +4,7 @@
   "destination": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\paper-release-20261117\\paper\\HereWeChoreography",
   "branch": "codex/paper-d123-20261117",
   "base_commit": "083d1d0387bba582a4504e79d57f12ab065fa3b9",
-  "source_files": 364,
+  "source_files": 363,
   "active_graphics": [
     "figures/revision_20261117_v3/paper/overview_method.pdf",
     "figures/revision_20261117_v3/paper/annotation_pipeline.pdf",
@@ -15,7 +15,7 @@
     "figures/revision_20261117_v3/paper/dataset_construction.pdf",
     "figures/title-icons/herewechoreography-title-icon.png"
   ],
-  "total_bytes": 119654673,
+  "total_bytes": 119642013,
   "files": [
     {
       "path": ".gitattributes",
@@ -1283,11 +1283,6 @@
       "sha256": "3fe93ea672ba5e6e6d1aef905ad55eb9d8ff04b2787abfceb7d906081d693a42"
     },
     {
-      "path": "figures/revision_20261117_v3/source/overview_revision_detail.preview.png",
-      "bytes": 12660,
-      "sha256": "bd6015aac7f230d3e3979015cedbbe4738e6ca8937ddc88f3b2f2900b6cfeb6d"
-    },
-    {
       "path": "figures/revision_20261117_v3/source/overview_v3_layout.py",
       "bytes": 15324,
       "sha256": "893a42ae0e554600eedc466c4219cb44b4f02e13042ae49278a7f72f3b6a6e9a"
@@ -1850,7 +1845,7 @@
     "obsolete style-population reports",
     "credentials"
   ],
-  "updated_utc": "2026-11-17T04:07:48.163754+00:00",
+  "updated_utc": "2026-11-17T04:09:19.197385+00:00",
   "alternative_overview_graphics": [
     "figures/revision_20261117_v3/paper/overview_benchmark.pdf"
   ],

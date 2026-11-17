@@ -362,8 +362,8 @@ def unit_request(state, unit, summary, cfg):
 
 def contribution(outline):
     metas = [s["metadata"] for s in outline["sections"]]
-    return dict(sections=len(metas), development={m["development"] for m in metas},
-                quantity={m["quantity_change"] for m in metas},
+    return dict(sections=len(metas), development=sorted({m["development"] for m in metas}),
+                quantity=sorted({m["quantity_change"] for m in metas}),
                 music_blocks_used=sum(len(m["music_blocks"]) for m in metas),
                 outline_sha256=object_sha(dict(motifs=outline["motifs"],
                                                sections=[{k: s[k] for k in ("section_id", "intent", "motif_ids")}

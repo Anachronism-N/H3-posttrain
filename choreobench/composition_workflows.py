@@ -87,6 +87,8 @@ def _source(path,song_id,cfg,sources):
              synthetic=synthetic,source_contract_sha256=digest)
 
 
+OUTLINE_CANDIDATE_CHARS=90
+
 def _shared_request(request,source,cfg,unit=None):
  """Equal public evidence for all strategies; constraints remain strategy-specific."""
  request=copy.deepcopy(request)
@@ -94,13 +96,36 @@ def _shared_request(request,source,cfg,unit=None):
  if source.get('music_summary') is not None:
   summary=source['music_summary']
   from .music_structure_summary import compact
-  payload['music_summary']=(dict(blocks=summary['blocks'],relations=summary['relations'],parameters=summary['parameters'],
-                                functional_labels_verified=False,beat_or_meter_assumed=False)
-                            if unit is None else compact(summary,unit['start'],unit['end']))
+  if unit is None:
+   # Outline needs block identity and timing, not every spectral diagnostic.
+   payload['music_summary']=dict(
+       blocks=[{k:b[k] for k in ('block_id','start_seconds','end_seconds','energy_trend') if k in b}
+               for b in summary['blocks']],
+       relations=summary['relations'],parameters=summary['parameters'],
+       functional_labels_verified=False,beat_or_meter_assumed=False)
+  else:
+   payload['music_summary']=compact(summary,unit['start'],unit['end'])
  condition=source.get('global_style')
  if condition is not None:
-  payload['global_style']=condition
+  # The full signal already travels as style_prior; keep one bounded copy so
+  # long songs do not duplicate every observation window in the prompt.
+  compact_condition={k:condition[k] for k in ('label','header','status','probabilities',
+                                               'model_identity','usage') if k in condition}
+  if 'aggregation' in condition:
+   compact_condition['aggregation']={k:condition['aggregation'][k]
+                                     for k in ('method','window_count','coverage_fraction')}
+  payload['global_style']=compact_condition
   request['messages'][0]['content']=condition['header']+'\nUse this shared global creative condition; output only the requested JSON, never a style header inside action text.\n'+request['messages'][0]['content']
+ if unit is None and isinstance(payload.get('local_proposals'),list):
+  for proposal in payload['local_proposals']:
+   text=proposal.get('text')
+   if isinstance(text,str) and len(text)>OUTLINE_CANDIDATE_CHARS:
+    proposal['text']=text[:OUTLINE_CANDIDATE_CHARS]+'...'
+  if condition is not None and 'style_prior' in payload:
+   payload.pop('style_prior')
+  payload['outline_context_compression']=dict(version=3,candidate_chars=OUTLINE_CANDIDATE_CHARS,
+                                              applied_to='outline_only',
+                                              style_prior_compacted_to='global_style')
  request['messages'][-1]['content']=json_text(payload)
  return guard_request(request,cfg)
 
@@ -164,6 +189,52 @@ class CompositionState:
   return observation
 
 
+
+
+def _outline_text(call, req, song_id, repair=True):
+ """Dispatch the outline call; on truncation ask once for a shorter complete JSON."""
+ if not repair: return json_text(call(req)), False
+ try:
+  return json_text(call(req)), False
+ except ValueError as error:
+  if 'Incomplete model output' not in str(error): raise
+  repair=copy.deepcopy(req)
+  repair['call_id']=song_id+'/four-method/0000-trunc-repair'
+  repair['response_kind']=str(req.get('response_kind'))+'_repair'
+  repair['messages']=list(req['messages'])+[dict(role='user',content=
+    'Your previous outline was truncated. Return a COMPLETE but shorter JSON: fewer motifs, concise descriptions, same schema. No prose.')]
+  return json_text(call(repair)), True
+
+
+def _snap_schedule(state):
+ """Deterministically adopt a permitted complete-unit schedule; returns True on success."""
+ from .timing import event_clock
+ if not getattr(state,'source',None) or getattr(state,'draft',None) is None: return False
+ units=state.source['units']['units']
+ if state.index>=len(units): return False
+ unit=units[state.index]
+ clock=event_clock(unit,state.plan['sample_rate'],state.source['config'])
+ schedules=clock.get('permitted_schedules') or []
+ events=(state.draft.get('events') or [])
+ if not schedules or not events: return False
+ feasible=[s for s in schedules if len(s)<=len(events)] or [min(schedules,key=len)]
+ schedule=min(feasible,key=lambda s:(abs(len(s)-len(events)),len(s)))
+ groups=[[] for _ in schedule]
+ for i,event in enumerate(events): groups[i%len(schedule)].append(event)
+ rebuilt=[]
+ for (left,right),group in zip(schedule,groups):
+  if not group: return False
+  action=' '.join(dict.fromkeys(g['action'] for g in group))
+  sources=[]
+  for g in group: sources.extend(g.get('source_call_ids') or [])
+  rebuilt.append(dict(start_boundary=left,end_boundary=right,track=group[0].get('track'),
+                      action=action,motif_id=next((g.get('motif_id') for g in group if g.get('motif_id')),None),
+                      source_call_ids=list(dict.fromkeys(sources))))
+ snapped=copy.deepcopy(state.draft);snapped['events']=rebuilt
+ try: state.validate(snapped)
+ except Exception: return False
+ state.draft=snapped
+ return True
 
 def _repair_outline(call, req, raw_text, error, cfg, song_id):
     """One bounded, fully journaled outline repair; never a silent retry."""
@@ -247,7 +318,7 @@ def _request(state,cfg,method,phase,feedback=None):
 
 def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow',seed=42,max_output_tokens=1024,
                     outline_max_output_tokens=4096,max_request_characters=200000,max_input_tokens=2000000,max_total_output_tokens=150000,resume=False,outline_reuse_run=None,controller_version='v1',music_summary_path=None,
-                    outline_proposal_char_limit=None,outline_candidates_per_window=None,acoustic_guidance=False,bar_structure=None,bars_per_block=4,motif_quota=True,motif_variation=False,style_prior=None,rewrite_repeats=False,repeat_groups=3,global_style_override=None):
+                    outline_proposal_char_limit=None,outline_candidates_per_window=None,acoustic_guidance=False,bar_structure=None,bars_per_block=4,motif_quota=True,motif_variation=False,style_prior=None,rewrite_repeats=False,repeat_groups=3,global_style_override=None,repair_blocks=True,max_calls_cap=None,snap_schedule=False):
  if method not in METHODS:raise ValueError('Unknown composition method')
  if controller_version not in ('v1','v2'):raise ValueError('Unknown composition controller version')
  if method=='structured' and controller_version!='v2':
@@ -268,12 +339,13 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
   outline_proposal_char_limit=outline_proposal_char_limit,
   outline_candidates_per_window=outline_candidates_per_window,acoustic_guidance=acoustic_guidance,
   bar_structure=bar_structure,bars_per_block=bars_per_block,motif_quota=motif_quota,motif_variation=motif_variation,
-   rewrite_repeats=rewrite_repeats,repeat_groups=repeat_groups,global_style_override=global_style_override)
+   rewrite_repeats=rewrite_repeats,repeat_groups=repeat_groups,global_style_override=global_style_override,repair_blocks=repair_blocks,snap_schedule=snap_schedule)
  if bounded:
   from .composition_controller_v2 import CompositionStateV2,NO_PROGRESS_LIMIT
   cfg.update(controller_version='v2',no_progress_limit=NO_PROGRESS_LIMIT,
     controller_policy='bounded-revision-reserved-commit-auto-finish-v2')
  sources={};source=_source(source_path,song_id,cfg,sources);cfg['max_calls']=1+4*len(source['units']['units'])
+ if max_calls_cap is not None:cfg['max_calls']=min(cfg['max_calls'],max_calls_cap)
  if style_prior is not None:source['style_prior']=_load_style_prior(style_prior,source_path,source,sources)
  source['global_style']=_global_condition(source.get('style_prior'),song_id,global_style_override)
  if music_summary_path is not None:
@@ -357,7 +429,8 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
    if input_tokens>max_input_tokens or output_tokens>max_total_output_tokens:raise ValueError('Actual token budget exceeded')
    if response.get('stop_reason') not in ('stop','eos'):raise ValueError('Incomplete model output retained')
    return parse_json_response(response['text'])
-  state=None
+  state=None;outline=None
+  repaired_units=set()
   try:
    outline_repair=False
    if method=='music_structured':
@@ -366,7 +439,8 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
     _need=not cfg.get('acoustic_guidance')
     req=music_outline_request(source['song'],source['options'],source['units'],source['music_summary'],cfg,_need,source.get('style_prior'));req['call_id']=song_id+'/four-method/0000'
     req=_shared_request(req,source,cfg)
-    raw=json_text(call(req))
+    raw,truncated=_outline_text(call,req,song_id,cfg.get('repair_blocks',True))
+    outline_repair=outline_repair or truncated
     try:
      outline=read_music_outline(raw,source['song'],source['music_summary'],source['units'],_need)
     except _MOE as error:
@@ -377,16 +451,24 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
     from .baseline import ModelOutputError as _MOE
     req=structured_outline_request(source['song'],source['options'],source['units'],cfg,source.get('style_prior'));req['call_id']=song_id+'/four-method/0000'
     req=_shared_request(req,source,cfg)
-    raw=json_text(call(req))
+    raw,truncated=_outline_text(call,req,song_id,cfg.get('repair_blocks',True))
+    outline_repair=outline_repair or truncated
     try:
      outline=read_structured_outline(raw,source['song'],source['options'])
     except _MOE as error:
      repair=_repair_outline(call,req,raw,error,cfg,song_id);outline_repair=True
      outline=read_structured_outline(json_text(call(repair)),source['song'],source['options'])
    else:
+    from .baseline import ModelOutputError as _MOE
     req=_outline_request(source['song'],source['options'],source['units'],cfg,source.get('style_prior'));req['call_id']=song_id+'/four-method/0000'
     req=_shared_request(req,source,cfg)
-    outline=_read_outline(json_text(call(req)),source['song'])
+    raw,truncated=_outline_text(call,req,song_id,cfg.get('repair_blocks',True))
+    outline_repair=outline_repair or truncated
+    try:
+     outline=_read_outline(raw,source['song'])
+    except _MOE as error:
+     repair=_repair_outline(call,req,raw,error,cfg,song_id);outline_repair=True
+     outline=_read_outline(json_text(call(repair)),source['song'])
    save('outline.json',outline);artifacts['outline.json']=file_sha(output/'outline.json')
    if outline_repair:save('outline_repair.json',dict(used=True,call_id=song_id+'/four-method/outline-repair'))
    state=StructuredState(source,outline) if method=='structured' else (CompositionStateV2 if bounded else CompositionState)(source,outline)
@@ -402,26 +484,72 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
      progress_before=state.progress_signature()
     req=_request(state,request_cfg,method,phase,feedback)
     before=object_sha(state.plan);cursor=state.index;decision=None
+    def apply_decision(value):
+     nonlocal phase,feedback
+     if method in ('react','choreography','structured'):return state.execute(value)
+     if phase=='feedback':
+      keys(value,('feedback',));text(value['feedback'],'feedback');feedback=value['feedback'];phase='revise'
+      return dict(status='feedback_recorded',quality_verified=False)
+     draft_observation=state.execute(dict(tool='revise_block' if phase=='revise' else 'propose_block',proposal=value,reason='Fixed workflow stage'))
+     if method=='self_refine' and phase=='propose':
+      phase='feedback';return dict(status='drafted',quality_verified=False)
+     if bounded and draft_observation.get('status')=='committed':
+      phase='propose';feedback=None;return draft_observation
+     if bounded and getattr(state,'draft',None) is not None and hasattr(state,'validate'):
+      try:
+       state.validate(state.draft)
+      except (ValueError,TypeError,KeyError):
+       if not (cfg.get('snap_schedule') and _snap_schedule(state)): raise
+     observation_commit=state.execute(dict(tool='commit_block',proposal=None,reason='Fixed structural check and commit'))
+     phase='propose';feedback=None
+     return observation_commit
+    def repair_request(error):
+     source_text=(info or {}).get('text') or ''
+     repair=copy.deepcopy(req)
+     repair['call_id']=req['call_id']+'-block-repair'
+     repair['response_kind']=str(req.get('response_kind'))+'_repair'
+     was_truncated=isinstance(info,dict) and info.get('stop_reason')=='budget_truncation'
+     if was_truncated: repair['max_output_tokens']=8192
+     instruction=('Your previous response was truncated. Return a COMPLETE but SHORTER JSON object for the same request: '
+                  'at most 2 events with at most 15 words each, and copy the permitted schedule exactly. No prose.'
+                  if was_truncated else
+                  'Correction required: '+str(error)+' Return only one corrected JSON object for the same request, with no prose.')
+     repair['messages']=list(req['messages'])+[dict(role='assistant',content=source_text),
+        dict(role='user',content=instruction)]
+     return repair
     try:
      decision=call(req)
-     if method in ('react','choreography','structured'):observation=state.execute(decision)
-     elif phase=='feedback':
-      keys(decision,('feedback',));text(decision['feedback'],'feedback');feedback=decision['feedback'];observation=dict(status='feedback_recorded',quality_verified=False);phase='revise'
-     else:
-      draft_observation=state.execute(dict(tool='revise_block' if phase=='revise' else 'propose_block',proposal=decision,reason='Fixed workflow stage'))
-      if method=='self_refine' and phase=='propose':observation=dict(status='drafted',quality_verified=False);phase='feedback'
-      elif bounded and draft_observation.get('status')=='committed':observation=draft_observation;phase='propose';feedback=None
-      else:observation=state.execute(dict(tool='commit_block',proposal=None,reason='Fixed structural check and commit'));phase='propose';feedback=None
+     observation=apply_decision(decision)
     except (ValueError,TypeError,KeyError) as error:
      observation=dict(status='rejected',error=str(error),quality_verified=False)
      raw=journal.records.get(req['call_id'])
      info=raw.get('result') if raw else None
-     if (isinstance(error,_ReplayInfrastructureError) or not raw or not raw.get('success') or not isinstance(info,dict)
+     infrastructure=(isinstance(error,_ReplayInfrastructureError) or not raw or not raw.get('success') or not isinstance(info,dict)
          or info.get('stop_reason') in (None,'http_error','infrastructure_error','malformed_api_response')
-         or any(type(info.get('costs',{}).get(k)) is not int or info['costs'][k]<0 for k in ('input_tokens','output_tokens'))):fatal=str(error)
-     if method in ('workflow','self_refine','music_structured'):stop='model_or_structure_failed';fatal=fatal or str(error)
-     if bounded and (input_tokens>max_input_tokens or output_tokens>max_total_output_tokens):
-      fatal=fatal or str(error);stop='failed_or_budget_exhausted'
+         or any(type(info.get('costs',{}).get(k)) is not int or info['costs'][k]<0 for k in ('input_tokens','output_tokens')))
+     repaired=False
+     truncated=isinstance(info,dict) and info.get('stop_reason')=='budget_truncation'
+     if (cfg.get('repair_blocks',True) and not (infrastructure and not truncated) and method in ('workflow','self_refine','music_structured')
+         and cursor not in repaired_units and isinstance(info,dict)
+         and info.get('stop_reason') in ('stop','eos','budget_truncation')):
+      repaired_units.add(cursor)
+      if method in ('workflow','self_refine','music_structured') and state is not None:
+       if hasattr(state,'draft'):state.draft=None
+       if hasattr(state,'revisions_used'):state.revisions_used=0
+      try:
+       decision=call(repair_request(error))
+       observation=apply_decision(decision)
+       repaired=True;fatal=None
+      except (ValueError,TypeError,KeyError) as second:
+       observation=dict(status='rejected',error=str(second),quality_verified=False)
+       error=second
+       raw=journal.records.get(req['call_id'])
+       info=raw.get('result') if raw else None
+     if not repaired:
+      if infrastructure:fatal=str(error)
+      if method in ('workflow','self_refine','music_structured'):stop='model_or_structure_failed';fatal=fatal or str(error)
+      if bounded and (input_tokens>max_input_tokens or output_tokens>max_total_output_tokens):
+       fatal=fatal or str(error);stop='failed_or_budget_exhausted'
     controller_action=None
     if bounded and method in ('react','choreography','structured') and not fatal:
      controller_action=state.after_decision(progress_before)
@@ -499,7 +627,8 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
                               if journal.started else None))
    if method=='music_structured':
     from .composition_music import contribution as music_contribution
-    extra['music_structure']=music_contribution(outline)
+    if outline is not None:
+     extra['music_structure']=music_contribution(outline)
    if method=='structured' and state is not None:
     extra['structured_statistics']=dict(
       blocks_with_detected_issues=state.blocks_with_issues,

@@ -1,0 +1,45 @@
+{
+ "schema": "panel20.extra_metrics.v1",
+ "arms": {
+  "O": {
+   "n": 11,
+   "mean_calls": 46.8,
+   "mean_latency_s": 516.8,
+   "mean_input_tokens": 857395,
+   "mean_output_tokens": 8619,
+   "mean_coverage": 1.0,
+   "mean_events": 45.7,
+   "mean_duplicate_rate": 0.41
+  },
+  "RA": {
+   "n": 14,
+   "mean_calls": 99,
+   "mean_latency_s": 1618.2,
+   "mean_input_tokens": 2379984,
+   "mean_output_tokens": 27344,
+   "mean_coverage": 1.0,
+   "mean_events": 46.2,
+   "mean_duplicate_rate": 0.513
+  },
+  "W": {
+   "n": 2,
+   "mean_calls": 48,
+   "mean_latency_s": 757.6,
+   "mean_input_tokens": 913269,
+   "mean_output_tokens": 12595,
+   "mean_coverage": 1.0,
+   "mean_events": 47,
+   "mean_duplicate_rate": 0.509
+  },
+  "SF": {
+   "n": 2,
+   "mean_calls": 119.5,
+   "mean_latency_s": 1312.9,
+   "mean_input_tokens": 2565518,
+   "mean_output_tokens": 21359,
+   "mean_coverage": 1.0,
+   "mean_events": 66,
+   "mean_duplicate_rate": 0.598
+  }
+ }
+}

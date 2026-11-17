@@ -1,0 +1,325 @@
+{
+ "judge": "Qwen3-Omni-30B-A3B-Instruct",
+ "modality": "text_only_simple",
+ "rows": [
+  {
+   "song_id": "fma-10811",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Cohesive transitions, clear song arc, and recurring motifs with variation."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-10811",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Core elements recur with clear variation and structural logic."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-10811",
+   "arm": "W",
+   "scores": {
+    "L1": 5,
+    "L2": 3,
+    "L3": 5,
+    "note": "Motif recurrence is strong and varied, but structural development lacks clear contrast or resolution."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-1881",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Cyclic structure with clear motif recurrence and development."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-4151",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Core elements persist with evolving dynamics and clear structural arc."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-4151",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 4,
+    "L3": 5,
+    "note": "Strong motif recurrence with evolving complexity and clear structural arc."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-4151",
+   "arm": "SF",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Core motifs recur with clear structural and dynamic variation."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-874",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 3,
+    "L3": 5,
+    "note": "Clear motif recurrence with variation, but lacks strong structural development."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-874",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 3,
+    "L3": 5,
+    "note": "Motif evolves meaningfully but lacks clear structural contrast."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-11689",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 3,
+    "L3": 5,
+    "note": "Clear motif recurrence with variation, but lacks strong structural contrast."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-1306",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Motif recurrence with meaningful variation is clearly evident throughout the piece."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-50459",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Clear motif repetition and structural progression throughout."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-50459",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 4,
+    "L3": 5,
+    "note": "Motif recurrence is strong and varied, with clear structural arc and seamless transitions."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-50459",
+   "arm": "W",
+   "scores": {
+    "L1": 5,
+    "L2": 3,
+    "L3": 5,
+    "note": "Motif variation is rich, but structural development lacks contrast."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-533",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Cohesive transitions, clear song arc, and recurring motifs with variation."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-533",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "core holds with concrete evidence"
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-1085",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Clear, consistent alternation and synchronization create strong continuity, organization, and motif development."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-1085",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 1,
+    "L3": 5,
+    "note": "Lacks structural development despite strong motif consistency."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-12099",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 3,
+    "L3": 5,
+    "note": "Repetition lacks development but maintains motif integrity."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-12099",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 3,
+    "L3": 5,
+    "note": "Strong motif recurrence but lacks clear structural contrast."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-12099",
+   "arm": "SF",
+   "scores": {
+    "L1": 5,
+    "L2": 3,
+    "L3": 5,
+    "note": "Core motif recurs with variation, but structural development lacks contrast."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-3855",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "cohesive transitions, clear arc, and recurring motifs with variation."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-550",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 4,
+    "L3": 5,
+    "note": "Smooth transitions and clear motif development support strong continuity and organization."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-6789",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 5,
+    "L3": 5,
+    "note": "Cohesive transitions, clear song arc, and recurring motifs with variation."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-6789",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 4,
+    "L3": 5,
+    "note": "Motif recurrence is strong and varied, with clear structural arc and seamless transitions."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-384",
+   "arm": "RA",
+   "scores": {
+    "L1": 3,
+    "L2": 3,
+    "L3": 3,
+    "note": "Motif repetition is present but lacks clear variation or development."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-3856",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 3,
+    "L3": 5,
+    "note": "Motif recurrence is strong, but development lacks clear contrast or resolution."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-397",
+   "arm": "O",
+   "scores": {
+    "L1": 5,
+    "L2": 4,
+    "L3": 5,
+    "note": "Strong motif recurrence with evolving variations, minor structural imbalance in development phase."
+   },
+   "error": null
+  },
+  {
+   "song_id": "fma-397",
+   "arm": "RA",
+   "scores": {
+    "L1": 5,
+    "L2": 4,
+    "L3": 5,
+    "note": "Strong motif recurrence with variation, minor structural imbalance in development."
+   },
+   "error": null
+  }
+ ]
+}

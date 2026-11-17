@@ -1,0 +1,140 @@
+{
+ "schema": "choreobench.panel20_v1",
+ "shards": [
+  "bar-style-panel20-shard0-v3",
+  "bar-style-panel20-shard1-v3",
+  "bar-style-panel20-shard2-v3",
+  "bar-style-panel20-shard3-v3"
+ ],
+ "runs": 80,
+ "arms": {
+  "W": {
+   "registered": 20,
+   "complete": 2,
+   "completion_rate": 0.1,
+   "failures": {
+    "model_or_structure_failed": 15,
+    "no CELL": 2,
+    "failed_or_budget_exhausted": 1
+   },
+   "calls": [
+    49,
+    13,
+    4,
+    null,
+    13,
+    6,
+    2,
+    47,
+    34,
+    6,
+    8,
+    3,
+    4,
+    4,
+    24,
+    null,
+    3,
+    7,
+    5,
+    27
+   ]
+  },
+  "SF": {
+   "registered": 20,
+   "complete": 2,
+   "completion_rate": 0.1,
+   "failures": {
+    "model_or_structure_failed": 15,
+    "no CELL": 2,
+    "failed_or_budget_exhausted": 1
+   },
+   "calls": [
+    50,
+    8,
+    139,
+    null,
+    11,
+    26,
+    2,
+    7,
+    28,
+    28,
+    100,
+    8,
+    8,
+    5,
+    5,
+    null,
+    5,
+    34,
+    11,
+    49
+   ]
+  },
+  "RA": {
+   "registered": 20,
+   "complete": 14,
+   "completion_rate": 0.7,
+   "failures": {
+    "unrepairable_draft": 2,
+    "no CELL": 2,
+    "failed_or_budget_exhausted": 1,
+    "budget_exhausted": 1
+   },
+   "calls": [
+    91,
+    86,
+    116,
+    null,
+    119,
+    126,
+    2,
+    97,
+    103,
+    126,
+    75,
+    108,
+    73,
+    85,
+    28,
+    null,
+    88,
+    157,
+    121,
+    58
+   ]
+  },
+  "O": {
+   "registered": 20,
+   "complete": 11,
+   "completion_rate": 0.55,
+   "failures": {
+    "no CELL": 2,
+    "model_or_structure_failed": 7
+   },
+   "calls": [
+    48,
+    53,
+    51,
+    null,
+    58,
+    9,
+    4,
+    50,
+    50,
+    24,
+    35,
+    36,
+    39,
+    39,
+    61,
+    null,
+    39,
+    10,
+    6,
+    31
+   ]
+  }
+ }
+}

@@ -128,7 +128,10 @@ class ReplayProvider:
 class NativeProvider:
     def __init__(self, spec, role, base_dir=None):
         _allowed(spec, ("kind", "family", "model", "checkpoint", "training_source_dir", "device",
-                        "max_length", "temperature", "top_p", "top_k", "task_prompt", "audio_contract"))
+                        "max_length", "temperature", "top_p", "top_k", "task_prompt", "audio_contract",
+                        "portable_checkpoint"))
+        if "portable_checkpoint" in spec and type(spec["portable_checkpoint"]) is not bool:
+            raise ValueError("portable_checkpoint must be an explicit boolean")
         if role != "local":
             raise ValueError("Native audio-only model is a local provider, never a text editor/planner")
         self.spec = copy.deepcopy(spec)

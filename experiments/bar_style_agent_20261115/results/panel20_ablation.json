@@ -1,0 +1,47 @@
+{
+ "schema": "choreobench.panel20_ablation.v1",
+ "runs": 80,
+ "variants": {
+  "no_style": {
+   "complete": 16,
+   "registered": 20,
+   "rate": 0.8,
+   "mean_calls": 51.1,
+   "failures": {
+    "model_or_structure_failed": 2,
+    "no CELL": 2
+   }
+  },
+  "no_acoustic": {
+   "complete": 9,
+   "registered": 20,
+   "rate": 0.45,
+   "mean_calls": 45.6,
+   "failures": {
+    "model_or_structure_failed": 8,
+    "no CELL": 2,
+    "failed_or_budget_exhausted": 1
+   }
+  },
+  "no_style_no_acoustic": {
+   "complete": 17,
+   "registered": 20,
+   "rate": 0.85,
+   "mean_calls": 54.4,
+   "failures": {
+    "failed_or_budget_exhausted": 1,
+    "no CELL": 2
+   }
+  },
+  "no_motif": {
+   "complete": 11,
+   "registered": 20,
+   "rate": 0.55,
+   "mean_calls": 46.8,
+   "failures": {
+    "no CELL": 2,
+    "model_or_structure_failed": 7
+   }
+  }
+ }
+}

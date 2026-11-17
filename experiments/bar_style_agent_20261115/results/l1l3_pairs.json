@@ -1,0 +1,162 @@
+{
+ "judge": "Qwen3-Omni-30B-A3B-Instruct",
+ "modality": "text_only_pairwise",
+ "rows": [
+  {
+   "song": "fma-10811",
+   "baseline": "W",
+   "a_is_o": false,
+   "result": {
+    "L1": "B",
+    "L2": "A",
+    "L3": "A",
+    "note": "B lacks a clear ending phase"
+   },
+   "error": null
+  },
+  {
+   "song": "fma-50459",
+   "baseline": "W",
+   "a_is_o": true,
+   "result": {
+    "L1": "tie",
+    "L2": "A",
+    "L3": "A",
+    "note": "A shows clearer motif development despite repetition"
+   },
+   "error": null
+  },
+  {
+   "song": "fma-12099",
+   "baseline": "SF",
+   "a_is_o": true,
+   "result": {
+    "L1": "B",
+    "L2": "B",
+    "L3": "B",
+    "note": "B shows clear development of motifs with variation, unlike A's repetition."
+   },
+   "error": null
+  },
+  {
+   "song": "fma-4151",
+   "baseline": "SF",
+   "a_is_o": true,
+   "result": {
+    "L1": "B",
+    "L2": "A",
+    "L3": "A",
+    "note": "B lacks clear structural development across the song."
+   },
+   "error": null
+  },
+  {
+   "song": "fma-10811",
+   "baseline": "RA",
+   "a_is_o": true,
+   "result": {
+    "L1": "B",
+    "L2": "A",
+    "L3": "A",
+    "note": "B lacks consistent motif recurrence with variation"
+   },
+   "error": null
+  },
+  {
+   "song": "fma-1085",
+   "baseline": "RA",
+   "a_is_o": true,
+   "result": {
+    "L1": "A",
+    "L2": "A",
+    "L3": "A",
+    "note": "A shows clear development through level and leading arm variation, while B lacks progression."
+   },
+   "error": null
+  },
+  {
+   "song": "fma-12099",
+   "baseline": "RA",
+   "a_is_o": true,
+   "result": {
+    "L1": "B",
+    "L2": "B",
+    "L3": "B",
+    "note": "B shows more dynamic development and variation in motif structure."
+   },
+   "error": null
+  },
+  {
+   "song": "fma-397",
+   "baseline": "RA",
+   "a_is_o": false,
+   "result": {
+    "L1": "tie",
+    "L2": "A",
+    "L3": "A",
+    "note": "A develops motifs meaningfully while B repeats them mechanically."
+   },
+   "error": null
+  },
+  {
+   "song": "fma-4151",
+   "baseline": "RA",
+   "a_is_o": true,
+   "result": {
+    "L1": "B",
+    "L2": "A",
+    "L3": "A",
+    "note": "B lacks clear motif development despite detailed description"
+   },
+   "error": null
+  },
+  {
+   "song": "fma-50459",
+   "baseline": "RA",
+   "a_is_o": true,
+   "result": {
+    "L1": "tie",
+    "L2": "B",
+    "L3": "A",
+    "note": "A shows clearer motif development despite repetition"
+   },
+   "error": null
+  },
+  {
+   "song": "fma-533",
+   "baseline": "RA",
+   "a_is_o": false,
+   "result": {
+    "L1": "tie",
+    "L2": "B",
+    "L3": "A",
+    "note": "B better organizes the whole song with clear sections"
+   },
+   "error": null
+  },
+  {
+   "song": "fma-6789",
+   "baseline": "RA",
+   "a_is_o": false,
+   "result": {
+    "L1": "tie",
+    "L2": "A",
+    "L3": "A",
+    "note": "A shows clearer development of motifs with variation."
+   },
+   "error": null
+  },
+  {
+   "song": "fma-874",
+   "baseline": "RA",
+   "a_is_o": false,
+   "result": {
+    "L1": "tie",
+    "L2": "B",
+    "L3": "B",
+    "note": "B shows clearer development through variation in repetition."
+   },
+   "error": null
+  }
+ ]
+}

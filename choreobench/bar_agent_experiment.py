@@ -201,7 +201,7 @@ def _run(inventory, provider, out_dir, *, execute=False, with_ablations=False, r
         try:
             if run_dir.exists():
                 raise ValueError("Interrupted run exists without terminal registry; inspect it, do not overwrite")
-            result = run_composition(job["source"], job["song_id"], contract["provider"], run_dir,
+            result = run_composition(job["source"], job["song_id"], read(contract["provider"]), run_dir,
                                      method=job["method"], controller_version="v2",
                                      music_summary_path=job["music_summary"], style_prior=job["style_prior"],
                                      acoustic_guidance=job["arm"] == "O",

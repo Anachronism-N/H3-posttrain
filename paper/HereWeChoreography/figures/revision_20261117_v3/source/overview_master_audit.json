@@ -1,0 +1,39 @@
+[
+  {
+    "file": "overview_method.svg",
+    "font": "Times New Roman",
+    "elements": {
+      "svg": 1,
+      "title": 1,
+      "desc": 1,
+      "rect": 23,
+      "g": 7,
+      "text": 84,
+      "line": 336,
+      "path": 49,
+      "circle": 23
+    },
+    "embedded_images": 0,
+    "native_text": true,
+    "scope": "Vector master; image elements only genuine source-video stills"
+  },
+  {
+    "file": "overview_benchmark.svg",
+    "font": "Times New Roman",
+    "elements": {
+      "svg": 1,
+      "title": 1,
+      "desc": 1,
+      "rect": 24,
+      "g": 4,
+      "line": 370,
+      "text": 94,
+      "image": 3,
+      "path": 40,
+      "circle": 3
+    },
+    "embedded_images": 3,
+    "native_text": true,
+    "scope": "Vector master; image elements only genuine source-video stills"
+  }
+]

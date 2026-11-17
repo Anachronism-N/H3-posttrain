@@ -2,7 +2,7 @@
   "compile_from_snapshot": true,
   "preview_pages": 9,
   "main_pages": 8,
-  "preview_sha256": "36e0f847ce592e4a4634c1181200fee6224372bb5b75bad294242fc0d92eab69",
+  "preview_sha256": "05b201df1ddd8af2ef0587f4296d99f7c74a04bf155c2048579414089ac0341f",
   "no_model_runs": false,
   "table_method_label": "Ours",
   "per_cell_counts": false,
@@ -12,7 +12,7 @@
   "common_valid_per_dimension": true,
   "inference_configuration_disclosed_in_appendix": true,
   "compile_from_source": true,
-  "source_and_snapshot_tex_identical": true,
+  "source_and_snapshot_tex_identical": false,
   "no_training_or_benchmark_inference": true,
   "overview_semantic_review": true,
   "page_2_visual_review": true,
@@ -26,6 +26,6 @@
   "native_powerpoint_slides": 8,
   "exact_ppt_png_crop_checks": 8,
   "native_powerpoint_execution_verified": false,
-  "supplementary_text_matches_all_pages": true,
-  "rebuilt_text_matches_all_pages": true
+  "source_alignment_scope": "Current figure assets; existing snapshot prose/results retained",
+  "preexisting_results_tables_sections_unchanged": true
 }

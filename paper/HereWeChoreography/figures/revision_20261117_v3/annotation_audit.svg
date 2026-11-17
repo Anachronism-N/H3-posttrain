@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="810" viewBox="0 0 1920 810">
+<title>Editable scientific diagram</title>
+<desc>Native text, shapes, paths and groups. Every label and connector can be edited individually. Schematic icons are not measured data.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"/></marker></defs>
+<rect width="100%" height="100%" fill="white"/>
+<g id="source-event-count">
+<rect x="16" y="12" width="616" height="365" rx="4" fill="#FAFCFD" stroke="#B7BFC7" stroke-width="1"/>
+<text x="36" y="49.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">(a) Source event count</text>
+<text x="36" y="80.0" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#2474B5" text-anchor="start">Mean 47.21 statements per clip</text>
+<g id="bars-16-12">
+<path d="M76,294.0 L608,294.0" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="64" y="301.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#2474B5" text-anchor="end">0</text>
+<path d="M76,220.25 L608,220.25" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="64" y="227.25" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#2474B5" text-anchor="end">25</text>
+<path d="M76,146.5 L608,146.5" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="64" y="153.5" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#2474B5" text-anchor="end">50</text>
+<path d="M76,117 L76,294" fill="none" stroke="#B7BFC7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M76,294 L608,294" fill="none" stroke="#B7BFC7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="90.18666666666667" y="292.57462419470295" width="60.293333333333344" height="1.425375805297065" rx="0" fill="#008F95" stroke="none" stroke-width="1.25"/>
+<text x="120.33333333333334" y="282.57462419470295" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">0.5</text>
+<text x="120.33333333333334" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">0–9</text>
+<rect x="178.85333333333332" y="286.83352720114533" width="60.293333333333344" height="7.166472798854689" rx="0" fill="#008F95" stroke="none" stroke-width="1.25"/>
+<text x="209.0" y="276.83352720114533" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">2.4</text>
+<text x="209.0" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">10–19</text>
+<rect x="267.52000000000004" y="208.1607015032212" width="60.293333333333344" height="85.83929849677881" rx="0" fill="#008F95" stroke="none" stroke-width="1.25"/>
+<text x="297.6666666666667" y="198.1607015032212" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">29.1</text>
+<text x="297.6666666666667" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">20–39</text>
+<rect x="356.1866666666667" y="155.32941123836792" width="60.293333333333344" height="138.67058876163208" rx="0" fill="#008F95" stroke="none" stroke-width="1.25"/>
+<text x="386.33333333333337" y="145.32941123836792" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">47.0</text>
+<text x="386.33333333333337" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">40–59</text>
+<rect x="444.85333333333335" y="238.59511453113817" width="60.293333333333344" height="55.40488546886184" rx="0" fill="#008F95" stroke="none" stroke-width="1.25"/>
+<text x="475.0" y="228.59511453113817" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">18.8</text>
+<text x="475.0" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">60–79</text>
+<rect x="533.5200000000001" y="287.50662133142447" width="60.293333333333344" height="6.493378668575519" rx="0" fill="#008F95" stroke="none" stroke-width="1.25"/>
+<text x="563.6666666666667" y="277.50662133142447" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">2.2</text>
+<text x="563.6666666666667" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">≥80</text>
+<text x="342.0" y="355.0" font-family="Times New Roman" font-size="23" font-weight="normal" fill="#202C3C" text-anchor="middle">Rule-event statements</text>
+<text x="29" y="110.0" font-family="Times New Roman" font-size="18" font-weight="normal" fill="#2474B5" text-anchor="start">Clips (%)</text>
+</g>
+</g>
+<g id="caption-length">
+<rect x="652" y="12" width="616" height="365" rx="4" fill="#FBFAFE" stroke="#B7BFC7" stroke-width="1"/>
+<text x="672" y="49.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">(b) Refined caption length</text>
+<text x="672" y="80.0" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#2474B5" text-anchor="start">Mean 135.33 words; style header excluded</text>
+<g id="bars-652-12">
+<path d="M712,294.0 L1244,294.0" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="700" y="301.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#2474B5" text-anchor="end">0</text>
+<path d="M712,220.25 L1244,220.25" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="700" y="227.25" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#2474B5" text-anchor="end">25</text>
+<path d="M712,146.5 L1244,146.5" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="700" y="153.5" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#2474B5" text-anchor="end">50</text>
+<path d="M712,117 L712,294" fill="none" stroke="#B7BFC7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M712,294 L1244,294" fill="none" stroke="#B7BFC7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="729.024" y="288.6284448818898" width="72.352" height="5.371555118110236" rx="0" fill="#7852A9" stroke="none" stroke-width="1.25"/>
+<text x="765.2" y="278.6284448818898" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">1.8</text>
+<text x="765.2" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">0–59</text>
+<rect x="835.424" y="248.5727451682176" width="72.352" height="45.42725483178239" rx="0" fill="#7852A9" stroke="none" stroke-width="1.25"/>
+<text x="871.6" y="238.5727451682176" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">15.4</text>
+<text x="871.6" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">60–99</text>
+<rect x="941.824" y="178.37298675733715" width="72.352" height="115.62701324266285" rx="0" fill="#7852A9" stroke="none" stroke-width="1.25"/>
+<text x="978.0" y="168.37298675733715" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">39.2</text>
+<text x="978.0" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">100–139</text>
+<rect x="1048.2240000000002" y="202.89472977809592" width="72.352" height="91.10527022190408" rx="0" fill="#7852A9" stroke="none" stroke-width="1.25"/>
+<text x="1084.4" y="192.89472977809592" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">30.9</text>
+<text x="1084.4" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">140–179</text>
+<rect x="1154.624" y="256.5310934144596" width="72.352" height="37.468906585540445" rx="0" fill="#7852A9" stroke="none" stroke-width="1.25"/>
+<text x="1190.8" y="246.53109341445958" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">12.7</text>
+<text x="1190.8" y="322.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">≥180</text>
+<text x="978.0" y="355.0" font-family="Times New Roman" font-size="23" font-weight="normal" fill="#202C3C" text-anchor="middle">English body words</text>
+<text x="665" y="110.0" font-family="Times New Roman" font-size="18" font-weight="normal" fill="#2474B5" text-anchor="start">Clips (%)</text>
+</g>
+</g>
+<g id="source-bodypart-bias">
+<rect x="1288" y="12" width="616" height="365" rx="4" fill="#FAFCFB" stroke="#B7BFC7" stroke-width="1"/>
+<text x="1308" y="49.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">(c) Body-part information</text>
+<text x="1308" y="80.0" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#2474B5" text-anchor="start">Shares of source event occurrences</text>
+<text x="1313" y="149.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="start">Wrist</text>
+<rect x="1421" y="125" width="314.62640770347434" height="28" rx="0" fill="#2474B5" stroke="none" stroke-width="1.25"/>
+<text x="1745.6264077034743" y="149.0" font-family="Times New Roman" font-size="25" font-weight="bold" fill="#202C3C" text-anchor="start">60.3%</text>
+<text x="1313" y="214.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="start">Elbow</text>
+<rect x="1421" y="190" width="154.6606902874993" height="28" rx="0" fill="#008F95" stroke="none" stroke-width="1.25"/>
+<text x="1585.6606902874994" y="214.0" font-family="Times New Roman" font-size="25" font-weight="bold" fill="#202C3C" text-anchor="start">29.7%</text>
+<text x="1313" y="279.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="start">Knee</text>
+<rect x="1421" y="255" width="52.14147343759774" height="28" rx="0" fill="#E69A28" stroke="none" stroke-width="1.25"/>
+<text x="1483.1414734375978" y="279.0" font-family="Times New Roman" font-size="25" font-weight="bold" fill="#202C3C" text-anchor="start">10.0%</text>
+<text x="1596" y="344.0" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle" font-style="italic">Event share is not motion correctness.</text>
+</g>
+<g id="source-temporal-granularity">
+<rect x="16" y="393" width="616" height="365" rx="4" fill="#FAFCFD" stroke="#B7BFC7" stroke-width="1"/>
+<text x="36" y="430.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">(d) Source temporal granularity</text>
+<text x="36" y="461.0" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#2474B5" text-anchor="start">Mean 2.84 windows per 5.0625 s clip</text>
+<g id="bars-16-393">
+<path d="M76,675.0 L608,675.0" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="64" y="682.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#2474B5" text-anchor="end">0</text>
+<path d="M76,601.25 L608,601.25" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="64" y="608.25" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#2474B5" text-anchor="end">25</text>
+<path d="M76,527.5 L608,527.5" fill="none" stroke="#E5E8EB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="64" y="534.5" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#2474B5" text-anchor="end">50</text>
+<path d="M76,498 L76,675" fill="none" stroke="#B7BFC7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M76,675 L608,675" fill="none" stroke="#B7BFC7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="93.02399999999999" y="660.8782211882606" width="72.352" height="14.121778811739443" rx="0" fill="#2474B5" stroke="none" stroke-width="1.25"/>
+<text x="129.2" y="650.8782211882606" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">4.8</text>
+<text x="129.2" y="703.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">1</text>
+<rect x="199.42400000000004" y="535.9202755905512" width="72.352" height="139.07972440944883" rx="0" fill="#2474B5" stroke="none" stroke-width="1.25"/>
+<text x="235.60000000000002" y="525.9202755905512" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">47.1</text>
+<text x="235.60000000000002" y="703.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">2</text>
+<rect x="305.824" y="611.3728078024338" width="72.352" height="63.62719219756621" rx="0" fill="#2474B5" stroke="none" stroke-width="1.25"/>
+<text x="342.0" y="601.3728078024338" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">21.6</text>
+<text x="342.0" y="703.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">3</text>
+<rect x="412.22400000000005" y="624.3067734430923" width="72.352" height="50.69322655690766" rx="0" fill="#2474B5" stroke="none" stroke-width="1.25"/>
+<text x="448.40000000000003" y="614.3067734430923" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">17.2</text>
+<text x="448.40000000000003" y="703.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">4</text>
+<rect x="518.6239999999999" y="647.5219219756622" width="72.352" height="27.478078024337872" rx="0" fill="#2474B5" stroke="none" stroke-width="1.25"/>
+<text x="554.8" y="637.5219219756622" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">9.3</text>
+<text x="554.8" y="703.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">≥5</text>
+<text x="342.0" y="736.0" font-family="Times New Roman" font-size="23" font-weight="normal" fill="#202C3C" text-anchor="middle">Source rule-event windows</text>
+<text x="29" y="491.0" font-family="Times New Roman" font-size="18" font-weight="normal" fill="#2474B5" text-anchor="start">Clips (%)</text>
+</g>
+</g>
+<g id="source-style-metadata">
+<rect x="652" y="393" width="616" height="365" rx="4" fill="#FFFCF7" stroke="#B7BFC7" stroke-width="1"/>
+<text x="672" y="430.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">(e) Source-style metadata</text>
+<text x="672" y="461.0" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#2474B5" text-anchor="start">Existing labels; no independent style relabeling</text>
+<text x="675" y="530.0" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="start">Unknown</text>
+<rect x="818" y="506" width="260.3456386133551" height="28" rx="0" fill="#2474B5" stroke="none" stroke-width="1.25"/>
+<text x="1089.345638613355" y="530.0" font-family="Times New Roman" font-size="25" font-weight="bold" fill="#202C3C" text-anchor="start">59.6%</text>
+<text x="675" y="595.0" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="start">Contemporary</text>
+<rect x="818" y="571" width="168.4267307495654" height="28" rx="0" fill="#008F95" stroke="none" stroke-width="1.25"/>
+<text x="997.4267307495654" y="595.0" font-family="Times New Roman" font-size="25" font-weight="bold" fill="#202C3C" text-anchor="start">38.5%</text>
+<text x="675" y="660.0" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="start">Other labels</text>
+<rect x="818" y="636" width="8.3704877799366" height="28" rx="0" fill="#E69A28" stroke="none" stroke-width="1.25"/>
+<text x="837.3704877799366" y="660.0" font-family="Times New Roman" font-size="25" font-weight="bold" fill="#202C3C" text-anchor="start">1.9%</text>
+<text x="960" y="725.0" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle" font-style="italic">Unknown labels remain in the audit.</text>
+</g>
+<g id="automatic-and-structural-audit">
+<rect x="1288" y="393" width="616" height="365" rx="4" fill="#FBFAFE" stroke="#B7BFC7" stroke-width="1"/>
+<text x="1308" y="430.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">(f) Annotation audit</text>
+<text x="1308" y="461.0" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#2474B5" text-anchor="start">Producer-reported flags and identity checks</text>
+<path d="M1308,486 L1884,486" fill="none" stroke="#B7BFC7" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1312" y="517.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="start">Automatic check: pass</text>
+<text x="1874" y="517.0" font-family="Times New Roman" font-size="25" font-weight="bold" fill="#202C3C" text-anchor="end">99.53%</text>
+<text x="1312" y="555.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="start">Automatic check: flagged</text>
+<text x="1874" y="555.0" font-family="Times New Roman" font-size="25" font-weight="bold" fill="#202C3C" text-anchor="end">0.47%</text>
+<path d="M1308,574 L1884,574" fill="none" stroke="#B7BFC7" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1312" y="608.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="start">Paired record IDs</text>
+<text x="1874" y="608.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="end">22,352 / 22,352</text>
+<text x="1312" y="646.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="start">Paired metadata mismatches</text>
+<text x="1874" y="646.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="end">0</text>
+<text x="1312" y="684.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="start">Style-field changes</text>
+<text x="1874" y="684.0" font-family="Times New Roman" font-size="25" font-weight="normal" fill="#202C3C" text-anchor="end">0</text>
+<text x="1596" y="731.0" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle" font-style="italic">Automatic flags are not human correctness.</text>
+</g>
+<text x="960" y="794.0" font-family="Times New Roman" font-size="23" font-weight="normal" fill="#202C3C" text-anchor="middle">All 22,352 paired records retained. Events, words, windows, and automatic flags are different units.</text>
+</svg>

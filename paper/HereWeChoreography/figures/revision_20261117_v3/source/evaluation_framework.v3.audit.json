@@ -1,0 +1,56 @@
+{
+  "schema": "herewechoreography.evaluation_layout.v3",
+  "source": "source/build_evaluation.py",
+  "output": "evaluation_framework.svg",
+  "svg_sha256": "4eb57848d48e1db080f9e010f9c6bec347c705df884c69c799673532e6d4f0ab",
+  "viewbox": [
+    0,
+    0,
+    1800,
+    1040
+  ],
+  "font": "Times New Roman",
+  "minimum_text_size": 26,
+  "palette": {
+    "ink": "#202C3C",
+    "teal": "#008F95",
+    "blue": "#2474B5",
+    "purple": "#7852A9",
+    "orange": "#E69A28",
+    "coral": "#D45D64"
+  },
+  "element_counts": {
+    "svg": 1,
+    "title": 1,
+    "desc": 1,
+    "rect": 47,
+    "g": 5,
+    "text": 95,
+    "path": 194,
+    "circle": 30,
+    "ellipse": 2
+  },
+  "whole_figure_raster": false,
+  "embedded_images": 0,
+  "text_bounds_violations": [],
+  "scope": "Illustrative protocol schematic; no candidate, heard recording or model is assigned a score.",
+  "definitions": {
+    "Q": "Local text quality",
+    "M": "Local music compatibility",
+    "G": "Global composition",
+    "M3": "Affective compatibility between musical character and bodily expression"
+  },
+  "M3_has_local_event_gate": false,
+  "unknown_is_not_poor_text": true,
+  "multi_song_compatible_choreography_allowed": true,
+  "prior_D6_scores_reused": false,
+  "actual_synchronization_measured": false,
+  "new_training_or_benchmark_scores": false,
+  "visual_review": "Local SVG preview inspected: bright foreground, separate unit and song scopes, legible labels and connectors, no candidate ratings.",
+  "preview": "evaluation_framework.preview.png",
+  "preview_sha256": "b2025f5f45e1104e496823aeb7182ff7ed3dd828c2ea2cf2f5beede8cfff5036",
+  "highlighted_music_and_score_unit_consistent": true,
+  "script_sha256": "adb34ac61a0b190e338d1d0ac09e2d1b8e8569f8534030768ddb6edd9a2495b1",
+  "native_powerpoint_open_test": false,
+  "preview_origin": "Canonical native-slide render; synchronized by export_paper_from_ppt_master.py"
+}

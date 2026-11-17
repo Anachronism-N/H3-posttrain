@@ -9,3 +9,5 @@ preamble.tex -whitespace
 results/harness/*.notes_excerpt.txt -whitespace
 
 figures/revision_20261117/*.svg -whitespace
+
+figures/revision_20261117_v3/*.svg -whitespace

@@ -7,14 +7,13 @@ The existing separation between paper and supplement is retained.
 
 ## Current editable figures
 
-Use [the revised figure package](figures/revision_20261117/README.md).
+Use [the revised figure package](figures/revision_20261117_v3/README.md).
 It includes both overview alternatives, F2a/F2b, F3, F4 and two supplementary
 diagrams as SVG masters and an eight-slide native editable PowerPoint.
 Paper PDFs and PNGs come from the same native slide objects; the PNG crop
-checks are in `paper_ppt_consistency.json`. Only six real video photographs
-are raster objects. Older `figures/editable` files are historical versions.
+checks are in `paper_ppt_consistency.json`. Only real source-video frames are raster objects. Older `figures/editable` and `figures/revision_20261117` files are historical versions.
 
-Figure 1 defaults to `figures/revision_20261117/paper/overview_method.pdf`.
+Figure 1 defaults to `figures/revision_20261117_v3/paper/overview_method.pdf`.
 Uncomment `\def\OverviewDataBenchmark{1}` in `main.tex` for the benchmark
 alternative. The two figures are alternatives for one overview slot.
 
@@ -67,3 +66,13 @@ review is in `review/strict_review_20261117_zh.md`.
 The snapshot manifest records copied file hashes. The figure validation receipt
 checks package structure and geometry; it does not claim testing in Microsoft
 PowerPoint or semantic validation of the proposed rubric.
+
+## Vivid foreground revision
+
+The latest figures separate pale backgrounds from vivid foreground graphics.
+The case, evaluation figure and both overview layouts have been redrawn.
+This revision updates figure assets and captions only; pre-existing sections,
+tables and experimental records in this branch are preserved. Concurrent
+manuscript/result edits in the local workspace are not merged by this task.
+`snapshot_build_audit.json` is the current compilation receipt. Earlier
+build receipts under `results/` are retained as historical records.

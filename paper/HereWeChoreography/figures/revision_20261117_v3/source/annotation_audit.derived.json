@@ -1,0 +1,47 @@
+{
+  "source_json": "annotation_audit.source.json",
+  "source_json_sha256": "f136c2bdc4930b1e23a2e348f121095be547f774676849a8c6688fc4d58dd610",
+  "raw_audit_sha256": "bef81f195f1fc88372ee6b3a8206818d043e28721fff97f9ab4a077254637052",
+  "n": 22352,
+  "quality_filter_applied": false,
+  "event_bin_percentages": [
+    0.4831782390837509,
+    2.429312813171081,
+    29.098067287043666,
+    47.006979241231214,
+    18.78131710808876,
+    2.201145311381532
+  ],
+  "word_bin_percentages": [
+    1.8208661417322833,
+    15.399069434502504,
+    39.19559770937724,
+    30.88314244810308,
+    12.701324266284896
+  ],
+  "bodypart_event_percentages": [
+    60.33931106641974,
+    29.660954301712195,
+    9.999734631868058
+  ],
+  "source_window_bin_percentages": [
+    4.787043664996421,
+    47.145669291338585,
+    21.568539727988547,
+    17.184144595561918,
+    9.314602720114532
+  ],
+  "style_percentages": [
+    59.5561918396564,
+    38.528990694345026,
+    1.9148174659985684
+  ],
+  "producer_gate_percentages": {
+    "true": 99.53024337866857,
+    "false": 0.4697566213314245
+  },
+  "all_chart_bars_native": true,
+  "all_text_native": true,
+  "font_family": "Times New Roman",
+  "unsupported_quality_rates_plotted": false
+}

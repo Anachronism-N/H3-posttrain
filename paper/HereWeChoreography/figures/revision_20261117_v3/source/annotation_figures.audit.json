@@ -1,0 +1,30 @@
+{
+  "figures": [
+    {
+      "file": "annotation_pipeline.svg",
+      "sha256": "0085d9ebb10adbb8e619d2b3dc3c6befcf8c1ba08b2a2ec3357df9265f6ee006",
+      "native_texts": 106,
+      "raster_images": 0,
+      "font_family": "Times New Roman",
+      "native_paths": 550
+    },
+    {
+      "file": "annotation_audit.svg",
+      "sha256": "dab7531fe0f9f24768baab1a075f79cb94703922d3e7a120713e082afdf36527",
+      "native_texts": 85,
+      "raster_images": 0,
+      "font_family": "Times New Roman",
+      "native_paths": 18
+    }
+  ],
+  "source_statistics": "annotation_audit.source.json",
+  "no_new_inference_or_human_labels": true,
+  "visual_checks": [
+    "Filled human contours and landmarks",
+    "Correct hand/leg callouts",
+    "Six stages and detailed 4/5 panels",
+    "Aligned audio bypass",
+    "Producer flags separate from correctness",
+    "No unsupported independent song counts"
+  ]
+}

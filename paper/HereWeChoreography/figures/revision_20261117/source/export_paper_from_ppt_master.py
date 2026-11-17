@@ -1,7 +1,7 @@
 """Paper assets are exact crops of the editable PPT's own rendered masters."""
 from pathlib import Path
 from PIL import Image
-import fitz,json,hashlib,math
+import fitz,json,hashlib,math,shutil
 ROOT=Path(__file__).resolve().parents[1]
 scene=json.loads((ROOT/'source/native_scenes.json').read_text(encoding='utf-8'))
 OUT=ROOT/'paper';OUT.mkdir(exist_ok=True)
@@ -16,6 +16,9 @@ for i,spec in enumerate(scene['slides'],1):
  scale=image.width/scene['width']
  ibox=tuple(round(v*scale) for v in box)
  image.crop(ibox).save(OUT/(stem+'.png'))
+ # Keep every delivered standalone preview on the same authoritative render.
+ for alias in [ROOT/(stem+'.preview.png'),ROOT/'preview'/(stem+'.png')]:
+  if alias.exists():shutil.copy2(OUT/(stem+'.png'),alias)
  doc=fitz.open(pdf);assert len(doc)==1
  sx,sy=doc[0].rect.width/scene['width'],doc[0].rect.height/scene['height']
  rect=fitz.Rect(box[0]*sx,box[1]*sy,box[2]*sx,box[3]*sy)

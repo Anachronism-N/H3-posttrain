@@ -15,7 +15,7 @@
     "figures/revision_20261117/paper/dataset_construction.pdf",
     "figures/title-icons/herewechoreography-title-icon.png"
   ],
-  "total_bytes": 80720682,
+  "total_bytes": 82014774,
   "files": [
     {
       "path": ".gitattributes",
@@ -354,8 +354,8 @@
     },
     {
       "path": "figures/revision_20261117/choreography_case.preview.png",
-      "sha256": "e4bfdc8f52ea270dedf35190a3f812fd8dea6be1137c5ec382fbae8dd3162fe9",
-      "bytes": 629313
+      "sha256": "a3fa9e01c5681e2b99038ddbb25f63f2b74487b75022710c27e9e5586272e539",
+      "bytes": 1151303
     },
     {
       "path": "figures/revision_20261117/choreography_case.svg",
@@ -369,8 +369,8 @@
     },
     {
       "path": "figures/revision_20261117/evaluation_framework.preview.png",
-      "sha256": "468110be1597530bf262e6f0e4b7cc29bccecc415a93e3a25b199bdc098c512d",
-      "bytes": 203389
+      "sha256": "3d1b395c39cdb51287e4254049ff5867d5281bd720322584a7db1f40d441b206",
+      "bytes": 372060
     },
     {
       "path": "figures/revision_20261117/evaluation_framework.svg",
@@ -389,8 +389,8 @@
     },
     {
       "path": "figures/revision_20261117/overview_benchmark.preview.png",
-      "sha256": "66447842d8d82cf590196793d41b4de2ee39c400120c3920649757e50861dd36",
-      "bytes": 286124
+      "sha256": "e0c0383adde17c415bf03f8c917b870e324258139ae8c64af6dac70ddf4de923",
+      "bytes": 465801
     },
     {
       "path": "figures/revision_20261117/overview_benchmark.svg",
@@ -399,8 +399,8 @@
     },
     {
       "path": "figures/revision_20261117/overview_method.preview.png",
-      "sha256": "94a1791e60c1c4a66aceaaf8b2d0d5eb129ca13231103df1c3beb804d1753319",
-      "bytes": 301590
+      "sha256": "4afee63564dcf1f98bf559d24f7f08588423c153e9e701fb50446ad487fe5c4a",
+      "bytes": 496229
     },
     {
       "path": "figures/revision_20261117/overview_method.svg",
@@ -409,7 +409,7 @@
     },
     {
       "path": "figures/revision_20261117/paper/agent_policy_comparison.pdf",
-      "sha256": "6f0ba81f9f22a6dc01443f04bc720c31204c23bb898b039ecb7d867d5b8b6cc5",
+      "sha256": "889df6fd7007a5a7d5e33b4c25ea0e791e8641ebdd3d388d2ab3eb834e3700e6",
       "bytes": 56285
     },
     {
@@ -419,7 +419,7 @@
     },
     {
       "path": "figures/revision_20261117/paper/annotation_audit.pdf",
-      "sha256": "43917a3c04de339aad097902d24ad89e3c330727df9b283c255547fcbc34c797",
+      "sha256": "7c3d2c75e476345d50bd338d6d710625ffe675ec70bd4233754b2e0022a1705f",
       "bytes": 77813
     },
     {
@@ -429,7 +429,7 @@
     },
     {
       "path": "figures/revision_20261117/paper/annotation_pipeline.pdf",
-      "sha256": "3d4da88911f4a3e15a43f184209580d0f0ba8d640126f4367fcf4083d16ece54",
+      "sha256": "f24a68df2653077322e913b6caae02e50514747568b13ea24124aa03477f8560",
       "bytes": 111826
     },
     {
@@ -439,7 +439,7 @@
     },
     {
       "path": "figures/revision_20261117/paper/choreography_case.pdf",
-      "sha256": "f4d18acff8f650a7bb7a5e56832b5ec2dbf9aa1f7561886b7eb33fc409360f58",
+      "sha256": "d5cd29bb4c1e5a0a2c6e3ad75510edac55f92360c38a1565c3bfa7ead92af39c",
       "bytes": 461779
     },
     {
@@ -449,7 +449,7 @@
     },
     {
       "path": "figures/revision_20261117/paper/dataset_construction.pdf",
-      "sha256": "69c3c95d7df996a830850a566c4ba3a45155ae1f3b43fe56bb52e3eafd11e84c",
+      "sha256": "ce911270baa8f1ea8e48ac73b87884286a8514f485571b9be3df078ab8657223",
       "bytes": 62787
     },
     {
@@ -459,7 +459,7 @@
     },
     {
       "path": "figures/revision_20261117/paper/evaluation_framework.pdf",
-      "sha256": "540fd249b17a6299f12ad03131e9887dff6e13f0a2e23412f0baf85323901324",
+      "sha256": "87235fbca2a23b1d1ac575d23077783a35b3aadd2f178003a2b5d55bd6313f73",
       "bytes": 84512
     },
     {
@@ -469,7 +469,7 @@
     },
     {
       "path": "figures/revision_20261117/paper/overview_benchmark.pdf",
-      "sha256": "09e2449beda288f65a43e7a591b680265b415b0ef516b294983a2f5942dfdd2b",
+      "sha256": "cfe736bfdf467f797cd5385fae9028a1063c7b1e112e511205eb7b5d05011a86",
       "bytes": 93588
     },
     {
@@ -479,7 +479,7 @@
     },
     {
       "path": "figures/revision_20261117/paper/overview_method.pdf",
-      "sha256": "27090257ed6a8e119d9348c6afa2cec747ec648d8569ef41bb37400e55871ec7",
+      "sha256": "fffd9d7db490d344bc3cd64b6a64568c1fc46212e403d0a3a1e23aac4f9c38a2",
       "bytes": 97938
     },
     {
@@ -489,7 +489,7 @@
     },
     {
       "path": "figures/revision_20261117/paper_ppt_consistency.json",
-      "sha256": "3a85f79353c366fa2053f9364575aadbef1fd8402479b9b3b786a36f45bee82a",
+      "sha256": "ec7c3e6798719e30ccb53f4be32fe7c6f54e7d90ba8ab3b94489b9e79ab9a9bb",
       "bytes": 4828
     },
     {
@@ -584,13 +584,13 @@
     },
     {
       "path": "figures/revision_20261117/preview/annotation_audit.png",
-      "sha256": "565fff29d3bf1b5c65741f256e319d9242f619441360ab9ef47e032789dd53d0",
-      "bytes": 179039
+      "sha256": "2cd588a99140618f62e0ff02cdde4e800130910ae4a6e2cda10f1ac29a49af8d",
+      "bytes": 283363
     },
     {
       "path": "figures/revision_20261117/preview/annotation_pipeline.png",
-      "sha256": "b06f531868a14983ca56a123146f83402716fd28ec86d29810fb979d69b9c4cf",
-      "bytes": 239642
+      "sha256": "cc5032e8b61588361f92c7f6d4d70e418349b12dcb945385f3a1bb54972ea4c4",
+      "bytes": 364218
     },
     {
       "path": "figures/revision_20261117/preview/native_pdf_overview.png",
@@ -754,8 +754,8 @@
     },
     {
       "path": "figures/revision_20261117/source/export_paper_from_ppt_master.py",
-      "sha256": "c596d5b9becad03c532c6526294c672a52001fbd1dcfba5fbd006c889bed89ca",
-      "bytes": 2007
+      "sha256": "e38210768ce1bfe180acfe43b1c5715640583696afcb9e33ffa0c805934b70d3",
+      "bytes": 2222
     },
     {
       "path": "figures/revision_20261117/source/finalize_native_pptx.mjs",
@@ -1174,7 +1174,7 @@
     },
     {
       "path": "results/main_text_evidence_audit.json",
-      "sha256": "a4a2ce7a4deddb402e72b3a102f37c69fcb8429e4e8d09ca5e2da756d7fe215a",
+      "sha256": "1a520199286911207edf3e75d8816c6dd065fc6cccbb29d1f93c27a43e297a89",
       "bytes": 13291
     },
     {
@@ -1335,7 +1335,7 @@
     "obsolete style-population reports",
     "credentials"
   ],
-  "updated_utc": "2026-11-17T03:16:56.349018+00:00",
+  "updated_utc": "2026-11-17T03:20:05.002924+00:00",
   "alternative_overview_graphics": [
     "figures/revision_20261117/paper/overview_benchmark.pdf"
   ],

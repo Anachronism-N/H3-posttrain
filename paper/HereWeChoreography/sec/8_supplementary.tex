@@ -51,11 +51,11 @@ only the 822-clip style population, retaining all seven zero-shot models
 and all three supervised objectives on the same clips.
 
 \paragraph{Automatic-rating configuration and coverage.}
-For Table~\ref{tab:refinement-d123}, \emph{Ours} denotes the supplied
-task-specific captioner predictions. Released processing-stage metadata
-disagree with the author-reported generation configuration, so the
-output-stage lineage remains unresolved. These ratings alone are not
-an isolated ablation of supervised fine-tuning.
+For Table~\ref{tab:local-results}, \captioner denotes direct
+task-specific SFT predictions, without an additional LLM editor.
+Published method names are mapped to this display name in the
+reproducibility receipt; frozen exports remain unchanged.
+Dataset annotation refinement is a separate stage.
 The Ours release comes from public commit \texttt{dc6dfd9}; the baseline
 release comes from \texttt{92d6dcf}. All eight generation inventories
 contain the same 2,000 case IDs. All released outputs are retained in
@@ -90,6 +90,54 @@ Full-release Ours Q1/Q2/Q3 valid counts are 1,999/1,990/1,999 for r4
 and 2,000/1,966/1,999 for v2.1; these available-case values are not
 substituted for the common-case main table. The earlier two-axis
 baseline assessment is likewise not relabeled as these three dimensions.
+
+\paragraph{Audio-conditioned music ratings.}
+The new release is commit \texttt{44d4290}, with 200 clips drawn from
+the full captioning inventory. The run includes ten text conditions,
+three dimensions, and one frozen audio observation per clip. The paper
+reports seven general models, direct SFT, and a separate deterministic
+music-rule control. An archived LLM-editing condition is not the proposed
+captioner and is excluded from the main comparison.
+
+Of 6,000 registered judgments, 5,999 pass the released structural checks;
+one Music-Flamingo dynamics judgment fails the contradiction/score cap.
+Invalid judgments remain invalid. Every displayed music column uses
+the all-method common valid intersection, including the rule control:
+200 clips for M1 and M3 and 199 for M2. This changes some means slightly
+from the release's available-case summary. The table uses decimal
+half-up rounding. Available-case values, the excluded case, source hashes,
+and the exact common sets are retained in the reproducibility receipt.
+
+The release declares \texttt{sol61.music-style-affect.v3.0-local}, with
+affective compatibility replacing the earlier event-gated D6. Existing
+JSON wrapper fields still identify an older pilot version; the complete
+prompt and its content hash are not released. The source-version
+discrepancy is recorded without modifying frozen records or claiming
+independent protocol verification. Valid judgments identify
+Qwen3-Omni-30B-A3B-Instruct, declare raw-audio input, and record audio
+feature tensors. Input-audio hashes match the frozen observation across
+all methods for each clip. There is no independent listener calibration
+or cross-family validation of these music scores yet.
+
+The music-rule control uses the release's deterministic v5 texts. It
+adds bar/beat phrases, BPM-binned dynamics, and a small number of
+pulse/posture cues to existing movement sentences. It uses no LLM, but
+it changes the prediction and is consequently a separate row. Its
+reference metrics and Q ratings have not been evaluated and remain
+missing, rather than copied from SFT. The reported algorithm can
+overstate beat placement or articulation: BPM alone does not determine
+legato versus sharp movement. Increased ratings do not establish
+that these inserted musical claims are correct.
+
+The archived paired analysis uses pairwise complete clips, 10,000
+bootstrap draws, 10,000 sign-flip draws, and Holm correction over its
+registered comparisons. It finds advantages of the rule control over
+direct SFT, but none of its three contrasts with MOSS-Music resolves
+an advantage. These source-reported tests are kept separate from the
+all-method common-case table. No claim of universal or independently
+validated musical superiority follows. Reference, Q and M columns use
+different cohorts and protocols; no overall average or cross-group
+paired test is reported.
 
 \paragraph{Caption decoding and metric configuration.}
 Reference agreement uses 2,000 clips; BERTScore uses the common

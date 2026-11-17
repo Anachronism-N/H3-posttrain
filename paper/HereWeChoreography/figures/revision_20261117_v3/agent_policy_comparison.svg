@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="850" viewBox="0 0 1920 850">
+<title>Editable scientific diagram</title>
+<desc>Native text, shapes, paths and groups. Every label and connector can be edited individually. Schematic icons are not measured data.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"/></marker></defs>
+<rect width="100%" height="100%" fill="white"/>
+<text x="960" y="35.0" font-family="Times New Roman" font-size="28" font-weight="bold" fill="#202C3C" text-anchor="middle">Same windows, candidates, style, acoustic evidence, outer LLM, and budget caps</text>
+<path d="M20,91 Q20,74 42,74 L1878,74 Q1900,74 1900,91" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<g id="policy-row-1">
+<rect x="16" y="109" width="1888" height="141" rx="12" fill="white" stroke="#2474B5" stroke-width="1.4"/>
+<rect x="17" y="110" width="251" height="139" rx="11" fill="#FAFCFD" stroke="none" stroke-width="1.5"/>
+<text x="39" y="154.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">Workflow</text>
+</g>
+<g id="policy-row-2">
+<rect x="16" y="266" width="1888" height="144" rx="12" fill="white" stroke="#7852A9" stroke-width="1.4"/>
+<rect x="17" y="267" width="251" height="142" rx="11" fill="#FBFAFE" stroke="none" stroke-width="1.5"/>
+<text x="39" y="311.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">Self-Refine</text>
+<text x="39" y="346.38" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">adaptation</text>
+</g>
+<g id="policy-row-3">
+<rect x="16" y="426" width="1888" height="157" rx="12" fill="white" stroke="#008F95" stroke-width="1.4"/>
+<rect x="17" y="427" width="251" height="155" rx="11" fill="#FAFCFB" stroke="none" stroke-width="1.5"/>
+<text x="39" y="471.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">ReAct</text>
+<text x="39" y="506.38" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">adaptation</text>
+</g>
+<g id="policy-row-4">
+<rect x="16" y="599" width="1888" height="145" rx="12" fill="white" stroke="#2474B5" stroke-width="2"/>
+<rect x="17" y="600" width="251" height="143" rx="11" fill="#FAFCFD" stroke="none" stroke-width="1.5"/>
+<text x="39" y="644.0" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">Proposed</text>
+<text x="39" y="679.38" font-family="Times New Roman" font-size="29" font-weight="bold" fill="#202C3C" text-anchor="start">harness</text>
+</g>
+<g id="workflow-steps">
+<rect x="310" y="129" width="244" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="432.0" y="166.4" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="middle">Outline</text>
+<rect x="685" y="129" width="303" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="836.5" y="166.4" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="middle">Compose unit</text>
+<rect x="1115" y="129" width="286" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="1258.0" y="166.4" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="middle">Validate</text>
+<rect x="1512" y="129" width="286" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="1655.0" y="166.4" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="middle">Commit</text>
+<path d="M554,158 L685,158" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M685.0,158.0 L675.00,153.70 L675.00,162.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M988,158 L1115,158" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1115.0,158.0 L1105.00,153.70 L1105.00,162.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M1401,158 L1512,158" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1512.0,158.0 L1502.00,153.70 L1502.00,162.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M1655,188 L1655,221 L836,221 L836,189" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M836.0,189.0 L831.70,199.00 L840.30,199.00 Z" fill="#202C3C" stroke="none"/>
+<text x="1245" y="214.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">Next unit</text>
+</g>
+<g id="self-refine-steps">
+<rect x="310" y="286" width="221" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="420.5" y="322.7" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Outline</text>
+<rect x="614" y="286" width="221" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="724.5" y="322.7" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Draft</text>
+<rect x="918" y="286" width="278" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="1057.0" y="322.7" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Self-feedback</text>
+<rect x="1279" y="286" width="241" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="1399.5" y="322.7" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Revise</text>
+<rect x="1603" y="286" width="276" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="1741.0" y="322.7" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Validate + commit</text>
+<path d="M531,315 L614,315" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M614.0,315.0 L604.00,310.70 L604.00,319.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M835,315 L918,315" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M918.0,315.0 L908.00,310.70 L908.00,319.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M1196,315 L1279,315" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1279.0,315.0 L1269.00,310.70 L1269.00,319.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M1520,315 L1603,315" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1603.0,315.0 L1593.00,310.70 L1593.00,319.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M1741,345 L1741,380 L725,380 L725,346" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M725.0,346.0 L720.70,356.00 L729.30,356.00 Z" fill="#202C3C" stroke="none"/>
+<text x="1257" y="372.0" font-family="Times New Roman" font-size="21" font-weight="normal" fill="#202C3C" text-anchor="middle">Next unit</text>
+</g>
+<g id="react-steps">
+<rect x="310" y="456" width="244" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="432.0" y="493.4" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="middle">Outline</text>
+<rect x="685" y="456" width="303" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="836.5" y="493.4" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="middle">Choose tool</text>
+<rect x="1115" y="456" width="286" height="58" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="1258.0" y="493.4" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="middle">Execute</text>
+<path d="M554,485 L685,485" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M685.0,485.0 L675.00,480.70 L675.00,489.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M988,485 L1115,485" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1115.0,485.0 L1105.00,480.70 L1105.00,489.30 Z" fill="#202C3C" stroke="none"/>
+<rect x="1530" y="445" width="280" height="45" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="1670.0" y="475.2" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Commit unit</text>
+<rect x="1530" y="500" width="280" height="45" rx="7" fill="white" stroke="#202C3C" stroke-width="1.5"/>
+<text x="1670.0" y="530.2" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Observe</text>
+<path d="M1402,485 L1460,485 L1460,467 L1528,467" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1528.0,467.0 L1518.00,462.70 L1518.00,471.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M1460,485 L1460,522 L1528,522" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1528.0,522.0 L1518.00,517.70 L1518.00,526.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M1670,546 L1670,561 L836,561 L836,516" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M836.0,516.0 L831.70,526.00 L840.30,526.00 Z" fill="#202C3C" stroke="none"/>
+<text x="1253" y="553.0" font-family="Times New Roman" font-size="20" font-weight="normal" fill="#202C3C" text-anchor="middle">Bounded tool loop</text>
+</g>
+<g id="proposed-steps">
+<rect x="292" y="617" width="276" height="66" rx="7" fill="#FAFCFD" stroke="#2474B5" stroke-width="1.5"/>
+<text x="430.0" y="644.2800000000001" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Music / motif</text>
+<text x="430.0" y="671.1200000000001" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">objectives</text>
+<rect x="652" y="617" width="294" height="66" rx="7" fill="#FAFCFD" stroke="#2474B5" stroke-width="1.5"/>
+<text x="799.0" y="644.2800000000001" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Compose with</text>
+<text x="799.0" y="671.1200000000001" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">history</text>
+<rect x="1075" y="617" width="315" height="66" rx="7" fill="#FAFCFD" stroke="#2474B5" stroke-width="1.5"/>
+<text x="1232.5" y="657.7" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Validate + commit</text>
+<rect x="1573" y="617" width="308" height="66" rx="7" fill="#FAFCFD" stroke="#2474B5" stroke-width="1.5"/>
+<text x="1727.0" y="644.2800000000001" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">Targeted repeat</text>
+<text x="1727.0" y="671.1200000000001" font-family="Times New Roman" font-size="22" font-weight="normal" fill="#202C3C" text-anchor="middle">revision</text>
+<path d="M568,650 L652,650" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M652.0,650.0 L642.00,645.70 L642.00,654.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M946,650 L1075,650" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1075.0,650.0 L1065.00,645.70 L1065.00,654.30 Z" fill="#202C3C" stroke="none"/>
+<path d="M1390,650 L1573,650" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1573.0,650.0 L1563.00,645.70 L1563.00,654.30 Z" fill="#202C3C" stroke="none"/>
+<text x="1481" y="631.0" font-family="Times New Roman" font-size="18" font-weight="normal" fill="#202C3C" text-anchor="middle">After all units</text>
+<path d="M1232,685 L1232,717 L799,717 L799,685" fill="none" stroke="#202C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M799.0,685.0 L794.70,695.00 L803.30,695.00 Z" fill="#202C3C" stroke="none"/>
+<text x="1015" y="709.0" font-family="Times New Roman" font-size="19" font-weight="normal" fill="#202C3C" text-anchor="middle">Next unit</text>
+<text x="1726" y="720.0" font-family="Times New Roman" font-size="18" font-weight="normal" fill="#202C3C" text-anchor="middle">Remaining budget only</text>
+</g>
+<g id="shared-contract">
+<rect x="16" y="768" width="1888" height="62" rx="10" fill="#f5f7fa" stroke="#202C3C" stroke-width="1.5"/>
+<text x="960" y="807.0" font-family="Times New Roman" font-size="24" font-weight="normal" fill="#202C3C" text-anchor="middle">Harness contract: persistent state · time bounds · protected regions · call/token accounting · logged failures</text>
+</g>
+</svg>

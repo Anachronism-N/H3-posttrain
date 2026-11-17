@@ -1,0 +1,169 @@
+{
+ "run_id": "qwen-omni-v3-formal-20261117",
+ "recorded": 6200,
+ "observations": 200,
+ "judge_items": 6000,
+ "registered_logical_items": 6000,
+ "complete": true,
+ "status_counts": {
+  "valid_structure": 5999,
+  "valid_observation": 200,
+  "invalid_judgment": 1
+ },
+ "observation_status_counts": {
+  "valid_observation": 200
+ },
+ "judge_status_counts": {
+  "valid_structure": 5999,
+  "invalid_judgment": 1
+ },
+ "per_method_dimension": {
+  "SFT_v3_rp105": {
+   "D4": {
+    "n": 200,
+    "mean": 3.455
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.51
+   },
+   "D6": {
+    "n": 200,
+    "mean": 3.97
+   }
+  },
+  "qwen3-omni-instruct": {
+   "D4": {
+    "n": 200,
+    "mean": 3.745
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.945
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.33
+   }
+  },
+  "moss-audio": {
+   "D4": {
+    "n": 200,
+    "mean": 3.445
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.715
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.16
+   }
+  },
+  "moss-music": {
+   "D4": {
+    "n": 200,
+    "mean": 4.335
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.99
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.355
+   }
+  },
+  "music-flamingo": {
+   "D4": {
+    "n": 200,
+    "mean": 3.925
+   },
+   "D5": {
+    "n": 199,
+    "mean": 3.96
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.365
+   }
+  },
+  "audio-flamingo3": {
+   "D4": {
+    "n": 200,
+    "mean": 2.975
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.575
+   },
+   "D6": {
+    "n": 200,
+    "mean": 3.695
+   }
+  },
+  "qwen25-omni": {
+   "D4": {
+    "n": 200,
+    "mean": 3.13
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.24
+   },
+   "D6": {
+    "n": 200,
+    "mean": 3.525
+   }
+  },
+  "audio-flamingo-next": {
+   "D4": {
+    "n": 200,
+    "mean": 3.805
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.76
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.17
+   }
+  },
+  "SFT_v3_rp105+refine-v1": {
+   "D4": {
+    "n": 200,
+    "mean": 3.525
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.54
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.01
+   }
+  },
+  "SFT_v3_rp105+music-rules-v5": {
+   "D4": {
+    "n": 200,
+    "mean": 4.36
+   },
+   "D5": {
+    "n": 200,
+    "mean": 4.025
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.455
+   }
+  }
+ },
+ "d6_applicability": {
+  "not_gated": 200
+ },
+ "deadline_hit": false,
+ "model_identity": "787f29571917ea588d46cabc0865dc86e463d99ed3c446280be8292c4d991739",
+ "elapsed_seconds": 4940.7,
+ "results_sha256": "df0d27f99d1e16ded49d00c966ced34cf9fe9f1ec1234b437153d11d178a4a8b"
+}

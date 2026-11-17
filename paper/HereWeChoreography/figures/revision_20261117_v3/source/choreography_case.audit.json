@@ -1,0 +1,131 @@
+{
+  "schema": "herewechoreography.case_revision.20261117_v3",
+  "case_id": "wJPptuhclZmKAEWs",
+  "source_video_sha256": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+  "source_audio_sha256": "a82eb75cb5a4fcc8006d79df7e2b3fdade5e39f9e06e6e0d2dc8a667b3d0246e",
+  "display_crop_xyxy": [
+    120,
+    280,
+    640,
+    1250
+  ],
+  "crop_scope": "Unchanged pixels, identical background-only crop; full body retained",
+  "frame_selection": {
+    "source_fps": 16,
+    "indices": [
+      0,
+      16,
+      32,
+      48,
+      64,
+      80
+    ],
+    "times_seconds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "equal_time_step_seconds": 1,
+    "rows": [
+      {
+        "original_frame_file": "source\\case_frames\\frame_01.png",
+        "original_frame_sha256": "0b6cfdd0b7e391a64083dff1a70cf8e156c70e1cbf44e38b6edd5ca035708e49",
+        "display_frame_file": "source\\case_frames\\display_01.png",
+        "display_sha256": "6e043a07c6f659db3a38013d0e274e9c515bff5cbefc399f408984f60d090d44",
+        "video_frame": 0,
+        "seconds": 0
+      },
+      {
+        "original_frame_file": "source\\case_frames\\frame_02.png",
+        "original_frame_sha256": "cc2d3eac25ebf007b52225607b06f3add306316817087dd1c93f4ec4ff09165e",
+        "display_frame_file": "source\\case_frames\\display_02.png",
+        "display_sha256": "ecb6ebddc64477277308c67cf49207e85ad3e515c0ad6d726e63e74375247192",
+        "video_frame": 16,
+        "seconds": 1
+      },
+      {
+        "original_frame_file": "source\\case_frames\\frame_03.png",
+        "original_frame_sha256": "4768740e58f12b364fe78c7c32f75ba18c518fa72654f706fa071130be5f2068",
+        "display_frame_file": "source\\case_frames\\display_03.png",
+        "display_sha256": "4371e2118622ba4d469ad86478730090d9d873f330c0cfe9f384a530e469fe25",
+        "video_frame": 32,
+        "seconds": 2
+      },
+      {
+        "original_frame_file": "source\\case_frames\\frame_04.png",
+        "original_frame_sha256": "8d32a0cdd3922b08c999707afa33c92c810f85062c305cb485f6084d9904513d",
+        "display_frame_file": "source\\case_frames\\display_04.png",
+        "display_sha256": "30cadbe12135584aeef885af2ad3b96fe65d520834ee45dcc6afc053a935555d",
+        "video_frame": 48,
+        "seconds": 3
+      },
+      {
+        "original_frame_file": "source\\case_frames\\frame_05.png",
+        "original_frame_sha256": "7a02d69d971abb9c0c0983169e0a772ec323f85492b06a21c804a7b166016396",
+        "display_frame_file": "source\\case_frames\\display_05.png",
+        "display_sha256": "73716d30d765c46c5ec0e561731214164c9a9bdafe2dae74bbbcfa4964226f70",
+        "video_frame": 64,
+        "seconds": 4
+      },
+      {
+        "original_frame_file": "source\\case_frames\\frame_06.png",
+        "original_frame_sha256": "edd0f80b572e1fcb4cab303c8d0a6c5754733af932f483d8d95a2c027b1940a1",
+        "display_frame_file": "source\\case_frames\\display_06.png",
+        "display_sha256": "d4c44ff608320748c37b78df30c0d5cb1ffc0b114a1f99233bd6404ca15b4aa0",
+        "video_frame": 80,
+        "seconds": 5
+      }
+    ]
+  },
+  "waveform": {
+    "kind": "2 ms PCM minimum/maximum envelope",
+    "global_peak": 0.897796630859375,
+    "global_scaling_only": true,
+    "sample_rate": 24000,
+    "sample_count": 121500,
+    "synthetic": false
+  },
+  "predicted_downbeats": [
+    0.2,
+    1.96,
+    3.7
+  ],
+  "planning_units_seconds": [
+    [
+      0,
+      3.7
+    ],
+    [
+      3.7,
+      5.0625
+    ]
+  ],
+  "leading_fragment_merged": [
+    0,
+    0.2
+  ],
+  "ending_is_incomplete_fragment": true,
+  "text_origin": "Author-composed illustrative instructions, not model output, GT, or quality rating",
+  "instructions": [
+    "Lower the raised foot; sweep both hands in compact side-to-side arcs in front of the upper torso, keeping the elbows bent.",
+    "Continue the same hand pattern with bent elbows; near the end, raise one knee."
+  ],
+  "quality_ratings": null,
+  "independent_av_alignment_verified": false,
+  "layout": "Equal-time filmstrip, measured audio/bar clock, unit-level body/action fields, two natural-language windows",
+  "instruction_field_rows": [
+    "Hands: unit-scoped hand action and range",
+    "Pose: written bent-elbow state carried across both units",
+    "Legs: unit-scoped lower-foot / near-end knee instruction"
+  ],
+  "field_bands_are_schematic_not_measured_action_intervals": true,
+  "changes_from_previous": "Reordered real frames before waveform; replaced three long explanatory footer blocks with native body/action/state fields; saturated foreground colors on pale panels",
+  "no_AI_modification_to_frames": true,
+  "output_svg_sha256": "d20fa430c6717de99f0317304ce2dedc1c1e502657d3070e84d383ab70b4da57",
+  "bounds_checked": true,
+  "native_text_count": 61,
+  "all_text_font": "Times New Roman"
+}

@@ -1,0 +1,36 @@
+{
+  "source_repo": "Anachronism-N/H3-posttrain",
+  "source_branch": "docs/m2d-music-refine-prompts-20261117",
+  "source_commit": "44d4290892ee73f9e8a3a65390d4e990dd521049",
+  "files": {
+    "results.jsonl": {
+      "source_path": "results/m2d/d4d6_v3_formal_200_20261117/results.jsonl",
+      "bytes": 8381818,
+      "sha256": "df0d27f99d1e16ded49d00c966ced34cf9fe9f1ec1234b437153d11d178a4a8b"
+    },
+    "summary.json": {
+      "source_path": "results/m2d/d4d6_v3_formal_200_20261117/summary.json",
+      "bytes": 2448,
+      "sha256": "fd2bbe45c5d14c6a9da3ef6cfe564f0e833a8e73f1dd837e1aeefb5cbbee19fc"
+    },
+    "analysis.json": {
+      "source_path": "results/m2d/d4d6_v3_formal_200_20261117/analysis.json",
+      "bytes": 9413,
+      "sha256": "e93be494e6c54e0f24681b621e73468b3e5f004aa923d739cf746aac29acfaa6"
+    },
+    "v5_texts.jsonl": {
+      "source_path": "results/m2d/d4d6_v3_formal_200_20261117/v5_texts.jsonl",
+      "bytes": 227314,
+      "sha256": "a568d6323e135ca75f3624d5c73d1f043a6439aec13b4a705cc36978b8502e7c"
+    },
+    "release_note.md": {
+      "source_path": "notes/32_m2d_music_refine_prompts_and_v5_results_20261117.md",
+      "bytes": 6630,
+      "sha256": "c795c6467ad8fe906a28e3d7cea3601517fa8b64dccf62ef6b94609e07419f4b"
+    }
+  },
+  "frozen_files_unmodified": true,
+  "captioner_extra_LLM_editor_used": false,
+  "editor_statement_basis": "Author confirmation; historical export labels retained verbatim.",
+  "rules_v5_is_separate_deterministic_control": true
+}

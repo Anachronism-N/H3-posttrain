@@ -4,17 +4,20 @@
 
 \subsection{Experimental Setup}
 \label{sec:exp-protocol}
-We compare the local SFT captioner with six general audio-language
+We compare \captioner with general audio-language
 baselines~\cite{qwen3omni,mossaudio,mossmusic,musicflamingo,audioflamingo3,qwen25omni}.
-Reference agreement evaluates local SFT outputs; automatic caption
-assessment evaluates the supplied choreography predictions. Tables specify
+Captioner predictions are generated directly.
+Reference agreement and automatic caption assessment are grouped in
+Table~\ref{tab:local-results}; each group keeps its own protocol and coverage.
+Audio-Flamingo-Next additionally participates in the rating comparison.
+Tables specify
 metric scales. Appendix~\ref{sec:experimental-details} documents decoding,
 data provenance, valid-case coverage, and rating configuration.
 Reported whole-song results use the fixed-window implementation.
 
 \subsection{Short-Clip Caption Agreement}
 \label{sec:exp-reference}
-SFT leads all six agreement measures (Table~\ref{tab:e2-full2000-v2}),
+\captioner leads all six agreement measures (Table~\ref{tab:e2-full2000-v2}),
 reaching 9.74 BLEU-4, 30.80 ROUGE-L, and 89.71 BERTScore F1 versus
 the strongest baseline values of 0.85, 14.99, and 82.85. This consistency
 supports task adaptation; shared references prevent interpreting these
@@ -25,18 +28,29 @@ Motion-keyword precision/recall reach 76.23/85.90 versus Qwen3-Omni's
 lower proportion of non-reference categories. The lexicons omit
 laterality, negation, action--body binding, and temporal correctness.
 Temporal-connective presence is almost saturated for both Qwen2.5-Omni
-and SFT, motivating stricter evidence
+and \captioner, motivating stricter evidence
 requirements. Table~\ref{tab:e2-full2000-diagnostics} retains surface
 diagnostics without treating duplication or length as dance quality.
 
 \subsection{Automatic Caption Assessment}
 \label{sec:exp-refinement}
-Table~\ref{tab:refinement-d123} compares automatic caption ratings.
-Ours leads Q1 at 4.97 versus 4.32 for the strongest baseline, and Q3 at
+The text-quality columns of Table~\ref{tab:local-results} compare caption ratings.
+\captioner leads Q1 at 4.97 versus 4.32 for the strongest baseline, and Q3 at
 4.80 versus 4.63. Q2 remains a weakness: Audio-Flamingo-Next reaches
-3.74, compared with 3.33 for Ours. The gains are therefore
+3.74, compared with 3.33 for \captioner. The gains are therefore
 dimension-specific rather than uniform. Inference and evaluation
 details appear in Appendix~\ref{sec:experimental-details}.
+
+The audio-conditioned columns assess rhythm, movement dynamics, and
+affective compatibility separately. Direct SFT obtains 3.46/3.51/3.97,
+below MOSS-Music on all three dimensions. Strong reference agreement
+and detailed movement language therefore do not establish musical fit.
+A separate deterministic control adds bar-oriented phrasing and
+BPM-conditioned movement cues to the SFT text, without an LLM editor.
+It reaches 4.36/4.03/4.46, but the released paired analysis does not
+resolve an advantage over MOSS-Music. This control characterizes a
+music-conditioning opportunity, not an improvement attributable to SFT
+or evidence of performed synchronization.
 
 \subsection{Audio-Conditioned Style Prior}
 \label{sec:exp-jev}

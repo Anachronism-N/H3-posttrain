@@ -1,0 +1,513 @@
+{
+ "run_dir": "/tmp/qwen-omni-v3-formal-20261117",
+ "cases_with_scores": 200,
+ "methods": [
+  "SFT_v3_rp105",
+  "SFT_v3_rp105+music-rules-v5",
+  "SFT_v3_rp105+refine-v1",
+  "audio-flamingo-next",
+  "audio-flamingo3",
+  "moss-audio",
+  "moss-music",
+  "music-flamingo",
+  "qwen25-omni",
+  "qwen3-omni-instruct"
+ ],
+ "means": {
+  "SFT_v3_rp105": {
+   "D4": {
+    "n": 200,
+    "mean": 3.455
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.51
+   },
+   "D6": {
+    "n": 200,
+    "mean": 3.97
+   }
+  },
+  "SFT_v3_rp105+music-rules-v5": {
+   "D4": {
+    "n": 200,
+    "mean": 4.36
+   },
+   "D5": {
+    "n": 200,
+    "mean": 4.025
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.455
+   }
+  },
+  "SFT_v3_rp105+refine-v1": {
+   "D4": {
+    "n": 200,
+    "mean": 3.525
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.54
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.01
+   }
+  },
+  "audio-flamingo-next": {
+   "D4": {
+    "n": 200,
+    "mean": 3.805
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.76
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.17
+   }
+  },
+  "audio-flamingo3": {
+   "D4": {
+    "n": 200,
+    "mean": 2.975
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.575
+   },
+   "D6": {
+    "n": 200,
+    "mean": 3.695
+   }
+  },
+  "moss-audio": {
+   "D4": {
+    "n": 200,
+    "mean": 3.445
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.715
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.16
+   }
+  },
+  "moss-music": {
+   "D4": {
+    "n": 200,
+    "mean": 4.335
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.99
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.355
+   }
+  },
+  "music-flamingo": {
+   "D4": {
+    "n": 200,
+    "mean": 3.925
+   },
+   "D5": {
+    "n": 199,
+    "mean": 3.9598
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.365
+   }
+  },
+  "qwen25-omni": {
+   "D4": {
+    "n": 200,
+    "mean": 3.13
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.24
+   },
+   "D6": {
+    "n": 200,
+    "mean": 3.525
+   }
+  },
+  "qwen3-omni-instruct": {
+   "D4": {
+    "n": 200,
+    "mean": 3.745
+   },
+   "D5": {
+    "n": 200,
+    "mean": 3.945
+   },
+   "D6": {
+    "n": 200,
+    "mean": 4.33
+   }
+  }
+ },
+ "comparisons": {
+  "SFT_v3_rp105+music-rules-v5": [
+   {
+    "baseline": "SFT_v3_rp105",
+    "dimension": "D4",
+    "n": 200,
+    "mean_difference": 0.905,
+    "ci95": [
+     0.755,
+     1.055
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "SFT_v3_rp105",
+    "dimension": "D5",
+    "n": 200,
+    "mean_difference": 0.515,
+    "ci95": [
+     0.36,
+     0.67
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "SFT_v3_rp105",
+    "dimension": "D6",
+    "n": 200,
+    "mean_difference": 0.485,
+    "ci95": [
+     0.255,
+     0.72
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "SFT_v3_rp105+refine-v1",
+    "dimension": "D4",
+    "n": 200,
+    "mean_difference": 0.835,
+    "ci95": [
+     0.68,
+     0.99
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "SFT_v3_rp105+refine-v1",
+    "dimension": "D5",
+    "n": 200,
+    "mean_difference": 0.485,
+    "ci95": [
+     0.32,
+     0.645
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "SFT_v3_rp105+refine-v1",
+    "dimension": "D6",
+    "n": 200,
+    "mean_difference": 0.445,
+    "ci95": [
+     0.23,
+     0.655
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "audio-flamingo-next",
+    "dimension": "D4",
+    "n": 200,
+    "mean_difference": 0.555,
+    "ci95": [
+     0.405,
+     0.7
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "audio-flamingo-next",
+    "dimension": "D5",
+    "n": 200,
+    "mean_difference": 0.265,
+    "ci95": [
+     0.11,
+     0.42
+    ],
+    "p_sign_flip": 0.0005999400059994001,
+    "p_holm": 0.0059994000599940004,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "audio-flamingo-next",
+    "dimension": "D6",
+    "n": 200,
+    "mean_difference": 0.285,
+    "ci95": [
+     0.085,
+     0.485
+    ],
+    "p_sign_flip": 0.0065993400659934,
+    "p_holm": 0.0527947205279472,
+    "verdict": "no_significant_difference"
+   },
+   {
+    "baseline": "audio-flamingo3",
+    "dimension": "D4",
+    "n": 200,
+    "mean_difference": 1.385,
+    "ci95": [
+     1.24,
+     1.52
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "audio-flamingo3",
+    "dimension": "D5",
+    "n": 200,
+    "mean_difference": 0.45,
+    "ci95": [
+     0.295,
+     0.59
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "audio-flamingo3",
+    "dimension": "D6",
+    "n": 200,
+    "mean_difference": 0.76,
+    "ci95": [
+     0.54,
+     0.975125
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "moss-audio",
+    "dimension": "D4",
+    "n": 200,
+    "mean_difference": 0.915,
+    "ci95": [
+     0.755,
+     1.07
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "moss-audio",
+    "dimension": "D5",
+    "n": 200,
+    "mean_difference": 0.31,
+    "ci95": [
+     0.154875,
+     0.46
+    ],
+    "p_sign_flip": 0.00019998000199980003,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "moss-audio",
+    "dimension": "D6",
+    "n": 200,
+    "mean_difference": 0.295,
+    "ci95": [
+     0.105,
+     0.49
+    ],
+    "p_sign_flip": 0.0032996700329967,
+    "p_holm": 0.029697030296970302,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "moss-music",
+    "dimension": "D4",
+    "n": 200,
+    "mean_difference": 0.025,
+    "ci95": [
+     -0.115,
+     0.165
+    ],
+    "p_sign_flip": 0.7851214878512148,
+    "p_holm": 1.0,
+    "verdict": "no_significant_difference"
+   },
+   {
+    "baseline": "moss-music",
+    "dimension": "D5",
+    "n": 200,
+    "mean_difference": 0.035,
+    "ci95": [
+     -0.125,
+     0.2
+    ],
+    "p_sign_flip": 0.7157284271572842,
+    "p_holm": 1.0,
+    "verdict": "no_significant_difference"
+   },
+   {
+    "baseline": "moss-music",
+    "dimension": "D6",
+    "n": 200,
+    "mean_difference": 0.1,
+    "ci95": [
+     -0.085,
+     0.285
+    ],
+    "p_sign_flip": 0.32896710328967105,
+    "p_holm": 1.0,
+    "verdict": "no_significant_difference"
+   },
+   {
+    "baseline": "music-flamingo",
+    "dimension": "D4",
+    "n": 200,
+    "mean_difference": 0.435,
+    "ci95": [
+     0.275,
+     0.6
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "music-flamingo",
+    "dimension": "D5",
+    "n": 199,
+    "mean_difference": 0.065327,
+    "ci95": [
+     -0.110553,
+     0.236181
+    ],
+    "p_sign_flip": 0.48755124487551244,
+    "p_holm": 1.0,
+    "verdict": "no_significant_difference"
+   },
+   {
+    "baseline": "music-flamingo",
+    "dimension": "D6",
+    "n": 200,
+    "mean_difference": 0.09,
+    "ci95": [
+     -0.14,
+     0.315
+    ],
+    "p_sign_flip": 0.46595340465953405,
+    "p_holm": 1.0,
+    "verdict": "no_significant_difference"
+   },
+   {
+    "baseline": "qwen25-omni",
+    "dimension": "D4",
+    "n": 200,
+    "mean_difference": 1.23,
+    "ci95": [
+     1.085,
+     1.37
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "qwen25-omni",
+    "dimension": "D5",
+    "n": 200,
+    "mean_difference": 0.785,
+    "ci95": [
+     0.63,
+     0.935
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "qwen25-omni",
+    "dimension": "D6",
+    "n": 200,
+    "mean_difference": 0.93,
+    "ci95": [
+     0.715,
+     1.145
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "qwen3-omni-instruct",
+    "dimension": "D4",
+    "n": 200,
+    "mean_difference": 0.615,
+    "ci95": [
+     0.445,
+     0.775125
+    ],
+    "p_sign_flip": 9.999000099990002e-05,
+    "p_holm": 0.0026997300269973002,
+    "verdict": "significant_advantage"
+   },
+   {
+    "baseline": "qwen3-omni-instruct",
+    "dimension": "D5",
+    "n": 200,
+    "mean_difference": 0.08,
+    "ci95": [
+     -0.08,
+     0.235
+    ],
+    "p_sign_flip": 0.35676432356764326,
+    "p_holm": 1.0,
+    "verdict": "no_significant_difference"
+   },
+   {
+    "baseline": "qwen3-omni-instruct",
+    "dimension": "D6",
+    "n": 200,
+    "mean_difference": 0.125,
+    "ci95": [
+     -0.08,
+     0.32
+    ],
+    "p_sign_flip": 0.23947605239476052,
+    "p_holm": 1.0,
+    "verdict": "no_significant_difference"
+   }
+  ]
+ }
+}

@@ -1,11 +1,13 @@
 {
   "date": "2026-11-17",
-  "author_statement": "The currently reported D1-D3 results use direct SFT captioner predictions, without an additional 397B editor.",
+  "author_statement": "The current captioner generates directly from SFT, without an additional LLM editor. Historical GitHub refine labels are naming errors, confirmed again by the author on 2026-11-17.",
   "existing_source_commit": "dc6dfd9894fb702acb857524f930481efec829df",
   "existing_source_path": "results/m2d/sft_v3_rp105_refine_v1_2000_20261116/",
   "existing_metadata_method": "SFT_v3_rp105+refine-v1",
   "existing_metadata_editor": "Qwen3.5-397B-A17B",
-  "resolution_status": "Author statement conflicts with frozen processing-stage metadata; generation lineage not independently resolved.",
-  "manuscript_action": "Remove unqualified editor-use claim; retain provenance uncertainty without asserting editor absence as independently verified.",
-  "scores_or_frozen_source_files_modified": false
+  "resolution_status": "Author-confirmed historical export-label error; paper uses direct-SFT terminology.",
+  "manuscript_action": "Describe direct SFT without an additional LLM editor; preserve historical files and metadata verbatim. Keep deterministic music-rule output as a separate control.",
+  "scores_or_frozen_source_files_modified": false,
+  "independent_generation_trace_verified": false,
+  "new_music_release": "44d4290892ee73f9e8a3a65390d4e990dd521049"
 }

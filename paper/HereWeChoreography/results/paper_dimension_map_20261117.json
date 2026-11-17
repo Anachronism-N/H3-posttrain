@@ -17,7 +17,9 @@
     "replaces_old_D6_definition": true,
     "legacy_D6_numeric_scores_reusable": false,
     "local_event_gate": false,
-    "calibration_completed": false
+    "calibration_completed": false,
+    "measured_release": "44d4290892ee73f9e8a3a65390d4e990dd521049",
+    "human_calibration_completed": false
   },
   "score_values_changed": false,
   "evaluation_code_scope": "Paper display mapping and rubric design; frozen inference records are unchanged."

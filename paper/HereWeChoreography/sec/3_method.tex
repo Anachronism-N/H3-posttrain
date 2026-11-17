@@ -2,10 +2,12 @@
 \section{Method}
 \label{sec:method}
 
-\subsection{Local Expert and Stateful Harness}
+\subsection{ChoreoScribe and the Stateful Harness}
 Given music $x$ of duration $T$ and an optional brief, we generate a whole-song textual score. Each event specifies an interval, movement track, action, and optional motif. Tracks represent concurrency; motifs represent recurring movement ideas. Our motion primitives are open-vocabulary movement proposals, rather than a learned codebook or 3D clips. Integer sample indices define the source clock; presentation and evaluation use global seconds.
 
-The expert is a LoRA-adapted Qwen3-Omni-30B-A3B-Captioner~\cite{qwen3omni}.
+\captioner is our textual choreographer, a LoRA-adapted
+Qwen3-Omni-30B-A3B-Captioner~\cite{qwen3omni}. It maps a short music clip
+to a movement description directly, without an additional LLM editor.
 We use \emph{joint-aware clause reweighting} to emphasize movement
 descriptions associated with selected joints or body regions:
 \begin{equation}

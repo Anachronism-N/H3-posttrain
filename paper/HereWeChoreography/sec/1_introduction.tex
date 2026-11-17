@@ -19,7 +19,7 @@ dance therefore measures only part of the task; musical response and
 whole-song organization require separate assessment.
 
 We address these requirements with \method, which decouples local movement
-prediction from global composition. A dedicated short-clip model,
+prediction from global composition. \captioner, our short-clip textual choreographer,
 trained with joint-aware clause reweighting, provides movement proposals.
 A stateful harness groups two to four musical bars
 into duration-aware units and composes them using a segment outline,
@@ -31,13 +31,13 @@ with fixed model weights.
 
 The framework connects four contributions: an evidence-linked
 music--movement resource and construction pipeline, a task-specific
-local model trained by supervised fine-tuning, a stateful compositional
+local model, \captioner, trained by supervised fine-tuning, a stateful compositional
 harness, and an evaluation protocol covering local content, musical
 response, and whole-song organization. Together, they address supervision,
 local prediction, global composition, and assessment within one textual
 planning interface.
 
-The local model achieves 30.80 ROUGE-L versus 14.99 for the strongest
+\captioner achieves 30.80 ROUGE-L versus 14.99 for the strongest
 evaluated general audio-language baseline on this metric, with gains
 across all reported reference-agreement measures. A dedicated audio-based
 style expert supplies global conditioning. Fixed-window whole-song

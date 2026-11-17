@@ -7,3 +7,5 @@ cvpr.sty -whitespace
 ieeenat_fullname.bst -whitespace
 preamble.tex -whitespace
 results/harness/*.notes_excerpt.txt -whitespace
+
+figures/revision_20261117/*.svg -whitespace

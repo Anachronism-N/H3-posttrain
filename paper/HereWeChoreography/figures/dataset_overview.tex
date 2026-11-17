@@ -3,15 +3,15 @@
 \centering
 \begin{subfigure}{\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figures/annotation_pipeline_v5.png}
+\includegraphics[width=\textwidth]{figures/revision_20261117/paper/annotation_pipeline.pdf}
 \caption{Geometry-based annotation framework and evidence-preserving refinement.}
 \label{fig:annotation-pipeline}
 \end{subfigure}
 \par\medskip
 \begin{subfigure}{\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figures/annotation_distributions_v3.pdf}
-\caption{Descriptive statistics on the same 22,352 paired clips.}
+\includegraphics[width=\textwidth]{figures/revision_20261117/paper/annotation_audit.pdf}
+\caption{Supervision profile and audit on the same paired records.}
 \label{fig:annotation-distributions}
 \end{subfigure}
 \caption{\textbf{Annotation construction and supervision profile.}
@@ -22,9 +22,9 @@ are detail views; matching 4/5 badges identify expanded stages.
 This is a component-integration framework; current experimental labels
 come from the existing 2D rule-log rewrite route, detailed in
 Appendix~\ref{sec:annotation-details}.
-(b) Frozen paired statistics retain all automatic quality flags.
-Event occurrences, caption body words, and body-part shares use different
-units; they characterize supervision rather than gains in action accuracy
-or diversity. The style prefix is excluded from word counts.}
+(b) Six audit views retain all producer flags. Events, body words, and
+source-rule windows have different units; the windows are not musical bars.
+Body-part shares describe source-rule information. Automatic pass flags and
+paired metadata checks do not establish semantic correctness or split independence.}
 \label{fig:dataset-overview}
 \end{figure*}

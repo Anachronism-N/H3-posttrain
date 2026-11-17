@@ -6,7 +6,9 @@
 \input{preamble}
 
 \definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
+\usepackage{xr-hyper}
 \usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
+\externaldocument[][nocite]{ref-build/appendix}[appendix.pdf]
 
 \def\confName{CVPR}
 \def\confYear{2027}
@@ -41,10 +43,5 @@
 \input{sec/6_llm_usage_statement}
 \clearpage
 \input{sec/7_references}
-
-\clearpage
-\appendix
-\onecolumn
-\input{sec/8_supplementary}
 
 \end{document}

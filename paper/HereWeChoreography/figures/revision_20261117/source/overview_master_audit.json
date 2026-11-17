@@ -1,0 +1,36 @@
+[
+  {
+    "file": "overview_method.svg",
+    "font": "Times New Roman",
+    "elements": {
+      "svg": 1,
+      "title": 1,
+      "desc": 1,
+      "rect": 29,
+      "g": 6,
+      "text": 124,
+      "line": 344,
+      "path": 56,
+      "circle": 24
+    },
+    "embedded_images": 0,
+    "native_text": true
+  },
+  {
+    "file": "overview_benchmark.svg",
+    "font": "Times New Roman",
+    "elements": {
+      "svg": 1,
+      "title": 1,
+      "desc": 1,
+      "rect": 28,
+      "g": 4,
+      "line": 435,
+      "text": 112,
+      "circle": 64,
+      "path": 32
+    },
+    "embedded_images": 0,
+    "native_text": true
+  }
+]

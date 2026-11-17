@@ -1,0 +1,13 @@
+# Rebuild cross-document labels before the selected PDF is compiled.
+# Direct pdflatex calls do not read latexmkrc, so this cannot recurse.
+use File::Path qw(make_path);
+make_path('ref-build');
+for my $stem (qw(main appendix)) {
+    my $status = system(
+        'pdflatex', '-draftmode', '-interaction=batchmode',
+        '-halt-on-error', '-file-line-error',
+        '-output-directory=ref-build', "-jobname=$stem", "$stem.tex"
+    );
+    die "Cross-reference preparation failed for $stem (status $status). See ref-build/$stem.log.\n"
+        if $status != 0;
+}

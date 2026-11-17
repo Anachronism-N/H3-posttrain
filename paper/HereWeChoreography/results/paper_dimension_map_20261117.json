@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-17",
+  "display_codes": {
+    "D1": "Q1",
+    "D2": "Q2",
+    "D3": "Q3",
+    "D4": "M1",
+    "D5": "M2",
+    "D6": "M3",
+    "L1": "G1",
+    "L2": "G2",
+    "L3": "G3"
+  },
+  "unchanged_record_fields": true,
+  "new_M3": {
+    "name": "Affective compatibility",
+    "replaces_old_D6_definition": true,
+    "legacy_D6_numeric_scores_reusable": false,
+    "local_event_gate": false,
+    "calibration_completed": false
+  },
+  "score_values_changed": false,
+  "evaluation_code_scope": "Paper display mapping and rubric design; frozen inference records are unchanged."
+}

@@ -1,8 +1,8 @@
 {
   "compile_from_snapshot": true,
-  "preview_pages": 16,
+  "preview_pages": 9,
   "main_pages": 8,
-  "preview_sha256": "b28b9c9aee6d7ee443fbd00b36d50f0d4078a987fef47f5ab89cf46b708324a1",
+  "preview_sha256": "36e0f847ce592e4a4634c1181200fee6224372bb5b75bad294242fc0d92eab69",
   "no_model_runs": false,
   "table_method_label": "Ours",
   "per_cell_counts": false,
@@ -14,13 +14,18 @@
   "compile_from_source": true,
   "source_and_snapshot_tex_identical": true,
   "no_training_or_benchmark_inference": true,
-  "image_generation_calls": 5,
   "overview_semantic_review": true,
   "page_2_visual_review": true,
   "joint_weighting_source_review": true,
   "alternative_overview_compiles": true,
-  "alternative_preview_pages": 16,
   "author_clarification_recorded": true,
   "numeric_results_unchanged": true,
-  "rebuilt_text_matches_all_pages": true
+  "supplementary_pages": 8,
+  "revision_image_generation_calls": 0,
+  "display_dimensions": "Q/M/G",
+  "native_powerpoint_slides": 8,
+  "exact_ppt_png_crop_checks": 8,
+  "native_powerpoint_execution_verified": false,
+  "rebuilt_text_matches_all_pages": true,
+  "supplementary_text_matches_all_pages": true
 }

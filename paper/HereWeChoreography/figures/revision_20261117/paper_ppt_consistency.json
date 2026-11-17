@@ -1,0 +1,130 @@
+{
+  "source": "One native editable Artifact Tool presentation",
+  "figures": [
+    {
+      "figure": "overview_method",
+      "slide": 1,
+      "paper_png_is_exact_crop_of_ppt_render": true,
+      "paper_pdf_exported_from_same_native_slide": true,
+      "crop_pixels": [
+        60,
+        64,
+        3140,
+        1736
+      ],
+      "source_svg_sha256": "808c63d92555113f5e4f14c7e82287bd5d4459ce507969415615cbef31604f77",
+      "paper_png_sha256": "4afee63564dcf1f98bf559d24f7f08588423c153e9e701fb50446ad487fe5c4a",
+      "paper_pdf_sha256": "27090257ed6a8e119d9348c6afa2cec747ec648d8569ef41bb37400e55871ec7"
+    },
+    {
+      "figure": "overview_benchmark",
+      "slide": 2,
+      "paper_png_is_exact_crop_of_ppt_render": true,
+      "paper_pdf_exported_from_same_native_slide": true,
+      "crop_pixels": [
+        60,
+        64,
+        3140,
+        1736
+      ],
+      "source_svg_sha256": "dc6885eedfcdd1f7ec47c1382e167c68b0c874ed33b2b4369d80323f751def39",
+      "paper_png_sha256": "e0c0383adde17c415bf03f8c917b870e324258139ae8c64af6dac70ddf4de923",
+      "paper_pdf_sha256": "09e2449beda288f65a43e7a591b680265b415b0ef516b294983a2f5942dfdd2b"
+    },
+    {
+      "figure": "annotation_pipeline",
+      "slide": 3,
+      "paper_png_is_exact_crop_of_ppt_render": true,
+      "paper_pdf_exported_from_same_native_slide": true,
+      "crop_pixels": [
+        60,
+        64,
+        3140,
+        1736
+      ],
+      "source_svg_sha256": "227b2bf7b694d55d6934b45894cbc77b9c67ab27c0bc609d5ad690cd7a211e08",
+      "paper_png_sha256": "cc5032e8b61588361f92c7f6d4d70e418349b12dcb945385f3a1bb54972ea4c4",
+      "paper_pdf_sha256": "3d4da88911f4a3e15a43f184209580d0f0ba8d640126f4367fcf4083d16ece54"
+    },
+    {
+      "figure": "evaluation_framework",
+      "slide": 4,
+      "paper_png_is_exact_crop_of_ppt_render": true,
+      "paper_pdf_exported_from_same_native_slide": true,
+      "crop_pixels": [
+        60,
+        171,
+        3140,
+        1629
+      ],
+      "source_svg_sha256": "01b86dbe0a257480d108c514f269225435c794844b3a2d95468ede0548c982eb",
+      "paper_png_sha256": "3d1b395c39cdb51287e4254049ff5867d5281bd720322584a7db1f40d441b206",
+      "paper_pdf_sha256": "540fd249b17a6299f12ad03131e9887dff6e13f0a2e23412f0baf85323901324"
+    },
+    {
+      "figure": "agent_policy_comparison",
+      "slide": 5,
+      "paper_png_is_exact_crop_of_ppt_render": true,
+      "paper_pdf_exported_from_same_native_slide": true,
+      "crop_pixels": [
+        60,
+        216,
+        3140,
+        1584
+      ],
+      "source_svg_sha256": "ad34296b0171f9af983eaa4608bc1bbe806baf3749362eb25c9e7b079656c64f",
+      "paper_png_sha256": "75ac0badfe87f2d2b9a0f460b815fff49501ea5be4cb85ddf2dfc7b434660730",
+      "paper_pdf_sha256": "6f0ba81f9f22a6dc01443f04bc720c31204c23bb898b039ecb7d867d5b8b6cc5"
+    },
+    {
+      "figure": "dataset_construction",
+      "slide": 6,
+      "paper_png_is_exact_crop_of_ppt_render": true,
+      "paper_pdf_exported_from_same_native_slide": true,
+      "crop_pixels": [
+        60,
+        384,
+        3140,
+        1416
+      ],
+      "source_svg_sha256": "d8dcabac0dd957041cf17e55407f0c8b34f334146885316c8f51f5757103dfdb",
+      "paper_png_sha256": "3b2414b19922746ee14bbcc9fefecb0316b88bef00b655d007a59933dff67f7d",
+      "paper_pdf_sha256": "69c3c95d7df996a830850a566c4ba3a45155ae1f3b43fe56bb52e3eafd11e84c"
+    },
+    {
+      "figure": "annotation_audit",
+      "slide": 7,
+      "paper_png_is_exact_crop_of_ppt_render": true,
+      "paper_pdf_exported_from_same_native_slide": true,
+      "crop_pixels": [
+        60,
+        248,
+        3140,
+        1552
+      ],
+      "source_svg_sha256": "c6f7661189e22fd244479decf73a9568fb06dc9dd007b981ac74013c878868fd",
+      "paper_png_sha256": "2cd588a99140618f62e0ff02cdde4e800130910ae4a6e2cda10f1ac29a49af8d",
+      "paper_pdf_sha256": "43917a3c04de339aad097902d24ad89e3c330727df9b283c255547fcbc34c797"
+    },
+    {
+      "figure": "choreography_case",
+      "slide": 8,
+      "paper_png_is_exact_crop_of_ppt_render": true,
+      "paper_pdf_exported_from_same_native_slide": true,
+      "crop_pixels": [
+        60,
+        94,
+        3140,
+        1706
+      ],
+      "source_svg_sha256": "3918cd82d7ce04fb279031242ce4e194ca5f45a9f9f380b1b5ea1ad8702dd0b5",
+      "paper_png_sha256": "a3fa9e01c5681e2b99038ddbb25f63f2b74487b75022710c27e9e5586272e539",
+      "paper_pdf_sha256": "f4d18acff8f650a7bb7a5e56832b5ec2dbf9aa1f7561886b7eb33fc409360f58"
+    }
+  ],
+  "fonts": [
+    "Times New Roman"
+  ],
+  "full_figure_raster_wrapping_in_ppt": false,
+  "rendering_note": "PPT and paper geometry, labels, icons and colors originate from the same native objects. External PowerPoint viewers require the declared font."
+}

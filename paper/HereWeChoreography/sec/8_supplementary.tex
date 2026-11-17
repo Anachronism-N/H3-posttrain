@@ -68,8 +68,8 @@ The main comparison uses the recorded r4 scoring family, the only
 published version available for every method. Baselines provide r4
 judgments on the same 1,900 holdout IDs; Ours is restricted to those
 IDs before aggregation. Each dimension then uses the common valid
-intersection across all eight methods: 1,888 for D1, 1,833 for D2,
-and 1,858 for D3. The shared valid-case means, per-method available-case
+intersection across all eight methods: 1,888 for Q1, 1,833 for Q2,
+and 1,858 for Q3. The shared valid-case means, per-method available-case
 means, missing statuses, and ID hashes are preserved in the audit.
 The older baseline v1.2 run is not mixed into the comparison.
 
@@ -80,10 +80,13 @@ judgments were not released. No per-dimension maximum across versions
 is selected. The baseline manifest identifies the r4 version by name,
 but omits the rubric content hash, so exact prompt-hash parity cannot
 be independently established from the export.
+Published record IDs D1--D3 are displayed as Q1--Q3 without changing
+their numerical values. The revised M3 affect criterion replaces the
+earlier local-development design; no legacy development scores are reused.
 These records cannot establish calibration to our nine-dimensional
 anchors. Differences between protocols are not model improvements, and
 reference agreement has not been recomputed on the supplied rating outputs.
-Full-release Ours D1/D2/D3 valid counts are 1,999/1,990/1,999 for r4
+Full-release Ours Q1/Q2/Q3 valid counts are 1,999/1,990/1,999 for r4
 and 2,000/1,966/1,999 for v2.1; these available-case values are not
 substituted for the common-case main table. The earlier two-axis
 baseline assessment is likewise not relabeled as these three dimensions.
@@ -224,11 +227,11 @@ The proposed rubric keeps each dimension separate. For local evaluation,
 the three common regions are first averaged within each song using the
 scored regions for that dimension. A song-level mean then gives each
 song equal weight, with valid-region and valid-song counts reported.
-Unknown or not-applicable judgments are not replaced by zeros.
+Unknown judgments are not replaced by zeros.
 Comparisons use paired song differences; source-group bootstrap draws
 resample songs together with all of their regions. The planned primary
 comparisons are the proposed method against each of the three baseline
-policies on L1--L3; multiplicity control and the primary judge must be
+policies on G1--G3; multiplicity control and the primary judge must be
 frozen before examining results. These aggregation rules specify the
 next experiment and do not imply that new rubric scores already exist.
 
@@ -253,6 +256,7 @@ derived captions.
 
 \section{Detailed Rubric and Calibration Guide}
 \label{sec:rubric-guide}
+\input{tables/rubric_core_anchors}
 \input{tables/rubric_anchors_detailed}
 The anchors distinguish requirements for local movement, music response,
 and whole-song organization. Before collecting formal scores, calibration
@@ -265,7 +269,8 @@ establishes agreement with independent listeners.
 \paragraph{AI assistance.}
 Language models assisted with drafting and revising manuscript text,
 literature organization, code, and experiment planning. GPT Image
-produced conceptual illustrations; statistical plots reproduce frozen
+produced early conceptual illustrations; the current diagrams were rebuilt
+as editable vector objects, and statistical panels reproduce frozen
 audit values. GPT-6.1-sol participates in annotation refinement.
 Numerical results come from saved experiment artifacts. The authors
 retain responsibility for the manuscript, citations, figures, code,

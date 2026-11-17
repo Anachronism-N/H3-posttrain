@@ -85,14 +85,14 @@ def main():
     tex = r"""% Generated from matched r4 records by results/build_d123_refinement_table.py.
 \begin{table*}[t]
 \centering
-\caption{Automatic caption assessment on a 1--5 scale (higher is better). Bold marks the highest score per dimension. D4--D6 remain unreported. Evaluation and inference details appear in Appendix~\ref{sec:experimental-details}.}
+\caption{Automatic caption assessment on a 1--5 scale (higher is better). Bold marks the highest score per dimension. M1--M3 remain unreported. Evaluation and inference details appear in Appendix~\ref{sec:experimental-details}.}
 \label{tab:refinement-d123}
 \begingroup\small
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.10}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrrrr@{}}
 \toprule
-Method & D1 & D2 & D3 & D4 & D5 & D6 \\
+Method & Q1 & Q2 & Q3 & M1 & M2 & M3 \\
 \midrule
 """
     for method,name in MODELS:

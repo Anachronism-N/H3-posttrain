@@ -1,0 +1,161 @@
+{
+  "schema": "annotation_audit_figure.v1",
+  "source_file": "figures/source/dataset_distribution_audit.json",
+  "source_sha256": "bef81f195f1fc88372ee6b3a8206818d043e28721fff97f9ab4a077254637052",
+  "source_revision": "1ca58b4ebc7f9457fb7dc7db587c05f3e79b767a",
+  "population": "All strictly paired original/refined validation+test records; no gate filtering",
+  "n": 22352,
+  "original_events": {
+    "edges": [
+      0,
+      10,
+      20,
+      40,
+      60,
+      80,
+      100000
+    ],
+    "interval": "[left,right)",
+    "counts": [
+      108,
+      543,
+      6504,
+      10507,
+      4198,
+      492
+    ],
+    "n": 22352
+  },
+  "event_summary": {
+    "n": 22352,
+    "mean": 47.20552970651396,
+    "median": 47.0,
+    "p10": 28.0,
+    "p90": 68.0,
+    "min": 1,
+    "max": 111
+  },
+  "caption_words": {
+    "edges": [
+      0,
+      60,
+      100,
+      140,
+      180,
+      100000
+    ],
+    "interval": "[left,right)",
+    "counts": [
+      407,
+      3442,
+      8761,
+      6903,
+      2839
+    ],
+    "n": 22352
+  },
+  "caption_word_summary": {
+    "n": 22352,
+    "mean": 135.327979599141,
+    "median": 133.0,
+    "p10": 88.0,
+    "p90": 186.0,
+    "min": 4,
+    "max": 328
+  },
+  "source_bodypart_counts": {
+    "wrist": 636663,
+    "elbow": 312964,
+    "knee": 105511
+  },
+  "source_event_total": 1055138,
+  "window_counts": {
+    "3": 4821,
+    "4": 3841,
+    "2": 10538,
+    "5": 1455,
+    "1": 1070,
+    "6": 342,
+    "7": 178,
+    "8": 63,
+    "10": 13,
+    "9": 25,
+    "11": 5,
+    "12": 1
+  },
+  "window_summary": {
+    "n": 22352,
+    "mean": 2.8396564065855405,
+    "median": 2.0,
+    "p10": 2.0,
+    "p90": 4.0,
+    "min": 1,
+    "max": 12
+  },
+  "duration_counts": {
+    "5.0625": 22352
+  },
+  "style_counts": {
+    "unknown": 13312,
+    "contemporary": 8612,
+    "chinese classical": 60,
+    "k-pop": 202,
+    "indian / bollywood": 2,
+    "other ethnic / folk": 107,
+    "belly dance": 9,
+    "pop / casual": 21,
+    "hip-hop": 18,
+    "freestyle / other": 7,
+    "lyrical": 1,
+    "ballet": 1
+  },
+  "style_field_changed_count": 0,
+  "producer_gate": {
+    "true": 22247,
+    "false": 105
+  },
+  "pairing": {
+    "original_val_test_records": 22352,
+    "final_val_test_records": 22352,
+    "original_duplicate_id_records": 0,
+    "final_duplicate_id_records": 0,
+    "missing_final_unique_ids": 0,
+    "missing_original_unique_ids": 0,
+    "source_or_split_mismatch": 0,
+    "strict_paired_unique_ids": 22352,
+    "all_ids_used_not_quality_selected": true
+  },
+  "definitions": {
+    "english_words": "ASCII Latin words including apostrophized/hyphenated compounds; Dance style header removed; recomputed from motion_caption",
+    "final_sents": "Producer sents field, not independently semantic sentence validation",
+    "original_events": "Nonempty Chinese full-stop-separated statements in target_windows captions, concatenated once across windows",
+    "gate": "Producer automatic check; not human or visual quality approval",
+    "style": "Existing source metadata, not an independent inferred class; unknown retained",
+    "histogram_overflow": "Final large edge 100000 is display overflow, labelled >=180 words / >=80 events / >=10 sentences"
+  },
+  "limits": [
+    "Original Chinese event statements and final English sentences are different units; their counts demonstrate compression/organization only, not higher action diversity.",
+    "Raw 16-class event vocabulary versus free prose vocabulary is not a comparable action-space measure.",
+    "No verified before/after action-class coverage claimed; lexical mentions can change through paraphrase and do not prove factual coverage.",
+    "Gate filtering changes retained metadata distribution only, not demonstrated caption quality.",
+    "Full corpus final distribution is 220667; original-final paired distributions cover val+test only, not full corpus.",
+    "No video/audio downloaded or read for this audit; no inference or quality judging performed."
+  ],
+  "research_references": [
+    {
+      "work": "HumanML3D (CVPR 2022)",
+      "url": "https://github.com/EricGuo5513/HumanML3D",
+      "lesson": "Report language/motion resource characteristics; do not equate lexical frequencies with semantic diversity."
+    },
+    {
+      "work": "BABEL (CVPR 2021)",
+      "url": "https://babel.is.tue.mpg.de/data.html",
+      "lesson": "Keep annotation granularity and temporal segment support explicit."
+    },
+    {
+      "work": "FineDance (ICCV 2023)",
+      "url": "https://github.com/li-ronghui/FineDance",
+      "lesson": "Audit body-part information and genre coverage; retain unknown style metadata."
+    }
+  ]
+}

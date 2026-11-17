@@ -1,73 +1,69 @@
 # HereWeChoreography manuscript snapshot
 
-This directory contains the active CVPR manuscript, figures, source tables, and
-frozen result receipts. `HereWeChoreography.pdf` is the compiled preview.
-The experiment section reports the available D1-D3 evidence; D4-D6 remain
-unreported until their evaluation is complete. The style comparison uses only
-the 822-clip population. Detailed result scopes and limitations are in `results/`.
+The current paper is `main.tex` / `HereWeChoreography.pdf` (eight content pages
+plus references); supplementary material is `appendix.tex` / `appendix.pdf`.
+`main.pdf` is an identical alias so cross-document PDF links remain valid.
+The existing separation between paper and supplement is retained.
 
-The proposed local D4-D6 redesign is documented in
-[the style/affect rubric proposal](../../notes/62_local_music_rubric_style_affect_proposal_20261117_zh.md).
-It requires calibration and has not been applied to the manuscript's rubric,
-evaluation code, or reported scores.
+## Current editable figures
 
-## Overview variants and expert supervision
+Use [the revised figure package](figures/revision_20261117/README.md).
+It includes both overview alternatives, F2a/F2b, F3, F4 and two supplementary
+diagrams as SVG masters and an eight-slide native editable PowerPoint.
+Paper PDFs and PNGs come from the same native slide objects; the PNG crop
+checks are in `paper_ppt_consistency.json`. Only six real video photographs
+are raster objects. Older `figures/editable` files are historical versions.
 
-The default Figure 1 uses `figures/overview_method_v3.png`, emphasizing the
-trained expert, JEV, controller/tool feedback, persistent state and targeted
-revision. The alternative `figures/overview_data_benchmark_v2.png` emphasizes
-paired supervision and the proposed benchmark. Uncomment the
-`\def\OverviewDataBenchmark{1}` line in `main.tex` to select the latter.
-The two images are alternatives for one overview slot. Source prompts and a
-semantic review receipt are in `figures/source/overview_*`.
+Figure 1 defaults to `figures/revision_20261117/paper/overview_method.pdf`.
+Uncomment `\def\OverviewDataBenchmark{1}` in `main.tex` for the benchmark
+alternative. The two figures are alternatives for one overview slot.
 
-The expert's training description now uses joint-aware clause reweighting,
-instantiated for lower-limb clauses at weight 1.5. Public implementation and
-checkpoint-report evidence are frozen in `results/joint_clause_weighting/`;
-the objective uses the count of valid assistant tokens as its denominator.
-No new training, benchmark inference or experimental result was added.
+## Evaluation names and unchanged results
+
+Q1--Q3 denote local text quality, M1--M3 local music compatibility, and
+G1--G3 global composition. Frozen records retain their D/L field names;
+existing D1--D3 scores are displayed as Q1--Q3 without changing values.
+M3 is the newly defined affective compatibility criterion: old event-response
+D6 scores cannot be reused. Music-aware ratings remain unreported pending
+calibration and execution. The mapping is in
+`results/paper_dimension_map_20261117.json`.
+
+The style table uses the 822-clip population. Detailed scope and provenance
+remain in `results/`. No new training, benchmark inference, human labels or
+quality scores were produced by this figure revision.
 
 ## Build
 
-The eight major figure panels are now available as native editable PowerPoint
-objects and SVG sources in [figures/editable](figures/editable/README.md),
-including both overview alternatives. The internal strict review of the
-current manuscript is in [review/strict_review_20261117_zh.md](review/strict_review_20261117_zh.md).
-The review identifies unresolved evidence and fair-comparison requirements;
-this delivery does not revise manuscript claims or add experimental results.
-
-Run from this directory with a TeX distribution containing the CVPR dependencies:
+Run from this directory with a TeX distribution containing CVPR dependencies:
 
 ```sh
 latexmk -pdf -interaction=nonstopmode -halt-on-error -outdir=build main.tex
+latexmk -pdf -interaction=nonstopmode -halt-on-error -outdir=build appendix.tex
 ```
 
-The checked-in figures and tables are sufficient to compile the complete paper.
-Compiler caches and temporary logs are excluded. The enclosing branch preserves
-the bar-style implementation described by the manuscript; the snapshot manifest
-records all copied files and hashes.
-The directory's Git attributes preserve exact file bytes for those hash checks.
+`latexmkrc` prepares cross-document labels in `ref-build/`. Keep both source
+documents together. Detailed rubric anchors are in the supplement; primary
+experiment tables and figures remain in the main paper. The internal strict
+review is in `review/strict_review_20261117_zh.md`.
 
-## Figure and table reproduction
+## Reproduction and provenance
 
-- `python results/build_d123_refinement_table.py` recomputes the versioned
-  D1-D3 means and valid counts from the released per-case judgments.
-- `python results/build_style_prior_822.py` rebuilds the active style table from
-  frozen aggregates and audit assertions, without model inference.
-- `python figures/source/plot_annotation_distributions_v3.py` rebuilds the
-  dataset statistics from `dataset_distribution_audit.json` (NumPy/Matplotlib).
-- The qualitative figure's active plotting source and unchanged source stills
-  are under `figures/source/`. Its text is an author-composed illustration;
-  timestamps and audio derive from actual paired media. It is not a scored model
-  prediction or a demonstration of verified audio-motion synchronization.
-- Raw MP4/WAV files are not redistributed in this snapshot. Full regeneration
-  of the qualitative figure requires restoring case `wJPptuhclZmKAEWs` under
-  `figures/source/case_example/`. The paired-data audit identifies the public
-  dataset `avagelion/dance-data`, source revisions, media hashes, and bounded tar
-  member locations. `extract_source_video_range.py wJPptuhclZmKAEWs 48 4024`
-  documents the range-download route; verify both restored media hashes before
-  running the plotting source. No GPU or new model inference is required.
-- Conceptual GPT Image prompts and provenance are retained for the active
-  generated figures. Source motion-description components remain attributed.
+- `python results/build_d123_refinement_table.py` recomputes legacy D1--D3
+  means from released judgments and emits the Q/M display table.
+- `python results/build_style_prior_822.py` rebuilds the style table.
+- Current figure rebuild and font/runtime instructions are in the figure
+  package README. Statistical panels use frozen source audit values.
+- The case uses unchanged, uniformly sampled real frames and a measured
+  waveform. Its instructions are author-composed illustrations, not scored
+  model outputs or evidence of measured synchronization.
+- Current labels follow 2D rule-event text refinement. The NLF 3D geometry
+  extension is kept separate from current experimental-label provenance.
+- Raw MP4/WAV files are not redistributed. Full case regeneration requires
+  restoring the media identified in the original source-case audit; the
+  included six stills suffice for rendering the delivered SVG and PPT.
+- Prior GPT Image concept prompts and original frozen receipts remain in
+  historical source directories. Final active diagrams use editable vectors.
 
-This snapshot does not run training or benchmark inference during export.
+The snapshot manifest records copied file hashes. The figure validation receipt
+checks package structure and geometry; it does not claim testing in Microsoft
+PowerPoint or semantic validation of the proposed rubric.

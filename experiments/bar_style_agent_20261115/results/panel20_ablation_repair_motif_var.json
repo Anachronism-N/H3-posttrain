@@ -1,0 +1,13 @@
+{
+ "schema": "panel20.ablation_extra.v1",
+ "variants": {
+  "no_repair": {
+   "complete": 11,
+   "registered": 20
+  },
+  "motif_variation": {
+   "complete": 11,
+   "registered": 20
+  }
+ }
+}

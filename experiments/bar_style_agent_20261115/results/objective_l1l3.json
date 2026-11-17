@@ -1,0 +1,45 @@
+{
+ "schema": "panel20.objective_l1l3.v1",
+ "arms": {
+  "O": {
+   "n": 11,
+   "events": 45.7,
+   "adj_jaccard": 0.325,
+   "adj_disjoint_rate": 0.123,
+   "repeated_4gram_pair_rate": 0.371,
+   "duplicate_sentence_rate": 0.41,
+   "unique_action_ratio": 0.378,
+   "coverage": 1.0
+  },
+  "RA": {
+   "n": 14,
+   "events": 46.2,
+   "adj_jaccard": 0.622,
+   "adj_disjoint_rate": 0.024,
+   "repeated_4gram_pair_rate": 0.314,
+   "duplicate_sentence_rate": 0.513,
+   "unique_action_ratio": 0.38,
+   "coverage": 1.0
+  },
+  "W": {
+   "n": 2,
+   "events": 47,
+   "adj_jaccard": 0.602,
+   "adj_disjoint_rate": 0.0,
+   "repeated_4gram_pair_rate": 0.553,
+   "duplicate_sentence_rate": 0.509,
+   "unique_action_ratio": 0.513,
+   "coverage": 1.0
+  },
+  "SF": {
+   "n": 2,
+   "events": 66,
+   "adj_jaccard": 0.348,
+   "adj_disjoint_rate": 0.005,
+   "repeated_4gram_pair_rate": 0.199,
+   "duplicate_sentence_rate": 0.598,
+   "unique_action_ratio": 0.306,
+   "coverage": 1.0
+  }
+ }
+}

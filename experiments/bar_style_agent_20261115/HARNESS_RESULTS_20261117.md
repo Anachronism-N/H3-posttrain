@@ -60,3 +60,37 @@ the dominant remaining failure is provider output truncation.
 - Two cells per arm failed at dispatch (`no CELL`), an infrastructure failure counted in denominators.
 - L1-L3 are text-only model judgments, not human-validated and not audio-based.
 - A 50-song panel (43 FMA + 7 AIOZ research-licensed short tracks) is prepared but not yet run.
+
+## Update: matched-budget RA, semantic L1/L3, and newer O versions
+
+Full-budget RA reaches 14/20 but uses 99 calls on average. With max_calls_cap=50 (verified applied,
+max calls seen 50), RA drops to **3/20 (15%)**, while O-v3 reaches 12/20 at ~47 calls.
+This supports a same-budget comparison instead of a same-capability claim: O dominates at matched budget,
+RA dominates only when allowed roughly twice the calls.
+
+O versions: v1 11/20, v2 11/20, v3 12/20, v4 11/20; v5 (continuity prompt + motif variation) running.
+
+Semantic L1 (body part + direction + level + motion continuity), completed plans:
+
+| arm | semantic continuity | explicit contradiction | no shared state |
+|---|---:|---:|---:|
+| W | 0.696 | 0.067 | 0.000 |
+| SF | 0.426 | 0.220 | 0.000 |
+| RA | 0.684 | 0.130 | 0.016 |
+| O | 0.405 | 0.169 | 0.104 |
+
+L3 structural metrics:
+
+| arm | recurrences per action | varied share | verbatim share |
+|---|---:|---:|---:|
+| W | 13.8 | 0.275 | 0.196 |
+| SF | 9.4 | 0.392 | 0.607 |
+| RA | 8.8 | 0.418 | 0.543 |
+| O | 8.0 | 0.312 | 0.500 |
+
+Absolute 1-5 model scores saturate for L1/L3 (nearly all 5) even with anchored strict prompts;
+they are not used for conclusions. Pairwise O vs RA: L2 5:4, L3 5:4, L1 1 win / 5 tie / 3 loss.
+
+Extra ablations on 20 songs: no_repair 11/20, motif_variation 11/20; repair toggles are not the bottleneck.
+
+Status: 50-song panel (43 FMA + 7 AIOZ research-licensed tracks, 2124 windows) prepared but not yet run.

@@ -1,0 +1,29 @@
+{
+ "schema": "panel20.l1_semantic.v1",
+ "arms": {
+  "O": {
+   "n": 11,
+   "semantic_continuity": 0.405,
+   "contradiction_rate": 0.169,
+   "disjoint_rate": 0.104
+  },
+  "RA": {
+   "n": 14,
+   "semantic_continuity": 0.684,
+   "contradiction_rate": 0.13,
+   "disjoint_rate": 0.016
+  },
+  "W": {
+   "n": 2,
+   "semantic_continuity": 0.696,
+   "contradiction_rate": 0.067,
+   "disjoint_rate": 0.0
+  },
+  "SF": {
+   "n": 2,
+   "semantic_continuity": 0.426,
+   "contradiction_rate": 0.22,
+   "disjoint_rate": 0.0
+  }
+ }
+}

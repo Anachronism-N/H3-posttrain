@@ -1,0 +1,41 @@
+{
+ "schema": "panel20.objective_l1l3_disc.v1",
+ "arms": {
+  "O": {
+   "n": 11,
+   "L1_continuity": 0.482,
+   "L1_contradiction": 0.404,
+   "L1_disjoint": 0.113,
+   "L3_recurrence": 7.978,
+   "L3_verbatim_share": 0.5,
+   "L3_varied_share": 0.312
+  },
+  "RA": {
+   "n": 14,
+   "L1_continuity": 0.314,
+   "L1_contradiction": 0.667,
+   "L1_disjoint": 0.019,
+   "L3_recurrence": 8.805,
+   "L3_verbatim_share": 0.543,
+   "L3_varied_share": 0.418
+  },
+  "W": {
+   "n": 2,
+   "L1_continuity": 0.02,
+   "L1_contradiction": 0.956,
+   "L1_disjoint": 0.023,
+   "L3_recurrence": 13.824,
+   "L3_verbatim_share": 0.196,
+   "L3_varied_share": 0.275
+  },
+  "SF": {
+   "n": 2,
+   "L1_continuity": 0.302,
+   "L1_contradiction": 0.692,
+   "L1_disjoint": 0.005,
+   "L3_recurrence": 9.446,
+   "L3_verbatim_share": 0.607,
+   "L3_varied_share": 0.392
+  }
+ }
+}

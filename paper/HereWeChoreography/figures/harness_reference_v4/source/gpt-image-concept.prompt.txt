@@ -1,0 +1,28 @@
+Edit the attached scientific method overview, using it as the visual reference and edit target. Produce ONE publication-quality, high-resolution wide landscape figure (roughly 2.1:1) for a CVPR paper. Preserve its rich human-readable visual vocabulary: waveform with bar groups, small specialist icons, trained-model blocks, skeleton with emphasized joints, state/memory icons, lock/edit icons, and tasteful flat dancer illustrations. Redesign the composition substantially to emphasize our contributions and especially the AGENT HARNESS.
+
+Critical corrections:
+1. "Choreographic brief" MUST be physically INSIDE the outlined "Stateful compositional harness", as a first task-state strip containing "Goals · constraints · editable scope". Do not put the brief outside or above that boundary.
+2. Remove "Whole-song textual score" entirely. The right column is titled "Hierarchical choreography", containing a global structure AND local bar-level movement instructions. Under this output draw a distinct "Local and global evaluation" block, showing BOTH local music-and-text evaluation and whole-song evaluation.
+3. The harness is the dominant center (~48% width), left specialist column ~25%, output/evaluation ~27%. It must visibly express the composer-controller-tools decision loop, persistent memory, and targeted revision, not just a chain of boxes.
+4. Bright foregrounds on PALE backgrounds: saturated scholarly teal #008F95, blue #2474B5, purple #7852A9, orange #E69A28; a little coral #D45D64 for evaluation. Backgrounds nearly white #FAFCFD/#FBFAFE/#FFFCF7, navy-black legible text. Do not desaturate foreground icons and labels. No glossy gradients, 3D floating UI, heavy shadows, neon, or excess ornament.
+5. Thin clean orthogonal arrows, correct endpoints, no crossing text, no ambiguous double branches. Explicit cache→harness read-only evidence arrow. Benchmark judges must stay OUTSIDE the generation loop, with no feedback arrow from evaluation into the agent.
+
+Exact content hierarchy and short labels:
+TOP: "Music" and a waveform marked "Bars 1–2", "Bars 3–4", "Bars 5–6". A music branch enters both our expert and source-audio analysis.
+LEFT main heading: "Specialists and shared evidence".
+Highlight the learned contribution as "Our trained choreography expert". Architecture: "Audio front end" → "Qwen3-Omni + LoRA" → "Local movement proposals". Beside it show a WHOLE-BODY skeleton and "Joint-aware text supervision", with the short example "raise the left arm; bend the right knee". Highlight the knee and corresponding clause as one concrete weighting example, not a new hand-only model. Small label "SFT-trained local expert".
+Below show 3 parallel compact tools: "Beat This!" / "2–4-bar windows"; "JEV" / "Global dance-style prior"; "librosa" / "Acoustic summaries". Below these and the expert is "Frozen evidence + proposal cache", with three small bar-aligned candidate thumbnails. All tools and proposals feed this cache.
+CENTER: strong teal outer boundary titled "Stateful compositional harness".
+First strip INSIDE: "Choreographic brief" / "Goals · constraints · editable scope".
+Main loop three modules:
+"Composer agent" / "Qwen3-VL" / "Outline · motifs · unit drafts" / small lock "Fixed weights at inference".
+"Controller" with rows "Schedule stages", "Budget + permissions", "Continue / stop".
+"Tool execution" rows "Read evidence / history", "Validate schedule", "Commit unit", "Revise selected text".
+Composer→Controller "Structured proposal"; Controller→Composer "Context + feedback"; Controller→Tools "Execute"; Tools→Controller "Checks / observations".
+A blue "Persistent state" strip below the loop, with four icon slots "Outline + motifs", "Current draft", "Committed history", "Call / token ledger". Both controller and tools connect to the memory strip with short read/write arrows.
+Bottom INSIDE the same harness: "Targeted revision", illustrated with 5 bar groups where only the middle is orange "Revise selected text" and the others show locks/"Retain". Underline caption "Keep time · track · motif fixed". This is a bounded operation, NOT an additional trained critic.
+RIGHT TOP: "Hierarchical choreography". A style field "Dance style is contemporary jazz." A compact global motif timeline A → B → A′ with labels "Introduce", "Contrast", "Return + vary". Beneath it use TWO or THREE short local bar-aligned movement panels with tasteful small dancer silhouettes, e.g. "Bars 1–2 · A" and "Bars 5–6 · A′": "Step right; sweep the left arm across the torso and settle low." then "Return to A with a wider arm sweep and a lower stance." Make example poses coherent and anatomically plausible; they are illustrative, not experimental visualizations.
+RIGHT BOTTOM distinct panel: "Local and global evaluation". Input label "Music + choreography text", with an audio waveform icon and arrow from the hierarchical output. Local row clearly labeled "Local units" with "Q1–Q3: Text quality" and "M1–M3: Music compatibility". Global row clearly labeled "Whole song" with "G1–G3: Continuity · structure · motifs". Add small footer "Independent assessment". No scores, no fabricated results, no data-size numbers.
+Small bottom legend can be retained, but only concise color roles: "Learned models", "Control", "Tools", "Retained state". No two-line title above the full figure.
+
+Use crisp consistent serif typography in the style of Times New Roman, clear visual hierarchy, well-spaced labels and clean grid alignment. Favor meaningful graphics and small icons over dense paragraphs. Ensure all text is spelled correctly. Maintain the reference's visual richness while making the harness the unmistakable core contribution.

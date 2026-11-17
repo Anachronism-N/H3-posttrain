@@ -13,7 +13,7 @@ diagrams as SVG masters and an eight-slide native editable PowerPoint.
 Paper PDFs and PNGs come from the same native slide objects; the PNG crop
 checks are in `paper_ppt_consistency.json`. Only real source-video frames are raster objects. Older `figures/editable` and `figures/revision_20261117` files are historical versions.
 
-Figure 1 defaults to `figures/revision_20261117_v3/paper/overview_method.pdf`.
+Figure 1 defaults to `figures/harness_reference_v4/paper/overview_method.pdf`.
 Uncomment `\def\OverviewDataBenchmark{1}` in `main.tex` for the benchmark
 alternative. The two figures are alternatives for one overview slot.
 
@@ -76,3 +76,11 @@ tables and experimental records in this branch are preserved. Concurrent
 manuscript/result edits in the local workspace are not merged by this task.
 `snapshot_build_audit.json` is the current compilation receipt. Earlier
 build receipts under `results/` are retained as historical records.
+
+## Reference-inspired harness overview
+
+The latest harness figure is in [harness_reference_v4](figures/harness_reference_v4/README.md).
+Its brief is inside the harness, its output contains global structure and local
+movement text, and its external evaluator separates local Q/M from global G.
+The GPT raster redraw and native editable reconstruction are labeled separately.
+Native PNG/PDF and the single-slide PowerPoint share one master.

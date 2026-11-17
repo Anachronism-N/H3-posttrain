@@ -1,0 +1,25 @@
+{
+  "source": "One native editable Artifact Tool presentation",
+  "figures": [
+    {
+      "figure": "overview_method",
+      "slide": 1,
+      "paper_png_is_exact_crop_of_ppt_render": true,
+      "paper_pdf_exported_from_same_native_slide": true,
+      "crop_pixels": [
+        60,
+        141,
+        3140,
+        1659
+      ],
+      "source_svg_sha256": "b5622cc6ef7db487d56922330356f67a33feec95442e3495ee9906d6ef752f71",
+      "paper_png_sha256": "0c98c4b9160bf87cafc1236ca8f3d2fd796dcb98a46b98d1247a46150e3c64c3",
+      "paper_pdf_sha256": "85cdb35955a3ab65737d8a7bf27ac8ef889eebe6418c3fb0c2435fa916ab3160"
+    }
+  ],
+  "fonts": [
+    "Times New Roman"
+  ],
+  "full_figure_raster_wrapping_in_ppt": false,
+  "rendering_note": "PPT and paper geometry, labels, icons and colors originate from the same native objects. External PowerPoint viewers require the declared font."
+}

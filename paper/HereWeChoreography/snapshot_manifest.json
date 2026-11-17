@@ -4,9 +4,9 @@
   "destination": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\paper-release-20261117\\paper\\HereWeChoreography",
   "branch": "codex/paper-d123-20261117",
   "base_commit": "083d1d0387bba582a4504e79d57f12ab065fa3b9",
-  "source_files": 363,
+  "source_files": 393,
   "active_graphics": [
-    "figures/revision_20261117_v3/paper/overview_method.pdf",
+    "figures/harness_reference_v4/paper/overview_method.pdf",
     "figures/revision_20261117_v3/paper/annotation_pipeline.pdf",
     "figures/revision_20261117_v3/paper/annotation_audit.pdf",
     "figures/revision_20261117_v3/paper/choreography_case.pdf",
@@ -15,12 +15,12 @@
     "figures/revision_20261117_v3/paper/dataset_construction.pdf",
     "figures/title-icons/herewechoreography-title-icon.png"
   ],
-  "total_bytes": 119642013,
+  "total_bytes": 128588614,
   "files": [
     {
       "path": ".gitattributes",
-      "bytes": 523,
-      "sha256": "445bb2eca0b3484218694c529bffb54c1c212e3ee83edfcdc563327a9ce39f11"
+      "bytes": 573,
+      "sha256": "a8310f806c15293eed632cbc0bf172c577199f9bdc51469b37a4defd150e33c9"
     },
     {
       "path": ".gitignore",
@@ -320,7 +320,157 @@
     {
       "path": "figures/harness_overview.tex",
       "bytes": 1463,
-      "sha256": "c2ed96c339cdf5112b685dddd158c8b00fba51002eb987405f12041234049cbd"
+      "sha256": "2ef4d54592118dc98340295d9dacfb1a97f43f1eb7ac6d76e05a97069a2f13be"
+    },
+    {
+      "path": "figures/harness_reference_v4/harness_overview_gpt_v4.png",
+      "bytes": 1953760,
+      "sha256": "570f8b0c51731cd031ad4cf3b1fe19c5991190f9d1db204f71094ad4920e6150"
+    },
+    {
+      "path": "figures/harness_reference_v4/native_pptx_objects.json",
+      "bytes": 117,
+      "sha256": "2fa0885a076a82e18e7d3c9fbf7ac0c1795d23076806ed7e75374de42ba826e8"
+    },
+    {
+      "path": "figures/harness_reference_v4/overview_method.preview.png",
+      "bytes": 464117,
+      "sha256": "0c98c4b9160bf87cafc1236ca8f3d2fd796dcb98a46b98d1247a46150e3c64c3"
+    },
+    {
+      "path": "figures/harness_reference_v4/overview_method.svg",
+      "bytes": 101852,
+      "sha256": "b5622cc6ef7db487d56922330356f67a33feec95442e3495ee9906d6ef752f71"
+    },
+    {
+      "path": "figures/harness_reference_v4/paper/overview_method.pdf",
+      "bytes": 105028,
+      "sha256": "85cdb35955a3ab65737d8a7bf27ac8ef889eebe6418c3fb0c2435fa916ab3160"
+    },
+    {
+      "path": "figures/harness_reference_v4/paper/overview_method.png",
+      "bytes": 464117,
+      "sha256": "0c98c4b9160bf87cafc1236ca8f3d2fd796dcb98a46b98d1247a46150e3c64c3"
+    },
+    {
+      "path": "figures/harness_reference_v4/paper_ppt_consistency.json",
+      "bytes": 905,
+      "sha256": "75d6f437d5cfd7a95295d7b09e9b9ff3b11b242e7d4dd86b147c6760b165b384"
+    },
+    {
+      "path": "figures/harness_reference_v4/powerpoint/HereWeChoreography_harness_reference_v4.pptx",
+      "bytes": 74154,
+      "sha256": "c4d1e15af80a4490ccda07033c52380a906b4d8a9d07308ec515bc5fe9786f77"
+    },
+    {
+      "path": "figures/harness_reference_v4/powerpoint/validation.json",
+      "bytes": 3859,
+      "sha256": "46334f4e339576c6766eea7b563235dd7341771ad242db022aa98b38246304a8"
+    },
+    {
+      "path": "figures/harness_reference_v4/pptx_preview/slide-1.pdf",
+      "bytes": 105470,
+      "sha256": "e7f9b2bca145e8a2e80ad425a25825ec86561953ecfd86163e88ce4b71f9ee98"
+    },
+    {
+      "path": "figures/harness_reference_v4/pptx_preview/slide-1.png",
+      "bytes": 522766,
+      "sha256": "bf054df0e3fa46b9291c2642a62937c412467ff0f6ee89fe641bcb580af055e2"
+    },
+    {
+      "path": "figures/harness_reference_v4/preserved_content.json",
+      "bytes": 7132,
+      "sha256": "2dab43aec1b92fc5517edff8b52b761130d450cc5bcbc13f925477a9e3303d38"
+    },
+    {
+      "path": "figures/harness_reference_v4/preview/overview_method.png",
+      "bytes": 464117,
+      "sha256": "0c98c4b9160bf87cafc1236ca8f3d2fd796dcb98a46b98d1247a46150e3c64c3"
+    },
+    {
+      "path": "figures/harness_reference_v4/README.md",
+      "bytes": 2314,
+      "sha256": "1963bbc4f2eda0a98ec96af484206260cc86e2b3f2b70db9a6e474fb83f853c9"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/build_harness_reference.py",
+      "bytes": 8566,
+      "sha256": "a428c8295dba6019dae226d9e7bb00ed631f56f84653a1bb72a98f200862b698"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/build_native_pptx.mjs",
+      "bytes": 4415,
+      "sha256": "020ae49e0cdb5e28bc4676a7ce8fe961c174066015d9dd263275f5a6f94c3593"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/evaluation_detail.preview.png",
+      "bytes": 30651,
+      "sha256": "240945be7a2bc3dd84a01cd1d7b5aefd313571d9cff48ed4a6c016dbfb438d15"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/export_paper_from_ppt_master.py",
+      "bytes": 2284,
+      "sha256": "40ccb100fdc3737bb5d4ed21230e71719c742749d4e4910a1efeceeeead044b9"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/finalize_native_pptx.mjs",
+      "bytes": 1708,
+      "sha256": "c62442dacaccaddd64b60c4d2eafb12db69f2f2e21a5fdede66e010af8731e55"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/gpt-image-concept-corrected.png",
+      "bytes": 1953760,
+      "sha256": "570f8b0c51731cd031ad4cf3b1fe19c5991190f9d1db204f71094ad4920e6150"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/gpt-image-concept.prompt.txt",
+      "bytes": 5710,
+      "sha256": "02429bcad31f1a0de3fea5d87f37808c02f22e3780fc561566fef331ab6f467d"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/gpt-image-correction.prompt.txt",
+      "bytes": 1904,
+      "sha256": "f3ae2999e0af6a012173feb25e76727c74c5969ad68637d7b6e2f8bf8d678f4a"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/harness_reference.audit.json",
+      "bytes": 503,
+      "sha256": "3233f3c1c4a9afdcf6d1ed2027f0cf250f410d7908c25f1cdee2c22118ee6327"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/harness_reference_layout.py",
+      "bytes": 16421,
+      "sha256": "c2fdb99fdaf90e054699a6ef8792c6cded85286a831c720fa18212e1e0f9e9ee"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/imagegen_provenance.json",
+      "bytes": 590,
+      "sha256": "d7fa29cfc5c3c1d0fdcfc14ae0fcfb0564f02f499559972058fb16bdd3132e93"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/native_scenes.json",
+      "bytes": 195739,
+      "sha256": "e93a357aced169bc4ab3f66dda0747c5e1b6f075b42857c956b55355c3361bb6"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/original-reference.png",
+      "bytes": 2308096,
+      "sha256": "e2f1a8514f76706a8769903ed2904dfb93ad6d02ac3896a3d6eb8d01a296547b"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/overview_method.scene.json",
+      "bytes": 134447,
+      "sha256": "14e2b9a8d705df75ceb643a128327038f14066d0e5f9a1d346f191696113787e"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/pdf_standard_fonts.cjs",
+      "bytes": 1786,
+      "sha256": "8ce6f0dd3e2460d7bf5e602179033206795c9b92e27037f585e12f03b0587d19"
+    },
+    {
+      "path": "figures/harness_reference_v4/source/svg_to_native_scene.py",
+      "bytes": 9815,
+      "sha256": "17e5416e8856852fc0147e250bb8ba8239469a8082684d19d4d5b2b1418d75d7"
     },
     {
       "path": "figures/harness_runtime_gpt_v4.png",
@@ -1514,8 +1664,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 4266,
-      "sha256": "1233e67aaea0a723c7f6080d3e26363d977a212be6e012c3505608caeba49c84"
+      "bytes": 4714,
+      "sha256": "79393ff8bd1005b2aea2c7e44e12ca6105160eddafa66db155853a6a3357affa"
     },
     {
       "path": "results/baselines822-comparison-v1.json",
@@ -1835,8 +1985,8 @@
   ],
   "compiled_preview": {
     "path": "HereWeChoreography.pdf",
-    "sha256": "05b201df1ddd8af2ef0587f4296d99f7c74a04bf155c2048579414089ac0341f",
-    "bytes": 2873383
+    "bytes": 2887641,
+    "sha256": "6420b4e71a6ae896539edc8179a6d8c61357d509b745cfe920280b877666863f"
   },
   "excluded": [
     "raw audio/video",
@@ -1845,7 +1995,7 @@
     "obsolete style-population reports",
     "credentials"
   ],
-  "updated_utc": "2026-11-17T04:09:19.197385+00:00",
+  "updated_utc": "2026-11-17T07:27:31.726316+00:00",
   "alternative_overview_graphics": [
     "figures/revision_20261117_v3/paper/overview_benchmark.pdf"
   ],
@@ -1860,6 +2010,6 @@
     "sha256": "a967b2f528df76e9a9d3895bb6d25c06d4ab056d2b0313933633daf7966b657d",
     "bytes": 2093117
   },
-  "main_pdf_alias_sha256": "05b201df1ddd8af2ef0587f4296d99f7c74a04bf155c2048579414089ac0341f",
+  "main_pdf_alias_sha256": "6420b4e71a6ae896539edc8179a6d8c61357d509b745cfe920280b877666863f",
   "current_build_audit": "snapshot_build_audit.json"
 }

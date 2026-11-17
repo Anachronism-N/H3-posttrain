@@ -1,0 +1,14 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "date": "2026-11-17",
+  "reference_sha256": "e2f1a8514f76706a8769903ed2904dfb93ad6d02ac3896a3d6eb8d01a296547b",
+  "raster_output": "harness_overview_gpt_v4.png",
+  "raster_output_sha256": "570f8b0c51731cd031ad4cf3b1fe19c5991190f9d1db204f71094ad4920e6150",
+  "prompts": [
+    "source/gpt-image-concept.prompt.txt",
+    "source/gpt-image-correction.prompt.txt"
+  ],
+  "editable_reconstruction_is_separate_from_raster": true,
+  "all_native_paper_and_ppt_exports_share_one_master": true,
+  "new_training_or_evaluation_scores": false
+}

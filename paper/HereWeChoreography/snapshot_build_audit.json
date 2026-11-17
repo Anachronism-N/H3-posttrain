@@ -2,7 +2,7 @@
   "compile_from_snapshot": true,
   "preview_pages": 9,
   "main_pages": 8,
-  "preview_sha256": "05b201df1ddd8af2ef0587f4296d99f7c74a04bf155c2048579414089ac0341f",
+  "preview_sha256": "6420b4e71a6ae896539edc8179a6d8c61357d509b745cfe920280b877666863f",
   "no_model_runs": false,
   "table_method_label": "Ours",
   "per_cell_counts": false,
@@ -27,5 +27,11 @@
   "exact_ppt_png_crop_checks": 8,
   "native_powerpoint_execution_verified": false,
   "source_alignment_scope": "Current figure assets; existing snapshot prose/results retained",
-  "preexisting_results_tables_sections_unchanged": true
+  "preexisting_results_tables_sections_unchanged": true,
+  "current_harness_figure": "figures/harness_reference_v4",
+  "current_harness_native_slide_count": 1,
+  "current_harness_native_text_objects": 108,
+  "current_harness_native_shape_objects": 589,
+  "current_harness_brief_inside": true,
+  "local_and_global_assessment_separate": true
 }

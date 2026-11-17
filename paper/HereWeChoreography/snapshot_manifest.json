@@ -4,7 +4,7 @@
   "destination": "C:\\Users\\32665\\Documents\\Codex\\2026-10-13\\new-chat\\work\\paper-release-20261117\\paper\\HereWeChoreography",
   "branch": "codex/paper-d123-20261117",
   "base_commit": "083d1d0387bba582a4504e79d57f12ab065fa3b9",
-  "source_files": 161,
+  "source_files": 162,
   "active_graphics": [
     "figures/agent_policy_comparison_gpt.png",
     "figures/annotation_distributions_v3.pdf",
@@ -15,7 +15,7 @@
     "figures/overview_method_v3.png",
     "figures/title-icons/herewechoreography-title-icon.png"
   ],
-  "total_bytes": 62078145,
+  "total_bytes": 62079447,
   "files": [
     {
       "path": "cvpr.sty",
@@ -519,8 +519,8 @@
     },
     {
       "path": "results/README.md",
-      "sha256": "82ad668271f35d287e1c554fdc1d3db56aa3509495dc036ce1b2772756d49fae",
-      "bytes": 15396
+      "sha256": "a75ef77ece946a0994e3da1171bbb1c7a29592403900636b463f075e37e755a6",
+      "bytes": 15588
     },
     {
       "path": "results/baselines822-comparison-v1.json",
@@ -561,6 +561,11 @@
       "path": "results/d123_baselines/provenance.json",
       "sha256": "f8c2240694963f74d4b6360c6879a6550340b6f22a908a62146065ff84610fe3",
       "bytes": 206488
+    },
+    {
+      "path": "results/d123_generation_clarification_20261117.json",
+      "sha256": "925c3e6584f00b455acbefe60a21b3ecca14d914a37b564c555eed9a45f88838",
+      "bytes": 774
     },
     {
       "path": "results/d123_refine_v1/baseline_search_audit.json",
@@ -684,8 +689,8 @@
     },
     {
       "path": "results/main_text_evidence_audit.json",
-      "sha256": "8c06131cbfa357d15255bd864c78f97baaa6e1211fa8f278a4a2aa04630442c6",
-      "bytes": 8756
+      "sha256": "6edb59c8db65214967a65d9177c4e4196955042c66d6705d2a3992486b7a9a42",
+      "bytes": 9283
     },
     {
       "path": "results/pilot_final_status_v1.json",
@@ -714,8 +719,8 @@
     },
     {
       "path": "review/strict_review_20261117_zh.md",
-      "sha256": "40162138bc4e2ed1ea5e8137c8ed87ebf03536f7a953d1a11f157cd7ffa5cb2d",
-      "bytes": 22419
+      "sha256": "d79fa47fd1a4007985847706cef9c0c5c6d492c02cfb7d77ff6717e24f4da990",
+      "bytes": 22438
     },
     {
       "path": "sec/0_abstract.tex",
@@ -749,8 +754,8 @@
     },
     {
       "path": "sec/4_experiments.tex",
-      "sha256": "112e6b881a1e8775c03ead2eb269c2bac4a91341fcea5c3b350f67202b2ec922",
-      "bytes": 4468
+      "sha256": "e08864a83574f2326035f3cb596d5f4e8d355c923d1f917971e8b9ca79701de0",
+      "bytes": 4474
     },
     {
       "path": "sec/5_conclusion.tex",
@@ -769,8 +774,8 @@
     },
     {
       "path": "sec/8_supplementary.tex",
-      "sha256": "88aa6467480a01bfb344e1ea18e09a9310080ec431c4c86b8fbe60e24673670d",
-      "bytes": 15980
+      "sha256": "b9dc821263dc12957ff114c18b920076c3512a308882c8af6840eed79d8e817e",
+      "bytes": 15997
     },
     {
       "path": "sec/9_method_implementation_details.tex",
@@ -825,8 +830,8 @@
   ],
   "compiled_preview": {
     "path": "HereWeChoreography.pdf",
-    "sha256": "338f615449f7995b849d31420d131ce36bc8bce9f30ec555a986a3cf9b13765a",
-    "bytes": 10588949
+    "sha256": "b28b9c9aee6d7ee443fbd00b36d50f0d4078a987fef47f5ab89cf46b708324a1",
+    "bytes": 10588716
   },
   "excluded": [
     "raw audio/video",
@@ -835,7 +840,7 @@
     "obsolete style-population reports",
     "credentials"
   ],
-  "updated_utc": "2026-11-16T20:34:19.764441+00:00",
+  "updated_utc": "2026-11-17T02:14:36.295208+00:00",
   "alternative_overview_graphics": [
     "figures/overview_data_benchmark_v2.png"
   ],

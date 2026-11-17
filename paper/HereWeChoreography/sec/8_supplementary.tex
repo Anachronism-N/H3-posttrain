@@ -51,16 +51,15 @@ only the 822-clip style population, retaining all seven zero-shot models
 and all three supervised objectives on the same clips.
 
 \paragraph{Automatic-rating configuration and coverage.}
-For Table~\ref{tab:refinement-d123}, \emph{Ours} denotes the complete
-captioning inference pipeline: the local SFT captioner followed by a
-Qwen3.5-397B-A17B text editor. The reference-agreement experiment in
-Table~\ref{tab:e2-full2000-v2} evaluates SFT outputs before this editing
-step; the two tables concern different output stages.
+For Table~\ref{tab:refinement-d123}, \emph{Ours} denotes the supplied
+task-specific captioner predictions. Released processing-stage metadata
+disagree with the author-reported generation configuration, so the
+output-stage lineage remains unresolved. These ratings alone are not
+an isolated ablation of supervised fine-tuning.
 The Ours release comes from public commit \texttt{dc6dfd9}; the baseline
 release comes from \texttt{92d6dcf}. All eight generation inventories
-contain the same 2,000 case IDs. The editor returns 1,996 outputs; four cases
-retain raw text after a content check or failure, and 1,991 final texts
-differ from raw SFT. All released outputs are retained in the audit.
+contain the same 2,000 case IDs. All released outputs are retained in
+the audit, alongside a separate record of the configuration clarification.
 Scores marked invalid or null
 are omitted per dimension, never replaced with zero. The public export
 contains numeric scores and status fields, without response bodies,
@@ -83,7 +82,7 @@ but omits the rubric content hash, so exact prompt-hash parity cannot
 be independently established from the export.
 These records cannot establish calibration to our nine-dimensional
 anchors. Differences between protocols are not model improvements, and
-reference agreement after editing has not been recomputed.
+reference agreement has not been recomputed on the supplied rating outputs.
 Full-release Ours D1/D2/D3 valid counts are 1,999/1,990/1,999 for r4
 and 2,000/1,966/1,999 for v2.1; these available-case values are not
 substituted for the common-case main table. The earlier two-axis
@@ -257,8 +256,9 @@ derived captions.
 \input{tables/rubric_anchors_detailed}
 The anchors distinguish requirements for local movement, music response,
 and whole-song organization. Before collecting formal scores, calibration
-should test intentional music mismatch, explicit body/timing conflicts,
-unproductive copying, and legitimate motif returns on frozen examples.
+should test claim-specific musical contrasts, compatible cross-song reuse,
+explicit body/timing conflicts, unproductive copying, and legitimate motif
+returns on frozen examples. A choreography need not identify a unique song.
 Neither a visually clear rubric nor successful response validation
 establishes agreement with independent listeners.
 

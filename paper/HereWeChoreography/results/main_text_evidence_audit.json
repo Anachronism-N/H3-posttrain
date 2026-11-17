@@ -41,7 +41,7 @@
       12
     ]
   },
-  "pdf_sha256": "338f615449f7995b849d31420d131ce36bc8bce9f30ec555a986a3cf9b13765a",
+  "pdf_sha256": "b28b9c9aee6d7ee443fbd00b36d50f0d4078a987fef47f5ab89cf46b708324a1",
   "source_sha256": {
     "sec/0_abstract.tex": "099f66cba3e3b07b2a4399791081609602027bf1d2220b49bee683a379d9a8e1",
     "sec/1_introduction.tex": "ef064326d2cf33717d4ea68bb9956e6c02118a2bf89270b2a0167515b709476c",
@@ -49,7 +49,7 @@
     "sec/2a_dataset.tex": "e298ab7a0607efd98435014acab7bbd80417bb425ec45cc106093e26b219e565",
     "sec/3_method.tex": "2b36a6752e12d40ca141e7030f5a58f70f3b8ccded9cf299a8b1b8b96da374bd",
     "sec/3a_evaluation.tex": "e178f2f366502d995bb2f18bd00485ffa04f322354969f1f50af4cac5e8ba89e",
-    "sec/4_experiments.tex": "112e6b881a1e8775c03ead2eb269c2bac4a91341fcea5c3b350f67202b2ec922",
+    "sec/4_experiments.tex": "e08864a83574f2326035f3cb596d5f4e8d355c923d1f917971e8b9ca79701de0",
     "sec/5_conclusion.tex": "15132236352a2b78ac02cc2bd87cd0736c17be1b4efc678c3f4b8888de5797b9",
     "figures/dataset_overview.tex": "55e9b07da5d83815a14c2938bb2a2766b369fa90b4984382c2dd2424e8f1cac8",
     "figures/annotation_pipeline_v5.png": "8601f3051079d6a4ed5d5ffa81dfb76ba20b5bf20e4bfd36013164bf7e9efd27",
@@ -59,7 +59,7 @@
     "results/style_prior_822.source.json": "6e70dbf282a782fc235a9cf85679c7354f31b3014c10b74ae1298fa82153a5c6",
     "results/build_style_prior_822.py": "a40f014e5b730850e1c0c7d6cd357320d474e81d4567352f6afc6472ad505a32",
     "tables/style_prior_822.tex": "b50916bcada70a23e6cd30738aa5dbc71246aa1226399eeb0ee52b0af0add6e0",
-    "sec/8_supplementary.tex": "88aa6467480a01bfb344e1ea18e09a9310080ec431c4c86b8fbe60e24673670d",
+    "sec/8_supplementary.tex": "b9dc821263dc12957ff114c18b920076c3512a308882c8af6840eed79d8e817e",
     "figures/choreography_example_v4.pdf": "eafe178bae5288552b93fe14fddb6947d5a266f2bfd1499155493726ddd67124",
     "figures/source/choreography_example_v4.audit.json": "f280c745e72a4d01288e3b4336d72b76b3e422c6ef9859c7a764379e030c7615",
     "tables/refinement_d123.tex": "045fb262c49d2bf512332b9a7220cab87b5cf1cda336d5701257339ec8e5a71f",
@@ -79,7 +79,7 @@
     "figures/overview_method_v3.png": "bd21459c013f028afc2873e4ec63c11725e5f8f0a6e5f9535eaa14898f0c8b02",
     "figures/overview_data_benchmark_v2.png": "29f35e3c2b08e5d7fd425d33dc2f4b88011cb163c50a76636eed14de4469da95",
     "figures/source/overview_design_20261117.audit.json": "2cb3defa8c14809f6d5299b8370e4fbe7f76e3423110eafcd5f8ad05551e4b3d",
-    "results/README.md": "82ad668271f35d287e1c554fdc1d3db56aa3509495dc036ce1b2772756d49fae",
+    "results/README.md": "a75ef77ece946a0994e3da1171bbb1c7a29592403900636b463f075e37e755a6",
     "figures/source/overview_data_benchmark_v1.prompt.txt": "d40fc598341159b61d4504480c38bf73cdb63fc51d317288de75f77075f10399",
     "figures/source/overview_data_benchmark_v2.prompt.txt": "9d5fbc06bc69ad9c362698663d160b8ad17c4f0908ab28c85fd0402d0f9e2d29",
     "figures/source/overview_method_v1.prompt.txt": "e39186e5a127317d15346899aa3d3f003c0f3e23fff4b4f28130aba7a2c2f56f",
@@ -90,7 +90,9 @@
     "results/joint_clause_weighting/provenance.json": "203aecbff3005699c89027f98089570a1f641db26f6536ab830249119dbbbf9e",
     "results/joint_clause_weighting/README.md": "141b522190e049d06070fe09e04540493bd795beb2fb8bfe526c4bdc7eb365ea",
     "results/joint_clause_weighting/SOL61_PLANNER_V3_DELIVERY.md": "32fab403fd5620cbfa14bdb6083c29ef28e78d8b9af43f6580590b65fb503f72",
-    "figures/title-icons/herewechoreography-title-icon.png": "0245f8cfe3fc103da8cdd3f75bde31219a266d8e59bc846cfad44cb47f63b463"
+    "figures/title-icons/herewechoreography-title-icon.png": "0245f8cfe3fc103da8cdd3f75bde31219a266d8e59bc846cfad44cb47f63b463",
+    "results/d123_generation_clarification_20261117.json": "925c3e6584f00b455acbefe60a21b3ecca14d914a37b564c555eed9a45f88838",
+    "review/strict_review_20261117_zh.md": "d79fa47fd1a4007985847706cef9c0c5c6d492c02cfb7d77ff6717e24f4da990"
   },
   "checks": {
     "compile": true,
@@ -156,7 +158,8 @@
       "D1": 1888,
       "D2": 1833,
       "D3": 1858
-    }
+    },
+    "method_label_origin": "Frozen export label; generation-stage interpretation disputed by author clarification."
   },
   "overview_scope": {
     "default": "method-focused",
@@ -164,5 +167,6 @@
     "examples": "Schematic waveforms, poses and text; no generated experimental results",
     "judge_outside_generation_loop": true,
     "joint_weighting": "Clause CE, lower-limb instantiation from release report"
-  }
+  },
+  "d123_generation_lineage_status": "Author reports direct SFT outputs; released stage metadata conflict. Neither processing-stage account is independently verified."
 }

@@ -15,7 +15,7 @@
     "figures/revision_20261117_v3/paper/dataset_construction.pdf",
     "figures/title-icons/herewechoreography-title-icon.png"
   ],
-  "total_bytes": 128579806,
+  "total_bytes": 128579987,
   "files": [
     {
       "path": ".gitattributes",
@@ -1159,8 +1159,8 @@
     },
     {
       "path": "figures/revision_20261117_v3/source/build_evaluation.py",
-      "sha256": "e2a3394f807e3c30da8365f3d0ddc390f6d11a75d7e97f2fa5bd8c5fc30be235",
-      "bytes": 11994
+      "sha256": "adb34ac61a0b190e338d1d0ac09e2d1b8e8569f8534030768ddb6edd9a2495b1",
+      "bytes": 12175
     },
     {
       "path": "figures/revision_20261117_v3/source/build_native_pptx.mjs",

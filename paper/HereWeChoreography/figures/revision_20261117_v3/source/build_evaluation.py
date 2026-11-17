@@ -181,4 +181,3 @@ audit={'schema':'herewechoreography.evaluation_layout.v3','source':'source/build
 (OUT/'source/evaluation_framework.v3.audit.json').write_text(json.dumps(audit,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 if outside:raise RuntimeError('Out-of-canvas text: '+str(outside))
 print(f'Wrote {svg}; {counts.get("text",0)} native labels, zero raster images.')
-

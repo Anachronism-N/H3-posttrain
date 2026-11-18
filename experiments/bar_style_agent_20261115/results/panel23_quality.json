@@ -1,0 +1,16 @@
+{
+ "schema": "choreobench.panel23_quality.v1",
+ "panel": "23 FMA replication subset",
+ "style": {
+  "n": 16,
+  "coverage": 1.0,
+  "duplicate_rate": 0.316,
+  "mean_events": 49.4
+ },
+ "nostyle": {
+  "n": 20,
+  "coverage": 1.0,
+  "duplicate_rate": 0.28,
+  "mean_events": 47.1
+ }
+}

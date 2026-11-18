@@ -46,13 +46,18 @@ L1/L3 saturate under the text-only rubric; L2 is the only discriminative dimensi
 | no_style | 16/20 | 0.80 | 3.88 |
 | no_acoustic | 9/20 | 0.45 | 3.67 |
 | no_style_no_acoustic | 17/20 | 0.85 | 3.12 |
-| no_motif | 11/20 | 0.55 | 4.18 |
-| no_repair | 11/20 | 0.55 | not scored |
-| motif_variation | 11/20 | 0.55 | not scored |
+| no_motif | superseded (see below) | - | 4.18 was scored on a non-ablation rerun |
+| no_repair | superseded (see below) | - | not scored |
+| motif_variation | superseded (see below) | - | not scored |
 
 Removing the JEV style condition raises deliverability but lowers whole-song organization (L2).
-Removing acoustic guidance raises structural failures. Repair toggles do not change yield;
-the dominant remaining failure is provider output truncation.
+Removing acoustic guidance raises structural failures.
+
+Ablation note (2026-11-18): the cell runner used for these 20-song runs did not forward
+`--no-motif`, `--no-repair` or `--motif-variation`, so those three variants were baseline reruns,
+not ablations; their completion numbers and the "repair toggles do not change yield" claim are
+withdrawn. no_style, no_acoustic and the combined variant did pass their flags and remain valid.
+A corrected rerun of the three missing variants on the 23-song replication subset is in progress.
 
 ## Limitations
 
@@ -91,7 +96,8 @@ L3 structural metrics:
 Absolute 1-5 model scores saturate for L1/L3 (nearly all 5) even with anchored strict prompts;
 they are not used for conclusions. Pairwise O vs RA: L2 5:4, L3 5:4, L1 1 win / 5 tie / 3 loss.
 
-Extra ablations on 20 songs: no_repair 11/20, motif_variation 11/20; repair toggles are not the bottleneck.
+Extra ablations on 20 songs (no_repair, motif_variation) were withdrawn: the runner did not apply
+those flags, so the cells were baseline reruns. Corrected variants are being rerun on the 23-song set.
 
 Status: 50-song panel (43 FMA + 7 AIOZ research-licensed tracks, 2124 windows) run; see the final table at the end of this document.
 
@@ -166,6 +172,7 @@ Failure modes at full budget (50 songs, including 4 songs whose cells failed to 
 - RA: 9 unrepairable drafts, 3 budget exhausted, 1 stalled, 2 failed/budget, 4 dispatch.
 - W: 35 structure failures; SF: 40 structure failures (tool-state and truncation).
 
-The 4 dispatch-failure songs (3 FMA, 1 AIOZ) were resubmitted for all four arms after the table was
-computed; results will be folded into this table when that recovery job finishes. They count as failures
-for every arm in the numbers above, so the paired comparison is unaffected.
+The 4 dispatch-failure songs (3 FMA, 1 AIOZ) were resubmitted for all four arms. All four are
+catalog-level failures: their frozen SOL61 catalogs contain at least one failed proposal, and the
+strict catalog contract rejects the whole song. They are therefore systematic failures shared by every
+arm, remain in the denominators, and keep the paired comparison valid.

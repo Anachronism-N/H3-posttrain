@@ -244,6 +244,42 @@ def _snap_schedule(state):
  state.draft=snapped
  return True
 
+def _fallback_unit(state):
+ """Commit one grounded event for the current unit after repeated model failure.
+
+ Only fires when the planner produced no committable draft twice. The action is
+ the first cited local caption for the unit and the schedule is a permitting
+ complete-unit schedule, so the fallback stays inside the frozen evidence.
+ """
+ from .timing import event_clock
+ from .coordination import LIMITS, _candidates
+ if not getattr(state,'source',None): return False
+ units=state.source['units']['units']
+ if state.index>=len(units): return False
+ unit=units[state.index]
+ clock=event_clock(unit,state.plan['sample_rate'],state.source['config'])
+ schedules=clock.get('permitted_schedules') or []
+ if not schedules: return False
+ schedule=min(schedules,key=len)
+ candidates=_candidates(state.source['options'],unit)
+ if not candidates: return False
+ motif_ids=next(s['motif_ids'] for s in state.outline['sections'] if s['section_id']==unit['section_id'])
+ events=[]
+ for i,frame in enumerate(schedule):
+  candidate=candidates[i%len(candidates)]
+  events.append(dict(start_boundary=frame['start_boundary'],end_boundary=frame['end_boundary'],
+    track='body',action=candidate['text'][:LIMITS['action_characters']],
+    motif_id=motif_ids[0] if motif_ids else None,source_call_ids=[candidate['call_id']]))
+ draft=dict(unit_id=unit['unit_id'],events=events)
+ try:
+  events_out,plan=state.validate(draft)
+ except Exception:
+  return False
+ state.plan=plan;state.index+=1;state.draft=None;state.revisions_used=0
+ state.observations.append(dict(tool='fallback_block',status='committed',unit_id=unit['unit_id'],quality_verified=False))
+ return True
+
+
 def _repair_outline(call, req, raw_text, error, cfg, song_id):
     """One bounded, fully journaled outline repair; never a silent retry."""
     from .schema import text as _text
@@ -326,7 +362,7 @@ def _request(state,cfg,method,phase,feedback=None):
 
 def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow',seed=42,max_output_tokens=1024,
                     outline_max_output_tokens=4096,max_request_characters=200000,max_input_tokens=2000000,max_total_output_tokens=150000,resume=False,outline_reuse_run=None,controller_version='v1',music_summary_path=None,
-                    outline_proposal_char_limit=None,outline_candidates_per_window=None,acoustic_guidance=False,bar_structure=None,bars_per_block=4,motif_quota=True,motif_variation=False,style_prior=None,rewrite_repeats=False,repeat_groups=3,global_style_override=None,repair_blocks=True,max_calls_cap=None,snap_schedule=False,continuity_prompt=False):
+                    outline_proposal_char_limit=None,outline_candidates_per_window=None,acoustic_guidance=False,bar_structure=None,bars_per_block=4,motif_quota=True,motif_variation=False,style_prior=None,rewrite_repeats=False,repeat_groups=3,global_style_override=None,repair_blocks=True,max_calls_cap=None,snap_schedule=False,continuity_prompt=False,fallback_unit=False):
  if method not in METHODS:raise ValueError('Unknown composition method')
  if controller_version not in ('v1','v2'):raise ValueError('Unknown composition controller version')
  if method=='structured' and controller_version!='v2':
@@ -347,7 +383,7 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
   outline_proposal_char_limit=outline_proposal_char_limit,
   outline_candidates_per_window=outline_candidates_per_window,acoustic_guidance=acoustic_guidance,
   bar_structure=bar_structure,bars_per_block=bars_per_block,motif_quota=motif_quota,motif_variation=motif_variation,
-   rewrite_repeats=rewrite_repeats,repeat_groups=repeat_groups,global_style_override=global_style_override,repair_blocks=repair_blocks,snap_schedule=snap_schedule,continuity_prompt=continuity_prompt)
+   rewrite_repeats=rewrite_repeats,repeat_groups=repeat_groups,global_style_override=global_style_override,repair_blocks=repair_blocks,snap_schedule=snap_schedule,continuity_prompt=continuity_prompt,fallback_unit=fallback_unit)
  if bounded:
   from .composition_controller_v2 import CompositionStateV2,NO_PROGRESS_LIMIT
   cfg.update(controller_version='v2',no_progress_limit=NO_PROGRESS_LIMIT,
@@ -559,6 +595,9 @@ def run_composition(source_path,song_id,provider_spec,out_dir,*,method='workflow
                                         reason='Deterministic permitted-schedule adoption after repair failure'))
          repaired=True;fatal=None
         except (ValueError,TypeError,KeyError):pass
+     if not repaired and cfg.get('fallback_unit') and method=='music_structured' and state is not None:
+      if _fallback_unit(state):
+       observation=state.observations[-1];repaired=True;fatal=None;stop=None
      if not repaired:
       if infrastructure:fatal=str(error)
       if method in ('workflow','self_refine','music_structured'):stop='model_or_structure_failed';fatal=fatal or str(error)

@@ -112,3 +112,19 @@ Failed attempts (all on the same panel and counted in denominators):
 Interpretation: the remaining failures on this service are model output-instability (malformed JSON, JSON-LD degeneration, loops), not a token-budget limit. Raising caps or adding prompt constraints does not fix them. Matched-budget O still dominates RA (60% vs 15% at <=50 calls).
 
 Expansion status: 23 additional FMA songs and 7 AIOZ research-licensed short tracks are running through the same four-arm protocol; results will be appended when the matrices finish.
+
+## Short-track panel (7 AIOZ research-licensed tracks, 60-65 s)
+
+| arm | complete | calls | input tokens | semantic L1 | duplicate rate |
+|---|---:|---:|---:|---:|---:|
+| W | 4/7 | 17.2 | 192619 | 0.731 | 0.375 |
+| SF | 1/7 | 47.0 | 723695 | 0.782 | 0.389 |
+| RA | 4/7 | 32.2 | 521651 | 0.645 | 0.415 |
+| O | **6/7** | **18.5** | **198560** | 0.541 | **0.235** |
+
+Short songs expose the opposite regime from the 20 long songs: with few units, O's strict controller
+finishes 6/7 at roughly half of RA's calls, while RA's tool loop has less room to recover.
+Quality is mixed: O has the lowest verbatim repetition but lower semantic L1 continuity than RA/W on this panel.
+
+Combined picture: O is stronger on short tracks and at matched call budget; RA is stronger on long songs
+when allowed roughly twice the calls. This length-dependent trade-off should be reported explicitly.

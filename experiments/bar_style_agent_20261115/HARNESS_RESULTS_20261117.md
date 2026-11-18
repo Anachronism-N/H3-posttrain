@@ -93,7 +93,7 @@ they are not used for conclusions. Pairwise O vs RA: L2 5:4, L3 5:4, L1 1 win / 
 
 Extra ablations on 20 songs: no_repair 11/20, motif_variation 11/20; repair toggles are not the bottleneck.
 
-Status: 50-song panel (43 FMA + 7 AIOZ research-licensed tracks, 2124 windows) prepared but not yet run.
+Status: 50-song panel (43 FMA + 7 AIOZ research-licensed tracks, 2124 windows) run; see the final table at the end of this document.
 
 ## Iteration log after the first 20-song report
 
@@ -128,3 +128,44 @@ Quality is mixed: O has the lowest verbatim repetition but lower semantic L1 con
 
 Combined picture: O is stronger on short tracks and at matched call budget; RA is stronger on long songs
 when allowed roughly twice the calls. This length-dependent trade-off should be reported explicitly.
+
+## Final 50-song panel (2026-11-18)
+
+Panel: 43 FMA songs + 7 AIOZ-GDANCE research-licensed short tracks (60-65 s), 2124 bar windows.
+Every registered (song, arm) cell counts in the denominator; a failure is a failure regardless of reason.
+Outer planner model: Qwen3-VL-30B-A3B-Instruct, text-only interface, 4 replicas x 2 GPUs.
+Local expert: SOL61 SFT v3 frozen per-song catalogs (K=2).
+
+| arm | complete | rate | calls/song | input tokens/song | output tokens/song |
+|---|---:|---:|---:|---:|---:|
+| W | 9/50 | 0.18 | 33.0 | 562603 | 7997 |
+| SF | 4/50 | 0.08 | 104.0 | 2185812 | 23462 |
+| RA | 31/50 | 0.62 | 86.8 | 2085971 | 25437 |
+| O | **33/50** | **0.66** | **42.5** | **773732** | **8132** |
+
+Costs are per successfully completed song, from registry cells.
+
+Split by source panel:
+
+| panel | W | SF | RA | O |
+|---|---:|---:|---:|---:|
+| FMA 43 (2-4 min songs) | 5/43 | 3/43 | 27/43 | 27/43 |
+| AIOZ 7 (60-65 s) | 4/7 | 1/7 | 4/7 | **6/7** |
+| total 50 | 9/50 | 4/50 | 31/50 | **33/50** |
+
+Paired song-level comparison O vs RA (same songs, same outer model, same local catalogs):
+both complete 24, O-only 9, RA-only 7, neither 10. Exact McNemar p = 1.00, so the 33 vs 31
+completion gap is not statistically distinguishable with 50 songs. The robust differences are:
+
+- O reaches the same completion with ~49% of RA's calls, ~37% of its input tokens, and ~32% of its output tokens.
+- On short tracks O finishes 6/7 vs RA 4/7 at ~57% of RA's calls.
+- At matched call budget (RA capped at 50) RA collapses to 3/20 vs O 12/20.
+
+Failure modes at full budget (50 songs, including 4 songs whose cells failed to dispatch for every arm):
+- O: 12 model/structure failures (truncation, invalid schedule, outline/motif limits), 1 budget, 4 dispatch.
+- RA: 9 unrepairable drafts, 3 budget exhausted, 1 stalled, 2 failed/budget, 4 dispatch.
+- W: 35 structure failures; SF: 40 structure failures (tool-state and truncation).
+
+The 4 dispatch-failure songs (3 FMA, 1 AIOZ) were resubmitted for all four arms after the table was
+computed; results will be folded into this table when that recovery job finishes. They count as failures
+for every arm in the numbers above, so the paired comparison is unaffected.

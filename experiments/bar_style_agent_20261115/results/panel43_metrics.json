@@ -1,0 +1,52 @@
+{
+ "schema": "panel43.metrics.v1",
+ "runs": 172,
+ "arms": {
+  "W": {
+   "registered": 43,
+   "complete": 5,
+   "rate": 0.116,
+   "mean_calls": 45.6,
+   "failures": {
+    "model_or_structure_failed": 34,
+    "no CELL": 3,
+    "failed_or_budget_exhausted": 1
+   }
+  },
+  "SF": {
+   "registered": 43,
+   "complete": 3,
+   "rate": 0.07,
+   "mean_calls": 123,
+   "failures": {
+    "model_or_structure_failed": 36,
+    "no CELL": 3,
+    "failed_or_budget_exhausted": 1
+   }
+  },
+  "RA": {
+   "registered": 43,
+   "complete": 27,
+   "rate": 0.628,
+   "mean_calls": 94.9,
+   "failures": {
+    "unrepairable_draft": 8,
+    "no CELL": 3,
+    "failed_or_budget_exhausted": 1,
+    "budget_exhausted": 3,
+    "stalled_no_content_progress": 1
+   }
+  },
+  "O": {
+   "registered": 43,
+   "complete": 27,
+   "rate": 0.628,
+   "mean_calls": 47.8,
+   "failures": {
+    "no CELL": 3,
+    "model_or_structure_failed": 12,
+    "failed_or_budget_exhausted": 1
+   }
+  }
+ }
+}

@@ -219,6 +219,13 @@ def _unit_request(song, options, units, unit, outline, plan, cfg, style_prior=No
     if not use_history:
         instruction += ("Previous committed action text, motif counts and body-state history are deliberately withheld. "
                         "This does not mean no previous movement happened; do not invent its content or state. ")
+    if cfg.get("caption_grounding", True):
+        instruction += ("Grounding: use the wording of the cited local_proposal as the action; you may add a short transition, "
+                        "but do not invent body parts or directions absent from the cited candidate. ")
+    if cfg.get("continuity_prompt"):
+        instruction += ("Boundary continuity: begin this block by continuing the same body part and direction/level "
+                        "that the previous committed event ended with; if direction changes, state the transition explicitly. "
+                        "Motif variation: when reusing a motif, change its direction, level or leading body part instead of copying the sentence. ")
     request = _guard_request(song["song_id"] + "/coordinate/" + unit["unit_id"], cfg,
                              _messages(payload, instruction), "coordination_unit", cfg["max_output_tokens"])
     if cfg["structured_unit_output"]:

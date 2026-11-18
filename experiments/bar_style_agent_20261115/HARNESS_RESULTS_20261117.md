@@ -57,7 +57,29 @@ Ablation note (2026-11-18): the cell runner used for these 20-song runs did not 
 `--no-motif`, `--no-repair` or `--motif-variation`, so those three variants were baseline reruns,
 not ablations; their completion numbers and the "repair toggles do not change yield" claim are
 withdrawn. no_style, no_acoustic and the combined variant did pass their flags and remain valid.
-A corrected rerun of the three missing variants on the 23-song replication subset is in progress.
+Corrected rerun (23-song replication subset, all six variants, cell runner now forwards every flag):
+
+| variant | complete/23 | rate | mean calls |
+|---|---:|---:|---:|
+| O baseline on the same 23 songs (with schedule snap) | 15/23 | 0.652 | 47.8 |
+| no_style | **20/23** | **0.870** | 48.2 |
+| no_acoustic | 14/23 | 0.609 | 46.7 |
+| no_style_no_acoustic | 19/23 | 0.826 | 47.4 |
+| no_motif | 9/23 | 0.391 | 50.7 |
+| no_repair | 15/23 | 0.652 | 49.0 |
+| motif_variation | 17/23 | 0.739 | 50.7 |
+
+The ablation cells were run without schedule snap while the baseline used it, so small
+differences against the baseline row are confounded; comparisons among the six variants
+share one configuration. Within that set, motif quota and acoustic guidance are load-bearing
+(-6 and -1 relative to 15/23, with no_motif at 9/23), repair is neutral, motif variation helps
+slightly, and removing the style prior is the largest single gain (20/23 vs 15/23).
+
+Style-prior trade-off: on the original 20 songs, no_style reached 16/20 vs 12/20 for the
+style-conditioned O, while the text judge scored whole-song organization lower (3.88 vs 4.45).
+The JEV/MuQ prior therefore improves stylistic organization but costs deliverability. A matched
+no-style baseline run for RA is in progress so the completion comparison is not confounded by
+giving only O the style-free prompt.
 
 ## Limitations
 

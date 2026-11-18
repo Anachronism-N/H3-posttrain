@@ -1,0 +1,72 @@
+{
+ "schema": "choreobench.panel23_ablation.v1",
+ "baseline_o": {
+  "complete": 15,
+  "registered": 23
+ },
+ "variants": {
+  "no_style": {
+   "complete": 20,
+   "registered": 23,
+   "rate": 0.87,
+   "mean_calls": 48.2,
+   "failures": {
+    "no CELL": 1,
+    "model_or_structure_failed": 2
+   }
+  },
+  "no_acoustic": {
+   "complete": 14,
+   "registered": 23,
+   "rate": 0.609,
+   "mean_calls": 46.7,
+   "failures": {
+    "model_or_structure_failed": 8,
+    "no CELL": 1
+   }
+  },
+  "no_style_no_acoustic": {
+   "complete": 19,
+   "registered": 23,
+   "rate": 0.826,
+   "mean_calls": 47.4,
+   "failures": {
+    "model_or_structure_failed": 3,
+    "no CELL": 1
+   }
+  },
+  "no_motif": {
+   "complete": 9,
+   "registered": 23,
+   "rate": 0.391,
+   "mean_calls": 50.7,
+   "failures": {
+    "model_or_structure_failed": 11,
+    "no CELL": 2,
+    "failed_or_budget_exhausted": 1
+   }
+  },
+  "no_repair": {
+   "complete": 15,
+   "registered": 23,
+   "rate": 0.652,
+   "mean_calls": 49.0,
+   "failures": {
+    "no CELL": 2,
+    "model_or_structure_failed": 5,
+    "failed_or_budget_exhausted": 1
+   }
+  },
+  "motif_variation": {
+   "complete": 17,
+   "registered": 23,
+   "rate": 0.739,
+   "mean_calls": 50.7,
+   "failures": {
+    "no CELL": 2,
+    "failed_or_budget_exhausted": 1,
+    "model_or_structure_failed": 3
+   }
+  }
+ }
+}

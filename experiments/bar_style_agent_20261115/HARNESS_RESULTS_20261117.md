@@ -94,3 +94,21 @@ they are not used for conclusions. Pairwise O vs RA: L2 5:4, L3 5:4, L1 1 win / 
 Extra ablations on 20 songs: no_repair 11/20, motif_variation 11/20; repair toggles are not the bottleneck.
 
 Status: 50-song panel (43 FMA + 7 AIOZ research-licensed tracks, 2124 windows) prepared but not yet run.
+
+## Iteration log after the first 20-song report
+
+Goal: raise O's completion above RA's 14/20 without weakening baselines.
+
+Failed attempts (all on the same panel and counted in denominators):
+- 8192 block/outline cap (O-v3): 12/20 (best so far).
+- schedule snapping after repair (O-v4): 11/20.
+- continuity + motif-variation prompts (O-v5b): 10/20; semantic L1 worsened to 0.344.
+- duplicate style-prior removal (O-v6/O-v7): 12/20, unchanged.
+- 16384 output cap on the eight failed songs (O8c): 0/8 conversions.
+- outline compression (one 60-char candidate per window) + two repairs (O9b): 1/8.
+- repetition penalty 1.05 + no_repeat_ngram 8 (O11b): 0/8 and JSON-LD degeneration.
+- music-only global outline (no window captions, O10): 10/20, but semantic L1 0.519 and duplicate rate 0.355 (quality direction improved).
+
+Interpretation: the remaining failures on this service are model output-instability (malformed JSON, JSON-LD degeneration, loops), not a token-budget limit. Raising caps or adding prompt constraints does not fix them. Matched-budget O still dominates RA (60% vs 15% at <=50 calls).
+
+Expansion status: 23 additional FMA songs and 7 AIOZ research-licensed short tracks are running through the same four-arm protocol; results will be appended when the matrices finish.

@@ -294,3 +294,19 @@ for hours; it was cancelled after 4 cells because a 30-song gap cannot plausibly
 comparison of interest is O versus RA, both of which have complete matched no-style runs.
 The final-configuration table is therefore O versus RA on 50 songs, with W/SF documented under
 the style configuration.
+
+### Semantic pairwise judge on shared successes
+
+Qwen3-32B (text-only, blind A/B, order randomized) compared O and RA on the 25 songs where both
+delivered a plan under matched no-style. No ties, no errors.
+
+| dimension | O wins | RA wins | sign test |
+|---|---:|---:|---:|
+| L1 adjacent-window continuity | 14 | 11 | p = 0.69 |
+| L2 whole-song organization | 13 | 12 | p = 1.00 |
+| L3 motif recurrence with variation | 14 | 11 | p = 0.69 |
+
+On the plans both methods manage to finish, judged choreographic quality is statistically
+indistinguishable. Combined with the earlier lexical metric, the conclusion is consistent:
+O's advantage is that it finishes 39/50 versus 28/50 at roughly half the calls, not that its
+finished plans are judged better than RA's.

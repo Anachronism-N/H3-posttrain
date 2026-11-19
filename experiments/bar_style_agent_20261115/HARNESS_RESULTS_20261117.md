@@ -198,3 +198,21 @@ The 4 dispatch-failure songs (3 FMA, 1 AIOZ) were resubmitted for all four arms.
 catalog-level failures: their frozen SOL61 catalogs contain at least one failed proposal, and the
 strict catalog contract rejects the whole song. They are therefore systematic failures shared by every
 arm, remain in the denominators, and keep the paired comparison valid.
+
+## Global planner: design and model swap (2026-11-19)
+
+The outer planner has always been a text-only Qwen3-VL-30B-A3B-Instruct. Two changes target
+the global planning layer specifically; the local expert stays SOL61 SFT v3.
+
+1. Music-and-style-only global outline (O10, 20 songs). The global outline saw the whole-song
+   music summary and style prior but no per-window captions. Result: 10/20 complete, worse than
+   the 12/20 caption-fed O, but semantic L1 0.519 vs 0.405 and duplicate rate 0.355 vs 0.410.
+   Removing per-window captions improves global coherence but loses deliverability, so this was
+   not adopted as the final configuration.
+
+2. Qwen3-Omni as the planner model. `Qwen3-Omni-30B-A3B-Instruct` is deployed through the
+   thinker-only text server as the outer planner on the 23-song replication subset (O arm only,
+   all prompts, catalogs, inputs and controller code unchanged; local expert unchanged).
+   Baseline on the same 23 songs is 15/23 for the VL-30B planner. The swap is accepted only if
+   completion improves without regressing plan-level duplicate rate or coverage; otherwise the
+   VL planner stays.

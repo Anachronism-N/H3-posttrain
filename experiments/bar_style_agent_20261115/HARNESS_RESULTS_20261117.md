@@ -216,3 +216,30 @@ the global planning layer specifically; the local expert stays SOL61 SFT v3.
    Baseline on the same 23 songs is 15/23 for the VL-30B planner. The swap is accepted only if
    completion improves without regressing plan-level duplicate rate or coverage; otherwise the
    VL planner stays.
+
+## Matched no-style comparison, 50 songs (2026-11-19)
+
+Because the style prior changed completion in both methods, the fair test removes it from both
+arms. Everything else is identical: same catalogs, prompts, outer model (Qwen3-VL-30B text-only),
+and cell runner. The only difference is the orchestration method.
+
+| arm | complete | rate | both | O-only | RA-only | neither | McNemar |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| O no-style | **41/50** | **0.82** | 25 | 16 | 3 | 6 | p = 0.0044 |
+| RA no-style | 28/50 | 0.56 | | | | | |
+
+O wins 16 songs that RA misses and loses 3, a significant completion advantage at matched inputs.
+Cost on the 23-song replication subset: O 48.5 calls / 529k input tokens / 8.2k output tokens per
+completed song versus RA 98.1 / 1.60M / 32.1k.
+
+Quality on the same 23 songs: O no-style coverage 1.00 and duplicate rate 0.28 versus 0.316 with
+the style prior, so the completion gain does not come from degenerate plans. The text judge had
+scored whole-song organization lower without the style prior (3.88 vs 4.45 on the 20-song set),
+so the style prior remains a quality lever even though it costs deliverability. The publishable
+claim should therefore be stated as: under matched inputs, the bounded controller is significantly
+more likely to deliver a complete structurally valid plan; style conditioning trades some of that
+deliverability for judged organization.
+
+Configuration note: the 20 original songs and the 23 replication songs use the no-snap O runs;
+the 7 AIOZ tracks use schedule snap. RA has no snap switch, so its side is unaffected. This is
+recorded explicitly rather than silently normalised.

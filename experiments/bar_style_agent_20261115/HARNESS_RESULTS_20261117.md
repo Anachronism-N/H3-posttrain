@@ -285,3 +285,12 @@ the full clock with structurally valid plans, but RA produces less verbatim sent
 the plans it manages to finish. The defensible claim is therefore completion probability and cost,
 not textual diversity: O finishes 39/50 at about half RA's calls, while RA's finished plans repeat
 less. A semantic (not lexical) quality judgement is still needed before claiming better choreography.
+
+### Scope note on W and SF in the final configuration
+
+W and SF are reported under the style-conditioned main table (9/50 and 4/50). A no-style rerun of
+both arms on the 23-song subset was submitted twice and remained queued behind other cluster work
+for hours; it was cancelled after 4 cells because a 30-song gap cannot plausibly close and the
+comparison of interest is O versus RA, both of which have complete matched no-style runs.
+The final-configuration table is therefore O versus RA on 50 songs, with W/SF documented under
+the style configuration.

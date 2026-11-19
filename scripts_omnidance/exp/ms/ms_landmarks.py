@@ -13,6 +13,7 @@ import hashlib
 import io
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -305,9 +306,31 @@ def load_bundle(bundle):
         raise ValueError("direct-landmark raw cache changed or has the wrong schema")
     with np.load(io.BytesIO(raw), allow_pickle=False) as cache:
         arrays = dict(cache)
+    from motionscript_v2.landmarks import validate_point_spec
+
+    validate_point_spec(manifest["point_spec"])
     expected_names = [row["name"] for row in manifest["point_spec"]["points"]]
     if list(arrays["names"]) != expected_names:
         raise ValueError("point names differ from the extraction query order")
+    n, k = manifest["frame_count"], manifest["point_count"]
+    if (isinstance(n, bool) or not isinstance(n, int) or n < 1 or k != len(expected_names)
+            or arrays["points_m"].shape != (n, k, 3) or arrays["valid"].shape != (n, k)):
+        raise ValueError("raw point/frame counts differ from manifest")
+    size = np.asarray(manifest.get("frame_size"))
+    if (size.shape != (2,) or size.dtype.kind not in "iu" or np.any(size <= 0)):
+        raise ValueError("manifest frame_size must be positive integer [width,height]")
+    if "points2d_px" in arrays and arrays["points2d_px"].shape != (n, k, 2):
+        raise ValueError("raw 2D points differ from the extraction frame/point order")
+    time = np.asarray(arrays["timestamps"])
+    bounds = manifest["media_bounds"]
+    end = bounds["end"]
+    if (time.shape != (n,) or time.dtype.kind not in "fiu" or not np.isfinite(time).all()
+            or np.any(np.diff(time) <= 0) or bounds["start"] != 0. or abs(time[0]) > 1e-9
+            or (end is not None and (not np.isfinite(end) or end <= time[-1]))):
+        raise ValueError("raw timestamps differ from declared video media bounds")
+    video_sha = manifest["source_sha256"].get("video")
+    if not isinstance(video_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", video_sha):
+        raise ValueError("source video SHA256 binding is required")
     return arrays, manifest, hashlib.sha256(raw_manifest).hexdigest()
 
 
@@ -320,6 +343,17 @@ def describe(args):
     bundle, out = Path(args.bundle).resolve(), Path(args.out).resolve()
     require_new_output(out, [bundle / "raw.npz"])
     raw, source, manifest_sha = load_bundle(bundle)
+    video = Path(source["source_paths"]["video"])
+    if sha256(video) != source["source_sha256"]["video"]:
+        raise ValueError("source video changed from the bound extraction input")
+    info = probe_video(video, args.ffprobe)
+    if (source["frame_size"] != [info["width"], info["height"]]
+            or raw["timestamps"].shape != info["time"].shape
+            or not np.allclose(raw["timestamps"], info["time"], rtol=0, atol=1e-5)
+            or not np.isclose(float(raw["fps"]), info["fps"], rtol=.001)
+            or not np.isclose(source["source_pts_offset_seconds"], info["pts_offset"], rtol=0, atol=1e-5)
+            or source["media_bounds"]["end"] != info["media_end"]):
+        raise ValueError("bound point timestamps/frame_size differ from source video")
     window_spec, window_sha = None, None
     if args.chunk_seconds is not None or args.windows is not None:
         from motionscript_v2.chunks import fixed_windows, validate_windows
@@ -342,13 +376,16 @@ def describe(args):
         window_spec = validate_windows(window_spec, media_start=bounds["start"], media_end=bounds["end"])
     config = {key: getattr(args, key) for key in
               ("fps", "max_gap_seconds", "smooth_seconds", "max_point_uncertainty")}
-    arrays, metadata = preprocess_landmarks(raw, **config)
-    arrays["raw_points2d_px"] = raw["points2d_px"]
+    arrays, metadata = preprocess_landmarks(raw, frame_size=source["frame_size"], **config)
+    metadata["screen_support_binding"] = {"manifest_sha256": manifest_sha,
+        "raw_sha256": source["raw_sha256"], "video_sha256": source["source_sha256"]["video"],
+        "video_timestamps_and_frame_size_verified": True}
+    metadata["source_bundle_and_video_binding_verified"] = True
     signal_arrays, signal_metadata = measure_landmark_signals(arrays)
     arrays.update(signal_arrays)
     events = extract_landmark_events(arrays, min_duration_seconds=args.min_duration_seconds,
                                     min_angle_change_degrees=args.min_angle_change_degrees)
-    report = {"schema": SCHEMA, "source": "nlf_direct_rgb_landmarks", "metadata": metadata,
+    report = {"schema": SCHEMA, "source": source["source"], "metadata": metadata,
         "point_count": len(arrays["names"]), "names": arrays["names"].tolist(),
         "continuous_signals": signal_metadata,
         "events": events, "caption": render_landmark_caption(events),
@@ -361,6 +398,7 @@ def describe(args):
         "implementation_sha256": {name: sha256(Path(__file__).parent / name) for name in
             ("ms_landmarks.py", "motionscript_v2/landmarks.py", "motionscript_v2/landmark_events.py")},
         "limits": ["Extra points are image-conditioned estimates, not ground-truth observations.",
+                   "In-frame 2D support is necessary, not ground-truth visibility or anatomical accuracy.",
                    "Relative palm/foot geometry is not a complete dance action vocabulary.",
                    "No Omni/H3 training input was changed."]}
     if window_spec is not None:
@@ -417,6 +455,7 @@ def parser():
     p.add_argument("--max-gap-seconds", type=float, default=.2)
     p.add_argument("--smooth-seconds", type=float, default=.025)
     p.add_argument("--max-point-uncertainty", type=float)
+    p.add_argument("--ffprobe", default="ffprobe")
     p.add_argument("--min-duration-seconds", type=float, default=.15)
     p.add_argument("--min-angle-change-degrees", type=float, default=20.)
     window_args = p.add_mutually_exclusive_group()

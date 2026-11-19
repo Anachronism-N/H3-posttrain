@@ -1,0 +1,98 @@
+{
+  "schema": "caption_tenfold_baseline_v1",
+  "observed_window_UTC": {
+    "start": "2026-10-25T19:34:49.900Z",
+    "end": "2026-10-25T19:35:00.950Z"
+  },
+  "coverage": {
+    "new_20k_30k_instances": 13,
+    "curated_joint_instances_covered": 19,
+    "legacy_visual_instances_covered": 4,
+    "repair_current_complete_not_measured": true,
+    "total_known_32b_instances": 24
+  },
+  "parsed_joint_indexes": [
+    {
+      "edition": "main",
+      "terminal": 4047,
+      "complete": 2090,
+      "malformed_rows_excluded": 3
+    },
+    {
+      "edition": "collaborative_v1",
+      "terminal": 963,
+      "complete": 526
+    },
+    {
+      "edition": "collaborative_v2",
+      "terminal": 675,
+      "complete": 357
+    },
+    {
+      "edition": "collaborative_v3",
+      "terminal": 641,
+      "complete": 318
+    },
+    {
+      "edition": "collaborative_v4",
+      "terminal": 206,
+      "complete": 93
+    }
+  ],
+  "joint_parsed_unique_complete": 3384,
+  "legacy_visual_only": {
+    "complete": 2248,
+    "overlap_with_joint_complete": 61,
+    "not_joint_caption_completion": true
+  },
+  "three_case_transaction_timing": [
+    {
+      "source": "gfbSUwmUzdFNdwmQ",
+      "total_seconds": 53.245,
+      "observation_seconds": 30.34,
+      "boundary_seconds": 14.19,
+      "rewrite_seconds": 8.712
+    },
+    {
+      "source": "KvUShAJRzqJkuTwn",
+      "total_seconds": 45.769,
+      "observation_seconds": 21.97,
+      "boundary_seconds": 14.1,
+      "rewrite_seconds": 9.698
+    },
+    {
+      "source": "gPsEDhcEmwcAxeOV",
+      "total_seconds": 51.743,
+      "observation_seconds": 32.65,
+      "boundary_seconds": 13.98,
+      "rewrite_seconds": 5.118
+    }
+  ],
+  "findings": [
+    "The sum of20k and30k throughput covers13 instances, not all24.",
+    "Only removing rewrite has at most1.11–1.27x gain within the sampled transaction stages, not10x full pipeline.",
+    "Current batch2 operates within one video phase; independent videos do not fill a common scheduler queue.",
+    "8B primary labeling is a separate quality-sensitive trial; the same8B checkpoint cannot independently approve its own annotations."
+  ],
+  "not_inferred": {
+    "uniform_all24_throughput": true,
+    "whole_pool_completion_time": true,
+    "tenfold_speedup_achieved": true,
+    "legacy_visual_equals_joint_caption": true,
+    "model_API_wall_equals_CUDA_active": true
+  },
+  "planned_trials": [
+    "32B same-checkpoint visual batching2vs8 on three fixed sources.",
+    "Direct neutral admitted facts output with native fact/support validation; keep empty windows partial.",
+    "8B same-image protocol labeling with independent32B/pixel quality comparison."
+  ],
+  "repair_notice_snapshot": {
+    "observed_at_UTC": "2026-10-25T19:39:04.710Z",
+    "byte_length": 1529880,
+    "valid_notice_rows": 1220,
+    "unique_source_keys": 1220,
+    "rows_with_joint_complete": 0,
+    "result_refs_followed": 0,
+    "current_joint_complete_not_counted": true
+  }
+}

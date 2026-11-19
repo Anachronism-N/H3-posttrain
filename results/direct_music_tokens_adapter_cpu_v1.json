@@ -1,0 +1,43 @@
+{
+  "complete": true,
+  "cpu_only": true,
+  "protocol": "musicfm_direct_tokens_cached_prefix_v1",
+  "actual_adapter_linear_executed": true,
+  "no_queries_normalization_length_head_or_qmax": true,
+  "linear_fp32_autocast_disabled_exact": true,
+  "channel_major_flatten_exact": true,
+  "short_sample_mask_holes_gathered_not_truncated": true,
+  "persistent_backbone_buffers_roundtrip": true,
+  "scopes": [
+    {
+      "train_backbone": false,
+      "adapter_weight_bias_gradients": true,
+      "dense_backbone_gradients": false,
+      "unused_head_frozen": true,
+      "backbone_eval_and_fp32": true,
+      "complete_state_metadata_roundtrip": true
+    },
+    {
+      "train_backbone": true,
+      "adapter_weight_bias_gradients": true,
+      "dense_backbone_gradients": true,
+      "unused_head_frozen": true,
+      "backbone_eval_and_fp32": true,
+      "complete_state_metadata_roundtrip": true
+    }
+  ],
+  "rejected_inputs": [
+    "adapter:context",
+    "adapter:query_count",
+    "adapter:qmax",
+    "checkpoint:expected_query_max",
+    "checkpoint:expected_query_max",
+    "checkpoint:query_max",
+    "checkpoint:format_version",
+    "checkpoint:context_policy",
+    "checkpoint:missing_persistent_buffer"
+  ],
+  "real_musicfm_weights_loaded": false,
+  "gpu_started": false,
+  "resample_scope": "CPU fixture strides only; not an audio-resample equivalence claim"
+}

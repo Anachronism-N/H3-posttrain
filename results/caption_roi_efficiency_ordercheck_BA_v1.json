@@ -1,0 +1,209 @@
+{
+  "schema": "native_roi_publication_v4_cpu_replay3",
+  "records": [
+    {
+      "id": "AuuitdcBJyGOnWaH",
+      "original_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/AuuitdcBJyGOnWaH",
+      "source_binding_sha256": "5bd0114c3ac5200c2fbf5b21d77694f46e8fdfb1179671273361495f14de8d26",
+      "model_sha256": "cca265f96585a040f8a1174d844c5f16f1d3aa28bb8d5168d233bd79016d1833",
+      "num_crops": 5,
+      "local_extract_seconds": null,
+      "local_extract_rerun": false,
+      "local_byte_replay_copy_and_verify_seconds": 0.023160891607403755,
+      "B_v4": {
+        "actual_operations": {
+          "shared_file_open": 24,
+          "shared_directory_open": 9,
+          "shared_link": 1,
+          "shared_unlink": 1,
+          "shared_file_fsync": 12,
+          "shared_directory_fsync": 9,
+          "shared_hash_read_bytes": 169233,
+          "local_hash_read_bytes": 168048,
+          "shared_stat": 4,
+          "shared_lstat": 2,
+          "shared_scandir": 0
+        },
+        "full_publish_wall_seconds": 2.7034730538725853,
+        "native_validate_completed": true,
+        "all_metadata_equal_after_only_output_path_remap": true,
+        "source_prepare_raw_jpeg_bytes_unchanged": true,
+        "output_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/smalltests/native-roi-v4-replay-shared-7xmkk_gm/B_v4/AuuitdcBJyGOnWaH"
+      },
+      "A_v3": {
+        "actual_operations": {
+          "shared_file_open": 41,
+          "shared_directory_open": 12,
+          "shared_link": 12,
+          "shared_unlink": 12,
+          "shared_file_fsync": 12,
+          "shared_directory_fsync": 12,
+          "shared_hash_read_bytes": 424498,
+          "local_hash_read_bytes": 253003,
+          "shared_stat": 3,
+          "shared_lstat": 2,
+          "shared_scandir": 0
+        },
+        "full_publish_wall_seconds": 5.247695318423212,
+        "native_validate_completed": true,
+        "all_metadata_equal_after_only_output_path_remap": true,
+        "source_prepare_raw_jpeg_bytes_unchanged": true,
+        "output_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/smalltests/native-roi-v4-replay-shared-7xmkk_gm/A_v3/AuuitdcBJyGOnWaH"
+      }
+    },
+    {
+      "id": "AzPomlvsANsevIFb",
+      "original_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/AzPomlvsANsevIFb",
+      "source_binding_sha256": "7599b99b3b1855c469c5c199e9c783f33e9547dd2ea9194862226181d8bc9d49",
+      "model_sha256": "cca265f96585a040f8a1174d844c5f16f1d3aa28bb8d5168d233bd79016d1833",
+      "num_crops": 14,
+      "local_extract_seconds": null,
+      "local_extract_rerun": false,
+      "local_byte_replay_copy_and_verify_seconds": 0.043020025826990604,
+      "B_v4": {
+        "actual_operations": {
+          "shared_file_open": 42,
+          "shared_directory_open": 9,
+          "shared_link": 1,
+          "shared_unlink": 1,
+          "shared_file_fsync": 21,
+          "shared_directory_fsync": 9,
+          "shared_hash_read_bytes": 231671,
+          "local_hash_read_bytes": 228236,
+          "shared_stat": 4,
+          "shared_lstat": 2,
+          "shared_scandir": 0
+        },
+        "full_publish_wall_seconds": 4.215214189141989,
+        "native_validate_completed": true,
+        "all_metadata_equal_after_only_output_path_remap": true,
+        "source_prepare_raw_jpeg_bytes_unchanged": true,
+        "output_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/smalltests/native-roi-v4-replay-shared-7xmkk_gm/B_v4/AzPomlvsANsevIFb"
+      },
+      "A_v3": {
+        "actual_operations": {
+          "shared_file_open": 77,
+          "shared_directory_open": 12,
+          "shared_link": 21,
+          "shared_unlink": 21,
+          "shared_file_fsync": 21,
+          "shared_directory_fsync": 12,
+          "shared_hash_read_bytes": 586378,
+          "local_hash_read_bytes": 350194,
+          "shared_stat": 3,
+          "shared_lstat": 2,
+          "shared_scandir": 0
+        },
+        "full_publish_wall_seconds": 14.536639547906816,
+        "native_validate_completed": true,
+        "all_metadata_equal_after_only_output_path_remap": true,
+        "source_prepare_raw_jpeg_bytes_unchanged": true,
+        "output_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/smalltests/native-roi-v4-replay-shared-7xmkk_gm/A_v3/AzPomlvsANsevIFb"
+      }
+    },
+    {
+      "id": "DxNCjtNsxcazNpGb",
+      "original_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/DxNCjtNsxcazNpGb",
+      "source_binding_sha256": "07be88db5398cf2adee1a02cabc49112f1950964d312c32cc61a4451bd3d3878",
+      "model_sha256": "cca265f96585a040f8a1174d844c5f16f1d3aa28bb8d5168d233bd79016d1833",
+      "num_crops": 17,
+      "local_extract_seconds": null,
+      "local_extract_rerun": false,
+      "local_byte_replay_copy_and_verify_seconds": 0.05057750456035137,
+      "B_v4": {
+        "actual_operations": {
+          "shared_file_open": 48,
+          "shared_directory_open": 9,
+          "shared_link": 1,
+          "shared_unlink": 1,
+          "shared_file_fsync": 24,
+          "shared_directory_fsync": 9,
+          "shared_hash_read_bytes": 211288,
+          "local_hash_read_bytes": 207103,
+          "shared_stat": 4,
+          "shared_lstat": 2,
+          "shared_scandir": 0
+        },
+        "full_publish_wall_seconds": 4.916168118827045,
+        "native_validate_completed": true,
+        "all_metadata_equal_after_only_output_path_remap": true,
+        "source_prepare_raw_jpeg_bytes_unchanged": true,
+        "output_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/smalltests/native-roi-v4-replay-shared-7xmkk_gm/B_v4/DxNCjtNsxcazNpGb"
+      },
+      "A_v3": {
+        "actual_operations": {
+          "shared_file_open": 89,
+          "shared_directory_open": 12,
+          "shared_link": 24,
+          "shared_unlink": 24,
+          "shared_file_fsync": 24,
+          "shared_directory_fsync": 12,
+          "shared_hash_read_bytes": 518677,
+          "local_hash_read_bytes": 302126,
+          "shared_stat": 3,
+          "shared_lstat": 2,
+          "shared_scandir": 0
+        },
+        "full_publish_wall_seconds": 9.946324850432575,
+        "native_validate_completed": true,
+        "all_metadata_equal_after_only_output_path_remap": true,
+        "source_prepare_raw_jpeg_bytes_unchanged": true,
+        "output_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/smalltests/native-roi-v4-replay-shared-7xmkk_gm/A_v3/DxNCjtNsxcazNpGb"
+      }
+    }
+  ],
+  "totals": {
+    "A_v3": {
+      "full_publish_wall_seconds": 29.730659716762602,
+      "actual_operations": {
+        "shared_file_open": 207,
+        "shared_directory_open": 36,
+        "shared_link": 57,
+        "shared_unlink": 57,
+        "shared_file_fsync": 57,
+        "shared_directory_fsync": 36,
+        "shared_hash_read_bytes": 1529553,
+        "local_hash_read_bytes": 905323,
+        "shared_stat": 9,
+        "shared_lstat": 6,
+        "shared_scandir": 0
+      }
+    },
+    "B_v4": {
+      "full_publish_wall_seconds": 11.834855361841619,
+      "actual_operations": {
+        "shared_file_open": 114,
+        "shared_directory_open": 27,
+        "shared_link": 3,
+        "shared_unlink": 3,
+        "shared_file_fsync": 57,
+        "shared_directory_fsync": 27,
+        "shared_hash_read_bytes": 612192,
+        "local_hash_read_bytes": 603387,
+        "shared_stat": 12,
+        "shared_lstat": 6,
+        "shared_scandir": 0
+      }
+    }
+  },
+  "variant_order": [
+    "B_v4",
+    "A_v3"
+  ],
+  "node": "TENCENT64.site",
+  "measurement_scope": "actual Python filesystem entrypoints and SHA stream reads during complete publish_roi including local preflight and final native validation; not strace/kernel syscall counts",
+  "no_detector_or_inference_or_gpu": true,
+  "no_production_database_writes": true,
+  "no_source_media_or_model_weight_hash_replay": true,
+  "fsync_retained_per_shared_file": true,
+  "directory_visibility_atomic": false,
+  "temporary_output_removed_after_test": true,
+  "speedup_claim": null,
+  "semantic_approval": false,
+  "formal_training": false,
+  "source_sha256": {
+    "curated_producer_io_v3.py": "deca435eb740352c8fe2dac237ff8a7b96c52926a25cb9b7d8b0c169bd8605fa",
+    "curated_producer_io_v4.py": "2dbf2b3da4bf838132b54ba8bcfbed90f5a3e9f8775c7a4ada56aaf0add6e735"
+  },
+  "test_sha256": "f24155e7b143fab2b28f21f3562224fa9ee882beb89154ba84588b579920ef0e"
+}

@@ -1,0 +1,344 @@
+{
+  "schema": "motionscript-live-bottleneck-assessment-v1",
+  "observed_at_utc": "2026-10-25T16:59:58Z",
+  "method": "current existing process identities verified; four nodes60 snapshots at1s, selected exact workers100 snapshots at0.2s; /proc stat/wchan/syscall/io and current timing logs; no strace/install/tracee signals",
+  "no_models_or_label_jobs_started": true,
+  "no_frozen_sources_or_running_configs_changed": true,
+  "observations": {
+    "N5": {
+      "sample_duration_seconds": 20.04,
+      "snapshots_per_worker": 100,
+      "workers": [
+        {
+          "pid": 1063210,
+          "start_ticks": 540316531,
+          "states": {
+            "S:request_wait_answer": 88,
+            "R:request_wait_answer": 7,
+            "S:0": 4,
+            "R:0": 1
+          },
+          "syscalls": {
+            "0": 2,
+            "257": 3,
+            "262": 92,
+            "running": 3
+          },
+          "path_categories": {
+            "262:other_artifact": 86,
+            "0:other_artifact": 2,
+            "257:other_artifact": 3,
+            "262:parent_directory": 4
+          },
+          "example_paths": {
+            "262:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/LqPWlfsoLBNPbmvH",
+            "0:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/yvXloUxJBjAqsaAG/joint-results/57ca56cf8f889969e2a082419a92ecb2656b01ef29bdae8787056b041037b412.json",
+            "257:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0001/sources/lCkAMBKyuyXehNTb/results/run-f9dff8f20331cb565e37f57274cb1ea082aedf0977f0db3a596b17e418f04e7a.json",
+            "262:parent_directory": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1"
+          },
+          "cpu_seconds_delta": 1.03
+        },
+        {
+          "pid": 975313,
+          "start_ticks": 537374861,
+          "states": {
+            "S:request_wait_answer": 68,
+            "D:generic_file_buffered_read": 6,
+            "S:poll_schedule_timeout.constprop.16": 26
+          },
+          "syscalls": {
+            "0": 6,
+            "7": 26,
+            "8": 1,
+            "74": 6,
+            "84": 2,
+            "86": 23,
+            "87": 12,
+            "257": 18,
+            "262": 6
+          },
+          "path_categories": {
+            "257:ROI_or_RGB": 14,
+            "74:ROI_or_RGB": 4,
+            "86:ROI_or_RGB": 19,
+            "87:ROI_or_RGB": 9,
+            "257:other_artifact": 4,
+            "86:other_artifact": 4,
+            "87:other_artifact": 3,
+            "262:ROI_or_RGB": 2,
+            "262:other_artifact": 2,
+            "74:other_artifact": 2,
+            "262:source_media": 2,
+            "0:source_media": 6
+          },
+          "example_paths": {
+            "257:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/roi/.sDzQGPApqQdJBPdL.io-v3-8u29t8n1/crops/f000042_right_hand.jpg",
+            "74:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/roi/.sDzQGPApqQdJBPdL.io-v3-8u29t8n1/crops/f000068_right_hand.jpg",
+            "86:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/roi/.sDzQGPApqQdJBPdL.io-v3-8u29t8n1/io_publish_ownership.json",
+            "87:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/roi/.sDzQGPApqQdJBPdL.io-v3-8u29t8n1/io_publish_ownership.json",
+            "257:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/sources/train/sDzQGPApqQdJBPdL/.beat_detection.json.e38f9cffafb74a4693cd106454c00482",
+            "86:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/sources/train/sDzQGPApqQdJBPdL/.beat_detection.json.e38f9cffafb74a4693cd106454c00482",
+            "87:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/sources/train/sDzQGPApqQdJBPdL/.beat_detection.json.e38f9cffafb74a4693cd106454c00482",
+            "262:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/roi/sDzQGPApqQdJBPdL",
+            "262:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/pose-preprocess/third_party/scail_pose/DWPoseProcess/dwpose/wholebody.py",
+            "74:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+            "262:source_media": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/xWIpsxuRHtslzDdQ.mp4",
+            "0:source_media": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/xWIpsxuRHtslzDdQ.mp4"
+          },
+          "cpu_seconds_delta": 0.09
+        }
+      ]
+    },
+    "N8": {
+      "sample_duration_seconds": 20.05,
+      "snapshots_per_worker": 100,
+      "workers": [
+        {
+          "pid": 1949026,
+          "start_ticks": 532793013,
+          "states": {
+            "S:request_wait_answer": 82,
+            "R:0": 3,
+            "D:generic_file_buffered_read": 7,
+            "S:poll_schedule_timeout.constprop.16": 8
+          },
+          "syscalls": {
+            "0": 7,
+            "1": 1,
+            "7": 8,
+            "8": 1,
+            "73": 2,
+            "74": 6,
+            "83": 1,
+            "86": 21,
+            "87": 10,
+            "257": 30,
+            "262": 10,
+            "running": 3
+          },
+          "path_categories": {
+            "257:ROI_or_RGB": 25,
+            "86:ROI_or_RGB": 17,
+            "87:ROI_or_RGB": 10,
+            "262:ROI_or_RGB": 8,
+            "74:ROI_or_RGB": 5,
+            "257:other_artifact": 5,
+            "86:other_artifact": 4,
+            "74:other_artifact": 1,
+            "262:other_artifact": 1,
+            "1:other_artifact": 1,
+            "73:other_artifact": 2,
+            "83:other_artifact": 1,
+            "0:source_media": 7,
+            "262:source_media": 1
+          },
+          "example_paths": {
+            "257:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/.f000004_left_hand.jpg.e2mpjaqk",
+            "86:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/.f000004_left_hand.jpg.e2mpjaqk",
+            "87:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/.f000004_left_hand.jpg.e2mpjaqk",
+            "262:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/f000010_left_hand.jpg",
+            "74:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/.f000024_left_hand.jpg.22c8zibu",
+            "257:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/EEyCMBALxzBMNLqA/.beat_detection.json.576993bc0a3f4db8b162f64cfa1ce89d",
+            "86:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/EEyCMBALxzBMNLqA/.beat_detection.json.576993bc0a3f4db8b162f64cfa1ce89d",
+            "74:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/EEyCMBALxzBMNLqA/.bar_plan.json.90db041ea4b6455f9da8a357d54cea26",
+            "262:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/EEyCMBALxzBMNLqA/producer.terminal.json",
+            "1:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+            "73:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/runs/p0-7bfdd9939c0d44569a324724a4b01590/progress.jsonl",
+            "83:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/DZSvZgSYwtGHUoiO",
+            "0:source_media": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/DZSvZgSYwtGHUoiO.mp4",
+            "262:source_media": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/DZSvZgSYwtGHUoiO.wav"
+          },
+          "cpu_seconds_delta": 1.21
+        },
+        {
+          "pid": 2361616,
+          "start_ticks": 538047604,
+          "states": {
+            "S:futex_wait_queue_me": 78,
+            "S:request_wait_answer": 22
+          },
+          "syscalls": {
+            "73": 3,
+            "74": 8,
+            "82": 2,
+            "83": 1,
+            "202": 78,
+            "257": 7,
+            "262": 1
+          },
+          "path_categories": {
+            "74:other_artifact": 8,
+            "73:other_artifact": 3,
+            "262:other_artifact": 1,
+            "257:other_artifact": 7,
+            "83:other_artifact": 1,
+            "82:other_artifact": 2
+          },
+          "example_paths": {
+            "74:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/boundaries/b-w00000-w00001/attempt-0/.response.raw.txt.5n4_dszt.tmp",
+            "73:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/boundaries/b-w00000-w00001/attempt-0/.lock",
+            "262:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/boundaries/b-w00000-w00001/attempt-0/binding.json",
+            "257:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/boundaries/b-w00000-w00001/attempt-0/.final.json.p3sradll.tmp",
+            "83:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/rewrite",
+            "82:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/rewrite/attempt-0/.response.json.q01nj4e3.tmp"
+          },
+          "cpu_seconds_delta": 0.12
+        },
+        {
+          "pid": 2363579,
+          "start_ticks": 538072660,
+          "states": {
+            "S:pipe_wait": 100
+          },
+          "syscalls": {
+            "0": 100
+          },
+          "path_categories": {},
+          "example_paths": {},
+          "cpu_seconds_delta": 0
+        },
+        {
+          "pid": 2362932,
+          "start_ticks": 538069228,
+          "states": {
+            "R:0": 78,
+            "S:futex_wait_queue_me": 22
+          },
+          "syscalls": {
+            "202": 23,
+            "running": 77
+          },
+          "path_categories": {},
+          "example_paths": {},
+          "cpu_seconds_delta": 16.38
+        }
+      ]
+    }
+  },
+  "N8_current_recent100_timing": {
+    "source_wall_s": {
+      "n": 100,
+      "mean": 76.49511951137335,
+      "median": 75.32004812220111,
+      "p95": 122.22841343749315,
+      "max": 138.89199227653444,
+      "total": 7649.511951137334
+    },
+    "main_verify_V_s": {
+      "n": 100,
+      "mean": 1.8718444361444562,
+      "median": 1.6395206125453115,
+      "p95": 3.5805713031440973,
+      "max": 5.031114741228521,
+      "total": 187.18444361444563
+    },
+    "CPU_prepare_P_s": {
+      "n": 100,
+      "mean": 8.142719920333475,
+      "median": 7.6968458238989115,
+      "p95": 12.074059979058802,
+      "max": 16.634526021778584,
+      "total": 814.2719920333475
+    },
+    "exposed_handoff_wait_W_s": {
+      "n": 100,
+      "mean": 0.06357499415054918,
+      "median": 0.06441569328308105,
+      "p95": 0.06781713292002678,
+      "max": 0.10817487630993128,
+      "total": 6.357499415054917
+    }
+  },
+  "timing_source": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/runs/v0-e708ec1b1fa347f1b5ada8f00628ec0d/prepare_ahead.timing.jsonl",
+    "byte_count_at_read": 119839,
+    "SHA256_at_read": "87de7e4b403a1e9d436296c39259d1ced5b0049d77c4e3533df116b339217bcf"
+  },
+  "additional_N6_restore_sampling": {
+    "pid": 1243718,
+    "start_ticks": 540116329,
+    "snapshots": 300,
+    "interval_s": 0.1,
+    "newfstatat_samples": 247,
+    "request_wait_answer_samples": 243,
+    "example_parent_directories": [
+      "shared project root",
+      "logs_omnidance/exp/MS",
+      "production root",
+      "runtime"
+    ],
+    "full_file_SHA_not_measured_by_stat_sampling": true
+  },
+  "primary_findings": [
+    {
+      "stage": "producer",
+      "confidence": "high",
+      "finding": "shared small-asset publication/metadata is dominant observed wait, not GPU pose/beat inference",
+      "N8_20s": {
+        "samples": 100,
+        "FUSE_request_wait_answer": 82,
+        "source_file_buffered_read": 7,
+        "openat": 30,
+        "link": 21,
+        "unlink": 10,
+        "newfstatat": 10,
+        "fsync": 6
+      },
+      "N5_20s": {
+        "samples": 100,
+        "FUSE_request_wait_answer": 68,
+        "source_file_buffered_read": 6,
+        "openat": 18,
+        "link": 23,
+        "unlink": 12,
+        "fsync": 6
+      },
+      "file_targets": "shared ROI crop temp files/final publication and beat/plan/ready receipts"
+    },
+    {
+      "stage": "review_initialization_or_restore",
+      "confidence": "high",
+      "finding": "metadata fan-out over source/evidence and repeated ancestor/path validation, before new VLM calls",
+      "N5_main_review_20s": {
+        "pid": 1063210,
+        "samples": 100,
+        "newfstatat": 92,
+        "FUSE_request_wait_answer": 88,
+        "CPU_seconds": 1.03
+      },
+      "N6_restore_60s": {
+        "newfstatat_samples": 54,
+        "samples": 60,
+        "FUSE_request_wait_answer": 47
+      },
+      "GPU_idle_does_not_mean_unassigned": true
+    },
+    {
+      "stage": "prefetched_consumer",
+      "confidence": "high_for_sampling_window_only",
+      "finding": "preparation largely hidden; serial model calls remain material and synchronous result persistence adds stalls",
+      "N8_20s": {
+        "parent_futex_wait_samples": 78,
+        "parent_FUSE_request_wait_samples": 22,
+        "engine_running_samples": 78,
+        "engine_CPU_seconds": 16.38,
+        "helper_pipe_wait_samples": 100
+      },
+      "futex_is_not_classified_as_IO": true,
+      "parent_fsync_samples": 8,
+      "model_50steps_or_global_IO_fraction_not_inferred": true
+    }
+  ],
+  "priority_actions": [
+    "Reduce shared per-JPEG/receipt publication fan-out with node-local transaction spool and committed immutable source/shard publication; preserve durable budget and receipt-last/noReplace/crash recovery",
+    "For reviewer restore, materialize verified history/evidence closure locally and reuse content-addressed snapshots; retain current source/delta checks and fresh resource gates",
+    "For already-prefetched consumers, do not keep increasing prefetch depth blindly; separate model generation and durable result persistence timers, then optimize serial model dispatch or small-file commit based on measured costs"
+  ],
+  "limits": [
+    "Snapshot fractions are not exact total wall-time percentages or syscall invocation counts",
+    "GPU/parent/helper samples differ by phase; parent sleep is not all storage stall",
+    "Current timing does not isolate all VLM, decode, write or verification costs, so no whole-pipeline speedup factor claimed",
+    "FUSE read_bytes is not Ceph server network bandwidth; no claim that physical disk/network bandwidth is saturated",
+    "No unsafe skipping of hashes, PTS/ROI rules, locks, leases, source budget or semantic approval"
+  ]
+}

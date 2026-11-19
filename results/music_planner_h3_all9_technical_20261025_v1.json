@@ -1,0 +1,201 @@
+{
+  "schema": "music-planner-all-nine-H3-technical-acceptance-v1",
+  "video_count": 9,
+  "source_ids": [
+    "wJPptuhclZmKAEWs",
+    "wJPrpFsThWAcBQIw",
+    "wJQTclrlOLEYYfTB"
+  ],
+  "families": [
+    "music_flamingo",
+    "omni_captioner",
+    "moss"
+  ],
+  "complete_and_safe_receipts_independently_verified": true,
+  "authorized_N2_existing_frozen_validator_independently_verified": true,
+  "geometry": {
+    "width": 704,
+    "height": 1280,
+    "frames": 124,
+    "fps": 24
+  },
+  "shared_decoding": {
+    "steps": 50,
+    "seed": 42,
+    "cfg": 1,
+    "flow_shift": 12,
+    "lora": null
+  },
+  "cumulative_native_calls_per_family": {
+    "DiT": 150,
+    "video_vae_decode": 3,
+    "audio": 0
+  },
+  "resources_safe_fields": {
+    "all_holders_safe": true,
+    "locks_released": true,
+    "leases_restored": true,
+    "managed_parent_wait": true,
+    "unknown_jobs_not_signaled": true,
+    "admitted_gpu_count": 1
+  },
+  "cases": [
+    {
+      "family": "music_flamingo",
+      "id": "wJPptuhclZmKAEWs",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "steps": 50,
+      "video_SHA256": "4375522773b4c0b2b8ae8844b6616483db242d4414ba9c95dc0d1da4ec0646c9"
+    },
+    {
+      "family": "music_flamingo",
+      "id": "wJPrpFsThWAcBQIw",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "steps": 50,
+      "video_SHA256": "1e415ae0fbf8d6355ac2d9e6b579e62854a93c031fa7704ec69901d2957ab529"
+    },
+    {
+      "family": "music_flamingo",
+      "id": "wJQTclrlOLEYYfTB",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "steps": 50,
+      "video_SHA256": "38e54ee989811e2e1ce83e18853cf02763ba985de7d8657443c260b82c338325"
+    },
+    {
+      "family": "omni_captioner",
+      "id": "wJPptuhclZmKAEWs",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "steps": 50,
+      "video_SHA256": "ac90bef8cae92d438e8a46142fd22626d8354c1fe1a29fc619598ff6e12c9675"
+    },
+    {
+      "family": "omni_captioner",
+      "id": "wJPrpFsThWAcBQIw",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "steps": 50,
+      "video_SHA256": "0bf31ff83ce554182d8f4bfe296a4dada53e98622b104b259bf567e0da72d506"
+    },
+    {
+      "family": "omni_captioner",
+      "id": "wJQTclrlOLEYYfTB",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "steps": 50,
+      "video_SHA256": "5d1c1fc86de659b1ebe7b63a4d63333b0c12ebf0e3ce7f2eb9346fc34c079f2a"
+    },
+    {
+      "family": "moss",
+      "id": "wJPptuhclZmKAEWs",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "steps": 50,
+      "video_SHA256": "26904297fe91de0409c869e71ac6e7489aba5af7c54631f86452e3bc03eeaba2"
+    },
+    {
+      "family": "moss",
+      "id": "wJPrpFsThWAcBQIw",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "steps": 50,
+      "video_SHA256": "ca8275b911b0aa271a3b37da9c611b1ce44c3eabc6500029afb869cd13f2b141"
+    },
+    {
+      "family": "moss",
+      "id": "wJQTclrlOLEYYfTB",
+      "media": {
+        "verified": true,
+        "verification_method": "full input ffmpeg streaminfo plus -xerror RGB all-frame byte count and showinfo PTS/size validation",
+        "frames": 124,
+        "height": 1280,
+        "width": 704,
+        "fps": 24,
+        "video_streams": 1,
+        "audio_streams": 0,
+        "complete_decode": true
+      },
+      "steps": 50,
+      "video_SHA256": "8ff858c073f224251cce9c2b2264870f8d5069230ae41cb68556f907cbb58b46"
+    }
+  ],
+  "human_quality_accepted": false,
+  "human_review": "pending_actual_user_scores",
+  "original_media_uploaded": false,
+  "model_winner": null
+}

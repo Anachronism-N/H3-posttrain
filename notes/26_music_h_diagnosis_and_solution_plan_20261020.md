@@ -1206,3 +1206,13 @@ tlzwCx随后实际返回pureFM首成功更新：optimizer_updates=1、microbatch
 第四轮Omni固定验证实际返回epoch4/update3000、24000曝光、9,689,876训练assistanttokens；val500/192753tokens，NLL0.7733987114458207，较第三轮恶化1.29209%，stale_epochs=2，尚未满足patience3。原同3case AR为191/157/143词、12/15/7个不同整句、最高精确整句重复1/2/1；较第三轮长死循环减轻，但正文仍主要手/肘/肩相对近远与同义改写，不能因精确重复降低便宣称语义多样/全身编排或音乐控制成功。原输出/解码参数不改，继续已批停止规则；若下一轮stale3则完整状态收尾后接m5K3wl固定三holdout。H3 anchor0.1已实际11更新，其中u10/u11锚定项激活且非零，未证明视频质量改善，原三组/评测依赖不变。
 
 随后实际全量3100更新/24800曝光/10,009,102assistanttokens，第5epoch已开始；anchor0.1达15成功更新，锚定非零。新omni30b_ms_style_full_epoch4_v1.json绑定第四轮event/raw caption SHA，保同case精确句重复与语义近义重复区别，不覆盖前轮或把literal loop减少变成编排获评通过。原唯一训练、停止规则及最终推理依赖保持。
+
+#### 2026-10-23 全量Omni五轮正确结束，三holdout推理内存准入修复
+
+FBQ4VO实际exit0，3750成功更新/5完整epoch/30000曝光/12,112,345assistanttokens/padded_forwards0；第五轮fixedval NLL0.8078102570404159/stale3，依原validation_plateau_not_human_quality_acceptance规则停止，不称效果成功。五轮NLL为0.778759556→0.767208211→0.763533174→0.773398711→0.807810257。最后三个val raw AR词212/112/411、精确重复最高2/2/7；第二条有转向及右移作为局部动作正证，第三条仍肘伸屈长循环，不当全身编排/音乐条件获评通过。
+
+vr7ERJ独立完整终态实际exit0：checkpoint-u0003750-e05-p0000000，四文件SHA/15,507,671,579bytes、628Adam全部step3750/FP32moment有限、8rankRNG、终态sampler epoch5/position0/permutationNone及history/latest/provenance指纹一致，fingerprint c5e4955f0b0dd90ebf6afdc3556be2c6127cc4443a9eb150c8d8cff4ac57d315，marker a5b0c4f1230dc81cd0510a91195242d2e370ad0e4bcb91808335bbae8fce5dc8。只是保存和来源审计，不做额外GPUupdate/真实optimizerresume或再次processor tensor等价测试。结果omni30b_ms_style_full_complete_audit_v1.json。
+
+m5K3wl原三holdout跟随任务在加载模型前被180GiB内存门槛拒绝，queue_v1仅plan、无inference/预测，不当生成质量失败。实际N7 cgroup limit1,071,415,808,000bytes、usage约1,039.9GB、pagecache1,026.4GB（含shmem410.7GB），无RSS>1GiB的大进程、host MemAvailable约1.686TB；根因是既有本轮检查点可回收页缓存占满准入余量。只对本轮complete同fingerprint的本地training_state.pt发送POSIX_FADV_DONTNEED提示，核UID/inode/size/mtime/ctime不变、不删除文件、不drop全机缓存、不动其他任务；usage降至853,208,137,728bytes/headroom218,207,670,272bytes。保原180GiB门槛与所有source/protocol不变，新queue_v2 WrbPIG同N7 GPU0只推固定3holdout，旧失败目录保留，未重复训练/清洗caption。
+
+H3 anchor0.1亦已100步exit0/complete，第二组完整状态独立审核O8IksC进行；同一原manager331804已自动fresh anchor1 launcher367843/UTC2026-10-23T13:21:22.212325，实际已57成功更新且锚定项激活非零，source247/cachemarker6eba不改。原6mgBAg等待全部三组完整状态后在N4每组固定3case，未有视频质量正评、不续300或取消整体跟进。

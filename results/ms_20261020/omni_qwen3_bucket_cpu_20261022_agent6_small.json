@@ -1,0 +1,2154 @@
+{
+  "schema": "omni-qwen3-ddp-bucket-cpu-evidence-v1",
+  "cpu_only": true,
+  "pretrained_model_loaded": false,
+  "official_30b_gpu_passed": false,
+  "model_architecture": "Qwen3OmniMoeThinkerForConditionalGeneration",
+  "torch": "2.8.0+cu129",
+  "transformers": "5.18.0",
+  "peft": "0.21.2",
+  "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/omni_dance_sft.py",
+  "source_sha256": "7c4636262726addbef7735ecc1e9717b66c922ed2a2ef20f264d08ddd22f33bb",
+  "fixture_path": "/tmp/omni_qwen3_bucket_cpu_20261022_agent6.py",
+  "fixture_sha256": "1b5d1d34f9925bdb813fde604ef998ac0870ddcbb544d3dadad1c4c5c9080a51",
+  "raw_evidence_dir": "/tmp/omni-qwen3-bucket-cpu-agent6-t6wh1azx",
+  "world_size": 2,
+  "backend": "gloo",
+  "model_seed": 17,
+  "text_layers": 1,
+  "lora_rank": 2,
+  "lora_alpha": 4,
+  "frozen_base_dtype": "BF16",
+  "trainable_dtype": "FP32",
+  "gradient_checkpointing": "nonreentrant",
+  "accumulation_slots": 2,
+  "optimizer": "production make_optimizer AdamW lr5e-5 projector1e-5 wd0",
+  "reduction": "PyTorch default_hooks.allreduce_hook, bucket metadata observer only",
+  "complete": true,
+  "bucket_and_deletion_math_bitwise_equal": true,
+  "all_variants_full_checkpoint_adam_rng_next_update_bitwise_equal": true,
+  "ranks": [
+    {
+      "rank": 0,
+      "variants": [
+        {
+          "variant": "view0_release0",
+          "gradient_as_bucket_view": false,
+          "del_after_backward": false,
+          "initial_adapter_hash": "1a97510e73ee0923ced4e1bc79ca56071c9ccb95a7bf076e0558f51681b0ecb9",
+          "frozen_base_hash": "1f700e9e4d080d201a9ebfbe174215e1f56fa57f6c94ae6d6b03638172c72245",
+          "complete_checkpoint": "/tmp/omni-qwen3-bucket-cpu-agent6-t6wh1azx/view0_release0/checkpoint-u0000002-e00-p0000008",
+          "resume_bitwise_equal": true,
+          "scope": {
+            "trainable_tensors": 64,
+            "trainable_parameters": 3504,
+            "audio_last_four": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "projectors": [
+              "audio_tower.proj1",
+              "audio_tower.proj2"
+            ],
+            "fused_expert_parameters": 2
+          },
+          "updates": [
+            {
+              "update": 1,
+              "losses": [
+                12.286482810974121,
+                12.286482810974121
+              ],
+              "loss_hash": "b406cc11457e04052dc48d14d79c55820805029045562ca2ef28c61ce37ad18c",
+              "nll": 4.095494270324707,
+              "grad_norm": 6.592024803161621,
+              "gradient_hash": "f35f60cc877bdeb75cb2d6311af7554e6099f5064c3ea653f255d32886dfa70a",
+              "adapter_hash": "5faa9b66ab57c86ea533cf36f485b7eca88905df768be11b92b6c681bc52a4a5",
+              "optimizer_hash": "d4b9c114908c7880c8044147bedd3059e17e4a6b223e1ff5bd68688e83e2639f",
+              "rng_hash": "1b359f0189991b848849772a7888253a07786d09412142c1ea2c66423a68779a",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 24,
+                    "shared": 0
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 2,
+                    "shared": 0
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 4,
+                    "shared": 0
+                  }
+                },
+                "shared_tensors": 0,
+                "view_tensors": 0,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 28032
+              },
+              "deletion_reclaimed_objects": []
+            },
+            {
+              "update": 2,
+              "losses": [
+                12.285980224609375,
+                12.285980224609375
+              ],
+              "loss_hash": "8a41e215cd2e7f11c42e48def88931441b6907909ae1d2ee8f2b90ae8a9201de",
+              "nll": 4.095326741536458,
+              "grad_norm": 6.552116870880127,
+              "gradient_hash": "f4074d528a9d79bb6fa7d61b58085d2eab434797095a67ec4251c08a33aab58a",
+              "adapter_hash": "c45311725294ab7d8bc62c0b66095b2d1fd387e55181956583d8cf54f9741efc",
+              "optimizer_hash": "23003dea5cc3268bf2621168d775d050d7ff8d8011a3814b454b449e80e74ae2",
+              "rng_hash": "6625841aad3a0a18ee1621861b7f93b70630f59853d6c0fd7de8a821b6e80826",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 48,
+                    "shared": 0
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 8,
+                    "shared": 0
+                  }
+                },
+                "shared_tensors": 0,
+                "view_tensors": 0,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 28032
+              },
+              "deletion_reclaimed_objects": []
+            }
+          ],
+          "uninterrupted_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "f1cd8fa118f516a83e25e5291b61daccc71bf122892c302fe5ed6e3442a9f35b",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 0
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 0
+                }
+              },
+              "shared_tensors": 0,
+              "view_tensors": 0,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 28032
+            },
+            "deletion_reclaimed_objects": []
+          },
+          "restored_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "f1cd8fa118f516a83e25e5291b61daccc71bf122892c302fe5ed6e3442a9f35b",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 0
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 0
+                }
+              },
+              "shared_tensors": 0,
+              "view_tensors": 0,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 28032
+            },
+            "deletion_reclaimed_objects": []
+          }
+        },
+        {
+          "variant": "view1_release0",
+          "gradient_as_bucket_view": true,
+          "del_after_backward": false,
+          "initial_adapter_hash": "1a97510e73ee0923ced4e1bc79ca56071c9ccb95a7bf076e0558f51681b0ecb9",
+          "frozen_base_hash": "1f700e9e4d080d201a9ebfbe174215e1f56fa57f6c94ae6d6b03638172c72245",
+          "complete_checkpoint": "/tmp/omni-qwen3-bucket-cpu-agent6-t6wh1azx/view1_release0/checkpoint-u0000002-e00-p0000008",
+          "resume_bitwise_equal": true,
+          "scope": {
+            "trainable_tensors": 64,
+            "trainable_parameters": 3504,
+            "audio_last_four": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "projectors": [
+              "audio_tower.proj1",
+              "audio_tower.proj2"
+            ],
+            "fused_expert_parameters": 2
+          },
+          "updates": [
+            {
+              "update": 1,
+              "losses": [
+                12.286482810974121,
+                12.286482810974121
+              ],
+              "loss_hash": "b406cc11457e04052dc48d14d79c55820805029045562ca2ef28c61ce37ad18c",
+              "nll": 4.095494270324707,
+              "grad_norm": 6.592024803161621,
+              "gradient_hash": "f35f60cc877bdeb75cb2d6311af7554e6099f5064c3ea653f255d32886dfa70a",
+              "adapter_hash": "5faa9b66ab57c86ea533cf36f485b7eca88905df768be11b92b6c681bc52a4a5",
+              "optimizer_hash": "d4b9c114908c7880c8044147bedd3059e17e4a6b223e1ff5bd68688e83e2639f",
+              "rng_hash": "1b359f0189991b848849772a7888253a07786d09412142c1ea2c66423a68779a",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 24,
+                    "shared": 48
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 2,
+                    "shared": 4
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 4,
+                    "shared": 8
+                  }
+                },
+                "shared_tensors": 64,
+                "view_tensors": 64,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 14016
+              },
+              "deletion_reclaimed_objects": []
+            },
+            {
+              "update": 2,
+              "losses": [
+                12.285980224609375,
+                12.285980224609375
+              ],
+              "loss_hash": "8a41e215cd2e7f11c42e48def88931441b6907909ae1d2ee8f2b90ae8a9201de",
+              "nll": 4.095326741536458,
+              "grad_norm": 6.552116870880127,
+              "gradient_hash": "f4074d528a9d79bb6fa7d61b58085d2eab434797095a67ec4251c08a33aab58a",
+              "adapter_hash": "c45311725294ab7d8bc62c0b66095b2d1fd387e55181956583d8cf54f9741efc",
+              "optimizer_hash": "23003dea5cc3268bf2621168d775d050d7ff8d8011a3814b454b449e80e74ae2",
+              "rng_hash": "6625841aad3a0a18ee1621861b7f93b70630f59853d6c0fd7de8a821b6e80826",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 48,
+                    "shared": 48
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 8,
+                    "shared": 8
+                  }
+                },
+                "shared_tensors": 64,
+                "view_tensors": 64,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 14016
+              },
+              "deletion_reclaimed_objects": []
+            }
+          ],
+          "uninterrupted_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "f1cd8fa118f516a83e25e5291b61daccc71bf122892c302fe5ed6e3442a9f35b",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 48
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 8
+                }
+              },
+              "shared_tensors": 64,
+              "view_tensors": 64,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 14016
+            },
+            "deletion_reclaimed_objects": []
+          },
+          "restored_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "f1cd8fa118f516a83e25e5291b61daccc71bf122892c302fe5ed6e3442a9f35b",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 48
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 8
+                }
+              },
+              "shared_tensors": 64,
+              "view_tensors": 64,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 14016
+            },
+            "deletion_reclaimed_objects": []
+          }
+        },
+        {
+          "variant": "view0_release1",
+          "gradient_as_bucket_view": false,
+          "del_after_backward": true,
+          "initial_adapter_hash": "1a97510e73ee0923ced4e1bc79ca56071c9ccb95a7bf076e0558f51681b0ecb9",
+          "frozen_base_hash": "1f700e9e4d080d201a9ebfbe174215e1f56fa57f6c94ae6d6b03638172c72245",
+          "complete_checkpoint": "/tmp/omni-qwen3-bucket-cpu-agent6-t6wh1azx/view0_release1/checkpoint-u0000002-e00-p0000008",
+          "resume_bitwise_equal": true,
+          "scope": {
+            "trainable_tensors": 64,
+            "trainable_parameters": 3504,
+            "audio_last_four": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "projectors": [
+              "audio_tower.proj1",
+              "audio_tower.proj2"
+            ],
+            "fused_expert_parameters": 2
+          },
+          "updates": [
+            {
+              "update": 1,
+              "losses": [
+                12.286482810974121,
+                12.286482810974121
+              ],
+              "loss_hash": "b406cc11457e04052dc48d14d79c55820805029045562ca2ef28c61ce37ad18c",
+              "nll": 4.095494270324707,
+              "grad_norm": 6.592024803161621,
+              "gradient_hash": "f35f60cc877bdeb75cb2d6311af7554e6099f5064c3ea653f255d32886dfa70a",
+              "adapter_hash": "5faa9b66ab57c86ea533cf36f485b7eca88905df768be11b92b6c681bc52a4a5",
+              "optimizer_hash": "d4b9c114908c7880c8044147bedd3059e17e4a6b223e1ff5bd68688e83e2639f",
+              "rng_hash": "1b359f0189991b848849772a7888253a07786d09412142c1ea2c66423a68779a",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 24,
+                    "shared": 0
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 2,
+                    "shared": 0
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 4,
+                    "shared": 0
+                  }
+                },
+                "shared_tensors": 0,
+                "view_tensors": 0,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 28032
+              },
+              "deletion_reclaimed_objects": [
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ]
+            },
+            {
+              "update": 2,
+              "losses": [
+                12.285980224609375,
+                12.285980224609375
+              ],
+              "loss_hash": "8a41e215cd2e7f11c42e48def88931441b6907909ae1d2ee8f2b90ae8a9201de",
+              "nll": 4.095326741536458,
+              "grad_norm": 6.552116870880127,
+              "gradient_hash": "f4074d528a9d79bb6fa7d61b58085d2eab434797095a67ec4251c08a33aab58a",
+              "adapter_hash": "c45311725294ab7d8bc62c0b66095b2d1fd387e55181956583d8cf54f9741efc",
+              "optimizer_hash": "23003dea5cc3268bf2621168d775d050d7ff8d8011a3814b454b449e80e74ae2",
+              "rng_hash": "6625841aad3a0a18ee1621861b7f93b70630f59853d6c0fd7de8a821b6e80826",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 48,
+                    "shared": 0
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 8,
+                    "shared": 0
+                  }
+                },
+                "shared_tensors": 0,
+                "view_tensors": 0,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 28032
+              },
+              "deletion_reclaimed_objects": [
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ]
+            }
+          ],
+          "uninterrupted_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "f1cd8fa118f516a83e25e5291b61daccc71bf122892c302fe5ed6e3442a9f35b",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 0
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 0
+                }
+              },
+              "shared_tensors": 0,
+              "view_tensors": 0,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 28032
+            },
+            "deletion_reclaimed_objects": [
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ]
+            ]
+          },
+          "restored_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "f1cd8fa118f516a83e25e5291b61daccc71bf122892c302fe5ed6e3442a9f35b",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 0
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 0
+                }
+              },
+              "shared_tensors": 0,
+              "view_tensors": 0,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 28032
+            },
+            "deletion_reclaimed_objects": [
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ]
+            ]
+          }
+        },
+        {
+          "variant": "view1_release1",
+          "gradient_as_bucket_view": true,
+          "del_after_backward": true,
+          "initial_adapter_hash": "1a97510e73ee0923ced4e1bc79ca56071c9ccb95a7bf076e0558f51681b0ecb9",
+          "frozen_base_hash": "1f700e9e4d080d201a9ebfbe174215e1f56fa57f6c94ae6d6b03638172c72245",
+          "complete_checkpoint": "/tmp/omni-qwen3-bucket-cpu-agent6-t6wh1azx/view1_release1/checkpoint-u0000002-e00-p0000008",
+          "resume_bitwise_equal": true,
+          "scope": {
+            "trainable_tensors": 64,
+            "trainable_parameters": 3504,
+            "audio_last_four": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "projectors": [
+              "audio_tower.proj1",
+              "audio_tower.proj2"
+            ],
+            "fused_expert_parameters": 2
+          },
+          "updates": [
+            {
+              "update": 1,
+              "losses": [
+                12.286482810974121,
+                12.286482810974121
+              ],
+              "loss_hash": "b406cc11457e04052dc48d14d79c55820805029045562ca2ef28c61ce37ad18c",
+              "nll": 4.095494270324707,
+              "grad_norm": 6.592024803161621,
+              "gradient_hash": "f35f60cc877bdeb75cb2d6311af7554e6099f5064c3ea653f255d32886dfa70a",
+              "adapter_hash": "5faa9b66ab57c86ea533cf36f485b7eca88905df768be11b92b6c681bc52a4a5",
+              "optimizer_hash": "d4b9c114908c7880c8044147bedd3059e17e4a6b223e1ff5bd68688e83e2639f",
+              "rng_hash": "1b359f0189991b848849772a7888253a07786d09412142c1ea2c66423a68779a",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 24,
+                    "shared": 48
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 2,
+                    "shared": 4
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 4,
+                    "shared": 8
+                  }
+                },
+                "shared_tensors": 64,
+                "view_tensors": 64,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 14016
+              },
+              "deletion_reclaimed_objects": [
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ]
+            },
+            {
+              "update": 2,
+              "losses": [
+                12.285980224609375,
+                12.285980224609375
+              ],
+              "loss_hash": "8a41e215cd2e7f11c42e48def88931441b6907909ae1d2ee8f2b90ae8a9201de",
+              "nll": 4.095326741536458,
+              "grad_norm": 6.552116870880127,
+              "gradient_hash": "f4074d528a9d79bb6fa7d61b58085d2eab434797095a67ec4251c08a33aab58a",
+              "adapter_hash": "c45311725294ab7d8bc62c0b66095b2d1fd387e55181956583d8cf54f9741efc",
+              "optimizer_hash": "23003dea5cc3268bf2621168d775d050d7ff8d8011a3814b454b449e80e74ae2",
+              "rng_hash": "6625841aad3a0a18ee1621861b7f93b70630f59853d6c0fd7de8a821b6e80826",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 48,
+                    "shared": 48
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 8,
+                    "shared": 8
+                  }
+                },
+                "shared_tensors": 64,
+                "view_tensors": 64,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 14016
+              },
+              "deletion_reclaimed_objects": [
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ]
+            }
+          ],
+          "uninterrupted_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "f1cd8fa118f516a83e25e5291b61daccc71bf122892c302fe5ed6e3442a9f35b",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 48
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 8
+                }
+              },
+              "shared_tensors": 64,
+              "view_tensors": 64,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 14016
+            },
+            "deletion_reclaimed_objects": [
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ]
+            ]
+          },
+          "restored_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "f1cd8fa118f516a83e25e5291b61daccc71bf122892c302fe5ed6e3442a9f35b",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 48
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 8
+                }
+              },
+              "shared_tensors": 64,
+              "view_tensors": 64,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 14016
+            },
+            "deletion_reclaimed_objects": [
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "rank": 1,
+      "variants": [
+        {
+          "variant": "view0_release0",
+          "gradient_as_bucket_view": false,
+          "del_after_backward": false,
+          "initial_adapter_hash": "1a97510e73ee0923ced4e1bc79ca56071c9ccb95a7bf076e0558f51681b0ecb9",
+          "frozen_base_hash": "1f700e9e4d080d201a9ebfbe174215e1f56fa57f6c94ae6d6b03638172c72245",
+          "complete_checkpoint": "/tmp/omni-qwen3-bucket-cpu-agent6-t6wh1azx/view0_release0/checkpoint-u0000002-e00-p0000008",
+          "resume_bitwise_equal": true,
+          "scope": {
+            "trainable_tensors": 64,
+            "trainable_parameters": 3504,
+            "audio_last_four": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "projectors": [
+              "audio_tower.proj1",
+              "audio_tower.proj2"
+            ],
+            "fused_expert_parameters": 2
+          },
+          "updates": [
+            {
+              "update": 1,
+              "losses": [
+                12.286482810974121,
+                12.286482810974121
+              ],
+              "loss_hash": "b406cc11457e04052dc48d14d79c55820805029045562ca2ef28c61ce37ad18c",
+              "nll": 4.095494270324707,
+              "grad_norm": 6.592024803161621,
+              "gradient_hash": "f35f60cc877bdeb75cb2d6311af7554e6099f5064c3ea653f255d32886dfa70a",
+              "adapter_hash": "5faa9b66ab57c86ea533cf36f485b7eca88905df768be11b92b6c681bc52a4a5",
+              "optimizer_hash": "d4b9c114908c7880c8044147bedd3059e17e4a6b223e1ff5bd68688e83e2639f",
+              "rng_hash": "fa375717cf56e50c59bf364c56618f27fb1f369d210a859e46a65f938cd8c2fd",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 24,
+                    "shared": 0
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 2,
+                    "shared": 0
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 4,
+                    "shared": 0
+                  }
+                },
+                "shared_tensors": 0,
+                "view_tensors": 0,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 28032
+              },
+              "deletion_reclaimed_objects": []
+            },
+            {
+              "update": 2,
+              "losses": [
+                12.285980224609375,
+                12.285980224609375
+              ],
+              "loss_hash": "8a41e215cd2e7f11c42e48def88931441b6907909ae1d2ee8f2b90ae8a9201de",
+              "nll": 4.095326741536458,
+              "grad_norm": 6.552116870880127,
+              "gradient_hash": "f4074d528a9d79bb6fa7d61b58085d2eab434797095a67ec4251c08a33aab58a",
+              "adapter_hash": "c45311725294ab7d8bc62c0b66095b2d1fd387e55181956583d8cf54f9741efc",
+              "optimizer_hash": "23003dea5cc3268bf2621168d775d050d7ff8d8011a3814b454b449e80e74ae2",
+              "rng_hash": "6653846ee229446283714d9f282f2f6f41038fe97011cbe98b37e3ed861932c7",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 48,
+                    "shared": 0
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 8,
+                    "shared": 0
+                  }
+                },
+                "shared_tensors": 0,
+                "view_tensors": 0,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 28032
+              },
+              "deletion_reclaimed_objects": []
+            }
+          ],
+          "uninterrupted_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "58ea88d9f2b71c42fc1042d90cfed63ae285d4403bfcd1e07890b78321bb68cf",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 0
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 0
+                }
+              },
+              "shared_tensors": 0,
+              "view_tensors": 0,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 28032
+            },
+            "deletion_reclaimed_objects": []
+          },
+          "restored_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "58ea88d9f2b71c42fc1042d90cfed63ae285d4403bfcd1e07890b78321bb68cf",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 0
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 0
+                }
+              },
+              "shared_tensors": 0,
+              "view_tensors": 0,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 28032
+            },
+            "deletion_reclaimed_objects": []
+          }
+        },
+        {
+          "variant": "view1_release0",
+          "gradient_as_bucket_view": true,
+          "del_after_backward": false,
+          "initial_adapter_hash": "1a97510e73ee0923ced4e1bc79ca56071c9ccb95a7bf076e0558f51681b0ecb9",
+          "frozen_base_hash": "1f700e9e4d080d201a9ebfbe174215e1f56fa57f6c94ae6d6b03638172c72245",
+          "complete_checkpoint": "/tmp/omni-qwen3-bucket-cpu-agent6-t6wh1azx/view1_release0/checkpoint-u0000002-e00-p0000008",
+          "resume_bitwise_equal": true,
+          "scope": {
+            "trainable_tensors": 64,
+            "trainable_parameters": 3504,
+            "audio_last_four": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "projectors": [
+              "audio_tower.proj1",
+              "audio_tower.proj2"
+            ],
+            "fused_expert_parameters": 2
+          },
+          "updates": [
+            {
+              "update": 1,
+              "losses": [
+                12.286482810974121,
+                12.286482810974121
+              ],
+              "loss_hash": "b406cc11457e04052dc48d14d79c55820805029045562ca2ef28c61ce37ad18c",
+              "nll": 4.095494270324707,
+              "grad_norm": 6.592024803161621,
+              "gradient_hash": "f35f60cc877bdeb75cb2d6311af7554e6099f5064c3ea653f255d32886dfa70a",
+              "adapter_hash": "5faa9b66ab57c86ea533cf36f485b7eca88905df768be11b92b6c681bc52a4a5",
+              "optimizer_hash": "d4b9c114908c7880c8044147bedd3059e17e4a6b223e1ff5bd68688e83e2639f",
+              "rng_hash": "fa375717cf56e50c59bf364c56618f27fb1f369d210a859e46a65f938cd8c2fd",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 24,
+                    "shared": 48
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 2,
+                    "shared": 4
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 4,
+                    "shared": 8
+                  }
+                },
+                "shared_tensors": 64,
+                "view_tensors": 64,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 14016
+              },
+              "deletion_reclaimed_objects": []
+            },
+            {
+              "update": 2,
+              "losses": [
+                12.285980224609375,
+                12.285980224609375
+              ],
+              "loss_hash": "8a41e215cd2e7f11c42e48def88931441b6907909ae1d2ee8f2b90ae8a9201de",
+              "nll": 4.095326741536458,
+              "grad_norm": 6.552116870880127,
+              "gradient_hash": "f4074d528a9d79bb6fa7d61b58085d2eab434797095a67ec4251c08a33aab58a",
+              "adapter_hash": "c45311725294ab7d8bc62c0b66095b2d1fd387e55181956583d8cf54f9741efc",
+              "optimizer_hash": "23003dea5cc3268bf2621168d775d050d7ff8d8011a3814b454b449e80e74ae2",
+              "rng_hash": "6653846ee229446283714d9f282f2f6f41038fe97011cbe98b37e3ed861932c7",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 48,
+                    "shared": 48
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 8,
+                    "shared": 8
+                  }
+                },
+                "shared_tensors": 64,
+                "view_tensors": 64,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 14016
+              },
+              "deletion_reclaimed_objects": []
+            }
+          ],
+          "uninterrupted_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "58ea88d9f2b71c42fc1042d90cfed63ae285d4403bfcd1e07890b78321bb68cf",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 48
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 8
+                }
+              },
+              "shared_tensors": 64,
+              "view_tensors": 64,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 14016
+            },
+            "deletion_reclaimed_objects": []
+          },
+          "restored_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "58ea88d9f2b71c42fc1042d90cfed63ae285d4403bfcd1e07890b78321bb68cf",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 48
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 8
+                }
+              },
+              "shared_tensors": 64,
+              "view_tensors": 64,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 14016
+            },
+            "deletion_reclaimed_objects": []
+          }
+        },
+        {
+          "variant": "view0_release1",
+          "gradient_as_bucket_view": false,
+          "del_after_backward": true,
+          "initial_adapter_hash": "1a97510e73ee0923ced4e1bc79ca56071c9ccb95a7bf076e0558f51681b0ecb9",
+          "frozen_base_hash": "1f700e9e4d080d201a9ebfbe174215e1f56fa57f6c94ae6d6b03638172c72245",
+          "complete_checkpoint": "/tmp/omni-qwen3-bucket-cpu-agent6-t6wh1azx/view0_release1/checkpoint-u0000002-e00-p0000008",
+          "resume_bitwise_equal": true,
+          "scope": {
+            "trainable_tensors": 64,
+            "trainable_parameters": 3504,
+            "audio_last_four": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "projectors": [
+              "audio_tower.proj1",
+              "audio_tower.proj2"
+            ],
+            "fused_expert_parameters": 2
+          },
+          "updates": [
+            {
+              "update": 1,
+              "losses": [
+                12.286482810974121,
+                12.286482810974121
+              ],
+              "loss_hash": "b406cc11457e04052dc48d14d79c55820805029045562ca2ef28c61ce37ad18c",
+              "nll": 4.095494270324707,
+              "grad_norm": 6.592024803161621,
+              "gradient_hash": "f35f60cc877bdeb75cb2d6311af7554e6099f5064c3ea653f255d32886dfa70a",
+              "adapter_hash": "5faa9b66ab57c86ea533cf36f485b7eca88905df768be11b92b6c681bc52a4a5",
+              "optimizer_hash": "d4b9c114908c7880c8044147bedd3059e17e4a6b223e1ff5bd68688e83e2639f",
+              "rng_hash": "fa375717cf56e50c59bf364c56618f27fb1f369d210a859e46a65f938cd8c2fd",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 24,
+                    "shared": 0
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 2,
+                    "shared": 0
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 4,
+                    "shared": 0
+                  }
+                },
+                "shared_tensors": 0,
+                "view_tensors": 0,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 28032
+              },
+              "deletion_reclaimed_objects": [
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ]
+            },
+            {
+              "update": 2,
+              "losses": [
+                12.285980224609375,
+                12.285980224609375
+              ],
+              "loss_hash": "8a41e215cd2e7f11c42e48def88931441b6907909ae1d2ee8f2b90ae8a9201de",
+              "nll": 4.095326741536458,
+              "grad_norm": 6.552116870880127,
+              "gradient_hash": "f4074d528a9d79bb6fa7d61b58085d2eab434797095a67ec4251c08a33aab58a",
+              "adapter_hash": "c45311725294ab7d8bc62c0b66095b2d1fd387e55181956583d8cf54f9741efc",
+              "optimizer_hash": "23003dea5cc3268bf2621168d775d050d7ff8d8011a3814b454b449e80e74ae2",
+              "rng_hash": "6653846ee229446283714d9f282f2f6f41038fe97011cbe98b37e3ed861932c7",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 48,
+                    "shared": 0
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 0
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 8,
+                    "shared": 0
+                  }
+                },
+                "shared_tensors": 0,
+                "view_tensors": 0,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 28032
+              },
+              "deletion_reclaimed_objects": [
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ]
+            }
+          ],
+          "uninterrupted_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "58ea88d9f2b71c42fc1042d90cfed63ae285d4403bfcd1e07890b78321bb68cf",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 0
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 0
+                }
+              },
+              "shared_tensors": 0,
+              "view_tensors": 0,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 28032
+            },
+            "deletion_reclaimed_objects": [
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ]
+            ]
+          },
+          "restored_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "58ea88d9f2b71c42fc1042d90cfed63ae285d4403bfcd1e07890b78321bb68cf",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 0
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 0
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 0
+                }
+              },
+              "shared_tensors": 0,
+              "view_tensors": 0,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 28032
+            },
+            "deletion_reclaimed_objects": [
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ]
+            ]
+          }
+        },
+        {
+          "variant": "view1_release1",
+          "gradient_as_bucket_view": true,
+          "del_after_backward": true,
+          "initial_adapter_hash": "1a97510e73ee0923ced4e1bc79ca56071c9ccb95a7bf076e0558f51681b0ecb9",
+          "frozen_base_hash": "1f700e9e4d080d201a9ebfbe174215e1f56fa57f6c94ae6d6b03638172c72245",
+          "complete_checkpoint": "/tmp/omni-qwen3-bucket-cpu-agent6-t6wh1azx/view1_release1/checkpoint-u0000002-e00-p0000008",
+          "resume_bitwise_equal": true,
+          "scope": {
+            "trainable_tensors": 64,
+            "trainable_parameters": 3504,
+            "audio_last_four": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "projectors": [
+              "audio_tower.proj1",
+              "audio_tower.proj2"
+            ],
+            "fused_expert_parameters": 2
+          },
+          "updates": [
+            {
+              "update": 1,
+              "losses": [
+                12.286482810974121,
+                12.286482810974121
+              ],
+              "loss_hash": "b406cc11457e04052dc48d14d79c55820805029045562ca2ef28c61ce37ad18c",
+              "nll": 4.095494270324707,
+              "grad_norm": 6.592024803161621,
+              "gradient_hash": "f35f60cc877bdeb75cb2d6311af7554e6099f5064c3ea653f255d32886dfa70a",
+              "adapter_hash": "5faa9b66ab57c86ea533cf36f485b7eca88905df768be11b92b6c681bc52a4a5",
+              "optimizer_hash": "d4b9c114908c7880c8044147bedd3059e17e4a6b223e1ff5bd68688e83e2639f",
+              "rng_hash": "fa375717cf56e50c59bf364c56618f27fb1f369d210a859e46a65f938cd8c2fd",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 24,
+                    "shared": 48
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 2,
+                    "shared": 4
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 4,
+                    "shared": 8
+                  }
+                },
+                "shared_tensors": 64,
+                "view_tensors": 64,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 14016
+              },
+              "deletion_reclaimed_objects": [
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ]
+            },
+            {
+              "update": 2,
+              "losses": [
+                12.285980224609375,
+                12.285980224609375
+              ],
+              "loss_hash": "8a41e215cd2e7f11c42e48def88931441b6907909ae1d2ee8f2b90ae8a9201de",
+              "nll": 4.095326741536458,
+              "grad_norm": 6.552116870880127,
+              "gradient_hash": "f4074d528a9d79bb6fa7d61b58085d2eab434797095a67ec4251c08a33aab58a",
+              "adapter_hash": "c45311725294ab7d8bc62c0b66095b2d1fd387e55181956583d8cf54f9741efc",
+              "optimizer_hash": "23003dea5cc3268bf2621168d775d050d7ff8d8011a3814b454b449e80e74ae2",
+              "rng_hash": "6653846ee229446283714d9f282f2f6f41038fe97011cbe98b37e3ed861932c7",
+              "actual_nonreentrant_checkpoint_calls": 2,
+              "no_sync_first_slot": {
+                "tensors": 64,
+                "view_tensors": 0,
+                "communication_buckets": 0
+              },
+              "grad": {
+                "trainable_tensors": 64,
+                "nonzero_by_scope": {
+                  "projector": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "audio_lora": {
+                    "tensors": 48,
+                    "nonzero": 48,
+                    "shared": 48
+                  },
+                  "expert_lora": {
+                    "tensors": 4,
+                    "nonzero": 4,
+                    "shared": 4
+                  },
+                  "lm_lora": {
+                    "tensors": 8,
+                    "nonzero": 8,
+                    "shared": 8
+                  }
+                },
+                "shared_tensors": 64,
+                "view_tensors": 64,
+                "gradient_logical_bytes": 14016,
+                "gradient_unique_storage_bytes": 14016,
+                "bucket_unique_storage_bytes": 14016,
+                "gradient_bucket_union_storage_bytes": 14016
+              },
+              "deletion_reclaimed_objects": [
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ],
+                [
+                  true,
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ]
+            }
+          ],
+          "uninterrupted_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "58ea88d9f2b71c42fc1042d90cfed63ae285d4403bfcd1e07890b78321bb68cf",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 48
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 8
+                }
+              },
+              "shared_tensors": 64,
+              "view_tensors": 64,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 14016
+            },
+            "deletion_reclaimed_objects": [
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ]
+            ]
+          },
+          "restored_next_update": {
+            "update": 3,
+            "losses": [
+              12.283823013305664,
+              12.283823013305664
+            ],
+            "loss_hash": "0d64fadccbb2ecac6333f23c04c04dfa8a4014c5ab11145108890672a80f702a",
+            "nll": 4.094607671101888,
+            "grad_norm": 6.548953533172607,
+            "gradient_hash": "c5c8fbe19b06acdac00514abf5df67a689f73e0fb55c9308cb6dbd3bd11459c9",
+            "adapter_hash": "500ede744304a870d8426dc411fd75cdac7bf0bd4e94ba48a38d0eff12900c95",
+            "optimizer_hash": "1bfaf1190c275304dd39b830fbbee069ade32ab2048d4a81b2517c74e1ed5a1e",
+            "rng_hash": "58ea88d9f2b71c42fc1042d90cfed63ae285d4403bfcd1e07890b78321bb68cf",
+            "actual_nonreentrant_checkpoint_calls": 2,
+            "no_sync_first_slot": {
+              "tensors": 64,
+              "view_tensors": 0,
+              "communication_buckets": 0
+            },
+            "grad": {
+              "trainable_tensors": 64,
+              "nonzero_by_scope": {
+                "projector": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "audio_lora": {
+                  "tensors": 48,
+                  "nonzero": 48,
+                  "shared": 48
+                },
+                "expert_lora": {
+                  "tensors": 4,
+                  "nonzero": 4,
+                  "shared": 4
+                },
+                "lm_lora": {
+                  "tensors": 8,
+                  "nonzero": 8,
+                  "shared": 8
+                }
+              },
+              "shared_tensors": 64,
+              "view_tensors": 64,
+              "gradient_logical_bytes": 14016,
+              "gradient_unique_storage_bytes": 14016,
+              "bucket_unique_storage_bytes": 14016,
+              "gradient_bucket_union_storage_bytes": 14016
+            },
+            "deletion_reclaimed_objects": [
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              [
+                true,
+                true,
+                true,
+                true,
+                true
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema": "music-planner-prepost-blind-text-rubric-v1",
+  "scope": "six anonymous groups, three paired fixed cases each; no model/stage identity, audio, video, NLL, or weak-reference text supplied",
+  "unit": "one caption; group means over the same three cases are diagnostic only",
+  "axes": [
+    "action_plan_coherence",
+    "dynamic_actions_not_static_pose",
+    "semantic_action_diversity",
+    "executable_action_specificity"
+  ],
+  "score_scale": {
+    "1": "No usable choreography on this axis, e.g. only music description or absent actions",
+    "2": "Sparse/static/generic actions, weak organization or detail",
+    "3": "Some concrete dynamic sequence; usable parts but generic, repetitive or underspecified",
+    "4": "Clear, coherent and reasonably varied action plan with concrete transitions or details",
+    "5": "Consistently strong action organization, varied executable movement and convincing transitions; text evidence only"
+  },
+  "requirements": [
+    "Read all 18 captions, do not extrapolate from a subset",
+    "Score text content separately from computed fixed-window format compliance",
+    "Missing transition is not automatically physically impossible",
+    "More words or more action categories do not automatically score better",
+    "Do not punish creative alternatives merely because they differ from one observed dance",
+    "Record rationale per case and group, near duplicates and uncertainty; allow unknown or ties",
+    "Model/phase identities are decoded only after the review JSON is saved"
+  ],
+  "unassessable_without_audio_video_or_ground_truth": [
+    "actual_action_start_end_timestamp_accuracy",
+    "music_or_beat_alignment",
+    "dance_style_ground_truth_accuracy",
+    "physical_execution_or_H3_visual_quality"
+  ],
+  "source_scope_limit": "three cases cannot establish population-level training benefit or statistical model superiority",
+  "test500_not_used_for_rubric_tuning": true,
+  "automatic_winner": null,
+  "human_quality_accepted": false,
+  "created_before_base_generation": true
+}

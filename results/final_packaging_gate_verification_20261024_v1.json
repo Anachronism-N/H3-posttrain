@@ -1,0 +1,343 @@
+{
+  "scope": "Independent bounded final packaging verification, not experiment success or GitHub final publication",
+  "snapshot": {
+    "time_CST": "2026-10-24T02:06:13.234375+08:00",
+    "video_config_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/goal_completion_video_roles_v1.json",
+    "video_config_sha256": "0e13b13818aa52e752b090388048e1e01c988912d5b492a0a28e60f3bde4ceb3",
+    "roles_valid": true,
+    "expected_models": 5,
+    "expected_cases_per_model": 3,
+    "expected_total_cases": 15,
+    "models": [
+      {
+        "role": "purefm100",
+        "model_id": "MS/review_h3_purefm100_n4_chunked_v2/videos",
+        "kind": "pure_video",
+        "directory": "review_h3_purefm100_n4_chunked_v2",
+        "expected_lora_sha256": "e5aef58b06bba1b0f8b570fb61cfe053a85d48f4d734c32e7cd923c6931749f0",
+        "expected_caption_sha256": null,
+        "finished_present": true,
+        "completed_audit_IDs": [
+          "wJPptuhclZmKAEWs",
+          "wJPrpFsThWAcBQIw",
+          "wJQTclrlOLEYYfTB"
+        ],
+        "run_complete_present": true,
+        "actual_lora_source_sha256": "e5aef58b06bba1b0f8b570fb61cfe053a85d48f4d734c32e7cd923c6931749f0",
+        "actual_caption_source_sha256": "17ff545eff693e19fd18fb60f10f6ae452636e14a0f06a0b6a138e0cdbad8020"
+      },
+      {
+        "role": "anchor01_100",
+        "model_id": "MS/review_h3_anchor01_s100_n4_v2/videos",
+        "kind": "pure_video",
+        "directory": "review_h3_anchor01_s100_n4_v2",
+        "expected_lora_sha256": null,
+        "expected_caption_sha256": null,
+        "finished_present": false,
+        "completed_audit_IDs": [],
+        "run_complete_present": false
+      },
+      {
+        "role": "omni_u3000",
+        "model_id": "MS/review_omni6k_u3000_n6_video_v2/videos",
+        "kind": "pure_video",
+        "directory": "review_omni6k_u3000_n6_video_v2",
+        "expected_lora_sha256": null,
+        "expected_caption_sha256": null,
+        "finished_present": true,
+        "completed_audit_IDs": [
+          "wJPptuhclZmKAEWs",
+          "wJPrpFsThWAcBQIw",
+          "wJQTclrlOLEYYfTB"
+        ],
+        "run_complete_present": true,
+        "actual_lora_source_sha256": null,
+        "actual_caption_source_sha256": "93467c34d5eff67c2c8d01da3a28f308039c4ddbef7286315b4d1745ecf81d82"
+      },
+      {
+        "role": "direct_full2250",
+        "model_id": "MS/music_direct_full6k_final2250_video_n4_v1",
+        "kind": "native_AV",
+        "directory": "music_direct_full6k_final2250_video_n4_v1",
+        "expected_lora_sha256": null,
+        "expected_caption_sha256": null,
+        "finished_present": false,
+        "completed_audit_IDs": [],
+        "report_present": false
+      },
+      {
+        "role": "omni_final3750",
+        "model_id": "MS/review_omni6k_final_u3750_n6_v1/videos",
+        "kind": "pure_video",
+        "directory": "review_omni6k_final_u3750_n6_v1",
+        "expected_lora_sha256": null,
+        "expected_caption_sha256": null,
+        "finished_present": false,
+        "completed_audit_IDs": [],
+        "run_complete_present": false
+      }
+    ],
+    "fusion_complete_present": false,
+    "checker_sha256": "a24c3aea0f9277343a03124d507ea31b1aff11e454d5f768181f613b6d39b1b8",
+    "new_runtime": {
+      "path": "scripts_omnidance/exp/ms/runtime_jobs/eval_omni_final3750_review_v1.py",
+      "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/eval_omni_final3750_review_v1.py",
+      "sha256": "a21f4e278e271fbeecd742a12bfcc9bcc1ac4b821dc3f3dba4dc5abc0b99e1a0",
+      "bytes_identical": true,
+      "AST_passed": true,
+      "GPU_reverified": false
+    },
+    "new_media_decode_or_hash": false
+  },
+  "technical_goal_complete": false,
+  "checker_actual_audit": {
+    "path": "MS/goal_actual_completion_audit_1792778114928.json",
+    "complete": false,
+    "pending": [
+      "N2_full_mapping_three_epochs",
+      "N1_complete_fusion_export",
+      "H3_pureFM_and_anchor_training",
+      "videos:anchor01_100",
+      "videos:direct_full2250",
+      "videos:omni_final3750",
+      "review_HTTP_all_five_configurations",
+      "GitHub_HEAD_matches"
+    ],
+    "exit2_completefalse_is_correct": true,
+    "GitHub_transport_timeout_not_proof_of_push_failure": true,
+    "GitHub_final_must_be_verified_in_main_connected_environment": true
+  },
+  "checker_existing_selftest": {
+    "passed": true,
+    "command": "python3 -B scripts_omnidance/exp/ms/verify_current_experiment_completion.py --self-test"
+  },
+  "independent_negative_probes": {
+    "synthetic_only": true,
+    "no_network_GPU_or_media_hash": true,
+    "current_checker_can_wrongly_accept": [
+      {
+        "name": "fusion_false_source_assumption",
+        "source": "scripts_omnidance/exp/ms/verify_current_experiment_completion.py:42",
+        "bad_value": "source_action_correctness_assumed=False"
+      },
+      {
+        "name": "N7_typed_exit_code",
+        "source": "scripts_omnidance/exp/ms/verify_current_experiment_completion.py:95",
+        "bad_value": "exit_code=False compares equal to zero"
+      },
+      {
+        "name": "H3_weight_state_receipt",
+        "source": "scripts_omnidance/exp/ms/verify_current_experiment_completion.py:132",
+        "bad_value": "pureFM anchor_lambda=False; anchor rng_rank_count=1 optimizer_shards=[]"
+      },
+      {
+        "name": "anchor_weight_identity_optional",
+        "source": "scripts_omnidance/exp/ms/verify_current_experiment_completion.py:160",
+        "bad_value": "WRONG_LORA passes when config lora_sha256 absent"
+      },
+      {
+        "name": "Omni_u3000_and_final3750_caption_identity_optional",
+        "source": "scripts_omnidance/exp/ms/verify_current_experiment_completion.py:164",
+        "bad_value": "WRONG_CAPTION passes when caption_sha256 absent"
+      },
+      {
+        "name": "direct_dense_state_and_native_protocol",
+        "source": "scripts_omnidance/exp/ms/verify_current_experiment_completion.py:176",
+        "bad_value": "state_tensors=1 exposures=1 actual_three_unique_epochs=False; raw native_audio_condition=WRONG student_reads_target_or_caption=True"
+      }
+    ],
+    "overall_fixture_complete_still_false": true,
+    "fix_status": "Fixed in exclusively owned one-shot checker revision2; 66 negative regressions + positive validators pass. Historical failed probes retained as before-fix evidence."
+  },
+  "publishing_scope": {
+    "allowed": "Required source, runtime provenance and small completion/review reports only; final commit/push by main session",
+    "do_not_stage_unknown": [
+      "notes/26_music_h_diagnosis_and_solution_plan_20261020.md",
+      "results/ms_20261020/omni_qwen3_bucket_cpu_20261022_agent6_fullscope_small.json",
+      "results/ms_20261020/omni_qwen3_bucket_cpu_20261022_agent6_small.json"
+    ],
+    "never_upload": [
+      "model weights",
+      "media",
+      "raw private captions/source data",
+      "Adam states",
+      "credentials"
+    ],
+    "commit_or_push_performed_by_this_agent": false
+  },
+  "checker_hardening_completed": {
+    "checker_path": "scripts_omnidance/exp/ms/verify_current_experiment_completion.py",
+    "revision": 2,
+    "source_sha256": "2de49bef6f96d8613066accc848c39d6e376ab93cd3f1325f083077965c8c89b",
+    "positive_and_negative_selftest": {
+      "self_test": "passed",
+      "fixture_only": true,
+      "negative_cases": 66,
+      "rejected": [
+        "mapping_complete",
+        "mapping_actual_successful_updates",
+        "mapping_actual_exposures",
+        "mapping_validation_epochs",
+        "exit_type_False",
+        "exit_type_True",
+        "exit_type_'0'",
+        "exit_type_1",
+        "fusion_unique_ids",
+        "fusion_human_review_completed",
+        "fusion_batch6000_complete",
+        "fusion_source_action_correctness_assumed",
+        "fusion_source_action_correctness_assumed",
+        "fusion_missing_assumption",
+        "video_frames",
+        "video_complete_decode",
+        "video_audio_streams",
+        "video_video_scheduler_updates",
+        "video_audio_vae_is_none",
+        "anchor_numeric_False",
+        "anchor_numeric_True",
+        "anchor_numeric_'0.1'",
+        "purefm_boolean_anchor",
+        "anchor_receipt_rng_rank_count",
+        "anchor_receipt_rng_rank_count",
+        "anchor_receipt_optimizer_shards",
+        "anchor_receipt_model_shards",
+        "anchor_receipt_successful_updates",
+        "anchor_receipt_complete",
+        "Omni_missing_caption_sha256",
+        "Omni_missing_raw_prediction_sha256",
+        "swap_u3000_as_final3750",
+        "swap_final3750_as_u3000",
+        "final_upstream_exit_false",
+        "final_upstream_GT_bool1",
+        "caption_edited_body",
+        "frozen_Omni_with_LoRA",
+        "wrong_anchor_lora",
+        "missing_anchor_actual_lora",
+        "wrong_caption_file",
+        "native_state_steps",
+        "native_state_state_tensors",
+        "native_state_exposures",
+        "native_state_optimizer_states",
+        "native_state_actual_three_unique_epochs",
+        "native_state_full_saved_Adam_RNG_sampler_pointer",
+        "native_state_trainable_tensors",
+        "native_metadata_false_as_zero",
+        "native_original_song_swap",
+        "native_case_student_reads_target_or_caption",
+        "native_case_teacher_identity",
+        "native_case_student_zero_input",
+        "native_case_output_audio",
+        "native_case_native_audio_condition",
+        "native_case_original_joint_pipeline",
+        "native_case_text_encoder_calls",
+        "native_decoded_bool1",
+        "anchor_explicit_wrong_sha",
+        "anchor_state_missing_actual_file",
+        "roles_missing_lora_sha256",
+        "roles_missing_training_receipt_path",
+        "roles_missing_raw_prediction_sha256",
+        "roles_missing_case_manifest_sha256",
+        "roles_missing_caption_sha256",
+        "roles_native_as_pure_video",
+        "roles_duplicate_registered_model"
+      ],
+      "actual_GPU_or_private_model_Adam_loaded": false,
+      "source_sha256": "2de49bef6f96d8613066accc848c39d6e376ab93cd3f1325f083077965c8c89b"
+    },
+    "all_seven_observed_gap_classes_fixed": true,
+    "explicit_role_evidence_configuration": "MS/goal_completion_video_roles_v1.json",
+    "explicit_role_evidence": [
+      {
+        "role": "purefm100",
+        "directory": "review_h3_purefm100_n4_chunked_v2",
+        "model_id": "MS/review_h3_purefm100_n4_chunked_v2/videos",
+        "kind": "pure_video",
+        "lora_sha256": "e5aef58b06bba1b0f8b570fb61cfe053a85d48f4d734c32e7cd923c6931749f0",
+        "caption_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni_h3_ms_style_eval3_v1/h3_gt_caption3.json",
+        "caption_sha256": "17ff545eff693e19fd18fb60f10f6ae452636e14a0f06a0b6a138e0cdbad8020"
+      },
+      {
+        "role": "anchor01_100",
+        "directory": "review_h3_anchor01_s100_n4_v2",
+        "model_id": "MS/review_h3_anchor01_s100_n4_v2/videos",
+        "kind": "pure_video",
+        "caption_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni_h3_ms_style_eval3_v1/h3_gt_caption3.json",
+        "caption_sha256": "17ff545eff693e19fd18fb60f10f6ae452636e14a0f06a0b6a138e0cdbad8020",
+        "training_receipt_path": "h3_ms_style_train_queue_n5_anchor_v8_6452f0c2-0fbe-4f6e-b79a-01a169818bf5/anchor01_verified.json",
+        "training_state_path": "h3_ms_style_anchor01_s100_n5_anchor_v8_6452f0c2-0fbe-4f6e-b79a-01a169818bf5/training-state-final-100",
+        "lora_path": "h3_ms_style_anchor01_s100_n5_anchor_v8_6452f0c2-0fbe-4f6e-b79a-01a169818bf5/step-100.safetensors",
+        "identity_policy": "actual_complete_anchor_receipt_and_training_LoRA_SHA_not_guessed"
+      },
+      {
+        "role": "omni_u3000",
+        "directory": "review_omni6k_u3000_n6_video_v2",
+        "model_id": "MS/review_omni6k_u3000_n6_video_v2/videos",
+        "kind": "pure_video",
+        "caption_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/review_omni6k_u3000_n6_video_v2/captions.json",
+        "caption_sha256": "93467c34d5eff67c2c8d01da3a28f308039c4ddbef7286315b4d1745ecf81d82",
+        "raw_prediction_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/n7_omni6k_u3000_eval_n6_v1/omni_prediction3_raw.json",
+        "raw_prediction_sha256": "725d8718f360fa728464ec6c4570503fea38d32e3caebb5cbcaa4eb4013322ad",
+        "checkpoint_adapter_sha256": "06cf2c1e5882f6a010305cbd7dc55b8ce261c4d9cd5588eabd28bc2881fec75e",
+        "checkpoint_marker_sha256": "0cdedd3338ea7cf336e445300e113721891dab19acd69041243c7fa0bda52a21"
+      },
+      {
+        "role": "direct_full2250",
+        "directory": "music_direct_full6k_final2250_video_n4_v1",
+        "model_id": "MS/music_direct_full6k_final2250_video_n4_v1",
+        "kind": "native_AV",
+        "case_manifest_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_direct_eval3_generation_joint_v1.json",
+        "case_manifest_sha256": "6d08214d9b5e0b5912374880e9b3d464c10941d74d766f99bb5317cd35c48409"
+      },
+      {
+        "role": "omni_final3750",
+        "directory": "review_omni6k_final_u3750_n6_v1",
+        "model_id": "MS/review_omni6k_final_u3750_n6_v1/videos",
+        "kind": "pure_video",
+        "caption_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/review_omni6k_final_u3750_n6_v1/captions.json",
+        "caption_sha256": "c172fab1b0b551616574c9ae28eac243d74495e4f6c62757b9888510aa9b2216",
+        "raw_prediction_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni_ms_style_full_eval3_queue_v2/full_predictions.json",
+        "raw_prediction_sha256": "ae5729876889899f4c869636dc8af5596ead0983fae7e99c2c57d870c019d28e",
+        "upstream_finished_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/omni_ms_style_full_eval3_queue_v2/finished.json"
+      }
+    ],
+    "anchor_actual_SHA_guessed": false,
+    "anchor_missing_receipt_is_pending": true,
+    "u3000_vs_final3750_actual_source_bound": true,
+    "no_nonempty_LoRA_on_frozen_Omni": true,
+    "fusion_assumption_strict_true": true,
+    "native_original_song_manifest_strict": true,
+    "live_train_infer_sources_modified": false
+  },
+  "actual_after_fix": {
+    "path": "results/current_experiment_completion_audit_20261024_v2.json",
+    "complete": false,
+    "exit_code": 2,
+    "pending": [
+      "N2_full_mapping_three_epochs",
+      "N1_complete_fusion_export",
+      "H3_pureFM_and_anchor_training",
+      "videos:MS/review_h3_anchor01_s100_n4_v2/videos",
+      "videos:MS/music_direct_full6k_final2250_video_n4_v1",
+      "videos:MS/review_omni6k_final_u3750_n6_v1/videos",
+      "review_HTTP_all_five_configurations",
+      "GitHub_HEAD_matches"
+    ],
+    "HTTP_Git_not_contacted_and_remain_pending": true,
+    "final_fusion_export": "MS/fusion_source_assumed_full6000_v5",
+    "N2_training_budget_completed": true,
+    "N2_full_state_receipt_pending": true,
+    "final_model_or_Adam_coldread_before_receipt": false
+  },
+  "N2_latest_training_budget": {
+    "actual_successful_updates": 2250,
+    "actual_exposures": 18000,
+    "actual_unique_train": 6000,
+    "validation_epochs": 3,
+    "latest_steps": 2250,
+    "final_format4_state_tensors_claimed": 467,
+    "validation03_samples": 500,
+    "validation03_updates": 2250,
+    "actual_complete_state_receipt_present": false,
+    "native_AV_three_video_completion_present": false
+  }
+}

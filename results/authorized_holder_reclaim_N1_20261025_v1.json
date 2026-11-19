@@ -1,0 +1,232 @@
+{
+  "node": "N1",
+  "user_authorized_scope": "N1 GPUs4-7 and N5 GPUs2-5 old project holders and their verified old restoring managers only",
+  "before_targets": [
+    {
+      "pid": 261133,
+      "uid": 0,
+      "ppid": 253517,
+      "start_ticks": 528758642,
+      "state": "R",
+      "argv": [
+        "/opt/venv_eval/bin/python",
+        "-u",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/hold_gpu.py"
+      ],
+      "cgroup": "12:freezer:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n11:devices:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n10:hugetlb:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n9:net_cls,net_prio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n8:cpuset:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n7:perf_event:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n6:cpu,cpuacct:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n5:blkio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n4:misc:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n3:pids:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n2:memory:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n1:name=systemd:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652",
+      "CVD": [
+        "CUDA_VISIBLE_DEVICES=4"
+      ],
+      "exe": "/usr/bin/python3.11",
+      "sig_ign": 16797698,
+      "sig_blk": 0,
+      "gpu": 4,
+      "uuid": "GPU-391a6df9-2874-dfaa-ac69-e5fc3ccdc554"
+    },
+    {
+      "pid": 261136,
+      "uid": 0,
+      "ppid": 253517,
+      "start_ticks": 528758662,
+      "state": "R",
+      "argv": [
+        "/opt/venv_eval/bin/python",
+        "-u",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/hold_gpu.py"
+      ],
+      "cgroup": "12:freezer:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n11:devices:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n10:hugetlb:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n9:net_cls,net_prio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n8:cpuset:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n7:perf_event:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n6:cpu,cpuacct:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n5:blkio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n4:misc:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n3:pids:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n2:memory:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n1:name=systemd:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652",
+      "CVD": [
+        "CUDA_VISIBLE_DEVICES=5"
+      ],
+      "exe": "/usr/bin/python3.11",
+      "sig_ign": 16797698,
+      "sig_blk": 0,
+      "gpu": 5,
+      "uuid": "GPU-1f94935b-c4da-79cf-bf7f-14df55219b96"
+    },
+    {
+      "pid": 267994,
+      "uid": 0,
+      "ppid": 254381,
+      "start_ticks": 528770446,
+      "state": "R",
+      "argv": [
+        "/opt/venv_eval/bin/python",
+        "-u",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/hold_gpu.py"
+      ],
+      "cgroup": "12:freezer:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n11:devices:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n10:hugetlb:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n9:net_cls,net_prio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n8:cpuset:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n7:perf_event:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n6:cpu,cpuacct:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n5:blkio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n4:misc:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n3:pids:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n2:memory:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n1:name=systemd:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652",
+      "CVD": [
+        "CUDA_VISIBLE_DEVICES=6"
+      ],
+      "exe": "/usr/bin/python3.11",
+      "sig_ign": 16797698,
+      "sig_blk": 0,
+      "gpu": 6,
+      "uuid": "GPU-c946459a-2445-a29f-0862-8bf131dcdf43"
+    },
+    {
+      "pid": 267997,
+      "uid": 0,
+      "ppid": 254381,
+      "start_ticks": 528770461,
+      "state": "R",
+      "argv": [
+        "/apdcephfs_gy2/share_303214315/cedricnie/miniconda3/envs/longlive/bin/python",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/hold_gpu.py"
+      ],
+      "cgroup": "12:freezer:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n11:devices:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n10:hugetlb:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n9:net_cls,net_prio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n8:cpuset:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n7:perf_event:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n6:cpu,cpuacct:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n5:blkio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n4:misc:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n3:pids:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n2:memory:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n1:name=systemd:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652",
+      "CVD": [
+        "CUDA_VISIBLE_DEVICES=7"
+      ],
+      "exe": "/apdcephfs_gy2/share_303214315/cedricnie/miniconda3/envs/longlive/bin/python3.10",
+      "sig_ign": 16797698,
+      "sig_blk": 0,
+      "gpu": 7,
+      "uuid": "GPU-8698d9b1-c2bb-6728-4abb-fd2d7e78a5ec"
+    }
+  ],
+  "before_managers": [
+    {
+      "pid": 253517,
+      "uid": 0,
+      "ppid": 1,
+      "start_ticks": 528743064,
+      "state": "S",
+      "argv": [
+        "/opt/venv_eval/bin/python",
+        "-B",
+        "-u",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/caption_chunk4_experiment_20261024_v1/runtime/caption_pair_manager_v1.py",
+        "--config",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/caption_chunk4_experiment_20261024_v1/runtime/launch_whole_v1.json",
+        "--config-sha",
+        "d7f993625bb0bc13f9136d824071fd6e85e210f232f1c753a7cda00ffb55c6c9",
+        "--manager-sha",
+        "2025a22f9143764f8004a0012db7b49f8413eec6c3744a7fc81aa7fd85e56105"
+      ],
+      "cgroup": "12:freezer:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n11:devices:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n10:hugetlb:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n9:net_cls,net_prio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n8:cpuset:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n7:perf_event:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n6:cpu,cpuacct:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n5:blkio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n4:misc:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n3:pids:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n2:memory:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n1:name=systemd:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652",
+      "CVD": [],
+      "exe": "/usr/bin/python3.11",
+      "sig_ign": 16797698,
+      "sig_blk": 0
+    },
+    {
+      "pid": 254381,
+      "uid": 0,
+      "ppid": 1,
+      "start_ticks": 528745038,
+      "state": "S",
+      "argv": [
+        "/opt/venv_eval/bin/python",
+        "-B",
+        "-u",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/caption_chunk4_experiment_20261024_v1/runtime/caption_pair_manager_v1.py",
+        "--config",
+        "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/caption_chunk4_experiment_20261024_v1/runtime/launch_fixed2s_v1.json",
+        "--config-sha",
+        "dad7d9cf7e7e01d89afef5bc46bed17d3c7a72d70cc3ff8d8569e48a715cd9c7",
+        "--manager-sha",
+        "2025a22f9143764f8004a0012db7b49f8413eec6c3744a7fc81aa7fd85e56105"
+      ],
+      "cgroup": "12:freezer:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n11:devices:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n10:hugetlb:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n9:net_cls,net_prio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n8:cpuset:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n7:perf_event:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n6:cpu,cpuacct:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n5:blkio:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n4:misc:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n3:pids:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n2:memory:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652\n1:name=systemd:/kubepods/burstable/podf69ab074-d2ac-4dfe-b764-13ae308d4085/51460f283ade9f9928b8756b14d77c6d5e044a1fe6bf06a2c764cc3f52a17652",
+      "CVD": [],
+      "exe": "/usr/bin/python3.11",
+      "sig_ign": 16797698,
+      "sig_blk": 0
+    }
+  ],
+  "original_lock_and_lease_metadata": {
+    "/tmp/od_reserve_4": {
+      "dev": 249,
+      "ino": 30234548688,
+      "size": 0,
+      "mtime_ns": 1792951421799314910
+    },
+    "/tmp/ms12k_gpu_4.lock": {
+      "dev": 249,
+      "ino": 30206040260,
+      "size": 0,
+      "mtime_ns": 1792815082802917409
+    },
+    "/tmp/od_reserve_5": {
+      "dev": 249,
+      "ino": 30234734954,
+      "size": 0,
+      "mtime_ns": 1792951421799314910
+    },
+    "/tmp/ms12k_gpu_5.lock": {
+      "dev": 249,
+      "ino": 30206040917,
+      "size": 0,
+      "mtime_ns": 1792815083073919586
+    },
+    "/tmp/od_reserve_6": {
+      "dev": 249,
+      "ino": 30234734957,
+      "size": 0,
+      "mtime_ns": 1792656121420269727
+    },
+    "/tmp/ms12k_gpu_6.lock": {
+      "dev": 249,
+      "ino": 30206927035,
+      "size": 0,
+      "mtime_ns": 1792787626097303031
+    },
+    "/tmp/od_reserve_7": {
+      "dev": 249,
+      "ino": 30234734958,
+      "size": 0,
+      "mtime_ns": 1792569141763501117
+    },
+    "/tmp/ms12k_gpu_7.lock": {
+      "dev": 249,
+      "ino": 30207113241,
+      "size": 0,
+      "mtime_ns": 1792830832974334939
+    }
+  },
+  "signals": [
+    {
+      "pid": 253517,
+      "signal": "SIGKILL",
+      "role": "old_restoring_manager"
+    },
+    {
+      "pid": 254381,
+      "signal": "SIGKILL",
+      "role": "old_restoring_manager"
+    },
+    {
+      "pid": 261133,
+      "signal": "SIGKILL",
+      "role": "old_project_holder"
+    },
+    {
+      "pid": 261136,
+      "signal": "SIGKILL",
+      "role": "old_project_holder"
+    },
+    {
+      "pid": 267994,
+      "signal": "SIGKILL",
+      "role": "old_project_holder"
+    },
+    {
+      "pid": 267997,
+      "signal": "SIGKILL",
+      "role": "old_project_holder"
+    }
+  ],
+  "started_UTC": "2026-10-25T18:03:42.800233+00:00",
+  "files_or_leases_deleted": false,
+  "after_target_GPU_apps": {
+    "4": [],
+    "5": [],
+    "6": [],
+    "7": []
+  },
+  "unrelated_processes_signaled": false,
+  "completed_UTC": "2026-10-25T18:03:46.782807+00:00",
+  "target_GPU_compute_reclaimed": 4
+}

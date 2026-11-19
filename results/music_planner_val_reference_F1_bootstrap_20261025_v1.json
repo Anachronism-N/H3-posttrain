@@ -1,0 +1,79 @@
+{
+  "schema": "val32-weak-reference-paired-bootstrap-v1",
+  "source_count": 32,
+  "bootstrap_samples": 5000,
+  "seed": 42,
+  "results": {
+    "music_flamingo": {
+      "rouge1": {
+        "mean_Captioner_minus_other": 0.004782914383433628,
+        "paired_bootstrap_95_percentile_CI": [
+          -0.017488446699702058,
+          0.028207589827450093
+        ],
+        "includes_zero": true
+      },
+      "rougeL": {
+        "mean_Captioner_minus_other": 0.0015626739436857013,
+        "paired_bootstrap_95_percentile_CI": [
+          -0.013655421989956024,
+          0.017153982626261083
+        ],
+        "includes_zero": true
+      },
+      "windowAction": {
+        "mean_Captioner_minus_other": 0.009149531024531027,
+        "paired_bootstrap_95_percentile_CI": [
+          -0.03803887085137084,
+          0.06034000721500722
+        ],
+        "includes_zero": true
+      },
+      "windowBody": {
+        "mean_Captioner_minus_other": 0.02462233946608949,
+        "paired_bootstrap_95_percentile_CI": [
+          -0.025921040764790744,
+          0.07710024350649353
+        ],
+        "includes_zero": true
+      }
+    },
+    "moss": {
+      "rouge1": {
+        "mean_Captioner_minus_other": 0.02050701606173607,
+        "paired_bootstrap_95_percentile_CI": [
+          -0.005641768493117169,
+          0.04580946166100886
+        ],
+        "includes_zero": true
+      },
+      "rougeL": {
+        "mean_Captioner_minus_other": 0.010471977889103756,
+        "paired_bootstrap_95_percentile_CI": [
+          -0.0030392564317815876,
+          0.024805981129244998
+        ],
+        "includes_zero": true
+      },
+      "windowAction": {
+        "mean_Captioner_minus_other": 0.01669250888000886,
+        "paired_bootstrap_95_percentile_CI": [
+          -0.02989163614163618,
+          0.06383807165057162
+        ],
+        "includes_zero": true
+      },
+      "windowBody": {
+        "mean_Captioner_minus_other": 0.006254509379509388,
+        "paired_bootstrap_95_percentile_CI": [
+          -0.04591562950937948,
+          0.06261611652236654
+        ],
+        "includes_zero": true
+      }
+    }
+  },
+  "reference_agreement_not_creative_choreography_accuracy": true,
+  "test_used": false,
+  "no_thresholds_or_checkpoints_changed": true
+}

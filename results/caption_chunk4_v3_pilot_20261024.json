@@ -1,0 +1,145 @@
+{
+  "date": "2026-10-24",
+  "scope": "four strategy finite caption experiment; actual fixed-three GPU pilot verified; not semantic or training acceptance",
+  "strategies": [
+    "whole",
+    "fixed2s",
+    "bpm",
+    "mergedbar"
+  ],
+  "model": "Qwen3-VL-32B-Instruct, frozen local TP2",
+  "source_sha256": "6052fbb8f799c8a88833b8f564a935dad4562e16b8faf63f3f265143c0c43232",
+  "input_plan_sha256": "4f87708a3cd358e9f0e1337e6cb5392bca3c9d50333ce4e762b3922635bd9756",
+  "pilot_sources_per_strategy": 3,
+  "pilot_strategy_sources": 12,
+  "pilot_exit_codes": {
+    "whole": 0,
+    "fixed2s": 0,
+    "bpm": 0,
+    "mergedbar": 0
+  },
+  "R1_candidates": 12,
+  "R2_candidate_views": 12,
+  "R2_reused_single_window_views": 4,
+  "independent_rewrite_model_calls": 20,
+  "boundary_observations": 8,
+  "visual_supplement_observations": 7,
+  "CPU_tests_passed": 40,
+  "main_actual_XGrammar_source_rows_passed": 12,
+  "main_wrong_count_ID_ref_order_rejected": 44,
+  "independent_readonly_wrong_cases_rejected": 74,
+  "original_MS_and_prior_raw_unchanged": true,
+  "root_cause_findings": [
+    "Free JSON omitted array closure despite normal EOS.",
+    "Generic unbounded windows schema permitted duplicate and invented windows; qKg generated174 windows and exhausted4096 tokens.",
+    "Raw upstream gender/time templates leaked into rewritten surface text."
+  ],
+  "repairs": [
+    "Per-request exact original count/order/window IDs using prefixItems and bounded arrays.",
+    "Local source-fact and adjacent boundary reference enums; empty-fact caption remains empty.",
+    "Raw-preserving fact conditioning neutralization; raw_text omitted from model input.",
+    "Conservative chronology: no fabricated order from overlapping evidence."
+  ],
+  "publication": {
+    "published": true,
+    "source_cases": 3,
+    "v3_views": 42,
+    "prior_view_counts": {
+      "v1": 41,
+      "v2": 42
+    },
+    "annotation_sha256": "539ec236e6c9897c3f2900559ccac5b4c7e0ff16db0d358c37e7d69f4a0969d1",
+    "reviews_or_scores_modified": false,
+    "live_review_url": "https://launcher-ql3qjy14j2-codeserver.ide.taiji.woa.com/proxy/8775/#annotation",
+    "actual_server_port": 8775,
+    "server_restarted": false,
+    "page_and_data_HTTP_status": 200,
+    "fixed_three_video_audio_range206_verified": 6,
+    "default_view": "latest v3, R2, four strategies",
+    "original_window_seek_buttons": true,
+    "live_js_scripts_compiled": 3,
+    "real_case_stage_filter_checks": 9,
+    "proxy_8775_service_started": true,
+    "local_codeserver_proxy_page_data_HTTP_status": 200,
+    "external_https_status": "direct network timeout from execution environment; browser access not independently established",
+    "hash_redirect_preserved": true
+  },
+  "full50": {
+    "approved": true,
+    "actually_started_all_four": true,
+    "complete": true,
+    "target_sources_per_strategy": 50,
+    "whole_completed": true,
+    "whole_full_nonempty_caption_sources": 46,
+    "whole_partial_sources": 4,
+    "other_strategies_completed": true,
+    "last_readonly_snapshot": {
+      "date": "2026-10-24",
+      "time_CST": "17:51:20",
+      "whole": 50,
+      "fixed2s": 25,
+      "bpm": 23,
+      "mergedbar": 18,
+      "counts_are_completed_source_rows_not_verified_motion_quality": true
+    },
+    "results": {
+      "whole": {
+        "processed_sources": 50,
+        "exit_code": 0,
+        "R1_candidate_rows": 50,
+        "R2_candidate_rows": 50,
+        "full_nonempty_sources": 46,
+        "blank_windows": 4,
+        "partial_windows": 4,
+        "visual_supplement_candidate": 1,
+        "visual_supplement_failed": 0
+      },
+      "fixed2s": {
+        "processed_sources": 50,
+        "exit_code": 0,
+        "R1_candidate_rows": 50,
+        "R2_candidate_rows": 50,
+        "full_nonempty_sources": 46,
+        "blank_windows": 4,
+        "partial_windows": 4,
+        "visual_supplement_candidate": 5,
+        "visual_supplement_failed": 0
+      },
+      "bpm": {
+        "processed_sources": 50,
+        "exit_code": 0,
+        "R1_candidate_rows": 50,
+        "R2_candidate_rows": 50,
+        "full_nonempty_sources": 46,
+        "blank_windows": 4,
+        "partial_windows": 4,
+        "visual_supplement_candidate": 6,
+        "visual_supplement_failed": 0
+      },
+      "mergedbar": {
+        "processed_sources": 50,
+        "exit_code": 0,
+        "R1_candidate_rows": 50,
+        "R2_candidate_rows": 50,
+        "full_nonempty_sources": 44,
+        "blank_windows": 7,
+        "partial_windows": 4,
+        "visual_supplement_candidate": 18,
+        "visual_supplement_failed": 3
+      }
+    },
+    "remaining_blank_reasons": [
+      "Four partial-support windows per strategy have no complete admissible motion facts; preserved empty.",
+      "Three mergedbar visual supplement events only name one source frame each; rejected, underlying MS no_output stays empty."
+    ]
+  },
+  "limitations": [
+    "Valid grammar/count/IDs do not establish motion accuracy or beat alignment.",
+    "Boundary enhancement is intentionally minimal; benefit must be assessed by corrected transition/repetition errors and preserved facts, not text edit size.",
+    "Partial-support windows stay partial; visual supplements remain separate AI weak candidates."
+  ],
+  "semantic_approval": false,
+  "human_review_completed": false,
+  "formal_training": false,
+  "raw_captions_media_weights_uploaded": false
+}

@@ -1,0 +1,82 @@
+{
+  "schema": "nlf-fresh32-immutable-describe-sidecar-independent-verification-v1",
+  "passed": true,
+  "terminal_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/immutable_describe_v1/terminal_receipt.json",
+  "terminal_sha256": "16caa955d2017dafa6a75179403785aae395babcc157e2dcbc9356f794f55880",
+  "terminal_schema": "nlf-fresh32-immutable-describe-sidecar-terminal-v1",
+  "actual_cli_runs": 6,
+  "actual_source_sidecars_verified": 6,
+  "helper_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/runtime_jobs/nlf_rgb32_describe_sidecar_v1.py",
+  "helper_sha256": "e72a926b16ec042eb5aa58c6387e20144c67de7795fbac296443d6380db554c9",
+  "helper_syntax_passed": true,
+  "source_f7_unchanged": true,
+  "necessary_control_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/caption_control_v1/terminal_receipt.json",
+  "necessary_control_sha256": "7b9ecc068b530886571835b096870853aae82a7e42b4a0d9ad3bc9fac53f5d9d",
+  "checked": [
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "mode": "whole",
+      "event_count": 31,
+      "foot_events": 0,
+      "window_counts": [],
+      "sidecar_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/immutable_describe_v1/wJPptuhclZmKAEWs/whole/actual_source_sidecar.json",
+      "sidecar_sha256": "7a5a1da5fd6de851d121275ae5cca579b9b4b0c511e6f2506c78dc31ba375234"
+    },
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "mode": "fixed2s",
+      "event_count": 31,
+      "foot_events": 0,
+      "window_counts": [
+        11,
+        18
+      ],
+      "sidecar_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/immutable_describe_v1/wJPptuhclZmKAEWs/fixed2s/actual_source_sidecar.json",
+      "sidecar_sha256": "3194679d0a4db7c26a64dd7fb97b6bc318f4b891dc4f37b5ecafb0cd15a699f5"
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "mode": "whole",
+      "event_count": 36,
+      "foot_events": 2,
+      "window_counts": [],
+      "sidecar_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/immutable_describe_v1/wJPrpFsThWAcBQIw/whole/actual_source_sidecar.json",
+      "sidecar_sha256": "d65b58c66022f834d22bcf33715220c4238a05ee864ad1c1e5a707527b323716"
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "mode": "fixed2s",
+      "event_count": 36,
+      "foot_events": 2,
+      "window_counts": [
+        19,
+        14
+      ],
+      "sidecar_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/immutable_describe_v1/wJPrpFsThWAcBQIw/fixed2s/actual_source_sidecar.json",
+      "sidecar_sha256": "29662da9204673d180c04f545f1ad85a90d6a213577b90b209656a8c3d2c76ef"
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "mode": "whole",
+      "event_count": 27,
+      "foot_events": 2,
+      "window_counts": [],
+      "sidecar_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/immutable_describe_v1/wJQTclrlOLEYYfTB/whole/actual_source_sidecar.json",
+      "sidecar_sha256": "9368ee60341f8b2ac3b70a274b61ba034086dd68c326fdd2426fa7fd323b7df7"
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "mode": "fixed2s",
+      "event_count": 27,
+      "foot_events": 2,
+      "window_counts": [
+        7,
+        19
+      ],
+      "sidecar_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/immutable_describe_v1/wJQTclrlOLEYYfTB/fixed2s/actual_source_sidecar.json",
+      "sidecar_sha256": "2cb3ae13ae3ed98e55842c8eee123024f13c5e26e271a3050c6862706caedd5a"
+    }
+  ],
+  "accuracy_approved": false,
+  "GPU_used": false
+}

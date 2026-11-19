@@ -1,0 +1,292 @@
+# 三音乐模型接管、音频边界修复与公平评测（2026-10-25）
+
+## 目标与不可突破的边界
+
+比较 MusicFlamingo、Qwen3-Omni-Captioner、MOSS-Music 的音乐到动作 caption 能力。每族仅使用原分配节点的 8 GPU；不占用完整精选标注、ROI 或独立 VLM 审核任务的其他节点。当前固定窗弱监督基准不等待新标注，不单独给某模型换数据。
+
+冻结合同：train=10720、val=490、test=500；每源一条完整约 5.0625 秒音频，输出一份含 [0,2) 和 [2,5.0625) 两窗口的 caption。不是两个物理 2 秒音频训练样本。2 epoch、global batch32（8 rank×micro1×accum4）、670 optimizer 更新、21440 正式源曝光。初始更新 2 和新进程恢复更新 3 均计入正式预算。
+
+配方保持 LoRA rank32/alpha64、语言 attention/MLP/MoE 与末四音频层 LoRA、音频投影可训，LR 1e-5/5e-5、clip1、seed42；BF16 载入后精确升 FP32 存储，冻结基座，算子 BF16、NLL FP32。DS 原生 torch_autocast，通信 FP32，bf16/fp16 开关关闭；原生 gradient checkpointing use_reentrant=True。Captioner 仍使用 audio-only 原生模板，无新增舞蹈 system/instruction，只有 assistant 正文与 EOS 计算 loss。
+
+## v8 实际故障与证据边界
+
+已通过真实保存更新 2、新进程恢复更新 3 的三阶段入口，不根据旧 v1–v7 失败推断 v8。此前 Flamingo、MOSS 和 Captioner 均进入过正式训练。
+
+Flamingo 和 MOSS 完成更新 97（3104 曝光）后，在构造更新 98 的 rank0 第 2 个 microbatch 时失败。旧 adapter 在重采样前执行绝对 1 帧长度检查。实际源 WAV 为 mono PCM16、24kHz、121505 帧；目标长度对应 121500 帧。多 5 帧即 0.208333 毫秒，原文件 SHA 与训练 manifest 一致。soundfile 解码与 WAV header 一致，四个同更新样本中其他三个为 121500 帧。不是计算超时、短源、重采样舍入、已观察到的字节变动或模型 NaN。具体原始生产阶段尚未追溯，不无证据归因于某个 decoder。
+
+两路已有 failure/exit1/resources_safe 回执，锁及租约恢复、占卡程序实际恢复；资源安全不等于训练完成。最后完整断点是更新 3，更新 97 只有日志，不可伪称可恢复到 97。更新 4–97 的 3008 曝光属于未保存、丢弃的旧实验资源开销。Captioner 的同更新风险由相同源排序/代码推导；每次必须读新日志才能认定实际失败，不能把风险预测当真实退出。
+
+初始串行仅 header 审计因存储 I/O 推进缓慢而停止，未声称全量通过。替换为 max4 并发的只读 WAV header 审计，不 Path.resolve、不全音频内容 SHA、不写原数据。完整审计结果已存放实验 runtime/audio_header_audit_v9.json：全部 train10720/val490 header 已读取，但 +5 帧候选未通过。train 分布：10608 精确、105 条 -1 帧、2 条 +5 帧、1 条 +16 帧、3 条 -16 帧、1 条 -3312 帧。最后一条只有 118188 帧/24kHz=4.9245 秒；val484 精确、6 条 -1 帧。不能将该真短源当微量 overrun 放行。下一步追溯五条额外异常的原音视频，不能 pad/trim/跳样本或偷改旧 manifest。当前 normalized rows 的 original_source_window_mapping=unknown、audio_video_alignment_verified=false，恢复完整时间窗也需要来源证据。新 GPU 重跑尚未批准代码门禁，不以“审计结束”冒称“审计通过”。
+
+## 已批准的新版本方案
+
+用户批准修复后新冻结版本、独立输出，三模型从官方基座重新执行 2 → 新进程恢复 3 → 670。不迁移或篡改旧 fingerprint，不修改运行 source_v7、旧 config、旧 checkpoint 或来源清单。adapter SHA 变化必须形成新 fingerprint。
+
+主源码候选修复只允许已观察到的 24kHz 完整源正向最多 5 帧 overrun；原负向缺帧检查和其他采样率不放宽。不 crop/pad、不重写音频或 SHA、不跳样本，保留完整原波形并按原生策略重采样。全数据 header 审计未完成时，不将这一候选宣称已覆盖全量。21 项三族纯 CPU 正反例已实际通过：原长度、正向 1/5 帧、阈值外、缺帧、非 24kHz；核全波形 resample 数值、输出长度、原 SHA 不变、静音等长、错 SHA 与物理窗口拒绝。训练 venv 无 pytest，因此这次真实回归由同环境独立 Python 正反例执行；pytest 文件已加对应测试，但未把无法启动的 pytest 宣称通过。
+
+CPU 审计/回归不是 GPU 训练或质量验收。新启动里程碑必须三族各自真实完成 GPU 更新 2 保存、另一个进程恢复执行更新 3、完整 checkpoint 文件 SHA 与 finite/nonzero 梯度核验、再另一个进程恢复 3 进入正式训练。用 /proc PID、start ticks、argv 与 GPU rank 集合核身份；不得仅凭后台句柄、live.json 或目录存在认定成功。
+
+结束仍在运行的旧 Captioner 已获得用户授权，但只按精确身份和既有管理器受控退出/占卡恢复流程，等待资源安全与 fresh holder/租约/flock 准入后启动，不强杀未知进程。空闲节点保持安全占卡。
+
+## 公平评测与当前接续状态
+
+每模型内部在更新 335/670 的完整 val490 NLL 选择 checkpoint，不跨 tokenizer 直接用 NLL 排名。先冻结实际选择凭据、选中 marker SHA、源版本与完整性，再一次最终 test500；test 不用于选择或调参。
+
+统一 val32 panel：同 source IDs 与 donor mapping、seed42、greedy、cap2048，原音乐/不同源错配音乐/等长静音，保 raw、token IDs、EOS、truncation、复读和音乐依赖。变化幅度不是同步分数，NLL 下降或保存成功不是编舞通过。train/val 没有显式 Dance style 前缀或独立舞种字段；本轮是动作 caption 与音乐依赖弱基准，不能冒称舞种＋编舞联合任务已验收。
+
+独立 fixed3 入口已实现与 CPU 审核中：三条历史固定音频/参考图不在本轮 split，明确独立 holdout，不塞 val/test，不复用旧 caption cache。保完整音频与 raw 原文，转为 H3 records。原 v7 协议不可静默用于新训练源版本，须另冻结一致协议。独立审核曾复现并要求修复 ZeRO shard 仅计数、best 仅锁路径而不锁选中 marker、源版本未绑定三个门禁；修订测试逐版本区分，不合并自测与独立验收。
+
+正式评测需所用 checkpoint 文件全部内容 SHA 一次核验，以及当前官方基座权重内容 SHA 一次核验。历史 staging copy SHA 加当前 stat/metadata 不保证当前 weight bytes，不能互相替代。合法晚写 validation/request sidecar 单独 SHA，不冒称原训练 marker 已覆盖。
+
+同一个冻结 pure-video H3、无 LoRA 混用、相同参考图/prompt 协议：704×1280、124 帧、24fps、50 步、seed42、CFG1、flow shift12；每模型仅固定 3 case。用户重点清晰、连续、有编排、动作幅度与音乐响应，不能只摆 pose。H3 本地权重与 GPU 准入仍须实查，不能猜路径或占其他会话节点。
+
+## 用户批准排除异常源后的新共同合同
+
+2026-10-25 用户明确允许少量问题数据直接从训练列表移除，不再让这几条源恢复阻挡推进。已创建独立 music_planner_fixed2s_baseline_20261025_clean_v1；原始基准及 WAV 不动。依据完成的严格旧音频门禁 header 审计排除 7 条（+5 帧两条、+16 帧一条、-16 帧三条、真实短源一条），而不是仅排除 +5 帧候选的五条剩余异常。保留严格音频门禁，不需要靠放宽容差接受这些源。原 candidate/source_v9 未运行快照不是新数据正式执行版本。
+
+新 train=10713、val=490、test=500；保留训练行原字节与相对顺序，val/test 文件逐字节不变。每 epoch 的最后一个 global batch 消费 25 个真实源，不补入额外训练曝光。2 epoch 仍为 335×2=670 optimizer 更新，正式源曝光改为 21426。通过独立 CPU 提取真实 epoch_order/update_slices/validate_cursor 的两 epoch 仿真，核所有源每 epoch 恰好一次、尾批 25、最终 cursor(epoch2,position0,update670,exposure21426)。CPU 仿真不是 GPU 通过。
+
+exclusion_receipt.json 保存父基准/审计 SHA、七条排除原因；training_contract.json 保存三模型共用合同。已再次核过滤字节、split ID/source_group/audio SHA 隔离。旧 manager 的10720固定count与旧 eval 基准门禁不适用新清单，必须在后续明确的新冻结执行版本同步更新，不能用旧队列或旧fingerprint硬resume。
+
+暂停阶段仅创建与核验新数据合同并取消遗留巡检。用户随后恢复全目标，三模型 clean_v10 于 UTC 2026-10-24 20:59:19–20:59:20 启动：全部旧 v8 已真实在更新98输入检查失败、占卡安全恢复，未再强杀任务。新管理器严格固定 train10713/val490、source budget21426，完整分片同时要求 optim/model 的 rank0..7、mp00 精确集合；其余 pidfd/flock/租约/资源恢复逻辑保留。新 source_v10、manager 和三份配置独立冻结，不改旧快照或旧断点；严格旧长度门禁恢复，只有报错定位信息增强。
+
+新评测门禁要求清洗排除回执内容SHA、父基准身份、训练行精确有序过滤及val/test SHA不变。现有eval CPU单测17通过、train CPU单测32通过/2跳过/3未运行；在N2真实原七源经三族_audio共21次严格拒绝，正常源完整输入通过。新管理器在各实际授权节点只读校验配置/来源SHA、fresh八卡holder与准入余量，另三种非法合同拒绝。CPU验证不表示GPU保存恢复或质量通过。
+
+UTC21:00:46仍在初始GPU更新2保存。UTC21:16:43重新核验：三族均已有smoke.saved和smoke.approved，完整checkpoint与新进程恢复更新3通过，均进入full_training新进程；/proc start_ticks/argv与8GPU rank集合逐项相符，无新失败。该快照Flamingo85、MOSS53，Captioner正式进程刚启动，尚未打印更新4。UTC21:18:28 Flamingo已完成98，超越旧97失败点，但新训练顺序已随过滤改变，不能以更新数本身断言所有剩余数据都已消费。正式启动里程碑通过不等完整670更新、val选择或质量通过。当前上游源恢复调查不再阻挡实验，被排除条目不替换也不补零。
+
+## 训练后单卡评测接续与renderer准备
+
+新增独立 music_planner_eval_manager.py，最终源码SHA58dea033347a84ceda239f6ff67c9a90c692056e2add313c2bb604f2ca1ddd59；主会话独立重跑29项CPU测试并在运行前后核源码及测试SHA一致。未运行的并发修改候选不作为dispatch版本。实际部署准备为独立runtime/planner_eval_manager_v2.py，不改正在运行的source_v10或训练manager。该管理器要求本族真实670更新/21426曝光/2epoch完整回执、资源安全、实际epoch335/670全val490内部NLL最小checkpoint及预冻结best/markerSHA；test还要求三族共同final_selection及永久O_EXCL每族一次claim。GPU0采用精确pidfd/flock/lease与恢复holder流程，其他七卡不操作。正式评测前一次当前官方base内容SHA/LFS/gitblob审计及完整checkpoint文件内容审计；CPU tests不等真实30B单卡fit或GPU输出通过。
+
+val32/test的EOS、budget truncation、unknown stop和空raw输出是保留的模型诊断，不把弱模型复读当技术接口失败，也不因截断偷偷改变cap或重测test；native输出字段不一致、超预算、缺失真实接口证据等仍拒绝技术采集完成。fixed3有效H3 handoff保留严格完整停止及caption schema门槛。所有技术完成回执仍quality_accepted/human_quality_accepted=false。
+
+H3准备原worker恢复后未重新注册，不冒称继续运行；主会话只读核三节点既有相同H3环境版本和Ref2VA的13个DiT、14个text、视频VAE和processor存在。独立h3_renderer_v10冻结同h3_video_infer/h3_video_only、288个当前DiffSynth Python源码SHA及三节点环境版本凭据；N2空CUDA执行tinyH3 wrapper自测、7renderer CPU tests通过。未读取H3大权重内容或执行预训练GPU渲染。实际渲染前仍核模型内容身份、源码/环境未漂移与GPU安全准入；空闲卡由既有占卡保持。
+
+## clean_v10 首轮val后保存新故障
+
+UTC2026-10-24 21:57:11左右 MusicFlamingo 在epoch335验证函数返回后的save_checkpoint→trainable_state GatheredParameters退出时触发DeepSpeed0.17.5 Cannot partition a param in flight。最后打印update334/10688曝光；checkpoint335仅空目录，没有complete marker、validation或best，不拿函数调用顺序替代丢失的val收据。最后完整断点为300。既有manager已恢复8holder并写resources_safe，旧snapshot/config/失败目录保留，不硬resume新trainer指纹。
+
+这是新的验证与ZeRO参数生命周期问题，不是之前音频长度、OOM或模型质量验收。正在读实际DS源码并做最小根因修复；不能手填ds_status、删hooks、关闭checkpoint或绕过断言。UTC22:00:51重新核MOSS仍275、Captioner在100保存（最后打印99），两者实际训练进程存活，尚无新failure；不能将Flamingo失败直接归为其他族已失败。自动完成后评测协调器只完成代码与CPU门禁验证，当前旧clean_v10完整回执缺失，不运行评测调度。
+
+## v11 完整预算验收与评测真实进展
+
+原生ZeRO生命周期修复已经完成，trainer9583342d51c3f9b08a1c07f57958c102313364e24b9ed92620e49901fc20fae3；主会话独立N2真实DS0.17.5 CPU45项全过，源码与测试SHA前后相同，临时pytest工具自动清理且未安装训练env。GPU smoke now includes update2/fullval490/save2以及新进程update3/fullval490/save3，诊断val不加入训练曝光或best选择。v11新源和manager独立冻结，旧v10失败与300断点不改，不迁移旧fingerprint。
+
+2026-10-25 UTC03:44实查：三模型均有full.complete与resources_safe，实际670更新、2epoch、21426曝光、完整670断点及恢复证据。模型内部完整val490选择均为epoch670；NLL仅族内选择，不能跨族排名。MusicFlamingo的val32原音乐/错配/静音共96真实GPU输出已技术完成，均EOS、无接口失败、无截断或空输出，但不能据此宣称编舞或音乐同步效果通过。
+
+MOSS首次面板attempt在worker启动前被内存安全准入拒绝，资源已恢复，协调器正确停止派发，旧failure/claim保留。对结束的自有MOSS完整断点进行只读DONTNEED缓存建议，没有改文件/权重或杀其他任务；未将无明显即时缓存下降宣称修复。后续fresh headroom约217GB超过固定160GiB准入阈值，新独立manual_recovery_v1记录失败诊断与授权范围，同数据/weights/解码协议重新captureGPU0生成新attempt，仍保内存门禁。正式test尚无claim或生成，不重测test。
+
+三模型真实选择在eval_handoff_clean_v11/final_selection.json提前冻结，含各实际best/marker/fingerprint/训练完成与资源安全SHA、统一数据和greedyseed42/cap2048解码协议。新任务Flamingofixed3、Captionervalpanel、MOSSvalpanel已按对应原节点GPU0受控启动，当前审计所用checkpoint全部state文件和本地officialbase完整内容，未以长审计或未创建queue误判失败；其他7卡占卡保持。fixed3完整handoff、test500及H3三case人评尚未完成，没有赢家结论。
+
+## 最终推理兼容修复与严格结果边界
+
+MOSS在恢复准入后首次真实GPU96条均0token/142与141音频mask尺寸错误；根因是Transformers5.18不再维护cache_position，而官方MOSS prepare只靠该字段判定cached decode，未利用实际DynamicCache141，第二步重复处理全部prefix142与audio mask141。独立eval-only补丁仅用真实KV长度恢复原生单token分支，prefill和DeepStack原64音频位置不变，不padding、不禁cache、不改本地官方模型或训练指纹。主会话独立N7官方tiny9CPU回归通过；新v4manager保原29资源门禁并额外核每条native patch ref和独立sidecar。实际新GPU面板已产首条2048预算截断、无接口失败：截断是保留的模型诊断，尚未说明全部96完成或质量通过。
+
+Captioner旧val第一条2048tokens中im_end在第246号位置已有，随后重复595次im_start/im_end/newline。native GenerationConfig EOS=None，而adapter只在诊断时fallback tokenizer EOS151645，未传给实际generate。独立EOS补丁仅在native EOS缺失时给generate显式原训练助手终止ID，首EOS前logits/音频prefix/参数配置不变，既有有效EOS模型不打patch。主会话独立N4官方tiny9CPU回归通过；旧val经精确manager pidfd停止且占卡安全恢复，未裁剪或改写旧raw。新v5manager同29资源门禁与EOS provenance/first-end停止校验通过，新的实际CaptionerGPU面板已派发，仍须真实回执确认修复有效。
+
+以上是推理兼容修复，不是增加训练或用test调参。三个最终checkpoint/数据/greedyseed42/cap2048固定。Flamingo先前已有效EOS，无需补丁；其首次最终test500已开始生成，不重测。MOSS/Captioner尚未开始test；为使用其原节点闲置资源，计划按500固定ID全局顺序分为8个不重叠GPU子集，各source仅一次，同native协议与patch身份，聚合恢复原顺序。模型CPU加载串行、生成并行，八卡pidfd/flock/lease全部准入再释放，不能改变test once ledger或对失败partial test自动重测。当前该并行实现仍准备中，不冒称已启动或通过。
+
+H3单GPU0安全包装已独立7组CPU验证并冻结；必须真实三族fixed3有效raw交接、same参考图/renderer权重全SHA、50步seed42CFG1flow12/704×1280/124f24fps/noLoRA实际视频完成后，才能让用户盲评。当前尚无三族H3视频完成或赢家结论。所有旧失败记录保留，另七卡空闲时由原占卡程序保持。
+
+## 文本优先门槛及MOSS非persistent频率加载根因
+
+用户最新要求先卡文本，后续H3 GPU派发暂缓。基础val门槛按三条件每个32源固定：96完整采集、接口失败和空输出0，正常assistant EOS和正确双时间窗≥95%，同一规范化句子至少重复3次的caption比例≤5%。原音乐完全重复、4gram/句内复读、动作/身体部位覆盖及逐case错配/静音变化另作诊断，不把变化量当音乐同步分数；静音输入相同的重复输出不作为多样性失败。当前没有独立DanceStyle GT，不虚报舞种准确率。这是用户请求的val工程门槛，不是用test500调阈值，也不冒称语义编舞验收。
+
+text_gate对实际冻结donor映射、native token/stop和早EOS继续生成、MOSS每条真实finite-forward证据校验；状态complete还要求原collector eval.complete、manifest/raw SHA一致、exit0与resources_safe。8组纯JSON回归通过。完整Flamingo与修复后MOSS各96均通过基础文本门槛，Captioner仍在生成，不依据partial判断胜者。
+
+MOSS缓存修复后的旧异常输出全部token0，实际N7 GPU进一步诊断发现audio_encoder.embed_positions.inv_timescales640在普通HF5.18 meta加载后有垃圾/NaN；nonpersistentbuffer被empty_like而未重建，官方checkpoint同key报告UNEXPECTED。真实CPU官方HF FP32/BF16均复现坏频率，而真实HfDeepSpeedConfig zero3加载保留native ctor FP32 canonical，支持训练初始化正确、推理meta路径损坏的区别。独立11CPU测试通过；仅640官方BF16小tensor与native FP32 canonical.round(BF16)逐元素完全等价，分别如实记录dtype和SHA。新补丁只恢复native nonpersistent位置频率，不改任何已训练参数、其他buffer、配置、checkpoint或数据；生成作用域安装只读finite logits验证，NaN在argmax前拒绝。
+
+同完整MOSS670 checkpoint实际GPU恢复后prefix151936 logits全finite，3token正常为[58,15,13]，teacher-forced单源诊断NLL0.7198，未用作选择或质量评分；新的完整96面板均EOS、无接口失败/空输出/截断，全部原频率及finiteforward回执核验。这些证明加载/生成接口纠正，不是重训或额外源曝光，也不证明舞种准确。所有旧失败/异常raw保留且不用于模型排名。
+
+MOSS固定3条原生caption已完成EOS与资源安全；首次最终test500八卡已受控启动，global ID按index%8分片、不重复；加载模型串行、GPU生成并行。并行源码独立24CPU门禁通过（22分片/finite/API安全+2lease心跳线程），在长内容审核时持续刷新已拥有租约，cleanup前停止并join防FD重用竞态，不绕任何检查。Flamingo已开始的单卡首次test保持，不重测；Captioner待本族完整文本前提后再首次八卡test。当前都尚未证明最终500全部完成，H3与人评尚未执行，没有赢家。
+
+## 完整val文本门槛与匿名语义审核（文本优先阶段）
+
+三族val32各原音乐/错配/静音共96真实输出及collector/exit0/resources_safe已全验收；基础EOS、双时间窗三条件均100%，严重同句至少3次caption0%，接口与空输出0。基础门槛全部通过不等语义编排/音乐同步/舞种准确，DanceStyle独立GT仍缺，未用test选择或调门槛。
+
+原音乐句内重复均值：Flamingo2.07%、MOSS3.73%、Captioner6.72%；4gram重复均值12.59%/9.75%/13.59%。原音乐与错配、静音逐case文字全部有变化，证明基本音频依赖而不是正确音乐同步。MOSS val32有一个整条caption精确复用组、第一窗五case共用组及case18两窗正文相同；这些没有被粗基础门槛伪装成语义多样性通过。
+
+独立LLM在不知道模型名、NLL、test/音视频的条件下完整读匿名A/B/C各32原音乐caption，四轴ordinal意见（连续承接/动态动作/语义动作多样性/窗口可执行细节）为A3/3/2/3、B4/3/3/3、C3/3/2/3；审后解码A=Flamingo、B=Captioner、C=MOSS。main独立核实际payload证实所有精确重复组、跨窗同正文case；没有把缺少过渡自动判为物理矛盾，未以弱GT不同扣分。盲审text-only中低置信意见为Captioner优先，Flamingo与MOSS粗评分接近；这不是校准accuracy、音乐或H3人评，也没有最终winner。收到的实际审阅已保存总结与原匿名材料SHA，不伪称保存未提取成功的原长报告。
+
+同一首次最终test500：Flamingo与MOSS均500unique ID/全EOS/双窗100%/接口错误0/实际资源安全；MOSS8卡111281原生forward全部finite且计数一致、global顺序还原。跨case整段完全重复比例Flamingo10.8%、MOSS2.4%；句内重复2.70%与4.64%，不可仅凭一个重复指标判最强。先前偏MOSS是该重复诊断的暂时倾向，更多完整盲审文本证据后暂优先Captioner；Captioner最终test尚未开始，不能宣布三模型最终排名。
+
+Captioner完整val后，唯一受控继续器已派发fixed3文本任务；还在全checkpoint字节审计，实际/proc可见读取第5个optim shard。空stdout/尚无queue不等任务停止，不重复启动。H3权重N2已做CPU完整scope SHA预审，尚未GPU渲染；待实际3族fixed3文本完成后，再按原一致协议做人评。
+
+## 用户新增F1与参考一致性指标
+
+已补标准词级multiset P/R/F1（ROUGE-1）、连续2gram ROUGE-2及sequence LCS ROUGE-L的P/R/F1，去格式时间标签后以固定词/CJK字符规则计算；按两窗口还计算词级F1、动作类别和身体部位集合P/R/F1 macro与micro。8项算术/空集合/多次词/窗口调换/LCS/宏微平均回归通过，唯一初次浮点测试容差已修正而公式与分数未改。指标是同source的一个弱动作参考的一致程度，不是创作编排唯一正确率，也没有独立舞种GT可报告style-F1。
+
+完整val32原音乐macro：Flamingo/MOSS/Captioner的ROUGE-1 F1=0.501/0.485/0.506，ROUGE-2=0.186/0.167/0.192，ROUGE-L=0.262/0.253/0.264，窗口动作类别F1=0.616/0.609/0.625，窗口身体F1=0.701/0.719/0.725。Captioner数值略高但差距小；32配对source的5000次bootstrap(seed42)对ROUGE-1/L及窗口动作/身体F1差值的95%区间均包括0，不能宣称显著胜出。词匹配/类别集合不能区分所有动作顺序或音乐同步，正反例也证实整段词F1为1时调换两窗口动作仍可能窗口F1为0。
+
+错配/静音仍匹配该case的原source弱参考，分数只作为参考匹配与音频依赖诊断，不用于test调阈值或另选checkpoint。全三族val门槛仍沿原95%/5%工程规则，没有按这些新F1结果追调门槛。F1/ROUGE报告与配对不确定性已保存，Captioner最终test在执行前冻结同原checkpoint与协议，不依据新分数改模型。H3同源权重已CPU完整哈希，真实渲染仍需独立实际GPU及人评。
+
+## 2026-10-25 反事实指标与接续实查
+
+下表取已保存完整val32弱参考报告的窗口动作类别macro F1，三条件始终匹配同case原source参考，未交换错配参考：
+
+| 模型 | 原音乐 | 错配音乐 | 静音 |
+|---|---:|---:|---:|
+| Flamingo | 0.6161 | 0.6500 | 0.5947 |
+| MOSS | 0.6085 | 0.6254 | 0.6155 |
+| Captioner | 0.6252 | 0.5831 | 0.5061 |
+
+原音乐条件下Captioner在动作类别、身体部位和ROUGE指标均优于本模型的错配/静音条件；Flamingo/MOSS的动作类别F1没有保持这一规律。这比“换音乐文字变化”更有信息，但单个弱参考和规则类别覆盖仍有局限，不能直接证明节拍同步、因果音乐理解或端到端优胜，也不把该探索性诊断改成新验收阈值。已有跨模型配对95%区间只覆盖ROUGE-1/L及窗口动作/身体F1，均含0；未把没有计算的ROUGE-2差值区间说成已检验。
+
+截至07:38 UTC只读实查，Captioner首次test500的manager和8个GPU worker真实存活，GPU0–7为本任务，尚无complete/exit/resources_safe，不重复派发。三族fixed3原生文本已全部完成并安全，H3 v3 capture核N2 GPU0 holder PID/start_ticks/argv身份吻合。随后唯一派发H3 v3 run（后台Fji8Rn），仅N2 GPU0，每族固定三case，同源权重与采样协议；派发时仍需CPU前置/完整内容审计，不能宣称真实GPU渲染已经完成。运行配置SHA=55f7fd1c75b996a43aacfdbbb275a7ffd0cdf813991680f66c9311b4ceb5a332，manager SHA=bba5d6f6cc42e1a7ac2818d41ed738ce0e53c074d3044d7a73558417042320bf。
+
+F1/ROUGE与配对不确定性提交ae3e73f已推送，并以远端refs核实一致；原主工作区及无关改动保留。后续实际queue、日志、完整回执优先于本时间快照。
+
+## 最终test文本工具与H3真实缓存阶段
+
+首次test500统一汇总工具已独立读码并复跑10项CPU测试，冻结在runtime/final_text_report_v1/：报告脚本SHA=d909ef2bd990a2e33f302fdecb9893f077bc168ef6bf3416c5db2cda0037792d，原F1公式SHA=3cdbba545b861839978d553b00935966163fa20e294b7b388550f806dd546ced，测试SHA=fe7c7f402f87f58305255c558054e145955a898a601f80a6b4a8f830655cf03b。复用冻结原公式和实际v3/v2 collector核验，500源配对bootstrap保留每源两窗；另记录全raw UTF8 SHA精确复用组的全部成员比例及corpus distinct。没有因新诊断调整F1/阈值或重测。Flamingo没有记录逐forward finite hook，报告明确为null，不能补造该证据。
+
+唯一CPU接续器aACKpW已派发，只等待已有Captioner首次test的complete/exit0/resources_safe全部出现后调用冻结汇总脚本一次；未生成新测试样本、未占GPU、尚无三模型最终报告。最近只读快照Captioner已写入101条完整分片记录（15/14/13/13/12/12/11/11），这只是部分进度，不是500验收。
+
+H3 Flamingo三个条件缓存已有真实complete、exit0及三个固定ID；GPU0峰值为62655MiB（约61.2GiB），原生text_encoder与video_vae_encode各调用3次，DiT/decode为0且无音频分支。随后进入Flamingo视频阶段。缓存完成证明真实GPU条件计算，不代表视频已完成；最近快照仍无视频case audit。其他七卡holder身份不变。人评准备选择隔离离线匿名包，不修/重启共享review_web，也不把现网页不完整匿名、共享评分或有缺陷shuffle当成已经具备严格盲评。
+
+## 时间戳、动作评分与训练前后对照新增要求
+
+用户进一步要求核时间戳/动作表现，允许独立LLM打分，并比较训练前后。标签源ms_visual_batch.py:215固定chunk_seconds=2/min_tail=1.5，:398按固定桶分窗，:285明确window_boundaries_are_action_boundaries=False。因此现有双窗100%只能叫固定时间分桶/非空格式合规，窗口动作F1也只是同桶弱参考一致性，不能叫精细动作起止时间准确率、自由边界检测或音乐同步验收。当前fixed3协议无target_text或事件边界GT，不为它编造F1/时间真值。
+
+独立匿名LLM已实际审阅val32每族全部32原音乐caption；序数意见在跨窗承接/动态动作/动作多样性/细节四轴为Flamingo3/3/2/3、Captioner4/3/3/3、MOSS3/3/2/3。此为文本意见，不是校准准确率；未听音频/看视频，不能当音乐匹配、动作边界或H3人评。
+
+同一完整val490在更新2与670的NLL分别为Flamingo1.826934→0.765656，MOSS1.804309→0.735513，Captioner1.693363→0.684887。每族内部参考拟合有进步，但更新2已训练过64源，不能称未训练基座；也不跨tokenizer按NLL排模型，不能单凭下降说创作编排/音乐理解提高。
+
+新增最小同条件基座对照正在独立实现：原官方基座checkpoint=None/lora_rank=None，不attach LoRA/modules_to_save，同原完整音频/原native audio-only prefix/greedy/seed42/cap2048，每族仅同固定3case；训练后已有fixed3原始输出直接复用，不重测test500、不增加训练。MOSS缓存/位置频率和Captioner EOS推理兼容修复须两阶段一致，不能把推理bug当训练收益。仅各指定节点GPU0，N7需fresh holder核验，N2等当前H3完整安全后、N4等首次test完整安全后；未派发基座GPU任务，尚无前后质量结论。之后对六匿名组×3case做独立LLM盲文本比较，报告理由、相近/未知，三case结果只作诊断不外推全测试集显著提升。
+
+离线匿名人评包脚本已主会话独立11/11 CPU+synthetic ffmpeg回归验收并冻结：runtime/h3_review_pack_v1/，脚本SHAd07db03ddb996884ae9c2e79fe8f9e61b957f0e0cda4dfbb2c205edaca1333cb，测试SHAe857a11a640df40bb7c9e02744721f4555808a5f24bc69ca2dbcca7c2669e626。每case另存字节一致完整WAV、视频轨copy无损/AAC音轨有损，bundle_id绑定公开manifest/private key/评分JSON；公开包仅隐藏标签，不声称对抗数据拥有者追踪。唯一CPU接续kdE2Vs已启动，必须现有H3九片实际complete/resources_safe且全部门禁通过才构建；没有启动共享server、没有用户评分/接受结论。追加只读审查调用曾遇网关empty-stream，不能拿该失败调用冒新审查证据；本次主会话实测与已经收到的独立只读复核保留各自证据边界。
+
+## 基座对照冻结与真实首片H3进展（2026-10-25）
+
+新增基座producer/manager已完成独立读码和27/27 CPU回归，前后SHA一致，冻结runtime/base_fixed3_v1/：producer=c6cb903616b216dbf537b5af03027744de3262105390a97664aac78e10abd5e6，manager=622f05b931c981e77ecc7e1ec1914a43112167c04504780cd25e286c074b62e7，测试=1cbb409f8f88912719e263327757180d901081ae3edcb76601760bf0055b29b6。部署前纠正了新诊断器遗漏合法5.0625时间格式、没有核真实worker非零退出、export .jinja资源遗漏及实际EOS/input_tokens对照等问题；这些修补未在旧运行快照上就地修改，也没有把CPU测试当GPU通过。
+
+N7原MOSS首次test500 complete/safe/test.exit0已经绑定并独立核验。GPU0独立capture确认原holder身份且signals_sent=false，冻结moss.run_config_v1.json SHA=c9b53af46255d5315b71be0af8b892308564148a3a9b6176d8cac195c84bc4d6；随后唯一派发qk03LN。新base_fixed3.live的PID3472213/start_ticks537331257对应独立基座worker，官方HF加载报告仅known nonpersistent inv_timescales为UNEXPECTED，按同原生位置buffer修复对照；加载报告不是逐参数恢复证明。最近快照raw仍0，尚无三条基座完成/资源恢复证据。其他七卡仍占卡，不重测已训练输出或test500。
+
+N2基座唯一接续5cDwY8、N4基座唯一接续hOPNx3已启动且stdout明确只等待相关H3或首次test的全部actual complete/safe/exit0，不提前上卡；之后才冻结当前前序ref、重新capture、生成原同三case。每族base独立O_EXCLonce claim，不使用最终test账本、不自动重试失败。六匿名组×3case LLM rubric已经在base输出前冻结，无时间事件GT或音乐/视频真值评分。
+
+H3 Flamingo第一片已有完整case audit、实际MP4 SHA=4375522773b4c0b2b8ae8844b6616483db242d4414ba9c95dc0d1da4ec0646c9，完整124帧704×1280@24fps解码、50次DiT及1次VAE decode、无音频分支调用；这已是真实视频，不再仅cache证明。但仍仅1/9视频，不能当三模型视频评测已完成或画质人评通过。最近Captioner首次test写入266/500，最终报告aACKpW仍待完整与安全回执；离线人评kdE2Vs仍待九片/资源安全。后续queue/proc/文件实查优先于上述快照。
+
+## MOSS基座完成与离线评审工具v2修复
+
+MOSS纯基座同3case已完成真实GPU生成，主会话再次用冻结producer/manager核raw/manifest/实际exit0、608/608 finite forward、3EOS/3双窗、noCheckpoint/noLoRA、同源prefix重放及resources_safe全部通过；GPU0已恢复占卡。其基座已经能输出固定双窗，说明固定格式本身不能拿来证明训练收益；动作质量仍待同预冻rubric匿名前后审阅。独立技术总结存results/music_planner_moss_base_fixed3_technical_20261025_v1.json。
+
+主会话发现离线人评v1的元数据拒绝检查误把ffmpeg Input横幅内匿名目标文件绝对路径也当泄露：目标包位于ROOT下，而ROOT本来在forbidden列表，实际构建必被误拒。先在真实synthetic ffmpeg测试中加入父目录反例，明确复现失败，再仅排除Input #0横幅里的当前匿名目标路径，其他实际媒体metadata仍全检查；真实私有comment泄露新增回归继续拒。11/11 CPU回归通过，且已完成第一片H3视频作CPU临时mux保真验证，124packet/PTS/时长原样、完整WAV未改，AAC有损和356 padding样本被明确记录，不是九片人评包已经完成。旧v1冻结源码不动，旧CPU等待接续kdE2Vs在未写包/未写key前精准停止，GPU任务未动。
+
+修复版冻结runtime/h3_review_pack_v2，脚本SHAd498b175ad9eb22110b30c8efdf6bf19a0bce5be2b37cdf91bc45d88b986c7a5，测试SHAddea71d5cbbee690f7b8cbb8dc7f3a09958b6dce538fda5488cbb6213033cfc5。唯一新版CPU接续O3XtBy等现有H3九片完整且safe后构建独立planner_h3_review_offline_v2，private key在公开目录外，未启动共享网页。训练前后匿名材料唯一接续Dyc3fS等三族基座全部actual complete/safe后导出18条六匿名组，不预填评分；后续才独立LLM盲审。最新快照Captioner首次test已写428/500但仍无complete/safe，H3仍2/9，MOSS基座已complete/safe而其他两族基座等待前序。后续实际文件/回执优先于此时间快照。
+
+## Flamingo完整三片视频阶段独立验收
+
+Flamingo视频阶段已完整3case/实际exit0，主会话在N2授权节点只读复用冻结H3 prerequisites/check_stage独立重验通过。原始完整run_complete SHA=e4d5f0092272524241ca690a91336111dc3d4c2ff424f2b1587a8bc9ce8ef11a，累计DiT150/VAE decode3，无音频生成；同704×1280/124帧/24fps/50步/seed42/CFG1/shift12/noLoRA。仅3/9视频，现有manager自动继续Captioner条件缓存，不重复派发；没有用户视频质量评分。最初在coordinator直接调用prerequisites被authorized-host门禁拒绝，随后在N2只读调用通过，没有绕scope或降低门禁。
+
+预先冻结的训练前后LLM rubric已保留发布副本results/music_planner_prepost_LLM_rubric_20261025_v1.json；这不是实际评分。首次Captioner test最近447/500，8rank仍以原once账本跑；最终三模型文本report和另外两基座仍待各自actual complete/safe。
+
+## 三模型首次test500全部完成与最终文本结果
+
+Captioner首次test500已真实完成500唯一源和原global顺序，118177/118177 native logits forwards有限、8rank完整、真实test.exit0及resources_safe八卡全部恢复；主会话用冻结v2 collector独立重验并核80条相关输入ref。498EOS、2条原2048预算截断，failure均0，双窗99.6%；原raw和token完全保留，未增cap、未裁输出、未重测。Flamingo/MOSS此前500/exit0/safe亦已核。因此三模型首次最终文本技术评测已经完整结束，不再称Captioner仅部分完成。
+
+唯一CPU接续aACKpW已实际成功写H/final_text_report_v1.json，SHA=eb8e75bb3313fe17910a995d7b4390016a8570f529217317cb6e6600b6e31077；主会话独立重算六项macro/micro全部与记录case计数一致、三族各500同ID/顺序、172个输入文件当前SHA全部一致。公开纯指标总结为results/music_planner_final_test500_text_20261025_v1.json，不上传full report的原始caption或私有媒体。
+
+| test500 macro F1 | Flamingo | MOSS | Captioner |
+|---|---:|---:|---:|
+| ROUGE-1 | 0.4886 | 0.4926 | 0.4944 |
+| ROUGE-2 | 0.1744 | 0.1738 | 0.1774 |
+| ROUGE-L | 0.2595 | 0.2621 | 0.2621 |
+| 同窗口词F1 | 0.4260 | 0.4286 | 0.4297 |
+| 同窗口动作类别F1 | 0.6008 | 0.6163 | 0.6006 |
+| 同窗口身体类别F1 | 0.6833 | 0.6959 | 0.6986 |
+
+Captioner词级ROUGE略高，但对MOSS所有词级/身体相关macro分差配对95%区间含0；MOSS动作类别F1最高，对Captioner的差值0.01572，5000次seed42同源配对percentile95%区间[0.00214,0.02961]未跨0（没有多重比较校正，不能等同整体质量显著胜出）。MOSS对Flamingo动作差值区间亦未跨0；Captioner对Flamingo身体差值区间仅略不跨0。多指标存在取舍，不能继续把val32 text-only偏Captioner冒“各项最终都优”。这些仍是单个弱参考同桶一致性，而非创作唯一真值/精细动作时间准确/音乐同步。
+
+本报告跨case整条exact复用比例明确计所有count>1组的成员：Flamingo18.2%、MOSS4.4%、Captioner3.8%；此前10.8%/2.4%是(500-unique)/500即多出的副本比例，非组成员比例，两种定义不能混用。unique分别446/488/490。句内复读均值2.70%/4.64%/4.92%，4gram复读11.72%/12.18%/12.58%；Captioner不是每项都好、还存在2条预算截断。无test调阈值/重选checkpoint/重训。
+
+Captioner基座唯一接续hOPNx3在真实test安全结束后已freshcapture并派发N4仅GPU0，run_config SHA=aac0e369fc4051faa58f456262b23cc05893e7999207ce791a552b8295842925；base_fixed3.live PID661885/start_ticks537676327与/proc一致，其余七卡均恢复原占卡流程。该快照仍CPU加载、raw0，不能叫基座已经GPU生成完成。MOSS基座已完整safe，Flamingo基座仍等H3全安全。H3三片Flamingo视频已完整，Captioner三cache完成正视频生成，九片及真实人评尚未完成。
+
+## Captioner基座对照metadata误拒的根因与独立修复
+
+首次test500与训练后H3不受基座诊断影响。Captioner基座v1在生成前被tokenizer_identity拒，raw未生成、实际workerexit1/resources_safe单卡恢复，旧queue/once/source全部保留；旧Dyc3fS因此正确停止、不生成伪盲评。只读CPU对官方/训练后导出processor核实：processor模板、完整词表、实际原native prompt与同3case所有input_ids/attention/audio tensors逐元素完全相同，input长度同历史native76；差异仅save_pretrained在未实际调用的tokenizer.chat_template复制一份模板（官方None、export字符串）。v2排除此未使用存储字段后仍被all_special_ids列表枚举顺序误拒，两个列表成员完全相同，v2亦生成前失败并安全恢复，旧rI190m正确停止。此前只对少数组件核查未覆盖all_special_ids顺序，后续扩大到完整semantic identity实测后确认，不以旧CPU样例通过冒实际processor已验证。
+
+最终v3仅去掉未使用tokenizer模板存储对语义identity的影响，并对all_special_ids排序比较同多重集合；processor模板/渲染prompt、完整vocab/added vocab/special-token映射、实际EOS与输入长度、全部音频/前缀tensor仍须精确相同，成员/真实prompt/tensor变化反例继续拒绝。主会话实际CPU预检Captioner和Flamingo各同三case用v3门禁全部通过，未加载模型或使用GPU。27项CPU回归包括存储None/str和specialID重排允许、specialID成员变化/实际指令/音频tensor漂移拒绝及原exit0/资源保护全部通过。冻结runtime/base_fixed3_v3，producerSHA=9b7efe8ab681434e0be32db84564353372ad3de31fb1804bd96947d9c86b894b，managerSHA=902b01e2c99a99f91a8fcdb8f02532073392e042b9e0dabd5f61562ef58ddd6d，testSHA=ca009715fe4439d04b92eb982d6e01e3120eb476e9b91f86698c369a93dc2706；v1/v2快照不修改。
+
+MOSS v1成功基座直接复用，不重新生成。N2旧5cDwY8/c1s2Ts仅未派发的自有CPU等待器已核stdout与无queue/config/claim后精准停止，原H3 GPU不中断。Flamingo新唯一hrO7tP等现有H3九片完整/safe/exit0后重新capture再跑v3。Captioner旧两次失败均未生成raw且已资源safe，freshcapture后唯一gUYg12派发v3；运行configSHA=6c67e261078de54e08839fe5db1211994062005dd88b04a2723b27689eab6424。独立新输出/新once保旧失败，未删除账本、未重测test500或trainedcaption。
+
+唯一UphFnd等待MOSS v1+两族v3实际全部complete/exit0/safe后才导出prepost_blind_text_review_v3六匿名组18条，并沿同原冻结rubric评审，v1/v2失败不当质量负例。最近H3原队列进展为Flamingo3片、Captioner1片，合计4/9；Captioner基座v3尚未完成，真实前后动作评价和视频人评仍未出。
+
+## Captioner修复后原基座实际三case验收
+
+Captioner基座v3已完整三条原生GPU生成：417/465/385 tokens各正常EOS，1267/1267实际native forwards有限；主会话独立用冻结v3 check_outputs核manifest/raw/真实exit0及单卡resources_safe全部通过，无checkpoint/LoRA，同有效processor prompt/全部前缀audio tensors与训练后导出重放相同，旧full historical prefix tensor未保存的边界保留。v1/v2误拒均未生成caption且旧失败/账本/SHA保留，不用其失败给基座质量负分。N4 GPU0已恢复占卡，不再重复基座生成。
+
+同三个case，原基座0/3正确非空双窗、训练后3/3；只证明当前native audio-only协议下训练学会了目标输出形式，不能把固定格式提高当精细动作时间准确率、舞种/节拍同步或创作编排更好。MOSS原基座已有3/3双窗，更说明“有时间标签”不等训练效果。动作内容前后仍等Flamingo基座齐全后独立18条匿名LLM盲审。技术总结为results/music_planner_captioner_base_fixed3_technical_20261025_v3.json，无raw文本/私有音视频。
+
+## 第二族H3三片视频验收与人评构建执行位置
+
+Captioner同3case H3视频阶段已完整且实际exit0，主会话在授权N2只读复用冻结prerequisites/check_stage独立重验通过。run_complete SHA=a757e7ad45d0172f9f7e0bf18d3bd3497d6c340915e8b9f03924228e9c253827，累计DiT150/decode3，无音频分支生成，同原704×1280/124帧24fps/50步seed42CFG1shift12noLoRA。Flamingo前三片已验，合计6/9；MOSS缓存/视频仍待，用户人评仍未完成。
+
+离线包的冻结H3 prerequisites要求在授权N2执行；因此旧O3XtBy coordinator调用将在未来全片后被scope拒绝。主会话在尚未写公开包/密钥前精准停止这一个自有CPU等待器，没有停止GPU、没有改h3_review_pack_v2冻结源或跳过scope；新唯一0W9v4n等同九片comparecomplete/resources_safe后通过默认SSH到N2仅CPU做原门禁和离线mux。仍使用同独立planner_h3_review_offline_v2公开目录，key在目录外，未部署共享server、未外部上传。Flamingo基座唯一hrO7tP同样等H3全部安全后新capture；前后匿名材料UphFnd等所有基座实际齐全。不将任何等待器退出/巡检超时当全部实验完成。
+
+## 全部自动实验结束、完整前后盲评及真实人评待办
+
+H3九片原视频已全部完整生成，六阶段actualexit0、总h3.compare.complete与单卡resources_safe恢复；主会话在授权N2用冻结verify_complete独立重验9片/3固定case/同源与协议/媒体审计，另对全部九片当前SHA和累计50/100/150DiT及1/2/3decode再次核。纯技术验收摘要为results/music_planner_h3_all9_technical_20261025_v1.json，不能把technical complete当用户画质接受。
+
+Flamingo纯基座v3也已真实3条完成，354/354finite、3EOS、0双窗、actualexit0/safe；MOSS原基座v1及Captioner基座v3此前已完成。三族同音频/nativeprefix/greedy/cap2048前后合同与原训练后raw复用全部重验，技术摘要为results/music_planner_prepost_all3_technical_20261025_v3.json。所有24GPU当前均为原占卡恢复流程，未启动额外训练或test。
+
+独立前后六匿名组18条LLM评审曾遇Read工具输出截断：原审阅者把F组文件假判坏并评分可见前缀，磁盘Python完整json.loads实证六组全部有效、无literal truncated，主会话不使用该partial报告验收。原会话随后在停止指令抵达前修正其v1（误判/纠正过程保留于报告与会话），主会话另派独立完整v2审阅，直接将实际磁盘完整18条匿名正文和原预冻rubric内嵌，避免长Read截断；新审阅未看旧评分/模型/阶段/privatekey/音视频，实际18条四轴1–5评分，保存后独立核6sourceSHA、18唯一group×case、全部整数分/36精确substring证据/组均值才解盲。正式验收只用independent_llm_review_complete_v2.json SHA=aa290d88e2a6b66430f3c84c494c2bb05a19a7183a90d07d71314a7031fb352f。后续网关empty-stream通知不覆盖这份已落盘且独立核妥的真实报告。
+
+| 同3case盲文本四轴均值：组织/动态/多样/细节 | 原基座 | 训练后 |
+|---|---|---|
+| Flamingo | 3.33 / 4.00 / 3.67 / 3.00 | 4.00 / 4.00 / 3.67 / 4.00 |
+| MOSS | 4.00 / 4.00 / 4.00 / 4.00 | 4.00 / 3.67 / 3.00 / 3.67 |
+| Captioner | 1.00 / 1.00 / 1.00 / 1.00 | 3.67 / 2.33 / 2.33 / 3.67 |
+
+这轮固定3case中Flamingo训练改善组织和执行细节，动态与多样性持平；MOSS训练后未在动态/动作多样/细节上改善，部分指标退步；Captioner从完整音乐描述学成动作计划，但当前固定3case训练后多是摸头/扶髋/轻移重，动态多样性不强。不能说三模型各轴都变好、不能把仅3case序数均值当总体统计显著，不用未知音视频证据推音乐/真实时间准确率。完整非raw公开总结为results/music_planner_prepost_blind_text_review_20261025_v2.json，保留每条评分与简明判断，不上传原caption/媒体/私有密钥。
+
+九片离线匿名包已由唯一0W9v4n在授权N2实际CPU构建完成；主会话独立核9视频SHA/3完整原WAV/同bundle ID/页面无真实模型和caseID/JS语法/key公开外0600。包ID=b0cfae50578158ca66d1cecccd49aba6，indexSHA=e8cd89a12569105ec16851b0e8a5510c02dd524da68f30c5c669fff21b433532；公开tar仅目录内9MP4+3WAV+HTML+manifest，不含privatekey。原24GPU全部恢复占卡，评审包音轨AAC有损但视频轨copy与完整原WAV均保全，不截124帧尾。
+
+用户明确授权部署内网。新N2独立端口8766在确认未占用后，仅对planner_h3_review_offline_v2 public目录部署Python静态服务（managed后台2O9MnV）；未重启/修改已有review_web。http://28.216.17.70:8766/已从coordinatorHTTP实测网页/视频/WAV200、目录外private-key请求404。此页五轴ABC偏好是实际人评入口，支持相近/都不可用/未知，不是假九次pairwise；下载JSON包含同bundleID。已请求用户看视频并提供评分JSON路径或内容，目前尚未收到任何真实评分，不能自动human_quality_accepted或最终端到端winner。所有自动GPU训练/首次test/H3/基座和18条独立盲文本评审都已结束，剩余实际用户人评及其综合结论推送不可由助手编造。
+
+## 自动实验完成后的外部验收与发布阻塞
+
+全部GPU训练、首次test500、九片H3、三族基座和正式18条独立盲评结果已经本地完整保存并独立核验。纯技术/盲文本公开结果与notes精准提交为fe4c618，复制到隔离worktree的全部文件SHA一致；实际push返回Missing or invalid credentials、exitCode128，因此该完整结果提交尚未成功推送，不能把本地commit或此前阶段性push当最终GitHub交付。已请用户在本机恢复GitHub登录、不要发送聊天token，不搜索会话凭据、不覆盖git历史。嵌套认证问答UI超时，按工具反馈后续必要信息仅在自然语言中请求。
+
+内网匿名评分入口http://28.216.17.70:8766/及实际五轴JSON下载表单仍HTTP200，独立新CPU服务2O9MnV存活，不占GPU/不改共享review_web。公开包内未见用户scores文件，尚未收到实际评分JSON。没有评分不能给最终端到端winner或human_quality_accepted；完整目标仍待真实用户评分、综合判断与认证恢复后的成功push核验。自动跟进已收敛为这些外部依赖，不再重复GPU实验。最小CPU人评分JSON校验器已完成并冻结runtime/human_review_result_v1/music_planner_human_review_result.py，scriptSHA=62f80478e8d6b5c97ac0b7f0f7b78fc3a40e722d7dbebe12ccedeb62132f3c1d，testSHA=79f7b9649178ac4e65d806bdd65b69395d9453b87204044881fcc9bdfaefa36d；主会话独立15/15 CPU回归和真实public/private包的bundle/copy SHA只读核验通过。它要求同bundle/精确3case5axis、未知/都不可用保留、全未填写拒绝，partial不标完整，不据多维票数自动winner/qualityaccepted，原评分/公私包SHA写前再核，exclusive输出不覆盖。没有读取或制造真实用户评分，fixture只用于格式/安全回归。
+
+## 代码服务器代理部署与文本选用建议
+
+用户反馈原N2内网IP链接不可访问，要求经代码服务器HTTPS /proxy/8766/。已确认当前代码服务器本机8766未占用后，按用户授权部署独立Python静态服务eFEjxh，仅服务同匿名公开包planner_h3_review_offline_v2，不修改旧共享review_web或任何GPU任务。127.0.0.1:8766网页/视频/WAV实测200，目录外privatekey404；页面使用相对媒体路径，代理入口应带末尾斜杠。用户给定代理入口为https://launcher-ql3qjy14j2-codeserver.ide.taiji.woa.com/proxy/8766/；本机服务已验证，但运行环境访问该HTTPS域名超时，因此未声称外部代理端到端已经实测成功，仍待用户浏览器确认。
+
+用户希望仅按文本现在选一个使用。建议优先当前MOSS checkpoint670：完整test500同窗口动作类别F1=0.6163（Flamingo0.6008/Captioner0.6006），500正常EOS和双窗100%，ROUGE-L与Captioner近乎持平且其差值区间含0，跨case整条重复组成员4.4%显著少于Flamingo18.2%。这是一项文本用途的工程选用建议，不是综合视频/音乐同步最强裁决，不重选族内checkpoint、不调测试阈值或重测。Flamingo在固定3case独立盲审的动态/细节更好，但全量文本复用更明显；Captioner全量ROUGE微优，固定3case动作仍偏手势持姿且有2预算截断，不能只据val32早期意见全面优先。MOSS训练后并非所有维度都优于原基座，这与当前三种已训练模型里优先使用它不矛盾。原事件时间定位和视频真人验收仍未知，最终端到端winner不定。
+
+## 实际用户整体视频偏好与最终选用（2026-10-25）
+
+用户实际匿名评审原文已先存results/music_planner_human_overall_preferences_20261025_v1.json，再核同bundle和冻结private key SHA揭盲：A=Flamingo，B=Captioner，C=MOSS。case1：MOSS > Flamingo > Captioner；case2：Flamingo > MOSS > Captioner；case3：MOSS略优于Flamingo，两者都还行，用户未评价Captioner，不补造其名次。此为真实整体视觉偏好，不是分开的五轴数字评分；已接受用户文字反馈作为人评证据，无需强迫重复填写JSON，也未把缺轴或未评case3 B自行填全。
+
+综合当前实际使用需求，推荐已训练MOSS checkpoint670，Flamingo为备选，Captioner目前不优先。MOSS在3例中2例用户偏好领先Flamingo（其中1例略优），另1例Flamingo最佳；MOSS完整test500动作类别F1最高0.6163、全EOS/双窗、整段重复组成员4.4%低于Flamingo18.2%，与当前人评倾向一致。Captioner在两条完整人评排序中末位，case3未提供评价，不说它三例都最差。保留MOSS前后部分文本轴未提升的负证据，不声称所有模型训练都变好。仅3case不能作总体统计显著优胜，整体偏好不等每个视频绝对合格，固定窗不等真实动作起止/音乐同步准确。最终实用推荐存results/music_planner_final_model_recommendation_20261025_v1.json。
+
+目前训练、自动评测、基座对照、LLM文本盲审、实际整体视频偏好和选用综合分析均已完成；没有五轴拆分分数，不伪造。完整GitHub交付仍因本机认证未恢复而待推，最新原有HEAD9952f24只本地，新增人评/综合结果将精准本地提交并保留；不反复失效push/不索取聊天token。
+
+## 数据扩量与过拟合证据分析
+
+用户提出精选集合约22万条、当前只使用12k，询问扩量收益与当前是否过拟合。当前权威训练合同为候选12000源、清洗后11703可用源，其中train10713/val490/test500；每族2epoch/21426真实源曝光。本轮已独立核权威bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json：总222939条，train200568/val11110/test11261；计数是源视频clip/CSV源条目，不是已生成timed动作caption或窗口数量。该入口摘要semantic_approval/human_review_completed/formal_training均false、song_or_near_duplicate_overlap_verified=false；这些是本标注入口的未验收声明，不否定原来源人工精选，但不能拿源视频数量直接证明22万条本任务动作标签都ready。
+
+当前同族完整val490的NLL：
+
+| 模型 | 更新2诊断 | epoch1/更新335 | epoch2/更新670 |
+|---|---:|---:|---:|
+| Flamingo | 1.826934 | 0.827786 | 0.765656 |
+| MOSS | 1.804309 | 0.788028 | 0.735513 |
+| Captioner | 1.693363 | 0.716654 | 0.684887 |
+
+验证NLL在两个正式epoch末继续下降、三族best均670，没有观测到这些验证点上的经典“训练loss继续降但验证loss反弹”证据。在线u335/u670 train日志loss分别Flamingo0.840876/0.736689、MOSS0.814642/0.714973、Captioner0.735859/0.655934，但这是更新过程中该25源尾batch的NLL，不是同checkpoint全train-set评估；不能直接用完整val减尾batchloss的0.02–0.03量化泛化gap。当前没有完整同checkpoint train-vs-val差距证据。但仅两个epoch验证点不足以排除动作语义或歌曲层面的过拟合；更新2已训练64源不是未训练基座，不跨tokenizer按NLL排名。重复动作/通用手臂模板也可能来自弱标签偏置、条件信息不足、多解映射或模式集中，不能由复读直接定过拟合。MOSS前后3case部分文本轴未改善说明参考拟合与编排可用性不同，不单独证明过拟合。
+
+已核当前split source/exact音频重叠为0，但song_and_near_duplicate_isolation_verified=false；因此还不能声称歌曲/近重复隔离的泛化完全验收。扩量前必须按原始源/歌曲/近重复去泄漏，避免把当前val/test或近邻源纳入训练，并核视频动作弱caption覆盖与人工精选规则是否一致。更大且高质量、多舞种/动作/节奏覆盖的数据有机会改善泛化与多样性，但更大的重复、静姿或噪声弱caption池也可能放大模板；音乐本身不唯一决定具体编舞，这一多解性不靠规模自动消失。
+
+下一步建议优先已选MOSS做独立新扩量实验，小规模梯度如12k→50k→全量，只保原固定3case视频诊断，并在独立dev/新实验最终测试协议下比较。数据效果与优化预算要分开：相同epoch数下全量会显著增加更新，不能把收益全部归因数据；相同更新/源曝光下大池覆盖更广但每源重复少。报告应同时说明曝光预算、验证/动作参考指标、跨case重复、文本盲评及视频人评，不能仅看trainloss。此为方案建议，本次未启动任何新训练/评测、未改变当前最佳checkpoint和已完成最终test500或模型选用结论。
+
+## 资源释放状态与扩量预算口径
+
+用户询问N2/N4/N7是否可用于其他任务。最新默认SSH/nvidia-smi与/proc argv逐节点核验：每节点8卡均只有hold_gpu.py（约966MiB进程显存），无非占卡GPU进程，24卡本轮训练/推理均已结束。可以让给用户其他任务，本次未主动停止占卡或未知进程，新任务启动前按精确身份/锁/租约流程释放所需卡；不默认独占三个节点，也没有因讨论22万数据而启动新训练。
+
+扩量应只使用符合新合同且排除当前heldout的原train池，不把222939（含原val11110/test11261）全部当train。若原train200568条均准备完毕且可用，固定2epoch约401136曝光，是当前21426的18.72倍；固定原21426曝光则只相当于约0.107epoch。两种实验回答不同问题，更多epoch预算下的效果不能全部归因数据量，实际过滤后需重算预算。当前12k中val/test原属精选train池，扩原train时须明确排除，歌曲近重复还需分组保护；新style+timed MS如果同时换标签协议，不能把协议收益说成单纯扩量收益。
+
+## 当前结论
+
+三模型正式训练670更新/21426源曝光、首次test500、全部九片同H3视频和三族同条件纯基座对照都已真实完成/exit0/资源safe独立验收，24GPU恢复占卡。正式完整18条训练前后LLM盲审已保存并验证后才解盲；本轮固定3case中Flamingo组织/细节改善、MOSS部分轴不改善、Captioner学会动作目标形式但动态多样偏弱。test500 MOSS动作类别F1最高，CaptionerROUGE微优对MOSS区间跨0，不宣称全面赢家。固定时间窗输出不等精细动作边界准确，仍无独立事件时间或音乐同步真值。用户已提供真实整体视频偏好，核同匿名包后综合推荐MOSS checkpoint670、Flamingo备选、Captioner不优先；未提供的五轴拆分及case3 Captioner名次不代填。这是当前固定3例的实用选用结论，不是总体统计显著、音乐同步或所有片绝对质量验收。实验与综合分析已经完成；用户提供新认证后，原四个待交付提交已全部成功推送experiments/music-planner-fair-20261025，ls-remote实查远端SHA=59c201b18562184205ffda1cdac66f3c0482f3f8，与本地最终提交完全一致。原实验完整交付已完成。认证仅一次性进程环境使用，未持久化到repo/config/remote/凭据文件，未force push；聊天中出现的凭据需撤销或轮换，记录不包含其值。GitHub只精确发布本实验code/test和脱敏纯指标/分析，不上传权重、私有音视频或密钥，不改其他会话任务。

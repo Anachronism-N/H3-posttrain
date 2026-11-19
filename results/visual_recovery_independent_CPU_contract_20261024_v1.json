@@ -1,0 +1,65 @@
+{
+  "schema": "visual_recovery_independent_CPU_contract_verification_v1",
+  "verification_kind": "independent_CPU_synthetic_code_contract",
+  "source_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_visual_recovery.py",
+  "source_sha256_before": "334adb0b1830f62271948c51faaec48ecac96a1b8b5023d51d5a7ba75b395ce4",
+  "source_sha256_after": "334adb0b1830f62271948c51faaec48ecac96a1b8b5023d51d5a7ba75b395ce4",
+  "source_unchanged": true,
+  "test_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/tests/test_ms_visual_recovery.py",
+  "test_sha256_verified_before_execution": "b3cc0c28981e0ff7506335f5f1171f89a87a4f21b52966b2500c5cdd537ef933",
+  "test_sha256_after_execution_verified": false,
+  "python": "/opt/venv_eval/bin/python",
+  "tests_run": 38,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "tool_exit_code": 0,
+  "independent_cases": [
+    {
+      "name": "resealed_prior_in_new_request",
+      "legal_baseline_status": "candidate",
+      "actual": "rejected",
+      "reason": "new request is not pinned original RGB messages plus unique clarification",
+      "restored_original_bytes_baseline_status": "candidate"
+    },
+    {
+      "name": "same_target_claim_in_second_output",
+      "same_tree_repeat_claim": false,
+      "actual": "rejected",
+      "reason": "call claim outside unique planned target directory",
+      "second_output_tree_created": false
+    },
+    {
+      "name": "preserved_export_caption_not_original_reconstruction",
+      "matching_legal_baseline_accepted": true,
+      "actual": "rejected",
+      "reason": "original verified-export row differs from rebuilt producer proof: windows"
+    }
+  ],
+  "history": {
+    "old_source_sha256": "95916eb72955b62f0ef0769adaa9dcbdcd25e9c7baa48854d3f1cb3ffb30c322",
+    "old_cross_output_claim_accepted": true,
+    "old_resealed_good_caption_accepted": true,
+    "history_is_synthetic_CPU_not_model_calls": true
+  },
+  "execution_evidence": "Explore Task141 actual stdin Python stdout plus lead independent38pytest and production run-stage/prior mutation checks. No persistent stdin script or original receipt path exists; this is an archived summary, not a fabricated original receipt.",
+  "GPU_used": false,
+  "model_weights_loaded": false,
+  "LLM_or_detector_run": false,
+  "actual_recovery_performed": false,
+  "live_12000_media_or_frame_tree_scanned": false,
+  "second_full_exporter_run": false,
+  "original_b362_4a_882_sources_modified": false,
+  "human_review_completed": false,
+  "semantic_approval": false,
+  "full12000_caption_delivery_verified": false,
+  "verification_scope": "Three direct synthetic budget/source checks and38 regression tests only; not full recovery implementation acceptance.",
+  "nonempty_production_plan_roundtrip_verified": false,
+  "subsequent_production_failure": {
+    "source_sha256": "334adb0b1830f62271948c51faaec48ecac96a1b8b5023d51d5a7ba75b395ce4",
+    "reason": "Target SHA uses insertion-order JSON, but plan target JSONL was sorted by canonical_json; a valid nonempty plan fails load_plan with target content SHA mismatch.",
+    "original_three_gate_results_remain_valid": true,
+    "actual_recovery_performed": false,
+    "fix_and_end_to_end_independent_verification_pending": true
+  }
+}

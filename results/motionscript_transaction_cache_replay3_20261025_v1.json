@@ -1,0 +1,126 @@
+{
+  "schema": "transaction_cache_cpu_replay3_v1",
+  "records": [
+    {
+      "source_key": "train/AuuitdcBJyGOnWaH",
+      "status": "failed",
+      "original_budget_SHA": "3c8525d070c9a3454467a57e5e43df8c5a9d175cd132d93250d8189cc2f8cef3",
+      "budget_unchanged": true,
+      "A_native": {
+        "seconds": 1.2006558272987604,
+        "actual_python_reads": {
+          "hash_reads": 7,
+          "hash_read_bytes": 548747,
+          "read_bytes_calls": 1
+        },
+        "cache": null,
+        "all_original_artifact_bytes_equal": true
+      },
+      "B_transaction_cache": {
+        "seconds": 1.403532262891531,
+        "actual_python_reads": {
+          "hash_reads": 0,
+          "hash_read_bytes": 0,
+          "read_bytes_calls": 0
+        },
+        "cache": {
+          "event": "native_core_transaction",
+          "root": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/smalltests/transaction-cache-replay3-6yveuv7a/AuuitdcBJyGOnWaH/B_transaction_cache",
+          "receipt_resume_full_validation": false,
+          "core_transactionwall": 1.4031783640384674,
+          "artifact_reads": 2,
+          "artifact_bytes": 2421,
+          "cache_hits": 7,
+          "sha_reuses": 7,
+          "json_parses": 4,
+          "boundary_stat_checks": 10,
+          "successful_save_captures": 3
+        },
+        "all_original_artifact_bytes_equal": true
+      }
+    },
+    {
+      "source_key": "train/AzPomlvsANsevIFb",
+      "status": "failed",
+      "original_budget_SHA": "6a4b82ff5a4bc1e8ac0ede607e9776e0bf5e5db9f74f6f83b7818274acec22a5",
+      "budget_unchanged": true,
+      "A_native": {
+        "seconds": 1.5276246834546328,
+        "actual_python_reads": {
+          "hash_reads": 7,
+          "hash_read_bytes": 550075,
+          "read_bytes_calls": 1
+        },
+        "cache": null,
+        "all_original_artifact_bytes_equal": true
+      },
+      "B_transaction_cache": {
+        "seconds": 1.1855079680681229,
+        "actual_python_reads": {
+          "hash_reads": 0,
+          "hash_read_bytes": 0,
+          "read_bytes_calls": 0
+        },
+        "cache": {
+          "event": "native_core_transaction",
+          "root": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/smalltests/transaction-cache-replay3-6yveuv7a/AzPomlvsANsevIFb/B_transaction_cache",
+          "receipt_resume_full_validation": false,
+          "core_transactionwall": 1.1851534144952893,
+          "artifact_reads": 2,
+          "artifact_bytes": 1957,
+          "cache_hits": 7,
+          "sha_reuses": 7,
+          "json_parses": 4,
+          "boundary_stat_checks": 10,
+          "successful_save_captures": 3
+        },
+        "all_original_artifact_bytes_equal": true
+      }
+    },
+    {
+      "source_key": "train/DxNCjtNsxcazNpGb",
+      "status": "candidate",
+      "original_budget_SHA": "48925361415d3d860c77c3209a0119be6dcd5a7775af73907eb1e18b8800ace6",
+      "budget_unchanged": true,
+      "A_native": {
+        "seconds": 1.6509714797139168,
+        "actual_python_reads": {
+          "hash_reads": 8,
+          "hash_read_bytes": 1285353,
+          "read_bytes_calls": 1
+        },
+        "cache": null,
+        "all_original_artifact_bytes_equal": true
+      },
+      "B_transaction_cache": {
+        "seconds": 1.6565608736127615,
+        "actual_python_reads": {
+          "hash_reads": 0,
+          "hash_read_bytes": 0,
+          "read_bytes_calls": 0
+        },
+        "cache": {
+          "event": "native_core_transaction",
+          "root": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/smalltests/transaction-cache-replay3-6yveuv7a/DxNCjtNsxcazNpGb/B_transaction_cache",
+          "receipt_resume_full_validation": false,
+          "core_transactionwall": 1.6562192449346185,
+          "artifact_reads": 2,
+          "artifact_bytes": 2132,
+          "cache_hits": 8,
+          "sha_reuses": 8,
+          "json_parses": 5,
+          "boundary_stat_checks": 12,
+          "successful_save_captures": 4
+        },
+        "all_original_artifact_bytes_equal": true
+      }
+    }
+  ],
+  "new_model_calls": 0,
+  "new_budget_claims": 0,
+  "filesystem": "CephFS isolated temporary output",
+  "measurement_scope": "native finalization from already generated raw/generation; includes native synchronous saves and receipt commit",
+  "no_model_speedup_inferred": true,
+  "production_deployed": false,
+  "source_SHA": "f90f017ab293ddd9c25ceb41d85178a3e69990adf69e3332d5da37b4211613a5"
+}

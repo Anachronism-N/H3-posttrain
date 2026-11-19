@@ -1,0 +1,1524 @@
+{
+  "reports": [
+    {
+      "shard": 1,
+      "host": "28.216.17.70",
+      "samples": [
+        {
+          "time": 1792788944.457342,
+          "parents": [
+            2998805
+          ],
+          "workers": [
+            {
+              "pid": 2998808,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fdce0d46200 0xa00c2 0x180 0x0 0x2 0x7ffd4a36a690 0x7fde28ecafd4",
+              "stack": "[<0>] rwsem_down_write_slowpath+0x331/0x4e0\n[<0>] path_openat+0x3db/0x16a0\n[<0>] do_filp_open+0x93/0x100\n[<0>] do_sys_open+0x268/0x440\n[<0>] __x64_sys_openat+0x20/0x30\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n"
+            },
+            {
+              "pid": 2998809,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "82 0x7f71a664af10 0x7f72e1cea5d0 0x0 0x7f72edab32e6 0xffffffff 0x2 0x7ffc3ca1cbd8 0x7f72ee67eccb",
+              "stack": "[<0>] request_wait_answer+0xf6/0x220 [fuse]\n[<0>] fuse_simple_request+0x161/0x2b0 [fuse]\n[<0>] fuse_rename_common+0x10a/0x280 [fuse]\n[<0>] fuse_rename2+0x69/0x90 [fuse]\n[<0>] vfs_rename+0x305/0x9b0\n[<0>] do_renameat2+0x3bd/0x560\n[<0>] __x64_sys_rename+0x20/0x30\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n"
+            },
+            {
+              "pid": 2998810,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f762c449a70 0x7fff149b3e50 0x0 0x7f7774a0d730 0x2 0x7fff149b3e48 0x7f77744f68ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998811,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7f6051a3dd30 0x7f6051a46f30 0x0 0x7f6198f6f2e6 0xffffffff 0x2 0x7fffa82ea918 0x7f6199b3accb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998812,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fac45b4dbd0 0x7fac45b57f70 0x0 0x7fad8cfb32e6 0xffffffff 0x2 0x7fff9cf37f58 0x7fad8db7eccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998813,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7fe1f1826a40 0x7fff6b2ee7a0 0x0 0x7fe339eb0730 0x2 0x7fff6b2ee798 0x7fe3399998ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998814,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f7f1f749230 0x7ffc59d07d30 0x0 0x7f8067d33730 0x2 0x7ffc59d07d28 0x7f806781c8ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998815,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fece6351180 0xa00c2 0x180 0x0 0x2 0x7fff73986f00 0x7fee2e3eefd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998816,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f4484145e90 0xa00c2 0x180 0x0 0x2 0x7ffe1a6fe310 0x7f45cc2cffd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998817,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7ff8b2286f30 0x7ffe00df8000 0x0 0x7ff8b0744000 0x2 0x7ffe00df7ff8 0x7ff9f88398ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998818,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f686604d180 0x7fff8f29ce50 0x0 0x7f69ae6c9730 0x2 0x7fff8f29ce48 0x7f69ae1b28ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998819,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f41a9a3dde0 0xa00c2 0x180 0x0 0x2 0x7ffc187778e0 0x7f42f1bcefd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998820,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7fea9943d7b0 0x7ffcbf8fba40 0x0 0x7febe1a1e730 0x2 0x7ffcbf8fba38 0x7febe15078ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998821,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fec02b40f70 0x7fec02b4efd0 0x0 0x7fed49f932e6 0xffffffff 0x2 0x7fff6fb45528 0x7fed4ab5eccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998822,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fa999d3a4c0 0x7fa99cc5be30 0x0 0x7faae125f2e6 0xffffffff 0x2 0x7ffc9974a778 0x7faae1e31ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998823,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f750c73dbd0 0x7ffc636c0bd0 0x0 0x7f7654d43730 0x2 0x7ffc636c0bc8 0x7f765482c8ee",
+              "stack": "not_sampled"
+            }
+          ],
+          "logged": 1441,
+          "errors": 0,
+          "cgroup_mapping": [
+            {
+              "controllers": [
+                "rw",
+                "xattr",
+                "release_agent=/usr/lib/systemd/systemd-cgroups-agent",
+                "name=systemd"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/systemd"
+            },
+            {
+              "controllers": [
+                "rw",
+                "misc"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/misc"
+            },
+            {
+              "controllers": [
+                "rw",
+                "memory"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/memory"
+            },
+            {
+              "controllers": [
+                "rw",
+                "blkio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/blkio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "devices"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/devices"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpuset"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpuset"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpu",
+                "cpuacct"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpu,cpuacct"
+            },
+            {
+              "controllers": [
+                "rw",
+                "pids"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/pids"
+            },
+            {
+              "controllers": [
+                "rw",
+                "hugetlb"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/hugetlb"
+            },
+            {
+              "controllers": [
+                "rw",
+                "net_cls",
+                "net_prio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/net_cls,net_prio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "freezer"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/freezer"
+            },
+            {
+              "controllers": [
+                "rw",
+                "perf_event"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/perf_event"
+            }
+          ],
+          "cgroup_metrics": {
+            "memory.usage_in_bytes": "423056855040",
+            "memory.limit_in_bytes": "1071415808000",
+            "memory.failcnt": "0",
+            "memory.stat": {
+              "cache": 407937720320,
+              "rss": 13874032640,
+              "pgmajfault": 3214705,
+              "inactive_file": 2379800576,
+              "active_file": 36049752064
+            },
+            "blkio_devices_read_write": [
+              "8:0 Read 132067328",
+              "8:0 Write 249856",
+              "259:3 Read 545877151744",
+              "259:3 Write 288747520",
+              "259:0 Read 545910956032",
+              "259:0 Write 283693056",
+              "259:2 Read 545940537344",
+              "259:2 Write 282259456",
+              "259:1 Read 545913339904",
+              "259:1 Write 282611712",
+              "251:0 Read 2801144307712",
+              "251:0 Write 1651761152"
+            ],
+            "cpu.stat": "nr_periods 32112043\nnr_throttled 571275\nthrottled_time 5538565693568896\nnr_burst 0\nburst_time 0",
+            "cpu.cfs_quota_us": "13600000",
+            "cpu.cfs_period_us": "100000"
+          }
+        },
+        {
+          "time": 1792788954.472675,
+          "parents": [
+            2998805
+          ],
+          "workers": [
+            {
+              "pid": 2998808,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "262 0xffffff9c 0x7fdce0d47070 0x7ffd4a36a660 0x0 0x7fde293de730 0x2 0x7ffd4a36a658 0x7fde28ec78ee",
+              "stack": "[<0>] request_wait_answer+0xf6/0x220 [fuse]\n[<0>] fuse_simple_request+0x161/0x2b0 [fuse]\n[<0>] fuse_lookup_name+0x10b/0x200 [fuse]\n[<0>] fuse_lookup.part.26+0x56/0x120 [fuse]\n[<0>] fuse_lookup+0x22/0x30 [fuse]\n[<0>] __lookup_slow+0x9b/0x150\n[<0>] lookup_slow+0x3a/0x60\n[<0>] walk_component+0x1bf/0x330\n[<0>] path_lookupat.isra.53+0x6d/0x220\n[<0>] filename_lookup.part.69+0xa0/0x170\n[<0>] user_path_at_empty+0x3e/0x50\n[<0>] vfs_statx+0x76/0xe0\n[<0>] __do_sys_newfstatat+0x35/0x70\n[<0>] __x64_sys_newfs"
+            },
+            {
+              "pid": 2998809,
+              "state": "R",
+              "wchan": "request_wait_answer",
+              "syscall": "262 0xffffff9c 0x7f71a65b3c50 0x7ffc3ca1cba0 0x0 0x7f71a6658000 0x2 0x7ffc3ca1cb98 0x7f72ee7268ee",
+              "stack": "[<0>] request_wait_answer+0xf6/0x220 [fuse]\n[<0>] fuse_simple_request+0x161/0x2b0 [fuse]\n[<0>] fuse_dentry_revalidate+0x1a8/0x320 [fuse]\n[<0>] lookup_fast+0x283/0x2d0\n[<0>] walk_component+0x49/0x330\n[<0>] link_path_walk.part.51+0x2c6/0x540\n[<0>] path_lookupat.isra.53+0x93/0x220\n[<0>] filename_lookup.part.69+0xa0/0x170\n[<0>] user_path_at_empty+0x3e/0x50\n[<0>] vfs_statx+0x76/0xe0\n[<0>] __do_sys_newfstatat+0x35/0x70\n[<0>] __x64_sys_newfstatat+0x1e/0x20\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYS"
+            },
+            {
+              "pid": 2998810,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7f762c449230 0x7f762c453cf0 0x0 0x7f77738832e6 0xffffffff 0x2 0x7fff149b3e88 0x7f777444eccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998811,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f6051a3d9c0 0xa00c2 0x180 0x0 0x2 0x7fffa82ea910 0x7f6199be5fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998812,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fac45b4cec0 0xa00c2 0x180 0x0 0x2 0x7fff9cf37f50 0x7fad8dc29fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998813,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fe1f1826fc0 0x7fe1f1833e30 0x0 0x7fe338d1f2e6 0xffffffff 0x2 0x7fff6b2ee7d8 0x7fe3398f1ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998814,
+              "state": "D",
+              "wchan": "fuse_lock_inode",
+              "syscall": "262 0xffffff9c 0x7f7f1f74a4c0 0x7ffc59d07d30 0x0 0x7f8067d33730 0x2 0x7ffc59d07d28 0x7f806781c8ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998815,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fece63522b0 0x7fece7ea2f30 0x0 0x7fee2d7772e6 0xffffffff 0x2 0x7fff73986f08 0x7fee2e343ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998816,
+              "state": "R",
+              "wchan": "0",
+              "syscall": "running",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998817,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7ff8b0732570 0x7ff8b0745f90 0x0 0x7ff9f7bbf2e6 0xffffffff 0x2 0x7ffe00df8038 0x7ff9f8791ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998818,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f686604e360 0xa00c2 0x180 0x0 0x2 0x7fff8f29ce80 0x7f69ae1b5fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998819,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f41a9a3dde0 0xa00c2 0x180 0x0 0x2 0x7ffc187778e0 0x7f42f1bcefd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998820,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7fea9943d230 0x7ffcbf8fba40 0x0 0x7febe1a1e730 0x2 0x7ffcbf8fba38 0x7febe15078ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998821,
+              "state": "D",
+              "wchan": "fuse_lock_inode",
+              "syscall": "262 0xffffff9c 0x7fec02b41de0 0x7fff6fb454f0 0x0 0x7fed4b11d730 0x2 0x7fff6fb454e8 0x7fed4ac068ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998822,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fa999d39de0 0x7fa999d47610 0x0 0x7faae125f2e6 0xffffffff 0x2 0x7ffc9974a778 0x7faae1e31ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 2998823,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "257 0xffffff9c 0x7f750e28ef30 0x80000 0x0 0x0 0x2 0x7ffc636c08c0 0x7f765482ffd4",
+              "stack": "not_sampled"
+            }
+          ],
+          "logged": 1449,
+          "errors": 0,
+          "cgroup_mapping": [
+            {
+              "controllers": [
+                "rw",
+                "xattr",
+                "release_agent=/usr/lib/systemd/systemd-cgroups-agent",
+                "name=systemd"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/systemd"
+            },
+            {
+              "controllers": [
+                "rw",
+                "misc"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/misc"
+            },
+            {
+              "controllers": [
+                "rw",
+                "memory"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/memory"
+            },
+            {
+              "controllers": [
+                "rw",
+                "blkio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/blkio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "devices"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/devices"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpuset"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpuset"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpu",
+                "cpuacct"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpu,cpuacct"
+            },
+            {
+              "controllers": [
+                "rw",
+                "pids"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/pids"
+            },
+            {
+              "controllers": [
+                "rw",
+                "hugetlb"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/hugetlb"
+            },
+            {
+              "controllers": [
+                "rw",
+                "net_cls",
+                "net_prio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/net_cls,net_prio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "freezer"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/freezer"
+            },
+            {
+              "controllers": [
+                "rw",
+                "perf_event"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/perf_event"
+            }
+          ],
+          "cgroup_metrics": {
+            "memory.usage_in_bytes": "423068962816",
+            "memory.limit_in_bytes": "1071415808000",
+            "memory.failcnt": "0",
+            "memory.stat": {
+              "cache": 407949967360,
+              "rss": 13874032640,
+              "pgmajfault": 3214705,
+              "inactive_file": 2381930496,
+              "active_file": 36060401664
+            },
+            "blkio_devices_read_write": [
+              "8:0 Read 132067328",
+              "8:0 Write 249856",
+              "259:3 Read 545877151744",
+              "259:3 Write 288747520",
+              "259:0 Read 545910956032",
+              "259:0 Write 283693056",
+              "259:2 Read 545940537344",
+              "259:2 Write 282259456",
+              "259:1 Read 545913339904",
+              "259:1 Write 282611712",
+              "251:0 Read 2801144307712",
+              "251:0 Write 1651761152"
+            ],
+            "cpu.stat": "nr_periods 32112143\nnr_throttled 571275\nthrottled_time 5538565693568896\nnr_burst 0\nburst_time 0",
+            "cpu.cfs_quota_us": "13600000",
+            "cpu.cfs_period_us": "100000"
+          }
+        }
+      ]
+    },
+    {
+      "shard": 2,
+      "host": "28.216.19.213",
+      "samples": [
+        {
+          "time": 1792788944.4685824,
+          "parents": [
+            407467
+          ],
+          "workers": [
+            {
+              "pid": 407491,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7f6bee935de0 0x7f6bee943f70 0x0 0x7f6d35dc72e6 0xffffffff 0x2 0x7ffd9ff05768 0x7f6d36999ccb",
+              "stack": "[<0>] rwsem_down_write_slowpath+0x331/0x4e0\n[<0>] lock_rename+0xb7/0xc0\n[<0>] do_renameat2+0x2c8/0x560\n[<0>] __x64_sys_rename+0x20/0x30\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n"
+            },
+            {
+              "pid": 407492,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7fe15944b750 0x7ffc48119660 0x0 0x7fe159450000 0x2 0x7ffc48119658 0x7fe2a15b98ee",
+              "stack": "[<0>] lookup_slow+0x2c/0x60\n[<0>] walk_component+0x1bf/0x330\n[<0>] path_lookupat.isra.53+0x6d/0x220\n[<0>] filename_lookup.part.69+0xa0/0x170\n[<0>] user_path_at_empty+0x3e/0x50\n[<0>] vfs_statx+0x76/0xe0\n[<0>] __do_sys_newfstatat+0x35/0x70\n[<0>] __x64_sys_newfstatat+0x1e/0x20\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n"
+            },
+            {
+              "pid": 407493,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f3db4d32410 0xa00c2 0x180 0x0 0x2 0x7ffeafd32650 0x7f3efce00fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407494,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f6ea033db20 0xa00c2 0x180 0x0 0x2 0x7ffefc2520f0 0x7f6fe83f1fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407495,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "74 0xd 0x0 0x0 0x5641834d8e78 0x7fc171482bc0 0x2 0x7fffc507d0d0 0x7fc170e8ac40",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407496,
+              "state": "D",
+              "wchan": "generic_file_buffered_read",
+              "syscall": "0 0xd 0x562206fa3d20 0x400000 0x7fda80483340 0x0 0x2 0x7ffed1e3d180 0x7fdbc86e89ec",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407497,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fd9a25464c0 0xa00c2 0x180 0x0 0x2 0x7ffdbb6edd90 0x7fdaea64bfd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407498,
+              "state": "D",
+              "wchan": "generic_file_buffered_read",
+              "syscall": "0 0xd 0x55a51f241280 0x400000 0x7fb4a667fe80 0x0 0x2 0x7ffe6b6fa810 0x7fb5ee8309ec",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407499,
+              "state": "D",
+              "wchan": "generic_file_buffered_read",
+              "syscall": "0 0xd 0x557ee2293300 0x400000 0x7f8f45587c40 0x0 0x2 0x7ffeb6bc6a10 0x7f908d7289ec",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407500,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fb13db45650 0xa00c2 0x180 0x0 0x2 0x7fff17af1d70 0x7fb285bfbfd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407501,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f1e4dd46360 0xa00c2 0x180 0x0 0x2 0x7ffd21615c10 0x7f1f95eeafd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407502,
+              "state": "R",
+              "wchan": "0",
+              "syscall": "running",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407503,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f6f5d141860 0x7ffdfb5651d0 0x0 0x7f70a576c730 0x2 0x7ffdfb5651c8 0x7f70a52558ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407504,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "257 0xffffff9c 0x7fb7a9239de0 0xa00c2 0x180 0x0 0x2 0x7fff081e95b0 0x7fb8f1322fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407505,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f2cd62531b0 0x7ffde058f1f0 0x0 0x7f2cd6248000 0x2 0x7ffde058f1e8 0x7f2e1e3c38ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407506,
+              "state": "R",
+              "wchan": "0",
+              "syscall": "running",
+              "stack": "not_sampled"
+            }
+          ],
+          "logged": 1426,
+          "errors": 0,
+          "cgroup_mapping": [
+            {
+              "controllers": [
+                "rw",
+                "xattr",
+                "release_agent=/usr/lib/systemd/systemd-cgroups-agent",
+                "name=systemd"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/systemd"
+            },
+            {
+              "controllers": [
+                "rw",
+                "net_cls",
+                "net_prio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/net_cls,net_prio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "freezer"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/freezer"
+            },
+            {
+              "controllers": [
+                "rw",
+                "misc"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/misc"
+            },
+            {
+              "controllers": [
+                "rw",
+                "perf_event"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/perf_event"
+            },
+            {
+              "controllers": [
+                "rw",
+                "devices"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/devices"
+            },
+            {
+              "controllers": [
+                "rw",
+                "pids"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/pids"
+            },
+            {
+              "controllers": [
+                "rw",
+                "hugetlb"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/hugetlb"
+            },
+            {
+              "controllers": [
+                "rw",
+                "blkio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/blkio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "memory"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/memory"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpu",
+                "cpuacct"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpu,cpuacct"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpuset"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpuset"
+            }
+          ],
+          "cgroup_metrics": {
+            "blkio_devices_read_write": [
+              "8:0 Read 65536",
+              "8:0 Write 0",
+              "259:0 Read 330296995840",
+              "259:0 Write 22888439808",
+              "259:1 Read 330295275520",
+              "259:1 Write 22888472576",
+              "251:0 Read 710921560064",
+              "251:0 Write 66926284800"
+            ],
+            "memory.usage_in_bytes": "760696844288",
+            "memory.limit_in_bytes": "1071415808000",
+            "memory.failcnt": "0",
+            "memory.stat": {
+              "cache": 739979202560,
+              "rss": 16108052480,
+              "pgmajfault": 1490255,
+              "inactive_file": 163287904256,
+              "active_file": 265526878208
+            },
+            "cpu.stat": "nr_periods 31837431\nnr_throttled 3606\nthrottled_time 1795691789827\nnr_burst 0\nburst_time 0",
+            "cpu.cfs_quota_us": "13600000",
+            "cpu.cfs_period_us": "100000"
+          }
+        },
+        {
+          "time": 1792788954.478919,
+          "parents": [
+            407467
+          ],
+          "workers": [
+            {
+              "pid": 407491,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f6bee935de0 0xa00c2 0x180 0x0 0x2 0x7ffd9ff05760 0x7f6d36a44fd4",
+              "stack": "[<0>] rwsem_down_write_slowpath+0x331/0x4e0\n[<0>] path_openat+0x3db/0x16a0\n[<0>] do_filp_open+0x93/0x100\n[<0>] do_sys_open+0x268/0x440\n[<0>] __x64_sys_openat+0x20/0x30\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n"
+            },
+            {
+              "pid": 407492,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7fe15943ea40 0x7ffc48119660 0x0 0x7fe2a1ad0730 0x2 0x7ffc48119658 0x7fe2a15b98ee",
+              "stack": "[<0>] lookup_slow+0x2c/0x60\n[<0>] walk_component+0x1bf/0x330\n[<0>] path_lookupat.isra.53+0x6d/0x220\n[<0>] filename_lookup.part.69+0xa0/0x170\n[<0>] user_path_at_empty+0x3e/0x50\n[<0>] vfs_statx+0x76/0xe0\n[<0>] __do_sys_newfstatat+0x35/0x70\n[<0>] __x64_sys_newfstatat+0x1e/0x20\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n"
+            },
+            {
+              "pid": 407493,
+              "state": "R",
+              "wchan": "0",
+              "syscall": "running",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407494,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7f6ea033dd30 0x7f6ea034bf70 0x0 0x7f6fe777b2e6 0xffffffff 0x2 0x7ffefc2520f8 0x7f6fe8346ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407495,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fc028d45de0 0xa00c2 0x180 0x0 0x2 0x7fffc507cfc0 0x7fc170e86fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407496,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fda80541c80 0xa00c2 0x180 0x0 0x2 0x7ffed1e3d4b0 0x7fdbc86e7fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407497,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fd9a2545860 0x7fd9a252e8f0 0x0 0x7fdae99d32e6 0xffffffff 0x2 0x7ffdbb6edd98 0x7fdaea5a0ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407498,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fb4a673da70 0xa00c2 0x180 0x0 0x2 0x7ffe6b6fab40 0x7fb5ee82ffd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407499,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f8f45649bd0 0xa00c2 0x180 0x0 0x2 0x7ffeb6bc6d40 0x7f908d727fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407500,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fb13db457b0 0x7fb13f69af30 0x0 0x7fb284f832e6 0xffffffff 0x2 0x7fff17af1d78 0x7fb285b50ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407501,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "257 0xffffff9c 0x7f1e4dd46360 0xa00c2 0x180 0x0 0x2 0x7ffd21615c10 0x7f1f95eeafd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407502,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f572cd435f0 0xa00c2 0x180 0x0 0x2 0x7fff08aa60c0 0x7f5874e91fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407503,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "74 0xd 0x0 0x0 0x558b15bff8e8 0x7f70a5854bc0 0x2 0x7ffdfb565310 0x7f70a525cc40",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407504,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fb7a923a360 0xa00c2 0x180 0x0 0x2 0x7fff081e95b0 0x7fb8f1322fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407505,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f2cd623e150 0xa00c2 0x180 0x0 0x2 0x7ffde058f220 0x7f2e1e3c6fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 407506,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f43e313bb70 0xa00c2 0x180 0x0 0x2 0x7ffc06e83ac0 0x7f452b294fd4",
+              "stack": "not_sampled"
+            }
+          ],
+          "logged": 1434,
+          "errors": 0,
+          "cgroup_mapping": [
+            {
+              "controllers": [
+                "rw",
+                "xattr",
+                "release_agent=/usr/lib/systemd/systemd-cgroups-agent",
+                "name=systemd"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/systemd"
+            },
+            {
+              "controllers": [
+                "rw",
+                "net_cls",
+                "net_prio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/net_cls,net_prio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "freezer"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/freezer"
+            },
+            {
+              "controllers": [
+                "rw",
+                "misc"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/misc"
+            },
+            {
+              "controllers": [
+                "rw",
+                "perf_event"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/perf_event"
+            },
+            {
+              "controllers": [
+                "rw",
+                "devices"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/devices"
+            },
+            {
+              "controllers": [
+                "rw",
+                "pids"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/pids"
+            },
+            {
+              "controllers": [
+                "rw",
+                "hugetlb"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/hugetlb"
+            },
+            {
+              "controllers": [
+                "rw",
+                "blkio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/blkio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "memory"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/memory"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpu",
+                "cpuacct"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpu,cpuacct"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpuset"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpuset"
+            }
+          ],
+          "cgroup_metrics": {
+            "blkio_devices_read_write": [
+              "8:0 Read 65536",
+              "8:0 Write 0",
+              "259:0 Read 330296995840",
+              "259:0 Write 22888439808",
+              "259:1 Read 330295275520",
+              "259:1 Write 22888472576",
+              "251:0 Read 710921560064",
+              "251:0 Write 66926284800"
+            ],
+            "memory.usage_in_bytes": "760714199040",
+            "memory.limit_in_bytes": "1071415808000",
+            "memory.failcnt": "0",
+            "memory.stat": {
+              "cache": 739997040640,
+              "rss": 16108584960,
+              "pgmajfault": 1490255,
+              "inactive_file": 163289501696,
+              "active_file": 265543385088
+            },
+            "cpu.stat": "nr_periods 31837531\nnr_throttled 3606\nthrottled_time 1795691789827\nnr_burst 0\nburst_time 0",
+            "cpu.cfs_quota_us": "13600000",
+            "cpu.cfs_period_us": "100000"
+          }
+        }
+      ]
+    },
+    {
+      "shard": 3,
+      "host": "28.216.19.143",
+      "samples": [
+        {
+          "time": 1792788944.4944427,
+          "parents": [
+            1615
+          ],
+          "workers": [
+            {
+              "pid": 1631,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7f56b8f49910 0x7f56b8f328f0 0x0 0x7f580040b2e6 0xffffffff 0x2 0x7fffaed02e88 0x7f5800fd7ccb",
+              "stack": "[<0>] rwsem_down_write_slowpath+0x331/0x4e0\n[<0>] lock_rename+0xb7/0xc0\n[<0>] do_renameat2+0x2c8/0x560\n[<0>] __x64_sys_rename+0x20/0x30\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n"
+            },
+            {
+              "pid": 1632,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "262 0xffffff9c 0x7f7ace54d650 0x7ffc9ac3e2e0 0x0 0x7f7c16b6a730 0x2 0x7ffc9ac3e2d8 0x7f7c166538ee",
+              "stack": "[<0>] request_wait_answer+0xf6/0x220 [fuse]\n[<0>] fuse_simple_request+0x161/0x2b0 [fuse]\n[<0>] fuse_lookup_name+0x10b/0x200 [fuse]\n[<0>] fuse_lookup.part.26+0x56/0x120 [fuse]\n[<0>] fuse_lookup+0x22/0x30 [fuse]\n[<0>] __lookup_slow+0x9b/0x150\n[<0>] lookup_slow+0x3a/0x60\n[<0>] walk_component+0x1bf/0x330\n[<0>] path_lookupat.isra.53+0x6d/0x220\n[<0>] filename_lookup.part.69+0xa0/0x170\n[<0>] user_path_at_empty+0x3e/0x50\n[<0>] vfs_statx+0x76/0xe0\n[<0>] __do_sys_newfstatat+0x35/0x70\n[<0>] __x64_sys_newfs"
+            },
+            {
+              "pid": 1633,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "74 0xd 0x0 0x0 0x5650c56d86d8 0x7f339dca8bc0 0x2 0x7ffc28a90ba0 0x7f339d6b0c40",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1634,
+              "state": "D",
+              "wchan": "generic_file_buffered_read",
+              "syscall": "0 0xd 0x5609b6dd4680 0x400000 0x7f492e87fc40 0x0 0x2 0x7ffe2659b970 0x7f4a76a889ec",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1635,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7f52d044a780 0x7f52d0457cf0 0x0 0x7f54179072e6 0xffffffff 0x2 0x7fff9384e3e8 0x7f54184d2ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1636,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f3b48282e90 0x7fffa1973420 0x0 0x7f3b46740000 0x2 0x7fffa1973418 0x7f3c8e7f48ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1637,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fee8de42410 0xa00c2 0x180 0x0 0x2 0x7ffed7b68a20 0x7fefd5f85fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1638,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f162d03dd30 0xa00c2 0x180 0x0 0x2 0x7ffd9a567e50 0x7f1775127fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1639,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "257 0xffffff9c 0x7f1a41a43540 0xa00c2 0x180 0x0 0x2 0x7fff6d02e2d0 0x7f1b89bc1fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1640,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fe894442db0 0xa00c2 0x180 0x0 0x2 0x7ffd7abb2cd0 0x7fe9dc5b1fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1641,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fdf29739f40 0x7fdf2974ecb0 0x0 0x7fe070c2b2e6 0xffffffff 0x2 0x7ffe34cf4f78 0x7fe0717f8ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1642,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f2ac2957750 0x7ffffe00a140 0x0 0x7f2ac295c000 0x2 0x7ffffe00a138 0x7f2c0aab58ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1643,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f6209e3f6a0 0xa00c2 0x180 0x0 0x2 0x7ffc9397e460 0x7f6351f60fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1644,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fa490d457b0 0xa00c2 0x180 0x0 0x2 0x7ffd2b8708f0 0x7fa5d8e73fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1645,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7f9a081417b0 0x7f9a0814fa70 0x0 0x7f9b4f57b2e6 0xffffffff 0x2 0x7ffc7d291ef8 0x7f9b50148ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1646,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f991243e2b0 0xa00c2 0x180 0x0 0x2 0x7ffe4681fe60 0x7f9a5a5bdfd4",
+              "stack": "not_sampled"
+            }
+          ],
+          "logged": 1476,
+          "errors": 0,
+          "cgroup_mapping": [
+            {
+              "controllers": [
+                "rw",
+                "xattr",
+                "release_agent=/usr/lib/systemd/systemd-cgroups-agent",
+                "name=systemd"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/systemd"
+            },
+            {
+              "controllers": [
+                "rw",
+                "memory"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/memory"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpu",
+                "cpuacct"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpu,cpuacct"
+            },
+            {
+              "controllers": [
+                "rw",
+                "devices"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/devices"
+            },
+            {
+              "controllers": [
+                "rw",
+                "net_cls",
+                "net_prio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/net_cls,net_prio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpuset"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpuset"
+            },
+            {
+              "controllers": [
+                "rw",
+                "misc"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/misc"
+            },
+            {
+              "controllers": [
+                "rw",
+                "blkio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/blkio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "pids"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/pids"
+            },
+            {
+              "controllers": [
+                "rw",
+                "hugetlb"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/hugetlb"
+            },
+            {
+              "controllers": [
+                "rw",
+                "perf_event"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/perf_event"
+            },
+            {
+              "controllers": [
+                "rw",
+                "freezer"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/freezer"
+            }
+          ],
+          "cgroup_metrics": {
+            "memory.usage_in_bytes": "423284916224",
+            "memory.limit_in_bytes": "1071415808000",
+            "memory.failcnt": "0",
+            "memory.stat": {
+              "cache": 397303828480,
+              "rss": 23251271680,
+              "pgmajfault": 1138345,
+              "inactive_file": 7092105216,
+              "active_file": 108094689280
+            },
+            "cpu.stat": "nr_periods 31360788\nnr_throttled 8284\nthrottled_time 4099633348317\nnr_burst 0\nburst_time 0",
+            "cpu.cfs_quota_us": "13600000",
+            "cpu.cfs_period_us": "100000",
+            "blkio_devices_read_write": [
+              "8:0 Read 65536",
+              "8:0 Write 0",
+              "259:1 Read 171079114752",
+              "259:1 Write 703148032",
+              "259:0 Read 171067863040",
+              "259:0 Write 701558784",
+              "251:0 Read 380193320960",
+              "251:0 Write 2018553856"
+            ]
+          }
+        },
+        {
+          "time": 1792788954.5089045,
+          "parents": [
+            1615
+          ],
+          "workers": [
+            {
+              "pid": 1631,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f56b8f4b280 0x7fffaed02e50 0x0 0x7f5801596730 0x2 0x7fffaed02e48 0x7f580107f8ee",
+              "stack": "[<0>] lookup_slow+0x2c/0x60\n[<0>] walk_component+0x1bf/0x330\n[<0>] path_lookupat.isra.53+0x6d/0x220\n[<0>] filename_lookup.part.69+0xa0/0x170\n[<0>] user_path_at_empty+0x3e/0x50\n[<0>] vfs_statx+0x76/0xe0\n[<0>] __do_sys_newfstatat+0x35/0x70\n[<0>] __x64_sys_newfstatat+0x1e/0x20\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n"
+            },
+            {
+              "pid": 1632,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f7ace54e0a0 0x7ffc9ac3e2e0 0x0 0x7f7c16b6a730 0x2 0x7ffc9ac3e2d8 0x7f7c166538ee",
+              "stack": "[<0>] lookup_slow+0x2c/0x60\n[<0>] walk_component+0x1bf/0x330\n[<0>] path_lookupat.isra.53+0x6d/0x220\n[<0>] filename_lookup.part.69+0xa0/0x170\n[<0>] user_path_at_empty+0x3e/0x50\n[<0>] vfs_statx+0x76/0xe0\n[<0>] __do_sys_newfstatat+0x35/0x70\n[<0>] __x64_sys_newfstatat+0x1e/0x20\n[<0>] do_syscall_64+0x4d/0x120\n[<0>] entry_SYSCALL_64_after_hwframe+0x5c/0xc1\n"
+            },
+            {
+              "pid": 1633,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f325553e410 0xa00c2 0x180 0x0 0x2 0x7ffc28a90a90 0x7f339d6acfd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1634,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7f492e942780 0x7f492e954870 0x0 0x7f4a75e0f2e6 0xffffffff 0x2 0x7ffe2659bca8 0x7f4a769dcccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1635,
+              "state": "S",
+              "wchan": "request_wait_answer",
+              "syscall": "82 0x7f52d044aaf0 0x7f52d0457a70 0x0 0x7f54179072e6 0xffffffff 0x2 0x7fff9384e3e8 0x7f54184d2ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1636,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7f3b467359c0 0x7f3b46743750 0x0 0x7f3c8db7f2e6 0xffffffff 0x2 0x7fffa1973458 0x7f3c8e74cccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1637,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7fee8de4ff70 0x7ffed7b689f0 0x0 0x7fee8de54000 0x2 0x7ffed7b689e8 0x7fefd5f828ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1638,
+              "state": "D",
+              "wchan": "generic_file_buffered_read",
+              "syscall": "0 0xd 0x55ba91697400 0x400000 0x7f162cf7f100 0x0 0x2 0x7ffd9a567b20 0x7f17751289ec",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1639,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f1a41a43540 0xa00c2 0x180 0x0 0x2 0x7fff6d02e2d0 0x7f1b89bc1fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1640,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fe894441bd0 0x7fe895f96f30 0x0 0x7fe9db93b2e6 0xffffffff 0x2 0x7ffd7abb2cd8 0x7fe9dc506ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1641,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "82 0x7fdf29739650 0x7fdf2974f750 0x0 0x7fe070c2b2e6 0xffffffff 0x2 0x7ffe34cf4f78 0x7fe0717f8ccb",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1642,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f2ac2949b20 0xa00c2 0x180 0x0 0x2 0x7ffffe00a170 0x7f2c0aab8fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1643,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f6209e3e150 0xa00c2 0x180 0x0 0x2 0x7ffc9397e460 0x7f6351f60fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1644,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7fa490d457b0 0xa00c2 0x180 0x0 0x2 0x7ffd2b8708f0 0x7fa5d8e73fd4",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1645,
+              "state": "D",
+              "wchan": "lookup_slow",
+              "syscall": "262 0xffffff9c 0x7f9a081417b0 0x7ffc7d291ec0 0x0 0x7f9b50707730 0x2 0x7ffc7d291eb8 0x7f9b501f08ee",
+              "stack": "not_sampled"
+            },
+            {
+              "pid": 1646,
+              "state": "D",
+              "wchan": "rwsem_down_write_slowpath",
+              "syscall": "257 0xffffff9c 0x7f991243e2b0 0xa00c2 0x180 0x0 0x2 0x7ffe4681fe60 0x7f9a5a5bdfd4",
+              "stack": "not_sampled"
+            }
+          ],
+          "logged": 1481,
+          "errors": 0,
+          "cgroup_mapping": [
+            {
+              "controllers": [
+                "rw",
+                "xattr",
+                "release_agent=/usr/lib/systemd/systemd-cgroups-agent",
+                "name=systemd"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/systemd"
+            },
+            {
+              "controllers": [
+                "rw",
+                "memory"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/memory"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpu",
+                "cpuacct"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpu,cpuacct"
+            },
+            {
+              "controllers": [
+                "rw",
+                "devices"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/devices"
+            },
+            {
+              "controllers": [
+                "rw",
+                "net_cls",
+                "net_prio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/net_cls,net_prio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "cpuset"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/cpuset"
+            },
+            {
+              "controllers": [
+                "rw",
+                "misc"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/misc"
+            },
+            {
+              "controllers": [
+                "rw",
+                "blkio"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/blkio"
+            },
+            {
+              "controllers": [
+                "rw",
+                "pids"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/pids"
+            },
+            {
+              "controllers": [
+                "rw",
+                "hugetlb"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/hugetlb"
+            },
+            {
+              "controllers": [
+                "rw",
+                "perf_event"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/perf_event"
+            },
+            {
+              "controllers": [
+                "rw",
+                "freezer"
+              ],
+              "same_cgroup_as_mount_root": true,
+              "mount": "/sys/fs/cgroup/freezer"
+            }
+          ],
+          "cgroup_metrics": {
+            "memory.usage_in_bytes": "423292874752",
+            "memory.limit_in_bytes": "1071415808000",
+            "memory.failcnt": "0",
+            "memory.stat": {
+              "cache": 397312880640,
+              "rss": 23251804160,
+              "pgmajfault": 1138345,
+              "inactive_file": 7093968896,
+              "active_file": 108102144000
+            },
+            "cpu.stat": "nr_periods 31360888\nnr_throttled 8284\nthrottled_time 4099633348317\nnr_burst 0\nburst_time 0",
+            "cpu.cfs_quota_us": "13600000",
+            "cpu.cfs_period_us": "100000",
+            "blkio_devices_read_write": [
+              "8:0 Read 65536",
+              "8:0 Write 0",
+              "259:1 Read 171079114752",
+              "259:1 Write 703148032",
+              "259:0 Read 171067863040",
+              "259:0 Write 701558784",
+              "251:0 Read 380193320960",
+              "251:0 Write 2018553856"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

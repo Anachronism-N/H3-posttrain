@@ -1,0 +1,122 @@
+[
+  {
+    "node": "N1",
+    "exitCode": 0,
+    "data": {
+      "producer_workers": [],
+      "GPU_processes": "GPU-305f1213-85ff-38b5-7295-c6839023bd20, 2987330, 74902\nGPU-2e6ff906-0d91-c994-92e7-9bedb0947be8, 2987331, 74902\nGPU-1a898afb-ce06-d40b-043a-45679f17c945, 3178128, 75234\nGPU-670f50aa-b4bc-51d0-d768-5689bd7a25d8, 3178129, 75234\nGPU-391a6df9-2874-dfaa-ac69-e5fc3ccdc554, 452690, 75496\nGPU-1f94935b-c4da-79cf-bf7f-14df55219b96, 452691, 75496\nGPU-c946459a-2445-a29f-0862-8bf131dcdf43, 453650, 76188\nGPU-8698d9b1-c2bb-6728-4abb-fd2d7e78a5ec, 453651, 76188"
+    }
+  },
+  {
+    "node": "N3",
+    "exitCode": 0,
+    "data": {
+      "producer_workers": [],
+      "GPU_processes": "GPU-ea3fe93b-ee85-4357-3e35-b482e3c3d8c5, 1912998, 966\nGPU-7d83b768-a7c8-40a7-3975-f5619833a307, 1913002, 966\nGPU-0412c161-6471-21ae-3b86-88b6937d33a4, 928980, 74796\nGPU-230b5ddf-40c2-9507-a457-638e8558f866, 928981, 74798\nGPU-b18ddd18-cc10-a6b8-fd4e-d0aaa95d6d5a, 931263, 77086\nGPU-82b855ef-9624-74b7-99d6-08f427890067, 931264, 77088\nGPU-3989031e-587c-3c7b-091d-ad7f748e2d3a, 1226172, 76302\nGPU-a47141f9-91c2-af1b-35ce-61592196d7b1, 1226173, 76304"
+    }
+  },
+  {
+    "node": "N5",
+    "exitCode": 0,
+    "data": {
+      "producer_workers": [
+        {
+          "pid": 975313,
+          "start_ticks": 537374861,
+          "state": "S",
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_producer_io_v3.py",
+          "shard": "1",
+          "nshard": "2",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2",
+          "stage": "run",
+          "CUDA_VISIBLE_DEVICES": [
+            "CUDA_VISIBLE_DEVICES=1"
+          ]
+        },
+        {
+          "pid": 1088352,
+          "start_ticks": 540916151,
+          "state": "S",
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collaborative4_producer_v1.py",
+          "shard": "0",
+          "nshard": "1",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4",
+          "stage": "run",
+          "CUDA_VISIBLE_DEVICES": [
+            "CUDA_VISIBLE_DEVICES=0"
+          ]
+        }
+      ],
+      "GPU_processes": "GPU-6309cd58-c0c9-0d02-b2fb-c5dc0ccb8c3b, 1088352, 1372\nGPU-22fb8f46-d96c-75d5-14c2-358f85137e25, 975313, 1374\nGPU-f4e31ddd-8e78-0c88-7a78-382f05db93f7, 1089600, 74702\nGPU-d291bcac-a145-8bdd-192f-770181cf1969, 1089601, 74702\nGPU-177f51a0-3db5-c8a3-f3fd-534fc2555198, 1347184, 966\nGPU-0960b0b3-b6af-886e-455d-609c29bf2b03, 1347187, 966\nGPU-0294b607-4f86-fe41-6c19-1242f5cdb1ed, 821941, 1102\nGPU-ec445853-b769-db7d-888b-58c4735153ad, 1137209, 966"
+    }
+  },
+  {
+    "node": "N6",
+    "exitCode": 0,
+    "data": {
+      "producer_workers": [],
+      "GPU_processes": "GPU-bba35f4c-6cf5-7b0b-2791-fb6db663bde5, 1292175, 74966\nGPU-17d5f199-b350-b969-e6a4-0e6d500912fd, 1292176, 74966\nGPU-7ba79e0f-7d3c-3d67-e4f8-7cf882d41b9b, 1532222, 966\nGPU-e86d091f-150b-295b-cf18-e400efe73386, 1532225, 966\nGPU-76ff9524-9ddd-a9a2-cc8a-4815bb69898e, 599375, 74348\nGPU-956bfc75-a8f0-f5ba-2461-9e2ce6ae29c0, 599376, 74348\nGPU-07a457e3-0d01-3023-effc-c6359d937ab0, 601080, 76018\nGPU-200947a2-ed70-76ee-9206-ca92b837121a, 601081, 76018"
+    }
+  },
+  {
+    "node": "N8",
+    "exitCode": 0,
+    "data": {
+      "producer_workers": [
+        {
+          "pid": 1949023,
+          "start_ticks": 532793002,
+          "state": "S",
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+          "shard": "3",
+          "nshard": "4",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+          "stage": "run",
+          "CUDA_VISIBLE_DEVICES": [
+            "CUDA_VISIBLE_DEVICES=3"
+          ]
+        },
+        {
+          "pid": 1949024,
+          "start_ticks": 532793006,
+          "state": "S",
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+          "shard": "2",
+          "nshard": "4",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+          "stage": "run",
+          "CUDA_VISIBLE_DEVICES": [
+            "CUDA_VISIBLE_DEVICES=2"
+          ]
+        },
+        {
+          "pid": 1949025,
+          "start_ticks": 532793010,
+          "state": "S",
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+          "shard": "1",
+          "nshard": "4",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+          "stage": "run",
+          "CUDA_VISIBLE_DEVICES": [
+            "CUDA_VISIBLE_DEVICES=1"
+          ]
+        },
+        {
+          "pid": 1949026,
+          "start_ticks": 532793013,
+          "state": "S",
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+          "shard": "0",
+          "nshard": "4",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+          "stage": "run",
+          "CUDA_VISIBLE_DEVICES": [
+            "CUDA_VISIBLE_DEVICES=0"
+          ]
+        }
+      ],
+      "GPU_processes": "GPU-71514a5b-6e8d-c6bf-b0f8-0cfaef07aa44, 1949026, 1372\nGPU-800cccc7-29e2-548d-393d-f25334426ec6, 1949025, 1374\nGPU-b0945abb-6427-ff7d-74cf-5bd4921a4298, 1949024, 1372\nGPU-7534ea85-15c2-0073-004d-33d0e52e8ada, 1949023, 1372\nGPU-553613b2-b6fc-9595-97c3-2f0af3955bbe, 2362940, 75724\nGPU-a96761d7-d7e8-b960-623a-32cb57c84543, 2362941, 75724\nGPU-62613c67-17af-b6b4-3cbf-7f37a9ce8077, 1951834, 76146\nGPU-6a45ded3-8ce4-4d8f-bc36-65d42c099013, 1951835, 76146"
+    }
+  }
+]

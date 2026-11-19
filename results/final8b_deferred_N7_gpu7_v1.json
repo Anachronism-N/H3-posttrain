@@ -1,0 +1,105 @@
+{
+  "user_directive": "Defer final8B cleaning until all caption generation completed",
+  "node": "N7",
+  "gpu": 7,
+  "manager": {
+    "pid": 3513811,
+    "uid": 0,
+    "ppid": 3513810,
+    "start_ticks": 540936563,
+    "state": "S",
+    "argv": [
+      "/opt/venv_eval/bin/python",
+      "-B",
+      "-u",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collab3_8b_review_manager_v1.py",
+      "--config",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collab3_review_n7g7_launch_v1.json",
+      "--config-sha",
+      "7525c59a338d403ad31908e6a71d9959b957ab6803c02ccafde6e941f829638d",
+      "--manager-sha",
+      "6bd8a6c51d2b8423f481daae13222afa0724248c9bac5d1b9661ef8aba7727c6"
+    ],
+    "cgroup": "12:pids:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n11:misc:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n10:memory:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n9:freezer:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n8:cpuset:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n7:devices:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n6:net_cls,net_prio:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n5:cpu,cpuacct:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n4:perf_event:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n3:blkio:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n2:hugetlb:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n1:name=systemd:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7",
+    "CVD": [],
+    "exe": "/usr/bin/python3.11",
+    "sig_ign": 16781312,
+    "sig_blk": 0
+  },
+  "worker": {
+    "pid": 3514062,
+    "uid": 0,
+    "ppid": 3513811,
+    "start_ticks": 540937839,
+    "state": "S",
+    "argv": [
+      "/opt/venv_vllm/bin/python",
+      "-B",
+      "-u",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collab3_8b_review_watch_v1.py",
+      "--gpu",
+      "7",
+      "--plan",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collaborative3_source_plan_v1.json",
+      "--plan-sha256",
+      "f4345234020b1286d7723fcff4dcf0f0fbe78f03bbd88b66514e716878e9bcc6",
+      "--input-root",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_collab3_independent_inputs_bounded_v1",
+      "--out",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_collab3_independent_8b_v1/gpu7",
+      "--model",
+      "/opt/models/Qwen3-VL-8B-Instruct-review-extension-v2",
+      "--model-reference",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/reviewer8b_stage_N7_collab3_v1.json",
+      "--annotator-model-reference",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/32b_replica_stage_receipts/source_reference_v1.json",
+      "--ms-source",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_review_v2",
+      "--poll-seconds",
+      "30",
+      "--initial-source-review-limit",
+      "1",
+      "--continuation-authority",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collab3_review_n7g7_continue_v1.json",
+      "--run",
+      "--watch"
+    ],
+    "cgroup": "12:pids:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n11:misc:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n10:memory:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n9:freezer:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n8:cpuset:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n7:devices:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n6:net_cls,net_prio:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n5:cpu,cpuacct:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n4:perf_event:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n3:blkio:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n2:hugetlb:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n1:name=systemd:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7",
+    "CVD": [
+      "CUDA_VISIBLE_DEVICES=7"
+    ],
+    "exe": "/usr/bin/python3.11",
+    "sig_ign": 16781312,
+    "sig_blk": 0
+  },
+  "captured_native_GPU_processes": [
+    {
+      "pid": 3514656,
+      "uid": 0,
+      "ppid": 3514062,
+      "start_ticks": 540941362,
+      "state": "S",
+      "argv": [
+        "VLLM::EngineCore"
+      ],
+      "cgroup": "12:pids:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n11:misc:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n10:memory:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n9:freezer:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n8:cpuset:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n7:devices:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n6:net_cls,net_prio:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n5:cpu,cpuacct:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n4:perf_event:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n3:blkio:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n2:hugetlb:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7\n1:name=systemd:/kubepods/burstable/podfe05c7bc-a23e-4547-aa90-60fafbe22fca/e33ed5c3cf450f4274b2813b07a6c317bcababce43e5250498c5f2d8ce3ad7b7",
+      "CVD": [],
+      "exe": "/usr/bin/python3.11",
+      "sig_ign": 4096,
+      "sig_blk": 0
+    }
+  ],
+  "original_queue": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/queues/curated_collab3_review_n7g7_v1",
+  "scores_and_outputs_preserved": true,
+  "recorded_at_UTC": "2026-10-25T19:48:12.337418+00:00",
+  "verified_resources_safe": {
+    "phase": "curated_collab3_review_n7g7_v1",
+    "all_holders_safe": true,
+    "locks_released": true,
+    "leases_restored": true,
+    "managed_parent_wait": true,
+    "unknown_jobs_not_signaled": true
+  },
+  "completed_at_UTC": "2026-10-25T19:48:25.044571+00:00",
+  "no_new_review_model_calls_requested": true
+}

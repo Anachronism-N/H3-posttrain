@@ -1,0 +1,51 @@
+"""Explicit N6 physical0,1 resident repair admission with fresh holder rechecks."""
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+
+RT = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location('resident_repair_resource', RT / 'resource_manager.py')
+base = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(base)
+original_validate = base.validate_pair
+
+
+def validate(cfg):
+    if cfg['node'] != 'N6' or cfg['gpus'] != [0, 1]:
+        raise RuntimeError('resident repair only admits N6 physical0,1')
+    if '28.216.19.225' not in subprocess.check_output(['hostname', '-I'], text=True).split():
+        raise RuntimeError('resident repair executing on wrong physical node')
+    original_validate(cfg)
+    if '--watch' not in cfg['argv'] or '--run-job' in cfg['argv']:
+        raise RuntimeError('resident queue watch required, never single RAQ run-job')
+    if int(base.argv_option(cfg, '--total-source-count', '0')) != cfg['targetcount']:
+        raise RuntimeError('resident full-source termination bound differs from admission')
+    if base.argv_option(cfg, '--max-jobs', '0') != '0':
+        raise RuntimeError('full curated watcher must not impose a source subset')
+    if Path(base.argv_option(cfg, '--out')).resolve() != Path(cfg['out']).resolve():
+        raise RuntimeError('resident attempt ledger differs from admitted output')
+    if base.argv_option(cfg, '--global-revision') != cfg['global_revision']:
+        raise RuntimeError('resident global revision differs from admission')
+
+
+def summaries(cfg, out):
+    path = out / 'resident.summary.json'
+    if not path.exists():
+        return {}
+    value = json.loads(path.read_text())
+    if value.get('schema') != 'curated_repair_watch_v1' or value.get('global_revision') != cfg['global_revision']:
+        raise RuntimeError('resident summary binding differs')
+    if value.get('queue_drained') is not True:
+        raise RuntimeError('resident worker exited before full collector drained')
+    if value['source_count'] > cfg['targetcount']:
+        raise RuntimeError('resident repair exceeds full curated count')
+    return {str(path): {'summary': value, 'semantic_approval': False,
+                        'independent_review_required': True}}
+
+
+base.AUTHORIZED_PAIRS = {'N6': ((0, 1),)}
+base.validate_pair = validate
+base.stage_summaries = summaries
+if __name__ == '__main__':
+    base.main()

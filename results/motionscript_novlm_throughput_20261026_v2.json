@@ -1,0 +1,949 @@
+{
+  "schema": "motionscript-noVLM-all-active-producer-throughput-v2",
+  "utc_start": "2026-10-26T04:06:24Z",
+  "utc_end": "2026-10-26T04:09:26Z",
+  "measurement_seconds": 181.12981123756617,
+  "active_producer_workers_verified": 10,
+  "assigned_producer_GPUs": 10,
+  "active_nodes": [
+    "N8",
+    "N5",
+    "N2",
+    "N7"
+  ],
+  "ready_stream_count": 7,
+  "baseline_global_unique_sources": 26588,
+  "new_unique_ready_sources": 78,
+  "new_failed_sources": 0,
+  "new_terminal_sources": 78,
+  "unique_ready_per_minute": 25.837822984653847,
+  "unique_ready_per_hour": 1550.269379079231,
+  "per_group": {
+    "curated222939_production_v1": {
+      "new_unique_ready": 21,
+      "ready_sources_per_minute": 6.956336957406805,
+      "raw_ready_records": 21,
+      "duplicates_or_resumed": 0
+    },
+    "curated222939_collaborative_v2": {
+      "new_unique_ready": 7,
+      "ready_sources_per_minute": 2.3187789858022683,
+      "raw_ready_records": 7,
+      "duplicates_or_resumed": 0
+    },
+    "curated222939_collaborative_v3": {
+      "new_unique_ready": 41,
+      "ready_sources_per_minute": 13.581419773984715,
+      "raw_ready_records": 41,
+      "duplicates_or_resumed": 0
+    },
+    "curated222939_collaborative_v4": {
+      "new_unique_ready": 9,
+      "ready_sources_per_minute": 2.9812872674600595,
+      "raw_ready_records": 9,
+      "duplicates_or_resumed": 0
+    }
+  },
+  "intervals": [
+    {
+      "index": 0,
+      "elapsed_seconds": 30.655892519280314,
+      "counts": {
+        "new_terminal": 14,
+        "new_ready": 14
+      }
+    },
+    {
+      "index": 1,
+      "elapsed_seconds": 60.87154775019735,
+      "counts": {
+        "new_terminal": 14,
+        "new_ready": 14
+      }
+    },
+    {
+      "index": 2,
+      "elapsed_seconds": 91.13917037751526,
+      "counts": {
+        "new_terminal": 13,
+        "new_ready": 13
+      }
+    },
+    {
+      "index": 3,
+      "elapsed_seconds": 120.24178814981133,
+      "counts": {
+        "new_terminal": 11,
+        "new_ready": 11
+      }
+    },
+    {
+      "index": 4,
+      "elapsed_seconds": 150.770832256414,
+      "counts": {
+        "new_terminal": 13,
+        "new_ready": 13
+      }
+    },
+    {
+      "index": 5,
+      "elapsed_seconds": 181.1298088785261,
+      "counts": {
+        "new_terminal": 13,
+        "new_ready": 13
+      }
+    }
+  ],
+  "progress_ready_delta_sum": 89,
+  "progress_failed_delta_sum": 0,
+  "progress_deltas": [
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/runs/p1-68f1520ba07f47de8142d2c5c0017518/progress.jsonl",
+      "delta": {
+        "ready": 5,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/runs/p3-8dae83ae13cf4cb4a08b12560fa76b06/progress.jsonl",
+      "delta": {
+        "ready": 5,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/runs/p2-b81b7475b8de4dfcb48ab7e54b8137a0/progress.jsonl",
+      "delta": {
+        "ready": 7,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/runs/p0-7bfdd9939c0d44569a324724a4b01590/progress.jsonl",
+      "delta": {
+        "ready": 6,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/runs/p1-0c0f39caae984f9dba47dc3f2e363209/progress.jsonl",
+      "delta": {
+        "ready": 8,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/runs/p0-2643f7ce5eae494ab42a96c47997b232/progress.jsonl",
+      "delta": {
+        "ready": 14,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/runs/p3-d642d24bca5d414b91e746076530ff1c/progress.jsonl",
+      "delta": {
+        "ready": 11,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/runs/p2-ff5775d11cad4ddab051709d0f49bcea/progress.jsonl",
+      "delta": {
+        "ready": 10,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/runs/p1-ab2f782bc98b45c18cde694b730fdd3c/progress.jsonl",
+      "delta": {
+        "ready": 13,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    },
+    {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/runs/p0-e45308e21d6a4bbaa22c08f0ce932e33/progress.jsonl",
+      "delta": {
+        "ready": 10,
+        "failed": 0,
+        "resumed_terminal": 0
+      },
+      "existed_at_baseline": true
+    }
+  ],
+  "records": [
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "gNKXQHUYdStjTiYR",
+      "split": "train",
+      "ordinal": 12656,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.23582741525024
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "lRziFLmdzyjPRKvr",
+      "split": "train",
+      "ordinal": 12705,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.235869997181
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "VjbcSnTdTuvbNvHn",
+      "split": "train",
+      "ordinal": 12683,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.235883213579655
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "tVJaUyLphKwrpSpr",
+      "split": "train",
+      "ordinal": 12660,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.2358933147043
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "JDgKooRZojCRBSZg",
+      "split": "train",
+      "ordinal": 27327,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.35858948994428
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "QpDcoaUxatPyVOtB",
+      "split": "train",
+      "ordinal": 40576,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.359918536618352
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "LMGzFCORSBgFwrkG",
+      "split": "train",
+      "ordinal": 40580,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.35993632208556
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "riZQkVBbYUgegvgm",
+      "split": "train",
+      "ordinal": 40497,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.36111202649772
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "sYTmqEmOSmoJSSpi",
+      "split": "train",
+      "ordinal": 40501,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.36112396325916
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "JExomCYlgTTLrLOR",
+      "split": "train",
+      "ordinal": 40094,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.425703338347375
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "gDXqXDYRvjjCGetZ",
+      "split": "train",
+      "ordinal": 40098,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.425720186904073
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "jaljNVfGTeKfuTGs",
+      "split": "train",
+      "ordinal": 39999,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.427035440690815
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "VAnIIbNEKowBmKdd",
+      "split": "train",
+      "ordinal": 63883,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.6558674890548
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "GCHdMboeQeYeOeNM",
+      "split": "train",
+      "ordinal": 63884,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 30.655888945795596
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "OMjfFmwNXOWKyGdv",
+      "split": "train",
+      "ordinal": 12638,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.6835156166926
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "gcMFtzTAQAPBZjvF",
+      "split": "train",
+      "ordinal": 12709,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.683536055497825
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "eZbrtbiATDXQDqxg",
+      "split": "train",
+      "ordinal": 12687,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.68354669120163
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "hCfHHXytPgNokfsY",
+      "split": "train",
+      "ordinal": 12664,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.68355675134808
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "nsxLTsBFtcjnxGbu",
+      "split": "train",
+      "ordinal": 27329,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.864443842321634
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "mdrEQdrbZXAgsqna",
+      "split": "train",
+      "ordinal": 27331,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.864464840851724
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "MpBjeqGGAoQsigWR",
+      "split": "train",
+      "ordinal": 40584,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.86592941638082
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "pEnDawNsmgZysNqd",
+      "split": "train",
+      "ordinal": 40588,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.865945235826075
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "ABZkQYQBZAqoIPMk",
+      "split": "train",
+      "ordinal": 40505,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.86722671240568
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "uBmQwwxVcJTfWHgt",
+      "split": "train",
+      "ordinal": 40509,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.86723721213639
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "JXqdsInaMXnhlGJG",
+      "split": "train",
+      "ordinal": 40102,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.86876729503274
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "XCtWrnkAAThoZbEF",
+      "split": "train",
+      "ordinal": 40003,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.87006973102689
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "HjYyvkpHKrnoPLXq",
+      "split": "train",
+      "ordinal": 40007,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.87008025031537
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "itqtABFTFKXaZDRE",
+      "split": "train",
+      "ordinal": 63885,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 60.871546072885394
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "KyGWFBURbAfrsHli",
+      "split": "train",
+      "ordinal": 12642,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 90.7066709715873
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "lTNZBjtbRabHwtBd",
+      "split": "train",
+      "ordinal": 12668,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 90.70669247116894
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "bgTQgNHNrUYDOvns",
+      "split": "train",
+      "ordinal": 12691,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 90.70670371688902
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "SJYQRKmLQcjmItqP",
+      "split": "train",
+      "ordinal": 27333,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 90.83738555945456
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "HnMadAiVXEyvLgqB",
+      "split": "train",
+      "ordinal": 40592,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 90.89737206418067
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "WzDnkKSFjbCLfPbq",
+      "split": "train",
+      "ordinal": 40596,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 90.89739097747952
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "fsmYxhyImFdssOrU",
+      "split": "train",
+      "ordinal": 40513,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 91.02316962648183
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "NAjuQZbiDEjRFSTd",
+      "split": "train",
+      "ordinal": 40517,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 91.02318414393812
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "xXgjGxfAzBhlbKby",
+      "split": "train",
+      "ordinal": 40106,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 91.0879725208506
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "tcICQNHXFyNzlvSR",
+      "split": "train",
+      "ordinal": 40110,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 91.08798958547413
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "yppMynSPQolfvyGx",
+      "split": "train",
+      "ordinal": 40011,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 91.08928084559739
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "kqoUltcJaucFivWS",
+      "split": "train",
+      "ordinal": 63886,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 91.13915597181767
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "IQXFPkPIPmhopKQF",
+      "split": "train",
+      "ordinal": 63887,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 91.13916819635779
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "fWKuYquVFLrjOKYC",
+      "split": "train",
+      "ordinal": 12713,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.05048609618098
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "UylmnvOnpEABXXxk",
+      "split": "train",
+      "ordinal": 12646,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.05050740391016
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "abEWzLwxOfxTdTXv",
+      "split": "train",
+      "ordinal": 27335,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.17316369432956
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "QxQxYhrmhfgxEycT",
+      "split": "train",
+      "ordinal": 40600,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.17458238545805
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "oxzNNKeuBoUNPZyg",
+      "split": "train",
+      "ordinal": 40604,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.17459708917886
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "cSiIuUcLADtELDBQ",
+      "split": "train",
+      "ordinal": 40521,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.2375451112166
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "LMOxQibvRJvRxvrz",
+      "split": "train",
+      "ordinal": 40525,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.23755905590951
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "EiEHMczGozKWuBWg",
+      "split": "train",
+      "ordinal": 40114,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.23901529610157
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "ekUXTbDlvkLeczVB",
+      "split": "train",
+      "ordinal": 40015,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.24037659727037
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "UBobiJLsJxbrxoQC",
+      "split": "train",
+      "ordinal": 40019,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.24038823507726
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "RAhpYSGwRPOPzJVP",
+      "split": "train",
+      "ordinal": 63888,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 120.2417864203453
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "ExFWCGMczrNnTIij",
+      "split": "train",
+      "ordinal": 12650,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.23385369684547
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "uxmJrGNICqijZSEi",
+      "split": "train",
+      "ordinal": 12672,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.23387560248375
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "onZRLPauOyuJOCMW",
+      "split": "train",
+      "ordinal": 12695,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.23388853203505
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "ACzxlymCDOpHKiNT",
+      "split": "train",
+      "ordinal": 12717,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.23390058800578
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "LsdWpJCKixHxvkYZ",
+      "split": "train",
+      "ordinal": 27337,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.35645160079002
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "yHSrYPVNcwiOCfXA",
+      "split": "train",
+      "ordinal": 40608,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.59235846158117
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "EMPaxSiCoUQUxGUj",
+      "split": "train",
+      "ordinal": 40612,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.5923775760457
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "PQIwwXxoxXCWXrtl",
+      "split": "train",
+      "ordinal": 40529,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.7186784017831
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "sNBsFLBDArKSPZIX",
+      "split": "train",
+      "ordinal": 40533,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.71869221143425
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "KESUeYSQrVElhwDB",
+      "split": "train",
+      "ordinal": 40118,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.72001108527184
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "KwdfjARPxNPGBApY",
+      "split": "train",
+      "ordinal": 40023,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.7212121160701
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "WHxDXItIaOAfubFZ",
+      "split": "train",
+      "ordinal": 63889,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.77081628050655
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "lLbMzDBytGlrRGZA",
+      "split": "train",
+      "ordinal": 63890,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 150.77082985453308
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "PchIwaBmOKseoHsu",
+      "split": "train",
+      "ordinal": 12654,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 180.64219850115478
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "FcQnxthWYlzOhssj",
+      "split": "train",
+      "ordinal": 12699,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 180.6422256147489
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "eyDEWctwseGvmEMU",
+      "split": "train",
+      "ordinal": 12658,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 180.64223888143897
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "doqyROrrHwFhMVFV",
+      "split": "train",
+      "ordinal": 12721,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 180.6422534827143
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "ntFEMnloZwIlAXIy",
+      "split": "train",
+      "ordinal": 27339,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 180.76477944944054
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "BAYryQDziYhUsqcS",
+      "split": "train",
+      "ordinal": 40616,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 181.00969020370394
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "kIaISaxWWIfSLliL",
+      "split": "train",
+      "ordinal": 40620,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 181.00971248652786
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "otjXKfSUjroGpGEZ",
+      "split": "train",
+      "ordinal": 40537,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 181.01296654809266
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "XqOqleXJhhATwcDq",
+      "split": "train",
+      "ordinal": 40122,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 181.01439625304192
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "juFLiUFZdSWBMrqB",
+      "split": "train",
+      "ordinal": 40126,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 181.0144069250673
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "VJlJWxeFIgDrfbUH",
+      "split": "train",
+      "ordinal": 40027,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 181.12818090058863
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "cYnCaPiCUrLvAXvT",
+      "split": "train",
+      "ordinal": 40031,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 181.12819689605385
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "USuWvAiajTaSMrLQ",
+      "split": "train",
+      "ordinal": 63891,
+      "status": "ready",
+      "duplicate_or_resumed": false,
+      "elapsed_seconds_at_sample": 181.129806952551
+    }
+  ],
+  "stream_cursors": {
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl": {
+      "inode": 9895974513601,
+      "device": 1048620,
+      "offset": 15946352,
+      "baseline_prefix_SHA256": "b67d5e8b62810be100974b779f3cbc93209ec95d2d79b8cd44d3526f827fb984"
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl": {
+      "inode": 9895975195680,
+      "device": 1048620,
+      "offset": 6638900,
+      "baseline_prefix_SHA256": "fa9f29c13e3779a9817570c117a6485eb408f47af397744d527e5783f6ef28a6"
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl": {
+      "inode": 9895974864475,
+      "device": 1048620,
+      "offset": 2906288,
+      "baseline_prefix_SHA256": "3e2755d0597ef1958a062797b5aea009e050b7cad6daafca6e73a0635354d4b2"
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl": {
+      "inode": 9895974864908,
+      "device": 1048620,
+      "offset": 2877980,
+      "baseline_prefix_SHA256": "adf1f6f8a83960cdf00d8bce57194eb1cff232383e7fecf7c740439c79088312"
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl": {
+      "inode": 9895974783262,
+      "device": 1048620,
+      "offset": 2739136,
+      "baseline_prefix_SHA256": "a5e84a8bfec37c94e55bcc126c284a8f866f255f5cf8492b4f64c035d2672b05"
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl": {
+      "inode": 9895974783261,
+      "device": 1048620,
+      "offset": 2706784,
+      "baseline_prefix_SHA256": "4e286e502990cd20cd88a3e7eba5ca7413d0f3b255f0c1e8efc04ef9b93cda30"
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl": {
+      "inode": 9895976490887,
+      "device": 1048620,
+      "offset": 2550416,
+      "baseline_prefix_SHA256": "dc6b8526a99452acb7b45a0d04b759dc11cf9a7511012a5af673d39e1ec7664c"
+    }
+  },
+  "scope": "existing ROI/2D-keypoint + BeatThis + bar plan + durable publication; no VLM calls in these producers; not complete ruleMotionScript captions",
+  "original_six_worker_measurement_is_subset_not_overall": true,
+  "duplicates_and_replayed_terminal_records_excluded": true,
+  "no_new_model_runs_or_existing_tasks_modified": true,
+  "limits": [
+    "Only3min steady-state current mixed workload; no isolated noVLM/calibration or validation-skipping ablation",
+    "Ready production cannot be equated to completed MotionScript captions because current rule pipeline requires unbound3D input",
+    "Cold model initialization not included, current pipeline checks and Ceph costs remain",
+    "10 assigned GPUs are resource scope not averaged utilization or a linear scalability guarantee"
+  ]
+}

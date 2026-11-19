@@ -5,6 +5,7 @@ these tests do not establish actual palm/foot accuracy on RGB dance videos.
 """
 
 import contextlib
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -179,6 +180,9 @@ class DirectVideoTests(unittest.TestCase):
         self.assertEqual(report["point_count"], 32)
         self.assertFalse(report["semantic_approval"])
         self.assertEqual(report["events"], [])  # Degenerate fixture coordinates cannot produce palm/foot facts.
+        self.assertTrue(report["metadata"]["screen_support_enabled"])
+        self.assertTrue(report["metadata"]["screen_support_binding"]["video_timestamps_and_frame_size_verified"])
+        self.assertFalse(report["metadata"]["screen_support_is_visibility_ground_truth"])
         self.assertTrue((Path(args.out) / "coords.npz").is_file())
         with np.load(Path(args.out) / "coords.npz", allow_pickle=False) as saved:
             self.assertEqual(saved["landmark_signal_values"].shape[1], 8)
@@ -186,6 +190,48 @@ class DirectVideoTests(unittest.TestCase):
             self.assertFalse(saved["landmark_signal_valid"].any())
             self.assertEqual(saved["raw_points2d_px"].shape, (10, 32, 2))
         self.assertEqual(len(report["continuous_signals"]["signals"]), 8)
+
+    def test_default_describe_hard_masks_offscreen_points_and_preserves_original_raw(self):
+        cli.extract(self.args, predictor_factory=self.factory)
+        bundle = Path(self.args.out)
+        raw, manifest, _ = cli.load_bundle(bundle)
+        raw["points2d_px"][:, -6:, 1] = 96.
+        cli.save_npz(bundle / "raw.npz", raw)
+        manifest["raw_sha256"] = cli.sha256(bundle / "raw.npz")
+        payload = cli.json_bytes(manifest)
+        (bundle / "manifest.json").write_bytes(payload)
+        (bundle / "manifest.receipt.json").write_bytes(cli.json_bytes(
+            {"manifest_sha256": hashlib.sha256(payload).hexdigest()}))
+        original = {name: cli.sha256(bundle / name) for name in ("raw.npz", "manifest.json", "manifest.receipt.json")}
+        args = cli.parser().parse_args(["describe", "--bundle", str(bundle), "--out", str(self.root / "screen")])
+        report = cli.describe(args)
+        self.assertTrue(report["metadata"]["screen_support_enabled"])
+        with np.load(Path(args.out) / "coords.npz", allow_pickle=False) as saved:
+            self.assertFalse(saved["point_valid"][:, -6:].any())
+            self.assertTrue(np.isnan(saved["points_m"][:, -6:]).all())
+            self.assertTrue(saved["point_valid"][:, :-6].all())
+            np.testing.assert_array_equal(saved["raw_points2d_px"], raw["points2d_px"])
+            self.assertTrue(saved["raw_valid"].all())
+        self.assertEqual(original, {name: cli.sha256(bundle / name) for name in original})
+
+    def test_unknown_schema_declared_counts_and_video_dimensions_are_rejected(self):
+        cli.extract(self.args, predictor_factory=self.factory)
+        bundle = Path(self.args.out)
+        original = json.loads((bundle / "manifest.json").read_text())
+        for key, value, message in (("schema", "unknown_fresh_schema", "wrong schema"),
+                                    ("point_count", 31, "counts differ"),
+                                    ("frame_count", 9, "counts differ"),
+                                    ("frame_size", [96, 64], "differ from source video")):
+            with self.subTest(key=key):
+                manifest = {**original, key: value}
+                payload = cli.json_bytes(manifest)
+                (bundle / "manifest.json").write_bytes(payload)
+                (bundle / "manifest.receipt.json").write_bytes(cli.json_bytes(
+                    {"manifest_sha256": hashlib.sha256(payload).hexdigest()}))
+                args = cli.parser().parse_args(["describe", "--bundle", str(bundle), "--out", str(self.root / key)])
+                with self.assertRaisesRegex(ValueError, message):
+                    cli.describe(args)
+                self.assertFalse(Path(args.out).exists())
 
     def test_unobserved_cached_box_does_not_receive_invented_prediction(self):
         valid = np.ones(10, bool)

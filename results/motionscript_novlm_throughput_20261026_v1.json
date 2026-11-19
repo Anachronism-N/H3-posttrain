@@ -1,0 +1,458 @@
+{
+  "schema": "motionscript-no-VLM-existing-producer-throughput-v1",
+  "utc_start": "2026-10-26T04:01:52Z",
+  "utc_end": "2026-10-26T04:04:53Z",
+  "measurement_seconds": 180.50598590821028,
+  "producer_inventory_ref": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/motionscript_novlm_producer_inventory_20261026_v1.json",
+  "baseline_unique_sources": 18248,
+  "new_unique_ready_sources": 34,
+  "new_failed_sources": 0,
+  "new_terminal_sources": 34,
+  "ready_sources_per_minute": 11.301564265228121,
+  "ready_sources_per_hour": 678.0938559136872,
+  "sample_intervals": [
+    {
+      "sample_index": 0,
+      "elapsed_seconds": 31.0351128205657,
+      "interval_counts": {
+        "new_terminal": 7,
+        "new_ready": 7
+      },
+      "cumulative_unique_ready": 7
+    },
+    {
+      "sample_index": 1,
+      "elapsed_seconds": 60.237154697068036,
+      "interval_counts": {
+        "new_terminal": 4,
+        "new_ready": 4
+      },
+      "cumulative_unique_ready": 11
+    },
+    {
+      "sample_index": 2,
+      "elapsed_seconds": 90.20678193494678,
+      "interval_counts": {
+        "new_terminal": 6,
+        "new_ready": 6
+      },
+      "cumulative_unique_ready": 17
+    },
+    {
+      "sample_index": 3,
+      "elapsed_seconds": 120.2359715020284,
+      "interval_counts": {
+        "new_terminal": 5,
+        "new_ready": 5
+      },
+      "cumulative_unique_ready": 22
+    },
+    {
+      "sample_index": 4,
+      "elapsed_seconds": 150.35775885451585,
+      "interval_counts": {
+        "new_terminal": 8,
+        "new_ready": 8
+      },
+      "cumulative_unique_ready": 30
+    },
+    {
+      "sample_index": 5,
+      "elapsed_seconds": 180.50598271843046,
+      "interval_counts": {
+        "new_terminal": 4,
+        "new_ready": 4
+      },
+      "cumulative_unique_ready": 34
+    }
+  ],
+  "by_stream": {
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl": {
+      "new_unique_ready": 6,
+      "ready_sources_per_minute": 1.994393693863786
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl": {
+      "new_unique_ready": 9,
+      "ready_sources_per_minute": 2.991590540795679
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl": {
+      "new_unique_ready": 19,
+      "ready_sources_per_minute": 6.315580030568656
+    }
+  },
+  "records": [
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "idIjueKsdwMsQROK",
+      "split": "train",
+      "ordinal": 27309,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 30.7999265268445,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "jvXLdTBVagrzcLFb",
+      "split": "train",
+      "ordinal": 27311,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 30.79995274171233,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "yCMZvIVwVUyAhDFp",
+      "split": "train",
+      "ordinal": 63869,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 30.801602019928396,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "CXgcJHtYmthSpCIn",
+      "split": "train",
+      "ordinal": 63870,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 30.80161544587463,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "yBNBTMAdzvVVTwtx",
+      "split": "train",
+      "ordinal": 12655,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 31.035076174885035,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "InShyyAZrogdhNLj",
+      "split": "train",
+      "ordinal": 12681,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 31.035097183659673,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "MUcoeKpJRqPMXACy",
+      "split": "train",
+      "ordinal": 12628,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 31.035110061056912,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "SJBFTCJQOrGDPVBE",
+      "split": "train",
+      "ordinal": 63871,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 60.00309540797025,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "GZlLfCCERuoYIogp",
+      "split": "train",
+      "ordinal": 12610,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 60.23711757455021,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "rwjTNTBCAwvjjOMX",
+      "split": "train",
+      "ordinal": 12685,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 60.237139631062746,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "PaSjYmTlcCcSaeeP",
+      "split": "train",
+      "ordinal": 12659,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 60.23715244233608,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "pUtZwWGljMtrjKtq",
+      "split": "train",
+      "ordinal": 27313,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 90.12284731026739,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "zXJoTiAnrvBouDWn",
+      "split": "train",
+      "ordinal": 27315,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 90.12286981008947,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "nzTWWuKqSjsfvHfs",
+      "split": "train",
+      "ordinal": 63872,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 90.15629562269896,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "sklIxJwkUnBdcUME",
+      "split": "train",
+      "ordinal": 63873,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 90.15631842799485,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "iyCXiSMlNDiopvlA",
+      "split": "train",
+      "ordinal": 12632,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 90.20675115287304,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "EtsbkJyYKuqUeQGY",
+      "split": "train",
+      "ordinal": 12614,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 90.20677745807916,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "oNOZYIAazQOZwiQk",
+      "split": "train",
+      "ordinal": 63874,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 120.00253537204117,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "raTbmXMdjFbVvpWk",
+      "split": "train",
+      "ordinal": 12618,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 120.23590880446136,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "MrcAoafArMMDGsNG",
+      "split": "train",
+      "ordinal": 12636,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 120.23593582492322,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "ohKYtMLlYmhZxxVp",
+      "split": "train",
+      "ordinal": 12689,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 120.23595241457224,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "CvlonbjHiHuyVOqt",
+      "split": "train",
+      "ordinal": 12663,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 120.23596850596368,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "xmpyvKjhtrbPkIGk",
+      "split": "train",
+      "ordinal": 27317,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 150.1226610140875,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "AQLcZsTUWVqjvbQU",
+      "split": "train",
+      "ordinal": 63875,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 150.12411783728749,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "GKDURcRRuRPlWvPp",
+      "split": "train",
+      "ordinal": 63876,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 150.12413223367184,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "isovMGpzaXXdgZcS",
+      "split": "train",
+      "ordinal": 12640,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 150.3576963013038,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "HdJqiwlMRUTcwBZG",
+      "split": "train",
+      "ordinal": 12622,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 150.35771569330245,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "NEuTVTiaTqCmEyoi",
+      "split": "train",
+      "ordinal": 12667,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 150.35772782098502,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "XpHoqmgCDTbZLKzp",
+      "split": "train",
+      "ordinal": 12644,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 150.35774478130043,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "VIzkyfSbwaZNFDwM",
+      "split": "train",
+      "ordinal": 12626,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 150.3577565671876,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "DsjtvsGNOycnOPXA",
+      "split": "train",
+      "ordinal": 27319,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 180.1255151387304,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "pTggiFvPJjiyZuOs",
+      "split": "train",
+      "ordinal": 63877,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 180.12683849129826,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "pfaSxabVQKBPNXgR",
+      "split": "train",
+      "ordinal": 12693,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 180.50596078950912,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "eYcCmyUHCnytWtNM",
+      "split": "train",
+      "ordinal": 12671,
+      "status": "ready",
+      "elapsed_seconds_at_sample": 180.50598003156483,
+      "previous_source_seen_before_measurement": false,
+      "duplicate_in_measurement": false
+    }
+  ],
+  "stream_cursors": {
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl": {
+      "inode": 9895975195680,
+      "device": 1048620,
+      "offset": 6625420,
+      "baseline_prefix_SHA256": "1b843a838bc8aa1eab4f1648b222db8954259bdb4c33a30ca2416288c42bee73",
+      "initial_unique_global_sources": 3737
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl": {
+      "inode": 9895976490887,
+      "device": 1048620,
+      "offset": 2531544,
+      "baseline_prefix_SHA256": "ccad500abb1c79bfbd1376758409b19b010fcff0b564e1e5ca441ac415f59077",
+      "initial_unique_global_sources": 5606
+    },
+    "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl": {
+      "inode": 9895974513601,
+      "device": 1048620,
+      "offset": 15909928,
+      "baseline_prefix_SHA256": "527c0fceed6274bc3a0d7cefcdd3b9ba06e3fab61566fe29cce449cf2af1c587",
+      "initial_unique_global_sources": 18248
+    }
+  },
+  "scope": "ROI/2D keypoints + BeatThis + bar plan + durable ready publication; excludes32B observation/textrewrite/8B review, not completed rule-MotionScript captions",
+  "no_existing_tasks_modified_or_new_model_calls_started": true,
+  "full_222939_caption_completion_not_claimed": true,
+  "same_source_duplicates_or_resumed_excluded": true,
+  "limits": [
+    "short steady-state window under existing mixed-workload shared-storage conditions, not isolated noVLM ablation",
+    "NoVLM producer stage does not emit final action captions; pure-rule draft entry not implemented for current2D cache",
+    "Whole-job cold initialization and all-stage validation-free scenario not measured",
+    "Removing VLM may reduce shared-disk contention but this measurement does not quantify that change"
+  ]
+}

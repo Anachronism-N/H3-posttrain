@@ -1,0 +1,79 @@
+{
+  "schema": "caption_optimized_production_acceptance_v1",
+  "verified_at_utc": "2026-10-25T17:56:25Z",
+  "sequence": "efficiency verified and reported before production launch",
+  "roi_publication": {
+    "fixed_sources": 3,
+    "ab": {
+      "native_seconds": 24.038401721976697,
+      "optimized_seconds": 13.008757807314396,
+      "reduction_percent": 45.88343285975889
+    },
+    "ba": {
+      "native_seconds": 29.730659716762602,
+      "optimized_seconds": 11.834855361841619,
+      "reduction_percent": 60.193095361523554
+    },
+    "shared_file_opens": {
+      "native": 207,
+      "optimized": 114
+    },
+    "shared_links": {
+      "native": 57,
+      "optimized": 3
+    },
+    "shared_unlinks": {
+      "native": 57,
+      "optimized": 3
+    },
+    "file_fsync_preserved": 57,
+    "raw_jpeg_pts_and_roi_parameters_equal": true,
+    "whole_pipeline_speedup_measured": false,
+    "reports": [
+      "caption_roi_efficiency_ordercheck_AB_v1.json",
+      "caption_roi_efficiency_ordercheck_BA_v1.json"
+    ]
+  },
+  "consumer": {
+    "source_input_reuse": true,
+    "lock_scoped_transaction_cache": true,
+    "existing_receipt_resume_full_validation": true,
+    "model_persist_validation_timing_separated": true,
+    "native_sampling_and_requests_preserved": true,
+    "joint_cpu_regression_tests_passed": 28,
+    "isolated_shard_tests_passed": 17,
+    "stable_whole_pipeline_speedup_not_yet_measured": true
+  },
+  "initial_production": {
+    "new_nodes": [
+      "N2",
+      "N4",
+      "N7"
+    ],
+    "existing_five_nodes_not_restarted": true,
+    "source_range": {
+      "start": 32000,
+      "end": 62000
+    },
+    "selected_sources": 30000,
+    "original_batches": 60,
+    "batch_size": 500,
+    "full_pool_denominator": 222939,
+    "full_batch_denominator": 448,
+    "producer_workers": 4,
+    "tp2_consumer_workers": 9,
+    "gpus_assigned_to_new_workers": 22,
+    "all_new_worker_live_receipts_verified": true,
+    "new_individually_verified_complete_candidates": 3,
+    "independent_quality_review_required": true,
+    "all_sources_completed": false,
+    "all_batches_quality_approved": false
+  },
+  "limits": [
+    "ROI numbers cover publication replay, not detector/model/end-to-end speedup.",
+    "Live worker receipts are startup evidence, not proof that every model request or 30000 sources completed.",
+    "New complete candidates are not independently quality-approved.",
+    "Source batches, raw evidence, sampling and retry budgets were not relaxed.",
+    "N7 failed initial memory admission; only newly staged model file page cache was advised discardable; no shared memory deleted or unknown process signaled."
+  ]
+}

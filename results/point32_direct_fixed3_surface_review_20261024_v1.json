@@ -1,0 +1,504 @@
+{
+  "schema": "nlf-direct32-fixed3-limited-surface-review-v1",
+  "scope": "固定3真实RGB/32点/旧完整pose同窗有限表面核，不是全12k/整视频人工GT验准",
+  "engineering_3case_raw_and_overlay_completed": true,
+  "limited_surface_review_completed": true,
+  "accuracy_rate_measured": false,
+  "accuracy_100percent_claim": false,
+  "precise_new_point_accuracy_approved": false,
+  "new_information_beyond_old_complete_pose_proven": false,
+  "task10_accuracy_trial_fully_completed": false,
+  "cases": [
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "original_raw_sha256_unchanged": "e54f5e84d92d1d3f84552e88f6676a88d6fde7aa972cf73d720883e025a1d6bb",
+      "surface_evidence_images": [
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPptuhclZmKAEWs_feet_frame000.png",
+          "sha256": "15708fd7ed2734acf1ba9380e87300e25f0fc294f1a757bef1d972c92906078b"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPptuhclZmKAEWs_feet_frame002.png",
+          "sha256": "810c3d3486737fe036d424a3edad36e627f7c38be0aff13aaaa3133c2c8cb4a3"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPptuhclZmKAEWs_feet_frame032.png",
+          "sha256": "3368cf821c20ffe791acfe04bd811752f9ef351d623f90dd665d1ac0fb97078b"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPptuhclZmKAEWs_feet_frame078.png",
+          "sha256": "cd4b012fb5b6d4678e5df8ad846bfc06074758bf347f82f53a4c590a511d55ed"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPptuhclZmKAEWs_feet_frame080.png",
+          "sha256": "ea6f463ddb85bbaf30554c8a4e85d60122dbb93b9f7eb8659294a08be15f1772"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPptuhclZmKAEWs_frames000_032_080.jpg",
+          "sha256": "e4fb4b4503d3fe5eee19098fe15ee1d0a1fa7f2fa10e5fe1dc68a309f22712b8"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPptuhclZmKAEWs_palm_maxstep_frames058_059_060.jpg",
+          "sha256": "7704b0638096a2eddc67c74ec2b8e670125fb197d146c79d2c149056573f41a8"
+        }
+      ],
+      "palm_relative_2d_step_max_px": {
+        "left_index_mcp": 48.24030303955078,
+        "left_little_mcp": 33.038978576660156,
+        "right_index_mcp": 39.757938385009766,
+        "right_little_mcp": 37.28529739379883
+      },
+      "heel_relative_2d_step_max_px": {
+        "left_heel": 16.842609405517578,
+        "right_heel": 6.2099127769470215
+      },
+      "whole_event_counts_by_body_action": {
+        "right_palm:changes_relative_orientation": 7,
+        "right_palm:rotates_relative_to_arm_plane": 9,
+        "left_palm:changes_relative_orientation": 6,
+        "left_palm:rotates_relative_to_arm_plane": 13
+      },
+      "sample_events": [
+        {
+          "body_part": "left_palm",
+          "start": 0.15,
+          "end": 0.5,
+          "action": "changes_relative_orientation",
+          "direction": "increasing_relative_angle",
+          "measurement": {
+            "start": 76.448390315194,
+            "end": 101.67271418661365,
+            "delta": 25.224323871419642,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "left_palm",
+          "start": 0.35,
+          "end": 0.55,
+          "action": "rotates_relative_to_arm_plane",
+          "direction": "positive_roll",
+          "measurement": {
+            "start": -194.21908215824584,
+            "end": -169.67972575973968,
+            "delta": 24.539356398506158,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "right_palm",
+          "start": 0,
+          "end": 0.15,
+          "action": "changes_relative_orientation",
+          "direction": "increasing_relative_angle",
+          "measurement": {
+            "start": 86.16485638948362,
+            "end": 113.83406892097406,
+            "delta": 27.669212531490444,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "right_palm",
+          "start": 0,
+          "end": 0.15,
+          "action": "rotates_relative_to_arm_plane",
+          "direction": "positive_roll",
+          "measurement": {
+            "start": 170.6101251206023,
+            "end": 196.00607001594722,
+            "delta": 25.39594489534491,
+            "unit": "degrees"
+          }
+        }
+      ],
+      "foot_angle_frame_selection": [
+        {
+          "side": "left",
+          "frame": 78,
+          "pixels_heel_to_forefoot": 116.94709014892578,
+          "selection_basis": "projected separation/inbounds only; no visibility inference"
+        },
+        {
+          "side": "right",
+          "frame": 2,
+          "pixels_heel_to_forefoot": 67.97250366210938,
+          "selection_basis": "projected separation/inbounds only; no visibility inference"
+        }
+      ]
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "original_raw_sha256_unchanged": "7071d44d49e8a6b23e4c2a9870aa1e2581320c365305c09739381a97c236c95a",
+      "surface_evidence_images": [
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPrpFsThWAcBQIw_feet_frame000.png",
+          "sha256": "acefb8539557c82b9f3a5e8a3f84201c434bfa84053c30aa54fb833625166bce"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPrpFsThWAcBQIw_feet_frame032.png",
+          "sha256": "b0f4e4d61ce58440447a8ef2b2dd2e6fd4c9786a4384c83cd50ccd90a403b6c7"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPrpFsThWAcBQIw_feet_frame080.png",
+          "sha256": "f3db88a47fb37112faeae51be68b34162adb9738c6ee00a0805a1bcf380096c9"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPrpFsThWAcBQIw_frames000_032_080.jpg",
+          "sha256": "b17797c780e5006242b772fbd8c874d51fd6682b9a39ab1dbe728f4617d8bb67"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJPrpFsThWAcBQIw_palm_maxstep_frames025_026_027.jpg",
+          "sha256": "31807cc900cf9de404f99235750d48af334efd0b5efd27e02547ce1bc06e1eb3"
+        }
+      ],
+      "palm_relative_2d_step_max_px": {
+        "left_index_mcp": 98.35023498535156,
+        "left_little_mcp": 99.8299560546875,
+        "right_index_mcp": 59.874168395996094,
+        "right_little_mcp": 46.481788635253906
+      },
+      "heel_relative_2d_step_max_px": {
+        "left_heel": 9.398221969604492,
+        "right_heel": 12.556252479553223
+      },
+      "whole_event_counts_by_body_action": {
+        "right_palm:rotates_relative_to_arm_plane": 10,
+        "left_palm:rotates_relative_to_arm_plane": 15,
+        "left_palm:changes_relative_orientation": 7,
+        "right_palm:changes_relative_orientation": 3,
+        "right_foot:changes_relative_orientation": 1
+      },
+      "sample_events": [
+        {
+          "body_part": "left_palm",
+          "start": 0,
+          "end": 0.6,
+          "action": "rotates_relative_to_arm_plane",
+          "direction": "negative_roll",
+          "measurement": {
+            "start": -128.34716384171563,
+            "end": -211.98764469922745,
+            "delta": -83.64048085751182,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "left_palm",
+          "start": 0.15,
+          "end": 0.35,
+          "action": "changes_relative_orientation",
+          "direction": "decreasing_relative_angle",
+          "measurement": {
+            "start": 88.03242525536415,
+            "end": 65.16382395786302,
+            "delta": -22.86860129750113,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "right_palm",
+          "start": 0,
+          "end": 0.25,
+          "action": "rotates_relative_to_arm_plane",
+          "direction": "positive_roll",
+          "measurement": {
+            "start": 149.49331173592986,
+            "end": 175.30367979182378,
+            "delta": 25.810368055893917,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "right_palm",
+          "start": 0.25,
+          "end": 0.4,
+          "action": "rotates_relative_to_arm_plane",
+          "direction": "negative_roll",
+          "measurement": {
+            "start": 175.30367979182378,
+            "end": 152.10607444064308,
+            "delta": -23.197605351180698,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "right_foot",
+          "start": 1.05,
+          "end": 1.8,
+          "action": "changes_relative_orientation",
+          "direction": "increasing_relative_angle",
+          "measurement": {
+            "start": 80.6973207862271,
+            "end": 103.63199195884125,
+            "delta": 22.93467117261416,
+            "unit": "degrees"
+          }
+        }
+      ],
+      "foot_angle_frame_selection": [
+        {
+          "side": "left",
+          "frame": null,
+          "pixels_heel_to_forefoot": null,
+          "selection_basis": "projected separation/inbounds only; no visibility inference"
+        },
+        {
+          "side": "right",
+          "frame": null,
+          "pixels_heel_to_forefoot": null,
+          "selection_basis": "projected separation/inbounds only; no visibility inference"
+        }
+      ]
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "original_raw_sha256_unchanged": "b2499697652c95fadb811014d4528d04b4dc314b88695ee91bb834f605158760",
+      "surface_evidence_images": [
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJQTclrlOLEYYfTB_feet_frame000.png",
+          "sha256": "6cc12163595a45079ad60268e73710aa86fd905d9dbcff282e5bd80df8ad6be6"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJQTclrlOLEYYfTB_feet_frame032.png",
+          "sha256": "16618bd541c3ee27d781cf762e6f80e01ffbb0215a2542291e77e98f991e0526"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJQTclrlOLEYYfTB_feet_frame036.png",
+          "sha256": "ce0d03cadfeaa130abc357411d9ecfeecdc59c16e72bed397f1b3ed525ebfe28"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJQTclrlOLEYYfTB_feet_frame038.png",
+          "sha256": "db5a4adb83fa75b4874fc70c4768d97e227bca8f1720320034ea5a9a0b0e55db"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJQTclrlOLEYYfTB_feet_frame080.png",
+          "sha256": "1fe80b5c3bda3268dfa3f3e1a4e353a0790fc15126f77ce8f0e7dfa8c3f5c696"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJQTclrlOLEYYfTB_frames000_032_080.jpg",
+          "sha256": "9dbbae0ca54f37bd5293a1d6c4466e89f49122b14efa8a31c18e1bf22b823814"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/wJQTclrlOLEYYfTB_palm_maxstep_frames033_034_035.jpg",
+          "sha256": "7bf196dcdbe39e9a76cc3d3847c4e4bef81569f8b29c515dcb6aa5000fcaba68"
+        }
+      ],
+      "palm_relative_2d_step_max_px": {
+        "left_index_mcp": 72.4219741821289,
+        "left_little_mcp": 59.59322738647461,
+        "right_index_mcp": 31.900527954101562,
+        "right_little_mcp": 28.63560676574707
+      },
+      "heel_relative_2d_step_max_px": {
+        "left_heel": 16.10016632080078,
+        "right_heel": 7.103837490081787
+      },
+      "whole_event_counts_by_body_action": {
+        "left_palm:rotates_relative_to_arm_plane": 9,
+        "right_palm:rotates_relative_to_arm_plane": 7,
+        "left_palm:changes_relative_orientation": 6,
+        "right_palm:changes_relative_orientation": 5,
+        "left_foot:changes_relative_orientation": 2
+      },
+      "sample_events": [
+        {
+          "body_part": "left_palm",
+          "start": 0,
+          "end": 0.2,
+          "action": "rotates_relative_to_arm_plane",
+          "direction": "negative_roll",
+          "measurement": {
+            "start": -123.94318899903914,
+            "end": -187.81927112097023,
+            "delta": -63.87608212193109,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "left_palm",
+          "start": 0,
+          "end": 0.45,
+          "action": "changes_relative_orientation",
+          "direction": "increasing_relative_angle",
+          "measurement": {
+            "start": 73.9021259949285,
+            "end": 122.31896170737745,
+            "delta": 48.41683571244896,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "right_palm",
+          "start": 0,
+          "end": 0.35,
+          "action": "rotates_relative_to_arm_plane",
+          "direction": "positive_roll",
+          "measurement": {
+            "start": 120.68733911048581,
+            "end": 184.21711720788073,
+            "delta": 63.529778097394924,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "right_palm",
+          "start": 0.1,
+          "end": 0.95,
+          "action": "changes_relative_orientation",
+          "direction": "decreasing_relative_angle",
+          "measurement": {
+            "start": 103.83313209838799,
+            "end": 75.68319935440863,
+            "delta": -28.149932743979363,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "left_foot",
+          "start": 1.85,
+          "end": 2.15,
+          "action": "changes_relative_orientation",
+          "direction": "increasing_relative_angle",
+          "measurement": {
+            "start": 3.764723987733293,
+            "end": 41.46868088021252,
+            "delta": 37.703956892479226,
+            "unit": "degrees"
+          }
+        },
+        {
+          "body_part": "left_foot",
+          "start": 2.15,
+          "end": 2.45,
+          "action": "changes_relative_orientation",
+          "direction": "decreasing_relative_angle",
+          "measurement": {
+            "start": 41.46868088021252,
+            "end": 4.292489372381704,
+            "delta": -37.176191507830815,
+            "unit": "degrees"
+          }
+        }
+      ],
+      "foot_angle_frame_selection": [
+        {
+          "side": "left",
+          "frame": 38,
+          "pixels_heel_to_forefoot": 103.6939468383789,
+          "selection_basis": "projected separation/inbounds only; no visibility inference"
+        },
+        {
+          "side": "right",
+          "frame": 36,
+          "pixels_heel_to_forefoot": 101.98680877685547,
+          "selection_basis": "projected separation/inbounds only; no visibility inference"
+        }
+      ]
+    }
+  ],
+  "metrics_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/surface_check_v1/metrics_and_events.json",
+  "metrics_sha256": "89fa5b51d23690771e714004df5c8f8bd22edebc0ce65b8a8be43d8462529f89",
+  "extractor_sha256": "f7b3ee3c1c59b9ac19b96f2a73f3bb18a79d4804e715bc1f7334c3e363c467c1",
+  "actual_spec_sha256": "bcb8f9afcb8d0dcc62640e193e3de31dc875020f7e0191fc8af3c5800dad555f",
+  "reviewed_samples": {
+    "stairs": {
+      "base_frames": [
+        0,
+        32,
+        80
+      ],
+      "foot_roi_frames": [
+        0,
+        32,
+        78,
+        80
+      ],
+      "largest_relative_palm_2d_step_frames": [
+        58,
+        59,
+        60
+      ]
+    },
+    "redshirt": {
+      "base_frames": [
+        0,
+        32,
+        80
+      ],
+      "hand_roi_frame": 32,
+      "largest_relative_palm_2d_step_frames": [
+        25,
+        26,
+        27
+      ]
+    },
+    "shop": {
+      "base_frames": [
+        0,
+        32,
+        80
+      ],
+      "foot_roi_frames": [
+        36,
+        38
+      ],
+      "largest_relative_palm_2d_step_frames": [
+        33,
+        34,
+        35
+      ]
+    }
+  },
+  "usable": {
+    "category": "可用作复核证据，不是正式精确监督",
+    "details": [
+      "实际same-window native2D/连续3D/body22与完整旧pose72+24旋转对照和来源SHA均可读；工程路径正确",
+      "三例粗身体与主要手足位移可回看，画内点只能提供候选几何与定位线索；不可从在画内自动推出解剖精度",
+      "店铺right heel31在frame36侧鞋后上轮廓附近较合理，仅该局部粗轮廓支持，不能代替整个足面/承重/接触验准"
+    ]
+  },
+  "unverifiable": {
+    "category": "不可验/不可直接采为观测标签",
+    "details": [
+      "红衣6foot表面点各81/81帧在source RGB画外；4palm点14/13/9/9帧越界，即使所有32点finite与plane_non_degenerate，也不是visible GT",
+      "楼梯frame32合掌重叠，食指根侧/小指根侧与掌面不可能单帧独立核准；其他快速手动作样例模糊，roll正负/角度未验证",
+      "楼梯heel28/31在frame32裤脚/鞋帮上方而非清晰鞋后跟；frame0/78/80抬足后部仍遮挡，定位疑点不能当精确足面",
+      "店铺leftheel28 frame36/38抬足模糊并落在踝附近/物体边界，左右踝鞋/后跟真实像素对应不清，不能批准精确足底平面"
+    ]
+  },
+  "clear_unsupported_claim": {
+    "category": "明确不能成立的观测来源/语义许可，不等于有GT证明3D数值错误",
+    "details": [
+      "红衣right_foot候选1.05–1.8秒+22.9°，整个区间足部画外；若当作视频真实观察到的足面变化，就是无图像依据的监督",
+      "任何把finite2592/2592、plane_non_degenerate、低uncertainty转化为全部可见/accuracy100%或许可踮脚承重的做法都不成立",
+      "本有限抽样没有逐点解剖GT，不能把heel疑点升级成已量化的全体预测错误"
+    ]
+  },
+  "motion_vs_jitter": {
+    "findings": [
+      "最大相对掌像素跳变原RGB相邻帧分别楼梯58–60/红衣25–27/店铺33–35都存在明显真实手臂位移/旋转及运动模糊，不能把raw最大3D.45m直接视为抖动",
+      "raw2D、相对腕踝2D、相对腕踝3D已分别保存；相对步骤去除共同translation仍含真正局部旋转/动作，不是校准噪声误差",
+      "掌相对像素max楼梯33–48/红衣46–100/店铺29–72px；heel相对踝max6–17px；这些统计只筛检查时段，没有像素GT不能给jitter准确率"
+    ]
+  },
+  "event_interpretation": {
+    "counts": [
+      35,
+      36,
+      29
+    ],
+    "notes": [
+      "楼梯35候选全部掌向/掌滚转，没有足事件；主体手势可见不等于这些细角/roll精确",
+      "红衣36候选含1个画外足事件，不可采为可靠新增观测；掌候选多数也需遮挡/出画面核查",
+      "店铺29候选含2个left_foot相对方向变化1.85–2.15秒+37.7°及2.15–2.45秒-37.2°，同抬脚模糊时段，真实抬腿由旧body+pose已可表达，未证明新增足面信息正确",
+      "候选事件多数为掌面relative_roll/normal angle；完整旧pose能恢复部分腕足旋转，点数增加不证明新增有效自由度",
+      "同B固定窗[0,2),[2,5.0625)保持，不用更长caption或新增事件数冒收益"
+    ]
+  },
+  "recommended_decision": "已解除资产/interface/真提取阻碍；保独立raw和review用于准确性研究。不要直接采红衣足或鞋后跟/掌侧未核候选用于Omni/H3监督；保原主要动作标签。若要下一步判优，应选更清晰可见掌/后跟同窗样例并对完整旧pose做一致预算对照，需lead另授权，不自动扩全量或修raw。",
+  "source_or_raw_modified": false,
+  "points_hand_adjusted": false,
+  "private_images_or_arrays_uploaded": false,
+  "gpu_used": false
+}

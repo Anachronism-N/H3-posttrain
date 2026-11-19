@@ -1,0 +1,341 @@
+{
+  "schema": "music-planner-val-text-gates-v1",
+  "thresholds": {
+    "min_normal_stop_fraction": 0.95,
+    "min_valid_two_window_fraction": 0.95,
+    "max_severe_sentence_repeat_fraction": 0.05
+  },
+  "gate_scope": "complete native outputs, assistant EOS, two windows and severe exact sentence repetition only",
+  "severe_repeat_definition": "same normalized sentence occurs at least three times within one caption",
+  "music_semantic_synchronization_accuracy_evaluated": false,
+  "silence_corpus_duplicate_not_used_as_diversity_failure": true,
+  "gate_config": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/runtime/val_text_gate_config_v2.json",
+    "sha256": "8e2c2ab2390bb1bc68091ef5a3266fb55acbb2c374c0792ed71e711191e9561f",
+    "size_bytes": 2293
+  },
+  "code": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/music_planner_text_gate.py",
+    "sha256": "5a20b58c3cde8e6f38f0bbf79ed622c37b9bae573325584d55ad4fe1588c2a30",
+    "size_bytes": 11100
+  },
+  "reports": {
+    "music_flamingo": {
+      "expected_records": 96,
+      "actual_records": 96,
+      "exact_membership": true,
+      "interface_failures": 0,
+      "empty_outputs": 0,
+      "invalid_stop_or_earlier_EOS": 0,
+      "recorded_nonfinite_or_missing_required_MOSS_proof": 0,
+      "native_finite_proof_records": 0,
+      "native_finite_proof_coverage": 0.0,
+      "by_condition": {
+        "original": {
+          "sources": 32,
+          "normal_stop_fraction": 1.0,
+          "valid_two_window_fraction": 1.0,
+          "severe_exact_sentence_repeat_fraction": 0.0,
+          "stop_counts": {
+            "eos": 32
+          },
+          "mean_words": 173.6875,
+          "mean_repeated_4gram_fraction": 0.12594190074373943,
+          "mean_repeated_sentence_fraction": 0.020734126984126983,
+          "mean_action_categories": 6.53125,
+          "mean_body_categories": 4.1875
+        },
+        "mismatched": {
+          "sources": 32,
+          "normal_stop_fraction": 1.0,
+          "valid_two_window_fraction": 1.0,
+          "severe_exact_sentence_repeat_fraction": 0.0,
+          "stop_counts": {
+            "eos": 32
+          },
+          "mean_words": 173.6875,
+          "mean_repeated_4gram_fraction": 0.12594190074373943,
+          "mean_repeated_sentence_fraction": 0.020734126984126983,
+          "mean_action_categories": 6.53125,
+          "mean_body_categories": 4.1875
+        },
+        "silence": {
+          "sources": 32,
+          "normal_stop_fraction": 1.0,
+          "valid_two_window_fraction": 1.0,
+          "severe_exact_sentence_repeat_fraction": 0.0,
+          "stop_counts": {
+            "eos": 32
+          },
+          "mean_words": 166,
+          "mean_repeated_4gram_fraction": 0.04294478527607362,
+          "mean_repeated_sentence_fraction": 0.0,
+          "mean_action_categories": 7,
+          "mean_body_categories": 2
+        }
+      },
+      "gate_checks": {
+        "original": {
+          "normal_stop": true,
+          "two_windows": true,
+          "severe_repeat": true
+        },
+        "mismatched": {
+          "normal_stop": true,
+          "two_windows": true,
+          "severe_repeat": true
+        },
+        "silence": {
+          "normal_stop": true,
+          "two_windows": true,
+          "severe_repeat": true
+        }
+      },
+      "text_gate_passed": true,
+      "original_exact_duplicate_fraction": 0.0,
+      "music_dependency": {
+        "mismatched": {
+          "pairs": 32,
+          "raw_identical_fraction": 0.0
+        },
+        "silence": {
+          "pairs": 32,
+          "raw_identical_fraction": 0.0
+        }
+      },
+      "music_dependency_change_is_not_synchronization_score": true,
+      "dance_style_accuracy": null,
+      "dance_style_ground_truth_available": false,
+      "semantic_choreography_quality_accepted": false,
+      "automatic_model_ranking": false,
+      "exact_frozen_audio_donor_mapping": true,
+      "collector_completion_and_resource_safe_verified": true,
+      "status": "complete",
+      "source_refs": {
+        "manifest": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/eval_handoff_clean_v11/coordinator_v1/music_flamingo_val_panel_out/manifest.json",
+          "sha256": "2a8bbc8cbd21110d778d035f79c9ccf77a2dcc6dc4b66b9597d5d91bd8c2934d",
+          "size_bytes": 146375
+        },
+        "raw": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/eval_handoff_clean_v11/coordinator_v1/music_flamingo_val_panel_out/raw.jsonl",
+          "sha256": "f91d7766cc6a709e24488bd12475d78c5f1bb34ce70e5ad4bd00d39cfed52389",
+          "size_bytes": 934327
+        }
+      }
+    },
+    "moss": {
+      "expected_records": 96,
+      "actual_records": 96,
+      "exact_membership": true,
+      "interface_failures": 0,
+      "empty_outputs": 0,
+      "invalid_stop_or_earlier_EOS": 0,
+      "recorded_nonfinite_or_missing_required_MOSS_proof": 0,
+      "native_finite_proof_records": 96,
+      "native_finite_proof_coverage": 1.0,
+      "by_condition": {
+        "original": {
+          "sources": 32,
+          "normal_stop_fraction": 1.0,
+          "valid_two_window_fraction": 1.0,
+          "severe_exact_sentence_repeat_fraction": 0.0,
+          "stop_counts": {
+            "eos": 32
+          },
+          "mean_words": 177.5,
+          "mean_repeated_4gram_fraction": 0.09745206588473428,
+          "mean_repeated_sentence_fraction": 0.03732638888888889,
+          "mean_action_categories": 5.90625,
+          "mean_body_categories": 4.71875
+        },
+        "mismatched": {
+          "sources": 32,
+          "normal_stop_fraction": 1.0,
+          "valid_two_window_fraction": 1.0,
+          "severe_exact_sentence_repeat_fraction": 0.0,
+          "stop_counts": {
+            "eos": 32
+          },
+          "mean_words": 177.5,
+          "mean_repeated_4gram_fraction": 0.09745206588473428,
+          "mean_repeated_sentence_fraction": 0.03732638888888889,
+          "mean_action_categories": 5.90625,
+          "mean_body_categories": 4.71875
+        },
+        "silence": {
+          "sources": 32,
+          "normal_stop_fraction": 1.0,
+          "valid_two_window_fraction": 1.0,
+          "severe_exact_sentence_repeat_fraction": 0.0,
+          "stop_counts": {
+            "eos": 32
+          },
+          "mean_words": 165,
+          "mean_repeated_4gram_fraction": 0.08024691358024691,
+          "mean_repeated_sentence_fraction": 0.0,
+          "mean_action_categories": 6,
+          "mean_body_categories": 3
+        }
+      },
+      "gate_checks": {
+        "original": {
+          "normal_stop": true,
+          "two_windows": true,
+          "severe_repeat": true
+        },
+        "mismatched": {
+          "normal_stop": true,
+          "two_windows": true,
+          "severe_repeat": true
+        },
+        "silence": {
+          "normal_stop": true,
+          "two_windows": true,
+          "severe_repeat": true
+        }
+      },
+      "text_gate_passed": true,
+      "original_exact_duplicate_fraction": 0.03125,
+      "music_dependency": {
+        "mismatched": {
+          "pairs": 32,
+          "raw_identical_fraction": 0.0
+        },
+        "silence": {
+          "pairs": 32,
+          "raw_identical_fraction": 0.0
+        }
+      },
+      "music_dependency_change_is_not_synchronization_score": true,
+      "dance_style_accuracy": null,
+      "dance_style_ground_truth_available": false,
+      "semantic_choreography_quality_accepted": false,
+      "automatic_model_ranking": false,
+      "exact_frozen_audio_donor_mapping": true,
+      "collector_completion_and_resource_safe_verified": true,
+      "status": "complete",
+      "source_refs": {
+        "manifest": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/eval_handoff_clean_v11/moss_inference_recovery_v2/moss_val_panel_out/manifest.json",
+          "sha256": "2912a41e0a7da24424c204d9361ac65a827a8a404655236814704c471cf2c1f8",
+          "size_bytes": 180330
+        },
+        "raw": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/eval_handoff_clean_v11/moss_inference_recovery_v2/moss_val_panel_out/raw.jsonl",
+          "sha256": "fb22c1167e47f7c83f14ba30448c5cb54dcb5e691634f2a258e259435219f2d1",
+          "size_bytes": 1018532
+        }
+      }
+    },
+    "omni_captioner": {
+      "expected_records": 96,
+      "actual_records": 96,
+      "exact_membership": true,
+      "interface_failures": 0,
+      "empty_outputs": 0,
+      "invalid_stop_or_earlier_EOS": 0,
+      "recorded_nonfinite_or_missing_required_MOSS_proof": 0,
+      "native_finite_proof_records": 0,
+      "native_finite_proof_coverage": 0.0,
+      "by_condition": {
+        "original": {
+          "sources": 32,
+          "normal_stop_fraction": 1.0,
+          "valid_two_window_fraction": 1.0,
+          "severe_exact_sentence_repeat_fraction": 0.0,
+          "stop_counts": {
+            "eos": 32
+          },
+          "mean_words": 173.65625,
+          "mean_repeated_4gram_fraction": 0.1359202338533906,
+          "mean_repeated_sentence_fraction": 0.06722470238095238,
+          "mean_action_categories": 5.375,
+          "mean_body_categories": 4.34375
+        },
+        "mismatched": {
+          "sources": 32,
+          "normal_stop_fraction": 1.0,
+          "valid_two_window_fraction": 1.0,
+          "severe_exact_sentence_repeat_fraction": 0.0,
+          "stop_counts": {
+            "eos": 32
+          },
+          "mean_words": 173.65625,
+          "mean_repeated_4gram_fraction": 0.1359202338533906,
+          "mean_repeated_sentence_fraction": 0.06722470238095238,
+          "mean_action_categories": 5.375,
+          "mean_body_categories": 4.34375
+        },
+        "silence": {
+          "sources": 32,
+          "normal_stop_fraction": 1.0,
+          "valid_two_window_fraction": 1.0,
+          "severe_exact_sentence_repeat_fraction": 0.0,
+          "stop_counts": {
+            "eos": 32
+          },
+          "mean_words": 145,
+          "mean_repeated_4gram_fraction": 0.04225352112676056,
+          "mean_repeated_sentence_fraction": 0.0,
+          "mean_action_categories": 4,
+          "mean_body_categories": 4
+        }
+      },
+      "gate_checks": {
+        "original": {
+          "normal_stop": true,
+          "two_windows": true,
+          "severe_repeat": true
+        },
+        "mismatched": {
+          "normal_stop": true,
+          "two_windows": true,
+          "severe_repeat": true
+        },
+        "silence": {
+          "normal_stop": true,
+          "two_windows": true,
+          "severe_repeat": true
+        }
+      },
+      "text_gate_passed": true,
+      "original_exact_duplicate_fraction": 0.0,
+      "music_dependency": {
+        "mismatched": {
+          "pairs": 32,
+          "raw_identical_fraction": 0.0
+        },
+        "silence": {
+          "pairs": 32,
+          "raw_identical_fraction": 0.0
+        }
+      },
+      "music_dependency_change_is_not_synchronization_score": true,
+      "dance_style_accuracy": null,
+      "dance_style_ground_truth_available": false,
+      "semantic_choreography_quality_accepted": false,
+      "automatic_model_ranking": false,
+      "exact_frozen_audio_donor_mapping": true,
+      "collector_completion_and_resource_safe_verified": true,
+      "status": "complete",
+      "source_refs": {
+        "manifest": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/eval_handoff_clean_v11/captioner_eos_recovery_v1/omni_captioner_val_panel_out/manifest.json",
+          "sha256": "80ec266fef56652d17c4044bfff787695c830fc5dce424b05de276234da06bb5",
+          "size_bytes": 193765
+        },
+        "raw": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/music_planner_fixed2s_training_20261024_v1/eval_handoff_clean_v11/captioner_eos_recovery_v1/omni_captioner_val_panel_out/raw.jsonl",
+          "sha256": "3e6ab48f531730278817ec706163664f508d6fdc2b24eb3df2615e9cf72051f6",
+          "size_bytes": 954553
+        }
+      }
+    }
+  },
+  "test_used_for_threshold_selection": false,
+  "independent_dance_style_ground_truth": false,
+  "H3_dispatch_deferred_until_text_review": true,
+  "winner": null,
+  "human_quality_accepted": false
+}

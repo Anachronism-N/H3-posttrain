@@ -1,0 +1,125 @@
+{
+  "sample_duration_seconds": 20.05,
+  "snapshots_per_worker": 100,
+  "workers": [
+    {
+      "pid": 1949026,
+      "start_ticks": 532793013,
+      "states": {
+        "S:request_wait_answer": 82,
+        "R:0": 3,
+        "D:generic_file_buffered_read": 7,
+        "S:poll_schedule_timeout.constprop.16": 8
+      },
+      "syscalls": {
+        "0": 7,
+        "1": 1,
+        "7": 8,
+        "8": 1,
+        "73": 2,
+        "74": 6,
+        "83": 1,
+        "86": 21,
+        "87": 10,
+        "257": 30,
+        "262": 10,
+        "running": 3
+      },
+      "path_categories": {
+        "257:ROI_or_RGB": 25,
+        "86:ROI_or_RGB": 17,
+        "87:ROI_or_RGB": 10,
+        "262:ROI_or_RGB": 8,
+        "74:ROI_or_RGB": 5,
+        "257:other_artifact": 5,
+        "86:other_artifact": 4,
+        "74:other_artifact": 1,
+        "262:other_artifact": 1,
+        "1:other_artifact": 1,
+        "73:other_artifact": 2,
+        "83:other_artifact": 1,
+        "0:source_media": 7,
+        "262:source_media": 1
+      },
+      "example_paths": {
+        "257:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/.f000004_left_hand.jpg.e2mpjaqk",
+        "86:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/.f000004_left_hand.jpg.e2mpjaqk",
+        "87:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/.f000004_left_hand.jpg.e2mpjaqk",
+        "262:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/f000010_left_hand.jpg",
+        "74:ROI_or_RGB": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/EEyCMBALxzBMNLqA/crops/.f000024_left_hand.jpg.22c8zibu",
+        "257:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/EEyCMBALxzBMNLqA/.beat_detection.json.576993bc0a3f4db8b162f64cfa1ce89d",
+        "86:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/EEyCMBALxzBMNLqA/.beat_detection.json.576993bc0a3f4db8b162f64cfa1ce89d",
+        "74:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/EEyCMBALxzBMNLqA/.bar_plan.json.90db041ea4b6455f9da8a357d54cea26",
+        "262:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/EEyCMBALxzBMNLqA/producer.terminal.json",
+        "1:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+        "73:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/runs/p0-7bfdd9939c0d44569a324724a4b01590/progress.jsonl",
+        "83:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/sources/train/DZSvZgSYwtGHUoiO",
+        "0:source_media": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/DZSvZgSYwtGHUoiO.mp4",
+        "262:source_media": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/DZSvZgSYwtGHUoiO.wav"
+      },
+      "cpu_seconds_delta": 1.21
+    },
+    {
+      "pid": 2361616,
+      "start_ticks": 538047604,
+      "states": {
+        "S:futex_wait_queue_me": 78,
+        "S:request_wait_answer": 22
+      },
+      "syscalls": {
+        "73": 3,
+        "74": 8,
+        "82": 2,
+        "83": 1,
+        "202": 78,
+        "257": 7,
+        "262": 1
+      },
+      "path_categories": {
+        "74:other_artifact": 8,
+        "73:other_artifact": 3,
+        "262:other_artifact": 1,
+        "257:other_artifact": 7,
+        "83:other_artifact": 1,
+        "82:other_artifact": 2
+      },
+      "example_paths": {
+        "74:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/boundaries/b-w00000-w00001/attempt-0/.response.raw.txt.5n4_dszt.tmp",
+        "73:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/boundaries/b-w00000-w00001/attempt-0/.lock",
+        "262:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/boundaries/b-w00000-w00001/attempt-0/binding.json",
+        "257:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/boundaries/b-w00000-w00001/attempt-0/.final.json.p3sradll.tmp",
+        "83:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/rewrite",
+        "82:other_artifact": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/visual/shard-0000/sources/BzQuYZTmTjyitQeT/rewrite/attempt-0/.response.json.q01nj4e3.tmp"
+      },
+      "cpu_seconds_delta": 0.12
+    },
+    {
+      "pid": 2363579,
+      "start_ticks": 538072660,
+      "states": {
+        "S:pipe_wait": 100
+      },
+      "syscalls": {
+        "0": 100
+      },
+      "path_categories": {},
+      "example_paths": {},
+      "cpu_seconds_delta": 0
+    },
+    {
+      "pid": 2362932,
+      "start_ticks": 538069228,
+      "states": {
+        "R:0": 78,
+        "S:futex_wait_queue_me": 22
+      },
+      "syscalls": {
+        "202": 23,
+        "running": 77
+      },
+      "path_categories": {},
+      "example_paths": {},
+      "cpu_seconds_delta": 16.38
+    }
+  ]
+}

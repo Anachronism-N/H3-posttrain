@@ -1,0 +1,62 @@
+[
+  {
+    "node": "N2",
+    "exitCode": 0,
+    "data": {
+      "producer_workers": [
+        {
+          "pid": 3467970,
+          "start_ticks": 540721914,
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collaborative3_producer_v1.py",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3",
+          "shard": "0",
+          "nshard": "4",
+          "CVD": [
+            "CUDA_VISIBLE_DEVICES=0"
+          ]
+        },
+        {
+          "pid": 3469128,
+          "start_ticks": 540735446,
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collaborative3_producer_v1.py",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3",
+          "shard": "1",
+          "nshard": "4",
+          "CVD": [
+            "CUDA_VISIBLE_DEVICES=1"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "node": "N7",
+    "exitCode": 0,
+    "data": {
+      "producer_workers": [
+        {
+          "pid": 3499949,
+          "start_ticks": 540752486,
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collaborative3_producer_v1.py",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3",
+          "shard": "3",
+          "nshard": "4",
+          "CVD": [
+            "CUDA_VISIBLE_DEVICES=1"
+          ]
+        },
+        {
+          "pid": 3499960,
+          "start_ticks": 540752581,
+          "entry": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_collaborative3_producer_v1.py",
+          "out": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3",
+          "shard": "2",
+          "nshard": "4",
+          "CVD": [
+            "CUDA_VISIBLE_DEVICES=0"
+          ]
+        }
+      ]
+    }
+  }
+]

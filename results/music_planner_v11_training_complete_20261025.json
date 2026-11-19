@@ -1,0 +1,49 @@
+{
+  "schema": "music-planner-v11-training-budget-verified-v1",
+  "all_three_training_completed": true,
+  "split_counts": {
+    "train": 10713,
+    "val": 490,
+    "test": 500
+  },
+  "epochs": 2,
+  "optimizer_updates": 670,
+  "source_exposures": 21426,
+  "validation_selection": {
+    "policy": "within-family full-val490 minimum over335/670",
+    "across_tokenizer_NLL_ranking": false,
+    "selected_updates": {
+      "music_flamingo": 670,
+      "moss": 670,
+      "omni_captioner": 670
+    }
+  },
+  "completion_evidence": "Actual per-family full.complete and resources_safe receipts, full marker/cursor checked by frozen evaluation gate",
+  "evaluations": {
+    "music_flamingo_valpanel": {
+      "attempted": 96,
+      "technical_complete": true,
+      "eos": 96,
+      "budget_truncation": 0,
+      "empty_output": 0,
+      "human_quality_accepted": false
+    },
+    "moss_valpanel_first_attempt": {
+      "worker_started": false,
+      "reason": "memory_headroom_admission",
+      "old_failure_preserved": true,
+      "independent_new_attempt": true
+    },
+    "test500": {
+      "generated": false,
+      "all_three_checkpoint_choices_frozen_before_first_test": true
+    },
+    "H3_fixed3": {
+      "rendered": false,
+      "human_review": false
+    }
+  },
+  "winner": null,
+  "goal_complete": false,
+  "original_media_and_old_runs_preserved": true
+}

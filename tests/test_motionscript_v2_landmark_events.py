@@ -12,6 +12,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts_omnidance.exp.ms.motionscript_v2.events import JOINT_NAMES
+from scripts_omnidance.exp.ms.motionscript_v2.landmarks import preprocess_landmarks
 from scripts_omnidance.exp.ms.motionscript_v2.landmark_events import (
     extract_landmark_events, measure_landmark_signals, render_landmark_caption,
 )
@@ -85,6 +86,31 @@ def select(events, measurement):
 
 
 class LandmarkEventsTest(unittest.TestCase):
+    def test_offscreen_feet_abstain_without_dropping_palm_or_body_tracks(self):
+        for complete in (True, False):
+            with self.subTest(complete=complete):
+                data = full32() if complete else palm()
+                raw = dict(points_m=data["points_m"], valid=data["point_valid"], timestamps=data["time"],
+                           names=np.asarray(data["names"]), coordinate_frame=data["coordinate_frame"],
+                           units="m", fps=20., points2d_px=np.full((41, len(data["names"]), 2), 20.))
+                feet = [i for i, name in enumerate(data["names"])
+                        if "toe" in name or "heel" in name or "foot" in name or "ankle" in name]
+                raw["points2d_px"][:, feet, 1] = 80.
+                tracks, _ = preprocess_landmarks(raw, frame_size=[100, 80], smooth_seconds=0)
+                events = extract_landmark_events(tracks)
+                self.assertFalse(any("foot" in event["body_part"] for event in events))
+                self.assertTrue(any(event["body_part"] == "left_palm" for event in events))
+                reliable = [i for i in range(len(data["names"])) if i not in feet]
+                self.assertTrue(tracks["point_valid"][:, reliable].all())
+                if feet:
+                    self.assertFalse(tracks["point_valid"][:, feet].any())
+                    self.assertTrue(np.isnan(tracks["points_m"][:, feet]).all())
+                signals, _ = measure_landmark_signals(tracks)
+                for i, name in enumerate(signals["landmark_signal_names"]):
+                    if "foot" in name:
+                        self.assertFalse(signals["landmark_signal_valid"][:, i].any())
+
+
     def test_default32_full_traces_survive_subthreshold_motion_and_safe_npz(self):
         data = full32()
         signals, metadata = measure_landmark_signals(data)

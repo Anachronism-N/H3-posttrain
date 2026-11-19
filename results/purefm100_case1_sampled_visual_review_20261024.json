@@ -1,0 +1,23 @@
+{
+  "complete": true,
+  "scope": "Assistant qualitative inspection of 20 fixed-rate sampled frames for one same-caption/reference case; not a user rating or musical synchronization judgment",
+  "sample_id": "wJPptuhclZmKAEWs",
+  "baseline_video": "MS/h3_ms_style_eval3_gt_videos_v1/wJPptuhclZmKAEWs.mp4",
+  "experiment_video": "MS/review_h3_purefm100_n4_chunked_v2/videos/wJPptuhclZmKAEWs.mp4",
+  "frame_sampling": "4Hz,20frames,176x320 preview tiles",
+  "observations": {
+    "baseline": "Arm movements, leg lifts and turning are visible across samples.",
+    "purefm100": "Arm movements, leg lifts, directional turns and later arm extensions are visible; these samples are not only stationary upper-body posing.",
+    "appearance_difference": "The small cross-body accessory looks different in color/appearance across the two outputs; reference-image correctness was not judged here."
+  },
+  "bounds": {
+    "only_one_case": true,
+    "full_video_motion_continuity_not_proven_by_samples": true,
+    "music_sync_not_evaluated": true,
+    "full_resolution_hand_face_quality_not_scored": true,
+    "not_a_music_hidden_model": true,
+    "no_human_scores_written": true,
+    "model_quality_accepted": false
+  },
+  "media_uploaded_to_third_party": false
+}

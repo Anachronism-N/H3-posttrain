@@ -1,0 +1,57 @@
+{
+  "resource_refs": {
+    "finished.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/finished.json",
+      "sha256": "07d859e9ba7b6d50a8edeb5bfd819ef2f7fac46fd1a845d38241b8aea34ddc4f"
+    },
+    "worker_exit.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/worker_exit.json",
+      "sha256": "4def447d247b044b1454e8851e47f6fe22f2fe4444d9062ce8ec35fffdc5e97e"
+    },
+    "holder_restored.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/holder_restored.json",
+      "sha256": "6c19f009ac38d3d92bc636967ec588452ba8e546c209c14286807a332690fd62"
+    },
+    "admission.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/admission.json",
+      "sha256": "cc9310ea0f180b922f7809702a1401cf358fc758b6cb10baa4e873d273cd8489"
+    },
+    "live.json": {
+      "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_resource_v1/live.json",
+      "sha256": "e2bc04c82f89eee3a286ff163827d2b2810f53f4d966b4357e92ef0d718f407f"
+    }
+  },
+  "worker_exit": {
+    "exit_code": 0,
+    "child_pid": 3071298,
+    "source_unchanged": true,
+    "cgroup_before": 414578720768,
+    "cgroup_peak": 417224896512,
+    "gpu_peak_MiB": 2187
+  },
+  "GPU2restored_identity": {
+    "pid": 3071686,
+    "uid": 0,
+    "ppid": 3071153,
+    "start_ticks": 527318943,
+    "argv": [
+      "/opt/venv_eval/bin/python",
+      "-u",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/scripts_omnidance/exp/hold_gpu.py"
+    ],
+    "state": "R"
+  },
+  "GPU2uuid": "GPU-8b229be5-2232-3cb4-19ce-4189062ceb8d",
+  "actual_parent_pid": 3071153,
+  "actual_child_pid": 3071298,
+  "cgroup_peak": 417224896512,
+  "gpu_peak_MiB": 2187,
+  "producer_finished_sha": "87ed9a42f1e496a2c84802c00ce64c377b63c4e590b28e483d904b6d93dc38f5",
+  "comparison_verification": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_rgb32_fresh_detector_fixed3_v1/comparison_verification_cpu.json",
+    "sha256": "ac281672a0be6a3f71922509d95ed07e296be72fef213f4ec8373590e9911ace"
+  },
+  "source_sha": "8875af505ead1e86313bcafe4aaf18f76c87eac0287d6dd1a2c0877e61c985d5",
+  "test_sha": "c468aa38dd861c9fb5be343c31c9b7e0167517a6cd779bbb0734fb0bae8864fb",
+  "compare_sha": "3f21369fbe60ab5f2f341260b1eab682c6fb35bb563f0aa577640d794e82146b"
+}

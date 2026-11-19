@@ -100,12 +100,16 @@ def _exact_source_matches(source_time, time):
 
 def preprocess_landmarks(raw: dict, *, fps=20.0, max_gap_seconds=0.2,
                          smooth_seconds=0.0625,
-                         max_point_uncertainty=None) -> tuple[dict, dict]:
+                         max_point_uncertainty=None, frame_size=None) -> tuple[dict, dict]:
     """Resample independent measured/predicted point tracks, retaining gaps.
 
     Required raw keys are ``points_m[T,K,3]``, ``valid[T,K]``, ``timestamps[T]``,
     ``names[K]``, ``fps``, ``coordinate_frame`` and ``units``. Optional
     ``uncertainty[T,K]`` gates only when ``max_point_uncertainty`` is supplied.
+    Bound ``points2d_px[T,K,2]`` plus ``frame_size=[width,height]`` adds a
+    necessary image-domain gate, not a visibility or anatomical certificate.
+    Screen-excluded predictions split support even across a short gap. Ordinary
+    missing samples with unknown 2D retain bounded interpolation.
     A missing/invalid point stays NaN outside its own bounded support spans.
 
     Output ``point_observed`` means a timestamp matched a quality-usable raw
@@ -143,7 +147,35 @@ def preprocess_landmarks(raw: dict, *, fps=20.0, max_gap_seconds=0.2,
             or np.any((raw_valid != 0) & (raw_valid != 1))):
         raise ValueError("valid must be a boolean or binary integer [T,K] mask")
     raw_valid = raw_valid.astype(bool)
-    raw_quality_valid = raw_valid & np.isfinite(points).all(axis=2)
+    finite3d = np.isfinite(points).all(axis=2)
+    raw_quality_valid = raw_valid & finite3d
+    mask_reason = (~raw_valid).astype(np.uint8) | ((~finite3d).astype(np.uint8) * 2)
+    pixels = None
+    if "points2d_px" in raw:
+        pixels = _numeric(raw["points2d_px"], "points2d_px")
+        if pixels.shape != (source_count, point_count, 2):
+            raise ValueError("points2d_px must have shape [T,K,2]")
+    size = frame_size if frame_size is not None else raw.get("frame_size")
+    if size is not None:
+        size = _numeric(size, "frame_size")
+        if size.shape != (2,) or not np.isfinite(size).all() or np.any(size <= 0) or np.any(size != np.floor(size)):
+            raise ValueError("frame_size must be positive integer [width,height]")
+        if frame_size is not None and "frame_size" in raw and not np.array_equal(size, raw["frame_size"]):
+            raise ValueError("bound frame_size differs from raw frame_size")
+    screen_enabled = pixels is not None and size is not None
+    hard_excluded = np.zeros_like(raw_valid)
+    screen_supported = None
+    if screen_enabled:
+        finite2d = np.isfinite(pixels).all(axis=2)
+        inframe = finite2d & (pixels >= 0).all(axis=2) & (pixels < size).all(axis=2)
+        out_of_frame = finite2d & ~inframe
+        screen_supported = raw_valid & inframe
+        raw_quality_valid &= inframe
+        # Unknown 2D at an ordinary missing sample is not evidence of being
+        # outside the image; a known exclusion must never be interpolated away.
+        hard_excluded = out_of_frame | (raw_valid & ~finite2d)
+        mask_reason |= (~finite2d).astype(np.uint8) * 4
+        mask_reason |= out_of_frame.astype(np.uint8) * 8
     uncertainty = None
     if "uncertainty" in raw:
         uncertainty = _numeric(raw["uncertainty"], "uncertainty")
@@ -152,8 +184,9 @@ def preprocess_landmarks(raw: dict, *, fps=20.0, max_gap_seconds=0.2,
     if max_point_uncertainty is not None:
         if uncertainty is None:
             raise ValueError("uncertainty is required when max_point_uncertainty is supplied")
-        raw_quality_valid &= np.isfinite(uncertainty) & (uncertainty >= 0)
-        raw_quality_valid &= uncertainty <= max_point_uncertainty
+        uncertainty_valid = np.isfinite(uncertainty) & (uncertainty >= 0) & (uncertainty <= max_point_uncertainty)
+        raw_quality_valid &= uncertainty_valid
+        mask_reason |= (~uncertainty_valid).astype(np.uint8) * 16
 
     output_count = int(np.floor((source_time[-1] - source_time[0]) * fps + 1e-10)) + 1
     time = source_time[0] + np.arange(output_count, dtype=np.float64) / fps
@@ -164,15 +197,22 @@ def preprocess_landmarks(raw: dict, *, fps=20.0, max_gap_seconds=0.2,
     point_segment_id = np.full((len(time), point_count), -1, dtype=np.int32)
     per_point = []
     for point in range(point_count):
-        selected, supported = _interpolate(source_time, points[:, point], raw_quality_valid[:, point],
-                                            time, maximum_interval, smooth_seconds * fps)
-        output[:, point] = selected
-        point_valid[:, point] = supported
-        segments = _segments(source_time, raw_quality_valid[:, point], maximum_interval)
+        segments = []
+        for start, end in _runs(~hard_excluded[:, point]):
+            local_time = source_time[start:end]
+            local_valid = raw_quality_valid[start:end, point]
+            selected, supported = _interpolate(local_time, points[start:end, point], local_valid,
+                                                time, maximum_interval, smooth_seconds * fps)
+            output[supported, point] = selected[supported]
+            point_valid[:, point] |= supported
+            segments.extend(indices + start for indices in _segments(local_time, local_valid, maximum_interval))
         for identifier, indices in enumerate(segments):
             point_segment_id[_supported_grid(source_time, indices, time), point] = identifier
+        supported = point_valid[:, point]
         per_point.append({"name": str(names[point]), "raw_valid_count": int(raw_valid[:, point].sum()),
                           "raw_quality_valid_count": int(raw_quality_valid[:, point].sum()),
+                          "raw_screen_excluded_count": int(hard_excluded[:, point].sum()),
+                          "raw_screen_supported_count": None if screen_supported is None else int(screen_supported[:, point].sum()),
                           "supported_source_segments": len(segments),
                           "long_gap_count": max(0, len(segments) - 1),
                           "raw_missing_runs": len(_runs(~raw_quality_valid[:, point])),
@@ -190,10 +230,17 @@ def preprocess_landmarks(raw: dict, *, fps=20.0, max_gap_seconds=0.2,
         "point_valid": point_valid, "point_observed": point_observed,
         "point_interpolated": point_valid & ~point_observed,
         "point_segment_id": point_segment_id,
-        "raw_points_m": points.astype(np.float32), "raw_time": source_time.copy(),
+        "raw_points_m": np.asarray(raw["points_m"]).copy(), "raw_time": source_time.copy(),
         "raw_valid": raw_valid.copy(), "raw_quality_valid": raw_quality_valid,
+        "raw_mask_reason": mask_reason, "raw_screen_excluded": hard_excluded,
         "coordinate_frame": np.asarray(frame), "units": np.asarray("m"),
     }
+    if pixels is not None:
+        arrays["raw_points2d_px"] = np.asarray(raw["points2d_px"]).copy()
+    if size is not None:
+        arrays["frame_size"] = size.astype(np.int64)
+    if screen_supported is not None:
+        arrays["raw_screen_supported"] = screen_supported
     if uncertainty is not None:
         arrays["raw_uncertainty"] = uncertainty.astype(np.float32)
     uncertainty_units = raw.get("uncertainty_units", "model_native_unspecified")
@@ -216,8 +263,19 @@ def preprocess_landmarks(raw: dict, *, fps=20.0, max_gap_seconds=0.2,
         "max_point_uncertainty": max_point_uncertainty, "uncertainty_units": uncertainty_units,
         "uncertainty_is_calibrated_confidence": False,
         "raw_uncertainty_preserved": uncertainty is not None, "uncertainty_resampled": False,
-        "raw_valid_definition": "original upstream per-point validity mask, preserved before finite/uncertainty gating",
-        "point_valid_definition": "finite point prediction with optional uncertainty gate and bounded temporal support; no skeleton parent chain",
+        "raw_valid_definition": "original upstream per-point validity mask, preserved before finite/screen/uncertainty gating",
+        "screen_support_enabled": screen_enabled,
+        "screen_support_unavailable_reason": None if screen_enabled else "points2d_px or bound frame_size absent; no projection inferred",
+        "frame_size": None if size is None else size.astype(int).tolist(),
+        "screen_support_definition": "raw valid AND finite 2D AND 0<=x<width AND 0<=y<height; necessary image-domain support, not visibility ground truth",
+        "screen_support_is_visibility_ground_truth": False,
+        "screen_excluded_short_gaps_filled": False,
+        "screen_exclusion_splits_point_support": True,
+        "ordinary_missing_unknown_2d_interpolation": "bounded interpolation retained; no claim that interpolated points were visible",
+        "raw_mask_reason_bits": {"upstream_invalid": 1, "nonfinite3d": 2, "nonfinite2d": 4, "outside_frame": 8, "uncertainty_rejected": 16},
+        "input_screen_excluded_count": int(hard_excluded.sum()),
+        "raw_points2d_preserved": pixels is not None,
+        "point_valid_definition": "finite point prediction with available necessary screen gate, optional uncertainty gate and bounded independent temporal support; no skeleton parent chain",
         "point_observed_definition": "output timestamp matches a quality-usable raw prediction for this point; smoothing may change its value; not a calibrated observation confidence",
         "point_segment_id_definition": "independent source support segment for each point; invalid=-1; adjacent output samples can have distinct IDs",
         "input_masked_nonfinite_count": int((raw_valid & ~np.isfinite(points).all(axis=2)).sum()),

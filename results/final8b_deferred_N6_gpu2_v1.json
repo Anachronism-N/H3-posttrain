@@ -1,0 +1,102 @@
+{
+  "user_directive": "Defer final8B cleaning until all caption generation completed",
+  "node": "N6",
+  "gpu": 2,
+  "manager": {
+    "pid": 661582,
+    "uid": 0,
+    "ppid": 661581,
+    "start_ticks": 533351476,
+    "state": "S",
+    "argv": [
+      "/opt/venv_eval/bin/python",
+      "-B",
+      "-u",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_review_extension_resource_manager_v1.py",
+      "--config",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_review_extension_n6g2_launch_v2.json",
+      "--config-sha",
+      "64ac5503c06f7bbff2f61a40effab807a8ed9c3d1481961b722c45d53def0cf1",
+      "--manager-sha",
+      "6bd8a6c51d2b8423f481daae13222afa0724248c9bac5d1b9661ef8aba7727c6"
+    ],
+    "cgroup": "12:hugetlb:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n11:blkio:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n10:memory:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n9:net_cls,net_prio:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n8:devices:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n7:cpu,cpuacct:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n6:cpuset:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n5:misc:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n4:pids:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n3:freezer:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n2:perf_event:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n1:name=systemd:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed",
+    "CVD": [],
+    "exe": "/usr/bin/python3.11",
+    "sig_ign": 16781312,
+    "sig_blk": 0
+  },
+  "worker": {
+    "pid": 661618,
+    "uid": 0,
+    "ppid": 661582,
+    "start_ticks": 533351976,
+    "state": "S",
+    "argv": [
+      "/opt/venv_vllm/bin/python",
+      "-B",
+      "-u",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_review_extension_watch_v1.py",
+      "--manifest",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+      "--collaborative-root",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v1",
+      "--repair-root",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_repair_v1",
+      "--extra-visual-root",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_review_extra_visual_v1",
+      "--out",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_independent_reviews_extension_v1",
+      "--model",
+      "/opt/models/Qwen3-VL-8B-Instruct-review-extension-v2",
+      "--model-reference",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/reviewer8b_stage_N6_extension_v2.json",
+      "--ms-source",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_review_v2",
+      "--annotator-model-reference",
+      "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/32b_replica_stage_receipts/source_reference_v1.json",
+      "--global-revision",
+      "repair-20261025-v1",
+      "--poll-seconds",
+      "60",
+      "--watch"
+    ],
+    "cgroup": "12:hugetlb:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n11:blkio:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n10:memory:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n9:net_cls,net_prio:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n8:devices:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n7:cpu,cpuacct:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n6:cpuset:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n5:misc:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n4:pids:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n3:freezer:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n2:perf_event:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n1:name=systemd:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed",
+    "CVD": [
+      "CUDA_VISIBLE_DEVICES=2"
+    ],
+    "exe": "/usr/bin/python3.11",
+    "sig_ign": 16781312,
+    "sig_blk": 0
+  },
+  "captured_native_GPU_processes": [
+    {
+      "pid": 661822,
+      "uid": 0,
+      "ppid": 661618,
+      "start_ticks": 533354216,
+      "state": "S",
+      "argv": [
+        "VLLM::EngineCore"
+      ],
+      "cgroup": "12:hugetlb:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n11:blkio:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n10:memory:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n9:net_cls,net_prio:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n8:devices:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n7:cpu,cpuacct:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n6:cpuset:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n5:misc:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n4:pids:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n3:freezer:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n2:perf_event:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed\n1:name=systemd:/kubepods/burstable/pod2c2660c3-3fcc-49a1-87dd-f576ace2c32e/53849121ea0f23863d08d760f6da2a1ff2f4032f1cc88eb484a0d00afb8babed",
+      "CVD": [],
+      "exe": "/usr/bin/python3.11",
+      "sig_ign": 4096,
+      "sig_blk": 0
+    }
+  ],
+  "original_queue": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/queues/curated_review_extension_n6g2_v1",
+  "scores_and_outputs_preserved": true,
+  "recorded_at_UTC": "2026-10-25T19:48:11.991441+00:00",
+  "verified_resources_safe": {
+    "phase": "curated_review_extension_v1",
+    "all_holders_safe": true,
+    "locks_released": true,
+    "leases_restored": true,
+    "managed_parent_wait": true,
+    "unknown_jobs_not_signaled": true
+  },
+  "completed_at_UTC": "2026-10-25T19:48:24.745563+00:00",
+  "no_new_review_model_calls_requested": true
+}

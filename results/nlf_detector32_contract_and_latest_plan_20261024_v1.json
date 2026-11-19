@@ -1,0 +1,151 @@
+{
+  "schema": "nlf-stage-fresh-detection32-interface-plan-v1",
+  "latest_docs": {
+    "remote_commit": "3eabafb10745f55f5032b4623bac985dbe0f3e47",
+    "path": "notes/31_bar_chunking_and_rgb32_execution_plan_20261024.md",
+    "sha256": "13ba135095eb6655fc7e5c71d12cbf0ce6388b5dfa0e18ad87d3e49885eaa724",
+    "code_changed": false,
+    "fresh_detector32_cli_implemented_by_commit": false,
+    "requires_combined_old_smpl_plus32": false,
+    "rgb32_unexecuted_text_stale_against_real_receipts": true,
+    "source_worktree_not_changed": true
+  },
+  "actual_model": {
+    "path": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/nlf_l_multi_0.3.2.torchscript",
+    "sha256": "52bee28edb6ea9148691331df87cfc238d7e3d9134dc60104a5aaed282a9ddad",
+    "read_method": "N1 CPU TorchScript exported schemas plus actual model ZIP source; no GPU",
+    "query_method": "get_weights_for_canonical_points(Tensor canonical_points)->Dict[str,Tensor]",
+    "detect_method": "detect_poses_batched(Tensor images,Dict[str,Tensor]weights, optionalcamera, num_aug, detector_threshold,detector_nms_iou_threshold,max_detections,detector_flip_aug,detector_both_flip_aug,suppress_implausible_poses,extra_boxes)->Dict[str,List[Tensor]]",
+    "native_outputs": [
+      "boxes",
+      "poses3d",
+      "poses2d",
+      "uncertainties"
+    ],
+    "per_image_shapes": [
+      "[people,5]boxes",
+      "[people,32,3]3D mm",
+      "[people,32,2]pixel",
+      "[people,32]uncertainty"
+    ],
+    "old_box_cache_required": false,
+    "old_smpl_pose_inference_required": false
+  },
+  "pipeline_semantics": {
+    "actual_chain": "im_to_linear(images)->detector.forward->freshboxes->_estimate_poses_batched(images,boxes,weights32)->crop_model.predict_multi_same_weights->get_features(crops)->decode all32 querypoints->absolute/TTA->outputboxes/3D/2D/unc",
+    "detector_and_point_backbone_are_separate": true,
+    "all32_points_share_one_crop_feature_call_per_internal_batch": true,
+    "aug3_has_three_augmented_crops": true,
+    "internal_batch_may_split": true,
+    "one_total_neural_forward_claim": false,
+    "newquery_set_can_change_absolute_geometry_and_TTA_alignment": true,
+    "old_body_bitwise_unchanged_guarantee": false,
+    "tracking_guaranteed": false
+  },
+  "prior_run": {
+    "receipt": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/point32_direct_fixed3_real_review_20261024_v1.json",
+    "sha256": "6cb221c4e4245e134d3715b3c9adc5367a56b3c9f3e4b8bb1e85e1f6be72291d",
+    "real3_rgb32_ran": true,
+    "used_cached_boxes": true,
+    "not_fresh_detector_trial": true
+  },
+  "union_smplx": {
+    "oldprefix_points": 1079,
+    "vertices1024": true,
+    "joints55": true,
+    "dedup_join32_size": 1083,
+    "newqueries": [
+      "left_little_toe",
+      "right_big_toe",
+      "right_little_toe",
+      "right_heel"
+    ],
+    "body72_legacy_is_smpl1048_not_smplx1079": true,
+    "parametric_api_custom_weights_argument": false,
+    "parametric_api_fixed_split": [
+      1024,
+      55
+    ],
+    "mutating_model_weights_to1083_for_fixedsplit_unsupported": true,
+    "independent_postfit_possible": "query union1083 once, select prefix1079 then existing fitters.smplx.fit; no second crop-backbone but absolute/TTA queryset changes, not equality guarantee",
+    "actual_union_gpu_run_done": false,
+    "not_required_by_new_doc": true
+  },
+  "proposal": {
+    "stage": "input/model/interface prepared, no new helper/extract GPU launched yet",
+    "new_output_root": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_detect_fixed3_v1",
+    "new_output_created": false,
+    "mode": "fresh detector32 only, first3 ordered, save all people ragged output and detection count",
+    "input_source_refs": [
+      {
+        "id": "wJPptuhclZmKAEWs",
+        "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJPptuhclZmKAEWs.mp4",
+        "video_sha256": "ce2d9ee8baea25b7e6eef6a631d2213abbc683c1da46a88d9aa90c4cb19a0bae",
+        "actual_source_frames": 81,
+        "actual_fps": 16,
+        "media_end_seconds": 5.0625,
+        "oldboxes_comparison_only": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_eval3/wJPptuhclZmKAEWs.npz"
+      },
+      {
+        "id": "wJPrpFsThWAcBQIw",
+        "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJPrpFsThWAcBQIw.mp4",
+        "video_sha256": "a967740e4258bcdc0f0cb3c03d8d4fa4f7b180d703812e951ce90330ca3ed963",
+        "actual_source_frames": 81,
+        "actual_fps": 16,
+        "media_end_seconds": 5.0625,
+        "oldboxes_comparison_only": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_eval3/wJPrpFsThWAcBQIw.npz"
+      },
+      {
+        "id": "wJQTclrlOLEYYfTB",
+        "video_path": "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/wJQTclrlOLEYYfTB.mp4",
+        "video_sha256": "187d2b2d4542eb4a6d0fdcdb8bad717876d56cf103772d0af439b2cf3656bc71",
+        "actual_source_frames": 81,
+        "actual_fps": 16,
+        "media_end_seconds": 5.0625,
+        "oldboxes_comparison_only": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/nlf_eval3/wJQTclrlOLEYYfTB.npz"
+      }
+    ],
+    "spec_path": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/body_palm_foot32.json",
+    "spec_sha256": "bcb8f9afcb8d0dcc62640e193e3de31dc875020f7e0191fc8af3c5800dad555f",
+    "candidate_resource": "N2 oneGPU only after lead and unique resource owner fresh UUID/holder/reserve admission; user reports7unused but no personal fresh freeGPU claim",
+    "resource_owner": "goal-live-pipelines-2",
+    "planned_defaults": {
+      "bs": 8,
+      "num_aug": 3,
+      "default_fov_degrees": 55,
+      "detector_threshold": 0.3,
+      "detector_nms_iou_threshold": 0.7,
+      "max_detections": 150,
+      "extra_boxes": null,
+      "suppress_implausible_poses": true
+    },
+    "policy": "Preserve all detections/boxscore/ragged persons; any single-person selection must be explicit independent receipt, cannot use max_detections1 as tracking. Detection failures keep NaN/missing no fake geometry. Output 3D mm->m explicit; same native2D necessarymask only, not visibility.",
+    "next_run_needs_independent_helper_authorization": true,
+    "initial_validation": "first source actual detection+32 shape/PTS/box/count receipt and overlay vs prior sameRGB cachedboxes; then other2; 50/full12k only new scope authorization",
+    "gpu_started": false
+  },
+  "BPM_bar": {
+    "old_C50_baseline_path": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/ms_beat_chunk_same50_verified_20261024_v1.json",
+    "old_C50_sha256": "69849d2c03098f03c63bbe2dd0e29d6b04d57f8ba247fa55d08d14acfe2628d3",
+    "old_C50_beatDP2_4_8_not_truebar": true,
+    "newdoc_detect_downbeats": true,
+    "actual_existing_window_strategies": [
+      "fixed",
+      "beat",
+      "explicit"
+    ],
+    "bar_implemented_by_doc_commit": false,
+    "new_requirements": [
+      "actual File2Beats beats/downbeats with model/postprocessor/sourceaudioSHA",
+      "unknown audio/video offset preserved; unknown cannot claim verified bar alignment",
+      "original downbeat/bar layer plus partial head/tail layers",
+      "strictbar versus shortedge-merge windows metadata, overlong split on actualbeat/shortbars merge genuine adjacentbars",
+      "samevideoSHA window manifest shared MS+VLM, not rename old beatDP as bar"
+    ]
+  },
+  "serialized_local_model_evidence": "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/results/nlf_detector32_contract_evidence_20261024_v1.json",
+  "source_model_assets_modified": false,
+  "f7_extractor_or_imports_modified": false,
+  "fullVLM_source_modified": false,
+  "accuracy_approved": false
+}

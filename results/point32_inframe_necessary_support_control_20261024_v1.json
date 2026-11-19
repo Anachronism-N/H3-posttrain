@@ -1,0 +1,76 @@
+{
+  "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/inframe_control_v1/terminal_receipt.json",
+  "sha256": "231a8119b7d5adb7eea6204c012910f3c799b1699c7cedc15c9be55c1bc22164",
+  "schema": "nlf-direct32-inframe-control-terminal-v1",
+  "independent_verified": true,
+  "cases": [
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "numeric_valid": 2592,
+      "necessary_support": 2592,
+      "excluded": 0,
+      "excluded_by_point_nonzero": {},
+      "original_events": 35,
+      "derived_events": 35,
+      "derived_foot_events": 0,
+      "window_event_counts": [
+        12,
+        21
+      ],
+      "report_sha256": "2189b43d38d4dc334cd713dc5bcd6ae5011cb81a005c3910c23ace64bfa9e066"
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "numeric_valid": 2592,
+      "necessary_support": 1575,
+      "excluded": 1017,
+      "excluded_by_point_nonzero": {
+        "left_knee": 81,
+        "right_knee": 81,
+        "left_ankle": 81,
+        "right_ankle": 81,
+        "left_foot": 81,
+        "right_foot": 81,
+        "left_index_mcp": 14,
+        "left_little_mcp": 13,
+        "right_index_mcp": 9,
+        "right_little_mcp": 9,
+        "left_big_toe": 81,
+        "left_little_toe": 81,
+        "left_heel": 81,
+        "right_big_toe": 81,
+        "right_little_toe": 81,
+        "right_heel": 81
+      },
+      "original_events": 36,
+      "derived_events": 28,
+      "derived_foot_events": 0,
+      "window_event_counts": [
+        11,
+        16
+      ],
+      "report_sha256": "bdc9cad457a3208faa7bd7cf6b1200aa561d201f8c4facdc1bcc67953026093c"
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "numeric_valid": 2592,
+      "necessary_support": 2592,
+      "excluded": 0,
+      "excluded_by_point_nonzero": {},
+      "original_events": 29,
+      "derived_events": 29,
+      "derived_foot_events": 2,
+      "window_event_counts": [
+        7,
+        20
+      ],
+      "report_sha256": "76392bba3be5ac91b9e7d3dfa48174200fd572598a283a6a8d84e472e43123e9"
+    }
+  ],
+  "source_sha": {
+    "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/ms_landmarks.py": "f7b3ee3c1c59b9ac19b96f2a73f3bb18a79d4804e715bc1f7334c3e363c467c1",
+    "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/motionscript_v2/landmarks.py": "50b8e8345c9c6d9794547e9fb205ae9f5b2a0432e86fe66703cfd9e6c54003d9",
+    "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/motionscript_v2/landmark_events.py": "25d81a3d33e316a163276342e54c2f82131da2daa2719a5eced46769f49ed632",
+    "/apdcephfs_gy4/share_302533218/cedricnie/H3-posttrain/scripts_omnidance/exp/ms/motionscript_v2/chunks.py": "68350fed466f8f066e76c128d6971e7830e2e3e96d75e4c180389e4fb3277d4d"
+  }
+}

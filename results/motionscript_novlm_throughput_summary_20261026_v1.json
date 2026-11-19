@@ -1,0 +1,68 @@
+{
+  "schema": "motionscript-novlm-throughput-public-summary-v1",
+  "active_producer_workers": 10,
+  "assigned_producer_GPUs": 10,
+  "observed_nodes": [
+    "N8",
+    "N5",
+    "N2",
+    "N7"
+  ],
+  "stage": "ROI/2D keypoints, BeatThis and bar plan with durable ready publication; excludes VLM caption generation and review",
+  "measurements": [
+    {
+      "seconds": 181.12981123756617,
+      "successful_unique_sources": 78,
+      "failed_sources": 0,
+      "per_minute": 25.837822984653847
+    },
+    {
+      "seconds": 180.47824731096625,
+      "successful_unique_sources": 68,
+      "failed_sources": 0,
+      "per_minute": 22.606602517422,
+      "start_cursor_overhead_s": 0.24345308262854815,
+      "end_cursor_read_overhead_s": 0.47821596823632717
+    }
+  ],
+  "total_observed_unique_success": 146,
+  "total_observed_seconds": 361.6080585485324,
+  "combined_unique_sources_per_minute": 24.225123840331385,
+  "combined_unique_sources_per_hour": 1453.5074304198831,
+  "per_group": {
+    "curated222939_production_v1": {
+      "unique_sources": 38,
+      "per_minute": 6.3051692187163875
+    },
+    "curated222939_collaborative_v2": {
+      "unique_sources": 13,
+      "per_minute": 2.1570315748240274
+    },
+    "curated222939_collaborative_v3": {
+      "unique_sources": 78,
+      "per_minute": 12.942189448944164
+    },
+    "curated222939_collaborative_v4": {
+      "unique_sources": 17,
+      "per_minute": 2.820733597846805
+    }
+  },
+  "observed_rate_range_per_minute": [
+    22.606602517422,
+    25.837822984653847
+  ],
+  "completed_rule_MotionScript_caption_rate": null,
+  "reason_caption_rate_not_measured": "Existing rule entry requires unbound3D NLF/landmarks; current producer2D134 is not a complete MS-caption entry",
+  "current_validation_and_Ceph_overhead_included": true,
+  "other_existing_VLM_workloads_kept_running": true,
+  "no_actual_all_VLM_disabled_experiment_performed": true,
+  "no_pipeline_acceleration_factor_claimed": true,
+  "duplicate_and_terminal_replay_excluded": true,
+  "successful_terminal_counts_not_semantic_quality_approval": true,
+  "earlier_six_worker_rate_not_overall": true,
+  "progress_delta89_not_used_as_same_window_rate": true,
+  "input_report_SHA256": [
+    "2187b933a20676f383a3af7952177a95ab2befa89efb21bdb51b072733badfd7",
+    "135286ed7bd09d1f3536bf37b92da0e12d9590cd2e3bde21b39b894b4ac098d1"
+  ]
+}

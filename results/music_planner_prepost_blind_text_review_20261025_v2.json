@@ -1,0 +1,336 @@
+{
+  "schema": "music-planner-prepost-independent-blind-text-public-summary-v2",
+  "scope": "same three fixed cases, official base vs reused trained raw, same each-family waveform/prefix/decode",
+  "captions_read": 18,
+  "blind_model_and_stage_identity_verified": true,
+  "formal_review_SHA256": "aa290d88e2a6b66430f3c84c494c2bb05a19a7183a90d07d71314a7031fb352f",
+  "formal_review_source_JSON_valid": true,
+  "exact_evidence_quotes_independently_verified": 36,
+  "group_means_independently_recomputed": true,
+  "decoded_only_after_saved_and_validated_report": true,
+  "axis_names": [
+    "action_plan_coherence",
+    "dynamic_actions_not_static_pose",
+    "semantic_action_diversity",
+    "executable_action_specificity"
+  ],
+  "means": {
+    "music_flamingo": {
+      "base": {
+        "action_plan_coherence": 3.3333333333333335,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 3.6666666666666665,
+        "executable_action_specificity": 3
+      },
+      "trained": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 3.6666666666666665,
+        "executable_action_specificity": 4
+      }
+    },
+    "moss": {
+      "trained": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 3.6666666666666665,
+        "semantic_action_diversity": 3,
+        "executable_action_specificity": 3.6666666666666665
+      },
+      "base": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 4,
+        "executable_action_specificity": 4
+      }
+    },
+    "omni_captioner": {
+      "trained": {
+        "action_plan_coherence": 3.6666666666666665,
+        "dynamic_actions_not_static_pose": 2.3333333333333335,
+        "semantic_action_diversity": 2.3333333333333335,
+        "executable_action_specificity": 3.6666666666666665
+      },
+      "base": {
+        "action_plan_coherence": 1,
+        "dynamic_actions_not_static_pose": 1,
+        "semantic_action_diversity": 1,
+        "executable_action_specificity": 1
+      }
+    }
+  },
+  "trained_minus_base": {
+    "music_flamingo": {
+      "action_plan_coherence": 0.6666666666666665,
+      "dynamic_actions_not_static_pose": 0,
+      "semantic_action_diversity": 0,
+      "executable_action_specificity": 1
+    },
+    "moss": {
+      "action_plan_coherence": 0,
+      "dynamic_actions_not_static_pose": -0.3333333333333335,
+      "semantic_action_diversity": -1,
+      "executable_action_specificity": -0.3333333333333335
+    },
+    "omni_captioner": {
+      "action_plan_coherence": 2.6666666666666665,
+      "dynamic_actions_not_static_pose": 1.3333333333333335,
+      "semantic_action_diversity": 1.3333333333333335,
+      "executable_action_specificity": 2.6666666666666665
+    }
+  },
+  "scores": [
+    {
+      "family": "music_flamingo",
+      "stage": "base",
+      "case": "case1",
+      "axis_scores": {
+        "action_plan_coherence": 3,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 3,
+        "executable_action_specificity": 3
+      },
+      "rationale": "髋部下沉、胸部冲击到侧向摆动与点脚，提供短而可用的动态顺序；后半段如何由前半段接入、点脚方向及摆动幅度未展开。压缩表述本身不扣分，但细节仅支持中等组织与执行具体性。"
+    },
+    {
+      "family": "music_flamingo",
+      "stage": "base",
+      "case": "case2",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 4,
+        "executable_action_specificity": 3
+      },
+      "rationale": "下沉回升接点脚，再扩大为侧步、躯干弹动与甩臂，前后变化连贯且涉及不同部位；后半段仍以一组动作概括而未明确步序、方向或左右。音乐脉冲与拍点断言不计入评分，篇幅增加也不自动提升具体性。"
+    },
+    {
+      "family": "music_flamingo",
+      "stage": "base",
+      "case": "case3",
+      "axis_scores": {
+        "action_plan_coherence": 3,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 4,
+        "executable_action_specificity": 3
+      },
+      "rationale": "髋部冲击、胸部弹动、脚步、转身与高位摆臂组成动态且有一定语义变化的短计划；脚步模式和转身方向不明，跨段转换只给出先后关系，故组织与执行细节保留在中等。"
+    },
+    {
+      "family": "music_flamingo",
+      "stage": "trained",
+      "case": "case1",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 3,
+        "executable_action_specificity": 4
+      },
+      "rationale": "前段结束的身体倾斜与近脸手势被下一段接住，宽窄站姿、举右臂、横跨身体和转侧再回正都能形成可执行顺序；主要变化仍集中于绕臂、举臂和轻量重心移动，且重复同一收尾，动作多样性不因长文本升高。"
+    },
+    {
+      "family": "music_flamingo",
+      "stage": "trained",
+      "case": "case2",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 4,
+        "executable_action_specificity": 4
+      },
+      "rationale": "近脸转身自然衔接第二段，交叉与伸举双臂配合前后步、右腿轻跳或抬起和头部变化，动态部位与动作类型较丰富。左右肢体和行进方向有细节，但部分手臂动作仍概述为反复图案，尚非持续精细的完整步序。"
+    },
+    {
+      "family": "music_flamingo",
+      "stage": "trained",
+      "case": "case3",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 4,
+        "executable_action_specificity": 4
+      },
+      "rationale": "举臂近头的段尾延续到下一段，抬脚、点脚、屈膝以及向右转时双臂分向扫动给出具体动态变化；回正继续摆动也明确。手臂圆绕和重心转移有模板重复，但并非只有静态摆姿；frame数字不作为真实时间准确性的证据。"
+    },
+    {
+      "family": "moss",
+      "stage": "trained",
+      "case": "case1",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 3,
+        "semantic_action_diversity": 3,
+        "executable_action_specificity": 4
+      },
+      "rationale": "左右手举伸到降臂、转躯干、触头和合掌的顺序明确，跨段举右臂姿态也被承接，执行位置较清楚；但明写保持姿态、腿部基本不动，动态主要限于上肢与轻微调整，动作类型与持续动态均有限。"
+    },
+    {
+      "family": "moss",
+      "stage": "trained",
+      "case": "case2",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 3,
+        "executable_action_specificity": 3
+      },
+      "rationale": "开合举臂和身体摆动之后加入屈膝抬脚、侧转回正，足以形成连续动态计划；然而前半段大量使用协调图案和抬伸等概称，第二段腿脚及转向也未注明左右。重复开合举臂限制语义多样性，流畅的文字断言不等同于执行细节。"
+    },
+    {
+      "family": "moss",
+      "stage": "trained",
+      "case": "case3",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 3,
+        "executable_action_specificity": 4
+      },
+      "rationale": "交叉手臂、侧向站姿和摆臂转身接到宽站姿，再展开手臂上扫、圆绕和躯干转右，前后姿态接续清楚且有可执行空间变化；后半段仍以宽站轻移和反复手势为主，转身并未消除上肢语义重复。"
+    },
+    {
+      "family": "omni_captioner",
+      "stage": "trained",
+      "case": "case1",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 2,
+        "semantic_action_diversity": 2,
+        "executable_action_specificity": 4
+      },
+      "rationale": "摸头、降手、扶髋、抬手合掌再回髋的链条和前后脚步容易照做，第二段从前段扶髋位置起步也连贯；但核心是整理头发或头饰等日常手势，持续站立与轻微重心变化占主导，舞蹈动态及动作多样性较弱，具体位置与动态强度分开评分。"
+    },
+    {
+      "family": "omni_captioner",
+      "stage": "trained",
+      "case": "case2",
+      "axis_scores": {
+        "action_plan_coherence": 3,
+        "dynamic_actions_not_static_pose": 2,
+        "semantic_action_diversity": 2,
+        "executable_action_specificity": 3
+      },
+      "rationale": "起初胸前与向外的交替手势提供少量动作，随后右手留髋、左手缓慢换位且双脚不动，后半段更近摆姿描述。虽有可理解的先后和部分左右位置，整体缺少动态展开与多样步序；frame标记不增加真实时间或执行质量分。"
+    },
+    {
+      "family": "omni_captioner",
+      "stage": "trained",
+      "case": "case3",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 3,
+        "semantic_action_diversity": 3,
+        "executable_action_specificity": 4
+      },
+      "rationale": "第一段左右臂伸举、上扫和躯干转动较清楚，举臂段尾也衔接第二段的头旁与扶髋位置；后段反复触头、扶髋和微小屈膝移重，动态仍存在但发展有限。部位位置和肢体区别较具体，不因动作幅度小就认定不可执行。"
+    },
+    {
+      "family": "moss",
+      "stage": "base",
+      "case": "case1",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 4,
+        "executable_action_specificity": 4
+      },
+      "rationale": "点脚与落跟、微甩腕接侧步轻跳，再叠加肩滚、甩头及摆臂，最后合脚屈膝收姿，扩展与收束有明确方向，动态部位和动作类型较丰富。步数、左右及各层动作的精确次序仍不完整；强拍、情绪和音乐能量措辞不获得额外质量分。"
+    },
+    {
+      "family": "moss",
+      "stage": "base",
+      "case": "case2",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 4,
+        "executable_action_specificity": 4
+      },
+      "rationale": "点脚落跟与松摆臂转入侧向弹动和髋摆，再以肩滚、甩腕及上扫手臂、支撑转身发展，形成合理的动态递进。动作类型较多且可直接理解，但左右与转身细节尚未细分；关于踩拍和自信的断言不参与四轴评分。"
+    },
+    {
+      "family": "moss",
+      "stage": "base",
+      "case": "case3",
+      "axis_scores": {
+        "action_plan_coherence": 4,
+        "dynamic_actions_not_static_pose": 4,
+        "semantic_action_diversity": 4,
+        "executable_action_specificity": 4
+      },
+      "rationale": "腕甩与肘部急摆配合点脚，接开臂合掌、髋部弹摆与轻跳，再用肩滚和臂浪结束，动态从小动作扩展到多部位连续变化。仍有手臂概述和未指定方向之处；歌词、鼓声及同步说法只属未经验证的音乐叙述，评分仅取动作本身。"
+    },
+    {
+      "family": "omni_captioner",
+      "stage": "base",
+      "case": "case1",
+      "axis_scores": {
+        "action_plan_coherence": 1,
+        "dynamic_actions_not_static_pose": 1,
+        "semantic_action_diversity": 1,
+        "executable_action_specificity": 1
+      },
+      "rationale": "完整文本围绕声音制作、唱腔、乐器、风格与听众语境展开，没有安排舞者的身体动作、转换或可执行编舞顺序。舞曲与活力等音乐标签不是动作内容，故四轴均无可用编舞证据；并非由于篇幅或无固定窗而低分。"
+    },
+    {
+      "family": "omni_captioner",
+      "stage": "base",
+      "case": "case2",
+      "axis_scores": {
+        "action_plan_coherence": 1,
+        "dynamic_actions_not_static_pose": 1,
+        "semantic_action_diversity": 1,
+        "executable_action_specificity": 1
+      },
+      "rationale": "完整正文是音乐编配、声部和制作效果说明，没有把任何唱词转换为舞者动作，也没有身体部位、行动顺序或转换计划。音乐被称为适合跳舞不能替代编舞，四轴均记无可用动作；声音质量与制作年代不在评分范围。"
+    },
+    {
+      "family": "omni_captioner",
+      "stage": "base",
+      "case": "case3",
+      "axis_scores": {
+        "action_plan_coherence": 1,
+        "dynamic_actions_not_static_pose": 1,
+        "semantic_action_diversity": 1,
+        "executable_action_specificity": 1
+      },
+      "rationale": "完整文本描述歌唱、重复乐句、电子伴奏和推广用途，所述声乐在三秒处改变也不是舞者动作转换；引述与解释唱词并未形成跳跃或其他行动计划。因缺乏编舞内容，四轴均为1，不能由欢快音乐或歌曲语义推测舞蹈。"
+    }
+  ],
+  "rubric_pre_frozen_before_generation": true,
+  "source_payload_SHA256": [
+    "f49fee7880bbd26aa5a302fed5fc07cd64e640d0444f18dead4a5e340d21b5e3",
+    "8b1673bd72d9372083bb70bb7af2b647e8a83ecffca66b0e409749a86cc4a519",
+    "eed7a1d05cd58449ea6087b8b61d1d4268d6771edd1749a556ac04b2247e030c",
+    "be0724182a6f3cac03edb2d8e133e76c1a8b7cd9fe346f8e17c24c57db572bd5",
+    "63be4a746d3e9b5899d29fd12544de5bf44a59fe71d5fb84e00d660c2322d3a7",
+    "4184de5ebf3afc41ef1ebe9d60517c30df9dbb359f8db6752f1581c8874e6621"
+  ],
+  "interpretation": {
+    "music_flamingo": "组织和执行细节改善，动态与多样性本轮持平",
+    "moss": "本轮训练后动态、动作多样性和执行细节未见改善，均值低于原基座；组织持平",
+    "omni_captioner": "从音乐描述变为动作计划，但固定3case仍多手势/持姿，动态与多样性较弱",
+    "population_training_benefit_not_established": true,
+    "cannot_claim_all_models_improved_on_all_axes": true,
+    "small_case_ordinal_scores_not_statistical_model_winner": true
+  },
+  "uncertainty": [
+    "1–5为离散主观量表，3与4的边界存在不确定性；没有第二轮协商或根据身份、旧评分校准。组均值来自实际三条，不代表精度达到多位小数。",
+    "B/C之间以及E/B若干轴相近或持平；合理评审可在泛称动作的组织与具体性上相差1分，不能把小均值差当作确定结论。",
+    "A的简述可由执行者补足，长文本中也有概称；未写出衔接不自动意味着身体不可能执行，多动作类别也不自动更好。",
+    "组内或跨组近重复主要包括A的髋胸开场、B/C的开合举臂和宽站移重、E的点脚落跟与肩滚。没有逐字相同caption；这些只是可见模板相似，不断言来源或训练记忆。",
+    "所有18条完整文本均被用于判断；没有把任何工具显示、字符数量或JSON解析问题转成动作质量。F的三条全为音乐描述是依据完整正文判断，唱词本身不算编舞。",
+    "时间窗、frame数字和歌词匹配均未据外部事实校验；仅三例不能确立总体训练收益、统计优势或最终实验优胜者。"
+  ],
+  "unassessable": [
+    "actual_action_start_end_timestamp_accuracy",
+    "music_or_beat_alignment",
+    "dance_style_ground_truth_accuracy",
+    "physical_execution_or_H3_visual_quality"
+  ],
+  "discarded_initial_tool_truncation_judgment_not_used": true,
+  "human_quality_accepted": false,
+  "music_or_true_action_time_accuracy_not_measured": true,
+  "video_review_status": "pending_user_scores",
+  "raw_caption_or_media_uploaded": false,
+  "overall_experiment_winner": null
+}

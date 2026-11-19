@@ -1,0 +1,184 @@
+{
+  "schema": "motionscript-vlm-impact-evidence-v1",
+  "scope": "read-only existing MotionScript32B observation and independent8B review, not music-planner evaluation",
+  "actual_execution_verified": true,
+  "observation_changes_candidate_caption_verified": true,
+  "review_isolation_affects_eligibility_not_automatic_caption_rewrite": true,
+  "observation_cases": [
+    {
+      "source_id": "AuuitdcBJyGOnWaH",
+      "window": "w00000",
+      "result_SHA256": "d5471b46cca8b90b6c19bc929cba2094b76b24251817125dcd8282bc797ab55f",
+      "original_observation_calls": 1,
+      "recovery_new_visual_requests": 0,
+      "joint_complete_candidate": true,
+      "semantic_approval": false,
+      "human_review_completed": false,
+      "training_approved": false,
+      "original_transaction_refs": [
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/jobs/train/AuuitdcBJyGOnWaH.json",
+          "sha256": "fc187c791f330534dcd30c151bd71bfb6c457109fbc4b1a949a8a67cd1b52b8c"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/worker-terminals/train/AuuitdcBJyGOnWaH.json",
+          "sha256": "2a3c5aaccf1127e3ca35478e900535b9f96aa1fedb8d0fa40b3fb48dca84a39e"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AuuitdcBJyGOnWaH/result.json",
+          "sha256": "4b1b7ed383ebcf801699bc03e162efb43e0f6b6722904b52d1a11d847dfd803e"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AuuitdcBJyGOnWaH/visual_result.json",
+          "sha256": "321935cf5cc06db912907d05b8ccba8c07619d799520268d5f2999ba6e1f140f"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/request-previews/train/AuuitdcBJyGOnWaH/w00000/request.json",
+          "sha256": "baaef66b733d98aad7b1528aeea5e2b1292a08a270bf747a24017599ffaf90d4"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_repair_v1/attempt-budget/train/AuuitdcBJyGOnWaH.json",
+          "sha256": "3c8525d070c9a3454467a57e5e43df8c5a9d175cd132d93250d8189cc2f8cef3"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AuuitdcBJyGOnWaH/windows/w00000/attempt-000001/receipt.json",
+          "sha256": "aa1083a3e6575b13ad574fa472d5cbe8733d4665e11b7ec41be9f398474c3b25"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AuuitdcBJyGOnWaH/windows/w00000/attempt-000001/binding.json",
+          "sha256": "a7eae967e054b0e1a6a87dbdc8764bcdf54fc7787d56bf189ed14d99a652529d"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AuuitdcBJyGOnWaH/windows/w00000/attempt-000001/final.json",
+          "sha256": "a642c4f771e36fb0b6fb01f8168ff4323989f0f8da4328416de9c684566c94d8"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AuuitdcBJyGOnWaH/windows/w00000/attempt-000001/generation.json",
+          "sha256": "33f5305b53cae5b3c43b92fc5a7c69a9c91494241cfb174ea1ce427d1ba3a965"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AuuitdcBJyGOnWaH/windows/w00000/attempt-000001/request.json",
+          "sha256": "c06e99d5fc4b15d3026f9eb4cf4a253f915deda118b98ec56ec58b6492d17ffb"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AuuitdcBJyGOnWaH/windows/w00000/attempt-000001/response.raw.txt",
+          "sha256": "56a813368f4553de58373b1391363b9ac3fa057a8f01b49cdb0e589033bfc9d1"
+        }
+      ]
+    },
+    {
+      "source_id": "AzPomlvsANsevIFb",
+      "window": "w00001",
+      "result_SHA256": "b72aca073fa900702927c7c03bebfac6efba91db3b18683ecc4f239431bad868",
+      "original_observation_calls": 1,
+      "recovery_new_visual_requests": 0,
+      "joint_complete_candidate": true,
+      "semantic_approval": false,
+      "human_review_completed": false,
+      "training_approved": false,
+      "original_transaction_refs": [
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/jobs/train/AzPomlvsANsevIFb.json",
+          "sha256": "5b06a60dc29e04a69ff48d9a7989282e8e53eef1aac529f7bad459d166c22dbb"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/worker-terminals/train/AzPomlvsANsevIFb.json",
+          "sha256": "0d70673564edf5c8c044bebe2b3beabd567a9a852d95793956a5e3cc6d495a21"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AzPomlvsANsevIFb/result.json",
+          "sha256": "91cc31665b6532325ab144e09e5084d549eb95deeb941313d4ebfccbd1487da6"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AzPomlvsANsevIFb/visual_result.json",
+          "sha256": "72c7a51a90f37c3e34e9913928f9f8b521ad61a0e256dc518f0c71f412675ede"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/request-previews/train/AzPomlvsANsevIFb/w00001/request.json",
+          "sha256": "90a5c59d94dc42c77efe9412951a76d50e611b33a3e1075a6941a4099685d83f"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_repair_v1/attempt-budget/train/AzPomlvsANsevIFb.json",
+          "sha256": "6a4b82ff5a4bc1e8ac0ede607e9776e0bf5e5db9f74f6f83b7818274acec22a5"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AzPomlvsANsevIFb/windows/w00001/attempt-000001/receipt.json",
+          "sha256": "95653ab30e2e7bfdfb92ad20483d5cb35d7c720cd453dfb2fd54da2fe209a86f"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AzPomlvsANsevIFb/windows/w00001/attempt-000001/binding.json",
+          "sha256": "8513de4951e8690cdb07b68371e0c41f50a530fbac7472aa28ff38f9ef9f4446"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AzPomlvsANsevIFb/windows/w00001/attempt-000001/final.json",
+          "sha256": "a642c4f771e36fb0b6fb01f8168ff4323989f0f8da4328416de9c684566c94d8"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AzPomlvsANsevIFb/windows/w00001/attempt-000001/generation.json",
+          "sha256": "757be38459bb3798cebae967e32bdde8afff47a9651835748922302decd90bc7"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AzPomlvsANsevIFb/windows/w00001/attempt-000001/request.json",
+          "sha256": "d37c76ce0251692d0a974b2ebb91e8477072addfd138b338379dd4edfa1deef2"
+        },
+        {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_coarse_empty_window_reobserve_v1/revisions/empty-coarse-reobserve-20261025-v1/train/AzPomlvsANsevIFb/windows/w00001/attempt-000001/response.raw.txt",
+          "sha256": "79d9a07894925b183c8cac72e65d82f819abbdcdbadda2dba91990f0891faa6a"
+        }
+      ]
+    }
+  ],
+  "review_internal_conflict_cases": [
+    {
+      "source_id": "AGHERrlosJudNkQg",
+      "review_receipt": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_independent_reviews_v1/train-b000001/sources/69d9b7cf27bfec1606046e9d/bf5ff5fa896d160d/review/receipt.json",
+        "sha256": "5b14bb807cd87d49fe6e72f7d4dca1b4721fc002b1d4cc38e434e6c359f87e18"
+      },
+      "all_six_original_artifact_SHA_verified": true,
+      "model_call_performed": true,
+      "finish_reason": "stop",
+      "status": "confirmed_error",
+      "AI_error_candidate_not_GT": true,
+      "human_decision": "pending",
+      "internal_conflict": "evidence explicitly says label is correct",
+      "confirmed_error_retained_by_original_frozen_validator_CPU_replay": true
+    },
+    {
+      "source_id": "FfhDWfkwlSmdvDAO",
+      "review_receipt": {
+        "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_independent_reviews_v1/train-b000001/sources/c513f36b9fde37fdbcddfade/b9f2ad91e3fd08eb/review/receipt.json",
+        "sha256": "19ee2c2b3484650771544459dcdcecbe357b92d0ce8eb6f8dab063f58a25dae6"
+      },
+      "all_six_original_artifact_SHA_verified": true,
+      "model_call_performed": true,
+      "finish_reason": "stop",
+      "status": "confirmed_error",
+      "AI_error_candidate_not_GT": true,
+      "human_decision": "pending",
+      "internal_conflict": "reported omitted torso turn appears in next sentence of full caption",
+      "confirmed_error_retained_by_original_frozen_validator_CPU_replay": true
+    }
+  ],
+  "review_positive_impact_cases": [
+    {
+      "source_id": "DJnshrZeRHektEmD",
+      "effect": "AI questions steady maintained arm despite observed changes; isolation pending human, not proven true error"
+    },
+    {
+      "source_id": "GFtELGrrbTYeSDHf",
+      "effect": "AI questions loose-fist claim; isolation pending human, sparse open-hand observations do not prove no fist across whole interval"
+    }
+  ],
+  "limitations": [
+    "No independently calibrated human precision/recall or no-VLM ablation found in investigated records",
+    "Two recovered empty-window contributions prove real input and label impact, not pixel-ground-truth accuracy or superiority over pose-only baseline",
+    "Paired frame citations and valid evidence_kind enums only establish reference/format validity, not natural-language judgment correctness",
+    "Hand detail evidence remains uncertain; old handshape captions were not newly verified by coarse observation",
+    "VLM calls can produce zero admitted target-window candidates; execution count is not success/accuracy",
+    "AIerror and overlay alternatives have different counting scopes; cannot use counts as actual error rate"
+  ],
+  "no_models_rerun": true,
+  "no_active_annotation_code_or_score_or_flags_modified": true,
+  "recommendation": "Retain visual observation; treat8B as human-review candidate triage until full-caption scope/evidence consistency and independent calibration are verified; do not automatically delete/rewrite based on AIerror"
+}

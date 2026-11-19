@@ -1,0 +1,72 @@
+{
+  "schema": "music-planner-final-use-recommendation-v1",
+  "scope": "current three trained models for music-to-choreography captions and frozen-H3 downstream generation",
+  "recommended_model": "moss",
+  "recommended_checkpoint_update": 670,
+  "alternative_model": "music_flamingo",
+  "not_preferred_model": "omni_captioner",
+  "human_review_source": "actual user overall anonymous video preferences, saved before decoding",
+  "anonymous_labels": {
+    "A": "music_flamingo",
+    "B": "omni_captioner",
+    "C": "moss"
+  },
+  "human_preferences": [
+    {
+      "case": "case1",
+      "order": [
+        "moss",
+        "music_flamingo",
+        "omni_captioner"
+      ]
+    },
+    {
+      "case": "case2",
+      "order": [
+        "music_flamingo",
+        "moss",
+        "omni_captioner"
+      ]
+    },
+    {
+      "case": "case3",
+      "order": [
+        "moss",
+        "music_flamingo"
+      ],
+      "margin": "slight",
+      "acceptable": [
+        "music_flamingo",
+        "moss"
+      ],
+      "omni_captioner_evaluation": "not_provided"
+    }
+  ],
+  "reasons": [
+    "MOSS preferred over Flamingo in two of three fixed cases, including one slight preference; Flamingo preferred in one",
+    "MOSS highest test500 same-window weak-reference action-category macro F1, 0.6163178848928849",
+    "MOSS 500/500 EOS and fixed-window formatting; full-prediction duplicate-group member fraction0.044 vs Flamingo0.182",
+    "Captioner is last in the two cases with complete rankings; case3 Captioner unmentioned, no inferred rank",
+    "Flamingo remains a useful alternative, with stronger fixed3 text organization/detail opinion and best case2 human preference"
+  ],
+  "evidence_limits": [
+    "Three cases are practical selection evidence, not statistical population superiority",
+    "User supplied overall visual preferences, not separate clarity/continuity/choreography/amplitude/music_response scores",
+    "No independent true action-event timestamp or music synchronization accuracy ground truth",
+    "MOSS posttraining did not improve every text-quality axis relative to its base; no claim of universal training improvement",
+    "Case1/2 relative best does not prove every clip passes absolute quality requirements",
+    "Fixed-time-window formatting is not true action boundary localization"
+  ],
+  "human_overall_preference_review_completed": true,
+  "individual_five_axis_review_completed": false,
+  "music_alignment_accuracy_verified": false,
+  "all_models_absolute_quality_accepted": false,
+  "automatic_training_and_evaluations_complete": true,
+  "GitHub_final_delivery_verified": false,
+  "source_reports": [
+    "music_planner_human_overall_preferences_20261025_v1.json",
+    "music_planner_final_test500_text_20261025_v1.json",
+    "music_planner_prepost_blind_text_review_20261025_v2.json",
+    "music_planner_h3_all9_technical_20261025_v1.json"
+  ]
+}

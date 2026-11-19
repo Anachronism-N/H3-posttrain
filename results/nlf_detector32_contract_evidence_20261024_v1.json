@@ -1,0 +1,357 @@
+{
+  "union_smplx_original_points": 1079,
+  "union_extra_count": 4,
+  "union_point_count": 1083,
+  "mapping32": [
+    {
+      "name": "pelvis",
+      "union_index": 1024,
+      "in_original1079": true
+    },
+    {
+      "name": "left_hip",
+      "union_index": 1025,
+      "in_original1079": true
+    },
+    {
+      "name": "right_hip",
+      "union_index": 1026,
+      "in_original1079": true
+    },
+    {
+      "name": "spine1",
+      "union_index": 1027,
+      "in_original1079": true
+    },
+    {
+      "name": "left_knee",
+      "union_index": 1028,
+      "in_original1079": true
+    },
+    {
+      "name": "right_knee",
+      "union_index": 1029,
+      "in_original1079": true
+    },
+    {
+      "name": "spine2",
+      "union_index": 1030,
+      "in_original1079": true
+    },
+    {
+      "name": "left_ankle",
+      "union_index": 1031,
+      "in_original1079": true
+    },
+    {
+      "name": "right_ankle",
+      "union_index": 1032,
+      "in_original1079": true
+    },
+    {
+      "name": "spine3",
+      "union_index": 1033,
+      "in_original1079": true
+    },
+    {
+      "name": "left_foot",
+      "union_index": 1034,
+      "in_original1079": true
+    },
+    {
+      "name": "right_foot",
+      "union_index": 1035,
+      "in_original1079": true
+    },
+    {
+      "name": "neck",
+      "union_index": 1036,
+      "in_original1079": true
+    },
+    {
+      "name": "left_collar",
+      "union_index": 1037,
+      "in_original1079": true
+    },
+    {
+      "name": "right_collar",
+      "union_index": 1038,
+      "in_original1079": true
+    },
+    {
+      "name": "head",
+      "union_index": 1039,
+      "in_original1079": true
+    },
+    {
+      "name": "left_shoulder",
+      "union_index": 1040,
+      "in_original1079": true
+    },
+    {
+      "name": "right_shoulder",
+      "union_index": 1041,
+      "in_original1079": true
+    },
+    {
+      "name": "left_elbow",
+      "union_index": 1042,
+      "in_original1079": true
+    },
+    {
+      "name": "right_elbow",
+      "union_index": 1043,
+      "in_original1079": true
+    },
+    {
+      "name": "left_wrist",
+      "union_index": 1044,
+      "in_original1079": true
+    },
+    {
+      "name": "right_wrist",
+      "union_index": 1045,
+      "in_original1079": true
+    },
+    {
+      "name": "left_index_mcp",
+      "union_index": 1049,
+      "in_original1079": true
+    },
+    {
+      "name": "left_little_mcp",
+      "union_index": 1055,
+      "in_original1079": true
+    },
+    {
+      "name": "right_index_mcp",
+      "union_index": 1064,
+      "in_original1079": true
+    },
+    {
+      "name": "right_little_mcp",
+      "union_index": 1070,
+      "in_original1079": true
+    },
+    {
+      "name": "left_big_toe",
+      "union_index": 539,
+      "in_original1079": true
+    },
+    {
+      "name": "left_little_toe",
+      "union_index": 1079,
+      "in_original1079": false
+    },
+    {
+      "name": "left_heel",
+      "union_index": 560,
+      "in_original1079": true
+    },
+    {
+      "name": "right_big_toe",
+      "union_index": 1080,
+      "in_original1079": false
+    },
+    {
+      "name": "right_little_toe",
+      "union_index": 1081,
+      "in_original1079": false
+    },
+    {
+      "name": "right_heel",
+      "union_index": 1082,
+      "in_original1079": false
+    }
+  ],
+  "serialized_model_evidence": [
+    {
+      "zip_entry": "nlf_l_0.3.2b/code/__torch__/nlf/pt/multiperson/multiperson_model.py",
+      "source_sha256": "01d7b3229990ed482d157a3ffb848d5c670eecef6cdb6ef9704968430c5f7626",
+      "functions": [
+        {
+          "start_line": 96,
+          "end_line": 120,
+          "function": "def detect_poses_batched(self: __torch__.nlf.pt.multiperson.multiperson_model.MultipersonNLF,",
+          "body": [
+            "  def detect_poses_batched(self: __torch__.nlf.pt.multiperson.multiperson_model.MultipersonNLF,",
+            "    images: Tensor,",
+            "    weights: Dict[str, Tensor],",
+            "    intrinsic_matrix: Optional[Tensor]=None,",
+            "    distortion_coeffs: Optional[Tensor]=None,",
+            "    extrinsic_matrix: Optional[Tensor]=None,",
+            "    world_up_vector: Optional[Tensor]=None,",
+            "    default_fov_degrees: float=55.,",
+            "    internal_batch_size: int=64,",
+            "    antialias_factor: int=1,",
+            "    num_aug: int=1,",
+            "    rot_aug_max_degrees: float=25.,",
+            "    detector_threshold: float=0.29999999999999999,",
+            "    detector_nms_iou_threshold: float=0.69999999999999996,",
+            "    max_detections: int=150,",
+            "    detector_flip_aug: bool=False,",
+            "    detector_both_flip_aug: bool=False,",
+            "    suppress_implausible_poses: bool=True,",
+            "    extra_boxes: Optional[List[Tensor]]=None) -> Dict[str, List[Tensor]]:",
+            "    _11 = __torch__.nlf.pt.multiperson.multiperson_model.im_to_linear",
+            "    images1 = _11(images, )",
+            "    detector = self.detector",
+            "    boxes = (detector).forward(images1, detector_threshold, detector_nms_iou_threshold, max_detections, extrinsic_matrix, world_up_vector, detector_flip_aug, detector_both_flip_aug, extra_boxes, )",
+            "    _12 = (self)._estimate_poses_batched(images1, boxes, weights, intrinsic_matrix, distortion_coeffs, extrinsic_matrix, world_up_vector, default_fov_degrees, internal_batch_size, antialias_factor, num_aug, rot_aug_max_degrees, suppress_implausible_poses, )",
+            "    return _12"
+          ]
+        },
+        {
+          "start_line": 251,
+          "end_line": 395,
+          "function": "def _estimate_parametric_batched(self: __torch__.nlf.pt.multiperson.multiperson_model.MultipersonNLF,",
+          "body": [
+            "    model_name: str=\"smpl\") -> Dict[str, List[Tensor]]:",
+            "    _32 = (body_models).__contains__(model_name, )",
+            "      _33 = torch.format(_30, model_name, (\"smpl\", \"smplx\"))",
+            "    weights = self.weights",
+            "    _34 = torch.dim((weights[model_name])[\"w_tensor\"])",
+            "      _35 = (self).get_weights_for_canonical_points(cano_all[model_name], )",
+            "      weights0 = self.weights",
+            "      torch._set_item(weights0, model_name, _35)",
+            "    weights1 = self.weights",
+            "    result = (self)._estimate_poses_batched(images, boxes, weights1[model_name], intrinsic_matrix, distortion_coeffs, extrinsic_matrix, world_up_vector, default_fov_degrees, internal_batch_size, antialias_factor, num_aug, rot_aug_max_degrees, suppress_implausible_poses, )",
+            "      _40 = (self)._predict_empty_parametric(images, model_name, )",
+            "      mean_poses = torch.mean(poses3d_flat, [-2], True)",
+            "      poses3d_flat0 = torch.sub(poses3d_flat, mean_poses)",
+            "      if torch.eq(model_name, \"smpl\"):",
+            "        fitters = self.fitters",
+            "        fitter = fitters.smpl",
+            "        fitters0 = self.fitters",
+            "        fitter = fitters0.smplx",
+            "      body_model = fitter.body_model",
+            "      num_vertices = body_model.num_vertices",
+            "      body_model0 = fitter.body_model",
+            "      num_joints = body_model0.num_joints",
+            "      _41 = torch.split(poses3d_flat0, [num_vertices, num_joints], -2)",
+            "      body_model1 = fitter.body_model",
+            "      num_vertices0 = body_model1.num_vertices",
+            "      body_model2 = fitter.body_model",
+            "      num_joints0 = body_model2.num_joints",
+            "      _42 = torch.split(uncertainties_flat, [num_vertices0, num_joints0], -1)",
+            "      vertex_weights = torch.pow(vertex_uncertainties_flat, -1.5)",
+            "      _43 = torch.mean(vertex_weights, [-1], True)",
+            "      vertex_weights0 = torch.div(vertex_weights, _43)",
+            "      joint_weights = torch.pow(joint_uncertainties_flat, -1.5)",
+            "      _44 = torch.mean(joint_weights, [-1], True)",
+            "      joint_weights0 = torch.div(joint_weights, _44)",
+            "      fit = (fitter).fit(_45, _46, vertex_weights0, joint_weights0, 3, beta_regularizer, 0., beta_regularizer2, 0., None, False, True, False, False, None, None, None, _47, )",
+            "      _48 = torch.split(fit[\"pose_rotvecs\"], n_pose_per_image_list)",
+            "      _49 = torch.split(fit[\"shape_betas\"], n_pose_per_image_list)",
+            "      _51 = torch.div(torch.squeeze(mean_poses, -2), 1000)",
+            "      _52 = torch.split(torch.add(_50, _51), n_pose_per_image_list)",
+            "      if torch.eq(model_name, \"smpl\"):",
+            "      _56 = torch.div(torch.squeeze(mean_poses, -2), 1000)",
+            "      _57 = torch.split(fit_vertices_flat, n_pose_per_image_list)",
+            "      _58 = torch.split(fit_joints_flat, n_pose_per_image_list)",
+            "      _69 = torch.add(vertices_flat, mean_poses)",
+            "      _70 = torch.split(_69, n_pose_per_image_list)",
+            "      _71 = torch.add(joints_flat, mean_poses)",
+            "      _72 = torch.split(_71, n_pose_per_image_list)",
+            "      body_model4 = fitter.body_model",
+            "      num_vertices1 = body_model4.num_vertices",
+            "      body_model5 = fitter.body_model",
+            "      num_joints1 = body_model5.num_joints",
+            "      _73 = torch.split(poses2d_flat, [num_vertices1, num_joints1], -2)",
+            "      _74 = torch.split(vertices2d, n_pose_per_image_list)",
+            "      _75 = torch.split(joints2d, n_pose_per_image_list)",
+            "      _77 = torch.split(_76, n_pose_per_image_list)",
+            "      _79 = torch.split(_78, n_pose_per_image_list)"
+          ]
+        },
+        {
+          "start_line": 792,
+          "end_line": 823,
+          "function": "def _filter_poses(self: __torch__.nlf.pt.multiperson.multiperson_model.MultipersonNLF,",
+          "body": [
+            "  def _filter_poses(self: __torch__.nlf.pt.multiperson.multiperson_model.MultipersonNLF,",
+            "    boxes: List[Tensor],",
+            "    poses3d: List[Tensor],",
+            "    poses2d: List[Tensor],",
+            "    uncert: List[Tensor]) -> Tuple[List[Tensor], List[Tensor], List[Tensor], List[Tensor]]:",
+            "    _225 = __torch__.nlf.pt.multiperson.plausibility_check.is_uncertainty_low",
+            "    _226 = __torch__.nlf.pt.multiperson.plausibility_check.is_pose_consistent_with_box",
+            "    _227 = __torch__.nlf.pt.multiperson.plausibility_check.pose_non_max_suppression",
+            "    _228 = annotate(List[Tensor], [])",
+            "    _229 = annotate(List[Tensor], [])",
+            "    _230 = annotate(List[Tensor], [])",
+            "    _231 = annotate(List[Tensor], [])",
+            "    _232 = [torch.len(boxes), torch.len(poses3d), torch.len(poses2d), torch.len(uncert)]",
+            "    for _233 in range(ops.prim.min(_232)):",
+            "      boxes_ = boxes[_233]",
+            "      poses3d_ = poses3d[_233]",
+            "      poses2d_ = poses2d[_233]",
+            "      uncert_ = uncert[_233]",
+            "      is_uncert_low = _225(uncert_, )",
+            "      is_pose_consi = _226(poses2d_, boxes_, )",
+            "      plausible_mask = torch.logical_and(is_uncert_low, is_pose_consi)",
+            "      _234 = torch.div(torch.select(boxes_, -1, 4), torch.mean(uncert_, [-1]))",
+            "      nms_indices = _227(poses3d_, _234, plausible_mask, )",
+            "      _235 = annotate(List[Optional[Tensor]], [nms_indices])",
+            "      _236 = torch.append(_228, torch.index(boxes_, _235))",
+            "      _237 = annotate(List[Optional[Tensor]], [nms_indices])",
+            "      _238 = torch.append(_229, torch.index(poses3d_, _237))",
+            "      _239 = annotate(List[Optional[Tensor]], [nms_indices])",
+            "      _240 = torch.append(_230, torch.index(poses2d_, _239))",
+            "      _241 = annotate(List[Optional[Tensor]], [nms_indices])",
+            "      _242 = torch.append(_231, torch.index(uncert_, _241))",
+            "    return (_228, _229, _230, _231)"
+          ]
+        }
+      ]
+    },
+    {
+      "zip_entry": "nlf_l_0.3.2b/code/__torch__/nlf/pt/models/nlf_model.py",
+      "source_sha256": "218b5cd44c98ed6c34505dd9b8da0d4177d2fd277965582cbb3842ee5c4a51c1",
+      "functions": [
+        {
+          "start_line": 63,
+          "end_line": 95,
+          "function": "def predict_multi_same_weights(self: __torch__.nlf.pt.models.nlf_model.NLFModel,",
+          "body": [
+            "  def predict_multi_same_weights(self: __torch__.nlf.pt.models.nlf_model.NLFModel,",
+            "    image: Tensor,",
+            "    intrinsic_matrix: Tensor,",
+            "    weights: Dict[str, Tensor],",
+            "    flip_canonicals_per_image: Tensor) -> Tuple[Tensor, Tensor]:",
+            "    features_processed = (self).get_features(image, )",
+            "    heatmap_head = self.heatmap_head",
+            "    _14 = (heatmap_head).decode_features_multi_same_weights(features_processed, weights, flip_canonicals_per_image, )",
+            "    coords2d, coords3d, uncertainties, = _14",
+            "    _15 = __torch__.torch.amp.autocast_mode.autocast.__new__(__torch__.torch.amp.autocast_mode.autocast)",
+            "    _16 = (_15).__init__(\"cuda\", None, False, None, )",
+            "    with _15:",
+            "      heatmap_head1 = self.heatmap_head",
+            "      _17 = (heatmap_head1).reconstruct_absolute(torch.to(coords2d, 6), torch.to(coords3d, 6), torch.to(uncertainties, 6), torch.to(intrinsic_matrix, 6), )",
+            "    return _17",
+            "class LocalizerHead(Module):",
+            "  __parameters__ = []",
+            "  __buffers__ = []",
+            "  training : bool",
+            "  _is_full_backward_hook : Optional[bool]",
+            "  uncert_bias : float",
+            "  uncert_bias2 : float",
+            "  depth : int",
+            "  stride_test : int",
+            "  centered_stride : bool",
+            "  box_size_m : float",
+            "  proc_side : int",
+            "  backbone_link_dim : int",
+            "  fix_uncert_factor : bool",
+            "  mix_3d_inside_fov : float",
+            "  weak_perspective : bool",
+            "  weight_field : __torch__.nlf.pt.models.field.GPSField",
+            "  layer : __torch__.torch.nn.modules.container.___torch_mangle_135.Sequential"
+          ]
+        }
+      ]
+    }
+  ],
+  "new_code_executed": false,
+  "gpu_used": false
+}

@@ -1,0 +1,519 @@
+{
+  "schema": "motionscript-noVLM-steady-state-throughput-v3",
+  "ready_streams": 7,
+  "active_producers_and_assigned_GPUs": 10,
+  "timed_wait_seconds": 180.00002647191286,
+  "effective_measurement_seconds": 180.47824731096625,
+  "cursor_start_boundary_overhead_seconds": 0.24345308262854815,
+  "end_cursor_read_overhead_seconds": 0.47821596823632717,
+  "unique_ready": 68,
+  "unique_failed": 0,
+  "duplicates_or_resumed_excluded": 0,
+  "unique_ready_per_minute": 22.606602517422,
+  "unique_ready_per_hour": 1356.39615104532,
+  "by_group": {
+    "curated222939_production_v1": {
+      "unique_ready": 17,
+      "per_minute": 5.6516506293555
+    },
+    "curated222939_collaborative_v2": {
+      "unique_ready": 6,
+      "per_minute": 1.9947002221254706
+    },
+    "curated222939_collaborative_v3": {
+      "unique_ready": 37,
+      "per_minute": 12.300651369773735
+    },
+    "curated222939_collaborative_v4": {
+      "unique_ready": 8,
+      "per_minute": 2.659600296167294
+    }
+  },
+  "records": [
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "rHuxQjHwKluMOwdb",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "GtHRNLYJJOVubXZk",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "ldhOUUUNBwYThPPy",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "KWyKDoSLEjWkKrsf",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "ZFdMRaMMZDtfnIES",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "SSISFAZmHiwuYNql",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "wQEOqbTSBjfnQBsC",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "hYIgnFwrtvfsnPRi",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "RXHFpmiCkYpxcXWZ",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "NBefJYhmNAPWbhYG",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "DpGPUgDsOVyLmQSq",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "dSlEuxxbkusUBTAE",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "RHEdcOakdvrCXrsk",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "zLjZSEAAwdfpeZMS",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "BAMMhSWGbFQhLhhL",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "GoNwEyTMEyVocUse",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl",
+      "id": "mVyYJKUfyFiJfFKI",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "mEMUKoQRqzYvSOTJ",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "MAVjdlQMHqVHREJE",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "CaetxmGchrpSktqa",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "vfcpTmisYKgiSrvT",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "iADoDejbosdjrrks",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2/ready.jsonl",
+      "id": "ztYWWaaHmhfWfIyX",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "PrLcJHXOVDaoNCIQ",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "xSphMioVuVjhLJJh",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "FceEbdRBLLfOZrFW",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "HEVXjvMeJDhKNOhb",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "ySGrEQQYhRxRwXmG",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "GKPXTswscfdmHWdW",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "rGqMExnkFLoXtcUK",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "OpUbCsluQOZQGxNx",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0000.jsonl",
+      "id": "HzUNQTBHWehdCMMM",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "QtbggYptBngWiAlB",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "GUjtnrkSlxyysqKb",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "GwpqBKrEEaoQXUkS",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "BoqaURHeJWQmxLUF",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "cXTZVhCNeTnpTecU",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "avxYjVrUjLKTwctK",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "hLExxZrPzbwLSPHq",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "eBbMxMmuQfhNoPIh",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "FJhnQVvdexrMrNng",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "ZWFIwCdoPOrPvYFB",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0001.jsonl",
+      "id": "YoOOfzKtDDeFbXnP",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "rsKmNRIoipmaRRpy",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "yXiBFTRVkiIRqzXv",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "PyUUGHKNHSVOsKfH",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "lNaMlothfiLLNyio",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "ESVmGvUrUDsIaQzq",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "NOWCuQgRcNikiiLC",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "MyoYTuKluzLXIOyT",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0002.jsonl",
+      "id": "BnoNkTbMxmcPMRsQ",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "RjCJSzPZZnuyAtYy",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "FbUbqvzFEcKlJJuL",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "wxRNzvsXrWpBKMKY",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "jsHzxqpbwXZcnuRN",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "SqpNtdPRngCcjoCo",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "YQAfQVVzhkXkJdNX",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "mMFzzEyQhuQRvZNk",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "QkdMxYlXrWTiARNw",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v3/ready/producer-0003.jsonl",
+      "id": "fhuFrXynyjjUoFPs",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "VBmlNeOiNRuFDDEx",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "ZKVZYXceMGwcLyMY",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "wgRDfdBlVSsLvKuV",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "QtBFURNTDNYZMHLh",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "XshwjuNxASvtSaVs",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "OHKVldXqPPwxkNQo",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "DZoEunJatUkbYExb",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    },
+    {
+      "stream": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v4/ready/producer-0000.jsonl",
+      "id": "OjCnhypfAUGfOfsb",
+      "split": "train",
+      "status": "ready",
+      "duplicate_or_resumed": false
+    }
+  ],
+  "scope": "ROI2Dkeypoints/BeatThis/barplan/durable publication, not complete action-caption MS",
+  "VLM_jobs_elsewhere_not_stopped": true,
+  "current_validation_and_Ceph_costs_included": true,
+  "baseline_scan_outside_timed_interval": true,
+  "limits": [
+    "Boundaries across7appendstreams are not globally atomic; measured cursor overhead disclosed",
+    "No isolated noVLM ablation/full-rule-caption benchmark/GPU scaling guarantee",
+    "v2 progress snapshot covers broader boundaries; delta89 not used as matched rate"
+  ]
+}

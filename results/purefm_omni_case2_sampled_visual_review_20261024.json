@@ -1,0 +1,35 @@
+{
+  "complete": true,
+  "review_kind": "assistant_qualitative_sampled_frames_not_user_rating",
+  "sample_id": "wJPrpFsThWAcBQIw",
+  "inputs": {
+    "baseline": "MS/h3_ms_style_eval3_gt_videos_v1/wJPrpFsThWAcBQIw.mp4",
+    "purefm100": "MS/review_h3_purefm100_n4_chunked_v2/videos/wJPrpFsThWAcBQIw.mp4",
+    "Omni_u3000": "MS/review_omni6k_u3000_n6_video_v2/videos/wJPrpFsThWAcBQIw.mp4"
+  },
+  "sampling": {
+    "fps": 4,
+    "frames": 20,
+    "preview_size": [
+      176,
+      320
+    ]
+  },
+  "observations": {
+    "baseline": "Visible crossed-arm, arm-sweep and lifting gestures with a wide stance; the subject stays mostly in place in these sampled frames.",
+    "purefm100": "Similar wide stance and crossed-arm/arm-sweep vocabulary; observed frames do not establish a large choreography improvement over baseline.",
+    "Omni_u3000": "Mostly upper-body crossed-arm, forward-palm and arm-extension gestures with a wide stance; sampled frames do not demonstrate broad travel or diverse footwork.",
+    "clarity": "Preview images are not sufficient to score full-resolution hand/face quality."
+  },
+  "bounds": {
+    "not_full_video_motion_assessment": true,
+    "music_sync_not_evaluated": true,
+    "no_numeric_human_scores": true,
+    "human_quality_accepted": false,
+    "does_not_override_user_GT_dance_feedback": true,
+    "Omni_caption_changed_relative_to_baseline": true,
+    "purefm_same_caption_relative_to_baseline": true,
+    "no_new_training_or_video_regeneration": true
+  },
+  "image_files_published": false
+}

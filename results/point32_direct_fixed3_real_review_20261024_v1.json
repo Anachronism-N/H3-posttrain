@@ -1,0 +1,384 @@
+{
+  "schema": "nlf-direct32-fixed3-real-extraction-review-delivery-v1",
+  "three_real_raw_verified": true,
+  "three_cpu_overlays_generated_and_decoded": true,
+  "three_whole_and_fixed2s_descriptions_verified": true,
+  "real_rgb_points_not_template": true,
+  "actual_spec_path": "/apdcephfs_gy4/share_302533218/cedricnie/models/nlf/canonical_assets_official_v020/body_palm_foot32.json",
+  "actual_spec_sha256": "bcb8f9afcb8d0dcc62640e193e3de31dc875020f7e0191fc8af3c5800dad555f",
+  "actual_model_sha256": "52bee28edb6ea9148691331df87cfc238d7e3d9134dc60104a5aaed282a9ddad",
+  "extractor_source_sha256": "f7b3ee3c1c59b9ac19b96f2a73f3bb18a79d4804e715bc1f7334c3e363c467c1",
+  "review_tool_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/point32_review.py",
+  "review_tool_sha256": "413d354656a01a396020b7f78933a985ae1d0831035c7131780ae93f2ad5ba22",
+  "relative_motion_diagnostic_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/relative_motion_diagnostic.json",
+  "relative_motion_diagnostic_sha256": "babd6362bdec332e09ef82f495b4b2aa8f4930b2b6defd573ddcdb9d55e3966e",
+  "cases": [
+    {
+      "id": "wJPptuhclZmKAEWs",
+      "raw_manifest_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/raw/wJPptuhclZmKAEWs/manifest.json",
+      "raw_manifest_sha256": "2214e90d24b53c97d79704d788b9ffe65ac53ca8f4d0c7351e2ec5a902b65edc",
+      "raw_npz_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/raw/wJPptuhclZmKAEWs/raw.npz",
+      "raw_npz_sha256": "e54f5e84d92d1d3f84552e88f6676a88d6fde7aa972cf73d720883e025a1d6bb",
+      "raw_points_shape": [
+        81,
+        32,
+        3
+      ],
+      "raw_pixels_shape": [
+        81,
+        32,
+        2
+      ],
+      "finite_valid_point_frames": 2592,
+      "review_receipt_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPptuhclZmKAEWs/review_receipt.json",
+      "review_receipt_sha256": "916be4aa2d31fb76cc2ce75b50fd94e140d09121e96032d33ab935dcc59ba058",
+      "review_artifacts": {
+        "same_window_trace.npz": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPptuhclZmKAEWs/same_window_trace.npz",
+          "sha256": "311084211f8d541584c61a81d351e32a8e03c2ee9a9c9e721103062e1cec6afb"
+        },
+        "trace_metadata.json": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPptuhclZmKAEWs/trace_metadata.json",
+          "sha256": "2314ee2e2173b21d9d86f3cdcfe4ee9fa5da357014d3a8180c21c7bf852533f2"
+        },
+        "rgb_direct32_vs_legacy_pose.mp4": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPptuhclZmKAEWs/rgb_direct32_vs_legacy_pose.mp4",
+          "sha256": "45a77948551a5201fcab983d907892a01ac31ea0c825b08d71ff08218a238de5"
+        },
+        "frame_000.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPptuhclZmKAEWs/frame_000.png",
+          "sha256": "85b58c23c997b04ae90f8fed91ec9f4abedeebbdd64c15b439f1b4e73a66e00b"
+        },
+        "frame_032.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPptuhclZmKAEWs/frame_032.png",
+          "sha256": "5a1f07dfca96d4116245557aa2cfcce94e53b881880f7d83daad89c7b832eaca"
+        },
+        "frame_080.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPptuhclZmKAEWs/frame_080.png",
+          "sha256": "16ff8f7110f6f20817457dd40021cfdb52cdbdde8d90aaf51e5f258d444631e3"
+        },
+        "hand_foot_roi_frame032.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPptuhclZmKAEWs/hand_foot_roi_frame032.png",
+          "sha256": "c64514fe68e6fe2be8e3b338bad167b9aaef9ab3b5c3e71df085328634964a0e"
+        }
+      },
+      "encoded_review_frames": 152,
+      "encoded_review_fps": 30,
+      "point_valid_count_range": [
+        32,
+        32
+      ],
+      "extra_points_out_of_bounds_frames": {
+        "left_index_mcp": 0,
+        "left_little_mcp": 0,
+        "right_index_mcp": 0,
+        "right_little_mcp": 0,
+        "left_big_toe": 0,
+        "left_little_toe": 0,
+        "left_heel": 0,
+        "right_big_toe": 0,
+        "right_little_toe": 0,
+        "right_heel": 0
+      },
+      "raw_norm_m_quantiles": [
+        2.092177064418793,
+        2.494262456893921,
+        2.8105958914756775
+      ],
+      "degenerate_plane_frame_counts": {
+        "left_palm": 0,
+        "left_foot": 0,
+        "right_palm": 0,
+        "right_foot": 0
+      },
+      "samewindow_complete_legacy_pose72_and_rotation24_preserved": true,
+      "describe": [
+        {
+          "kind": "whole",
+          "report_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/whole/wJPptuhclZmKAEWs/report.json",
+          "report_sha256": "aebb1b176e5f04d54f950b698f0336e9611e4a081542f8019a9d6050f9a8a0ae",
+          "coords_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/whole/wJPptuhclZmKAEWs/coords.npz",
+          "coords_sha256": "1840ab2e1ef1ff54f8a58e7a6ee8f8fce16638274ffb06547caa29ab096da749",
+          "whole_event_count": 35,
+          "windows": [],
+          "window_event_counts": [],
+          "caption_is_training_target": false
+        },
+        {
+          "kind": "fixed2s",
+          "report_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/fixed2s/wJPptuhclZmKAEWs/report.json",
+          "report_sha256": "e5f188d57e90da697759beb563cc400e61412fe8261536fd5523d94d63fdfb37",
+          "coords_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/fixed2s/wJPptuhclZmKAEWs/coords.npz",
+          "coords_sha256": "1840ab2e1ef1ff54f8a58e7a6ee8f8fce16638274ffb06547caa29ab096da749",
+          "whole_event_count": 35,
+          "windows": [
+            {
+              "start": 0,
+              "end": 2
+            },
+            {
+              "start": 2,
+              "end": 5.0625
+            }
+          ],
+          "window_event_counts": [
+            12,
+            21
+          ],
+          "caption_is_training_target": false
+        }
+      ]
+    },
+    {
+      "id": "wJPrpFsThWAcBQIw",
+      "raw_manifest_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/raw/wJPrpFsThWAcBQIw/manifest.json",
+      "raw_manifest_sha256": "e762329f8659cdf8a22445375a0c6f7acd8f4fce32023a910e2fab2584713187",
+      "raw_npz_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/raw/wJPrpFsThWAcBQIw/raw.npz",
+      "raw_npz_sha256": "7071d44d49e8a6b23e4c2a9870aa1e2581320c365305c09739381a97c236c95a",
+      "raw_points_shape": [
+        81,
+        32,
+        3
+      ],
+      "raw_pixels_shape": [
+        81,
+        32,
+        2
+      ],
+      "finite_valid_point_frames": 2592,
+      "review_receipt_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPrpFsThWAcBQIw/review_receipt.json",
+      "review_receipt_sha256": "50580a5fecc0cb14462b05e906b51b4d52b76cf9616b9dc751cb6f91873346ff",
+      "review_artifacts": {
+        "same_window_trace.npz": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPrpFsThWAcBQIw/same_window_trace.npz",
+          "sha256": "5c33493f25907849f5733d325920146c5e852c21425e4067e22d7c40769b292c"
+        },
+        "trace_metadata.json": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPrpFsThWAcBQIw/trace_metadata.json",
+          "sha256": "2314ee2e2173b21d9d86f3cdcfe4ee9fa5da357014d3a8180c21c7bf852533f2"
+        },
+        "rgb_direct32_vs_legacy_pose.mp4": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPrpFsThWAcBQIw/rgb_direct32_vs_legacy_pose.mp4",
+          "sha256": "abfed2d2154c0f7fc519f20769e7284649ef4097dfc5f33e3f03899f3a56d7ec"
+        },
+        "frame_000.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPrpFsThWAcBQIw/frame_000.png",
+          "sha256": "902fb74251a02cb2cb5c1ab1a44e8bedfeb176cf2424d906a8ad3f743721554a"
+        },
+        "frame_032.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPrpFsThWAcBQIw/frame_032.png",
+          "sha256": "87c8af190c5f09d0fd9f1bd0b60ccbc7ec77d45d1a52448a37f4e028fce88e47"
+        },
+        "frame_080.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPrpFsThWAcBQIw/frame_080.png",
+          "sha256": "6bc6999b19d1f53311fa0aee33772a16ec8e2b051fd91a19c11355bc8b51ff56"
+        },
+        "hand_foot_roi_frame032.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJPrpFsThWAcBQIw/hand_foot_roi_frame032.png",
+          "sha256": "b25a69846d234e6b8ba9887583bd447acd9ed82beb861ff8130845fd7803718c"
+        }
+      },
+      "encoded_review_frames": 152,
+      "encoded_review_fps": 30,
+      "point_valid_count_range": [
+        32,
+        32
+      ],
+      "extra_points_out_of_bounds_frames": {
+        "left_index_mcp": 14,
+        "left_little_mcp": 13,
+        "right_index_mcp": 9,
+        "right_little_mcp": 9,
+        "left_big_toe": 81,
+        "left_little_toe": 81,
+        "left_heel": 81,
+        "right_big_toe": 81,
+        "right_little_toe": 81,
+        "right_heel": 81
+      },
+      "raw_norm_m_quantiles": [
+        1.036590620279312,
+        1.5362818837165833,
+        1.9532854902744294
+      ],
+      "degenerate_plane_frame_counts": {
+        "left_palm": 0,
+        "left_foot": 0,
+        "right_palm": 0,
+        "right_foot": 0
+      },
+      "samewindow_complete_legacy_pose72_and_rotation24_preserved": true,
+      "describe": [
+        {
+          "kind": "whole",
+          "report_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/whole/wJPrpFsThWAcBQIw/report.json",
+          "report_sha256": "24780ce2f0f689fa532c3e91e984fb2bb3b2486b37d46a1c8b1b39cee951e8c7",
+          "coords_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/whole/wJPrpFsThWAcBQIw/coords.npz",
+          "coords_sha256": "0dd75f8d5d1c5ae2f976e63111c9674cba79fd16a196902f1dc2a756207ebb8c",
+          "whole_event_count": 36,
+          "windows": [],
+          "window_event_counts": [],
+          "caption_is_training_target": false
+        },
+        {
+          "kind": "fixed2s",
+          "report_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/fixed2s/wJPrpFsThWAcBQIw/report.json",
+          "report_sha256": "fd105f2efbb6f1f93f016337edaee807534ec72e12bfd79b28515dc08af2fa45",
+          "coords_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/fixed2s/wJPrpFsThWAcBQIw/coords.npz",
+          "coords_sha256": "0dd75f8d5d1c5ae2f976e63111c9674cba79fd16a196902f1dc2a756207ebb8c",
+          "whole_event_count": 36,
+          "windows": [
+            {
+              "start": 0,
+              "end": 2
+            },
+            {
+              "start": 2,
+              "end": 5.0625
+            }
+          ],
+          "window_event_counts": [
+            19,
+            16
+          ],
+          "caption_is_training_target": false
+        }
+      ]
+    },
+    {
+      "id": "wJQTclrlOLEYYfTB",
+      "raw_manifest_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/raw/wJQTclrlOLEYYfTB/manifest.json",
+      "raw_manifest_sha256": "2d48a411abe7385043e08ce1255e663d6aa2d37c4819dc276ccad0de502ddab2",
+      "raw_npz_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/raw/wJQTclrlOLEYYfTB/raw.npz",
+      "raw_npz_sha256": "b2499697652c95fadb811014d4528d04b4dc314b88695ee91bb834f605158760",
+      "raw_points_shape": [
+        81,
+        32,
+        3
+      ],
+      "raw_pixels_shape": [
+        81,
+        32,
+        2
+      ],
+      "finite_valid_point_frames": 2592,
+      "review_receipt_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJQTclrlOLEYYfTB/review_receipt.json",
+      "review_receipt_sha256": "c4111773db2b1c30bc9e391687e9d8d3b6fe28538e9d9ebf07ae3f88c96dfccd",
+      "review_artifacts": {
+        "same_window_trace.npz": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJQTclrlOLEYYfTB/same_window_trace.npz",
+          "sha256": "960566474ea200048146bd39e80646c890a36d28982deee9ab276ac2da1f3b47"
+        },
+        "trace_metadata.json": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJQTclrlOLEYYfTB/trace_metadata.json",
+          "sha256": "2314ee2e2173b21d9d86f3cdcfe4ee9fa5da357014d3a8180c21c7bf852533f2"
+        },
+        "rgb_direct32_vs_legacy_pose.mp4": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJQTclrlOLEYYfTB/rgb_direct32_vs_legacy_pose.mp4",
+          "sha256": "1032c02d25da92bc6a9b63ac2cc4a2a10001b1e71db0f9234c59cab757e649f2"
+        },
+        "frame_000.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJQTclrlOLEYYfTB/frame_000.png",
+          "sha256": "00a9c9530723ef6d9e3004ad980dcf5a2a99a90cc96b5a5c872a00ade522462b"
+        },
+        "frame_032.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJQTclrlOLEYYfTB/frame_032.png",
+          "sha256": "dc93c3e8f773de5b93cff98738a860f283bc8c1e23a34f9026c91a0fb37bcd0d"
+        },
+        "frame_080.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJQTclrlOLEYYfTB/frame_080.png",
+          "sha256": "8adbdd5958e67435e0bca1c28194ccb432898ec8056181f326904dc79511e875"
+        },
+        "hand_foot_roi_frame032.png": {
+          "path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/review/wJQTclrlOLEYYfTB/hand_foot_roi_frame032.png",
+          "sha256": "e77e1561d6f13a4b33872d4ba350fff8aff9f63861a0028dd5470195f429ee54"
+        }
+      },
+      "encoded_review_frames": 152,
+      "encoded_review_fps": 30,
+      "point_valid_count_range": [
+        32,
+        32
+      ],
+      "extra_points_out_of_bounds_frames": {
+        "left_index_mcp": 0,
+        "left_little_mcp": 0,
+        "right_index_mcp": 0,
+        "right_little_mcp": 0,
+        "left_big_toe": 0,
+        "left_little_toe": 0,
+        "left_heel": 0,
+        "right_big_toe": 0,
+        "right_little_toe": 0,
+        "right_heel": 0
+      },
+      "raw_norm_m_quantiles": [
+        2.681824789047241,
+        3.065267562866211,
+        3.362101788520813
+      ],
+      "degenerate_plane_frame_counts": {
+        "left_palm": 0,
+        "left_foot": 0,
+        "right_palm": 0,
+        "right_foot": 0
+      },
+      "samewindow_complete_legacy_pose72_and_rotation24_preserved": true,
+      "describe": [
+        {
+          "kind": "whole",
+          "report_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/whole/wJQTclrlOLEYYfTB/report.json",
+          "report_sha256": "6f8140729c1f3483cd8b1f571f27c99591dae4475d025df20c690c1058f5868d",
+          "coords_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/whole/wJQTclrlOLEYYfTB/coords.npz",
+          "coords_sha256": "25868b05d98ac9ee6da9de8168a8985e4417f5e9938036cca5b5f8093b168d3d",
+          "whole_event_count": 29,
+          "windows": [],
+          "window_event_counts": [],
+          "caption_is_training_target": false
+        },
+        {
+          "kind": "fixed2s",
+          "report_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/fixed2s/wJQTclrlOLEYYfTB/report.json",
+          "report_sha256": "1314b72593c33f4bee24bbc228e2c2aeaf183bbe6cc9b53d010a88253e1b4aa7",
+          "coords_path": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/point32_direct_fixed3_v1/describe/fixed2s/wJQTclrlOLEYYfTB/coords.npz",
+          "coords_sha256": "25868b05d98ac9ee6da9de8168a8985e4417f5e9938036cca5b5f8093b168d3d",
+          "whole_event_count": 29,
+          "windows": [
+            {
+              "start": 0,
+              "end": 2
+            },
+            {
+              "start": 2,
+              "end": 5.0625
+            }
+          ],
+          "window_event_counts": [
+            7,
+            20
+          ],
+          "caption_is_training_target": false
+        }
+      ]
+    }
+  ],
+  "sampled_images_actually_viewed": [
+    "wJPptuhclZmKAEWs/frame_000.png",
+    "wJPptuhclZmKAEWs/frame_032.png",
+    "wJPptuhclZmKAEWs/frame_080.png",
+    "wJPptuhclZmKAEWs/hand_foot_roi_frame032.png",
+    "wJPrpFsThWAcBQIw/frame_032.png",
+    "wJPrpFsThWAcBQIw/hand_foot_roi_frame032.png",
+    "wJQTclrlOLEYYfTB/frame_032.png",
+    "wJQTclrlOLEYYfTB/hand_foot_roi_frame032.png"
+  ],
+  "observed_issue": "Red-shirt clip feet are out of source image in all81 frames despite finite valid; palm points partly out-of-frame. Cannot count inferred foot geometry as reliable visible observations.",
+  "accuracy_completed": false,
+  "new_points_better_than_complete_old_pose_proven": false,
+  "raw_is_ground_truth": false,
+  "description_training_approved": false,
+  "full_video_human_review_completed": false,
+  "source_or_full_vlm_modified": false,
+  "gpu_used_by_cpu_reviewer": false,
+  "private_video_uploaded": false
+}

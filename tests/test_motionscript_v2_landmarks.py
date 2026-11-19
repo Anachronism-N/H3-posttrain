@@ -228,3 +228,79 @@ def test_invalid_cache_shapes_names_units_frames_and_times_are_rejected(mutation
 def test_invalid_resampling_options_are_rejected(option, value):
     with pytest.raises(ValueError):
         preprocess_landmarks(raw(), **{option: value})
+
+
+def test_screen_support_excludes_nonfinite_and_half_open_boundaries_per_point():
+    source = raw(count=5, point_count=7, source_fps=20)
+    source["points_m"] = source["points_m"].astype(np.float64) + 1e-11
+    source["points2d_px"] = np.broadcast_to(
+        [[0., 0.], [99.9, 79.9], [100., 20.], [20., 80.], [-.1, 20.], [np.nan, 1.], [1., np.inf]],
+        (5, 7, 2)).copy()
+    original = copy.deepcopy(source)
+    arrays, metadata = preprocess_landmarks(source, frame_size=[100, 80], smooth_seconds=0)
+    assert arrays["point_valid"][:, :2].all()
+    assert not arrays["point_valid"][:, 2:].any()
+    assert np.isnan(arrays["points_m"][:, 2:]).all()
+    assert arrays["raw_mask_reason"][0].tolist() == [0, 0, 8, 8, 8, 4, 4]
+    assert arrays["raw_screen_supported"][:, :2].all()
+    assert metadata["screen_support_enabled"]
+    assert not metadata["screen_support_is_visibility_ground_truth"]
+    for key in source:
+        np.testing.assert_array_equal(source[key], original[key])
+    np.testing.assert_array_equal(arrays["raw_valid"], original["valid"])
+    np.testing.assert_array_equal(arrays["raw_points_m"], original["points_m"])
+    np.testing.assert_array_equal(arrays["raw_points2d_px"], original["points2d_px"])
+
+
+def test_short_screen_exclusion_splits_segments_but_ordinary_missing_still_interpolates():
+    source = raw(count=5, source_fps=20)
+    source["points2d_px"] = np.full((5, 3, 2), 20.)
+    source["points2d_px"][2, 0, 0] = 100.
+    source["points_m"][3:, 0, 0] += 100.
+    source["valid"][2, 1] = False
+    source["points_m"][2, 1] = np.nan
+    source["points2d_px"][2, 1] = np.nan
+    arrays, _ = preprocess_landmarks(source, frame_size=[100, 80], fps=40,
+                                      max_gap_seconds=.2, smooth_seconds=.1)
+    assert not arrays["point_valid"][3:6, 0].any()
+    assert np.isnan(arrays["points_m"][3:6, 0]).all()
+    assert arrays["point_segment_id"][2, 0] == 0
+    assert arrays["point_segment_id"][6, 0] == 1
+    assert arrays["points_m"][2, 0, 0] < 1.
+    assert arrays["points_m"][6, 0, 0] > 100.
+    assert arrays["point_valid"][:, 1:].all()
+    assert arrays["point_interpolated"][4, 1]
+    assert not arrays["raw_screen_excluded"][2, 1]
+    coarse, _ = preprocess_landmarks(source, frame_size=[100, 80], fps=5, smooth_seconds=0)
+    assert coarse["point_valid"].all()
+    assert coarse["point_segment_id"][:, 0].tolist() == [0, 1]
+
+
+@pytest.mark.parametrize("include_pixels,include_size", [(False, False), (False, True), (True, False)])
+def test_missing_2d_or_size_does_not_guess_projection(include_pixels, include_size):
+    source = raw(count=5, source_fps=20)
+    if include_pixels:
+        source["points2d_px"] = np.full((5, 3, 2), np.nan)
+    if include_size:
+        source["frame_size"] = [100, 80]
+    arrays, metadata = preprocess_landmarks(source, smooth_seconds=0)
+    assert arrays["point_valid"].all()
+    assert not metadata["screen_support_enabled"]
+    assert "raw_screen_supported" not in arrays
+
+
+@pytest.mark.parametrize("size", [[0, 80], [100, -1], [100., 80.5], [100, np.inf], [100], [True, False]])
+def test_invalid_screen_dimensions_are_rejected(size):
+    with pytest.raises(ValueError, match="frame_size"):
+        preprocess_landmarks(raw(), frame_size=size)
+
+
+def test_wrong_2d_shape_and_conflicting_binding_are_rejected():
+    source = raw()
+    source["points2d_px"] = np.zeros((11, 2, 2))
+    with pytest.raises(ValueError, match="points2d_px"):
+        preprocess_landmarks(source, frame_size=[100, 80])
+    source.pop("points2d_px")
+    source["frame_size"] = [80, 100]
+    with pytest.raises(ValueError, match="bound frame_size"):
+        preprocess_landmarks(source, frame_size=[100, 80])

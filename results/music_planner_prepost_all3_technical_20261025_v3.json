@@ -1,0 +1,131 @@
+{
+  "schema": "music-planner-all-three-prepost-fixed3-technical-v3",
+  "models": {
+    "moss": {
+      "accepted_attempt": 1,
+      "source_count": 3,
+      "worker_exit_code": 0,
+      "resources_safe": true,
+      "noCheckpoint_orLoRA": true,
+      "base_EOS": 3,
+      "base_fixed_two_window_count": 3,
+      "trained_fixed_two_window_count": 3,
+      "native_finite_forward_count": 608,
+      "base_raw_sha256": "ca2653c21048bb7d021146f5c783c5f0cb6541563a6432227c84ab304f39be26",
+      "trained_raw_sha256": "958700162d3cc9a5b74f471d6c0a32cc86548d62480d468ac10c8766c543da62",
+      "quality_diagnostics": [
+        [],
+        [],
+        []
+      ],
+      "per_case": [
+        {
+          "id": "wJPptuhclZmKAEWs",
+          "tokens": 219,
+          "stop": "eos"
+        },
+        {
+          "id": "wJPrpFsThWAcBQIw",
+          "tokens": 171,
+          "stop": "eos"
+        },
+        {
+          "id": "wJQTclrlOLEYYfTB",
+          "tokens": 218,
+          "stop": "eos"
+        }
+      ]
+    },
+    "music_flamingo": {
+      "accepted_attempt": 3,
+      "source_count": 3,
+      "worker_exit_code": 0,
+      "resources_safe": true,
+      "noCheckpoint_orLoRA": true,
+      "base_EOS": 3,
+      "base_fixed_two_window_count": 0,
+      "trained_fixed_two_window_count": 3,
+      "native_finite_forward_count": 354,
+      "base_raw_sha256": "31ac4dc0bc524d02a1667ce8aec0e9e2fb8650f7869a7154b86c3bf4cf9230f6",
+      "trained_raw_sha256": "1793273f8b811a81101fe053e8b2b079f30833366a661c3ee2bf4be10372b61e",
+      "quality_diagnostics": [
+        [
+          "no_exact_dual_window_format"
+        ],
+        [
+          "no_exact_dual_window_format"
+        ],
+        [
+          "no_exact_dual_window_format"
+        ]
+      ],
+      "per_case": [
+        {
+          "id": "wJPptuhclZmKAEWs",
+          "tokens": 57,
+          "stop": "eos"
+        },
+        {
+          "id": "wJPrpFsThWAcBQIw",
+          "tokens": 236,
+          "stop": "eos"
+        },
+        {
+          "id": "wJQTclrlOLEYYfTB",
+          "tokens": 61,
+          "stop": "eos"
+        }
+      ]
+    },
+    "omni_captioner": {
+      "accepted_attempt": 3,
+      "source_count": 3,
+      "worker_exit_code": 0,
+      "resources_safe": true,
+      "noCheckpoint_orLoRA": true,
+      "base_EOS": 3,
+      "base_fixed_two_window_count": 0,
+      "trained_fixed_two_window_count": 3,
+      "native_finite_forward_count": 1267,
+      "base_raw_sha256": "14a71254f0408cc16ab537009785f7bcd2113959c906a57777963bc5c111f174",
+      "trained_raw_sha256": "05601fc6ff21490a5d84913243e6026303f3ac44416a64ebb1f4e468b1a9b0c8",
+      "quality_diagnostics": [
+        [
+          "no_exact_dual_window_format"
+        ],
+        [
+          "no_exact_dual_window_format"
+        ],
+        [
+          "no_exact_dual_window_format"
+        ]
+      ],
+      "per_case": [
+        {
+          "id": "wJPptuhclZmKAEWs",
+          "tokens": 417,
+          "stop": "eos"
+        },
+        {
+          "id": "wJPrpFsThWAcBQIw",
+          "tokens": 465,
+          "stop": "eos"
+        },
+        {
+          "id": "wJQTclrlOLEYYfTB",
+          "tokens": 385,
+          "stop": "eos"
+        }
+      ]
+    }
+  },
+  "same_each_family_effective_audio_prefix_and_full_waveform_and_decode_verified": true,
+  "trained_outputs_reused_not_regenerated": true,
+  "first_test500_not_rerun": true,
+  "failed_pre_generation_attempts_preserved_not_ranked_as_quality": true,
+  "fixed_window_format_not_action_event_time_accuracy": true,
+  "three_case_diagnostic_not_population_statistical_proof": true,
+  "independent_text_quality_review_pending": true,
+  "human_video_quality_review_pending": true,
+  "raw_media_or_text_uploaded": false
+}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>OmniDance 音乐控舞 · 人工评审</title>
-<script>if(!/\/$|\.html$/.test(location.pathname))location.replace(location.pathname+"/"+location.search)</script>
+<script>if(!/\/$|\.html$/.test(location.pathname))location.replace(location.pathname+"/"+location.search+location.hash)</script>
 <style>
 :root{--bg:#111418;--panel:#1a1f26;--line:#2b323c;--fg:#e6e9ee;--dim:#8a94a3;--acc:#4f9dff;--ok:#3ecf8e;--warn:#f5a524;--bad:#ef5b5b}
 *{box-sizing:border-box}
@@ -61,7 +61,11 @@ td.l{text-align:left;max-width:420px;overflow:hidden;text-overflow:ellipsis}
 <header>
   <b>OmniDance 评审</b>
   <a href="data-review">MotionScript 数据评审</a>
-  <button id="annotationTab" type="button">32点／分窗caption</button>
+  <a href="coarse3-review" title="三源新标签、原RGB与原生手部ROI；独立抽样通过，不是全批次或训练批准">三源粗动作修复</a>
+  <button id="batchQualityTab" type="button">批次质量抽检</button>
+  <button id="salvageQualityTab" type="button" title="新增salvage独立AI错误代表，只读、不批准标签">Salvage · 错误复核</button>
+  <button id="raqScopeTab" type="button" title="RAQ v3：只改目标窗的确定性离线派生候选，不是模型重写或语义批准">RAQ · scope 修订</button>
+  <button id="annotationTab" type="button" title="原视频、按小节caption及真实手部ROI；不是音乐模型生成视频">MotionScript／手部 ROI 图像</button>
   <span><button data-tab="cmp" class="tabbtn on">对比评审</button> <button data-tab="sum" class="tabbtn">汇总</button></span>
   <label>评审人 <input id="reviewer" size="8" placeholder="名字"></label>
   <label>预设 <select id="preset"><option value="">（自定义）</option></select></label>
@@ -96,7 +100,7 @@ td.l{text-align:left;max-width:420px;overflow:hidden;text-overflow:ellipsis}
     </div>
     <div id="info"></div>
     <div id="grid"></div>
-    <p class="hint">快捷键：空格 播放/暂停，←/→ 切换样本，R 重头，, / . 逐帧。点击视频标题旁的“听此列”切换主音轨（aswap 时 GT 列原音乐与生成列不同）。评分自动保存到服务器。</p>
+    <p class="hint">本区域评审音乐模型生成视频与caption，不显示ROI；请点击顶部“MotionScript／手部 ROI 图像”查看真实标注证据。快捷键：空格 播放/暂停，←/→ 切换样本，R 重头，, / . 逐帧。点击视频标题旁的“听此列”切换主音轨（aswap 时 GT 列原音乐与生成列不同）。评分自动保存到服务器。</p>
   </section>
   <section id="sum" class="hidden">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -404,12 +408,12 @@ init().catch(e=>{status("初始化失败："+e);console.error(e)});
   const element=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=String(text);return e};
   const link=(text,path)=>{const a=element("a",text);a.href=media(path);a.target="_blank";a.rel="noopener";return a};
   const box=()=>{const e=element("div");e.style.cssText="background:#1a1f26;border:1px solid #2b323c;padding:14px;border-radius:6px";return e};
-  const select=(rows,callback)=>{const e=element("select");rows.forEach(([v,l])=>{const o=element("option",l);o.value=v;e.append(o)});e.onchange=()=>callback(e.value);return e};
+  const select=(rows,callback,value)=>{const e=element("select");rows.forEach(([v,l])=>{const o=element("option",l);o.value=v;e.append(o)});if(value!==undefined)e.value=value;e.onchange=()=>callback(e.value);return e};
   const video=(path)=>{const e=element("video");e.controls=true;e.preload="metadata";e.src=media(path);e.style.cssText="max-height:600px;max-width:100%;display:block;background:black";return e};
   const textBlock=(text)=>{const e=element("pre",text);e.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.6 sans-serif";return e};
   function returnToModels(){panel.hidden=true;document.getElementById("main").style.display="";panel.querySelectorAll("video,audio").forEach(x=>x.pause());document.getElementById("annotationTab").classList.remove("on");if(location.hash==="#annotation")history.replaceState(null,"",location.pathname+location.search)}
   function render(){
-    panel.replaceChildren();panel.append(element("h1","新32点骨架与不同分窗caption对照"));
+    panel.replaceChildren();panel.append(element("h1","MotionScript 小节标注与手部 ROI 评审"));
     panel.append(element("p",bundle.note));
     panel.append(element("p","只展示真实已保存输出。候选不等于动作正确；BPM长度网格首0不是实际拍点，小节来自估计downbeat，音画偏移及踩拍未核准。不会保存评分。"));
     const back=element("button","返回模型评审");back.onclick=returnToModels;panel.append(back);
@@ -426,28 +430,56 @@ init().catch(e=>{status("初始化失败："+e);console.error(e)});
       host.append(video(c.video));host.append(link("打开原始视频",c.original_video));
     }
     drawSkeleton(bundle.skeleton_cases[0].id);
-    const captions=box();captions.style.marginTop="20px";captions.append(element("h2","B. 同一个源视频，不同chunk策略的原caption"));
-    captions.append(element("p","本区三case与骨架区三case不同，不伪称同源增点分窗联合对照。MotionScript和独立RGB VLM分开；保留英文原文，不填补弃权。时间头是观察窗口，不是精确动作边界。"));
-    let caseId=bundle.caption_cases[0].id,sourceFilter="MotionScript";
+    const captions=box();captions.style.marginTop="20px";captions.append(element("h2","B. 三个 case：原始观察／最终 caption／证据帧"));
+    captions.append(element("p","主线已确定为真实小节＋短窗合并。最新 ROI 版默认并排显示 R0 原MS、R1 原始视觉弱标签、R2 全文整理结果；失败版不是完整成功版。旧四策略对照仍可切换查看。时间头是观察窗口，不是精确动作边界。"));
+    captions.append(element("p","请重点检查：主要动作是否遗漏，V／OK／心形等手势变化是否被误写为持续姿态，左右与次数是否有据，相邻窗是否连贯；画外部位允许不标，不应连带丢可靠部位。点击时间按钮定位视频，展开 RGB／ROI 证据并点击图片查看原尺寸。"));
+    const versions=[...new Set(bundle.caption_cases.flatMap(c=>c.views.map(v=>v.run_version).filter(Boolean)))].sort((a,b)=>b.localeCompare(a,undefined,{numeric:true}));
+    const roiVersions=versions.filter(v=>/^stable_roi3_v[0-9]+$/.test(v)).sort((a,b)=>b.localeCompare(a,undefined,{numeric:true}));
+    let caseId=bundle.caption_cases[0].id,sourceFilter="all",versionFilter=roiVersions[0]||versions[0]||"original",stageFilter=roiVersions.length?"all":versions.length?"R2":"all";
     const controls=element("div");controls.style.cssText="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px";
     controls.append(select(bundle.caption_cases.map(c=>[c.id,c.id]),id=>{caseId=id;drawCaptions()}));
-    controls.append(select([["MotionScript","原MotionScript"],["独立VLM RGB","独立VLM RGB"],["all","全部来源"]],s=>{sourceFilter=s;drawCaptions()}));captions.append(controls);
+    controls.append(select([...versions.map(v=>[v,v+(v===(roiVersions[0]||versions[0])?"（最新）":"（历史）")]),["original","原始标注对照"],["all","全部版本"]],v=>{versionFilter=v;drawCaptions()},versionFilter));
+    controls.append(select([["R2","R2 · 最终caption（含边界）"],["R1","R1 · 原始观察／历史改写"],["R0","R0 · 原MotionScript"],["visual_supplement","独立视觉补充（原MS空窗）"],["all","全部阶段"]],s=>{stageFilter=s;drawCaptions()},stageFilter));
+    controls.append(select([["all","全部来源"],["MotionScript","MS／改写正文"],["独立VLM RGB","独立VLM RGB"]],s=>{sourceFilter=s;drawCaptions()},sourceFilter));captions.append(controls);
     const captionHost=element("div");captions.append(captionHost);panel.append(captions);
     function drawCaptions(){
       captionHost.querySelectorAll("video,audio").forEach(v=>v.pause());captionHost.replaceChildren();const c=bundle.caption_cases.find(x=>x.id===caseId);
       const v=video(c.video);captionHost.append(v);const audio=element("audio");audio.controls=true;audio.preload="none";audio.src=media(c.audio);captionHost.append(element("p","原配对音乐（可单独播放；音画偏移未独立验证）"),audio);
       const grid=element("div");grid.style.cssText="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px";
-      c.views.filter(x=>sourceFilter==="all"||x.source===sourceFilter).forEach(view=>{
+      const views=c.views.filter(x=>(sourceFilter==="all"||x.source===sourceFilter)
+        &&(versionFilter==="all"||(versionFilter==="original"?!x.run_version:x.run_version===versionFilter))
+        &&(stageFilter==="all"||(!x.run_version&&versionFilter==="original")||x.stage===stageFilter));
+      if(!views.length)grid.append(element("p","当前筛选没有已保存结果；可切换版本、阶段或来源。"));
+      views.forEach(view=>{
         const column=box();column.append(element("h3",view.label),element("p",view.source));
         view.windows.forEach(w=>{
           const section=element("section");section.style.cssText="padding:10px 0;border-top:1px solid #2b323c";
           const seek=element("button","["+w.start.toFixed(6)+", "+w.end.toFixed(6)+") 秒");
           seek.onclick=()=>{const go=()=>{v.pause();v.currentTime=w.start;v.scrollIntoView({block:"nearest",behavior:"smooth"})};v.readyState?go():v.addEventListener("loadedmetadata",go,{once:true})};section.append(seek);
+          if(w.events&&Array.isArray(w.events.per_window_outputs)){
+            const jumps=element("div");jumps.append(element("span","定位原分段： "));
+            w.events.per_window_outputs.forEach(part=>{const b=element("button","["+part.start.toFixed(3)+", "+part.end.toFixed(3)+") 秒");
+              b.onclick=()=>{const go=()=>{v.pause();v.currentTime=part.start;v.scrollIntoView({block:"nearest",behavior:"smooth"})};v.readyState?go():v.addEventListener("loadedmetadata",go,{once:true})};jumps.append(b)});
+            section.append(jumps);
+          }
           section.append(element("p",w.status+(w.reason?" · "+w.reason:"")));
           section.append(textBlock(w.caption||"【无完整正文／弃权，未补写静止动作】"));
           if(w.partial_caption){const d=element("details");d.append(element("summary","仅部分支持正文，不是完整窗口caption"),textBlock(w.partial_caption));section.append(d)}
           if(w.raw_original_MS){const d=element("details");d.append(element("summary","原MS聚合与非聚合输出（原文）"),textBlock(JSON.stringify(w.raw_original_MS,null,2)));section.append(d)}
-          if(w.events){const d=element("details");d.append(element("summary","原VLM事件与证据帧（非精确动作时间）"),textBlock(JSON.stringify(w.events,null,2)));section.append(d)}
+          if(w.events){
+            const errors=[w.events.observation_error,w.events.actualdispatch_error,w.events.rewrite_error].filter(Boolean);
+            if(errors.length)section.append(textBlock("实际失败原因：\n"+[...new Set(errors)].join("\n")));
+            const evidence=element("details");evidence.open=Boolean(w.events.hand_roi_evidence);evidence.append(element("summary","RGB／手部 ROI 图像（已展开；点击图片打开原尺寸）"));
+            const gallery=element("div");gallery.style.cssText="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0";
+            const addImage=(frame,label)=>{if(!frame.path)return;const figure=element("figure");figure.style.cssText="margin:0;max-width:150px";const a=link("",frame.path),img=element("img");img.src=media(frame.path);img.loading="lazy";img.alt=label;img.style.cssText="width:140px;height:160px;object-fit:contain;background:#080b10";a.append(img);figure.append(a,element("figcaption",label));if(Number.isFinite(frame.time)){const seekFrame=element("button","定位 "+frame.time.toFixed(3)+"s");seekFrame.onclick=()=>{const go=()=>{v.pause();v.currentTime=frame.time};v.readyState?go():v.addEventListener("loadedmetadata",go,{once:true})};figure.append(seekFrame)}gallery.append(figure)};
+            (w.events.frames||[]).forEach(frame=>addImage(frame,"RGB · 帧"+frame.index+" · "+Number(frame.time).toFixed(3)+"s"));
+            for(const [part,label] of [["left_hand","左手候选"],["right_hand","右手候选"]]){
+              const crops=w.events.hand_roi_evidence?.[part]?.crops||[];
+              crops.forEach(crop=>addImage(crop,label+" · 帧"+crop.frame_index+" · "+Number(crop.time).toFixed(3)+"s"));
+            }
+            evidence.append(gallery);section.append(evidence);
+            const d=element("details");d.append(element("summary","原始观察／准入事实／筛选审计／边界关系"),textBlock(JSON.stringify(w.events,null,2)));section.append(d);
+          }
           column.append(section);
         });grid.append(column);
       });captionHost.append(grid);
@@ -465,6 +497,166 @@ init().catch(e=>{status("初始化失败："+e);console.error(e)});
   document.addEventListener("keydown",e=>{if(!panel.hidden&&!['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))e.stopImmediatePropagation()},true);
   window.addEventListener("hashchange",()=>{if(location.hash==="#annotation")show();else if(!panel.hidden)returnToModels()});
   if(location.hash==="#annotation")show();
+})();
+</script>
+
+<script>
+(()=>{
+ const path="/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/batch_quality_v1/index.json";
+ const panel=document.createElement("section");panel.hidden=true;panel.id="batchQualityPanel";panel.style.cssText="padding:20px;max-width:1700px;margin:auto";document.body.append(panel);
+ const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=String(text);return n};
+ const pre=t=>{const n=el("pre",t);n.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere";return n};
+ async function json(p){const r=await fetch(media(p),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);return r.json()}
+ function hide(){panel.hidden=true;panel.querySelectorAll("video,audio").forEach(n=>n.pause());document.getElementById("batchQualityTab").classList.remove("on")}
+ async function show(){
+  if(typeof pauseAll==="function")pauseAll();document.getElementById("main").style.display="none";const a=document.getElementById("annotationCompare");if(a)a.hidden=true;panel.hidden=false;document.getElementById("batchQualityTab").classList.add("on");history.replaceState(null,"",location.pathname+location.search+"#batch-quality");panel.replaceChildren(el("p","加载真实批次审核记录……"));
+  try{
+   const index=await json(path);if(index.schema!=="curated_batch_quality_web_v1")throw Error("审核索引版本不符");panel.replaceChildren(el("h1","完整精选集 · 舞种＋MotionScript 批次抽检"));panel.append(el("p","总范围 "+index.total_sources+" 条，"+index.expected_batches+" 批；更新时间 "+index.updated_utc));panel.append(el("p","独立 8B 模型抽检；默认人工主要复核其确认错误候选，问题多再扩大。AI 确认错误不是人工真值；未抽检单条不标逐条审核通过。"));
+   const toolbar=el("div"),refresh=el("button","刷新批次进度");refresh.onclick=show;const back=el("button","返回模型评审");back.onclick=()=>{hide();document.getElementById("main").style.display="";history.replaceState(null,"",location.pathname+location.search)};toolbar.append(refresh,back);panel.append(toolbar);
+   const list=el("select"),host=el("div");index.batches.forEach(b=>{const o=el("option",b.batch_id+" · 标签="+b.label_status+" · 审核="+b.review_status+" · 错误候选="+(b.error_count??"未审核"));o.value=b.batch_id;list.append(o)});panel.append(list,host);
+   if(!index.batches.length){host.append(el("p","批次仍在生成或审核中，没有将仅运行中的任务冒充已完成批次。"));return}
+   async function draw(){host.querySelectorAll("video,audio").forEach(n=>n.pause());host.replaceChildren();const b=index.batches.find(b=>b.batch_id===list.value);host.append(el("h2",b.batch_id),pre(JSON.stringify(b,null,2)));if(!b.review_queue_ref){host.append(el("p","本批独立审核尚未完成。"));return}const q=await json(b.review_queue_ref.path);const items=q.items||[];host.append(el("p","独立VLM错误候选 "+q.error_count+" 条；此处显示按错误类型选出的 "+items.length+" 条人工代表。"));
+    function drawItem(item,parent){const card=el("article");card.style.cssText="border:1px solid #2b323c;padding:14px;margin:16px 0";card.append(el("h3",item.source_id+" · "+item.status+" · 人工待复核"),pre("Dance style: "+item.new_label.dance_style+"\n"+String(item.new_label.timed_motion_script)));const v=el("video");v.controls=true;v.preload="metadata";v.src=media(item.video_path);v.style.cssText="max-height:450px;max-width:100%";card.append(v);if(item.audio_path){const a=el("audio");a.controls=true;a.preload="none";a.src=media(item.audio_path);card.append(a)}card.append(pre(JSON.stringify(item.errors,null,2)));const gallery=el("div");gallery.style.cssText="display:flex;gap:8px;flex-wrap:wrap";
+     for(const f of [...(item.evidence_frames||[]),...(item.native_hand_rois||[])]){if(!f.path)continue;const fig=el("figure");fig.style.margin="0";const a=el("a");a.href=media(f.path);a.target="_blank";a.rel="noopener";const img=el("img");img.src=media(f.path);img.loading="lazy";img.style.cssText="width:150px;height:180px;object-fit:contain;background:#080b10";img.alt="原帧或原生手部ROI";a.append(img);const time=Number(f.time);fig.append(a,el("figcaption",(f.part||"RGB")+" · 帧"+(f.index??f.frame_index)+" · "+time.toFixed(3)+"s"));if(Number.isFinite(time)){const seek=el("button","定位此帧");seek.onclick=()=>{v.pause();v.currentTime=time};fig.append(seek)}gallery.append(fig)}
+     card.append(gallery,el("p","请在聊天中反馈：正确错误／误报／证据不足。此页面不会修改旧模型评分，也不会自动批准标签。"));parent.append(card)}
+    items.forEach(x=>drawItem(x,host));if(q.optional_uncertain_items?.length){const d=el("details");d.append(el("summary","可选：证据不足样例（"+q.optional_uncertain_items.length+"）"));q.optional_uncertain_items.forEach(x=>drawItem(x,d));host.append(d)}
+   }
+   list.onchange=()=>draw().catch(e=>host.replaceChildren(pre("加载失败："+e.message)));await draw();
+  }catch(e){panel.replaceChildren(pre("批次审核加载失败："+e.message))}
+ }
+ document.getElementById("batchQualityTab").onclick=show;document.getElementById("annotationTab").addEventListener("click",hide);document.querySelectorAll(".tabbtn").forEach(b=>b.addEventListener("click",hide));window.addEventListener("hashchange",()=>{if(location.hash==="#batch-quality")show();else hide()});if(location.hash==="#batch-quality")show();
+})();
+</script>
+<script>
+/* Read-only RAQ evidence view, independent of the watched batch index and scoring. */
+(()=>{
+ const dataPath="/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/raq_scope_v3.json";
+ const panel=document.createElement("section");panel.id="raqScopePanel";panel.hidden=true;panel.style.cssText="padding:20px;max-width:1700px;margin:auto";document.body.append(panel);
+ const tab=document.getElementById("raqScopeTab"),main=document.getElementById("main");
+ const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=String(text);return n};
+ const pre=text=>{const n=el("pre",text);n.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6";return n};
+ const details=(title,text)=>{const n=el("details");n.append(el("summary",title),pre(text));return n};
+ const link=(text,path)=>{const n=el("a",text);n.href=media(path);n.target="_blank";n.rel="noopener";return n};
+ function pause(node){node.querySelectorAll("video,audio").forEach(n=>n.pause())}
+ function hide(){pause(panel);panel.hidden=true;tab.classList.remove("on")}
+ function back(){hide();main.style.display="";history.replaceState(null,"",location.pathname+location.search)}
+ function render(d){
+  panel.replaceChildren(el("h1",d.id+" · RAQ scope 离线修订 v3"));
+  const toolbar=el("div"),refresh=el("button","重新读取本修订"),returnButton=el("button","返回模型评审");refresh.onclick=show;returnButton.onclick=back;toolbar.append(refresh,returnButton);panel.append(toolbar);
+  panel.append(el("p","只改 w00001 [1.580, 3.440) 秒；w00000／w00002 的全文及引用冻结保留。舞种标签未改。此处只有 v3，不重复列出同协议的 v1。"));
+  panel.append(el("p","状态：deterministic_derived_candidate（确定性派生候选）；不是本次模型重写。new_model_calls=0，model_rewrite_performed=false；semantic_approval=false，human_review_completed=false，training_eligible=false，training_entry_updated=false。独立审核仍待完成，本页不保存评分、不批准标签、不改训练数据。"));
+  panel.append(el("p","实际已用证据：14 张 body RGB＋2 张原生手部 ROI，共 16 张。14 张 body 是离散采样，不是完整连续视频；窗口范围不是精确动作起止。原生 RGB 额外导出仅供人审同帧核对，不计为新模型输入。"));
+  const video=el("video");video.controls=true;video.preload="metadata";video.playsInline=true;video.src=media(d.video.path);video.style.cssText="display:block;max-height:560px;max-width:100%;background:#000";
+  const audio=el("audio");audio.controls=true;audio.preload="none";audio.src=media(d.audio.path);
+  panel.append(el("h2","原视频与原配音乐"),video,el("p","音乐单独播放；本页不宣称已验证音画偏移或踩拍。"),audio);
+  function seek(time){const go=()=>{video.pause();video.currentTime=Number(time);video.scrollIntoView({block:"nearest",behavior:"smooth"})};video.readyState?go():video.addEventListener("loadedmetadata",go,{once:true})}
+  const jump=(text,time)=>{const b=el("button",text);b.onclick=()=>seek(time);return b};
+  const captionGrid=el("div");captionGrid.style.cssText="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px";
+  for(const [name,key] of [["旧版完整 caption（原始保存结果）","old_caption"],["新版完整 caption（只拼接目标窗准入原句）","new_caption"]]){
+   const column=el("div");column.style.cssText="background:#1a1f26;border:1px solid #2b323c;padding:14px";column.append(el("h2",name));
+   for(const w of d.windows){const block=el("article");block.style.cssText="border-top:1px solid #2b323c;padding:12px 0";
+    block.append(jump(w.window_id+" ["+Number(w.start).toFixed(3)+", "+Number(w.end).toFixed(3)+") 秒",w.start),el("p",w.unchanged?"冻结：正文与 used_fact_ids／used_boundary_ids 完全不变":"目标窗：由手形弱断言改为有据的双臂运动原句"),pre(w[key]));column.append(block)}captionGrid.append(column)
+  }
+  panel.append(captionGrid);
+  panel.append(details("unknown／internal：手指细节不确定性（不是动作事实，不进入新版正文）",d.internal_unknown_clauses.map(c=>c.raw_source_clause+"\n原因："+c.reason).join("\n\n")+"\n\n原始 uncertainties：\n"+d.internal_uncertainties.join("\n")));
+  panel.append(el("h2","同帧原生 RGB／ROI：帧 36 与 38"),el("p","704×1280 无损 RGB 来自与 ROI 相同的 CPU 解码器；RGB 像素 SHA 和 crop_rgb_sha256 均匹配原 ROI 清单。点击图片打开原尺寸，按钮定位视频。ROI 不增加原生细节；left_hand 是候选侧别，不保证解剖左右。右手细节 unknown，不补造 ROI／手形。"));
+  const pairGrid=el("div");pairGrid.style.cssText="display:flex;gap:16px;flex-wrap:wrap";
+  function image(path,label,width,height){const a=link("",path),img=el("img");img.src=media(path);img.alt=label;img.loading="lazy";img.style.cssText="max-width:100%;object-fit:contain;background:#080b10;width:"+width+"px;height:"+height+"px";a.append(img);return a}
+  for(const rgb of d.native_RGB_frames){const roi=d.hand_rois.find(c=>c.frame_index===rgb.frame_index),card=el("article");card.style.cssText="background:#1a1f26;border:1px solid #2b323c;padding:14px;max-width:480px";
+   card.append(el("h3","同帧 "+rgb.frame_index+" · PTS "+Number(rgb.source_timestamp).toFixed(4)+"s · tick "+rgb.source_pts),jump("定位 "+Number(rgb.time).toFixed(4)+" 秒",rgb.time));
+   const images=el("div");images.style.cssText="display:flex;gap:12px;align-items:center";images.append(image(rgb.path,"原生同帧 RGB",220,400),image(roi.path,"同帧 left_hand 原生 ROI",roi.crop_pixel_size[0],roi.crop_pixel_size[1]));card.append(images);
+   card.append(el("p","RGB 704×1280；ROI "+roi.crop_pixel_size.join("×")+"；原手部支持尺寸 "+roi.original_hand_pixel_size.map(n=>Number(n).toFixed(1)).join("×")+"px；裁剪 xyxy="+roi.crop_xyxy.join(", ")));
+   card.append(details("像素绑定与 SHA（技术核对，不代表语义审核）",JSON.stringify({RGB:rgb,ROI:roi},null,2)));pairGrid.append(card)
+  }
+  panel.append(pairGrid,el("h2","本轮模型实际输入：14 张 body RGB"),el("p","保留清单中的真实图像，不把缩略 body 冒充原生图；额外原生同帧上下文在上方。标注帧序号与实际 PTS，不从文件名猜帧序号。"));
+  const gallery=el("div");gallery.style.cssText="display:flex;gap:10px;flex-wrap:wrap";
+  for(const f of d.body_frames){const fig=el("figure");fig.style.margin="0";fig.append(image(f.path,"模型输入 body RGB 帧 "+f.index,130,236),el("figcaption","帧 "+f.index+" · PTS "+Number(f.source_timestamp).toFixed(4)+"s · "+f.pixel_size.join("×")),jump("定位此帧",f.time));gallery.append(fig)}panel.append(gallery);
+  const refs=el("div");refs.append(el("h2","原始引用与未批准状态"));
+  for(const [name,ref] of [["v3 result",d.result_ref],["旧 result",d.original_result_ref],["14 body＋2 ROI manifest",d.evidence_manifest_ref],["已存在的源模型观察",d.source_generation_ref]]){const row=el("p");row.append(link(name,ref.path),el("span"," · SHA256 "+ref.sha256));refs.append(row)}
+  refs.append(details("完整状态、预算与 scope 审计（只读）",JSON.stringify({result:d.result_status,final:d.final_status,budget:d.budget_audit,admitted_events:d.target_admitted_events,scope:d.scope_filter_audit,support:d.support_filter_audit,source_binding:d.source_binding},null,2)));panel.append(refs)
+ }
+ async function show(){
+  if(typeof pauseAll==="function")pauseAll();pause(panel);
+  for(const id of ["annotationCompare","batchQualityPanel"]){const n=document.getElementById(id);if(n){pause(n);n.hidden=true}}
+  for(const id of ["annotationTab","batchQualityTab"])document.getElementById(id).classList.remove("on");
+  main.style.display="none";panel.hidden=false;tab.classList.add("on");history.replaceState(null,"",location.pathname+location.search+"#raq-scope");panel.replaceChildren(el("p","加载独立 RAQ v3 修订与同帧证据……"));
+  try{const response=await fetch(media(dataPath)+"&v=raq-scope-v3",{cache:"no-store"});if(!response.ok)throw Error("HTTP "+response.status);const d=await response.json();
+   if(d.schema!=="raq_scope_review_bundle_v3"||d.revision!=="raq-scope-offline-20261025-v3")throw Error("修订版本不符");
+   if(!panel.hidden&&location.hash==="#raq-scope")render(d)
+  }catch(e){if(!panel.hidden)panel.replaceChildren(el("p","RAQ 修订加载失败："+e.message))}
+ }
+ tab.onclick=show;
+ for(const button of [document.getElementById("annotationTab"),document.getElementById("batchQualityTab"),...document.querySelectorAll(".tabbtn")])button.addEventListener("click",hide,true);
+ document.addEventListener("keydown",e=>{if(!panel.hidden&&!['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))e.stopImmediatePropagation()},true);
+ window.addEventListener("hashchange",()=>{if(location.hash==="#raq-scope")show();else if(!panel.hidden){hide();if(!["#annotation","#batch-quality"].includes(location.hash))main.style.display=""}});
+ if(location.hash==="#raq-scope")show();
+})();
+</script>
+<script>
+/* Independent salvage-error panel: text-only rendering, no scoring/approval APIs. */
+(()=>{
+ const path="/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/salvage_quality_v1/index.json";
+ const panel=document.createElement("section");panel.id="salvageQualityPanel";panel.hidden=true;panel.style.cssText="padding:20px;max-width:1700px;margin:auto";document.body.append(panel);
+ const tab=document.getElementById("salvageQualityTab"),main=document.getElementById("main");
+ const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=String(text);return n};
+ const pre=text=>{const n=el("pre",text);n.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere";return n};
+ const details=(title,text)=>{const n=el("details");n.append(el("summary",title),pre(text));return n};
+ const link=(text,path)=>{const n=el("a",text);n.href=media(path);n.target="_blank";n.rel="noopener";return n};
+ const pause=node=>node.querySelectorAll("video,audio").forEach(n=>n.pause());
+ function hide(){pause(panel);panel.hidden=true;tab.classList.remove("on")}
+ function back(){hide();main.style.display="";history.replaceState(null,"",location.pathname+location.search)}
+ function drawItem(item,parent){
+  const card=el("article");card.style.cssText="background:#1a1f26;border:1px solid #2b323c;padding:14px;margin:16px 0";
+  card.append(el("h2",item.source_key+" · "+item.status+" · AI候选待人工核对"));
+  card.append(el("p","原批 "+item.original_batch_id+"（"+item.original_batch_source_count+" 条）未通过／未完成整批审核；本次只审核新salvage标签，不复用旧评分。"));
+  const video=el("video");video.controls=true;video.preload="metadata";video.playsInline=true;video.src=media(item.video_path);video.style.cssText="display:block;max-height:520px;max-width:100%;background:#000";card.append(video);
+  if(item.audio_path){const audio=el("audio");audio.controls=true;audio.preload="none";audio.src=media(item.audio_path);card.append(audio)}
+  const captions=el("div");captions.style.cssText="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px";
+  for(const [title,label] of [["旧完整标签（原保存结果）",item.old_label],["当前salvage标签（非GT／未批准）",item.new_label]]){const c=el("div");c.append(el("h3",title),pre("Dance style: "+label.dance_style),pre(label.timed_motion_script||"（原正文为空；不补造旧caption）"));captions.append(c)}card.append(captions);
+  const refs=el("div");for(const [title,ref] of [["当前标签文件",item.current_label_ref],["旧标签文件",item.old_label_ref]]){const row=el("p");row.append(link(title,ref.path),el("span"," · SHA256 "+ref.sha256));refs.append(row)}refs.append(pre("当前语义标签 SHA256 "+item.current_semantic_label_sha256));card.append(refs);
+  card.append(details("本次delta／新增有据事实（不是语义批准）",JSON.stringify(item.review_delta,null,2)));
+  card.append(el("h3","AI错误理由 · "+(item.representative_error_types||[]).join(" / ")),pre(JSON.stringify(item.errors,null,2)));
+  if(item.uncertainties?.length)card.append(details("必要的major uncertain／证据边界",JSON.stringify(item.uncertainties,null,2)));
+  card.append(el("h3","已有原RGB与同帧native ROI"),el("p","只映射已存在的真实证据；离散RGB不是完整视频。slotbodylowres／nativecrop按原证据清单标记；ROI不增加原生细节，不保证解剖左右。没有同帧ROI时不补造。点击图片打开原尺寸；按钮按清单time定位视频，PTS秒来自source_timestamp（不是猜文件名或帧率）。"));
+  const gallery=el("div");gallery.style.cssText="display:flex;gap:12px;flex-wrap:wrap";
+  function seek(time){const go=()=>{video.pause();video.currentTime=time};if(video.readyState)go();else video.addEventListener("loadedmetadata",go,{once:true})}
+  function image(frame,title){const fig=el("figure");fig.style.margin="0";const a=link("",frame.path),im=el("img");im.src=media(frame.path);im.alt=title;im.loading="lazy";im.style.cssText="width:145px;height:250px;object-fit:contain;background:#080b10";a.append(im);fig.append(a,el("figcaption",title));fig.append(details("原始帧／ROI元数据（不替代人审）",JSON.stringify(frame,null,2)));return fig}
+  for(const f of item.evidence_frames||[]){const index=f.index??f.frame_index,pts=Number(f.source_timestamp),time=Number(f.time),group=el("article");group.style.cssText="border:1px solid #2b323c;padding:10px;max-width:680px";
+   group.append(el("h4","原帧 "+index+" · PTS秒 "+(Number.isFinite(pts)?pts.toFixed(4):"未记录")));
+   if(Number.isFinite(time)){const b=el("button","定位此帧 "+time.toFixed(4)+" 秒");b.onclick=()=>seek(time);group.append(b)}
+   const pair=el("div");pair.style.cssText="display:flex;gap:8px;flex-wrap:wrap";pair.append(image(f,"原RGB · 帧"+index));
+   const rois=(item.native_hand_rois||[]).filter(r=>r.frame_index===index);
+   for(const roi of rois)pair.append(image(roi,"同帧native ROI · "+roi.part+" · "+(roi.crop_pixel_size||[]).join("×")+" · PTS tick "+(roi.source_pts??"未记录")));
+   if(!rois.length)pair.append(el("p","原清单无此帧native ROI；不生成截图或猜手形。"));group.append(pair);gallery.append(group)}
+  card.append(gallery,details("证据预算与原slot标记",JSON.stringify(item.evidence_metadata,null,2)),details("transaction／summary／ledger／review_web／receipt SHA核对",JSON.stringify(item.verification_refs,null,2)));
+  card.append(el("p","请在聊天中反馈：真实错误／AI误报／证据不足。本页只读：AI confirmed-error不是GT，无人审批准；完整标签、AI pass或索引校验成功均不会自动批准，也不修改原模型评分。"));parent.append(card)
+ }
+ function render(index){
+  panel.replaceChildren(el("h1","Salvage · 新增AI错误代表复核"));
+  const toolbar=el("div"),refresh=el("button","刷新独立索引"),returnButton=el("button","返回原模型评审");refresh.onclick=show;returnButton.onclick=back;toolbar.append(refresh,returnButton);panel.append(toolbar);
+  panel.append(el("p","范围 "+index.total_sources+" 条／"+index.expected_batches+" 原批；本版 "+index.label_edition+"，索引更新 "+index.updated_utc));
+  const p=index.progress;panel.append(el("p","已处理 "+p.processed_source_count+"；独立AI已审核 "+p.sampled_sources_reviewed+"；AI错误候选 "+p.AI_error_candidate_count+"（已绑定验证 "+index.verified_error_candidate_count+"）；no_new_supported_facts "+p.no_new_supported_facts_count+" 只计数，不推为人工待办。"));
+  panel.append(el("p","仅新增AI confirmed-error每错误类型最多3条代表＋必要major uncertain。不是总体随机错误率；原500条批次未通过，未审核总体仍未声称通过。semantic_approval=false／human_review_completed=false／training_eligible=false；无自动批准、无评分写入。"));
+  panel.append(details("截至版本 asofversion／状态计数（稳定state＋progress快照）",JSON.stringify({asofversion:index.asofversion,status_counts:index.status_counts,representatives:index.representative_counts_by_error_type},null,2)));
+  if(index.deferred_retry_sources?.length)panel.append(details("更新中或绑定未验证：下次重试，未当作已完成／永久坏数据",JSON.stringify(index.deferred_retry_sources,null,2)));
+  if(!index.items.length)panel.append(el("p","当前已提交终态没有可展示的新增错误代表；不会将no_newfacts或运行中样本冒充人工待办。"));
+  for(const item of index.items)drawItem(item,panel);
+  if(index.optional_major_uncertain_items?.length){const d=el("details");d.append(el("summary","必要major uncertain（"+index.optional_major_uncertain_items.length+"）"));for(const item of index.optional_major_uncertain_items)drawItem(item,d);panel.append(d)}
+ }
+ async function show(){
+  if(typeof pauseAll==="function")pauseAll();pause(panel);
+  for(const id of ["annotationCompare","batchQualityPanel","raqScopePanel"]){const n=document.getElementById(id);if(n){pause(n);n.hidden=true}}
+  for(const id of ["annotationTab","batchQualityTab","raqScopeTab"])document.getElementById(id).classList.remove("on");
+  main.style.display="none";panel.hidden=false;tab.classList.add("on");history.replaceState(null,"",location.pathname+location.search+"#salvage-quality");panel.replaceChildren(el("p","读取已提交salvage审核与真实媒体……"));
+  try{const r=await fetch(media(path),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const index=await r.json();if(index.schema!=="curated_salvage_error_quality_web_v1"||index.label_edition!=="clause-salvage-20261025-v1")throw Error("索引版本不符");
+   if(!panel.hidden&&location.hash==="#salvage-quality")render(index)
+  }catch(e){if(!panel.hidden)panel.replaceChildren(el("p","独立salvage索引加载失败："+e.message))}
+ }
+ tab.onclick=show;
+ for(const b of [document.getElementById("annotationTab"),document.getElementById("batchQualityTab"),document.getElementById("raqScopeTab"),...document.querySelectorAll(".tabbtn")])b.addEventListener("click",hide,true);
+ document.addEventListener("keydown",e=>{if(!panel.hidden&&!['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))e.stopImmediatePropagation()},true);
+ window.addEventListener("hashchange",()=>{if(location.hash==="#salvage-quality")show();else if(!panel.hidden){hide();if(!["#annotation","#batch-quality","#raq-scope"].includes(location.hash))main.style.display=""}});
+ if(location.hash==="#salvage-quality")show();
 })();
 </script>
 </body>

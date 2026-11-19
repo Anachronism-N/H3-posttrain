@@ -1,0 +1,1331 @@
+{
+  "schema": "motionscript-live-io-observation-v1",
+  "scope": "read-only existing processes, 60 samples at roughly1s intervals per worker; GPU snapshots at10s intervals",
+  "no_model_runs_started": true,
+  "no_existing_processes_signaled_or_modified": true,
+  "nodes": [
+    {
+      "node": "N1",
+      "exitCode": 0,
+      "payload": {
+        "utc": "2026-10-25T16:55:56Z",
+        "sample_duration_seconds": 60.85,
+        "available_profilers": {
+          "strace": false,
+          "iostat": false,
+          "pidstat": false,
+          "findmnt": true
+        },
+        "workers": [
+          {
+            "pid": 2971667,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_image_cache_v1.py",
+            "argv": [
+              "/opt/venv_vllm/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_image_cache_v1.py",
+              "consumer",
+              "--ms-source",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_consumer_v1",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+              "--model",
+              "/opt/models/Qwen3-VL-32B-Instruct",
+              "--model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/32b_replica_stage_receipts/source_reference_v1.json",
+              "--tp",
+              "2",
+              "--shard",
+              "2",
+              "--nshard",
+              "4",
+              "--limit",
+              "0",
+              "--stage",
+              "run",
+              "--watch",
+              "--style-reuse",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s0.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s1.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s2.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s3.jsonl"
+            ],
+            "start_ticks": 537422791,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:request_wait_answer": 19,
+              "D:generic_file_buffered_read": 5,
+              "S:poll_schedule_timeout.constprop.16": 3,
+              "S:futex_wait_queue_me": 33
+            },
+            "syscall_counts": {
+              "0": 5,
+              "7": 3,
+              "73": 1,
+              "74": 5,
+              "82": 5,
+              "83": 1,
+              "86": 1,
+              "202": 33,
+              "257": 4,
+              "262": 2
+            },
+            "blocked_fd_targets": {
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/hdUczstEZClMmsru/roi_manifest.json": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/hdUczstEZClMmsru.mp4": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/hdUczstEZClMmsru/raw_wholebody134.npz": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/hdUczstEZClMmsru/crops/f000018_left_hand.jpg": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/hdUczstEZClMmsru/crops/f000040_left_hand.jpg": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 67,
+            "delta_io": {
+              "rchar": 15214703,
+              "wchar": 2700352,
+              "syscr": 2074,
+              "syscw": 1450,
+              "read_bytes": 2011136,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 3157108,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_v1.py",
+            "argv": [
+              "/opt/venv_vllm/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_v1.py",
+              "consumer",
+              "--ms-source",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_consumer_v1",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+              "--model",
+              "/opt/models/Qwen3-VL-32B-Instruct",
+              "--model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/32b_replica_stage_receipts/source_reference_v1.json",
+              "--tp",
+              "2",
+              "--shard",
+              "3",
+              "--nshard",
+              "4",
+              "--limit",
+              "0",
+              "--stage",
+              "run",
+              "--watch",
+              "--style-reuse",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s0.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s1.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s2.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s3.jsonl"
+            ],
+            "start_ticks": 537693796,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:futex_wait_queue_me": 50,
+              "S:request_wait_answer": 10
+            },
+            "syscall_counts": {
+              "73": 2,
+              "74": 5,
+              "82": 1,
+              "202": 50,
+              "257": 2
+            },
+            "blocked_fd_targets": {},
+            "same_identity": true,
+            "delta_cpu_ticks": 66,
+            "delta_io": {
+              "rchar": 13944922,
+              "wchar": 1474074,
+              "syscr": 2213,
+              "syscw": 2023,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 10747,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/coarse3_review_server_wrapper_v1.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/coarse3_review_server_wrapper_v1.py",
+              "--host",
+              "0.0.0.0",
+              "--port",
+              "8775",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/review_web/manifest_h3_ms_style_gt_eval3_v1.json"
+            ],
+            "start_ticks": 540151392,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:poll_schedule_timeout.constprop.16": 60
+            },
+            "syscall_counts": {
+              "7": 60
+            },
+            "blocked_fd_targets": {},
+            "same_identity": true,
+            "delta_cpu_ticks": 0,
+            "delta_io": {
+              "rchar": 0,
+              "wchar": 0,
+              "syscr": 0,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 2970990,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_cache_resource_manager_v1.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_cache_resource_manager_v1.py",
+              "--config",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_cache_s2_fresh_main_v1.json",
+              "--config-sha",
+              "3d22a5437b1e4167adadbe399391f1453a662e03068e6dac5f9e001e2b4dada3",
+              "--manager-sha",
+              "6bd8a6c51d2b8423f481daae13222afa0724248c9bac5d1b9661ef8aba7727c6"
+            ],
+            "start_ticks": 537421895,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:hrtimer_nanosleep": 56,
+              "S:pipe_wait": 4
+            },
+            "syscall_counts": {
+              "0": 4,
+              "230": 56
+            },
+            "blocked_fd_targets": {
+              "pipe:[3161572463]": 1,
+              "pipe:[3161518769]": 1,
+              "pipe:[3161540266]": 1,
+              "pipe:[3161625616]": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 3,
+            "delta_io": {
+              "rchar": 1985132,
+              "wchar": 3524,
+              "syscr": 2604,
+              "syscw": 132,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 3156567,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_resource_manager_v1.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_resource_manager_v1.py",
+              "--config",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_cache_s3_prepare_ahead_main_v1.json",
+              "--config-sha",
+              "3677d1066abdd56fb3f207b75aebc821f4fb851a69dca3ee3d60e7409a867163",
+              "--manager-sha",
+              "6bd8a6c51d2b8423f481daae13222afa0724248c9bac5d1b9661ef8aba7727c6"
+            ],
+            "start_ticks": 537692909,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:hrtimer_nanosleep": 57,
+              "S:pipe_wait": 3
+            },
+            "syscall_counts": {
+              "0": 3,
+              "230": 57
+            },
+            "blocked_fd_targets": {
+              "pipe:[3161446125]": 1,
+              "pipe:[3161592081]": 1,
+              "pipe:[3161592088]": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 3,
+            "delta_io": {
+              "rchar": 1985148,
+              "wchar": 3548,
+              "syscr": 2609,
+              "syscw": 132,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 3181463,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_v1.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_v1.py",
+              "--cpu-helper",
+              "02d792a4bf9aa7977dcbbc783fedcd95f4a06a0b85c223b6c34a5e898d4a1d49"
+            ],
+            "start_ticks": 537728780,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:pipe_wait": 60
+            },
+            "syscall_counts": {
+              "0": 60
+            },
+            "blocked_fd_targets": {
+              "pipe:[3110025832]": 60
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 0,
+            "delta_io": {
+              "rchar": 0,
+              "wchar": 0,
+              "syscr": 0,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          }
+        ],
+        "GPU_samples": [
+          {
+            "elapsed": 0.12,
+            "csv": "0, 100, 74913\n1, 100, 74913\n2, 100, 74545\n3, 100, 74545\n4, 100, 975\n5, 100, 975\n6, 100, 975\n7, 100, 975"
+          },
+          {
+            "elapsed": 10.28,
+            "csv": "0, 0, 74913\n1, 0, 74913\n2, 100, 74545\n3, 100, 74545\n4, 100, 975\n5, 100, 975\n6, 100, 975\n7, 100, 975"
+          },
+          {
+            "elapsed": 20.4,
+            "csv": "0, 0, 74913\n1, 0, 74913\n2, 100, 74545\n3, 100, 74545\n4, 100, 975\n5, 100, 975\n6, 100, 975\n7, 100, 975"
+          },
+          {
+            "elapsed": 30.59,
+            "csv": "0, 100, 74913\n1, 100, 74913\n2, 100, 74545\n3, 100, 74545\n4, 100, 975\n5, 100, 975\n6, 100, 975\n7, 100, 975"
+          },
+          {
+            "elapsed": 40.69,
+            "csv": "0, 0, 74913\n1, 0, 74913\n2, 100, 74545\n3, 100, 74545\n4, 100, 975\n5, 100, 975\n6, 100, 975\n7, 100, 975"
+          },
+          {
+            "elapsed": 50.85,
+            "csv": "0, 100, 74913\n1, 100, 74913\n2, 100, 74545\n3, 100, 74545\n4, 100, 975\n5, 100, 975\n6, 100, 975\n7, 100, 975"
+          }
+        ]
+      }
+    },
+    {
+      "node": "N8",
+      "exitCode": 0,
+      "payload": {
+        "utc": "2026-10-25T16:55:56Z",
+        "sample_duration_seconds": 60.83,
+        "available_profilers": {
+          "strace": false,
+          "iostat": false,
+          "pidstat": false,
+          "findmnt": true
+        },
+        "workers": [
+          {
+            "pid": 1949023,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+              "producer",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+              "--repo",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/repo",
+              "--shard",
+              "3",
+              "--nshard",
+              "4",
+              "--limit",
+              "0",
+              "--stage",
+              "run",
+              "--device",
+              "0",
+              "--roi-model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_roi_local_n8_v1.json",
+              "--beat-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-audio-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-device",
+              "cuda",
+              "--ffmpeg",
+              "/usr/local/bin/ffmpeg",
+              "--ffprobe",
+              "/opt/ms_tools/ffprobe"
+            ],
+            "start_ticks": 532793002,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:request_wait_answer": 37,
+              "D:generic_file_buffered_read": 3,
+              "S:poll_schedule_timeout.constprop.16": 18,
+              "R:0": 1,
+              "R:request_wait_answer": 1
+            },
+            "syscall_counts": {
+              "0": 3,
+              "1": 1,
+              "7": 18,
+              "73": 2,
+              "74": 4,
+              "86": 10,
+              "87": 1,
+              "257": 13,
+              "262": 7,
+              "running": 1
+            },
+            "blocked_fd_targets": {
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/jeDIlffJILOvascs.mp4": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/vZgmAySlWwFaAVVb.mp4": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/gsgdvKhNmpUvJsyp.mp4": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 356,
+            "delta_io": {
+              "rchar": 24572491,
+              "wchar": 640168,
+              "syscr": 1675,
+              "syscw": 608,
+              "read_bytes": 4517888,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 1949024,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+              "producer",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+              "--repo",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/repo",
+              "--shard",
+              "2",
+              "--nshard",
+              "4",
+              "--limit",
+              "0",
+              "--stage",
+              "run",
+              "--device",
+              "0",
+              "--roi-model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_roi_local_n8_v1.json",
+              "--beat-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-audio-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-device",
+              "cuda",
+              "--ffmpeg",
+              "/usr/local/bin/ffmpeg",
+              "--ffprobe",
+              "/opt/ms_tools/ffprobe"
+            ],
+            "start_ticks": 532793006,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:request_wait_answer": 38,
+              "D:generic_file_buffered_read": 3,
+              "S:poll_schedule_timeout.constprop.16": 19
+            },
+            "syscall_counts": {
+              "0": 3,
+              "7": 19,
+              "73": 1,
+              "74": 5,
+              "83": 1,
+              "86": 12,
+              "87": 2,
+              "257": 11,
+              "262": 6
+            },
+            "blocked_fd_targets": {
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/YtYguNjXpyFtblcw.mp4": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/zQNQSmIoXpruuTjp.mp4": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/zQNQSmIoXpruuTjp.wav": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 312,
+            "delta_io": {
+              "rchar": 19145859,
+              "wchar": 709809,
+              "syscr": 1352,
+              "syscw": 505,
+              "read_bytes": 3010560,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 1949025,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+              "producer",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+              "--repo",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/repo",
+              "--shard",
+              "1",
+              "--nshard",
+              "4",
+              "--limit",
+              "0",
+              "--stage",
+              "run",
+              "--device",
+              "0",
+              "--roi-model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_roi_local_n8_v1.json",
+              "--beat-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-audio-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-device",
+              "cuda",
+              "--ffmpeg",
+              "/usr/local/bin/ffmpeg",
+              "--ffprobe",
+              "/opt/ms_tools/ffprobe"
+            ],
+            "start_ticks": 532793010,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:request_wait_answer": 37,
+              "D:generic_file_buffered_read": 3,
+              "S:poll_schedule_timeout.constprop.16": 20
+            },
+            "syscall_counts": {
+              "0": 3,
+              "7": 20,
+              "73": 1,
+              "74": 2,
+              "86": 11,
+              "87": 2,
+              "257": 14,
+              "262": 7
+            },
+            "blocked_fd_targets": {
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/cCFCZuhTRIVOYaoj.wav": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/iszGRxFKhQjjVlie.mp4": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/iszGRxFKhQjjVlie.wav": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 363,
+            "delta_io": {
+              "rchar": 19114413,
+              "wchar": 563158,
+              "syscr": 1376,
+              "syscw": 524,
+              "read_bytes": 3047424,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 1949026,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/curated_pipeline.py",
+              "producer",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+              "--repo",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/repo",
+              "--shard",
+              "0",
+              "--nshard",
+              "4",
+              "--limit",
+              "0",
+              "--stage",
+              "run",
+              "--device",
+              "0",
+              "--roi-model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_roi_local_n8_v1.json",
+              "--beat-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-audio-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-device",
+              "cuda",
+              "--ffmpeg",
+              "/usr/local/bin/ffmpeg",
+              "--ffprobe",
+              "/opt/ms_tools/ffprobe"
+            ],
+            "start_ticks": 532793013,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:request_wait_answer": 49,
+              "D:generic_file_buffered_read": 2,
+              "S:poll_schedule_timeout.constprop.16": 9
+            },
+            "syscall_counts": {
+              "0": 2,
+              "7": 9,
+              "74": 3,
+              "83": 1,
+              "86": 10,
+              "87": 4,
+              "217": 1,
+              "257": 25,
+              "262": 5
+            },
+            "blocked_fd_targets": {
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/xLFzwFVwhpyTYlrv.mp4": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/xLFzwFVwhpyTYlrv.wav": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 249,
+            "delta_io": {
+              "rchar": 11448348,
+              "wchar": 722019,
+              "syscr": 1128,
+              "syscw": 339,
+              "read_bytes": 1519616,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 1951744,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_consumer_v1/curated_pipeline.py",
+            "argv": [
+              "/opt/venv_vllm/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_consumer_v1/curated_pipeline.py",
+              "consumer",
+              "--ms-source",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_consumer_v1",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+              "--model",
+              "/opt/models/Qwen3-VL-32B-Instruct",
+              "--model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/32b_replica_stage_receipts/source_reference_v1.json",
+              "--tp",
+              "2",
+              "--shard",
+              "1",
+              "--nshard",
+              "4",
+              "--limit",
+              "0",
+              "--stage",
+              "run",
+              "--watch",
+              "--style-reuse",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s0.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s1.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s2.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s3.jsonl"
+            ],
+            "start_ticks": 532841304,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:request_wait_answer": 13,
+              "D:generic_file_buffered_read": 9,
+              "S:poll_schedule_timeout.constprop.16": 3,
+              "S:futex_wait_queue_me": 35
+            },
+            "syscall_counts": {
+              "0": 9,
+              "7": 3,
+              "73": 1,
+              "74": 1,
+              "82": 3,
+              "83": 1,
+              "202": 35,
+              "217": 1,
+              "257": 6
+            },
+            "blocked_fd_targets": {
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/ExqwLQZElxtDPiLK/source_manifest.json": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/ExqwLQZElxtDPiLK/crops/f000000_left_hand.jpg": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/ExqwLQZElxtDPiLK/crops/f000012_left_hand.jpg": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/ExqwLQZElxtDPiLK/crops/f000018_right_hand.jpg": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/ExqwLQZElxtDPiLK/crops/f000022_left_hand.jpg": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/ExqwLQZElxtDPiLK/crops/f000030_left_hand.jpg": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/ExqwLQZElxtDPiLK/crops/f000046_right_hand.jpg": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/ExqwLQZElxtDPiLK/crops/f000054_left_hand.jpg": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/ExqwLQZElxtDPiLK/crops/f000080_left_hand.jpg": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 84,
+            "delta_io": {
+              "rchar": 15267217,
+              "wchar": 5979918,
+              "syscr": 2374,
+              "syscw": 1555,
+              "read_bytes": 458752,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 2361616,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_v1.py",
+            "argv": [
+              "/opt/venv_vllm/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_v1.py",
+              "consumer",
+              "--ms-source",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_consumer_v1",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1",
+              "--model",
+              "/opt/models/Qwen3-VL-32B-Instruct",
+              "--model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/32b_replica_stage_receipts/source_reference_v1.json",
+              "--tp",
+              "2",
+              "--shard",
+              "0",
+              "--nshard",
+              "4",
+              "--limit",
+              "0",
+              "--stage",
+              "run",
+              "--watch",
+              "--style-reuse",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s0.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s1.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s2.jsonl",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/vlm/labels_s3.jsonl"
+            ],
+            "start_ticks": 538047604,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:request_wait_answer": 21,
+              "D:generic_file_buffered_read": 1,
+              "S:futex_wait_queue_me": 38
+            },
+            "syscall_counts": {
+              "0": 1,
+              "74": 3,
+              "82": 4,
+              "86": 1,
+              "202": 38,
+              "257": 10,
+              "262": 3
+            },
+            "blocked_fd_targets": {
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/ready.jsonl": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 86,
+            "delta_io": {
+              "rchar": 18698782,
+              "wchar": 2940830,
+              "syscr": 2165,
+              "syscw": 1576,
+              "read_bytes": 4612096,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 1951678,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_resource_manager.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_resource_manager.py",
+              "--config",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_s1_v1_launch.json",
+              "--config-sha",
+              "a1f6babf4c9a2e6b87935db1d71da153ab07339186368c519a58c0053776f637",
+              "--manager-sha",
+              "6bd8a6c51d2b8423f481daae13222afa0724248c9bac5d1b9661ef8aba7727c6"
+            ],
+            "start_ticks": 532840805,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:hrtimer_nanosleep": 58,
+              "S:pipe_wait": 2
+            },
+            "syscall_counts": {
+              "0": 2,
+              "230": 57,
+              "running": 1
+            },
+            "blocked_fd_targets": {
+              "pipe:[3442711143]": 1,
+              "pipe:[3443166895]": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 4,
+            "delta_io": {
+              "rchar": 1819804,
+              "wchar": 3227,
+              "syscr": 2385,
+              "syscw": 121,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 2361185,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_n8s0_resource_v1.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_n8s0_resource_v1.py",
+              "--self-sha",
+              "2a2a7127d3f73e18f2836f6cdef68972b45d3a6616507d2592845cd0fc1d5d49",
+              "--ahead-sha",
+              "02d792a4bf9aa7977dcbbc783fedcd95f4a06a0b85c223b6c34a5e898d4a1d49",
+              "--config",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_n8s0_v1_launch_main_v1.json",
+              "--config-sha",
+              "5042c5049a865dbacda30dfd314fec058038786ba338461ed3ae7dd8c67c185e",
+              "--manager-sha",
+              "6bd8a6c51d2b8423f481daae13222afa0724248c9bac5d1b9661ef8aba7727c6"
+            ],
+            "start_ticks": 538042282,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:pipe_wait": 3,
+              "S:hrtimer_nanosleep": 57
+            },
+            "syscall_counts": {
+              "0": 3,
+              "230": 57
+            },
+            "blocked_fd_targets": {
+              "pipe:[3443089956]": 1,
+              "pipe:[3443104153]": 1,
+              "pipe:[3443166893]": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 2,
+            "delta_io": {
+              "rchar": 1901786,
+              "wchar": 3492,
+              "syscr": 2497,
+              "syscw": 127,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 2363579,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_v1.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_consumer_prepare_ahead_v1.py",
+              "--cpu-helper",
+              "02d792a4bf9aa7977dcbbc783fedcd95f4a06a0b85c223b6c34a5e898d4a1d49"
+            ],
+            "start_ticks": 538072660,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:pipe_wait": 52,
+              "S:request_wait_answer": 5,
+              "D:generic_file_buffered_read": 1,
+              "S:poll_schedule_timeout.constprop.16": 2
+            },
+            "syscall_counts": {
+              "0": 53,
+              "7": 2,
+              "74": 1,
+              "83": 1,
+              "257": 3
+            },
+            "blocked_fd_targets": {
+              "pipe:[3404283391]": 52,
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_production_v1/roi/gALCZguTPYcBQGsv/crops/f000002_left_hand.jpg": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 6,
+            "delta_io": {
+              "rchar": 5712599,
+              "wchar": 576509,
+              "syscr": 463,
+              "syscw": 129,
+              "read_bytes": 233472,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          }
+        ],
+        "GPU_samples": [
+          {
+            "elapsed": 0.15,
+            "csv": "0, 6, 1381\n1, 8, 1383\n2, 4, 1381\n3, 0, 1381\n4, 0, 75735\n5, 0, 75735\n6, 0, 75465\n7, 0, 75465"
+          },
+          {
+            "elapsed": 10.25,
+            "csv": "0, 0, 1381\n1, 0, 1383\n2, 0, 1381\n3, 0, 1381\n4, 0, 75735\n5, 0, 75735\n6, 0, 75465\n7, 0, 75465"
+          },
+          {
+            "elapsed": 20.35,
+            "csv": "0, 0, 1381\n1, 0, 1383\n2, 0, 1381\n3, 12, 1381\n4, 100, 75735\n5, 100, 75735\n6, 0, 75465\n7, 0, 75465"
+          },
+          {
+            "elapsed": 30.49,
+            "csv": "0, 0, 1381\n1, 0, 1383\n2, 0, 1381\n3, 0, 1381\n4, 100, 75735\n5, 100, 75735\n6, 100, 75465\n7, 100, 75465"
+          },
+          {
+            "elapsed": 40.63,
+            "csv": "0, 0, 1381\n1, 0, 1383\n2, 0, 1381\n3, 0, 1381\n4, 100, 75735\n5, 100, 75735\n6, 49, 75465\n7, 22, 75465"
+          },
+          {
+            "elapsed": 50.82,
+            "csv": "0, 0, 1381\n1, 0, 1383\n2, 0, 1381\n3, 0, 1381\n4, 100, 75735\n5, 100, 75735\n6, 100, 75465\n7, 100, 75465"
+          }
+        ]
+      }
+    },
+    {
+      "node": "N5",
+      "exitCode": 0,
+      "payload": {
+        "utc": "2026-10-25T16:55:56Z",
+        "sample_duration_seconds": 60.65,
+        "available_profilers": {
+          "strace": false,
+          "iostat": false,
+          "pidstat": false,
+          "findmnt": true
+        },
+        "workers": [
+          {
+            "pid": 975313,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_producer_io_v3.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_producer_io_v3.py",
+              "producer",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v2",
+              "--repo",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_producer_v1/repo",
+              "--shard",
+              "1",
+              "--nshard",
+              "2",
+              "--limit",
+              "0",
+              "--stage",
+              "run",
+              "--device",
+              "0",
+              "--roi-model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_roi_local_n5_v1.json",
+              "--beat-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-audio-sitepath",
+              "/opt/curated_music_dependencies_v1",
+              "--beat-device",
+              "cuda",
+              "--ffmpeg",
+              "/usr/local/bin/ffmpeg",
+              "--ffprobe",
+              "/opt/ms_tools/ffprobe",
+              "--ordinal-start",
+              "21000",
+              "--ordinal-end",
+              "31000",
+              "--local-work-root",
+              "/tmp"
+            ],
+            "start_ticks": 537374861,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:request_wait_answer": 38,
+              "D:generic_file_buffered_read": 3,
+              "S:poll_schedule_timeout.constprop.16": 17,
+              "R:0": 2
+            },
+            "syscall_counts": {
+              "0": 3,
+              "7": 17,
+              "8": 1,
+              "74": 6,
+              "86": 10,
+              "87": 4,
+              "257": 14,
+              "262": 3,
+              "running": 2
+            },
+            "blocked_fd_targets": {
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/AigqOFKeUOZoHePg.mp4": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/videos/lpEBlqxDfHDQKkGh.mp4": 1,
+              "/apdcephfs_gy4/share_302533218/cedricnie/OmniDance_processed/pose_preprocess_outputs/mainline/normalized_704x1280/main/audio/hLwnMcjECGPWjbvq.wav": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 475,
+            "delta_io": {
+              "rchar": 37446382,
+              "wchar": 1483781,
+              "syscr": 3557,
+              "syscw": 878,
+              "read_bytes": 4509696,
+              "write_bytes": 1019904,
+              "cancelled_write_bytes": 0
+            }
+          }
+        ],
+        "GPU_samples": [
+          {
+            "elapsed": 0.1,
+            "csv": "0, 100, 975\n1, 0, 1383\n2, 100, 975\n3, 100, 975\n4, 100, 975\n5, 100, 975\n6, 0, 1111\n7, 0, 0"
+          },
+          {
+            "elapsed": 10.18,
+            "csv": "0, 100, 975\n1, 0, 1383\n2, 100, 975\n3, 100, 975\n4, 100, 975\n5, 100, 975\n6, 0, 1111\n7, 0, 0"
+          },
+          {
+            "elapsed": 20.28,
+            "csv": "0, 100, 975\n1, 0, 1383\n2, 100, 975\n3, 100, 975\n4, 100, 975\n5, 100, 975\n6, 0, 1111\n7, 0, 0"
+          },
+          {
+            "elapsed": 30.38,
+            "csv": "0, 100, 975\n1, 49, 1383\n2, 100, 975\n3, 100, 975\n4, 100, 975\n5, 100, 975\n6, 0, 1111\n7, 0, 0"
+          },
+          {
+            "elapsed": 40.48,
+            "csv": "0, 100, 975\n1, 0, 1383\n2, 100, 975\n3, 100, 975\n4, 100, 975\n5, 100, 975\n6, 0, 1111\n7, 0, 0"
+          },
+          {
+            "elapsed": 50.65,
+            "csv": "0, 100, 975\n1, 0, 1383\n2, 100, 975\n3, 100, 975\n4, 100, 975\n5, 100, 975\n6, 0, 1111\n7, 0, 0"
+          }
+        ]
+      }
+    },
+    {
+      "node": "N6",
+      "exitCode": 0,
+      "payload": {
+        "utc": "2026-10-25T16:55:56Z",
+        "sample_duration_seconds": 60.68,
+        "available_profilers": {
+          "strace": false,
+          "iostat": false,
+          "pidstat": false,
+          "findmnt": true
+        },
+        "workers": [
+          {
+            "pid": 661618,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_review_extension_watch_v1.py",
+            "argv": [
+              "/opt/venv_vllm/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_review_extension_watch_v1.py",
+              "--manifest",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_inputs_v1/manifest.summary.json",
+              "--collaborative-root",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v1",
+              "--repair-root",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_repair_v1",
+              "--extra-visual-root",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_review_extra_visual_v1",
+              "--out",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated_independent_reviews_extension_v1",
+              "--model",
+              "/opt/models/Qwen3-VL-8B-Instruct-review-extension-v2",
+              "--model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/reviewer8b_stage_N6_extension_v2.json",
+              "--ms-source",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/source_curated_review_v2",
+              "--annotator-model-reference",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/32b_replica_stage_receipts/source_reference_v1.json",
+              "--global-revision",
+              "repair-20261025-v1",
+              "--poll-seconds",
+              "60",
+              "--watch"
+            ],
+            "start_ticks": 533351976,
+            "initial_state": "S",
+            "priority": 0,
+            "sample_counts": {
+              "S:hrtimer_nanosleep": 21,
+              "D:generic_file_buffered_read": 1,
+              "S:request_wait_answer": 17,
+              "R:0": 12,
+              "R:request_wait_answer": 1,
+              "S:poll_schedule_timeout.constprop.16": 7,
+              "S:0": 1
+            },
+            "syscall_counts": {
+              "0": 1,
+              "1": 1,
+              "7": 7,
+              "73": 2,
+              "230": 21,
+              "257": 1,
+              "262": 15,
+              "running": 12
+            },
+            "blocked_fd_targets": {
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/curated222939_collaborative_v1/sources/train/rPlKnFjobkipNLNo/joint-results/7cea11a0d41f0b579f3c7d3c162611efc9fe90f849f475c2b701d2ef9b9fa963.json": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 1177,
+            "delta_io": {
+              "rchar": 7786558392,
+              "wchar": 11088737,
+              "syscr": 20054,
+              "syscw": 2823,
+              "read_bytes": 24576,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 661582,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_review_extension_resource_manager_v1.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_review_extension_resource_manager_v1.py",
+              "--config",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/curated_review_extension_n6g2_launch_v2.json",
+              "--config-sha",
+              "64ac5503c06f7bbff2f61a40effab807a8ed9c3d1481961b722c45d53def0cf1",
+              "--manager-sha",
+              "6bd8a6c51d2b8423f481daae13222afa0724248c9bac5d1b9661ef8aba7727c6"
+            ],
+            "start_ticks": 533351476,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:hrtimer_nanosleep": 58,
+              "S:pipe_wait": 2
+            },
+            "syscall_counts": {
+              "0": 2,
+              "230": 58
+            },
+            "blocked_fd_targets": {
+              "pipe:[325666211]": 1,
+              "pipe:[325696778]": 1
+            },
+            "same_identity": true,
+            "delta_cpu_ticks": 2,
+            "delta_io": {
+              "rchar": 917919,
+              "wchar": 2321,
+              "syscr": 1228,
+              "syscw": 66,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 1136528,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/coarse3_zero_dispatch_resume_resource_v1.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/coarse3_zero_dispatch_resume_resource_v1.py",
+              "--config",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/coarse3_n6_launch_zero_dispatch_resume_main_v1.json",
+              "--config-sha",
+              "8d07eb22484fdf70e183bb1466a6c65b01fa6248a7ddabea8765523601a97438",
+              "--manager-sha",
+              "6bd8a6c51d2b8423f481daae13222afa0724248c9bac5d1b9661ef8aba7727c6"
+            ],
+            "start_ticks": 538841645,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:do_wait": 60
+            },
+            "syscall_counts": {
+              "61": 60
+            },
+            "blocked_fd_targets": {},
+            "same_identity": true,
+            "delta_cpu_ticks": 0,
+            "delta_io": {
+              "rchar": 0,
+              "wchar": 0,
+              "syscr": 0,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          },
+          {
+            "pid": 1243718,
+            "script": "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/prepare_salvage_current_resource_restore_v2.py",
+            "argv": [
+              "/opt/venv_eval/bin/python",
+              "-B",
+              "-u",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/prepare_salvage_current_resource_restore_v2.py",
+              "--config",
+              "/apdcephfs_gy4/share_302533218/cedricnie/diff/logs_omnidance/exp/MS/bar_annotation_optimized_20261024_v1/runtime/salvage_current_resource_restore_main_v2.json",
+              "--config-sha",
+              "9cbe368cee9bba303a81a03978c5970a9eeb6149e37fe8c0f827f86d6508a969",
+              "--manager-sha",
+              "6bd8a6c51d2b8423f481daae13222afa0724248c9bac5d1b9661ef8aba7727c6",
+              "--execution-sha",
+              "df177b4fbd1297a77d164a53174276457da37a8f053d94e8af3c62d651e82f04",
+              "--tests-sha",
+              "779b3fe5354fb55851240c976e887e2b991d82f77b20e3343c54e55d4c401c37"
+            ],
+            "start_ticks": 540116329,
+            "initial_state": "S",
+            "priority": 1,
+            "sample_counts": {
+              "S:0": 7,
+              "S:request_wait_answer": 47,
+              "R:request_wait_answer": 4,
+              "R:0": 2
+            },
+            "syscall_counts": {
+              "262": 54,
+              "running": 6
+            },
+            "blocked_fd_targets": {},
+            "same_identity": true,
+            "delta_cpu_ticks": 689,
+            "delta_io": {
+              "rchar": 75497362,
+              "wchar": 0,
+              "syscr": 2492,
+              "syscw": 0,
+              "read_bytes": 0,
+              "write_bytes": 0,
+              "cancelled_write_bytes": 0
+            }
+          }
+        ],
+        "GPU_samples": [
+          {
+            "elapsed": 0.09,
+            "csv": "0, 100, 975\n1, 100, 975\n2, 0, 61299\n3, 100, 975\n4, 0, 74359\n5, 0, 74359\n6, 100, 76027\n7, 100, 76027"
+          },
+          {
+            "elapsed": 10.19,
+            "csv": "0, 100, 975\n1, 100, 975\n2, 0, 61299\n3, 100, 975\n4, 0, 74359\n5, 0, 74359\n6, 100, 76027\n7, 100, 76027"
+          },
+          {
+            "elapsed": 20.28,
+            "csv": "0, 100, 975\n1, 100, 975\n2, 0, 61299\n3, 100, 975\n4, 100, 74359\n5, 100, 74359\n6, 0, 76027\n7, 0, 76027"
+          },
+          {
+            "elapsed": 30.4,
+            "csv": "0, 100, 975\n1, 100, 975\n2, 0, 61299\n3, 100, 975\n4, 100, 74359\n5, 100, 74359\n6, 0, 76027\n7, 0, 76027"
+          },
+          {
+            "elapsed": 40.5,
+            "csv": "0, 100, 975\n1, 100, 975\n2, 0, 61299\n3, 100, 975\n4, 100, 74359\n5, 100, 74359\n6, 100, 76027\n7, 100, 76027"
+          },
+          {
+            "elapsed": 50.68,
+            "csv": "0, 100, 975\n1, 100, 975\n2, 0, 61299\n3, 100, 975\n4, 100, 74359\n5, 100, 74359\n6, 100, 76027\n7, 100, 76027"
+          }
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "samples are snapshots, not exact per-source wall-clock attribution",
+    "parent futex/poll can correspond to model or subprocess work; not all sleep is IO",
+    "kernel read_bytes for FUSE does not measure remote Ceph server bandwidth",
+    "source hashes and records are not new semantic/quality acceptance"
+  ]
+}

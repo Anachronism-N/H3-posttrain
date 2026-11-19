@@ -266,7 +266,7 @@ def _fallback_unit(state):
  motif_ids=next(s['motif_ids'] for s in state.outline['sections'] if s['section_id']==unit['section_id'])
  events=[]
  for i,frame in enumerate(schedule):
-  candidate=candidates[i%len(candidates)]
+  candidate=candidates[(state.index+i)%len(candidates)]
   events.append(dict(start_boundary=frame['start_boundary'],end_boundary=frame['end_boundary'],
     track='body',action=candidate['text'][:LIMITS['action_characters']],
     motif_id=motif_ids[0] if motif_ids else None,source_call_ids=[candidate['call_id']]))

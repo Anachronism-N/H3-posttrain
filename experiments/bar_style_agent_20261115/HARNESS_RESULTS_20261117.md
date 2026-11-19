@@ -310,3 +310,37 @@ On the plans both methods manage to finish, judged choreographic quality is stat
 indistinguishable. Combined with the earlier lexical metric, the conclusion is consistent:
 O's advantage is that it finishes 39/50 versus 28/50 at roughly half the calls, not that its
 finished plans are judged better than RA's.
+
+## Deterministic fallback under the final configuration (2026-11-20)
+
+The final no-style configuration failed on 11 songs: 5 with catalog-level failures shared by every
+arm, and 6 recoverable model failures (4 truncation loops, 2 invalid schedules). The fallback
+commits one grounded event per unresolved unit, using the first cited catalog caption and a
+permitted complete-unit schedule, after two failed planner attempts.
+
+All six recoverable failures converted:
+
+| song | previous failure | fallback result | calls |
+|---|---|---|---:|
+| fma-11689 | truncation | finished | 68 |
+| fma-1224 | truncation | finished | 127 |
+| fma-874 | truncation | finished | 60 |
+| fma-6789 | invalid schedule | finished | 40 |
+| fma-88877 | truncation | finished | 51 |
+| fma-124390 | invalid schedule | finished | 62 |
+
+Because the fallback only triggers after two failed attempts, running it on the failed set is
+equivalent to applying it to all songs (successful cells are untouched and deterministic).
+
+| arm | complete | rate | both | O-only | RA-only | neither | McNemar |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| O no-style + snap + fallback | **45/50** | **0.90** | 28 | 17 | 0 | 5 | p = 1.5e-5 |
+| RA no-style | 28/50 | 0.56 | | | | | |
+
+The five remaining failures are exactly the catalog-level songs (failed local-expert proposals)
+that no arm can run. RA never completes a song O misses under this configuration.
+
+Caveat: converted songs use the minimal grounded fallback for the unresolved units, so their local
+detail is lower than a fully model-written plan. The completion comparison is therefore a
+deliverability result; a separate quality judgement of the six converted plans is still needed
+before claiming they match model-written units.

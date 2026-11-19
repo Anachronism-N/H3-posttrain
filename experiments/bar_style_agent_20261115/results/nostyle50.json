@@ -1,11 +1,11 @@
 {
  "schema": "choreobench.nostyle50.v1",
  "songs": 50,
- "o_complete": 41,
+ "o_complete": 39,
  "ra_complete": 28,
  "both": 25,
- "o_only": 16,
+ "o_only": 14,
  "ra_only": 3,
- "neither": 6,
- "mcnemar_p": 0.0044
+ "neither": 8,
+ "mcnemar_p": 0.0127
 }

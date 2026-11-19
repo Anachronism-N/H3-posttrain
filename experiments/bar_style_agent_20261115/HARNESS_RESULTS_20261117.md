@@ -225,10 +225,13 @@ and cell runner. The only difference is the orchestration method.
 
 | arm | complete | rate | both | O-only | RA-only | neither | McNemar |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| O no-style | **41/50** | **0.82** | 25 | 16 | 3 | 6 | p = 0.0044 |
+| O no-style | **39/50** | **0.78** | 25 | 14 | 3 | 8 | p = 0.0127 |
 | RA no-style | 28/50 | 0.56 | | | | | |
 
-O wins 16 songs that RA misses and loses 3, a significant completion advantage at matched inputs.
+O wins 14 songs that RA misses and loses 3, a significant completion advantage at matched inputs.
+These are the uniform numbers: every O cell uses no-style + schedule snap. An earlier mix with
+no-snap on the 20 original songs gave 41/50; snap helped style-conditioned O but cost two songs
+without the style prior on that subset, so the uniform snapped configuration is reported instead.
 Cost on the 23-song replication subset: O 48.5 calls / 529k input tokens / 8.2k output tokens per
 completed song versus RA 98.1 / 1.60M / 32.1k.
 
@@ -240,9 +243,10 @@ claim should therefore be stated as: under matched inputs, the bounded controlle
 more likely to deliver a complete structurally valid plan; style conditioning trades some of that
 deliverability for judged organization.
 
-Configuration note: the 20 original songs and the 23 replication songs use the no-snap O runs;
-the 7 AIOZ tracks use schedule snap. RA has no snap switch, so its side is unaffected. This is
-recorded explicitly rather than silently normalised.
+Configuration note: all O cells in this table use no-style + schedule snap (20 original songs
+rerun uniformly). RA has no snap switch, so its side is unaffected. With snap, O-noStyle is
+39/50; the 20-song no-snap variant reached 16/20 versus 14/20 snapped, which is recorded as a
+small interaction rather than folded into the headline.
 
 ## Planner model selection (2026-11-19)
 

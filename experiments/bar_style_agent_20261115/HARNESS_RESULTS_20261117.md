@@ -243,3 +243,26 @@ deliverability for judged organization.
 Configuration note: the 20 original songs and the 23 replication songs use the no-snap O runs;
 the 7 AIOZ tracks use schedule snap. RA has no snap switch, so its side is unaffected. This is
 recorded explicitly rather than silently normalised.
+
+## Planner model selection (2026-11-19)
+
+All three candidates were tested as the outer planner on the same 23-song replication subset,
+O arm only, identical prompts, catalogs, controller, and 4096-token outline budget.
+
+| planner | complete/23 | calls per completed song | outcome |
+|---|---:|---:|---|
+| Qwen3-VL-30B-A3B-Instruct (current) | **15/23** | 47.8 | selected |
+| Qwen3-32B (thinking disabled) | 14/23 | 47.5 | no gain |
+| Qwen3-Omni-30B-A3B-Instruct | 0/23 | 1 | unusable |
+
+Omni failed in every loader variant tried: processor (missing audio feature extractor), direct
+thinker class on the full checkpoint (degenerate repeated-token output), manual thinker-config
+weight loading, and the Captioner-style loader with an explicit chat template. Its first outline
+call always runs to the 4096-token cap with non-JSON degenerate text. This is a model/checkpoint
+integration failure, not a prompt or budget issue.
+
+Planner design rather than model swap is the useful lever: dropping the style prior raises
+completion to 20/23 on the same subset (see ablation), and compressed per-window evidence in the
+global outline preserves coverage while lowering duplicate rate. The final planner therefore
+stays Qwen3-VL-30B and uses the no-style configuration; a uniform O-noStyle + snap rerun on the
+20 original songs is in progress to remove the earlier no-snap/snap mix.

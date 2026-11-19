@@ -270,3 +270,18 @@ completion to 20/23 on the same subset (see ablation), and compressed per-window
 global outline preserves coverage while lowering duplicate rate. The final planner therefore
 stays Qwen3-VL-30B and uses the no-style configuration; a uniform O-noStyle + snap rerun on the
 20 original songs is in progress to remove the earlier no-snap/snap mix.
+
+### Plan-level quality of the final configuration
+
+Across all successfully completed plans in the matched no-style 50-song comparison:
+
+| arm | plans | coverage | duplicate sentence rate | mean events |
+|---|---:|---:|---:|---:|
+| O no-style + snap | 39 | 1.000 | 0.291 | 43.0 |
+| RA no-style | 28 | 1.000 | 0.132 | 39.8 |
+
+On the 25 songs both arms complete, O's duplicate rate is 0.256 versus RA's 0.140. Both arms cover
+the full clock with structurally valid plans, but RA produces less verbatim sentence repetition on
+the plans it manages to finish. The defensible claim is therefore completion probability and cost,
+not textual diversity: O finishes 39/50 at about half RA's calls, while RA's finished plans repeat
+less. A semantic (not lexical) quality judgement is still needed before claiming better choreography.

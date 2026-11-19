@@ -344,3 +344,9 @@ Caveat: converted songs use the minimal grounded fallback for the unresolved uni
 detail is lower than a fully model-written plan. The completion comparison is therefore a
 deliverability result; a separate quality judgement of the six converted plans is still needed
 before claiming they match model-written units.
+
+Quality of the six converted plans: coverage stays 1.0, but the duplicate sentence rate rises to
+0.48 (mean 66 events) versus 0.29 for model-written O plans, because fallback units reuse the
+first cited caption. The fallback is therefore a deliverability guarantee, not a quality
+improvement: it converts otherwise-failed songs into complete, structurally valid but repetitive
+plans. This trade-off must be stated wherever the 45/50 number is used.

@@ -350,3 +350,9 @@ Quality of the six converted plans: coverage stays 1.0, but the duplicate senten
 first cited caption. The fallback is therefore a deliverability guarantee, not a quality
 improvement: it converts otherwise-failed songs into complete, structurally valid but repetitive
 plans. This trade-off must be stated wherever the 45/50 number is used.
+
+Follow-up: rotating the cited caption by unit index did not change the fallback plans
+(6/6 converted, coverage 1.0, duplicate rate 0.485 versus 0.480). The repetition comes from the
+catalog captions themselves repeating across adjacent windows, not from always taking the first
+candidate. Reducing it would require rewriting fallback text, which would no longer be grounded in
+the cited evidence, so the repetitive-but-grounded behaviour is kept and reported.

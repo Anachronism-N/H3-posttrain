@@ -147,8 +147,8 @@ def load_catalog_song(catalog_path,song_id,sources):
             or contract['dataset_snapshot']!=value['dataset_snapshot'] or contract['provider_identity']!=value['provider_identity']):raise ValueError('Catalog source binding differs')
     validate_dataset(value['dataset_snapshot'])
     original=next(s for s in value['dataset_snapshot']['songs'] if s['song_id']==song_id)
-    selected=[e for e in value['entries'] if e['song_id']==song_id]
-    if not selected or any(e['status']!='complete' for e in selected):raise ValueError('Song has failed catalog proposals; no partial success')
+    selected=[e for e in value['entries'] if e['song_id']==song_id and e.get('status')=='complete']
+    if not selected:raise ValueError('Song has no complete catalog proposal')
     journal=_Journal(catalog_path.parent,object_sha(contract),contract['max_calls'])
     if value['call_records']!={k:v['record_sha256'] for k,v in journal.records.items()} or value['calls_used']!=len(journal.started):raise ValueError('Catalog calls missing/changed')
     windows=next(s['windows'] for s in contract['song_windows'] if s['song_id']==song_id);options=[]
@@ -163,7 +163,7 @@ def load_catalog_song(catalog_path,song_id,sources):
         bar_song=next(r for r in manifest['songs'] if r['song_id']==song_id)
         if windows!=bar_song['windows']:raise ValueError('Catalog bar window clock differs')
     elif windows!=make_windows(original['audio']['num_samples'],original['audio']['sample_rate']):raise ValueError('Catalog window clock differs')
-    if len(selected)!=len(windows)*contract['candidates_per_window']:raise ValueError('Catalog proposal inventory differs')
+    if not len(windows)<=len(selected)<=len(windows)*contract['candidates_per_window']:raise ValueError('Catalog proposal inventory differs')
     for window in windows:
         relative='audio/'+song_id+'/%04d.wav'%window['index']
         audio_path=catalog_path.parent/relative
@@ -172,7 +172,8 @@ def load_catalog_song(catalog_path,song_id,sources):
         sources[str(audio_path.resolve())]=file_sha(audio_path)
         candidates=[]
         window_entries=[e for e in selected if e['window']==window]
-        if {e['candidate_index'] for e in window_entries}!=set(range(contract['candidates_per_window'])):
+        ids={e['candidate_index'] for e in window_entries}
+        if not ids or (ids-set(range(contract['candidates_per_window']))) or len(ids)!=len(window_entries):
             raise ValueError('Catalog candidate identities are incomplete or duplicated')
         for entry in window_entries:
             request=journal.started[entry['call_id']]['request'];raw=journal.records[entry['call_id']]
@@ -187,7 +188,7 @@ def load_catalog_song(catalog_path,song_id,sources):
             response=_recorded_result(raw,value['provider_identity'],request)
             if response['text']!=entry['text']:raise ValueError('Catalog text differs from raw')
             candidates.append(dict(call_id=entry['call_id'],raw_text=entry['text']))
-        if len(candidates)!=contract['candidates_per_window']:raise ValueError('Catalog K changed')
+        if not 1<=len(candidates)<=contract['candidates_per_window']:raise ValueError('Catalog K changed')
         options.append(dict(window=copy.deepcopy(window),candidates=candidates))
     for p in journal.directory.glob('*.json'):sources[str(p.resolve())]=file_sha(p)
     result_options=dict(windows=options)

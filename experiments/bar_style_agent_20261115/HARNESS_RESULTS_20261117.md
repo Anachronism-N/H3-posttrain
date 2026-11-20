@@ -399,3 +399,10 @@ audio output (`enable_audio_output=False` plus `return_audio=False`). In every c
 full Omni model stops mid-JSON at the same character positions on the same three songs. The Omni
 line is closed: it cannot satisfy the planner's long structured-output contract in this checkpoint,
 and Qwen3-VL-30B remains the selected planner.
+
+Catalog-recovery attempt (not adopted): a K=2 redundancy rule (accept a song catalog when every
+window retains at least one complete proposal) was implemented and submitted on the five
+catalog-blocked songs for all four arms, but the two validation runs crashed inside the loader
+before any model call and the diagnostic rerun remained queued for an hour. The loader change was
+reverted and the strict rule (all proposals complete) remains in force. The five songs therefore
+stay counted as failures for every arm, and the 45/50 versus 28/50 table is unchanged.

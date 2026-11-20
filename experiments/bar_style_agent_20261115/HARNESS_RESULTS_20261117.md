@@ -375,3 +375,10 @@ Follow-up: rotating the cited caption by unit index did not change the fallback 
 catalog captions themselves repeating across adjacent windows, not from always taking the first
 candidate. Reducing it would require rewriting fallback text, which would no longer be grounded in
 the cited evidence, so the repetitive-but-grounded behaviour is kept and reported.
+
+Follow-up on Omni: loading the full `Qwen3OmniMoeForConditionalGeneration` (not the thinker subtree)
+with an explicit chat template produces real schema-shaped JSON, but generation ends (EOS) inside
+the JSON object at roughly 1k tokens on all three test songs, with the same failure positions under
+both 4096 and 8192 output budgets. This rules out loader corruption and token caps: the model
+stops mid-object even when given more budget. The verdict is unchanged: Omni is not usable as the
+planner without prompt redesign or instruction tuning, and VL-30B remains selected.

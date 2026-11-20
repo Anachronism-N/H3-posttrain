@@ -382,3 +382,13 @@ the JSON object at roughly 1k tokens on all three test songs, with the same fail
 both 4096 and 8192 output budgets. This rules out loader corruption and token caps: the model
 stops mid-object even when given more budget. The verdict is unchanged: Omni is not usable as the
 planner without prompt redesign or instruction tuning, and VL-30B remains selected.
+
+Cost per completed song in the final configuration (fallback conversions included):
+
+| arm | completed | calls | input tokens | output tokens |
+|---|---:|---:|---:|---:|
+| O no-style + snap + fallback | 45 | 47.7 | 536225 | 10193 |
+| RA no-style | 28 | 85.0 | 1381574 | 28206 |
+
+O completes 61% more songs while using 56% of RA's calls, 39% of its input tokens, and 36% of its
+output tokens per completed song.

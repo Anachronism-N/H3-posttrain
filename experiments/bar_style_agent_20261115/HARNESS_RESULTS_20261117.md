@@ -1,6 +1,25 @@
 # Harness comparison and ablations (2026-11-17)
 
-Panel: 20 songs (11 core + 9 extension), 1004 bar windows, per-song SOL61 v3 catalogs,
+## Executive summary (2026-11-20)
+
+- Planner: Qwen3-VL-30B retained after testing Qwen3-32B (14/23 vs 15/23) and Qwen3-Omni (0/23,
+  unusable checkpoint integration). Final config: no style prior, schedule snap, deterministic
+  grounded fallback.
+- Main 50-song comparison under the style-conditioned configuration: O 33/50 vs RA 31/50
+  (p=1.00), but O uses about half the calls and a third of the tokens.
+- Matched no-style comparison, 50 songs: O 39/50 vs RA 28/50 (p=0.0127).
+- Adding the deterministic fallback converts all six recoverable failures: O 45/50 vs RA 28/50,
+  with 17 songs completed only by O and none only by RA (p=1.5e-5). The five remaining failures
+  are catalog-level songs that no arm can run.
+- Quality: coverage 1.0 for both; RA's finished plans repeat less (0.14 vs 0.26 on shared songs);
+  blind semantic judging on 25 shared successes is a wash (L1 14:11, L2 13:12, L3 14:11).
+  Fallback-converted plans are complete but repetitive (0.48). The defensible claims are completion
+  probability and cost, not superior choreography.
+- Ablations (23 songs): no_style 20/23, no_motif 9/23, no_acoustic 14/23, no_repair 15/23,
+  motif_variation 17/23, baseline 15/23. Three earlier variants were withdrawn because their flags
+  were never applied.
+
+Original 20-song panel (first experiment below): 1004 bar windows, per-song SOL61 v3 catalogs,
 shared Qwen3-VL-30B outer model (4 replicas), failures counted in every denominator.
 
 ## Main comparison

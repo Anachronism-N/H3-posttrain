@@ -392,3 +392,10 @@ Cost per completed song in the final configuration (fallback conversions include
 
 O completes 61% more songs while using 56% of RA's calls, 39% of its input tokens, and 36% of its
 output tokens per completed song.
+
+Two further Omni adjustments were tested and both left the failure unchanged: merging the system
+contract into the user turn (in case the Omni chat template ignores system role) and disabling
+audio output (`enable_audio_output=False` plus `return_audio=False`). In every configuration the
+full Omni model stops mid-JSON at the same character positions on the same three songs. The Omni
+line is closed: it cannot satisfy the planner's long structured-output contract in this checkpoint,
+and Qwen3-VL-30B remains the selected planner.

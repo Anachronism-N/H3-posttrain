@@ -136,7 +136,13 @@ def original_captions(arrays: dict, src: Path, shim: Path | None) -> list[dict]:
         if root is not None:
             sys.path.insert(0, str(root.resolve()))
     import torch
-    from text2pose.posescript import captioning
+    if (src / "captioning.py").is_file():
+        from ms_original_rules import load_original_rules
+        captioning = load_original_rules(src)
+    else:
+        from text2pose.posescript import captioning
+    if hasattr(captioning, "device") and captioning.device.type != "cpu":
+        raise ValueError("original_captions uses CPU coordinates; run with CUDA_VISIBLE_DEVICES='' for unchanged upstream rules")
 
     if not any(Path(captioning.__file__).resolve().is_relative_to(root.resolve()) for root in (src, shim) if root):
         raise ValueError("imported MotionScript is outside the specified source/shim")

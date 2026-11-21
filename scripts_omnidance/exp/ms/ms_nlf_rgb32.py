@@ -19,7 +19,7 @@ def numpy(value):
     return np.asarray(value.detach().cpu().numpy() if hasattr(value, "detach") else value)
 
 
-def select_largest_detections(result, batch_count):
+def select_largest_detections(result, batch_count, point_count=32):
     keys = ("boxes", "poses3d", "poses2d", "uncertainties")
     if not isinstance(result, dict) or any(key not in result or len(result[key]) != batch_count for key in keys):
         raise ValueError("NLF detector output must align all four ragged fields to the RGB batch")
@@ -30,7 +30,7 @@ def select_largest_detections(result, batch_count):
         if b.ndim != 2 or b.shape[1] != 5:
             raise ValueError("NLF detection boxes must be [people,5] XYWH+score")
         count = len(b)
-        if p.shape != (count, 32, 3) or q.shape != (count, 32, 2) or u.shape != (count, 32):
+        if p.shape != (count, point_count, 3) or q.shape != (count, point_count, 2) or u.shape != (count, point_count):
             raise ValueError("Detection counts and direct32 geometry do not match")
         if any(x.dtype.kind not in "fiu" for x in (b, p, q, u)):
             raise ValueError("Detection fields must be numeric arrays")
@@ -46,7 +46,7 @@ def select_largest_detections(result, batch_count):
         all_points.append(p.astype(np.float32) / 1000.)
         all_pixels.append(q.astype(np.float32))
         all_uncertainty.append(u.astype(np.float32))
-    points, uncertainty, valid, pixels = unpack_predictions(selected, np.asarray(counts) > 0, 32)
+    points, uncertainty, valid, pixels = unpack_predictions(selected, np.asarray(counts) > 0, point_count)
     return dict(points_m=points, points2d_px=pixels, uncertainty=uncertainty, valid=valid,
         box=np.asarray(boxes, np.float32), detection_valid=np.asarray(counts) > 0,
         detection_count=np.asarray(counts, np.int32), selected_index=np.asarray(indices, np.int32),

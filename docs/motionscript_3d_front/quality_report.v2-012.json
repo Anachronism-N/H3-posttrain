@@ -1,0 +1,2395 @@
+{
+  "schema": "native-body-real-quality-report-v2",
+  "status": "pending_or_insufficient_review",
+  "quality_gate_passed": false,
+  "registered_videos": 200,
+  "completed_source_rgb_reviews": 21,
+  "completed_independent_human_reviews": 0,
+  "pending": [
+    {
+      "id": "THOliYAPJajgGFqj",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "WUFbEAhBNJdXBLNw",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "lbcntDCrQxhQoosQ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "VkoyXKwjFHeGIGHY",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "SFIXKSmUVHJBSsji",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "wvLInJTavupakpQP",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "PxivvTgZRdfLFfKo",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "zSCeYpvKxvdblaMX",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "bjssKDJFTMBQqAGT",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "EdecdsSdDXEyCIMk",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "SLGPUJPTbhlxaYdU",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "lsBNKMmgjzWQpnZu",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "mulpZqctEiSIvLuP",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "tVSpYUdPTaUwYgxr",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "GDOygPhOEMewOrPd",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "TRgznxBuvfhmNpBH",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "hPChLoLKywzNAPrO",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "idCmNScUAYukuYdN",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "aaiieOvpuRyUYuTS",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "VyHMeIZjdRNwiFwk",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "vlPrwFrhnIhjbeIF",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "aBSengdTPwixaKcN",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "vLNPHvcDXjpKLSCf",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "MQXkyKgcqEOsRRlZ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "HoxvCmehNYnkEEJu",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "yEZvHBjYTJoPbNUJ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "IFyCdepLZQZkUjIp",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "tlQTZYKGZQcNxkNt",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "XCapPBZinpCvSuAC",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "bJftYjbYhtZtBJyJ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "AKGflnDawAgntVQH",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "uvmEHeHRFGuQmAyR",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "iWROJbarlmEzyKxQ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "QJZLlSpiBhWuLhRb",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "wPkXxtzeCKtIxQWR",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "KexjmlXgCMHSmmIY",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "tCIHSclRIxcIdhyc",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "YIYQXmkgLJBpCDmj",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "paNFrlrZdpljMiPV",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "whyGpWIXorjaUHRp",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "qrgtisGDTSoftjUy",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "ICuzDjpHNQicgzUF",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "DJnshrZeRHektEmD",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "CTCZzxFqTlYxJbgm",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OdNcoRloaeoqhJYy",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "leViZUnaOiMlcieI",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "XYcoOwfDMdKWUKVP",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "GkEUloJLCmtonbNR",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "gAyIGZMehOAubPZh",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OqlSEntkSpfwHHuH",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "EBFSvnYUGhgSUmLy",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "hGFCzYKrwOJrBtUp",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "zRaRfTeZCdKYIUuX",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "MrrQMcjwpzXphZyZ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "YDitGCoBYmjAvoGK",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "wmKcgBYnMKQJBCgE",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "oJmMCxVxbZXaxClR",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "xxhLPJPHeLjXXGzN",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "opxoADpqAgZoWmgv",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "QHRLcuhXPDptCsTS",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "hwnvfqovhiiBQsdY",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "rlsLXvvfGrdGCbKk",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "hWkVHliVLgksKwri",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "RfzpStuDdlRVhMAu",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "GpFFyGczpAisGPnj",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OAXBZGQJSmIWjJSD",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "voMrsIGRwKpUyRRa",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "qfPSESevkfXoerbT",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OYlNgcSwejhIOTyl",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "WKPxYUvBqYrVQLUM",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "mYYfZitkoMVEJslr",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "dgCZVVfhYrnjrsBf",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "jqoZXbNoNchzsYOd",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OAfrJEqwryuBYhJj",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "etogsuFGqgcpciMh",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "LrlIaletrVtwufEP",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "GfGRSHcZMhJPofuo",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "MaBXXbwCGyzYwAwu",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "rtlPMLZkNfriRlQq",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "nQChhrnHpchkKnWt",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "dXBRVnsQlCitEfyM",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "vgXoVUwLCkKRRmdm",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "dYdQCwWtYHuOmXDx",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "BhwiEiUmyYmGHlAz",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "FwpAjCCnuPeRBaFN",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "jBZdXYgsQDqvcCTo",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "nKyheLgYhgEsahJo",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "yRVNUIcATfCqSLtt",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "jJZujispYSJRLZcn",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "lElWiWmWBmfdauxp",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "lSEaakbrcrfiYYka",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "hwaoFLMbAOyUeUim",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "JIwifseRpsXdHBYl",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "LSMwPCgrtsErRbTd",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "vSTlGsaYjwRfkKuZ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "WVCNqOxXAFvJbhxF",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OnteqMIGJjxipPoc",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "SxLqkNQdrrHnSEff",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "IwpXivfsznaEZpIM",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "UJkURTZmlhrpjKvM",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "vYKbYxYMiUpNSxbw",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "MohjmkdjouPLTgjG",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "bvFdldVwbwwsByTC",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "PVaMWTNVNFfQshHm",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "QYXxAcFqFmATypZc",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "WMYbLKlzPuVOflQy",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "lffXATKMppaSEAAo",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "MMhfoybNOUjYTTkw",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "lHmBibjMjZkNgJRn",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "IhynPxGWLQmUMFmC",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "JrTWRUJuvpROYFJg",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "RzDgjGNIiWqtvtbb",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "xDELNeJzfwLfyIRH",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "TfBInJsUSvoKEkKg",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "zfODGfYvaWVXubZJ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "zdpYfIGOYeqINjKi",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "NRQBaFJwWBHOaXzN",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "YHdOyRCqljUFfUJV",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "ymQCsqRpqKNcLgAJ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "ZcTWswVlqCBCtFfk",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "VmsycDFbwPOTDPkE",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "mfpqUxOTSfYTJpLV",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "zaMAPgLtMLMBoVHn",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "eoWOPJvwiKuQvMkY",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "bFhBHlitYUMXjQnC",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "HzyYowqteESSvLfv",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "PKgiWPzXagXqnVMG",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "MODCodnkRvoLVkTR",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "jKZqegsiRVGNPFFT",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "JgpzkEzdsFikFAAE",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "UmdXvkWoPMwglkjP",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "sZdpFVXLcGUvYvvI",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "eqsXdprLvePehjHx",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "CkXxaGZjSzaZHQEm",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "fAdEgAYBbhnHjFvc",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "pGZLoUfZEYZeYidZ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "tOBxwuNlKdNemdBg",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "vyfILKMFtkaOrmkD",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "utbpDxVieGVVuGnZ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "alWXjzeZIYtIkedI",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "wOpJwgkFLbKBGJDq",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "MFXYNTBggThlzEgf",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "YeRWCKTvlXyFZQuK",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "jchOGvhttXPILcmP",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "pZzVxiFoargZeQiV",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "ymLWBcjFmVcmMWGb",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "DgoEcKRzbkbmBImK",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "ePEdLrHHcGcCETFR",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "SHvxowlyGeuOjbSy",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "QBDUGlzKTGFxUjtJ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "KUprGRpXPjfQWQsk",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "IvUTIxEfcoKblUDj",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "gERUfgGMyEstVrYC",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "rdGjfzEfhlyVPNdC",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "qGyrTqCjWDobrOSR",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OcUlVbAjJcciFtHG",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "iHfiXAiRlNiBHhVF",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "alZNIYHzQpzgvHmf",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OOIwWJHYAraWQldD",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OoEXqtprfVGjIKik",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "OveEJnMbrehiRmKx",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "zuaDeszAVHGbEOiC",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "uqVfYjBeBtKElELf",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "BMgiCCPKrjdcriia",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "PkOknHpIYChyACzb",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "SdeyRwgXVhZhBEyd",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "ndgjfAIHPnQMzWHJ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "edNHekGqgoGWcZPL",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "lRYMJpJfEbnFWMzk",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "UIDROUTQHRsRMpAW",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "iTtLBvFLvMFGdyky",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "pSvyawtsLbeOXmJZ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "dSiGPEBIQHVziDhJ",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "aeCuUKRVYbXBREZz",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "HUNNOTtCetSMVhbI",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "bUtRLKdJvfwJJHws",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "cjoqXtBWOIgqESCO",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "IecoafOKTBrFdTts",
+      "reason": "source/reference/channel review incomplete"
+    },
+    {
+      "id": "BrYYYcQEboTfEWiO",
+      "reason": "source/reference/channel review incomplete"
+    }
+  ],
+  "invalid_reviews_or_bindings": [],
+  "missing_independent_reviews": [
+    "CTCZzxFqTlYxJbgm",
+    "CXnOwcDSVHzIUwtx",
+    "CkXxaGZjSzaZHQEm",
+    "DJnshrZeRHektEmD",
+    "FyUgxWjRsOITaKzM",
+    "IFyCdepLZQZkUjIp",
+    "IvUTIxEfcoKblUDj",
+    "IwpXivfsznaEZpIM",
+    "KexjmlXgCMHSmmIY",
+    "KhfvQfWrHlPRsXTt",
+    "LSMwPCgrtsErRbTd",
+    "MQXkyKgcqEOsRRlZ",
+    "MaBXXbwCGyzYwAwu",
+    "MrrQMcjwpzXphZyZ",
+    "NyfVAyPijuUenemx",
+    "QHRLcuhXPDptCsTS",
+    "QYXxAcFqFmATypZc",
+    "SDjBFHHLfNrWZyQw",
+    "TRgznxBuvfhmNpBH",
+    "TfBInJsUSvoKEkKg",
+    "UJkURTZmlhrpjKvM",
+    "UcoNCJtmVeQRDyvz",
+    "VkoyXKwjFHeGIGHY",
+    "VmsycDFbwPOTDPkE",
+    "XCapPBZinpCvSuAC",
+    "XPVRgFxtXkBsceVC",
+    "ZdoIHubgfEwrnrtx",
+    "drKSnQygeQBpvOwH",
+    "edNHekGqgoGWcZPL",
+    "fAdEgAYBbhnHjFvc",
+    "gERUfgGMyEstVrYC",
+    "hFJWFhMQCFJOLwzX",
+    "hWAgtTrXwoSEHaeB",
+    "hjippsshahMjZMqT",
+    "hwaoFLMbAOyUeUim",
+    "iQBpcSyrZpDaSFjj",
+    "iTtLBvFLvMFGdyky",
+    "iWROJbarlmEzyKxQ",
+    "jLxDfRnLeLBTCcmB",
+    "kucgimcrldnunIqv",
+    "kwbxBGvBhSFjyoIN",
+    "lbcntDCrQxhQoosQ",
+    "leViZUnaOiMlcieI",
+    "nQChhrnHpchkKnWt",
+    "ndgjfAIHPnQMzWHJ",
+    "oXbuqHPsWXQFplhp",
+    "pSvyawtsLbeOXmJZ",
+    "rRwNMQMKDoQTyHuS",
+    "riCajHnGtnoTLObH",
+    "sZdpFVXLcGUvYvvI",
+    "tPcHgaVsYRLuCHZz",
+    "tVSpYUdPTaUwYgxr",
+    "vLNPHvcDXjpKLSCf",
+    "vYKbYxYMiUpNSxbw",
+    "voMrsIGRwKpUyRRa",
+    "vomjSdzUmXzYXdVU",
+    "wPkXxtzeCKtIxQWR",
+    "whyGpWIXorjaUHRp",
+    "xxhLPJPHeLjXXGzN",
+    "ymQCsqRpqKNcLgAJ",
+    "zRaRfTeZCdKYIUuX",
+    "zaMAPgLtMLMBoVHn"
+  ],
+  "unresolved_independent_disagreements": [],
+  "required_independent_review_ids": [
+    "CTCZzxFqTlYxJbgm",
+    "CXnOwcDSVHzIUwtx",
+    "CkXxaGZjSzaZHQEm",
+    "DJnshrZeRHektEmD",
+    "FyUgxWjRsOITaKzM",
+    "IFyCdepLZQZkUjIp",
+    "IvUTIxEfcoKblUDj",
+    "IwpXivfsznaEZpIM",
+    "KexjmlXgCMHSmmIY",
+    "KhfvQfWrHlPRsXTt",
+    "LSMwPCgrtsErRbTd",
+    "MQXkyKgcqEOsRRlZ",
+    "MaBXXbwCGyzYwAwu",
+    "MrrQMcjwpzXphZyZ",
+    "NyfVAyPijuUenemx",
+    "QHRLcuhXPDptCsTS",
+    "QYXxAcFqFmATypZc",
+    "SDjBFHHLfNrWZyQw",
+    "TRgznxBuvfhmNpBH",
+    "TfBInJsUSvoKEkKg",
+    "UJkURTZmlhrpjKvM",
+    "UcoNCJtmVeQRDyvz",
+    "VkoyXKwjFHeGIGHY",
+    "VmsycDFbwPOTDPkE",
+    "XCapPBZinpCvSuAC",
+    "XPVRgFxtXkBsceVC",
+    "ZdoIHubgfEwrnrtx",
+    "drKSnQygeQBpvOwH",
+    "edNHekGqgoGWcZPL",
+    "fAdEgAYBbhnHjFvc",
+    "gERUfgGMyEstVrYC",
+    "hFJWFhMQCFJOLwzX",
+    "hWAgtTrXwoSEHaeB",
+    "hjippsshahMjZMqT",
+    "hwaoFLMbAOyUeUim",
+    "iQBpcSyrZpDaSFjj",
+    "iTtLBvFLvMFGdyky",
+    "iWROJbarlmEzyKxQ",
+    "jLxDfRnLeLBTCcmB",
+    "kucgimcrldnunIqv",
+    "kwbxBGvBhSFjyoIN",
+    "lbcntDCrQxhQoosQ",
+    "leViZUnaOiMlcieI",
+    "nQChhrnHpchkKnWt",
+    "ndgjfAIHPnQMzWHJ",
+    "oXbuqHPsWXQFplhp",
+    "pSvyawtsLbeOXmJZ",
+    "rRwNMQMKDoQTyHuS",
+    "riCajHnGtnoTLObH",
+    "sZdpFVXLcGUvYvvI",
+    "tPcHgaVsYRLuCHZz",
+    "tVSpYUdPTaUwYgxr",
+    "vLNPHvcDXjpKLSCf",
+    "vYKbYxYMiUpNSxbw",
+    "voMrsIGRwKpUyRRa",
+    "vomjSdzUmXzYXdVU",
+    "wPkXxtzeCKtIxQWR",
+    "whyGpWIXorjaUHRp",
+    "xxhLPJPHeLjXXGzN",
+    "ymQCsqRpqKNcLgAJ",
+    "zRaRfTeZCdKYIUuX",
+    "zaMAPgLtMLMBoVHn"
+  ],
+  "independent_review_contract_sha256": "4bfda4d51ea1303af7158fb5c5133dab441e32358b459b1a99c87e672d2f80d0",
+  "supplemental_review_panel_sha256": {
+    "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/supplemental_independent_side_review.json": "c0c5addc541944eb5e0331e2513e1445c31d267ea14eeb8834c110a010bc66b0",
+    "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/supplemental_independent_geometry_review.json": "9f6627b438a29ae2ce0c842574edb4101b8e12a13ae030f6829cba0fa5a3bf4e",
+    "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/supplemental_independent_sourcebatch_review.json": "e38f912fc01187853131a482c1e62e5cfa325c91f5f1b04124c825c5e711beeb",
+    "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/supplemental_independent_sourcebatch2_review.json": "0fdb4f658f90daa316bbb3fe0ca82db38ecc93d2325bb767c82d9cc9d0cb41b8",
+    "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/supplemental_independent_sourcebatch3_review.json": "13839fbe12b947bf92cd4ac1c3074685a57eb923a34a10ad6cf2a5993707f336",
+    "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/supplemental_independent_sourcebatch4_review.json": "853d04039c641837fc816ba3a489d510697b4a174966018ef3355f170befb0c9",
+    "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/supplemental_independent_sourcebatch5_review.json": "b5566cac16fadc8f867cb78ae033a5277d45a53841d11e4b5b96c407f1ca499b",
+    "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/supplemental_independent_sourcebatch6_review.json": "1ceabeb07db6b2da8bdc1bc036a1d45210d9b338b46c8d639f907299689214f7",
+    "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/supplemental_independent_sourcebatch7_review.json": "131e009ecce4e862ac733719b46a9df62f605783272abdd2f697bef5f3daec08"
+  },
+  "metrics": {
+    "counts": {
+      "tp": 296,
+      "fp": 0,
+      "fn": 217,
+      "unknown": 2311,
+      "references": 513,
+      "support_total": 4123,
+      "support_valid": 4063,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0
+    },
+    "false_positive_fraction": 0.0,
+    "false_negative_fraction": 0.42300194931773877,
+    "unknown_candidate_fraction": 0.8864595320291523,
+    "boundary_error_p95_seconds": 0.39999999999999997,
+    "decidable_support_fraction": 0.9854474896919718
+  },
+  "independent_human_metrics": {
+    "counts": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "unknown": 0,
+      "references": 0,
+      "support_total": 0,
+      "support_valid": 0,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0
+    },
+    "false_positive_fraction": null,
+    "false_negative_fraction": null,
+    "unknown_candidate_fraction": null,
+    "boundary_error_p95_seconds": null,
+    "decidable_support_fraction": null
+  },
+  "strata": {
+    "partial_body": {
+      "registered_videos": 62,
+      "reviewed_videos": 7,
+      "metrics": {
+        "counts": {
+          "tp": 99,
+          "fp": 0,
+          "fn": 81,
+          "unknown": 403,
+          "references": 180,
+          "support_total": 1761,
+          "support_valid": 1710,
+          "critical_errors": 0,
+          "incorrect_removed_occurrences": 0
+        },
+        "false_positive_fraction": 0.0,
+        "false_negative_fraction": 0.45,
+        "unknown_candidate_fraction": 0.8027888446215139,
+        "boundary_error_p95_seconds": 0.48249999999999854,
+        "decidable_support_fraction": 0.9710391822827938
+      },
+      "video_bootstrap_ci95": {
+        "false_positive_fraction": [
+          0.0,
+          0.0
+        ],
+        "false_negative_fraction": [
+          0.225179769894535,
+          0.6718848476890756
+        ],
+        "boundary_error_p95_seconds": [
+          0.3624999999999998,
+          0.7000000000000002
+        ],
+        "decidable_support_fraction": [
+          0.9391948933245559,
+          0.9948553054662379
+        ]
+      }
+    },
+    "body_in_frame": {
+      "registered_videos": 138,
+      "reviewed_videos": 14,
+      "metrics": {
+        "counts": {
+          "tp": 197,
+          "fp": 0,
+          "fn": 136,
+          "unknown": 1908,
+          "references": 333,
+          "support_total": 2362,
+          "support_valid": 2353,
+          "critical_errors": 0,
+          "incorrect_removed_occurrences": 0
+        },
+        "false_positive_fraction": 0.0,
+        "false_negative_fraction": 0.4084084084084084,
+        "unknown_candidate_fraction": 0.9064133016627078,
+        "boundary_error_p95_seconds": 0.32937499999999953,
+        "decidable_support_fraction": 0.9961896697713802
+      },
+      "video_bootstrap_ci95": {
+        "false_positive_fraction": [
+          0.0,
+          0.0
+        ],
+        "false_negative_fraction": [
+          0.3063562485335836,
+          0.5014910715228571
+        ],
+        "boundary_error_p95_seconds": [
+          0.25,
+          0.45571874999999923
+        ],
+        "decidable_support_fraction": [
+          0.9859504809363395,
+          1.0
+        ]
+      }
+    },
+    "low_contrast": {
+      "registered_videos": 22,
+      "reviewed_videos": 1,
+      "metrics": {
+        "counts": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 7,
+          "unknown": 234,
+          "references": 15,
+          "support_total": 134,
+          "support_valid": 134,
+          "critical_errors": 0,
+          "incorrect_removed_occurrences": 0
+        },
+        "false_positive_fraction": 0.0,
+        "false_negative_fraction": 0.4666666666666667,
+        "unknown_candidate_fraction": 0.9669421487603306,
+        "boundary_error_p95_seconds": 0.3749999999999999,
+        "decidable_support_fraction": 1.0
+      },
+      "video_bootstrap_ci95": {
+        "false_positive_fraction": null,
+        "false_negative_fraction": null,
+        "boundary_error_p95_seconds": null,
+        "decidable_support_fraction": null
+      }
+    }
+  },
+  "video_bootstrap_ci95": {
+    "false_positive_fraction": [
+      0.0,
+      0.0
+    ],
+    "false_negative_fraction": [
+      0.31491272479144194,
+      0.5342978548323023
+    ],
+    "boundary_error_p95_seconds": [
+      0.3243749999999993,
+      0.5499999999999998
+    ],
+    "decidable_support_fraction": [
+      0.9695444828580054,
+      0.9973018888285835
+    ]
+  },
+  "gates": {
+    "false_positive_fraction_max": 0.05,
+    "false_negative_fraction_max": 0.15,
+    "boundary_error_p95_seconds_max": 0.2,
+    "decidable_support_fraction_min": 0.9,
+    "critical_source_time_mapping_errors_max": 0,
+    "incorrect_removed_occurrences_max": 0,
+    "required_main_video_reviews": 200,
+    "required_independent_human_reviews_min": 40
+  },
+  "unknown_operator_seconds": 2632.4375,
+  "total_reviewed_operator_seconds": 2835.0,
+  "unknown_operator_fraction": 0.9285493827160494,
+  "cases": [
+    {
+      "id": "kucgimcrldnunIqv",
+      "reviewer": "assistant source-first reference compiler and candidate comparator",
+      "reviewer_type": "assistant",
+      "tp": 30,
+      "fp": 0,
+      "unknown": 58,
+      "references": 44,
+      "fn": 14,
+      "support_total": 354,
+      "support_valid": 354,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.025000000000000022,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.012500000000000011,
+        0.03749999999999998,
+        0.012499999999999956,
+        0.08750000000000002,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.08750000000000002,
+        0.03750000000000009,
+        0.03749999999999998,
+        0.07499999999999996,
+        0.03749999999999998,
+        0.07499999999999996,
+        0.03749999999999998,
+        0.1875,
+        0.03750000000000009,
+        0.3374999999999999,
+        0.30000000000000004,
+        0.012499999999999956,
+        0.30000000000000004,
+        0.012499999999999956,
+        0.5375000000000001,
+        0.08749999999999991,
+        0.02499999999999991,
+        0.3624999999999998,
+        0.03750000000000009,
+        0.02499999999999991,
+        0.08749999999999991,
+        0.02499999999999991,
+        0.20000000000000018,
+        0.012500000000000178,
+        0.02499999999999991,
+        0.012500000000000178,
+        0.02499999999999991,
+        0.1875,
+        0.012500000000000178,
+        0.3875000000000002,
+        0.20000000000000018,
+        0.10000000000000009,
+        0.04999999999999982,
+        0.04999999999999982,
+        0.625,
+        0.08750000000000036,
+        0.10000000000000009,
+        0.17499999999999982,
+        0.4249999999999998,
+        0.07500000000000018,
+        0.012500000000000178,
+        0.07500000000000018,
+        0.07500000000000018,
+        0.13750000000000018,
+        0.04999999999999982,
+        0.0625
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 117.375,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.8694444444444445,
+      "unmatched_decidable_reference_ids": [
+        "ref_001",
+        "ref_002",
+        "ref_003",
+        "ref_011",
+        "ref_012",
+        "ref_013",
+        "ref_018",
+        "ref_022",
+        "ref_038",
+        "ref_039",
+        "ref_040",
+        "ref_042",
+        "ref_043",
+        "ref_044"
+      ]
+    },
+    {
+      "id": "rRwNMQMKDoQTyHuS",
+      "reviewer": "assistant source-first reference compiler and candidate comparator",
+      "reviewer_type": "assistant",
+      "tp": 6,
+      "fp": 0,
+      "unknown": 26,
+      "references": 6,
+      "fn": 0,
+      "support_total": 156,
+      "support_valid": 154,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.625,
+        0.1625000000000001,
+        0.525,
+        0.1625000000000001,
+        0.2124999999999999,
+        0.050000000000000044,
+        0.2124999999999999,
+        0.050000000000000044,
+        0.4125000000000001,
+        0.07500000000000018,
+        0.3624999999999998,
+        0.375
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 127.375,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9435185185185185,
+      "unmatched_decidable_reference_ids": []
+    },
+    {
+      "id": "CXnOwcDSVHzIUwtx",
+      "reviewer": "assistant source-first compiler and candidate comparator with independent source-only chain crosscheck",
+      "reviewer_type": "assistant",
+      "tp": 5,
+      "fp": 0,
+      "unknown": 69,
+      "references": 41,
+      "fn": 36,
+      "support_total": 273,
+      "support_valid": 272,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.050000000000000044,
+        0.03750000000000009,
+        0.125,
+        0.0625,
+        0.07500000000000018,
+        0.0625,
+        0.13750000000000018,
+        0.11249999999999982,
+        0.13750000000000018,
+        0.025000000000000355
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 121.4375,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.899537037037037,
+      "unmatched_decidable_reference_ids": [
+        "ref_001",
+        "ref_002",
+        "ref_003",
+        "ref_004",
+        "ref_005",
+        "ref_009",
+        "ref_010",
+        "ref_011",
+        "ref_012",
+        "ref_013",
+        "ref_014",
+        "ref_015",
+        "ref_016",
+        "ref_017",
+        "ref_018",
+        "ref_023",
+        "ref_024",
+        "ref_025",
+        "ref_026",
+        "ref_027",
+        "ref_034",
+        "ref_039",
+        "ref_040",
+        "ref_041",
+        "ref_042",
+        "ref_043",
+        "ref_044",
+        "ref_045",
+        "ref_046",
+        "ref_047",
+        "ref_049",
+        "ref_050",
+        "ref_051",
+        "ref_052",
+        "ref_053",
+        "ref_054"
+      ]
+    },
+    {
+      "id": "drKSnQygeQBpvOwH",
+      "reviewer": "assistant source-first compiler and candidate comparator with independent source-only chain crosscheck",
+      "reviewer_type": "assistant",
+      "tp": 23,
+      "fp": 0,
+      "unknown": 185,
+      "references": 29,
+      "fn": 6,
+      "support_total": 246,
+      "support_valid": 246,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.3,
+        0.03749999999999998,
+        0.3,
+        0.012499999999999956,
+        0.35,
+        0.012499999999999956,
+        0.35,
+        0.012499999999999956,
+        0.03749999999999998,
+        0.11250000000000004,
+        0.012499999999999956,
+        0.03750000000000009,
+        0.0625,
+        0.012499999999999956,
+        0.012499999999999956,
+        0.08749999999999991,
+        0.08749999999999991,
+        0.050000000000000044,
+        0.050000000000000044,
+        0.1499999999999999,
+        0.1499999999999999,
+        0.13750000000000018,
+        0.3500000000000001,
+        0.012500000000000178,
+        0.13750000000000018,
+        0.04999999999999982,
+        0.04999999999999982,
+        0.11249999999999982,
+        0.1499999999999999,
+        0.037499999999999645,
+        0.11249999999999982,
+        0.0625,
+        0.037499999999999645,
+        0.08750000000000036,
+        0.0625,
+        0.07500000000000018,
+        0.08750000000000036,
+        0.025000000000000355,
+        0.22499999999999964,
+        0.037499999999999645,
+        0.07500000000000018,
+        0.012500000000000178,
+        0.025000000000000355,
+        0.0625,
+        0.025000000000000355,
+        0.0625
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 122.75,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9092592592592592,
+      "unmatched_decidable_reference_ids": [
+        "ref_005",
+        "ref_006",
+        "ref_007",
+        "ref_008",
+        "ref_010",
+        "ref_028"
+      ]
+    },
+    {
+      "id": "NyfVAyPijuUenemx",
+      "reviewer": "assistant source-envelope compiler with independent source-only survey and prior partial diagnostic context",
+      "reviewer_type": "assistant",
+      "tp": 8,
+      "fp": 0,
+      "unknown": 234,
+      "references": 15,
+      "fn": 7,
+      "support_total": 134,
+      "support_valid": 134,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.1625000000000001,
+        0.2625000000000002,
+        0.3624999999999998,
+        0.0,
+        0.4125000000000001,
+        0.0,
+        0.11249999999999982,
+        0.03750000000000009,
+        0.0,
+        0.07500000000000018,
+        0.03750000000000009,
+        0.08750000000000036,
+        0.07500000000000018,
+        0.17499999999999982,
+        0.08750000000000036,
+        0.0625
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 128.375,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.950925925925926,
+      "unmatched_decidable_reference_ids": [
+        "ref_001",
+        "ref_002",
+        "ref_004",
+        "ref_005",
+        "ref_009",
+        "ref_013",
+        "ref_015"
+      ]
+    },
+    {
+      "id": "FyUgxWjRsOITaKzM",
+      "reviewer": "assistant source-envelope compiler with independent source-only survey and prior partial diagnostic context",
+      "reviewer_type": "assistant",
+      "tp": 16,
+      "fp": 0,
+      "unknown": 83,
+      "references": 37,
+      "fn": 21,
+      "support_total": 282,
+      "support_valid": 282,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.04999999999999999,
+        0.050000000000000044,
+        0.04999999999999999,
+        0.050000000000000044,
+        0.050000000000000044,
+        0.02499999999999991,
+        0.050000000000000044,
+        0.48750000000000004,
+        0.012499999999999956,
+        0.10000000000000009,
+        0.10000000000000009,
+        0.2250000000000001,
+        0.10000000000000009,
+        0.17499999999999982,
+        0.07500000000000018,
+        0.0625,
+        0.02499999999999991,
+        0.0625,
+        0.125,
+        0.11249999999999982,
+        0.11249999999999982,
+        0.02499999999999991,
+        0.0625,
+        0.07500000000000018,
+        0.0625,
+        0.02499999999999991,
+        0.012500000000000178,
+        0.02499999999999991,
+        0.02499999999999991,
+        0.0625,
+        0.0625,
+        0.15000000000000036
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 121.125,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.8972222222222223,
+      "unmatched_decidable_reference_ids": [
+        "ref_002",
+        "ref_003",
+        "ref_004",
+        "ref_005",
+        "ref_014",
+        "ref_016",
+        "ref_017",
+        "ref_018",
+        "ref_019",
+        "ref_022",
+        "ref_023",
+        "ref_024",
+        "ref_025",
+        "ref_028",
+        "ref_029",
+        "ref_030",
+        "ref_031",
+        "ref_034",
+        "ref_035",
+        "ref_036",
+        "ref_037"
+      ]
+    },
+    {
+      "id": "SDjBFHHLfNrWZyQw",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 35,
+      "fp": 0,
+      "unknown": 203,
+      "references": 42,
+      "fn": 7,
+      "support_total": 180,
+      "support_valid": 180,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.0,
+        0.012500000000000011,
+        0.0,
+        0.012500000000000011,
+        0.012500000000000011,
+        0.03749999999999998,
+        0.08750000000000002,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.03749999999999998,
+        0.050000000000000044,
+        0.03749999999999998,
+        0.050000000000000044,
+        0.050000000000000044,
+        0.050000000000000044,
+        0.050000000000000044,
+        0.10000000000000009,
+        0.050000000000000044,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.050000000000000044,
+        0.0,
+        0.050000000000000044,
+        0.050000000000000044,
+        0.012499999999999956,
+        0.13749999999999996,
+        0.02499999999999991,
+        0.03750000000000009,
+        0.02499999999999991,
+        0.012499999999999956,
+        0.02499999999999991,
+        0.02499999999999991,
+        0.10000000000000009,
+        0.02499999999999991,
+        0.10000000000000009,
+        0.10000000000000009,
+        0.08749999999999991,
+        0.10000000000000009,
+        0.08749999999999991,
+        0.08749999999999991,
+        0.13750000000000018,
+        0.08749999999999991,
+        0.3374999999999999,
+        0.11249999999999982,
+        0.10000000000000009,
+        0.08749999999999991,
+        0.02499999999999991,
+        0.03750000000000009,
+        0.03750000000000009,
+        0.02499999999999991,
+        0.03750000000000009,
+        0.03750000000000009,
+        0.0,
+        0.03750000000000009,
+        0.07500000000000018,
+        0.02499999999999991,
+        0.125,
+        0.17499999999999982,
+        0.0625,
+        0.07500000000000018,
+        0.012500000000000178,
+        0.0625,
+        0.15000000000000036,
+        0.012500000000000178,
+        0.04999999999999982,
+        0.012500000000000178,
+        0.0
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 126.25,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9351851851851852,
+      "unmatched_decidable_reference_ids": [
+        "ref_022",
+        "ref_026",
+        "ref_027",
+        "ref_029",
+        "ref_030",
+        "ref_031",
+        "ref_037"
+      ]
+    },
+    {
+      "id": "tPcHgaVsYRLuCHZz",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 24,
+      "fp": 0,
+      "unknown": 106,
+      "references": 47,
+      "fn": 23,
+      "support_total": 355,
+      "support_valid": 355,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.1,
+        0.2375,
+        0.1,
+        0.1875,
+        0.3,
+        0.08750000000000002,
+        0.35,
+        0.012499999999999956,
+        0.17500000000000004,
+        0.13749999999999996,
+        0.02499999999999991,
+        0.0625,
+        0.02499999999999991,
+        0.1625000000000001,
+        0.08749999999999991,
+        0.2625000000000002,
+        0.0625,
+        0.0,
+        0.0625,
+        0.02499999999999991,
+        0.11249999999999982,
+        0.0625,
+        0.0625,
+        0.0,
+        0.125,
+        0.03750000000000009,
+        0.4375,
+        0.02499999999999991,
+        0.0,
+        0.02499999999999991,
+        0.03750000000000009,
+        0.2124999999999999,
+        0.03750000000000009,
+        0.2124999999999999,
+        0.03750000000000009,
+        0.11249999999999982,
+        0.07500000000000018,
+        0.13750000000000018,
+        0.02499999999999991,
+        0.0625,
+        0.11249999999999982,
+        0.012500000000000178,
+        0.03750000000000009,
+        0.012500000000000178,
+        0.11249999999999982,
+        0.037499999999999645,
+        0.012500000000000178,
+        0.0625
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 117.375,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.8694444444444445,
+      "unmatched_decidable_reference_ids": [
+        "ref_001",
+        "ref_002",
+        "ref_004",
+        "ref_005",
+        "ref_006",
+        "ref_011",
+        "ref_018",
+        "ref_020",
+        "ref_022",
+        "ref_023",
+        "ref_024",
+        "ref_027",
+        "ref_030",
+        "ref_031",
+        "ref_032",
+        "ref_034",
+        "ref_036",
+        "ref_037",
+        "ref_038",
+        "ref_039",
+        "ref_041",
+        "ref_045",
+        "ref_047"
+      ]
+    },
+    {
+      "id": "iQBpcSyrZpDaSFjj",
+      "reviewer": "assistant comparator with independent source-only assistant reference crosscheck",
+      "reviewer_type": "assistant",
+      "tp": 20,
+      "fp": 0,
+      "unknown": 35,
+      "references": 23,
+      "fn": 3,
+      "support_total": 326,
+      "support_valid": 315,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.07500000000000001,
+        0.11250000000000004,
+        0.07500000000000001,
+        0.3125,
+        0.38749999999999996,
+        0.0625,
+        0.1875,
+        0.0625,
+        0.575,
+        0.7124999999999999,
+        0.17500000000000004,
+        0.13750000000000018,
+        0.17500000000000004,
+        0.7124999999999999,
+        0.02499999999999991,
+        0.2625000000000002,
+        0.02499999999999991,
+        0.13750000000000018,
+        0.02499999999999991,
+        0.02499999999999991,
+        0.4375,
+        0.04999999999999982,
+        0.2875000000000001,
+        0.7000000000000002,
+        0.2250000000000001,
+        0.125,
+        0.2250000000000001,
+        0.17499999999999982,
+        0.25,
+        0.40000000000000036,
+        0.20000000000000018,
+        0.34999999999999964,
+        0.9249999999999998,
+        0.012500000000000178,
+        0.5750000000000002,
+        0.0625,
+        0.47499999999999964,
+        0.0625,
+        0.27500000000000036,
+        0.0625
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 118.8125,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.8800925925925925,
+      "unmatched_decidable_reference_ids": [
+        "source_ref_006",
+        "source_ref_016",
+        "source_ref_023"
+      ]
+    },
+    {
+      "id": "vomjSdzUmXzYXdVU",
+      "reviewer": "assistant source-first inventory and candidate comparator",
+      "reviewer_type": "assistant",
+      "tp": 15,
+      "fp": 0,
+      "unknown": 77,
+      "references": 19,
+      "fn": 4,
+      "support_total": 304,
+      "support_valid": 272,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.25,
+        0.04999999999999982,
+        0.25,
+        0.10000000000000009,
+        0.04999999999999982,
+        0.0,
+        0.04999999999999982,
+        0.1499999999999999,
+        0.04999999999999982,
+        0.3125,
+        0.3875000000000002,
+        0.1499999999999999,
+        0.4624999999999999,
+        0.125,
+        0.4125000000000001,
+        0.17499999999999982,
+        0.012500000000000178,
+        0.10000000000000009,
+        0.012500000000000178,
+        0.25,
+        0.4125000000000001,
+        0.025000000000000355,
+        0.13750000000000018,
+        0.025000000000000355,
+        0.13750000000000018,
+        0.07500000000000018,
+        0.3125,
+        0.037499999999999645,
+        0.21250000000000036,
+        0.1875
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 120.0,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.8888888888888888,
+      "unmatched_decidable_reference_ids": [
+        "ref_004",
+        "ref_009",
+        "ref_011",
+        "ref_012"
+      ]
+    },
+    {
+      "id": "ZdoIHubgfEwrnrtx",
+      "reviewer": "assistant source-first inventory and candidate comparator",
+      "reviewer_type": "assistant",
+      "tp": 14,
+      "fp": 0,
+      "unknown": 56,
+      "references": 21,
+      "fn": 7,
+      "support_total": 212,
+      "support_valid": 212,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.0,
+        0.04999999999999999,
+        0.04999999999999999,
+        0.025000000000000022,
+        0.04999999999999999,
+        0.07499999999999996,
+        0.3125,
+        0.1499999999999999,
+        0.3125,
+        0.0,
+        0.012500000000000178,
+        0.3500000000000001,
+        0.125,
+        0.1499999999999999,
+        0.3999999999999999,
+        0.13750000000000018,
+        0.3500000000000001,
+        0.012500000000000178,
+        0.012500000000000178,
+        0.012500000000000178,
+        0.2999999999999998,
+        0.10000000000000009,
+        0.012500000000000178,
+        0.34999999999999964,
+        0.10000000000000009,
+        0.04999999999999982,
+        0.3250000000000002,
+        0.0
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 124.5625,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9226851851851852,
+      "unmatched_decidable_reference_ids": [
+        "ref_003_visible_3",
+        "ref_007",
+        "ref_008",
+        "ref_009_visible_11",
+        "ref_014",
+        "ref_016_visible_19",
+        "ref_018_visible_22"
+      ]
+    },
+    {
+      "id": "riCajHnGtnoTLObH",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 3,
+      "fp": 0,
+      "unknown": 93,
+      "references": 6,
+      "fn": 3,
+      "support_total": 52,
+      "support_valid": 52,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.17499999999999982,
+        0.07500000000000018,
+        0.07500000000000018,
+        0.125,
+        0.20000000000000018,
+        0.20000000000000018
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 132.5,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9814814814814815,
+      "unmatched_decidable_reference_ids": [
+        "ref_002",
+        "ref_004",
+        "ref_006"
+      ]
+    },
+    {
+      "id": "XPVRgFxtXkBsceVC",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 15,
+      "fp": 0,
+      "unknown": 102,
+      "references": 22,
+      "fn": 7,
+      "support_total": 147,
+      "support_valid": 147,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.0,
+        0.04999999999999999,
+        0.0,
+        0.04999999999999999,
+        0.0,
+        0.04999999999999999,
+        0.0,
+        0.04999999999999999,
+        0.2,
+        0.0,
+        0.04999999999999999,
+        0.4,
+        0.15000000000000002,
+        0.050000000000000044,
+        0.0,
+        0.03750000000000009,
+        0.050000000000000044,
+        0.08749999999999991,
+        0.1499999999999999,
+        0.09999999999999964,
+        0.1499999999999999,
+        0.04999999999999982,
+        0.09999999999999964,
+        0.0,
+        0.04999999999999982,
+        0.0,
+        0.04999999999999982,
+        0.0,
+        0.04999999999999982,
+        0.09999999999999964
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 128.125,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9490740740740741,
+      "unmatched_decidable_reference_ids": [
+        "ref_002",
+        "ref_011",
+        "ref_012",
+        "ref_013",
+        "ref_014",
+        "ref_017",
+        "ref_021"
+      ]
+    },
+    {
+      "id": "KhfvQfWrHlPRsXTt",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 10,
+      "fp": 0,
+      "unknown": 124,
+      "references": 22,
+      "fn": 12,
+      "support_total": 176,
+      "support_valid": 176,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.024999999999999994,
+        0.09999999999999998,
+        0.024999999999999994,
+        0.04999999999999999,
+        0.09999999999999998,
+        0.15000000000000002,
+        0.04999999999999999,
+        0.050000000000000044,
+        0.15000000000000002,
+        0.17500000000000004,
+        0.1875,
+        0.13750000000000018,
+        0.1875,
+        0.1875,
+        0.012499999999999956,
+        0.1499999999999999,
+        0.08750000000000036,
+        0.0,
+        0.08750000000000036,
+        0.0
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 126.375,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9361111111111111,
+      "unmatched_decidable_reference_ids": [
+        "ref_001",
+        "ref_002",
+        "ref_003",
+        "ref_004",
+        "ref_006",
+        "ref_010",
+        "ref_014",
+        "ref_015",
+        "ref_017",
+        "ref_019",
+        "ref_020",
+        "ref_022"
+      ]
+    },
+    {
+      "id": "hjippsshahMjZMqT",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 19,
+      "fp": 0,
+      "unknown": 86,
+      "references": 32,
+      "fn": 13,
+      "support_total": 210,
+      "support_valid": 210,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.07499999999999996,
+        0.0,
+        0.2749999999999999,
+        0.08749999999999991,
+        0.02499999999999991,
+        0.13749999999999996,
+        0.012499999999999956,
+        0.012499999999999956,
+        0.08749999999999991,
+        0.0625,
+        0.13749999999999996,
+        0.11249999999999982,
+        0.25,
+        0.0625,
+        0.11249999999999982,
+        0.08749999999999991,
+        0.10000000000000009,
+        0.04999999999999982,
+        0.1625000000000001,
+        0.02499999999999991,
+        0.02499999999999991,
+        0.08749999999999991,
+        0.07500000000000018,
+        0.03750000000000009,
+        0.125,
+        0.16249999999999964,
+        0.08749999999999991,
+        0.012500000000000178,
+        0.03750000000000009,
+        0.08750000000000036,
+        0.16249999999999964,
+        0.13750000000000018,
+        0.012500000000000178,
+        0.125,
+        0.08750000000000036,
+        0.07500000000000018,
+        0.13750000000000018,
+        0.025000000000000355
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 124.625,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9231481481481482,
+      "unmatched_decidable_reference_ids": [
+        "ref_001",
+        "ref_005",
+        "ref_006",
+        "ref_007",
+        "ref_008",
+        "ref_009",
+        "ref_013",
+        "ref_014",
+        "ref_016",
+        "ref_017",
+        "ref_018",
+        "ref_019",
+        "ref_027"
+      ]
+    },
+    {
+      "id": "oXbuqHPsWXQFplhp",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 7,
+      "fp": 0,
+      "unknown": 173,
+      "references": 17,
+      "fn": 10,
+      "support_total": 119,
+      "support_valid": 119,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.0,
+        0.11249999999999999,
+        0.11249999999999999,
+        0.25,
+        0.08750000000000002,
+        0.15000000000000002,
+        0.08750000000000002,
+        0.15000000000000002,
+        0.1875,
+        0.19999999999999996,
+        0.23750000000000004,
+        0.25,
+        0.025000000000000355,
+        0.025000000000000355
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 129.375,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9583333333333334,
+      "unmatched_decidable_reference_ids": [
+        "ref_003",
+        "ref_005",
+        "ref_007",
+        "ref_008",
+        "ref_011",
+        "ref_012",
+        "ref_013",
+        "ref_014",
+        "ref_015",
+        "ref_017"
+      ]
+    },
+    {
+      "id": "UcoNCJtmVeQRDyvz",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 14,
+      "fp": 0,
+      "unknown": 127,
+      "references": 36,
+      "fn": 22,
+      "support_total": 258,
+      "support_valid": 258,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.21250000000000002,
+        0.03749999999999998,
+        0.11249999999999999,
+        0.03749999999999998,
+        0.08750000000000002,
+        0.03749999999999998,
+        0.012499999999999956,
+        0.36250000000000004,
+        0.32499999999999996,
+        0.1625000000000001,
+        0.32499999999999996,
+        0.2124999999999999,
+        0.012500000000000178,
+        0.0625,
+        0.012500000000000178,
+        0.0625,
+        0.0625,
+        0.0625,
+        0.0625,
+        0.11249999999999982,
+        0.13750000000000018,
+        0.0625,
+        0.2749999999999999,
+        0.125,
+        0.2749999999999999,
+        0.125,
+        0.125,
+        0.15000000000000036
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 122.125,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9046296296296297,
+      "unmatched_decidable_reference_ids": [
+        "ref_001",
+        "ref_002",
+        "ref_003",
+        "ref_005",
+        "ref_008",
+        "ref_010",
+        "ref_011",
+        "ref_012",
+        "ref_015",
+        "ref_016",
+        "ref_020",
+        "ref_023",
+        "ref_024",
+        "ref_026",
+        "ref_028",
+        "ref_029",
+        "ref_031",
+        "ref_032",
+        "ref_033",
+        "ref_034",
+        "ref_035",
+        "ref_036"
+      ]
+    },
+    {
+      "id": "kwbxBGvBhSFjyoIN",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 9,
+      "fp": 0,
+      "unknown": 82,
+      "references": 26,
+      "fn": 17,
+      "support_total": 136,
+      "support_valid": 131,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.10000000000000009,
+        0.25,
+        0.10000000000000009,
+        0.02499999999999991,
+        0.1625000000000001,
+        0.07500000000000018,
+        0.0625,
+        0.02499999999999991,
+        0.2250000000000001,
+        0.0625,
+        0.07500000000000018,
+        0.13750000000000018,
+        0.1875,
+        0.07500000000000018,
+        0.07500000000000018,
+        0.037499999999999645,
+        0.0625,
+        0.0
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 128.4375,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9513888888888888,
+      "unmatched_decidable_reference_ids": [
+        "ref_001",
+        "ref_002",
+        "ref_003",
+        "ref_004",
+        "ref_005",
+        "ref_006",
+        "ref_007",
+        "ref_008",
+        "ref_011",
+        "ref_014",
+        "ref_015",
+        "ref_016",
+        "ref_019",
+        "ref_021",
+        "ref_022",
+        "ref_025",
+        "ref_026"
+      ]
+    },
+    {
+      "id": "jLxDfRnLeLBTCcmB",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 6,
+      "fp": 0,
+      "unknown": 138,
+      "references": 9,
+      "fn": 3,
+      "support_total": 75,
+      "support_valid": 75,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.4375,
+        0.2124999999999999,
+        0.2875,
+        0.0625,
+        0.13749999999999996,
+        0.2124999999999999,
+        0.13749999999999996,
+        0.13749999999999996,
+        0.012499999999999956,
+        0.012499999999999956,
+        0.0625,
+        0.15000000000000036
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 131.4375,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9736111111111111,
+      "unmatched_decidable_reference_ids": [
+        "ref_004",
+        "ref_007",
+        "ref_008"
+      ]
+    },
+    {
+      "id": "hFJWFhMQCFJOLwzX",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 11,
+      "fp": 0,
+      "unknown": 82,
+      "references": 12,
+      "fn": 1,
+      "support_total": 70,
+      "support_valid": 61,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.8500000000000001,
+        0.5499999999999998,
+        0.8,
+        0.0,
+        0.04999999999999982,
+        0.1499999999999999,
+        0.0,
+        0.20000000000000018,
+        0.0,
+        0.4500000000000002,
+        0.04999999999999982,
+        0.25,
+        1.0375,
+        0.025000000000000355,
+        0.6875,
+        0.025000000000000355,
+        0.3500000000000001,
+        0.13750000000000018,
+        0.09999999999999964,
+        0.16249999999999964,
+        0.1875,
+        0.125
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 131.875,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9768518518518519,
+      "unmatched_decidable_reference_ids": [
+        "ref_012"
+      ]
+    },
+    {
+      "id": "hWAgtTrXwoSEHaeB",
+      "reviewer": "assistant source-first survey/compiler and candidate comparator; independent source-only checks are not human reviews",
+      "reviewer_type": "assistant",
+      "tp": 6,
+      "fp": 0,
+      "unknown": 172,
+      "references": 7,
+      "fn": 1,
+      "support_total": 58,
+      "support_valid": 58,
+      "critical_errors": 0,
+      "incorrect_removed_occurrences": 0,
+      "boundary_errors": [
+        0.125,
+        0.0625,
+        0.07500000000000001,
+        0.6875,
+        0.0625,
+        0.13749999999999996,
+        0.11250000000000004,
+        0.2124999999999999,
+        0.13749999999999996,
+        0.2250000000000001,
+        0.012499999999999956,
+        0.04999999999999982
+      ],
+      "geometry_checks_passed": false,
+      "unknown_operator_seconds": 132.125,
+      "total_operator_seconds": 135.0,
+      "unknown_operator_fraction": 0.9787037037037037,
+      "unmatched_decidable_reference_ids": [
+        "ref_007"
+      ]
+    }
+  ],
+  "review_revision_sha256": {
+    "kucgimcrldnunIqv": {
+      "main": "2cb20b3e9c8c0dfcf5e7e82c02e6d82490c5e0b54dc52bf430f36072030ee050"
+    },
+    "rRwNMQMKDoQTyHuS": {
+      "main": "171f429ff3a7842e77f365adef17dea5d4d2d522ca9ed7c513d5d6f18732e226"
+    },
+    "CXnOwcDSVHzIUwtx": {
+      "main": "4e502dc8d1c42b2329b1ac75a5d3e7482cc1974dab1b81546000acb5eb555cf3"
+    },
+    "drKSnQygeQBpvOwH": {
+      "main": "bf79f92dfaf8bfbd4babfeb9f7ee17043a1de4de31a636ebeb3a75baeddecade"
+    },
+    "NyfVAyPijuUenemx": {
+      "main": "3cc9c6c1f98805983fbc57741a12ef7ed416c90360ca2fadc6776082c275ea81"
+    },
+    "FyUgxWjRsOITaKzM": {
+      "main": "c20ce81564da1f422dc00f743bd502a17fe0f4b789f4b6eed2ac3ea4a29cbbf4"
+    },
+    "SDjBFHHLfNrWZyQw": {
+      "main": "7f10aaf12fcad021f3ecf948830c8c17e55cc03fe5f44bb6e53d168c2d516cc2"
+    },
+    "tPcHgaVsYRLuCHZz": {
+      "main": "1958cb43efcf30cafeeaa35e9ae45b20c76dcdc6299e00b2d6f96e0793bd713d"
+    },
+    "iQBpcSyrZpDaSFjj": {
+      "main": "53db1af98799dfa6a8b58ca1045156faa395b68f44cca34555211c0f0291d1b2"
+    },
+    "vomjSdzUmXzYXdVU": {
+      "main": "ae66f6ac6d0c142d3a24fcadcb9daf5449aed763582f7a92ebca3e8b66afa770"
+    },
+    "ZdoIHubgfEwrnrtx": {
+      "main": "77221d5c4264822f48d98eb0ea839979bcd63eaff395869118d74d85b5c29368"
+    },
+    "riCajHnGtnoTLObH": {
+      "main": "3beaae5e24d3b0334e6d94ec67b2b65cbdf770eb5193eb1c4bc1d1c2c47ab090"
+    },
+    "XPVRgFxtXkBsceVC": {
+      "main": "a3a4496dbfa3e075924be704a249c613f41d6101cf6c60682e6c7bf2a4eb6470"
+    },
+    "KhfvQfWrHlPRsXTt": {
+      "main": "4cc5aa167b68c8958ddb0910bac2e79e4ec0ed543a433f4bc2f6d131d6c50e44"
+    },
+    "hjippsshahMjZMqT": {
+      "main": "49ebd9dec22afcbe816a8b20ffd8b67df77da63d511d2102f3a5aec8cfeb6eff"
+    },
+    "oXbuqHPsWXQFplhp": {
+      "main": "dfc2db01220750b635a18590b16183b54f4bb79f22ee268af0d32732b796de4a"
+    },
+    "UcoNCJtmVeQRDyvz": {
+      "main": "999adf2e8707d9f4f0a8faae45cf8a3c95a904f2b1dc175513a1af1c0065ecf1"
+    },
+    "kwbxBGvBhSFjyoIN": {
+      "main": "a7a4698f138cdb5e9bf7ecadabcbdeb63244ac8be2c97df89220faf68fa80a9e"
+    },
+    "jLxDfRnLeLBTCcmB": {
+      "main": "53315d71faec37afb0a03fceafb5007da44ee04fefc79859730c97c878b8b113"
+    },
+    "hFJWFhMQCFJOLwzX": {
+      "main": "23288aeac9781881109a85100212d7c751e436510d41efc153d9d37c682348c4"
+    },
+    "hWAgtTrXwoSEHaeB": {
+      "main": "b3adf09b7c9885ac275f52d2d24c72ca9e6cd30d0de874e98fba7fd52013a4ab"
+    }
+  },
+  "one_reference_supports_at_most_one_candidate": true,
+  "direction_and_reference_coverage_verified": false,
+  "direction_reference_verification_scope": "all200 registered source reviews; pending sources remain unverified",
+  "all_measured_channels_require_full_source_coverage": true,
+  "geometry_unknowns_block_promotion": true,
+  "metrics_scope": "completed source reviews only; no full-200 inference while pending",
+  "absolute_scale_or_depth_certified": false,
+  "frozen_measurements_changed": false,
+  "selection_sha256": "1838a80b625f1ba282ff50b5006b3e58854a747aa89d414893a1787d467b8c39",
+  "frozen_protocol_sha256": "f43acdc9078ab1be541e6bfaa43eb2c459829760d24eb59a3a93c48f1ec162b0",
+  "postprocess_registry_sha256": "c90f3fb9bd02b0de3f09a99225fa046ee7b8c0bd02887d040004552770991840",
+  "implementation_sha256": "9a9fb1e1bc2a5f425ce8a79a5b674d2913c5a4c370e9f51f32b7676e3f3f5c3e",
+  "frozen_verifier_v1_sha256": "d05a59df146765f88905c4bb87ebef3c31dec9552ca32ea97780274ffd7561f0"
+}

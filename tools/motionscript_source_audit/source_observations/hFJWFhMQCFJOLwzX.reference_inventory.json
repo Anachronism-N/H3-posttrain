@@ -1,0 +1,42 @@
+{
+  "schema": "native-body-rgb-reference-tracks-v1",
+  "id": "hFJWFhMQCFJOLwzX",
+  "video_sha256": "932a392d0a50313acc10970eec7d5e786d19861f10a6a800f3a5c27edc1a377c",
+  "source_first": true,
+  "current_candidate_table_read_before_inventory_freeze": false,
+  "reference_origin": "Primary all81 source-only frames and16 pure source detail frames before candidate comparison",
+  "reviewer_type": "assistant",
+  "source_detail_sha256": "e63d94643c71435260bb0c8b4ae62f6f3dc0583dcd2dfa96b0e66853b55a2224",
+  "side_policy": "Near-frontal initial image-left shoulder/hip is depicted right, image-right is left. Follow bare shoulder/forearm chains through crossed arms and the later profile pose; raised near-side arm is tracked as left, not renamed by current wrist x. Premirror actor side is uncertified.",
+  "frame_namespace": "Frozen input clip native decoded frames",
+  "seconds_policy": "Frozen media_probe.time and integer PTS/time_base",
+  "tracks": [
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[40,44],"directions":["bend"],"reason":"Hands leave the waist and visible forearms fold across the upper torso; no exact3D degree amount is claimed."},
+    {"body_part":"left_elbow","measurement_name":"joint_interior_angle","frames":[40,44],"directions":["bend"]},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[40,44],"directions":["positive_torso_up_axis"]},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[40,44],"directions":["positive_torso_up_axis"]},
+    {"body_part":"right_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"raises","frames":[40,44],"directions":["increasing_relative_elevation"]},
+    {"body_part":"left_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"raises","frames":[40,44],"directions":["increasing_relative_elevation"]},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[63,66],"directions":["negative_torso_up_axis"],"reason":"Crossed wrists descend toward the waist as arms separate, relative to the current shoulders/torso rather than body imageY alone."},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[63,66],"directions":["negative_torso_up_axis"]},
+    {"body_part":"left_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"raises","frames":[68,73],"directions":["increasing_relative_elevation"]},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[68,73],"directions":["positive_torso_up_axis"]},
+    {"body_part":"left_elbow","measurement_name":"joint_interior_angle","frames":[73,78],"directions":["bend"],"reason":"Extended overhead forearm folds toward the head; contact with hair/head itself is not a new measured fact."},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[73,78],"directions":["negative_torso_up_axis"]}
+  ],
+  "decidable_channel_frame_windows": {
+    "right_elbow.joint_interior_angle": [[40,44]],
+    "left_elbow.joint_interior_angle": [[40,44],[73,78]],
+    "right_wrist.wrist_position_along_torso_axis": [[40,44],[63,66]],
+    "left_wrist.wrist_position_along_torso_axis": [[40,44],[63,66],[68,78]],
+    "right_upper_arm.upper_arm_elevation_relative_to_torso": [[40,44]],
+    "left_upper_arm.upper_arm_elevation_relative_to_torso": [[40,44],[68,73]]
+  },
+  "unknown_channel_reason": "Hands held around hips, small finger rotations, torso/hip sway and crossed/hidden forearm endpoints do not certify3D wrist/angle reversals. Shoe/leg shifts and bends are real but loose trousers, low-angle perspective and hip motion leave side-resolved exact knee/ankle3D quantities uncertain. Root/yaw/depth/radial values and ground contact remain uncalibrated; unknown is not stillness.",
+  "other_observed_source_motion": [{"description":"Repeated hip/torso sway with foot lifting/return and knee/leg silhouette changes throughout0–68, followed by profile posture; these are not deleted or converted into world displacement/force or knee cycles from shoe height.","decidable":false}],
+  "exact_3d_amplitude_speed_or_depth_certified": false,
+  "source_references_are_coarse_not_precise_extrema": true,
+  "multiple_signals_not_distinct_physical_action_count": true,
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false
+}

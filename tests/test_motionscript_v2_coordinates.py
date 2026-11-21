@@ -239,6 +239,20 @@ def test_joint_segments_preserve_a_gap_hidden_between_output_samples():
     assert arrays["joint_observed"].all()  # Both endpoints really are observations.
 
 
+def test_missing_feet_preserves_fk_upper_body_without_ground_claim():
+    record = nlf(count=9)
+    record["pose"][:, 4 * 3:6 * 3] = np.nan
+    arrays, metadata = preprocess(record, template(), smooth_seconds=0)
+    assert arrays["valid"].all()
+    assert arrays["joint_valid"][:, [16, 17, 18, 19, 20, 21]].all()
+    assert np.isfinite(arrays["body"][:, [16, 18, 20]]).all()
+    assert not arrays["floor_valid"].any()
+    assert np.isnan(arrays["estimated_floor_y"]).all()
+    assert np.isnan(arrays["coords"][:, :52]).all()
+    assert np.isfinite(arrays["root_rotation"]).all()
+    assert "root-relative" in metadata["floor_missing_behavior"]
+
+
 def test_all_invalid_and_single_frame_are_well_formed():
     record = nlf(count=5)
     record["valid"][:] = False

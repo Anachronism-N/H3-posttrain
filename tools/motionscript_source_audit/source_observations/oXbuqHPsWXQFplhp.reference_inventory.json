@@ -1,0 +1,41 @@
+{
+  "schema": "native-body-rgb-reference-tracks-v1",
+  "id": "oXbuqHPsWXQFplhp",
+  "video_sha256": "fa8d656598e023c4a0ce993231ffe4fa7955894026f08be75347fe2d0f1f0d6e",
+  "source_first": true,
+  "current_candidate_table_read_before_inventory_freeze": false,
+  "reference_origin": "Primary all81 source-only frames and16 detail frames before candidate comparison; coarse source-envelope interpretation only",
+  "reviewer_type": "assistant",
+  "source_detail_sha256": "61a95192a1bac71e739d4821a92826b045803a9d6fe2048ae51d7564b73f16e5",
+  "side_policy": "Near-frontal initial image-left shoulder/hip is depicted right, image-right is left. Follow proximal chains through the full turn18–28 and later crosses; current hand/shoe x does not rename sides. Premirror actor laterality is uncertified.",
+  "frame_namespace": "Frozen input clip native decoded frames",
+  "seconds_policy": "Frozen media_probe.time and integer PTS/time_base",
+  "tracks": [
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[4,9,16],"directions":["bend","extend"],"reason":"Visible forearm folds toward the face/crossed chest and opens to the lowered side; finger poses are not angles."},
+    {"body_part":"left_elbow","measurement_name":"joint_interior_angle","frames":[4,9,16],"directions":["bend","extend"]},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[4,9,16],"directions":["positive_torso_up_axis","negative_torso_up_axis"]},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[4,9,16],"directions":["positive_torso_up_axis","negative_torso_up_axis"]},
+    {"body_part":"right_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"lowers","frames":[9,16],"directions":["decreasing_relative_elevation"]},
+    {"body_part":"left_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"lowers","frames":[9,16],"directions":["decreasing_relative_elevation"]},
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[36,40,44],"directions":["bend","extend"]},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[36,40,44],"directions":["positive_torso_up_axis","negative_torso_up_axis"]},
+    {"body_part":"right_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"raises","frames":[74,78],"directions":["increasing_relative_elevation"]},
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[74,78],"directions":["extend"]},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[74,78],"directions":["positive_torso_up_axis"]}
+  ],
+  "decidable_channel_frame_windows": {
+    "right_elbow.joint_interior_angle": [[4,16],[36,44],[74,78]],
+    "left_elbow.joint_interior_angle": [[4,16]],
+    "right_wrist.wrist_position_along_torso_axis": [[4,16],[36,44],[74,78]],
+    "left_wrist.wrist_position_along_torso_axis": [[4,16]],
+    "right_upper_arm.upper_arm_elevation_relative_to_torso": [[9,16],[74,78]],
+    "left_upper_arm.upper_arm_elevation_relative_to_torso": [[9,16]]
+  },
+  "unknown_channel_reason": "Small subject/blurred endpoints and the turn18–28 leave other3D trajectories and directions unconfirmed. Folded-back leg/shoe lifts are visible at0–3,10–13 and77–80, but skirt/hip location, depth and full side-resolved knee/ankle measurement are not promoted from shoe height alone. Camera/root/depth/radial quantities are uncalibrated. Unknown is not stillness.",
+  "other_observed_source_motion": [{"description":"Full turn18–28, leg folding/returning and side weight shifts are visible; no calibrated yaw/ground contact or force is claimed.","decidable":false}],
+  "exact_3d_amplitude_speed_or_depth_certified": false,
+  "source_references_are_coarse_not_precise_extrema": true,
+  "multiple_signals_not_distinct_physical_action_count": true,
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false
+}

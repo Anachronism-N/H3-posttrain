@@ -1,0 +1,61 @@
+{
+  "schema": "native-body-source-audit-batch-v1",
+  "batch_number": 6,
+  "previous_contract": "independent_review_contract.v6.json",
+  "previous_contract_sha256": "03d5c7f6f94bbae0f8b07c896c94c24d0e02a2eb65282df6f3ee68f5de69bae7",
+  "new_contract": "independent_review_contract.v7.json",
+  "source_package": "independent-review-supplement-sourcebatch6-v1",
+  "supplemental_panel": "supplemental_independent_sourcebatch6_review.json",
+  "cases": {
+    "oXbuqHPsWXQFplhp": {
+      "inventory": "oXbuqHPsWXQFplhp.reference_inventory.json",
+      "sha256": "f8bc087d64310c4db1aec5f49d57597f67adf0d3e924eab856c379f065434717",
+      "matches": {
+        "21": ["right_elbow", "joint_interior_angle", 4, 9],
+        "44": ["left_elbow", "joint_interior_angle", 9, 16],
+        "45": ["right_elbow", "joint_interior_angle", 9, 16],
+        "31": ["right_wrist", "wrist_position_along_torso_axis", 9, 16],
+        "34": ["left_upper_arm", "upper_arm_elevation_relative_to_torso", 9, 16],
+        "35": ["right_upper_arm", "upper_arm_elevation_relative_to_torso", 9, 16],
+        "169": ["right_elbow", "joint_interior_angle", 74, 78]
+      }
+    },
+    "UcoNCJtmVeQRDyvz": {
+      "inventory": "UcoNCJtmVeQRDyvz.reference_inventory.json",
+      "sha256": "9e6fd5e0eb3746d003a8e849194269e31fe5af5fca2ba4cf7c9b112ae2a3af07",
+      "matches": {
+        "23": ["right_wrist", "wrist_position_along_torso_axis", 9, 11],
+        "26": ["left_wrist", "wrist_position_along_torso_axis", 9, 11],
+        "31": ["left_elbow", "joint_interior_angle", 11, 15],
+        "41": ["right_elbow", "joint_interior_angle", 11, 15],
+        "63": ["left_wrist", "wrist_position_along_torso_axis", 26, 31],
+        "64": ["right_wrist", "wrist_position_along_torso_axis", 26, 31],
+        "90": ["left_upper_arm", "upper_arm_elevation_relative_to_torso", 39, 43],
+        "91": ["right_upper_arm", "upper_arm_elevation_relative_to_torso", 39, 43],
+        "92": ["right_wrist", "wrist_position_along_torso_axis", 39, 47],
+        "93": ["left_wrist", "wrist_position_along_torso_axis", 39, 47],
+        "94": ["right_elbow", "joint_interior_angle", 43, 47],
+        "120": ["left_elbow", "joint_interior_angle", 54, 62],
+        "121": ["right_elbow", "joint_interior_angle", 54, 62],
+        "134": ["right_elbow", "joint_interior_angle", 62, 68]
+      }
+    },
+    "kwbxBGvBhSFjyoIN": {
+      "inventory": "kwbxBGvBhSFjyoIN.reference_inventory.json",
+      "sha256": "70a658dc67ef8caade928505a7c6c5418f5955827cd52f4e89ca76514354ca9e",
+      "matches": {
+        "38": ["left_elbow", "joint_interior_angle", 40, 48],
+        "40": ["left_wrist", "wrist_position_along_torso_axis", 40, 54],
+        "53": ["left_wrist", "wrist_position_along_torso_axis", 58, 63],
+        "54": ["left_elbow", "joint_interior_angle", 58, 63],
+        "44": ["right_wrist", "wrist_position_along_torso_axis", 49, 54],
+        "46": ["right_elbow", "joint_interior_angle", 49, 54],
+        "60": ["right_elbow", "joint_interior_angle", 63, 66],
+        "69": ["right_elbow", "joint_interior_angle", 66, 69],
+        "89": ["right_elbow", "joint_interior_angle", 75, 80]
+      }
+    }
+  },
+  "correspondences_are_coarse_not_certified3d_error_metrics": true,
+  "source_model_or_event_thresholds_changed": false
+}

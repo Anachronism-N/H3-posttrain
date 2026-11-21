@@ -1,0 +1,37 @@
+{
+  "schema": "native-body-rgb-reference-tracks-v1",
+  "id": "rRwNMQMKDoQTyHuS",
+  "video_sha256": "e66b2adee823a99f05de38e886a1a02140e67bfcf6b0c557777ae45460cb7574",
+  "source_first": true,
+  "candidates_or_prediction_images_read_before_freeze": false,
+  "reviewer_type": "assistant",
+  "reference_origin": "Primary assistant reviewed all81 source-only frames and12 source-only detail frames before reading candidates",
+  "source_detail_sha256": "b39575d41a84083ea5d689eab2085a31c5400a0167fe019b1994f797f18050a5",
+  "source_directory": "acceptance-source-sequence-review-v1/rRwNMQMKDoQTyHuS",
+  "source_files": ["frames_000_026.jpg", "frames_027_053.jpg", "frames_054_080.jpg"],
+  "frame_namespace": "Frozen input clip native decoded frames",
+  "seconds_policy": "Use frozen media_probe.time and integer PTS/time_base, not inferred nominalfps",
+  "side_policy": "Follow depicted right shoulder-elbow-wrist from initial image-left and left chain from initial image-right, including crossing hands. Shirt lettering is reversed; pre-mirror actor laterality is not certified.",
+  "tracks": [
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[14,19],"directions":["positive_torso_up_axis"],"reason":"Right shoulder chain raises the wrist from waist toward the face; source detail14/16/19 confirms the gross trend."},
+    {"body_part":"right_elbow","measurement_name":"elbow_internal_angle","frames":[14,19],"directions":["bend"],"reason":"Initially hanging forearm folds toward the face while its shoulder-elbow chain remains identifiable."},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[25,28],"directions":["negative_torso_up_axis"],"reason":"Visible portion of lowering from face toward the lower source edge; the unseen completion after28 is not filled."},
+    {"body_part":"right_elbow","measurement_name":"elbow_internal_angle","frames":[25,28],"directions":["extend"],"reason":"Visible forearm opens while lowering; the later wrist leaves the image, so this reference covers only the visible portion."},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[57,62],"directions":["positive_torso_up_axis"],"reason":"Both wrists rise from the waist toward the depicted left upper torso; the right proximal chain crosses the torso."},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[57,62],"directions":["positive_torso_up_axis"],"reason":"Both wrists rise from the waist toward the depicted left upper torso; this is the left chain, not renamed by the current hand x-position."},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_body_right_axis","action":"changes_local_position","frames":[57,62],"directions":["negative_body_right_axis"],"decidable":false,"reason":"Gross shared sideways displacement is visible but clasped/overlapping wrists prevent independently certifying the full local3D per-wrist lateral trajectory."},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_body_right_axis","action":"changes_local_position","frames":[57,62],"directions":["negative_body_right_axis"],"decidable":false,"reason":"Gross shared sideways displacement is visible but clasped/overlapping wrists prevent independently certifying the full local3D per-wrist lateral trajectory."}
+  ],
+  "source_observability": {
+    "both_wrist_vertical_channels": {"unknown_frames":[[0,12],[29,43]],"reason":"Early hands move behind the hips; midclip wrists approach or leave the lower input boundary. Visible gross changes outside these intervals remain assessable."},
+    "right_elbow.elbow_internal_angle": {"decidable_frames":[[14,28]],"reason":"Large visible hinge folding/opening is assessable here; other small/clothed or overlapped variations remain unknown rather than certified stillness."},
+    "left_elbow.elbow_internal_angle": "Unknown: no robust source-only3D hinge inventory through the sleeve/clasped wrists; do not infer no motion.",
+    "all_remaining_channels": "Unknown unless assessed above: entire knees/ankles below the input frame; hip/torso landmarks under loose clothing; true depth, radial displacement, pelvis motion, precise heading and torso3D angle cannot be independently certified. Fine late hand oscillations are not converted into wrist movement."
+  },
+  "source_trends_not_distinct_physical_action_count": true,
+  "lowering_reference_is_visible_support_only_not_unseen_completion": true,
+  "reference_boundaries_are_coarse_source_trends": true,
+  "exact_3d_amplitude_speed_or_depth_certified": false,
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false
+}

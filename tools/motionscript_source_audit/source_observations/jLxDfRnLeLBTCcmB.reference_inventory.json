@@ -1,0 +1,39 @@
+{
+  "schema": "native-body-rgb-reference-tracks-v1",
+  "id": "jLxDfRnLeLBTCcmB",
+  "video_sha256": "a17a354fe89217332e34e82bfc78ff5b3039590e25a19412252e5237ddcdbcf0",
+  "source_first": true,
+  "current_candidate_table_read_before_inventory_freeze": false,
+  "reference_origin": "Primary all81 source-only frames and16 pure source detail frames before candidate comparison",
+  "reviewer_type": "assistant",
+  "source_detail_sha256": "709bdddbb566b9cd8f2940b86361bc7ce1339164a541ecdd6a1e6ac55a3824c1",
+  "side_policy": "Initial near-frontal image-left shoulder chain is depicted right, image-right is left. Track shirt cuffs/forearms through chest crossings; current wrist x does not define side. Premirror actor side unknown.",
+  "frame_namespace": "Frozen input clip native decoded frames",
+  "seconds_policy": "Frozen media_probe.time and integer PTS/time_base",
+  "tracks": [
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[15,21],"directions":["bend"],"reason":"Visible forward reach retracts into a coarse chest/waist fold; exact3D angle is not certified."},
+    {"body_part":"left_elbow","measurement_name":"joint_interior_angle","frames":[15,21],"directions":["bend"]},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[15,21],"directions":["negative_torso_up_axis"],"reason":"Wrist/forearm retracts from raised forward position toward torso/waist; body bounce and motion blur are not sufficient alone."},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[15,21],"directions":["negative_torso_up_axis"]},
+    {"body_part":"right_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"lowers","frames":[15,21],"directions":["decreasing_relative_elevation"]},
+    {"body_part":"left_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"lowers","frames":[15,21],"directions":["decreasing_relative_elevation"]},
+    {"body_part":"left_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"raises","frames":[73,80],"directions":["increasing_relative_elevation"],"reason":"Late left proximal chain reaches forward from a lower folded configuration; not renamed from current screen x."},
+    {"body_part":"left_elbow","measurement_name":"joint_interior_angle","frames":[73,80],"directions":["extend"]},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[73,80],"directions":["positive_torso_up_axis"]}
+  ],
+  "decidable_channel_frame_windows": {
+    "right_elbow.joint_interior_angle": [[15,21]],
+    "left_elbow.joint_interior_angle": [[15,21],[73,80]],
+    "right_wrist.wrist_position_along_torso_axis": [[15,21]],
+    "left_wrist.wrist_position_along_torso_axis": [[15,21],[73,80]],
+    "right_upper_arm.upper_arm_elevation_relative_to_torso": [[15,21]],
+    "left_upper_arm.upper_arm_elevation_relative_to_torso": [[15,21],[73,80]]
+  },
+  "unknown_channel_reason": "Repeated torso bouncing, torso/forearm overlap, blur and small motions leave intervening3D directions unconfirmed, not static. Wide trousers and moving/crossing shoes do not establish exact hip-knee-ankle angles or body-axis motion; no knee event is inferred from shoe height. Radius/depth/root/yaw and absolute3D values remain uncalibrated.",
+  "other_observed_source_motion": [{"description":"Frequent chest/waist forearm and torso pulses, side steps and alternating shoe lifts continue through21–73; source envelope does not certify every small3D reversal or side-specific knee/ankle measurement.","decidable":false}],
+  "exact_3d_amplitude_speed_or_depth_certified": false,
+  "source_references_are_coarse_not_precise_extrema": true,
+  "multiple_signals_not_distinct_physical_action_count": true,
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false
+}

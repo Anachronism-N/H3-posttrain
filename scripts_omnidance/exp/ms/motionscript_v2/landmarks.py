@@ -57,8 +57,9 @@ def validate_point_spec(spec: dict) -> dict:
         raise ValueError(f"point specification schema must be {SPEC_SCHEMA}")
     if spec.get("units") != "m":
         raise ValueError("canonical point specification units must be m; convert upstream")
-    if spec.get("canonical_frame") != CANONICAL_FRAME:
-        raise ValueError(f"canonical_frame must be {CANONICAL_FRAME}")
+    canonical_frame = spec.get("canonical_frame")
+    if canonical_frame not in (CANONICAL_FRAME, "nlf_learned_native_joints"):
+        raise ValueError(f"canonical_frame must be {CANONICAL_FRAME} or nlf_learned_native_joints")
     points = spec.get("points")
     if not isinstance(points, list) or not points:
         raise ValueError("points must be a nonempty list of named canonical queries")
@@ -83,7 +84,7 @@ def validate_point_spec(spec: dict) -> dict:
         source = json.loads(json.dumps(source, allow_nan=False))
     except (ValueError, TypeError) as error:
         raise ValueError("source provenance must be finite JSON data") from error
-    return {"schema": SPEC_SCHEMA, "units": "m", "canonical_frame": CANONICAL_FRAME,
+    return {"schema": SPEC_SCHEMA, "units": "m", "canonical_frame": canonical_frame,
             "points": normalized, "source": source}
 
 
@@ -142,6 +143,26 @@ def preprocess_landmarks(raw: dict, *, fps=20.0, max_gap_seconds=0.2,
     if (source_time.shape != (source_count,) or not np.isfinite(source_time).all()
             or source_time[0] < 0 or np.any(np.diff(source_time) <= 0)):
         raise ValueError("timestamps must be finite, nonnegative, strictly increasing [T] seconds")
+    timing_keys = ("frame_indices", "pts", "time_base")
+    timing = {}
+    if any(key in raw for key in timing_keys):
+        if not all(key in raw for key in timing_keys):
+            raise ValueError("frame_indices, pts and time_base must be supplied together")
+        for key in ("frame_indices", "pts"):
+            value = np.asarray(raw[key])
+            if (value.shape != (source_count,) or value.dtype.kind not in "iu"
+                    or np.any(np.diff(value.astype(np.int64)) <= 0)):
+                raise ValueError(f"{key} must be strictly increasing integer [T]")
+            if key == "frame_indices" and np.any(value < 0):
+                raise ValueError("frame_indices must be nonnegative")
+            timing["raw_" + key] = value.astype(np.int64)
+        base = np.asarray(raw["time_base"])
+        if base.shape != (2,) or base.dtype.kind not in "iu" or np.any(base <= 0):
+            raise ValueError("time_base must be positive integer [numerator,denominator]")
+        seconds = (timing["raw_pts"] - timing["raw_pts"][0]).astype(np.float64) * (int(base[0]) / int(base[1]))
+        if not np.allclose(source_time - source_time[0], seconds, rtol=0, atol=1e-9):
+            raise ValueError("timestamps differ from integer PTS/time_base")
+        timing["time_base"] = base.astype(np.int64)
     raw_valid = np.asarray(raw.get("valid"))
     if (raw_valid.shape != (source_count, point_count) or raw_valid.dtype.kind not in "biu"
             or np.any((raw_valid != 0) & (raw_valid != 1))):
@@ -235,6 +256,8 @@ def preprocess_landmarks(raw: dict, *, fps=20.0, max_gap_seconds=0.2,
         "raw_mask_reason": mask_reason, "raw_screen_excluded": hard_excluded,
         "coordinate_frame": np.asarray(frame), "units": np.asarray("m"),
     }
+    arrays.update(timing)
+    arrays["source_match_indices"] = matches
     if pixels is not None:
         arrays["raw_points2d_px"] = np.asarray(raw["points2d_px"]).copy()
     if size is not None:
@@ -254,6 +277,9 @@ def preprocess_landmarks(raw: dict, *, fps=20.0, max_gap_seconds=0.2,
         "source_provenance_verified": False,
         "point_names_are_verified_anatomy": False,
         "output_geometry_dtype": "float32", "time_dtype": "float64",
+        "integer_pts_verified": bool(timing),
+        "source_frame_mapping": "explicit indices and integer PTS/time_base" if timing else "unavailable; no frame indices inferred",
+        "last_frame_tail_duration": "not inferred from nominal fps",
         "max_gap_seconds": max_gap_seconds,
         "gap_duration_definition": "bracketing_observation_interval_minus_one_nominal_source_frame",
         "edge_extrapolation": False, "smooth_seconds": smooth_seconds,

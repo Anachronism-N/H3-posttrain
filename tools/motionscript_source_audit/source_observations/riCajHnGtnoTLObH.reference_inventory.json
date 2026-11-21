@@ -1,0 +1,43 @@
+{
+  "schema": "native-body-rgb-reference-tracks-v1",
+  "id": "riCajHnGtnoTLObH",
+  "video_sha256": "040d2fdfbfb3555892cf1b8645360314e2f27bc5369950772d2210056e428333",
+  "source_first": true,
+  "current_candidate_table_read_before_inventory_freeze": false,
+  "reference_origin": "Independent source-only assistant surveyed all81 frames without predictions/old references; primary checked14 source-only details and chain handoff before candidate comparison",
+  "reviewer_type": "assistant",
+  "source_detail_sha256": "13d1330839174754c8982e39abf5c5b76cf3d4a525d5ccd22d7158291a50c2a8",
+  "side_policy": "Initial oblique hip chains P/Q cannot be silently attached through41–46 overlap. Re-anchor near-frontal46: image-left proximal shoulder/hip is depicted right, image-right is left. The later left forearm crosses toward the image-left face without becoming right; wrist x never labels side. Pre-mirror actor laterality is uncertified.",
+  "frame_namespace": "Frozen input clip native decoded frames",
+  "seconds_policy": "Frozen media_probe.time and integer PTS/time_base",
+  "tracks": [
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[46,50],"directions":["extend"],"reason":"Near-frontal right forearm opens toward the lower/outward configuration; source endpoint states alone are not extrapolated through later overlap."},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[46,50],"directions":["negative_torso_up_axis"]},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_shoulder_axis","action":"changes_local_position","frames":[46,50],"directions":["positive_anatomical_right_axis"]},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[47,53],"directions":["positive_torso_up_axis"],"reason":"Left chain wrist moves from below shoulder toward the inner/near-face configuration while the proximal chain is followed, not renamed by hand x."},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[64,80],"directions":["negative_torso_up_axis"],"reason":"Source envelope descends from the re-visible raised configuration through front/chest toward waist. This is a coarse moving-reference envelope, not a continuous world wrist translation or exact3D speed/path."},
+    {"body_part":"right_knee","measurement_name":"joint_interior_angle","frames":[68,74],"directions":["extend"],"reason":"After the frontal re-anchor the bare right knee contour progresses from a more flexed state toward a straighter state; exact angle and precise peak boundary remain uncertified."},
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[66,80],"directions":["bend"],"decidable":false,"reason":"A later folded state reappears, but wrist/arm overlap67–77 hides the transition. Do not infer a complete bending interval from static endpoint poses."},
+    {"body_part":"left_ankle","measurement_name":"ankle_position_along_hip_axis","action":"changes_local_position","frames":[47,49],"directions":["negative_anatomical_right_axis"],"decidable":false,"reason":"Coarse shoe region moves away in projection; current hip-axis3D direction and exact ankle center are not independently certified."},
+    {"body_part":"left_ankle","measurement_name":"ankle_position_along_hip_axis","action":"changes_local_position","frames":[62,66,74,80],"directions":["positive_anatomical_right_axis","negative_anatomical_right_axis","positive_anatomical_right_axis"],"decidable":false,"reason":"Projected inward/outward coarse footwear motions are retained, but hip/torso orientation changes prevent promoting them to full3D local-axis truth."}
+  ],
+  "unresolved_anonymous_source_knee_tracks": [
+    {"chain":"early_P","frames":[8,14,21],"directions":["bend","extend"],"reason":"Visible near-side knee envelope, but anatomical side through the later overlap is not certified."},
+    {"chain":"early_P","frames":[22,24,29],"directions":["bend","extend"]},
+    {"chain":"early_P","frames":[30,34,39],"directions":["bend","extend"]}
+  ],
+  "decidable_channel_frame_windows": {
+    "right_elbow.joint_interior_angle": [[46,50]],
+    "right_wrist.wrist_position_along_torso_axis": [[46,50]],
+    "right_wrist.wrist_position_along_shoulder_axis": [[46,50]],
+    "left_wrist.wrist_position_along_torso_axis": [[47,53],[64,80]],
+    "right_knee.joint_interior_angle": [[68,74]]
+  },
+  "unknown_channel_reason": "Early P/Q sides are not joined across41–46 overlap. Left wrist endpoint obscured54–62 and right arm/wrist overlap67–77 remain unsupported. Static folded elbow states are not dynamic bend events. Clothing/occlusion and unobservable3D depth/current axes leave other channels unknown, not stillness; footwear does not prove floor, force or ankle3D metric motion.",
+  "exact_3d_amplitude_speed_or_depth_certified": false,
+  "source_references_are_coarse_not_precise_extrema": true,
+  "anonymous_knee_motion_not_deleted_or_reassigned_from_model_predictions": true,
+  "multiple_signals_not_distinct_physical_action_count": true,
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false
+}

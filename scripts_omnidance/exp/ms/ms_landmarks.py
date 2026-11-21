@@ -75,7 +75,7 @@ def build_smplx_spec(joints, vertices, *, source=None):
 def probe_video(path, ffprobe="ffprobe"):
     result = subprocess.run([
         ffprobe, "-v", "error", "-select_streams", "v:0", "-show_frames", "-show_streams",
-        "-show_entries", "stream=width,height,avg_frame_rate,start_time,duration:stream_tags=rotate:stream_side_data=rotation:frame=best_effort_timestamp_time,duration_time,pkt_duration_time",
+        "-show_entries", "stream=width,height,avg_frame_rate,start_time,duration,time_base:stream_tags=rotate:stream_side_data=rotation:frame=best_effort_timestamp,best_effort_timestamp_time,duration_time,pkt_duration_time",
         "-of", "json", str(path)], check=True, capture_output=True)
     value = strict_json(result.stdout)
     if len(value.get("streams", [])) != 1:
@@ -87,6 +87,18 @@ def probe_video(path, ffprobe="ffprobe"):
     time = np.asarray([float(row["best_effort_timestamp_time"]) for row in value["frames"]], np.float64)
     if not len(time) or not np.isfinite(time).all() or np.any(np.diff(time) <= 0):
         raise ValueError("decoded video timestamps must be finite and strictly increasing")
+    native_timing = {}
+    if "time_base" in stream:
+        base = Fraction(stream["time_base"])
+        pts = np.asarray([int(row["best_effort_timestamp"]) for row in value["frames"]], dtype=np.int64)
+        if base <= 0 or np.any(np.diff(pts) <= 0):
+            raise ValueError("integer video PTS/time_base must increase")
+        exact_time = pts.astype(np.float64) * float(base)
+        if not np.allclose(time, exact_time, rtol=0, atol=1e-6):
+            raise ValueError("integer PTS disagrees with decoded frame seconds")
+        time = exact_time
+        native_timing = {"pts": pts, "time_base": np.asarray([base.numerator, base.denominator], dtype=np.int64),
+                         "frame_indices": np.arange(len(pts), dtype=np.int64)}
     offset = float(time[0])
     time -= offset
     try:
@@ -115,7 +127,7 @@ def probe_video(path, ffprobe="ffprobe"):
             media_end, end_source = float(stop), "video stream start_time + duration - first frame PTS"
     return {"time": time, "fps": fps, "width": int(stream["width"]),
             "height": int(stream["height"]), "pts_offset": offset,
-            "media_end": media_end, "media_end_source": end_source}
+            "media_end": media_end, "media_end_source": end_source, **native_timing}
 
 
 def decode_batches(path, info, batch_size, ffmpeg="ffmpeg"):

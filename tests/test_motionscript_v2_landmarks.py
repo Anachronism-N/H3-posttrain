@@ -90,6 +90,33 @@ def test_arbitrary_68_points_retain_actual_predictions_without_fk_or_axis_flip()
     json.dumps(metadata, allow_nan=False)
 
 
+def test_source_integer_pts_and_frame_indices_survive_vfr_resampling():
+    source = raw(count=4, timestamps=[.2, .24, .31, .39], source_fps=20)
+    source.update(frame_indices=np.array([7, 8, 9, 10]),
+                  pts=np.array([1200, 1240, 1310, 1390]), time_base=np.array([1, 1000]))
+    tracks, metadata = preprocess_landmarks(source, smooth_seconds=0)
+    np.testing.assert_array_equal(tracks["raw_frame_indices"], source["frame_indices"])
+    np.testing.assert_array_equal(tracks["raw_pts"], source["pts"])
+    np.testing.assert_array_equal(tracks["time_base"], source["time_base"])
+    assert metadata["integer_pts_verified"] is True
+    assert tracks["time"][-1] <= source["timestamps"][-1]
+    assert "not inferred" in metadata["last_frame_tail_duration"]
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda data: data.pop("pts"),
+    lambda data: data.update(pts=np.array([0, 1, 3, 4])),
+    lambda data: data.update(frame_indices=np.array([0, 1, 1, 3])),
+    lambda data: data.update(time_base=np.array([1, 0])),
+])
+def test_source_frame_contract_rejects_mismatched_or_incomplete_timing(mutation):
+    source = raw(count=4, source_fps=20)
+    source.update(frame_indices=np.arange(4), pts=np.arange(4), time_base=np.array([1, 20]))
+    mutation(source)
+    with pytest.raises(ValueError):
+        preprocess_landmarks(source)
+
+
 def test_per_point_short_gap_interpolates_without_filling_other_tracks():
     source = raw(count=5, source_fps=20)
     source["valid"][2, 1] = False

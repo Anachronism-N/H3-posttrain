@@ -32,7 +32,7 @@ class SelectionTests(unittest.TestCase):
         np.testing.assert_equal(out["points_m"], 2.)
         self.assertEqual(out["all_points_m"].shape, (2, 32, 3))
         np.testing.assert_equal(out["all_points_m"][0], 1.)
-        self.assertEqual(out["box"][0, 4], .1)
+        self.assertAlmostEqual(float(out["box"][0, 4]), .1, places=7)
 
     def test_empty_keeps_nan_mask_and_ragged_shapes(self):
         out = cli.select_largest_detections(result([0, 0]), 2)

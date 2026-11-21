@@ -1,0 +1,874 @@
+{
+  "schema": "native-body-source-reference-inventory-v3",
+  "id": "ZdoIHubgfEwrnrtx",
+  "reviewer_type": "assistant",
+  "origin": "independent source-only assistant agent; no candidate table or prior references seen",
+  "source_all81_frames_inspected": true,
+  "source_first_reference_before_candidate_table": true,
+  "reference_occurrences": [
+    {
+      "id": "ref_001",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "negative_torso_up_axis",
+      "start": 0.0,
+      "end": 0.25,
+      "source_frames": [
+        0,
+        4
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_002",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 0.25,
+      "end": 0.625,
+      "source_frames": [
+        4,
+        10
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_003",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 1.125,
+      "end": 1.5,
+      "source_frames": [
+        18,
+        24
+      ],
+      "decidable": false,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_003_visible_3",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 1.3125,
+      "end": 1.5,
+      "source_frames": [
+        18,
+        24
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified. Only the observable support interval is used; its unseen portion is not filled or treated as stillness.",
+      "exact3d_amplitude_or_depth_certified": false,
+      "source_support_limited_reference": true,
+      "source_coarse_reference_id": "ref_003",
+      "complete_action_across_unknown_interval_certified": false
+    },
+    {
+      "id": "ref_004",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "negative_torso_up_axis",
+      "start": 2.0625,
+      "end": 2.5,
+      "source_frames": [
+        33,
+        40
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_005",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 3.1875,
+      "end": 3.5625,
+      "source_frames": [
+        51,
+        57
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_006",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "negative_torso_up_axis",
+      "start": 3.5625,
+      "end": 3.75,
+      "source_frames": [
+        57,
+        60
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_007",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 4.1875,
+      "end": 4.4375,
+      "source_frames": [
+        67,
+        71
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_008",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "negative_torso_up_axis",
+      "start": 4.4375,
+      "end": 4.625,
+      "source_frames": [
+        71,
+        74
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_009",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 2.0625,
+      "end": 2.5,
+      "source_frames": [
+        33,
+        40
+      ],
+      "decidable": false,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_009_visible_10",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 2.0625,
+      "end": 2.25,
+      "source_frames": [
+        33,
+        40
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified. Only the observable support interval is used; its unseen portion is not filled or treated as stillness.",
+      "exact3d_amplitude_or_depth_certified": false,
+      "source_support_limited_reference": true,
+      "source_coarse_reference_id": "ref_009",
+      "complete_action_across_unknown_interval_certified": false
+    },
+    {
+      "id": "ref_009_visible_11",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 2.375,
+      "end": 2.5,
+      "source_frames": [
+        33,
+        40
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified. Only the observable support interval is used; its unseen portion is not filled or treated as stillness.",
+      "exact3d_amplitude_or_depth_certified": false,
+      "source_support_limited_reference": true,
+      "source_coarse_reference_id": "ref_009",
+      "complete_action_across_unknown_interval_certified": false
+    },
+    {
+      "id": "ref_010",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "negative_torso_up_axis",
+      "start": 3.0,
+      "end": 3.3125,
+      "source_frames": [
+        48,
+        53
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_011",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 3.75,
+      "end": 4.0,
+      "source_frames": [
+        60,
+        64
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_012",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "negative_torso_up_axis",
+      "start": 4.0,
+      "end": 4.25,
+      "source_frames": [
+        64,
+        68
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_013",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 4.625,
+      "end": 5.0,
+      "source_frames": [
+        74,
+        80
+      ],
+      "decidable": true,
+      "reason": "Source-only proximal-chain tracking identifies gross wrist-height movement; partial edge visibility and exact3D amount remain uncertified.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_014",
+      "body_part": "left_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "lowers",
+      "direction": "decreasing_relative_elevation",
+      "start": 0.0,
+      "end": 0.25,
+      "source_frames": [
+        0,
+        4
+      ],
+      "decidable": true,
+      "reason": "Coarse source shoulder-elbow silhouette trend from the source-only reviewer; no exact3D angle certification.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_015",
+      "body_part": "left_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "raises",
+      "direction": "increasing_relative_elevation",
+      "start": 0.25,
+      "end": 0.625,
+      "source_frames": [
+        4,
+        10
+      ],
+      "decidable": true,
+      "reason": "Coarse source shoulder-elbow silhouette trend from the source-only reviewer; no exact3D angle certification.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_016",
+      "body_part": "left_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "raises",
+      "direction": "increasing_relative_elevation",
+      "start": 0.9375,
+      "end": 1.3125,
+      "source_frames": [
+        15,
+        21
+      ],
+      "decidable": false,
+      "reason": "Coarse source shoulder-elbow silhouette trend from the source-only reviewer; no exact3D angle certification.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_016_visible_19",
+      "body_part": "left_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "raises",
+      "direction": "increasing_relative_elevation",
+      "start": 0.9375,
+      "end": 1.125,
+      "source_frames": [
+        15,
+        21
+      ],
+      "decidable": true,
+      "reason": "Coarse source shoulder-elbow silhouette trend from the source-only reviewer; no exact3D angle certification. Only the observable support interval is used; its unseen portion is not filled or treated as stillness.",
+      "exact3d_amplitude_or_depth_certified": false,
+      "source_support_limited_reference": true,
+      "source_coarse_reference_id": "ref_016",
+      "complete_action_across_unknown_interval_certified": false
+    },
+    {
+      "id": "ref_017",
+      "body_part": "left_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "lowers",
+      "direction": "decreasing_relative_elevation",
+      "start": 2.0625,
+      "end": 2.5,
+      "source_frames": [
+        33,
+        40
+      ],
+      "decidable": true,
+      "reason": "Coarse source shoulder-elbow silhouette trend from the source-only reviewer; no exact3D angle certification.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_018",
+      "body_part": "right_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "raises",
+      "direction": "increasing_relative_elevation",
+      "start": 2.0625,
+      "end": 2.5,
+      "source_frames": [
+        33,
+        40
+      ],
+      "decidable": false,
+      "reason": "Coarse source shoulder-elbow silhouette trend from the source-only reviewer; no exact3D angle certification.",
+      "exact3d_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "ref_018_visible_22",
+      "body_part": "right_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "raises",
+      "direction": "increasing_relative_elevation",
+      "start": 2.0625,
+      "end": 2.25,
+      "source_frames": [
+        33,
+        40
+      ],
+      "decidable": true,
+      "reason": "Coarse source shoulder-elbow silhouette trend from the source-only reviewer; no exact3D angle certification. Only the observable support interval is used; its unseen portion is not filled or treated as stillness.",
+      "exact3d_amplitude_or_depth_certified": false,
+      "source_support_limited_reference": true,
+      "source_coarse_reference_id": "ref_018",
+      "complete_action_across_unknown_interval_certified": false
+    },
+    {
+      "id": "ref_018_visible_23",
+      "body_part": "right_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "raises",
+      "direction": "increasing_relative_elevation",
+      "start": 2.375,
+      "end": 2.5,
+      "source_frames": [
+        33,
+        40
+      ],
+      "decidable": true,
+      "reason": "Coarse source shoulder-elbow silhouette trend from the source-only reviewer; no exact3D angle certification. Only the observable support interval is used; its unseen portion is not filled or treated as stillness.",
+      "exact3d_amplitude_or_depth_certified": false,
+      "source_support_limited_reference": true,
+      "source_coarse_reference_id": "ref_018",
+      "complete_action_across_unknown_interval_certified": false
+    },
+    {
+      "id": "ref_019",
+      "body_part": "right_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "lowers",
+      "direction": "decreasing_relative_elevation",
+      "start": 3.0,
+      "end": 3.3125,
+      "source_frames": [
+        48,
+        53
+      ],
+      "decidable": true,
+      "reason": "Coarse source shoulder-elbow silhouette trend from the source-only reviewer; no exact3D angle certification.",
+      "exact3d_amplitude_or_depth_certified": false
+    }
+  ],
+  "channel_assessments": [
+    {
+      "body_part": "left_knee",
+      "measurement_name": "joint_interior_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "left_ankle",
+      "measurement_name": "ankle_to_hip_distance",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "left_ankle",
+      "measurement_name": "ankle_position_along_hip_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "left_ankle",
+      "measurement_name": "ankle_position_along_torso_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "left_ankle",
+      "measurement_name": "ankle_position_along_hip_torso_plane_normal",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_to_shoulder_distance",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "No independently certified 3D radial/lateral/plane-normal inventory in this cropped, turning or occluded source."
+        }
+      ]
+    },
+    {
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_shoulder_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "No independently certified 3D radial/lateral/plane-normal inventory in this cropped, turning or occluded source."
+        }
+      ]
+    },
+    {
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_shoulder_torso_plane_normal",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "No independently certified 3D radial/lateral/plane-normal inventory in this cropped, turning or occluded source."
+        }
+      ]
+    },
+    {
+      "body_part": "right_knee",
+      "measurement_name": "joint_interior_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "right_ankle",
+      "measurement_name": "ankle_to_hip_distance",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "right_ankle",
+      "measurement_name": "ankle_position_along_hip_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "right_ankle",
+      "measurement_name": "ankle_position_along_torso_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "right_ankle",
+      "measurement_name": "ankle_position_along_hip_torso_plane_normal",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knee/ankle support is obscured or outside the source; no leg primitive is inferred from upper-body motion."
+        }
+      ]
+    },
+    {
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_to_shoulder_distance",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "No independently certified 3D radial/lateral/plane-normal inventory in this cropped, turning or occluded source."
+        }
+      ]
+    },
+    {
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_shoulder_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "No independently certified 3D radial/lateral/plane-normal inventory in this cropped, turning or occluded source."
+        }
+      ]
+    },
+    {
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_shoulder_torso_plane_normal",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "No independently certified 3D radial/lateral/plane-normal inventory in this cropped, turning or occluded source."
+        }
+      ]
+    },
+    {
+      "body_part": "root",
+      "measurement_name": "pelvis_camera_x",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Metric camera-space pelvis displacement is not independently established from this source."
+        }
+      ]
+    },
+    {
+      "body_part": "root",
+      "measurement_name": "pelvis_camera_y_up",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Metric camera-space pelvis displacement is not independently established from this source."
+        }
+      ]
+    },
+    {
+      "body_part": "root",
+      "measurement_name": "pelvis_camera_z_backward",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Metric camera-space pelvis displacement is not independently established from this source."
+        }
+      ]
+    },
+    {
+      "body_part": "torso",
+      "measurement_name": "torso_camera_up_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Full 3D torso/ordered-plane orientation is not certified from the monocular source."
+        }
+      ]
+    },
+    {
+      "body_part": "torso",
+      "measurement_name": "shoulder_plane_camera_yaw",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Full 3D torso/ordered-plane orientation is not certified from the monocular source."
+        }
+      ]
+    },
+    {
+      "body_part": "left_elbow",
+      "measurement_name": "joint_interior_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Wide sleeves obscure elbow landmarks; source-only reviewer reported possible trends, not admitted3D bend/extension references."
+        }
+      ]
+    },
+    {
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 1.125,
+          "observability": "decidable",
+          "reason": "Coarse wrist movement tracked from the proximal chain."
+        },
+        {
+          "start": 1.125,
+          "end": 1.3125,
+          "observability": "unknown",
+          "reason": "Wrist/trajectory is close to the source edge."
+        },
+        {
+          "start": 1.3125,
+          "end": 2.5,
+          "observability": "decidable",
+          "reason": "Coarse visible wrist-height changes."
+        },
+        {
+          "start": 2.5,
+          "end": 3.1875,
+          "observability": "unknown",
+          "reason": "Left wrist/source support incomplete."
+        },
+        {
+          "start": 3.1875,
+          "end": 5.0,
+          "observability": "decidable",
+          "reason": "Visible alternate wrist-height changes; final source continuation is unknown."
+        }
+      ]
+    },
+    {
+      "body_part": "left_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 1.125,
+          "observability": "decidable",
+          "reason": "Visible coarse upper-arm raising/lowering."
+        },
+        {
+          "start": 1.125,
+          "end": 1.3125,
+          "observability": "unknown",
+          "reason": "Edge/partial trajectory affects the full3D reference."
+        },
+        {
+          "start": 1.3125,
+          "end": 2.5,
+          "observability": "decidable",
+          "reason": "Coarse upper-arm lowering visible."
+        },
+        {
+          "start": 2.5,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Fine/crossed3D upper-arm changes are not certified."
+        }
+      ]
+    },
+    {
+      "body_part": "right_elbow",
+      "measurement_name": "joint_interior_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Wide sleeves obscure elbow landmarks; source-only reviewer reported possible trends, not admitted3D bend/extension references."
+        }
+      ]
+    },
+    {
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 2.0625,
+          "observability": "unknown",
+          "reason": "Right wrist lacks reliable visible source support."
+        },
+        {
+          "start": 2.0625,
+          "end": 2.25,
+          "observability": "decidable",
+          "reason": "Visible beginning of right wrist rise."
+        },
+        {
+          "start": 2.25,
+          "end": 2.375,
+          "observability": "unknown",
+          "reason": "Right wrist is near the source edge."
+        },
+        {
+          "start": 2.375,
+          "end": 5.0,
+          "observability": "decidable",
+          "reason": "Coarse wrist-height changes can be observed."
+        }
+      ]
+    },
+    {
+      "body_part": "right_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 2.0625,
+          "observability": "unknown",
+          "reason": "Right upper-arm3D source support not established."
+        },
+        {
+          "start": 2.0625,
+          "end": 2.25,
+          "observability": "decidable",
+          "reason": "Coarse source right upper-arm rise."
+        },
+        {
+          "start": 2.25,
+          "end": 2.375,
+          "observability": "unknown",
+          "reason": "Edge/partial trajectory is not fully certified."
+        },
+        {
+          "start": 2.375,
+          "end": 3.375,
+          "observability": "decidable",
+          "reason": "Coarse upper-arm lowering visible."
+        },
+        {
+          "start": 3.375,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Fine3D upper-arm variations are not certified."
+        }
+      ]
+    }
+  ],
+  "reference_inventory_complete": true,
+  "scope": "coarse visible primitive direction only; 3D angles/metres/depth/force are not certified",
+  "source_boundary_annotation_tolerance_seconds": 0.125,
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false,
+  "side_convention": "depicted-body side from proximal chain; current wrist screenX and pre-mirror actor side are not certification",
+  "uncertain_elbow_trends_not_admitted": true,
+  "visible_partial_movement_references_not_silently_omitted": true,
+  "source_support_parts_are_not_extra_certified_physical_actions": true
+}

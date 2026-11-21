@@ -1,0 +1,41 @@
+{
+  "schema": "native-body-acceptance-protocol-v1",
+  "config": {
+    "fps": 20.0,
+    "max_gap_seconds": 0.2,
+    "smooth_seconds": 0.0625,
+    "max_point_uncertainty": null,
+    "min_duration_seconds": 0.15,
+    "min_angle_change_degrees": 20.0,
+    "min_distance_change_m": 0.12
+  },
+  "model_sha256": "2090b041ccebbd395018033152628c4f24afe519aed3a299861621547582cdad",
+  "mapping_sha256": "e21c2877aa56fdab6842ad1402934762c2b6d9264be2f9b4a8529efef2ea5222",
+  "measurement_code_sha256": {
+    "ms_optimize.py": "4e1a97da17daa7eec6506897b54ff2915b6ff9cfc0e26490e7d68e471f1273c2",
+    "motionscript_v2/__init__.py": "2fa82e2455f8045f4219cc090d0aa63d5e070541f9a4e69d7cdcb6bce0b078e6",
+    "motionscript_v2/body_events.py": "af5ad2a7f0b06119fc6cdba5e539338ae6b6041369f70fd47161b57ff93851d0",
+    "motionscript_v2/chunks.py": "68350fed466f8f066e76c128d6971e7830e2e3e96d75e4c180389e4fb3277d4d",
+    "motionscript_v2/coordinates.py": "72622d5a4189327d082db5747a077ad13284fd4a083905d9f04f0e0dd24d746e",
+    "motionscript_v2/events.py": "87d6b7c72e83e8095cf7361ed6e3b37402b9903c5e481c357f6ad6b22d69d985",
+    "motionscript_v2/landmark_events.py": "25d81a3d33e316a163276342e54c2f82131da2daa2719a5eced46769f49ed632",
+    "motionscript_v2/landmarks.py": "1fdc641f5898045e794709d65a4efda6edf2424ec7aeb3f7018bc5fdac1fce96",
+    "motionscript_v2/selection.py": "2c0f5934eb14b6f4ba7eac51f97d92f12704b655e75f8ea3a315f65ec85504ab"
+  },
+  "front_code_sha256": "db08581397d19c4fb9cd98e0975c54adc8cf7e5e735cab9e4dcf03bbd2b3f999",
+  "review_code_sha256": "f4e987171f574650d6fb7958cd8c874b8fc0484accc6de45d3911917d3d7dc26",
+  "postprocess_code_sha256": "655f6100df05e6eb60b2f2adb52356013261d519150419563c69e581d45c49f4",
+  "quality_code_sha256": "d05a59df146765f88905c4bb87ebef3c31dec9552ca32ea97780274ffd7561f0",
+  "acceptance_manifest_sha256": "1838a80b625f1ba282ff50b5006b3e58854a747aa89d414893a1787d467b8c39",
+  "development_manifest_sha256": "a2ce5226e55f2cfac14e5b2d6e906b74b4ff867862b37d4e66076795a022ce25",
+  "independent_review_panel_sha256": "392531cad378051023d58a7de0f0549d30882d153cc8c71e4b997e8e2f5893dd",
+  "development_engineering_audit_sha256": "86d0a08db42c47354e1bd8b872a89646d942fb8efcaa41340a38b7b9ee3c5c46",
+  "parameter_decision": "retain preregistered defaults after real development engineering checks; no metric or acceptance-output tuning",
+  "no_acceptance_predictions_used_for_parameter_selection": true,
+  "semantic_quality_verified": false,
+  "independent_human_review_completed": false,
+  "camera_coordinate_changes_are_not_world_body_motion": true,
+  "amplitude_speed_are_estimates_not_force_or_emotion": true,
+  "path_change_definition": "total variation of the declared scalar measurement, not automatically full 3D limb path length",
+  "original_real_video_comparison": "pending an admitted matching full-body template; actual upstream synthetic call contract separately verified"
+}

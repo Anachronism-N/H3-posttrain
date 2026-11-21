@@ -1,0 +1,26 @@
+{
+  "schema": "native-body-assistant-source-observation-v1",
+  "id": "XPVRgFxtXkBsceVC",
+  "source_all81_frames_inspected": true,
+  "original_lower_body_detail_frames_inspected": [18, 33],
+  "model_candidate_table_seen_before_this_record": false,
+  "reviewer_type": "assistant",
+  "source_observations": [
+    {"frames": [1, 5], "scope": "both arms", "observation": "Hands rise from the lower body toward the chest/face as the forearms fold. No fine finger or clap class is asserted."},
+    {"frames": [7, 13], "scope": "tracked arm chains", "observation": "The image-right shoulder chain extends outward/up while the other arm extends toward a lower lateral position; wrist screen side alone is not used as anatomy."},
+    {"frames": [13, 18], "scope": "arm lowering", "observation": "The raised arm lowers toward the side; hands then move behind the torso and wrist/forearm support becomes incomplete."},
+    {"frames": [18, 49], "scope": "lower-body stepping", "observation": "Crossing steps and lateral/rear boot motion are visible. Skirt/boot coverage and overlapping legs do not establish a complete side-specific 3D knee/ankle inventory."},
+    {"frames": [54, 59], "scope": "both arms", "observation": "Hands/forearms rise from lower positions to face level. Exact 3D angular amplitudes are not certified."},
+    {"frames": [64, 68], "scope": "both arms", "observation": "Wrists visibly descend from face level toward the waist/side."},
+    {"frames": [68, 73], "scope": "both arms", "observation": "Hands and forearms rise again, forming another distinct source movement episode."}
+  ],
+  "unknown_ranges": [
+    {"frames": [18, 49], "parts": ["left_wrist", "right_wrist", "left_elbow", "right_elbow"], "reason": "Hands/forearms are behind the torso; inferred model positions are not source observations."},
+    {"frames": [18, 49], "scope": "side-specific knee-angle and metric ankle trajectories", "reason": "Crossing legs, skirt-covered proximal joints and boot-covered ankle pivots require finer source adjudication; no world contact or unsupported exact 3D value is inferred."},
+    {"frames": [0, 80], "scope": "world/metric depth, force, finger/toe articulation", "reason": "Monocular source does not independently certify these quantities."}
+  ],
+  "reference_inventory_complete": false,
+  "full_source_diagnostic_audit_completed": false,
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false
+}

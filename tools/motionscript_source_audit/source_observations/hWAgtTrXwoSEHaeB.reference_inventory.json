@@ -1,0 +1,34 @@
+{
+  "schema": "native-body-rgb-reference-tracks-v1",
+  "id": "hWAgtTrXwoSEHaeB",
+  "video_sha256": "e74924f4a72e05fc89a299ebb66958326186a9b639be0c7a54a9f486b0e259a8",
+  "source_first": true,
+  "current_candidate_table_read_before_inventory_freeze": false,
+  "reference_origin": "Primary all81 source-only frames and16 pure source detail frames before candidate comparison",
+  "reviewer_type": "assistant",
+  "source_detail_sha256": "c2f15752af8d87bc563ee77185477a0ce53fd5372939a83a4b437da4ad6dfd21",
+  "side_policy": "Initial near-frontal image-left shoulder chain is depicted right, image-right depicted left. Follow bare forearm chains through head/torso occlusion and hair; current wrist x does not define side. Premirror actor side remains uncertified.",
+  "frame_namespace": "Frozen input clip native decoded frames",
+  "seconds_policy": "Frozen media_probe.time and integer PTS/time_base (native VFR, 81 frames)",
+  "tracks": [
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[2,9],"directions":["bend"],"reason":"Raised forward forearm folds toward the head between these source frames; exact3D degree values are not certified."},
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[9,13],"directions":["extend"],"reason":"After the fold the forearm opens while the wrist stays high; shoulder/hair overlap does not certify exact3D extrema."},
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[13,22],"directions":["bend"],"reason":"Near-side arm opens then folds again across the upper torso; the intermediate reversal is not a certified exact3D extreme."},
+    {"body_part":"right_elbow","measurement_name":"joint_interior_angle","frames":[29,36],"directions":["bend"]},
+    {"body_part":"left_elbow","measurement_name":"joint_interior_angle","frames":[13,21],"directions":["bend"],"reason":"Far-side forearm folds behind the head; contact with hair/head is not a separate measured fact."},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[2,9],"directions":["negative_torso_up_axis"],"reason":"Wrist/forearm descends from above-head level to face level relative to the current shoulders/torso."},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[9,13],"directions":["positive_torso_up_axis"],"reason":"The same wrist rises back overhead; body bounce and occlusion do not certify an absolute height."}
+  ],
+  "decidable_channel_frame_windows": {
+    "right_elbow.joint_interior_angle": [[2,9],[9,13],[13,22],[29,36]],
+    "left_elbow.joint_interior_angle": [[13,21]],
+    "right_wrist.wrist_position_along_torso_axis": [[2,9],[9,13]]
+  },
+  "unknown_channel_reason": "Rapid arm sweeps and hair/shoulder occlusion leave intervening3D directions unconfirmed, not static. Wide trousers and crossing shoes do not establish exact hip-knee-ankle angles or ground contact; knee folds and ankle lifts are not converted into side-resolved3D knee cycles from shoe height. Wrist/bearing envelopes around52-69 and the late71-79 arm alternation are visible but their3D axis/direction is not certified. Radius/depth/root/yaw and absolute3D values remain uncalibrated.",
+  "other_observed_source_motion": [{"description":"Continuous lateral steps, knee folds and alternating shoe lifts, repeated arm sweeps through the torso plane and a late left-right alternation; not deleted and not converted into world displacement, force, or exact3D counts.","decidable":false}],
+  "exact_3d_amplitude_speed_or_depth_certified": false,
+  "source_references_are_coarse_not_precise_extrema": true,
+  "multiple_signals_not_distinct_physical_action_count": true,
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false
+}

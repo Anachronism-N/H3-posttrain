@@ -1,0 +1,749 @@
+{
+  "schema": "native-body-source-reference-inventory-v1",
+  "id": "iQBpcSyrZpDaSFjj",
+  "reviewer_type": "assistant",
+  "source_all81_frames_inspected": true,
+  "native_source_details_inspected_before_candidate_table": true,
+  "candidate_table_seen_before_record": false,
+  "reference_inventory_complete": true,
+  "side_convention": "Anatomical labels of the depicted body in decoded RGB: front view, image-right is depicted-left; original performer side before mirroring is not certified.",
+  "reference_occurrences": [
+    {
+      "id": "rgb_ref_001",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 0.375,
+      "end": 0.5625,
+      "source_frames": [
+        6,
+        9
+      ],
+      "decidable": true,
+      "reason": "The depicted-right wrist first becomes visible low in the source and rises toward the side of the face.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_002",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "negative_torso_up_axis",
+      "start": 1.3125,
+      "end": 1.5,
+      "source_frames": [
+        21,
+        24
+      ],
+      "decidable": true,
+      "reason": "The visible wrist drops from face level toward the lower torso; later off-frame movement is not included.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_003",
+      "body_part": "right_elbow",
+      "measurement_name": "joint_interior_angle",
+      "action": "extends",
+      "direction": "increasing_joint_angle",
+      "start": 1.3125,
+      "end": 1.5,
+      "source_frames": [
+        21,
+        24
+      ],
+      "decidable": true,
+      "reason": "The visible bent forearm opens while the hand lowers; this is qualitative extension, not a certified degree value.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_004",
+      "body_part": "left_elbow",
+      "measurement_name": "joint_interior_angle",
+      "action": "bends",
+      "direction": "decreasing_joint_angle",
+      "start": 1.9375,
+      "end": 2.1875,
+      "source_frames": [
+        31,
+        35
+      ],
+      "decidable": true,
+      "reason": "Visible shoulder/elbow/wrist silhouettes change from a lowered straighter arm to a folded arm at the chest.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_005",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 1.9375,
+      "end": 2.1875,
+      "source_frames": [
+        31,
+        35
+      ],
+      "decidable": true,
+      "reason": "Both wrists move up from low positions to the chest relative to the largely upright torso.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_006",
+      "body_part": "left_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "raises",
+      "direction": "increasing_relative_elevation",
+      "start": 1.875,
+      "end": 2.1875,
+      "source_frames": [
+        30,
+        35
+      ],
+      "decidable": true,
+      "reason": "The elbow moves outward/upward from the lowered upper-arm position; wrist visibility is not a dependency of this primitive.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_007",
+      "body_part": "left_elbow",
+      "measurement_name": "joint_interior_angle",
+      "action": "bends",
+      "direction": "decreasing_joint_angle",
+      "start": 2.6875,
+      "end": 3.0,
+      "source_frames": [
+        43,
+        48
+      ],
+      "decidable": true,
+      "reason": "The bent crossed-chest configuration changes toward forearms folded upward beside the face; exact amplitude remains uncertified.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_008",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 2.6875,
+      "end": 3.0,
+      "source_frames": [
+        43,
+        48
+      ],
+      "decidable": true,
+      "reason": "Wrists rise from the chest toward face level; finger signs are outside this reference vocabulary.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_009",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "negative_torso_up_axis",
+      "start": 4.625,
+      "end": 5.0,
+      "source_frames": [
+        74,
+        80
+      ],
+      "decidable": true,
+      "reason": "Wrists move from face-level positions down into the chest-crossing configuration.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_010",
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_shoulder_axis",
+      "action": "changes_local_position",
+      "direction": "positive_anatomical_right_axis",
+      "start": 4.625,
+      "end": 5.0,
+      "source_frames": [
+        74,
+        80
+      ],
+      "decidable": true,
+      "reason": "In the front-facing decoded-body convention each visible wrist crosses inward toward the opposite chest side.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_011",
+      "body_part": "right_elbow",
+      "measurement_name": "joint_interior_angle",
+      "action": "bends",
+      "direction": "decreasing_joint_angle",
+      "start": 1.9375,
+      "end": 2.1875,
+      "source_frames": [
+        31,
+        35
+      ],
+      "decidable": true,
+      "reason": "Visible shoulder/elbow/wrist silhouettes change from a lowered straighter arm to a folded arm at the chest.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_012",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 1.9375,
+      "end": 2.1875,
+      "source_frames": [
+        31,
+        35
+      ],
+      "decidable": true,
+      "reason": "Both wrists move up from low positions to the chest relative to the largely upright torso.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_013",
+      "body_part": "right_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "action": "raises",
+      "direction": "increasing_relative_elevation",
+      "start": 1.875,
+      "end": 2.1875,
+      "source_frames": [
+        30,
+        35
+      ],
+      "decidable": true,
+      "reason": "The elbow moves outward/upward from the lowered upper-arm position; wrist visibility is not a dependency of this primitive.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_014",
+      "body_part": "right_elbow",
+      "measurement_name": "joint_interior_angle",
+      "action": "bends",
+      "direction": "decreasing_joint_angle",
+      "start": 2.6875,
+      "end": 3.0,
+      "source_frames": [
+        43,
+        48
+      ],
+      "decidable": true,
+      "reason": "The bent crossed-chest configuration changes toward forearms folded upward beside the face; exact amplitude remains uncertified.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_015",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "positive_torso_up_axis",
+      "start": 2.6875,
+      "end": 3.0,
+      "source_frames": [
+        43,
+        48
+      ],
+      "decidable": true,
+      "reason": "Wrists rise from the chest toward face level; finger signs are outside this reference vocabulary.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_016",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "action": "changes_local_position",
+      "direction": "negative_torso_up_axis",
+      "start": 4.625,
+      "end": 5.0,
+      "source_frames": [
+        74,
+        80
+      ],
+      "decidable": true,
+      "reason": "Wrists move from face-level positions down into the chest-crossing configuration.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    },
+    {
+      "id": "rgb_ref_017",
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_shoulder_axis",
+      "action": "changes_local_position",
+      "direction": "negative_anatomical_right_axis",
+      "start": 4.625,
+      "end": 5.0,
+      "source_frames": [
+        74,
+        80
+      ],
+      "decidable": true,
+      "reason": "In the front-facing decoded-body convention each visible wrist crosses inward toward the opposite chest side.",
+      "scope": "observable source primitive interval; not a claim about hidden motion before/after the visible support",
+      "absolute_amplitude_or_depth_certified": false
+    }
+  ],
+  "channel_assessments": [
+    {
+      "body_part": "left_knee",
+      "measurement_name": "joint_interior_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "left_ankle",
+      "measurement_name": "ankle_to_hip_distance",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "left_ankle",
+      "measurement_name": "ankle_position_along_hip_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "left_ankle",
+      "measurement_name": "ankle_position_along_torso_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "left_ankle",
+      "measurement_name": "ankle_position_along_hip_torso_plane_normal",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "left_elbow",
+      "measurement_name": "joint_interior_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 1.9375,
+          "observability": "unknown",
+          "reason": "The wrist/forearm is outside view or does not have sufficient visible endpoint support."
+        },
+        {
+          "start": 1.9375,
+          "end": 5.0,
+          "observability": "decidable",
+          "reason": "Only coarse visible elbow bending/extension direction is judged; exact 3D angle or intensity is not certified."
+        }
+      ]
+    },
+    {
+      "body_part": "left_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 2.375,
+          "observability": "decidable",
+          "reason": "Shoulder/upper-arm/elbow silhouette and upright torso permit coarse elevation review."
+        },
+        {
+          "start": 2.375,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Crossed forearms, hair and foreshortening do not reliably establish the full 3D torso-relative upper-arm angle changes."
+        }
+      ]
+    },
+    {
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 1.9375,
+          "observability": "unknown",
+          "reason": "Wrist lacks visible source support."
+        },
+        {
+          "start": 1.9375,
+          "end": 5.0,
+          "observability": "decidable",
+          "reason": "Only gross wrist-height change relative to the upright torso is judged; no metre value is certified."
+        }
+      ]
+    },
+    {
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_shoulder_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 4.625,
+          "observability": "unknown",
+          "reason": "Depth and forearm crossing prevent reliable 3D lateral-component occurrence inventory."
+        },
+        {
+          "start": 4.625,
+          "end": 5.0,
+          "observability": "decidable",
+          "reason": "Large inward crossing is observable with both shoulder references in the front-facing decoded-body convention."
+        }
+      ]
+    },
+    {
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_to_shoulder_distance",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Monocular foreshortening and incomplete endpoint depth do not certify the 3D radial-distance excursions."
+        }
+      ]
+    },
+    {
+      "body_part": "left_wrist",
+      "measurement_name": "wrist_position_along_shoulder_torso_plane_normal",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Signed displacement along the ordered 3D plane normal cannot be independently judged from this monocular source."
+        }
+      ]
+    },
+    {
+      "body_part": "right_knee",
+      "measurement_name": "joint_interior_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "right_ankle",
+      "measurement_name": "ankle_to_hip_distance",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "right_ankle",
+      "measurement_name": "ankle_position_along_hip_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "right_ankle",
+      "measurement_name": "ankle_position_along_torso_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "right_ankle",
+      "measurement_name": "ankle_position_along_hip_torso_plane_normal",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Knees/ankles remain outside the source framing; no leg primitive is inferred from upper-body movement."
+        }
+      ]
+    },
+    {
+      "body_part": "right_elbow",
+      "measurement_name": "joint_interior_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 0.375,
+          "observability": "unknown",
+          "reason": "The wrist/forearm is outside view or does not have sufficient visible endpoint support."
+        },
+        {
+          "start": 0.375,
+          "end": 1.5,
+          "observability": "decidable",
+          "reason": "Only coarse visible elbow bending/extension direction is judged; exact 3D angle or intensity is not certified."
+        },
+        {
+          "start": 1.5,
+          "end": 1.9375,
+          "observability": "unknown",
+          "reason": "Hand drops outside the source field."
+        },
+        {
+          "start": 1.9375,
+          "end": 5.0,
+          "observability": "decidable",
+          "reason": "Visible endpoint silhouettes support coarse elbow-change review; small wrist-only signs are not elbow references."
+        }
+      ]
+    },
+    {
+      "body_part": "right_upper_arm",
+      "measurement_name": "upper_arm_elevation_relative_to_torso",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 2.375,
+          "observability": "decidable",
+          "reason": "Shoulder/upper-arm/elbow silhouette and upright torso permit coarse elevation review."
+        },
+        {
+          "start": 2.375,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Crossed forearms, hair and foreshortening do not reliably establish the full 3D torso-relative upper-arm angle changes."
+        }
+      ]
+    },
+    {
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_torso_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 0.375,
+          "observability": "unknown",
+          "reason": "Wrist lacks visible source support."
+        },
+        {
+          "start": 0.375,
+          "end": 1.5,
+          "observability": "decidable",
+          "reason": "Only gross wrist-height change relative to the upright torso is judged; no metre value is certified."
+        },
+        {
+          "start": 1.5,
+          "end": 1.9375,
+          "observability": "unknown",
+          "reason": "Wrist is outside view."
+        },
+        {
+          "start": 1.9375,
+          "end": 5.0,
+          "observability": "decidable",
+          "reason": "Gross visible wrist-height changes can be reviewed independently of finger articulation."
+        }
+      ]
+    },
+    {
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_shoulder_axis",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 4.625,
+          "observability": "unknown",
+          "reason": "Depth and forearm crossing prevent reliable 3D lateral-component occurrence inventory."
+        },
+        {
+          "start": 4.625,
+          "end": 5.0,
+          "observability": "decidable",
+          "reason": "Large inward crossing is observable with both shoulder references in the front-facing decoded-body convention."
+        }
+      ]
+    },
+    {
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_to_shoulder_distance",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Monocular foreshortening and incomplete endpoint depth do not certify the 3D radial-distance excursions."
+        }
+      ]
+    },
+    {
+      "body_part": "right_wrist",
+      "measurement_name": "wrist_position_along_shoulder_torso_plane_normal",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Signed displacement along the ordered 3D plane normal cannot be independently judged from this monocular source."
+        }
+      ]
+    },
+    {
+      "body_part": "root",
+      "measurement_name": "pelvis_camera_x",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Pelvis position is incompletely framed/obscured; camera-space metre displacement cannot be independently established."
+        }
+      ]
+    },
+    {
+      "body_part": "root",
+      "measurement_name": "pelvis_camera_y_up",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Pelvis position is incompletely framed/obscured; camera-space metre displacement cannot be independently established."
+        }
+      ]
+    },
+    {
+      "body_part": "root",
+      "measurement_name": "pelvis_camera_z_backward",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "Pelvis position is incompletely framed/obscured; camera-space metre displacement cannot be independently established."
+        }
+      ]
+    },
+    {
+      "body_part": "torso",
+      "measurement_name": "torso_camera_up_angle",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "The full 3D torso/plane orientation is not certified; visible head/hand motion is not automatically a body turn."
+        }
+      ]
+    },
+    {
+      "body_part": "torso",
+      "measurement_name": "shoulder_plane_camera_yaw",
+      "reference_inventory_complete": true,
+      "intervals": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "observability": "unknown",
+          "reason": "The full 3D torso/plane orientation is not certified; visible head/hand motion is not automatically a body turn."
+        }
+      ]
+    }
+  ],
+  "reference_boundary_scope": "visible support-limited primitive intervals, not global onset outside the visible source field",
+  "unassigned_fine_hand_signs_are_not_primitive_misses": true,
+  "exact_angles_metres_force_and_depth_certified": false,
+  "source_evidence": [
+    {
+      "path": "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-source-sequence-review-v1/iQBpcSyrZpDaSFjj/frames_000_026.jpg",
+      "sha256": "8ad195d3bae58436fdddc916437551273628e243c9f95538f4a4f7c846876ec9"
+    },
+    {
+      "path": "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-source-sequence-review-v1/iQBpcSyrZpDaSFjj/frames_027_053.jpg",
+      "sha256": "7c4ca48967d5c3d1fef690e3671cb783524f818646b890294f968b88b11a7461"
+    },
+    {
+      "path": "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-source-sequence-review-v1/iQBpcSyrZpDaSFjj/frames_054_080.jpg",
+      "sha256": "07bc91943bd8b9c00bd23608ffee2ca15d85aa68c514369151b9a1687d4bbf00"
+    },
+    {
+      "path": "/ssd/2/niezichao.nzc/artifacts/motionscript-branches-20261119/acceptance-review-workspace-v1/source_observations/iQBpcSyrZpDaSFjj.original_detail_frames.jpg",
+      "sha256": "50e78ca974c88dc9f2855afe25b970fd1db2f953d017a59184b38c607970aa82"
+    }
+  ],
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false
+}

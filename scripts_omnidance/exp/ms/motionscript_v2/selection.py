@@ -12,7 +12,7 @@ import math
 
 from .events import render_caption
 
-__all__ = ["summarize_events", "make_summary_llm_payload"]
+__all__ = ["summarize_events", "co_supported_groups", "make_summary_llm_payload"]
 
 _EVIDENCE_TOLERANCE = {
     "sample_start": 1, "sample_end": 1, "sample_count": 2,
@@ -61,7 +61,7 @@ def _channel(event):
     return _key([
         event["source"], event["body_part"], event["measurement"]["unit"],
         *[evidence.get(key) for key in (
-            "measurement_name", "coordinate_frame", "axis_convention", "positive_yaw_convention",
+            "measurement_name", "coordinate_frame", "reference_frame", "operator", "axis_convention", "positive_yaw_convention",
             "required_joints", "continuity_segment_id", "required_joint_segment_ids", "continuity_scope")],
     ])
 
@@ -70,7 +70,8 @@ def _known_continuity(event):
     evidence = event["evidence"]
     joints, segments = evidence.get("required_joints"), evidence.get("required_joint_segment_ids")
     root = evidence.get("continuity_segment_id")
-    return (isinstance(root, int) and not isinstance(root, bool) and root >= 0
+    independent = evidence.get("continuity_scope") == "independent_required_point_segments"
+    return ((independent or (isinstance(root, int) and not isinstance(root, bool) and root >= 0))
             and isinstance(joints, list) and bool(joints)
             and isinstance(segments, list) and len(joints) == len(segments)
             and all(isinstance(value, int) and not isinstance(value, bool) and value >= 0 for value in segments))
@@ -130,7 +131,7 @@ def _alternates(left, right):
             and abs(left["measurement"]["end"] - right["measurement"]["start"]) <= .5 + 1e-12)
 
 
-def summarize_events(events) -> dict:
+def summarize_events(events, *, renderer=render_caption) -> dict:
     """Return an auditable selection/summary view of the full event list.
 
     ``selected_event_count`` counts deduplicated measured occurrences, not
@@ -180,7 +181,7 @@ def summarize_events(events) -> dict:
             body_part = first["body_part"].replace("_", " ").capitalize()
             text = f"{body_part} repeatedly {first['action']} and {span[1]['action']}."
         else:
-            text = render_caption([first])[0].split("] ", 1)[1]
+            text = renderer([first])[0].split("] ", 1)[1]
         groups.append({
             "id": f"group_{index:04d}", "kind": "repeated_alternation" if repeated else "event",
             "start": first["start"], "end": last["end"], "body_part": first["body_part"],
@@ -213,11 +214,56 @@ def summarize_events(events) -> dict:
             "duplicate_min_time_iou": .95, "measurement_tolerance_degrees": .5,
             "measurement_tolerance_m": .005, "evidence_tolerances": dict(_EVIDENCE_TOLERANCE),
             "min_alternating_occurrences": 4, "max_alternation_gap_seconds": .25,
-            "repetition_requires_known_root_and_joint_segments": True,
+            "repetition_requires_known_required_segments": True,
+            "independent_point_channels_do_not_require_root": True,
             "summary_span_is_not_continuous_motion": True,
             "all_original_events_retained": True,
         },
     }
+
+
+def co_supported_groups(events) -> list[dict]:
+    source = list(events)
+    _validate(source)
+    families = {}
+    for event in source:
+        side, _, part = event["body_part"].partition("_")
+        if side in ("left", "right") and part in ("upper_arm", "elbow", "wrist", "knee", "ankle", "foot"):
+            region = "arm" if part in ("upper_arm", "elbow", "wrist") else "leg"
+            families.setdefault((side, region), []).append(event)
+    groups = []
+    for (side, region), members in sorted(families.items()):
+        boundaries = sorted({value for event in members for value in (event["start"], event["end"])})
+        for start, end in zip(boundaries, boundaries[1:]):
+            midpoint = (start + end) / 2
+            active = [event for event in members if event["start"] < midpoint < event["end"]]
+            if len(active) < 2 or len({_channel(event) for event in active}) < 2:
+                continue
+            if not all(_known_continuity(event) for event in active):
+                continue
+            dependencies = [dict(zip(event["evidence"]["required_joints"], event["evidence"]["required_joint_segment_ids"]))
+                            for event in active]
+            common = set.intersection(*(set(item) for item in dependencies))
+            if not common or any(len({item[joint] for item in dependencies}) != 1 for joint in common):
+                continue
+            ids = sorted(event["id"] for event in active)
+            if (groups and groups[-1]["event_ids"] == ids and groups[-1]["body_region"] == side + "_" + region
+                    and abs(groups[-1]["end"] - start) <= 1e-9):
+                groups[-1]["end"] = end
+                continue
+            groups.append({"id": "", "kind": "co_supported_overlapping_measurements", "start": start, "end": end,
+                           "body_region": side + "_" + region, "event_ids": ids,
+                           "shared_required_joints": sorted(common),
+                           "shared_joint_segment_ids": [dependencies[0][joint] for joint in sorted(common)],
+                           "channels": [{"event_id": event["id"], "body_part": event["body_part"],
+                                         "measurement_name": event["evidence"].get("measurement_name"),
+                                         "source_start": event["start"], "source_end": event["end"]} for event in _ordered(active)],
+                           "single_action_or_strict_simultaneity_certified": False,
+                           "source_occurrences_deleted": False})
+    groups.sort(key=lambda group: (group["start"], group["end"], group["body_region"], group["event_ids"]))
+    for i, group in enumerate(groups, 1):
+        group["id"] = f"co_supported_{i:04d}"
+    return groups
 
 
 def make_summary_llm_payload(summary: dict) -> dict:

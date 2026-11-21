@@ -1,0 +1,53 @@
+{
+  "schema": "native-body-rgb-reference-tracks-v1",
+  "revision": 2,
+  "id": "drKSnQygeQBpvOwH",
+  "video_sha256": "9f146ea171e2b55c9db782c1130555939b34746c70ad2a447a4c60b5ccca081c",
+  "previous_reference_sha256": "151f4f2a66f5890f988549ec50721129630d577008fc69f7015f1c5c63df8ffe",
+  "source_first": true,
+  "candidates_or_prediction_images_read_before_original_freeze": false,
+  "source_revision_after_candidate_view": true,
+  "revision_basis": "An independent assistant saw source-only full/detail/upper-body images, no predictions or existing references. It confirmed visible left-chain folding/opening, but right shoulder-elbow segments are hidden at17/28/40/54; both elbows are bent at65/74. Opposite-phase extrapolation is therefore not admitted. Original references remain preserved and no model/fact values change.",
+  "reviewer_type": "assistant",
+  "reference_origin": "Primary source-first inventory plus independent source-only proximal-chain check; revised compilation is not blind and requires human adjudication",
+  "source_detail_sha256": "776f4b1841cf9b977036c2d703d50241e226343ca3e8296a7af7897eeb1542c0",
+  "source_upperbody_roi_sha256": "7abf15245a91510bc640268b9790d167658cd45c12d795242853ee2bd16a52dd",
+  "source_upperbody_roi_offset_px": [80,250],
+  "source_directory": "acceptance-source-sequence-review-v1/drKSnQygeQBpvOwH",
+  "source_files": ["frames_000_026.jpg","frames_027_053.jpg","frames_054_080.jpg"],
+  "frame_namespace": "Frozen input clip native decoded frames",
+  "seconds_policy": "Use frozen media_probe.time and integer PTS/time_base",
+  "side_policy": "Depicted left follows the initially image-right shoulder-elbow-wrist with the pink accessory; depicted right is the other proximal chain. Current wrist x-position and opposite-side motion never determine side or hidden motion. Pre-mirror actor laterality remains uncertified.",
+  "tracks": [
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[0,11,17],"directions":["negative_torso_up_axis","positive_torso_up_axis"],"reason":"Both initially high wrists lower toward the hips, then rise into the forward arm pattern."},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[0,11,17],"directions":["negative_torso_up_axis","positive_torso_up_axis"],"reason":"Initial visible wrist lowering and raising, before the sustained crossed-arm pattern."},
+    {"body_part":"left_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[17,21,28,36,40,51,56,65,69,74,79],"directions":["positive_torso_up_axis","negative_torso_up_axis","positive_torso_up_axis","negative_torso_up_axis","positive_torso_up_axis","negative_torso_up_axis","positive_torso_up_axis","negative_torso_up_axis","positive_torso_up_axis","negative_torso_up_axis"],"reason":"Pink-accessory wrist alternates between forward and near-shoulder/face positions; each reversal and the final lowering is retained. This is not inferred solely from whole-body screen bobbing."},
+    {"body_part":"right_wrist","measurement_name":"wrist_position_along_torso_axis","action":"changes_local_position","frames":[17,21,28,36,40,51,58,65,71,79],"directions":["negative_torso_up_axis","positive_torso_up_axis","negative_torso_up_axis","positive_torso_up_axis","negative_torso_up_axis","positive_torso_up_axis","negative_torso_up_axis","positive_torso_up_axis","negative_torso_up_axis"],"decidable":false,"reason":"Prior coarse opposite-phase hypotheses remain recorded, but overlapping forearms and uncertain endpoint support do not independently certify each complete local-axis trajectory."},
+    {"body_part":"left_elbow","measurement_name":"elbow_internal_angle","frames":[0,11],"directions":["extend"],"reason":"Visible initial forearm opening as the wrist lowers."},
+    {"body_part":"left_elbow","measurement_name":"elbow_internal_angle","frames":[17,21,28,36,40,51,56,65,69,74,79],"directions":["bend","extend","bend","extend","bend","extend","bend","extend","bend","extend"],"reason":"The directly tracked pink-accessory chain visibly folds toward the shoulder/face and opens forward; source-only crosscheck confirms the sampled open/folded poses. Boundaries remain coarse, not exact3D extrema."},
+    {"body_part":"right_elbow","measurement_name":"elbow_internal_angle","frames":[0,11],"directions":["extend"],"reason":"Initial source forearm opening is independently visible before crossed-arm occlusion."},
+    {"body_part":"right_elbow","measurement_name":"elbow_internal_angle","frames":[11,17,21,28,36,40,51,58,65,71,79],"directions":["bend","extend","bend","extend","bend","extend","bend","extend","bend","extend"],"decidable":false,"reason":"Do not complete hidden shoulder-elbow-wrist intervals by assuming inverse left-arm rhythm. Source-only crosscheck finds hidden right hinges and both elbows bent in some poses; the former sequence is preserved only as unresolved context."},
+    {"body_part":"left_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"raises","frames":[11,17],"directions":["increasing_relative_elevation"],"reason":"Visible shoulder-to-elbow chain rises into the forward pattern."},
+    {"body_part":"right_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"raises","frames":[11,17],"directions":["increasing_relative_elevation"],"decidable":false,"reason":"Raising the wrist does not independently locate the hidden right elbow or certify its torso-relative3D elevation."},
+    {"body_part":"left_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"lowers","frames":[74,79],"directions":["decreasing_relative_elevation"],"reason":"Final visible upper-arm lowering remains a separate source reference."},
+    {"body_part":"right_upper_arm","measurement_name":"upper_arm_elevation_relative_to_torso","action":"lowers","frames":[74,79],"directions":["decreasing_relative_elevation"],"reason":"Final shoulder-to-elbow chain lowers toward the side while the arms separate."}
+  ],
+  "decidable_channel_frame_windows": {
+    "left_wrist.wrist_position_along_torso_axis": [[0,79]],
+    "right_wrist.wrist_position_along_torso_axis": [[0,17]],
+    "left_elbow.joint_interior_angle": [[0,11],[17,79]],
+    "right_elbow.joint_interior_angle": [[0,11]],
+    "left_upper_arm.upper_arm_elevation_relative_to_torso": [[11,17],[74,79]],
+    "right_upper_arm.upper_arm_elevation_relative_to_torso": [[74,79]]
+  },
+  "unknown_channel_reason": "No symmetric/opposite-phase completion of hidden right joints. Unassessed depth/radial/root/heading quantities remain unknown. Pants obscure knee landmarks and overlapping legs prevent side-resolved3D angle certification; visible footwear does not establish hip-relative ankle3D motion or ground contact. Unknown is not stillness.",
+  "other_observed_source_motion": [
+    {"description":"Lower-body flexion/uprighting around17–25,32–40,47–56,62–71 is visibly coarse but not admitted as separate left/right knee angle truth.","decidable":false},
+    {"description":"Screen-facing direction and repeated torso inclination are visible, not calibrated camera yaw or gravity-relative lean.","decidable":false}
+  ],
+  "reference_boundaries_are_coarse_source_trends": true,
+  "exact_3d_amplitude_speed_or_depth_certified": false,
+  "different_measurements_are_not_distinct_physical_action_count": true,
+  "independent_human_review_completed": false,
+  "quality_gate_passed": false
+}

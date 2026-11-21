@@ -1,0 +1,75 @@
+{
+  "schema": "native-body-source-audit-batch-v1",
+  "batch_number": 5,
+  "previous_contract": "independent_review_contract.v5.json",
+  "previous_contract_sha256": "aaac71f4dd2e5f4ee88e03765e90533d11888633c6e33714220e7518e384be55",
+  "new_contract": "independent_review_contract.v6.json",
+  "source_package": "independent-review-supplement-sourcebatch5-v1",
+  "supplemental_panel": "supplemental_independent_sourcebatch5_review.json",
+  "cases": {
+    "XPVRgFxtXkBsceVC": {
+      "inventory": "XPVRgFxtXkBsceVC.reference_inventory.json",
+      "sha256": "59034736f8143793c2a0ffcc09cef3e15e2f37c4c338646cbb8f325a80f890a2",
+      "matches": {
+        "3": ["left_elbow", "joint_interior_angle", 0, 4],
+        "4": ["left_wrist", "wrist_position_along_torso_axis", 0, 4],
+        "6": ["right_elbow", "joint_interior_angle", 0, 4],
+        "7": ["right_wrist", "wrist_position_along_torso_axis", 0, 4],
+        "15": ["left_upper_arm", "upper_arm_elevation_relative_to_torso", 4, 12],
+        "30": ["right_upper_arm", "upper_arm_elevation_relative_to_torso", 4, 12],
+        "21": ["right_wrist", "wrist_position_along_torso_axis", 4, 16],
+        "35": ["left_upper_arm", "upper_arm_elevation_relative_to_torso", 12, 17],
+        "39": ["right_upper_arm", "upper_arm_elevation_relative_to_torso", 12, 17],
+        "100": ["right_elbow", "joint_interior_angle", 64, 68],
+        "101": ["right_wrist", "wrist_position_along_torso_axis", 64, 68],
+        "110": ["right_elbow", "joint_interior_angle", 68, 72],
+        "111": ["left_wrist", "wrist_position_along_torso_axis", 68, 72],
+        "112": ["right_wrist", "wrist_position_along_torso_axis", 68, 72],
+        "114": ["left_elbow", "joint_interior_angle", 68, 72]
+      }
+    },
+    "KhfvQfWrHlPRsXTt": {
+      "inventory": "KhfvQfWrHlPRsXTt.reference_inventory.json",
+      "sha256": "8273164afd249537d24c5f78e98c4320276ef6d1e4e869b559990b08c4e0ce92",
+      "matches": {
+        "9": ["left_wrist", "wrist_position_along_torso_axis", 2, 8],
+        "10": ["right_wrist", "wrist_position_along_torso_axis", 2, 8],
+        "22": ["left_wrist", "wrist_position_along_torso_axis", 8, 12],
+        "24": ["right_wrist", "wrist_position_along_torso_axis", 8, 12],
+        "33": ["left_wrist", "wrist_position_along_torso_axis", 12, 18],
+        "54": ["left_wrist", "wrist_position_along_torso_axis", 27, 33],
+        "55": ["left_elbow", "joint_interior_angle", 27, 33],
+        "58": ["right_elbow", "joint_interior_angle", 27, 32],
+        "130": ["right_upper_arm", "upper_arm_elevation_relative_to_torso", 69, 80],
+        "131": ["right_wrist", "wrist_position_along_torso_axis", 69, 80]
+      }
+    },
+    "hjippsshahMjZMqT": {
+      "inventory": "hjippsshahMjZMqT.reference_inventory.json",
+      "sha256": "b413e8c1d4967c1d0f9dbd0e0a553c995fcd169d0af80797647793dd4f6c6b86",
+      "matches": {
+        "32": ["right_elbow", "joint_interior_angle", 22, 25],
+        "40": ["right_wrist", "wrist_position_along_torso_axis", 25, 31],
+        "43": ["right_elbow", "joint_interior_angle", 25, 31],
+        "36": ["right_wrist", "wrist_position_along_shoulder_axis", 22, 25],
+        "46": ["right_wrist", "wrist_position_along_shoulder_axis", 25, 31],
+        "55": ["right_elbow", "joint_interior_angle", 36, 39],
+        "68": ["right_wrist", "wrist_position_along_shoulder_axis", 39, 45],
+        "74": ["right_wrist", "wrist_position_along_shoulder_axis", 48, 52],
+        "30": ["left_wrist", "wrist_position_along_torso_axis", 18, 24],
+        "75": ["left_wrist", "wrist_position_along_torso_axis", 49, 54],
+        "81": ["left_wrist", "wrist_position_along_torso_axis", 54, 63],
+        "83": ["left_elbow", "joint_interior_angle", 54, 63],
+        "89": ["left_wrist", "wrist_position_along_torso_axis", 63, 69],
+        "92": ["left_elbow", "joint_interior_angle", 63, 69],
+        "97": ["left_wrist", "wrist_position_along_torso_axis", 69, 78],
+        "100": ["left_elbow", "joint_interior_angle", 69, 78],
+        "85": ["left_wrist", "wrist_position_along_shoulder_axis", 54, 63],
+        "96": ["left_wrist", "wrist_position_along_shoulder_axis", 63, 69],
+        "104": ["left_wrist", "wrist_position_along_shoulder_axis", 69, 78]
+      }
+    }
+  },
+  "correspondences_are_coarse_not_certified3d_error_metrics": true,
+  "source_model_or_event_thresholds_changed": false
+}

@@ -146,7 +146,7 @@ def preprocess(nlf: dict, template: dict, *, fps=20.0, max_gap_seconds=0.2,
                smooth_seconds=0.0625, max_joint_uncertainty=None) -> tuple[dict, dict]:
     """Convert NLF's metre-valued ``j3d`` and SMPL axis angles to masked arrays.
 
-    ``valid`` concerns usable root/translation/heading and floor support;
+    ``valid`` concerns usable root/translation/heading, independently of floor;
     ``joint_valid`` additionally gates individual joints and their parent chain.
     Use ``joint_valid.all(axis=1)`` when a consumer needs a complete body.
     ``observed`` marks output timestamps matching reliable source root samples,
@@ -273,7 +273,7 @@ def preprocess(nlf: dict, template: dict, *, fps=20.0, max_gap_seconds=0.2,
     positions = _forward_kinematics(rotations, joints, parents)
     global_joints = positions[:, :22] + pelvis[:, None]
     floor = _floor_height(global_joints, joint_valid, valid, time, sigma_frames, segment_id)
-    valid &= np.isfinite(floor)
+    floor_valid = valid & np.isfinite(floor)
     joint_valid &= valid[:, None]
 
     yaw_deg = np.full(len(time), np.nan)
@@ -292,7 +292,8 @@ def preprocess(nlf: dict, template: dict, *, fps=20.0, max_gap_seconds=0.2,
                                   np.cos(heading[start:end] - reference_heading))
             yaw_deg[start:end] = np.degrees(np.unwrap(relative))
             body52[start:end] = np.einsum("tij,tkj->tki", _yaw_matrix(-heading[start:end]), positions[start:end])
-            body52[start:end, :, 1] += (pelvis[start:end, 1] - floor[start:end])[:, None]
+            height = np.where(floor_valid[start:end], pelvis[start:end, 1] - floor[start:end], 0.)
+            body52[start:end, :, 1] += height[:, None]
             relative_root = reference_rotation @ root_rotation[start:end]
             as_z_up = to_z_up @ relative_root @ to_z_up.T
             with warnings.catch_warnings():
@@ -308,6 +309,7 @@ def preprocess(nlf: dict, template: dict, *, fps=20.0, max_gap_seconds=0.2,
     global_joints[~joint_valid] = np.nan
     root_rotation[~valid] = np.nan
     coords = np.concatenate([body52, euler[:, None], translation[:, None]], axis=1)
+    coords[~floor_valid, :52] = np.nan
 
     observed = np.zeros(len(time), dtype=bool)
     for source_index in np.flatnonzero(source_valid):
@@ -324,6 +326,7 @@ def preprocess(nlf: dict, template: dict, *, fps=20.0, max_gap_seconds=0.2,
     arrays = dict(time=time, body=body52[:, :22].astype(np.float32),
                   translation=translation.astype(np.float32), yaw_deg=yaw_deg.astype(np.float32),
                   valid=valid, joint_valid=joint_valid, observed=observed,
+                  floor_valid=floor_valid, estimated_floor_y=floor.astype(np.float32),
                   joint_observed=joint_observed, joint_interpolated=joint_valid & ~joint_observed,
                   interpolated=valid & ~observed, source_time=source_time.copy(),
                   source_valid=source_valid, source_detection_valid=supplied_valid.copy(),
@@ -353,7 +356,8 @@ def preprocess(nlf: dict, template: dict, *, fps=20.0, max_gap_seconds=0.2,
         smoothing="output-grid Gaussian positions; sign-continuous normalized Gaussian quaternions",
         smoothing_crosses_unsupported_gap=False,
         coordinate_system="Y-up metres after diag(1,-1,-1) camera-axis rotation; not recovered world coordinates",
-        body_frame="root-relative, per-frame projected-forward yaw removed, estimated pelvis height above floor added",
+        body_frame="root-relative, per-frame projected-forward yaw removed; estimated pelvis height added only where floor_valid",
+        floor_missing_behavior="local geometry retained root-relative; floor-based coords body channels NaN; no contact or ground-height claim",
         global_joints_frame="fixed Y-up camera axes, absolute pelvis translation retained; not world ground truth",
         root_rotation_frame="complete root rotation in fixed Y-up camera axes",
         translation_frame="pelvis displacement from first usable output sample, rotated by its negative heading",

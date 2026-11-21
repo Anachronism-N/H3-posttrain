@@ -8,9 +8,10 @@
 - Main 50-song comparison under the style-conditioned configuration: O 33/50 vs RA 31/50
   (p=1.00), but O uses about half the calls and a third of the tokens.
 - Matched no-style comparison, 50 songs: O 39/50 vs RA 28/50 (p=0.0127).
-- Adding the deterministic fallback converts all six recoverable failures: O 45/50 vs RA 28/50,
-  with 17 songs completed only by O and none only by RA (p=1.5e-5). The five remaining failures
-  are catalog-level songs that no arm can run.
+- Adding the deterministic fallback converts all six recoverable failures, and accepting catalogs
+  that keep at least one complete proposal per window recovers the five catalog-blocked songs.
+  Final full panel: O 50/50 vs RA 30/50, 20 songs completed only by O and none only by RA
+  (McNemar p=1.9e-6).
 - Quality: coverage 1.0 for both; RA's finished plans repeat less (0.14 vs 0.26 on shared songs);
   blind semantic judging on 25 shared successes is a wash (L1 14:11, L2 13:12, L3 14:11).
   Fallback-converted plans are complete but repetitive (0.48). The defensible claims are completion
@@ -400,9 +401,42 @@ full Omni model stops mid-JSON at the same character positions on the same three
 line is closed: it cannot satisfy the planner's long structured-output contract in this checkpoint,
 and Qwen3-VL-30B remains the selected planner.
 
-Catalog-recovery attempt (not adopted): a K=2 redundancy rule (accept a song catalog when every
-window retains at least one complete proposal) was implemented and submitted on the five
-catalog-blocked songs for all four arms, but the two validation runs crashed inside the loader
-before any model call and the diagnostic rerun remained queued for an hour. The loader change was
-reverted and the strict rule (all proposals complete) remains in force. The five songs therefore
-stay counted as failures for every arm, and the 45/50 versus 28/50 table is unchanged.
+Catalog recovery (adopted): the five catalog-blocked songs were rerun under a K=2 redundancy rule
+(accept a catalog when every window keeps at least one complete proposal). The earlier crashes were
+not caused by the rule: two catalogs had `results.json` at the directory root but their call journal
+in a nested directory, so the loader saw zero calls. With per-song roots pointing at the directory
+that holds both files, the rule was validated locally (fma-13317: 60 windows, 119 candidates) and
+all four arms were rerun on the five songs.
+
+| song | W | SF | RA | O |
+|---|---:|---:|---:|---:|
+| fma-13317 | fail | fail | fail | finished |
+| fma-646 | finished | fail | fail | finished |
+| fma-122352 | fail | fail | fail | finished |
+| fma-96967 | fail | fail | finished | finished |
+| aioz-samba-636dc2ae | finished | fail | finished | finished |
+
+Recovered O plans: coverage 1.0, mean duplicate rate 0.333, mean 46.4 events. The strict rule
+remains the default for building catalogs; this rule only changes which existing catalogs are
+admitted for these five songs, and all arms used the same admitted catalogs.
+
+## Final full-panel result (2026-11-21)
+
+With the fallback and the K=2 catalog rule, all 50 songs are runnable and every registered cell is
+decided by the methods rather than by catalog admission.
+
+| arm | complete | rate | both | O-only | RA-only | neither | McNemar |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| O no-style + snap + fallback | **50/50** | **1.00** | 30 | 20 | 0 | 0 | p = 1.9e-6 |
+| RA no-style | 30/50 | 0.60 | | | | | |
+
+Cost per completed song: O 47.5 calls / 534476 input tokens / 10577 output tokens;
+RA 82.9 calls / 1341562 input tokens / 27549 output tokens. O completes every song at 57% of RA's
+calls and 40% of its input tokens.
+
+Plan quality across the 50 completed O plans remains coverage 1.0 with a mean duplicate sentence
+rate of about 0.32 (39 model-written matched plans 0.291, six fallback-converted 0.48, five
+catalog-recovered 0.333). RA's 30 completed plans sit near 0.14. The completion and cost result is
+therefore definitive; the lexical-diversity and semantic-quality claims remain mixed. W and SF were
+not rerun across the full final configuration; they complete 11/50 and 4/50 respectively when the
+recovered no-style cells are merged with their style-conditioned runs, and are far below both O and RA.

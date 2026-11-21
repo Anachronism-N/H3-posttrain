@@ -1,0 +1,10 @@
+{
+ "schema": "choreobench.final50.v1",
+ "songs": 50,
+ "o_complete": 50,
+ "ra_complete": 30,
+ "both": 30,
+ "o_only": 20,
+ "ra_only": 0,
+ "mcnemar_p": 1.9073486328125e-06
+}

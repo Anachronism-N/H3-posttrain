@@ -440,3 +440,9 @@ catalog-recovered 0.333). RA's 30 completed plans sit near 0.14. The completion 
 therefore definitive; the lexical-diversity and semantic-quality claims remain mixed. W and SF were
 not rerun across the full final configuration; they complete 11/50 and 4/50 respectively when the
 recovered no-style cells are merged with their style-conditioned runs, and are far below both O and RA.
+
+Semantic-judge coverage note: the blind pairwise judge covers the 25 songs both arms completed
+before catalog recovery. After recovery the shared set is 30; a rerun including the five additional
+pairs was submitted twice and remained queued on both L20Z queues, so it was cancelled. The
+25-pair result (L1 14:11, L2 13:12, L3 14:11, all non-significant) is the semantic evidence of
+record; the five extra pairs are unjudged.
